@@ -1,0 +1,116 @@
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+.btn {
+  font-family: Arial;
+  padding: 0.5em;
+  border: none;
+  border-bottom: 3px solid;
+  outline: none;
+  font-size: inherit;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.btn.default {
+  font-weight: bold;
+  border: 0;
+  padding: 15px 15px 15px 15px;
+  margin: 5px 5px 0 0;
+  border-radius: 4px;
+  cursor: pointer;
+  user-select: none;
+  text-align: center;
+  text-transform: uppercase; 
+  background-color: #e6e6e6;
+  color: #4d4d4d;
+}
+
+.btn.default:hover {
+  background-color: #c7c3c3;
+}
+
+.btn.accept {
+  font-weight: bold;
+  border: 0;
+  padding: 20px 100px 20px 100px;
+  margin: 10px 5px 0 0;
+  border-radius: 4px;
+  cursor: pointer;
+  user-select: none;
+  text-align: center;
+  text-transform: uppercase; 
+  background-color: #daf8da;
+  color: #4d4d4d;
+}
+
+.btn.accept:hover {
+  background-color: #b9f7b9;
+}
+
+.btn.destructive {
+  font-weight: bold;
+  border: 0;
+  padding: 15px 15px 15px 15px;
+  margin: 5px 5px 0 0;
+  border-radius: 4px;
+  cursor: pointer;
+  user-select: none;
+  text-align: center;
+  text-transform: uppercase; 
+  background-color: #f5bfbf;
+  color: #4d4d4d;
+}
+
+.btn.destructive:hover {
+  background-color: #f39494;
+}
+
+.title {
+  font-weight: bold;
+  font-size: 60px;
+  text-transform: uppercase;
+  margin: 20px 0 20px 0;
+}
+
+.word_grid {
+  margin: 20px 0 20px 0;
+}
+
+.letter_tile {
+  width: 60px;
+  height: 60px;
+  border: 2px solid #969595;
+  margin: 2px;
+  vertical-align: middle;
+  font-size: 2.5rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  user-select: none;
+}
+
+.letter_tile[data-status="correct"] {
+ background-color: rgb(85, 207, 85);
+}
+
+.letter_tile[data-status="contains"] {
+  background-color: rgb(245, 207, 40);
+}
+
+.word_row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  vertical-align: middle;
+}
