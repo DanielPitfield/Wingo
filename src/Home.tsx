@@ -1,5 +1,5 @@
 import React from "react";
-import { Page } from "./MainMenu";
+import { Page } from "./App";
 import { Button } from "./Button";
 
 export const Home: React.FC<{ setPage: (page: Page) => void }> = (props) => {

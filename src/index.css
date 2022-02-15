@@ -148,3 +148,86 @@ code {
   justify-content: center;
   vertical-align: middle;
 }
+
+/* Splash Screen page ========================= */
+.splash-screen {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-grow: 1;
+  font-size: calc(10px + 2vmin);
+}
+
+.main-menu-wrapper {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  font-size: 1.2em;
+  transition: opacity 0.5s ease;
+}
+
+[data-loading-state="loading"] {
+  opacity: 1;
+}
+
+[data-loading-state="loaded"] {
+  opacity: 0;
+}
+
+.game-name {
+  display: flex;
+  color: #676767;
+  background-color: #fcfcfc;
+  padding: 1em;
+  padding-top: 0.5em;
+  justify-content: center;
+}
+
+.left-bracket,
+.right-bracket {
+  font-size: 3.5em;
+  padding: 0 0.2em;
+  color: #e6e6e6;
+}
+
+.game-name-label {
+  margin-top: 0.5em;
+}
+
+.studio-name {
+  border: 2px solid;
+  border-color: #cccccc;
+  color: #b3b3b3;
+  background-color: #e6e6e6;
+  padding: 0.5em 3em;
+}
+
+/* Home page ========================= */
+.home {
+  display: flex;
+  flex-grow: 1;
+  font-size: calc(10px + 2vmin);
+}
+
+.sidebar {
+  flex-basis: 15em;
+  background-color: white;
+  border-right: 3px solid #ccc;
+  padding: 2em;
+}
+
+.sidebar-title {
+  font-weight: normal;
+  color: #555;
+}
+
+.sidebar-links {
+  padding: 0;
+  margin: 0;
+}
+
+.sidebar-links .sidebar-link {
+  list-style-type: none;
+  padding: 0.2em;
+  margin: 0.2em;
+}
