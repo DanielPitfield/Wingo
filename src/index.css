@@ -1,3 +1,13 @@
+@import url('https://fonts.googleapis.com/css2?family=Ubuntu&display=swap');
+
+.App {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
@@ -10,6 +20,10 @@ body {
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+.logo {
+  display: flex;
 }
 
 .btn {
@@ -86,26 +100,41 @@ code {
 
 .word_grid {
   margin: 20px 0 20px 0;
+  background-color: #323289;
+  padding: 20px 20px;
+  background-image: linear-gradient(318deg, #0d092e, transparent);
 }
 
 .letter_tile {
-  width: 60px;
-  height: 60px;
-  border: 2px solid #969595;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.6em;
+  height: 1.6em;
+  border: 2px solid #666;
+  border-radius: 8px;
   margin: 2px;
   vertical-align: middle;
-  font-size: 2.5rem;
+  font-family: 'Ubuntu', sans-serif;
+  font-size: 2.5em;
   font-weight: bold;
+  color: white;
   text-transform: uppercase;
   user-select: none;
+  text-shadow: 0 2px 2px #333;
+  background-color: rgb(13, 50, 134);
 }
 
 .letter_tile[data-status="correct"] {
- background-color: rgb(85, 207, 85);
+ background-color: rgb(76, 161, 80);
 }
 
 .letter_tile[data-status="contains"] {
-  background-color: rgb(245, 207, 40);
+  background-color: rgb(220, 141, 55);
+}
+
+.logo .letter_tile[data-status="incorrect"] {
+  background-color: rgb(204, 33, 50);
 }
 
 .word_row {
@@ -156,12 +185,14 @@ code {
   justify-content: center;
   flex-grow: 1;
   font-size: calc(10px + 2vmin);
+  min-height: 100vh;
 }
 
 .main-menu-wrapper {
   display: flex;
   flex-direction: column;
   text-align: center;
+  align-items: center;
   font-size: 1.2em;
   transition: opacity 0.5s ease;
 }
@@ -176,22 +207,15 @@ code {
 
 .game-name {
   display: flex;
-  color: #676767;
-  background-color: #fcfcfc;
   padding: 1em;
   padding-top: 0.5em;
+  align-items: center;
   justify-content: center;
-}
-
-.left-bracket,
-.right-bracket {
-  font-size: 3.5em;
-  padding: 0 0.2em;
-  color: #e6e6e6;
 }
 
 .game-name-label {
   margin-top: 0.5em;
+  font-size: 3rem;
 }
 
 .studio-name {
@@ -219,6 +243,10 @@ code {
 .sidebar-title {
   font-weight: normal;
   color: #555;
+}
+
+.sidebar-title .logo, .title .logo {
+  font-size: 1rem;
 }
 
 .sidebar-links {
