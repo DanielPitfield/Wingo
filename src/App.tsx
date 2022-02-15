@@ -49,7 +49,7 @@ const App: React.FC<Props> = (props) => {
       return;
     }
 
-    if (wordIndex == 0) {
+    if (wordIndex === 0) {
       return <>You guessed the word in one guess</>
     }
 
@@ -82,7 +82,7 @@ const App: React.FC<Props> = (props) => {
               return;
             }
 
-            if (currentWord.length != props.wordLength) { /* Incomplete word */
+            if (currentWord.length !== props.wordLength) { /* Incomplete word */
               return;
             }
 
@@ -97,7 +97,7 @@ const App: React.FC<Props> = (props) => {
               if (currentWord.toUpperCase() === props.targetWord.toUpperCase()) { /* Exact match */
                 setinProgress(false);
               }
-              else if ((wordIndex + 1) == props.numGuesses) {
+              else if ((wordIndex + 1) === props.numGuesses) {
                 setinProgress(false);
               }
               else {
