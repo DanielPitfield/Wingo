@@ -9,7 +9,7 @@ import Wordle from "./Wordle";
 const wordLength = 5;
 const numGuesses = 6;
 
-export type Page = "splash-screen" | "home" | "lobby" | "wordle_daily" | "wordle_repeatable";
+export type Page = "splash-screen" | "home" | "lobby" | "wordle_daily" | "wordle_repeat";
 
 export const App: React.FC = () => {
   const [loadingState, setLoadingState] = useState<"loading" | "loaded">("loading");
@@ -35,10 +35,10 @@ export const App: React.FC = () => {
         return <LobbyMenu setPage={setPage} />;
 
       case "wordle_daily":
-        return <Wordle wordLength={wordLength} numGuesses={numGuesses} setPage={setPage} />;
+        return <Wordle mode="daily" wordLength={wordLength} numGuesses={numGuesses} setPage={setPage} />;
 
-      case "wordle_repeatable":
-        return <Wordle wordLength={wordLength} numGuesses={numGuesses} setPage={setPage} />;
+      case "wordle_repeat":
+        return <Wordle mode="repeat" wordLength={wordLength} numGuesses={numGuesses} setPage={setPage} />;
     }
   })();
 

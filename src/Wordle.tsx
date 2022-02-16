@@ -7,6 +7,7 @@ import {Logo} from "./Logo";
 import { Button } from './Button';
 
 interface Props {
+  mode: "daily" | "repeat"
   wordLength: number;
   numGuesses: number;
   setPage: (page: Page) => void

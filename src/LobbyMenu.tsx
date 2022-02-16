@@ -14,7 +14,7 @@ export const LobbyMenu: React.FC<{ setPage: (page: Page) => void }> = (props) =>
             <Button mode="default" onClick={() => props.setPage("wordle_daily")} label="Wordle (daily)" />
           </li>
           <li className="sidebar-link">
-            <Button mode="default" onClick={() => props.setPage("wordle_repeatable")} label="Wordle (repeatable)" />
+            <Button mode="default" onClick={() => props.setPage("wordle_repeat")} label="Wordle (repeat)" />
           </li>
           <li className="sidebar-link">
             <Button mode="default" onClick={() => props.setPage("home")} label="Back to Main Menu" />
