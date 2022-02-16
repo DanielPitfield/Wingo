@@ -59,8 +59,6 @@ const Wordle: React.FC<Props> = (props) => {
   }
 
   function displayOutcome() {
-
-
     if (inProgress) {
       return;
     }    

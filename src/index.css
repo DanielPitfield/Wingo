@@ -138,7 +138,7 @@ code {
 }
 
 .letter_tile[data-status="not in word"] {
-  background-color: rgb(107, 104, 104)
+  background-color: #787c7e;
 }
 
 .logo .letter_tile[data-status="incorrect"] {
@@ -264,6 +264,5 @@ code {
 
 .sidebar-links .sidebar-link {
   list-style-type: none;
-  padding: 0.2em;
   margin: 0.2em;
 }

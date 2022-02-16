@@ -10,10 +10,13 @@ export const LobbyMenu: React.FC<{ setPage: (page: Page) => void }> = (props) =>
           Minigames
         </h1>
         <ul className="sidebar-links">
-          <li>
+        <li className="sidebar-link">
+            <Button mode="default" onClick={() => props.setPage("wordle_daily")} label="Wordle (daily)" />
+          </li>
+          <li className="sidebar-link">
             <Button mode="default" onClick={() => props.setPage("wordle_repeatable")} label="Wordle (repeatable)" />
           </li>
-          <li>
+          <li className="sidebar-link">
             <Button mode="default" onClick={() => props.setPage("home")} label="Back to Main Menu" />
           </li>
         </ul>
