@@ -91,7 +91,7 @@ const Wordle: React.FC<Props> = (props) => {
         {displayOutcome()}
       </div>
       <div>
-      {!inProgress && <Button mode={'accept'} label={'Restart'} onClick={ResetGame}></Button>}
+      {!inProgress && props.mode ==="repeat" && <Button mode={'accept'} label={'Restart'} onClick={ResetGame}></Button>}
       </div>
 
       <div className="word_grid">
