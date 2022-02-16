@@ -19,6 +19,7 @@ const Wordle: React.FC<Props> = (props) => {
   const [currentWord, setCurrentWord] = useState("");
   const [wordIndex, setWordIndex] = useState(0);
   const [inProgress, setinProgress] = useState(true);
+  const [inDictionary, setinDictionary] = useState(true);
   const [targetWord, settargetWord] = useState(words[Math.round(Math.random() * words.length)]);
 
   function ResetGame() {
@@ -26,6 +27,7 @@ const Wordle: React.FC<Props> = (props) => {
     setCurrentWord("");
     setWordIndex(0);
     setinProgress(true);
+    setinDictionary(true);
     settargetWord(words[Math.round(Math.random() * words.length)]);
   }
 
@@ -50,15 +52,22 @@ const Wordle: React.FC<Props> = (props) => {
       (i.e the row has already been used)
       Show the respective guessed word
       */
-      Grid.push(<WordRow key={i} word={wordIndex === i ? currentWord : wordIndex <= i ? "" : guesses[i]} length={wordLength} targetWord={targetWord} hasSubmit={wordIndex > i || !inProgress}></WordRow>);
+      Grid.push(<WordRow key={i} word={wordIndex === i ? currentWord : wordIndex <= i ? "" : guesses[i]} length={wordLength} targetWord={targetWord} hasSubmit={wordIndex > i || !inProgress} inDictionary={inDictionary}></WordRow>);
     }
 
     return Grid;
   }
 
   function displayOutcome() {
+
+
     if (inProgress) {
       return;
+    }    
+    
+    if (!inDictionary) {
+      return <>{currentWord} is not a valid word<br></br>
+      The word was: {targetWord}</>
     }
 
     if (wordIndex === 0) {
@@ -81,7 +90,9 @@ const Wordle: React.FC<Props> = (props) => {
       </div>
       <div>
         {displayOutcome()}
-        {!inProgress && <Button mode={'accept'} label={'Restart'} onClick={ResetGame}></Button>}
+      </div>
+      <div>
+      {!inProgress && <Button mode={'accept'} label={'Restart'} onClick={ResetGame}></Button>}
       </div>
 
       <div className="word_grid">
@@ -106,7 +117,6 @@ const Wordle: React.FC<Props> = (props) => {
             if (words.includes(currentWord.toLowerCase())) { /* Completed and accepeted word */
               setGuesses(guesses.concat(currentWord)); /* Add word to guesses */
 
-
               if (currentWord.toUpperCase() === targetWord.toUpperCase()) { /* Exact match */
                 setinProgress(false);
               }
@@ -117,6 +127,10 @@ const Wordle: React.FC<Props> = (props) => {
                 setCurrentWord(""); /* Start new word as empty string */
                 setWordIndex(wordIndex + 1); /* Increment index to indicate new word has been started */
               }
+            }
+            else {
+              setinDictionary(false);
+              setinProgress(false);
             }
           }}
           onSubmitLetter={(letter) => {

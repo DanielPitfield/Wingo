@@ -133,6 +133,14 @@ code {
   background-color: rgb(220, 141, 55);
 }
 
+.letter_tile[data-status="incorrect"] {
+  background-color: rgb(204, 33, 50);
+}
+
+.letter_tile[data-status="not in word"] {
+  background-color: rgb(107, 104, 104)
+}
+
 .logo .letter_tile[data-status="incorrect"] {
   background-color: rgb(204, 33, 50);
 }

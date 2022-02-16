@@ -3,7 +3,7 @@ import './index.css';
 
 interface Props {
   letter: string
-  status: "incorrect" | "contains" | "correct" | "not set"
+  status: "incorrect" | "contains" | "correct" | "not set" | "not in word"
 }
 
 const LetterTile: React.FC<Props> = (props) => {
