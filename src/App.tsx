@@ -5,11 +5,12 @@ import { Home } from "./Home";
 import { SplashScreen } from "./SplashScreen";
 import { LobbyMenu } from "./LobbyMenu";
 import Wordle from "./Wordle";
+import WordleConfig from "./WordleConfig";
 
 const wordLength = 5;
 const numGuesses = 6;
 
-export type Page = "splash-screen" | "home" | "lobby" | "wordle_daily" | "wordle_repeat";
+export type Page = "splash-screen" | "home" | "lobby" | "wordle_daily" | "wordle_repeat" | "wordle_limitless";
 
 export const App: React.FC = () => {
   const [loadingState, setLoadingState] = useState<"loading" | "loaded">("loading");
@@ -20,7 +21,7 @@ export const App: React.FC = () => {
     window.setTimeout(() => setLoadingState("loaded"), 2000);
 
     // Set home page after load
-    window.setTimeout(() => setPage("home"), 2500);
+    window.setTimeout(() => setPage("lobby"), 2500); // Change to "home"
   }, []);
 
   const pageComponent = (() => {
@@ -35,10 +36,13 @@ export const App: React.FC = () => {
         return <LobbyMenu setPage={setPage} />;
 
       case "wordle_daily":
-        return <Wordle mode="daily" wordLength={wordLength} numGuesses={numGuesses} setPage={setPage} />;
+        return <WordleConfig mode="daily" defaultWordLength={wordLength} numGuesses={numGuesses} setPage={setPage} />;
 
       case "wordle_repeat":
-        return <Wordle mode="repeat" wordLength={wordLength} numGuesses={numGuesses} setPage={setPage} />;
+        return <WordleConfig mode="repeat" defaultWordLength={wordLength} numGuesses={numGuesses} setPage={setPage} />;
+
+      case "wordle_limitless":
+        return <WordleConfig mode="limitless" defaultWordLength={4} numGuesses={numGuesses} setPage={setPage} />;
     }
   })();
 
