@@ -59,7 +59,7 @@ const WordleConfig: React.FC<Props> = (props) => {
 
       }
       else if (props.mode === "puzzle") {
-        const puzzle = wordHintMappings[Math.round(Math.random() * wordHintMappings.length)]
+        const puzzle = wordHintMappings[Math.round(Math.random() * wordHintMappings.length)];
         console.log("Puzzle word: " + puzzle.word);
         settargetWord(puzzle.word);
         settargetHint(puzzle.hint);
