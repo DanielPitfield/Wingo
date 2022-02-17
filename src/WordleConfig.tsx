@@ -39,24 +39,32 @@ const WordleConfig: React.FC<Props> = (props) => {
   const [targetWord, settargetWord] = useState<string>();
 
   React.useEffect(() => {
-    if (inProgress && props.mode !== "daily") {
-      const wordArray = wordLengthMappings.find((x) => x.value === wordLength)
-        ?.array!;
-      const newtargetword =
-        wordArray[Math.round(Math.random() * wordArray.length)];
-      settargetWord(newtargetword);
-      console.log("Not daily word: " + newtargetword);
-    } else {
-      const wordArray = wordLengthMappings.find((x) => x.value === wordLength)
-        ?.array!;
+    if (inProgress) {
+      if (props.mode === "daily") {
+        const wordArray = wordLengthMappings.find((x) => x.value === wordLength)
+          ?.array!;
 
-      const timestamp = +new Date(); // Unix timestamp (in milliseconds)
-      const ms_per_day = 24 * 60 * 60 * 1000;
-      const days_since_epoch = Math.floor(timestamp / ms_per_day);
-      const daily_word_index = Math.round(days_since_epoch % wordArray.length); // Number in the range [0, wordArray.length)
-      const new_daily_word = wordArray[daily_word_index];
-      console.log("Daily word: " + new_daily_word);
-      settargetWord(new_daily_word);
+        const timestamp = +new Date(); // Unix timestamp (in milliseconds)
+        const ms_per_day = 24 * 60 * 60 * 1000;
+        const days_since_epoch = Math.floor(timestamp / ms_per_day);
+        const daily_word_index = Math.round(
+          days_since_epoch % wordArray.length
+        ); // Number in the range (0, wordArray.length)
+        const new_daily_word = wordArray[daily_word_index];
+
+        console.log("Daily word: " + new_daily_word);
+        settargetWord(new_daily_word);
+
+      } else { 
+        const wordArray = wordLengthMappings.find((x) => x.value === wordLength)
+          ?.array!;
+
+        const newtargetword =
+          wordArray[Math.round(Math.random() * wordArray.length)];
+
+        console.log("Not daily word: " + newtargetword);
+        settargetWord(newtargetword);
+      }
     }
   }, [wordLength, inProgress, props.mode]);
 
@@ -104,7 +112,7 @@ const WordleConfig: React.FC<Props> = (props) => {
 
       if (currentWord.toUpperCase() === targetWord?.toUpperCase()) {
         /* Exact match */
-        setinProgress(false); // TODO: Limitless mode shouldnt set progress to false?
+        setinProgress(false);
       } else if (wordIndex + 1 === props.numGuesses) {
         setinProgress(false);
       } else {

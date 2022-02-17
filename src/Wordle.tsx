@@ -105,13 +105,13 @@ const Wordle: React.FC<Props> = (props) => {
             mode={"accept"}
             label={
               props.mode === "limitless" &&
-              props.targetWord === props.currentWord
+              props.targetWord.toUpperCase() === props.currentWord.toUpperCase()
                 ? "Continue"
                 : "Restart"
             }
             onClick={() =>
               props.mode === "limitless" &&
-              props.targetWord === props.currentWord
+              props.targetWord.toUpperCase() === props.currentWord.toUpperCase()
                 ? props.ContinueGame()
                 : props.ResetGame()
             }
