@@ -2,10 +2,14 @@ import React, { useState } from "react";
 import "./App.css";
 import { Page } from "./App";
 import Wordle from "./Wordle";
-import {
-  words_four,
-  words_five /*, words_six, words_seven, words_eight, words_nine, words_ten*/,
-} from "./words";
+import { words_four } from "./WordArrays/words_4";
+import { words_five } from "./WordArrays/words_5";
+import { words_six } from "./WordArrays/words_6";
+import { words_seven } from "./WordArrays/words_7";
+import { words_eight } from "./WordArrays/words_8";
+import { words_nine } from "./WordArrays/words_9";
+import { words_ten } from "./WordArrays/words_10";
+import { words_eleven } from "./WordArrays/words_11";
 
 interface Props {
   mode: "daily" | "repeat" | "limitless";
@@ -17,13 +21,12 @@ interface Props {
 const wordLengthMappings = [
   { value: 4, array: words_four },
   { value: 5, array: words_five },
-  /*
   { value: 6, array: words_six },
   { value: 7, array: words_seven },
   { value: 8, array: words_eight },
   { value: 9, array: words_nine },
-  { value: 10, array: words_ten }
-  */
+  { value: 10, array: words_ten },
+  { value: 11, array: words_eleven }
 ];
 
 const WordleConfig: React.FC<Props> = (props) => {
@@ -46,7 +49,7 @@ const WordleConfig: React.FC<Props> = (props) => {
     } else {
       const wordArray = wordLengthMappings.find((x) => x.value == wordLength)
         ?.array!;
-        
+
       const timestamp = +new Date(); // Unix timestamp (in milliseconds)
       const ms_per_day = 24 * 60 * 60 * 1000;
       const days_since_epoch = Math.floor(timestamp / ms_per_day);
