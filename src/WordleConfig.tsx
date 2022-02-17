@@ -12,7 +12,7 @@ import { words_ten } from "./WordArrays/words_10";
 import { words_eleven } from "./WordArrays/words_11";
 
 interface Props {
-  mode: "daily" | "repeat" | "limitless";
+  mode: "daily" | "repeat" | "limitless" | "puzzle";
   defaultWordLength: number;
   numGuesses: number;
   setPage: (page: Page) => void;

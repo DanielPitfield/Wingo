@@ -10,7 +10,7 @@ import WordleConfig from "./WordleConfig";
 const wordLength = 5;
 const numGuesses = 6;
 
-export type Page = "splash-screen" | "home" | "lobby" | "wordle_daily" | "wordle_repeat" | "wordle_limitless";
+export type Page = "splash-screen" | "home" | "lobby" | "wordle_daily" | "wordle_repeat" | "wordle_limitless" | "wordle_puzzle";
 
 export const App: React.FC = () => {
   const [loadingState, setLoadingState] = useState<"loading" | "loaded">("loading");
@@ -43,6 +43,9 @@ export const App: React.FC = () => {
 
       case "wordle_limitless":
         return <WordleConfig mode="limitless" defaultWordLength={4} numGuesses={numGuesses} setPage={setPage} />;
+
+        case "wordle_puzzle":
+        return <WordleConfig mode="puzzle" defaultWordLength={10} numGuesses={numGuesses} setPage={setPage} />;
     }
   })();
 

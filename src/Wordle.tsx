@@ -7,7 +7,7 @@ import { Logo } from "./Logo";
 import { Button } from "./Button";
 
 interface Props {
-  mode: "daily" | "repeat" | "limitless";
+  mode: "daily" | "repeat" | "limitless" | "puzzle";
   wordLength: number;
   numGuesses: number;
   guesses: string[];
@@ -117,6 +117,10 @@ const Wordle: React.FC<Props> = (props) => {
             }
           ></Button>
         )}
+      </div>
+
+      <div className="puzzle_hint">
+        {props.mode === "puzzle" && <>{}</>}
       </div>
 
       <div className="word_grid">
