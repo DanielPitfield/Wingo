@@ -9,10 +9,21 @@ import WordleConfig from "./WordleConfig";
 const wordLength = 5;
 const numGuesses = 6;
 
-export type Page = "splash-screen" | "home" | "lobby" | "wordle_daily" | "wordle_repeat" | "wordle_limitless" | "wordle_puzzle";
+export type Page =
+  | "splash-screen"
+  | "home"
+  | "lobby"
+  | "wordle_daily"
+  | "wordle_repeat"
+  | "wordle_limitless"
+  | "wordle_puzzle"
+  | "numbo"
+  | "nubble";
 
 export const App: React.FC = () => {
-  const [loadingState, setLoadingState] = useState<"loading" | "loaded">("loading");
+  const [loadingState, setLoadingState] = useState<"loading" | "loaded">(
+    "loading"
+  );
   const [page, setPage] = useState<Page>("splash-screen");
 
   useEffect(() => {
@@ -35,16 +46,56 @@ export const App: React.FC = () => {
         return <LobbyMenu setPage={setPage} />;
 
       case "wordle_daily":
-        return <WordleConfig mode="daily" defaultWordLength={wordLength} numGuesses={numGuesses} setPage={setPage} />;
+        return (
+          <WordleConfig
+            mode="daily"
+            defaultWordLength={wordLength}
+            numGuesses={numGuesses}
+            setPage={setPage}
+          />
+        );
 
       case "wordle_repeat":
-        return <WordleConfig mode="repeat" defaultWordLength={wordLength} numGuesses={numGuesses} setPage={setPage} />;
+        return (
+          <WordleConfig
+            mode="repeat"
+            defaultWordLength={wordLength}
+            numGuesses={numGuesses}
+            setPage={setPage}
+          />
+        );
 
       case "wordle_limitless":
-        return <WordleConfig mode="limitless" defaultWordLength={4} numGuesses={numGuesses} setPage={setPage} />;
+        return (
+          <WordleConfig
+            mode="limitless"
+            defaultWordLength={4}
+            numGuesses={numGuesses}
+            setPage={setPage}
+          />
+        );
 
-        case "wordle_puzzle":
-        return <WordleConfig mode="puzzle" defaultWordLength={10} numGuesses={1} setPage={setPage} />;
+      case "wordle_puzzle":
+        return (
+          <WordleConfig
+            mode="puzzle"
+            defaultWordLength={10}
+            numGuesses={1}
+            setPage={setPage}
+          />
+        );
+
+        /*
+        case "numbo":
+        return (
+          <Numbo></Numbo>
+        );
+
+        case "nubble":
+        return (
+          <Nubble></Nubble>
+        );
+        */
     }
   })();
 

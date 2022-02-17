@@ -238,11 +238,11 @@ code {
 .home {
   display: flex;
   flex-grow: 1;
-  font-size: calc(10px + 2vmin);
+  font-size: 2vmin;
 }
 
 .sidebar {
-  flex-basis: 15em;
+  flex-basis: 33.3%;
   background-color: white;
   border-right: 3px solid #ccc;
   padding: 2em;
@@ -265,6 +265,10 @@ code {
 .sidebar-links .sidebar-link {
   list-style-type: none;
   margin: 0.2em;
+}
+
+.sidebar-link .btn.default {
+  min-width: 250px;
 }
 
 .dice_top, .dice_bottom {
