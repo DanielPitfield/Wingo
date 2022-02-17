@@ -40,14 +40,14 @@ const WordleConfig: React.FC<Props> = (props) => {
 
   React.useEffect(() => {
     if (inProgress && props.mode !== "daily") {
-      const wordArray = wordLengthMappings.find((x) => x.value == wordLength)
+      const wordArray = wordLengthMappings.find((x) => x.value === wordLength)
         ?.array!;
       const newtargetword =
         wordArray[Math.round(Math.random() * wordArray.length)];
       settargetWord(newtargetword);
       console.log("Not daily word: " + newtargetword);
     } else {
-      const wordArray = wordLengthMappings.find((x) => x.value == wordLength)
+      const wordArray = wordLengthMappings.find((x) => x.value === wordLength)
         ?.array!;
 
       const timestamp = +new Date(); // Unix timestamp (in milliseconds)
@@ -58,7 +58,7 @@ const WordleConfig: React.FC<Props> = (props) => {
       console.log("Daily word: " + new_daily_word);
       settargetWord(new_daily_word);
     }
-  }, [wordLength, inProgress]);
+  }, [wordLength, inProgress, props.mode]);
 
   function ResetGame() {
     setGuesses([]);
@@ -95,7 +95,7 @@ const WordleConfig: React.FC<Props> = (props) => {
       return;
     }
 
-    const wordArray = wordLengthMappings.find((x) => x.value == wordLength)
+    const wordArray = wordLengthMappings.find((x) => x.value === wordLength)
       ?.array!;
 
     if (wordArray.includes(currentWord.toLowerCase())) {
@@ -104,7 +104,7 @@ const WordleConfig: React.FC<Props> = (props) => {
 
       if (currentWord.toUpperCase() === targetWord?.toUpperCase()) {
         /* Exact match */
-        setinProgress(false);
+        setinProgress(false); // TODO: Limitless mode shouldnt set progress to false?
       } else if (wordIndex + 1 === props.numGuesses) {
         setinProgress(false);
       } else {
