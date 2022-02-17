@@ -1,12 +1,11 @@
 import React, { useState } from "react";
 import "./App.css";
-import { Keyboard } from "./Keyboard";
 import { Page } from "./App";
-import { WordRow } from "./WordRow";
-import { Logo } from "./Logo";
-import { Button } from "./Button";
 import Wordle from "./Wordle";
-import { words_five, words_four } from "./words";
+import {
+  words_four,
+  words_five /*, words_six, words_seven, words_eight, words_nine, words_ten*/,
+} from "./words";
 
 interface Props {
   mode: "daily" | "repeat" | "limitless";
@@ -18,6 +17,13 @@ interface Props {
 const wordLengthMappings = [
   { value: 4, array: words_four },
   { value: 5, array: words_five },
+  /*
+  { value: 6, array: words_six },
+  { value: 7, array: words_seven },
+  { value: 8, array: words_eight },
+  { value: 9, array: words_nine },
+  { value: 10, array: words_ten }
+  */
 ];
 
 const WordleConfig: React.FC<Props> = (props) => {
@@ -26,18 +32,28 @@ const WordleConfig: React.FC<Props> = (props) => {
   const [wordIndex, setWordIndex] = useState(0);
   const [inProgress, setinProgress] = useState(true);
   const [inDictionary, setinDictionary] = useState(true);
-
-  const [wordLength, setwordLength] = useState(props.defaultWordLength); // Initial property value stored as state
+  const [wordLength, setwordLength] = useState(props.defaultWordLength);
   const [targetWord, settargetWord] = useState<string>();
 
   React.useEffect(() => {
-    if (inProgress) {
+    if (inProgress && props.mode !== "daily") {
       const wordArray = wordLengthMappings.find((x) => x.value == wordLength)
         ?.array!;
       const newtargetword =
         wordArray[Math.round(Math.random() * wordArray.length)];
-      console.log(newtargetword);
       settargetWord(newtargetword);
+      console.log("Not daily word: " + newtargetword);
+    } else {
+      const wordArray = wordLengthMappings.find((x) => x.value == wordLength)
+        ?.array!;
+        
+      const timestamp = +new Date(); // Unix timestamp (in milliseconds)
+      const ms_per_day = 24 * 60 * 60 * 1000;
+      const days_since_epoch = Math.floor(timestamp / ms_per_day);
+      const daily_word_index = Math.round(days_since_epoch % wordArray.length); // Number in the range [0, wordArray.length)
+      const new_daily_word = wordArray[daily_word_index];
+      console.log("Daily word: " + new_daily_word);
+      settargetWord(new_daily_word);
     }
   }, [wordLength, inProgress]);
 
