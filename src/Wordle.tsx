@@ -16,6 +16,7 @@ interface Props {
   inProgress: boolean;
   inDictionary: boolean;
   targetWord: string;
+  targetHint: string;
   setPage: (page: Page) => void;
   onEnter: () => void;
   onSubmitLetter: (letter: string) => void;
@@ -120,7 +121,7 @@ const Wordle: React.FC<Props> = (props) => {
       </div>
 
       <div className="puzzle_hint">
-        {props.mode === "puzzle" && <>{}</>}
+        {props.inProgress && props.mode === "puzzle" && <>{props.targetHint}</>}
       </div>
 
       <div className="word_grid">

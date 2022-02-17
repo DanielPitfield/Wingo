@@ -10,6 +10,7 @@ import { words_eight } from "./WordArrays/words_8";
 import { words_nine } from "./WordArrays/words_9";
 import { words_ten } from "./WordArrays/words_10";
 import { words_eleven } from "./WordArrays/words_11";
+import { wordHintMappings } from "./WordArrays/words_puzzles";
 
 interface Props {
   mode: "daily" | "repeat" | "limitless" | "puzzle";
@@ -37,6 +38,7 @@ const WordleConfig: React.FC<Props> = (props) => {
   const [inDictionary, setinDictionary] = useState(true);
   const [wordLength, setwordLength] = useState(props.defaultWordLength);
   const [targetWord, settargetWord] = useState<string>();
+  const [targetHint, settargetHint] = useState("");
 
   React.useEffect(() => {
     if (inProgress) {
@@ -55,15 +57,21 @@ const WordleConfig: React.FC<Props> = (props) => {
         console.log("Daily word: " + new_daily_word);
         settargetWord(new_daily_word);
 
+      }
+      else if (props.mode === "puzzle") {
+        const puzzle = wordHintMappings[Math.round(Math.random() * wordHintMappings.length)]
+        console.log("Puzzle word: " + puzzle.word);
+        settargetWord(puzzle.word);
+        settargetHint(puzzle.hint);
       } else { 
         const wordArray = wordLengthMappings.find((x) => x.value === wordLength)
           ?.array!;
 
-        const newtargetword =
+        const new_target_word =
           wordArray[Math.round(Math.random() * wordArray.length)];
 
-        console.log("Not daily word: " + newtargetword);
-        settargetWord(newtargetword);
+        console.log("Not daily word: " + new_target_word);
+        settargetWord(new_target_word);
       }
     }
   }, [wordLength, inProgress, props.mode]);
@@ -153,6 +161,7 @@ const WordleConfig: React.FC<Props> = (props) => {
       inProgress={inProgress}
       inDictionary={inDictionary}
       targetWord={targetWord || ""}
+      targetHint={targetHint || ""}
       setPage={props.setPage}
       onEnter={onEnter}
       onSubmitLetter={onSubmitLetter}

@@ -4,7 +4,6 @@ import { useState } from "react";
 import { Home } from "./Home";
 import { SplashScreen } from "./SplashScreen";
 import { LobbyMenu } from "./LobbyMenu";
-import Wordle from "./Wordle";
 import WordleConfig from "./WordleConfig";
 
 const wordLength = 5;
@@ -45,7 +44,7 @@ export const App: React.FC = () => {
         return <WordleConfig mode="limitless" defaultWordLength={4} numGuesses={numGuesses} setPage={setPage} />;
 
         case "wordle_puzzle":
-        return <WordleConfig mode="puzzle" defaultWordLength={10} numGuesses={numGuesses} setPage={setPage} />;
+        return <WordleConfig mode="puzzle" defaultWordLength={10} numGuesses={1} setPage={setPage} />;
     }
   })();
 
