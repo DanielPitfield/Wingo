@@ -16,6 +16,7 @@ interface Props {
   mode: "daily" | "repeat" | "limitless" | "puzzle";
   defaultWordLength: number;
   puzzleRevealMs: number;
+  puzzleLeaveNumBlanks: number;
   numGuesses: number;
   setPage: (page: Page) => void;
 }
@@ -60,7 +61,7 @@ const WordleConfig: React.FC<Props> = (props) => {
 
       }
       else if (props.mode === "puzzle") {
-        const puzzle = wordHintMappings[Math.round(Math.random() * wordHintMappings.length)];
+        const puzzle = wordHintMappings[Math.round(Math.random() * wordHintMappings.length - 1)];
         console.log("Puzzle word: " + puzzle.word);
         settargetWord(puzzle.word);
         settargetHint(puzzle.hint);
@@ -164,6 +165,7 @@ const WordleConfig: React.FC<Props> = (props) => {
       targetWord={targetWord || ""}
       targetHint={targetHint || ""}
       puzzleRevealMs={props.puzzleRevealMs}
+      puzzleLeaveNumBlanks={props.puzzleLeaveNumBlanks}
       setPage={props.setPage}
       onEnter={onEnter}
       onSubmitLetter={onSubmitLetter}

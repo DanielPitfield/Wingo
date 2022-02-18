@@ -10,6 +10,7 @@ import { Button } from "./Button";
 const wordLength = 5;
 const numGuesses = 6;
 const puzzleRevealMs = 2000;
+const puzzleLeaveNumBlanks = 3;
 
 export type Page =
   | "splash-screen"
@@ -54,6 +55,7 @@ export const App: React.FC = () => {
             defaultWordLength={wordLength}
             numGuesses={numGuesses}
             puzzleRevealMs={puzzleRevealMs}
+            puzzleLeaveNumBlanks={puzzleLeaveNumBlanks}
             setPage={setPage}
           />
         );
@@ -65,6 +67,7 @@ export const App: React.FC = () => {
             defaultWordLength={wordLength}
             numGuesses={numGuesses}
             puzzleRevealMs={puzzleRevealMs}
+            puzzleLeaveNumBlanks={puzzleLeaveNumBlanks}
             setPage={setPage}
           />
         );
@@ -76,6 +79,7 @@ export const App: React.FC = () => {
             defaultWordLength={4}
             numGuesses={numGuesses}
             puzzleRevealMs={puzzleRevealMs}
+            puzzleLeaveNumBlanks={puzzleLeaveNumBlanks}
             setPage={setPage}
           />
         );
@@ -87,6 +91,7 @@ export const App: React.FC = () => {
             defaultWordLength={10}
             numGuesses={1}
             puzzleRevealMs={puzzleRevealMs}
+            puzzleLeaveNumBlanks={puzzleLeaveNumBlanks}
             setPage={setPage}
           />
         );

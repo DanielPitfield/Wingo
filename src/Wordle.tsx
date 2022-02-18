@@ -18,6 +18,7 @@ interface Props {
   targetWord: string;
   targetHint: string;
   puzzleRevealMs: number;
+  puzzleLeaveNumBlanks: number;
   setPage: (page: Page) => void;
   onEnter: () => void;
   onSubmitLetter: (letter: string) => void;
@@ -27,7 +28,9 @@ interface Props {
 }
 
 const Wordle: React.FC<Props> = (props) => {
-  const [revealedLetters, setRevealedLetters] = useState(0);
+  const [revealedLetterIndexes, setRevealedLetterIndexes] = useState<number[]>(
+    []
+  );
 
   const [letterStatuses, setletterStatuses] = useState<
     {
@@ -98,46 +101,100 @@ const Wordle: React.FC<Props> = (props) => {
 
     if (props.mode === "puzzle") {
       intervalId = window.setInterval(() => {
-        setRevealedLetters(revealedLetters + 1);
+        if (
+          revealedLetterIndexes.length >=
+          props.targetWord.length - props.puzzleLeaveNumBlanks
+        ) {
+          // Leave
+          return;
+        }
+
+        const newrevealedLetterIndexes = revealedLetterIndexes.slice();
+
+        if (revealedLetterIndexes.length === 0) {
+          // Reveal the first letter
+          newrevealedLetterIndexes.push(0);
+        } else if (revealedLetterIndexes.length === 1) {
+          // Reveal the last letter
+          newrevealedLetterIndexes.push(props.targetWord.length - 1);
+        } else {
+          let newIndex: number;
+
+          do {
+            newIndex = Math.round(Math.random() * props.targetWord.length - 1);
+          } while (revealedLetterIndexes.includes(newIndex));
+
+          // Reveal a random letter
+          newrevealedLetterIndexes.push(newIndex);
+        }
+
+        setRevealedLetterIndexes(newrevealedLetterIndexes);
       }, props.puzzleRevealMs);
     }
 
     return () => {
       window.clearInterval(intervalId);
     };
-  }, []);
+  }, [props.mode, props.targetWord, revealedLetterIndexes]);
 
   /* Create grid of rows (for guessing words) */
   function populateGrid(rowNumber: number, wordLength: number) {
     var Grid = [];
+
+    if (props.mode === "puzzle") {
+      let displayWord = "";
+
+      for (let i = 0; i < props.targetWord.length; i++) {
+        if (revealedLetterIndexes.includes(i)) {
+          displayWord += props.targetWord[i];
+        } else {
+          displayWord += " ";
+        }
+      }
+
+      Grid.push(
+        <WordRow
+          key={"read-only"}
+          word={displayWord}
+          length={wordLength}
+          targetWord={props.targetWord}
+          hasSubmit={true}
+          getLetterStatus={getLetterStatus}
+          inDictionary={props.inDictionary}
+        ></WordRow>
+      );
+    }
+
     for (let i = 0; i < rowNumber; i++) {
-      /* 
-      If the wordIndex and the row number are the same
-      (i.e the row is currently being used)
-      Show the currentWord
-      */
+      let word;
 
-      /*
-      If the wordIndex is behind the currently iterated row
-      (i.e the row has not been used yet)
-      Show an empty string 
-      */
+      if (props.wordIndex === i) {
+        /* 
+        If the wordIndex and the row number are the same
+        (i.e the row is currently being used)
+        Show the currentWord
+        */
+        word = props.currentWord;
+      } else if (props.wordIndex <= i) {
+        /*
+        If the wordIndex is behind the currently iterated row
+        (i.e the row has not been used yet)
+        Show an empty string 
+        */
+        word = "";
+      } else {
+        /* 
+        If the wordIndex is ahead of the currently iterated row
+        (i.e the row has already been used)
+        Show the respective guessed word
+        */
+        word = props.guesses[i];
+      }
 
-      /* 
-      If the wordIndex is ahead of the currently iterated row
-      (i.e the row has already been used)
-      Show the respective guessed word
-      */
       Grid.push(
         <WordRow
           key={i}
-          word={
-            props.wordIndex === i
-              ? props.currentWord
-              : props.wordIndex <= i
-              ? ""
-              : props.guesses[i]
-          }
+          word={word}
           length={wordLength}
           targetWord={props.targetWord}
           hasSubmit={props.wordIndex > i || !props.inProgress}
@@ -165,11 +222,11 @@ const Wordle: React.FC<Props> = (props) => {
       // Red
       status = "incorrect";
     } else if (
-      props.targetWord[index].toUpperCase() === letter?.toUpperCase()
+      props.targetWord[index]?.toUpperCase() === letter?.toUpperCase()
     ) {
       // Green
       status = "correct";
-    } else if (props.targetWord.toUpperCase().includes(letter?.toUpperCase())) {
+    } else if (props.targetWord?.toUpperCase().includes(letter?.toUpperCase())) {
       // Yellow
       status = "contains";
       // Keyboard button with letter props.word[i],
