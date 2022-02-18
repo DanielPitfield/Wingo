@@ -273,6 +273,8 @@ code {
 .sidebar-links {
   padding: 0;
   margin: 0;
+  display: flex;
+  flex-wrap: wrap;
 }
 
 .sidebar-links .sidebar-link {
@@ -282,6 +284,53 @@ code {
 
 .sidebar-link .btn.default {
   min-width: 250px;
+}
+
+.game-mode-title {
+  display: flex;
+  flex-grow: 1;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+  text-transform: uppercase;
+  background-color: #4d4d4ddd;
+  color: #e6e6e6;
+  height: 15%;
+  padding: 0.5em;
+}
+
+.game-mode-button {
+  display: flex;
+  flex-shrink: 0;
+  font-weight: bold;
+  border: 0;
+  padding: 0;
+  height: 20em;
+  width: 20em;
+  border-radius: 2px solid rgb(192, 174, 174);
+  cursor: pointer;
+  user-select: none;
+}
+
+.game-mode-button:hover .game-mode-title {
+background-color: #444;
+}
+
+
+.game-mode-button[data-game-mode="wordle_daily"] {
+
+}
+
+.game-mode-button[data-game-mode="wordle_repeat"] {
+  
+}
+
+.game-mode-button[data-game-mode="wordle_limitless"] {
+  
+}
+
+.game-mode-button[data-game-mode="wordle_puzzle"] {
+  
 }
 
 .dice_top,

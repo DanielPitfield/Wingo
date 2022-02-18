@@ -12,7 +12,7 @@ export const Home: React.FC<{ setPage: (page: Page) => void }> = (props) => {
         </h1>
         <ul className="sidebar-links">
           <li className="sidebar-link">
-            <Button mode="accept" onClick={() => props.setPage("lobby")} label="Play" />
+            <Button mode="accept" onClick={() => props.setPage("lobby")}>Play</Button>
           </li>
         </ul>
       </div>

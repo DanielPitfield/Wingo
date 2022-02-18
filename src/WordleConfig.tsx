@@ -29,7 +29,7 @@ const wordLengthMappings = [
   { value: 8, array: words_eight },
   { value: 9, array: words_nine },
   { value: 10, array: words_ten },
-  { value: 11, array: words_eleven }
+  { value: 11, array: words_eleven },
 ];
 
 const WordleConfig: React.FC<Props> = (props) => {
@@ -40,7 +40,120 @@ const WordleConfig: React.FC<Props> = (props) => {
   const [inDictionary, setinDictionary] = useState(true);
   const [wordLength, setwordLength] = useState(props.defaultWordLength);
   const [targetWord, settargetWord] = useState<string>();
-  const [targetHint, settargetHint] = useState(""); 
+  const [targetHint, settargetHint] = useState("");
+  const [hasSubmitLetter, sethasSubmitLetter] = useState(false);
+  const [revealedLetterIndexes, setRevealedLetterIndexes] = useState<number[]>(
+    []
+  );
+  const defaultLetterStatuses: {
+    letter: string;
+    status: "" | "contains" | "correct" | "not set" | "not in word";
+  }[] = [
+    { letter: "a", status: "" },
+    { letter: "b", status: "" },
+    { letter: "c", status: "" },
+    { letter: "d", status: "" },
+    { letter: "e", status: "" },
+    { letter: "f", status: "" },
+    { letter: "g", status: "" },
+    { letter: "h", status: "" },
+    { letter: "i", status: "" },
+    { letter: "j", status: "" },
+    { letter: "k", status: "" },
+    { letter: "l", status: "" },
+    { letter: "m", status: "" },
+    { letter: "n", status: "" },
+    { letter: "o", status: "" },
+    { letter: "p", status: "" },
+    { letter: "q", status: "" },
+    { letter: "r", status: "" },
+    { letter: "s", status: "" },
+    { letter: "t", status: "" },
+    { letter: "u", status: "" },
+    { letter: "v", status: "" },
+    { letter: "w", status: "" },
+    { letter: "x", status: "" },
+    { letter: "y", status: "" },
+    { letter: "z", status: "" },
+  ];
+
+  const [letterStatuses, setletterStatuses] = useState<
+    {
+      letter: string;
+      status: "" | "contains" | "correct" | "not set" | "not in word";
+    }[]
+  >(defaultLetterStatuses);
+
+  React.useEffect(() => {
+    const letterStatusesCopy = letterStatuses.slice();
+
+    for (const guess of guesses) {
+      for (let i = 0; i < guess.length; i++) {
+        const letter = guess[i];
+
+        const currentLetterStatus = letterStatusesCopy.find(
+          (x) => x.letter.toLowerCase() === letter.toLowerCase()
+        );
+        const newStatus = getLetterStatus(letter, i);
+
+        if (newStatus !== "incorrect") {
+          currentLetterStatus!.status = newStatus;
+        }
+      }
+    }
+
+    console.log(letterStatusesCopy);
+    setletterStatuses(letterStatusesCopy);
+  }, [guesses, wordIndex]);
+
+  React.useEffect(() => {
+    let intervalId: number;
+
+    if (props.mode === "puzzle" && !hasSubmitLetter) {
+      intervalId = window.setInterval(() => {
+        if (hasSubmitLetter) {
+          return;
+        }
+
+        if (!targetWord) {
+          return;
+        }
+
+        if (
+          revealedLetterIndexes.length >=
+          targetWord!.length - props.puzzleLeaveNumBlanks
+        ) {
+          // Leave
+          return;
+        }
+
+        const newrevealedLetterIndexes = revealedLetterIndexes.slice();
+
+        if (revealedLetterIndexes.length === 0) {
+          // Reveal the first letter
+          newrevealedLetterIndexes.push(0);
+        } else if (revealedLetterIndexes.length === 1) {
+          // Reveal the last letter
+          newrevealedLetterIndexes.push(targetWord!.length - 1);
+        } else {
+          let newIndex: number;
+
+          do {
+            newIndex = Math.round(Math.random() * targetWord!.length - 1);
+          } while (revealedLetterIndexes.includes(newIndex));
+
+          // Reveal a random letter
+          newrevealedLetterIndexes.push(newIndex);
+        }
+
+        setRevealedLetterIndexes(newrevealedLetterIndexes);
+      }, props.puzzleRevealMs);
+    }
+
+    return () => {
+      window.clearInterval(intervalId);
+    };
+  }, [props.mode, targetWord, revealedLetterIndexes, hasSubmitLetter]);
 
   React.useEffect(() => {
     if (inProgress) {
@@ -58,19 +171,20 @@ const WordleConfig: React.FC<Props> = (props) => {
 
         console.log("Daily word: " + new_daily_word);
         settargetWord(new_daily_word);
-
-      }
-      else if (props.mode === "puzzle") {
-        const puzzle = wordHintMappings[Math.round(Math.random() * wordHintMappings.length - 1)];
+      } else if (props.mode === "puzzle") {
+        const puzzle =
+          wordHintMappings[
+            Math.round(Math.random() * wordHintMappings.length - 1)
+          ];
         console.log("Puzzle word: " + puzzle.word);
         settargetWord(puzzle.word);
         settargetHint(puzzle.hint);
-      } else { 
+      } else {
         const wordArray = wordLengthMappings.find((x) => x.value === wordLength)
           ?.array!;
 
         const new_target_word =
-          wordArray[Math.round(Math.random() * wordArray.length-1)];
+          wordArray[Math.round(Math.random() * wordArray.length - 1)];
 
         console.log("Not daily word: " + new_target_word);
         settargetWord(new_target_word);
@@ -85,6 +199,9 @@ const WordleConfig: React.FC<Props> = (props) => {
     setinProgress(true);
     setinDictionary(true);
     setwordLength(props.defaultWordLength);
+    sethasSubmitLetter(false);
+    setRevealedLetterIndexes([]);
+    setletterStatuses(defaultLetterStatuses);
   }
 
   function ContinueGame() {
@@ -94,6 +211,37 @@ const WordleConfig: React.FC<Props> = (props) => {
     setinProgress(true);
     setinDictionary(true);
     setwordLength(wordLength + 1);
+    sethasSubmitLetter(false);
+    setRevealedLetterIndexes([]);
+    setletterStatuses(defaultLetterStatuses);
+  }
+
+  function getLetterStatus(
+    letter: string,
+    index: number
+  ): "incorrect" | "contains" | "correct" | "not set" | "not in word" {
+    var status:
+      | "incorrect"
+      | "contains"
+      | "correct"
+      | "not set"
+      | "not in word";
+
+    if (!inDictionary) {
+      // Red
+      status = "incorrect";
+    } else if (targetWord?.[index]?.toUpperCase() === letter?.toUpperCase()) {
+      // Green
+      status = "correct";
+    } else if (targetWord?.toUpperCase().includes(letter?.toUpperCase())) {
+      // Yellow
+      status = "contains";
+      // Keyboard button with letter props.word[i],
+    } else {
+      status = "not in word"; // Another status for letter is not in word?
+    }
+
+    return status;
   }
 
   function onEnter() {
@@ -142,6 +290,7 @@ const WordleConfig: React.FC<Props> = (props) => {
       setCurrentWord(
         currentWord + letter
       ); /* Append chosen letter to currentWord */
+      sethasSubmitLetter(true);
     }
   }
 
@@ -162,10 +311,14 @@ const WordleConfig: React.FC<Props> = (props) => {
       wordIndex={wordIndex}
       inProgress={inProgress}
       inDictionary={inDictionary}
+      hasSubmitLetter={hasSubmitLetter}
       targetWord={targetWord || ""}
       targetHint={targetHint || ""}
       puzzleRevealMs={props.puzzleRevealMs}
       puzzleLeaveNumBlanks={props.puzzleLeaveNumBlanks}
+      revealedLetterIndexes={revealedLetterIndexes}
+      letterStatuses={letterStatuses}
+      getLetterStatus={getLetterStatus}
       setPage={props.setPage}
       onEnter={onEnter}
       onSubmitLetter={onSubmitLetter}

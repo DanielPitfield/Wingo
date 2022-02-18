@@ -40,18 +40,21 @@ export const Keyboard: React.FC<Props> = (props) => {
 
     for (let i = 0; i < RowLetters.length; i++) {
       /* Adds a button for every letter within the provided string, this letter is then used within a callback function (when clicked) */
-      const letterStatus = props.letterStatuses.find((x) => x.letter.toUpperCase() === RowLetters[i].toUpperCase())?.status;
+      const letterStatus = props.letterStatuses.find(
+        (x) => x.letter.toUpperCase() === RowLetters[i].toUpperCase()
+      )?.status;
 
       KeyboardButtons.push(
         <Button
           key={i}
           mode="default"
           status={letterStatus}
-          label={RowLetters[i]}
           onClick={(e) =>
             props.onSubmitLetter((e.target as HTMLButtonElement).innerText)
           }
-        />
+        >
+          {RowLetters[i]}
+        </Button>
       );
     }
 
@@ -68,10 +71,14 @@ export const Keyboard: React.FC<Props> = (props) => {
       </div>
       <div className="keyboard_row_bottom">
         <>{populateKeyboard("ZXCVBNM")}</>
-        <Button mode="destructive" label="<" onClick={props.onBackspace} />
+        <Button mode="destructive" onClick={props.onBackspace}>
+          &lt;
+        </Button>
       </div>
       <div className="keyboard_enter">
-        <>{<Button mode="accept" label="Enter" onClick={props.onEnter} />}</>
+        <Button mode="accept" onClick={props.onEnter}>
+          Enter
+        </Button>
       </div>
     </div>
   );

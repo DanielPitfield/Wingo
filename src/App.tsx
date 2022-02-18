@@ -114,11 +114,9 @@ export const App: React.FC = () => {
     <div className="app">
       {page !== "lobby" && page !== "home" && page !== "splash-screen" && (
         <nav className="navigation">
-          <Button
-            mode="default"
-            onClick={() => setPage("lobby")}
-            label="Back"
-          />
+          <Button mode="default" onClick={() => setPage("lobby")}>
+            Back
+          </Button>
         </nav>
       )}
       {pageComponent}
