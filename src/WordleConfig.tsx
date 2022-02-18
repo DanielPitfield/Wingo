@@ -15,6 +15,7 @@ import { wordHintMappings } from "./WordArrays/words_puzzles";
 interface Props {
   mode: "daily" | "repeat" | "limitless" | "puzzle";
   defaultWordLength: number;
+  puzzleRevealMs: number;
   numGuesses: number;
   setPage: (page: Page) => void;
 }
@@ -38,7 +39,7 @@ const WordleConfig: React.FC<Props> = (props) => {
   const [inDictionary, setinDictionary] = useState(true);
   const [wordLength, setwordLength] = useState(props.defaultWordLength);
   const [targetWord, settargetWord] = useState<string>();
-  const [targetHint, settargetHint] = useState("");
+  const [targetHint, settargetHint] = useState(""); 
 
   React.useEffect(() => {
     if (inProgress) {
@@ -68,7 +69,7 @@ const WordleConfig: React.FC<Props> = (props) => {
           ?.array!;
 
         const new_target_word =
-          wordArray[Math.round(Math.random() * wordArray.length)];
+          wordArray[Math.round(Math.random() * wordArray.length-1)];
 
         console.log("Not daily word: " + new_target_word);
         settargetWord(new_target_word);
@@ -162,6 +163,7 @@ const WordleConfig: React.FC<Props> = (props) => {
       inDictionary={inDictionary}
       targetWord={targetWord || ""}
       targetHint={targetHint || ""}
+      puzzleRevealMs={props.puzzleRevealMs}
       setPage={props.setPage}
       onEnter={onEnter}
       onSubmitLetter={onSubmitLetter}

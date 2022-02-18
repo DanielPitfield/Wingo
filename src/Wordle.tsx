@@ -17,6 +17,7 @@ interface Props {
   inDictionary: boolean;
   targetWord: string;
   targetHint: string;
+  puzzleRevealMs: number;
   setPage: (page: Page) => void;
   onEnter: () => void;
   onSubmitLetter: (letter: string) => void;
@@ -26,6 +27,86 @@ interface Props {
 }
 
 const Wordle: React.FC<Props> = (props) => {
+  const [revealedLetters, setRevealedLetters] = useState(0);
+
+  const [letterStatuses, setletterStatuses] = useState<
+    {
+      letter: string;
+      status: "" | "contains" | "correct" | "not set" | "not in word";
+    }[]
+  >([
+    { letter: "a", status: "" },
+    { letter: "b", status: "" },
+    { letter: "c", status: "" },
+    { letter: "d", status: "" },
+    { letter: "e", status: "" },
+    { letter: "f", status: "" },
+    { letter: "g", status: "" },
+    { letter: "h", status: "" },
+    { letter: "i", status: "" },
+    { letter: "j", status: "" },
+    { letter: "k", status: "" },
+    { letter: "l", status: "" },
+    { letter: "m", status: "" },
+    { letter: "n", status: "" },
+    { letter: "o", status: "" },
+    { letter: "p", status: "" },
+    { letter: "q", status: "" },
+    { letter: "r", status: "" },
+    { letter: "s", status: "" },
+    { letter: "t", status: "" },
+    { letter: "u", status: "" },
+    { letter: "v", status: "" },
+    { letter: "w", status: "" },
+    { letter: "x", status: "" },
+    { letter: "y", status: "" },
+    { letter: "z", status: "" },
+  ]);
+
+  React.useEffect(() => {
+    // props.guesses.map((guess) => {
+    //   // Get the letter statuses for all letters of this guess string
+    //   const letterStatuses = guess
+    //     .split("")
+    //     .map((letter, i) => ({ letter, status: getLetterStatus(letter, i) }));
+
+    // });
+
+    const letterStatusesCopy = letterStatuses.slice();
+
+    for (const guess of props.guesses) {
+      for (let i = 0; i < guess.length; i++) {
+        const letter = guess[i];
+
+        const currentLetterStatus = letterStatusesCopy.find(
+          (x) => x.letter.toLowerCase() === letter.toLowerCase()
+        );
+        const newStatus = getLetterStatus(letter, i);
+
+        if (newStatus !== "incorrect") {
+          currentLetterStatus!.status = newStatus;
+        }
+      }
+    }
+
+    console.log(letterStatusesCopy);
+    setletterStatuses(letterStatusesCopy);
+  }, [props.guesses, props.wordIndex]);
+
+  React.useEffect(() => {
+    let intervalId: number;
+
+    if (props.mode === "puzzle") {
+      intervalId = window.setInterval(() => {
+        setRevealedLetters(revealedLetters + 1);
+      }, props.puzzleRevealMs);
+    }
+
+    return () => {
+      window.clearInterval(intervalId);
+    };
+  }, []);
+
   /* Create grid of rows (for guessing words) */
   function populateGrid(rowNumber: number, wordLength: number) {
     var Grid = [];
@@ -60,12 +141,43 @@ const Wordle: React.FC<Props> = (props) => {
           length={wordLength}
           targetWord={props.targetWord}
           hasSubmit={props.wordIndex > i || !props.inProgress}
+          getLetterStatus={getLetterStatus}
           inDictionary={props.inDictionary}
         ></WordRow>
       );
     }
 
     return Grid;
+  }
+
+  function getLetterStatus(
+    letter: string,
+    index: number
+  ): "incorrect" | "contains" | "correct" | "not set" | "not in word" {
+    var status:
+      | "incorrect"
+      | "contains"
+      | "correct"
+      | "not set"
+      | "not in word";
+
+    if (!props.inDictionary) {
+      // Red
+      status = "incorrect";
+    } else if (
+      props.targetWord[index].toUpperCase() === letter?.toUpperCase()
+    ) {
+      // Green
+      status = "correct";
+    } else if (props.targetWord.toUpperCase().includes(letter?.toUpperCase())) {
+      // Yellow
+      status = "contains";
+      // Keyboard button with letter props.word[i],
+    } else {
+      status = "not in word"; // Another status for letter is not in word?
+    }
+
+    return status;
   }
 
   function displayOutcome() {
@@ -130,15 +242,10 @@ const Wordle: React.FC<Props> = (props) => {
 
       <div className="keyboard">
         <Keyboard
-          onEnter={() => {
-            props.onEnter();
-          }}
-          onSubmitLetter={(letter) => {
-            props.onSubmitLetter(letter);
-          }}
-          onBackspace={() => {
-            props.onBackspace();
-          }}
+          onEnter={props.onEnter}
+          onSubmitLetter={props.onSubmitLetter}
+          onBackspace={props.onBackspace}
+          letterStatuses={letterStatuses}
         ></Keyboard>
       </div>
     </div>

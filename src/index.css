@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Ubuntu&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Ubuntu&display=swap");
 
 .App {
   text-align: center;
@@ -10,15 +10,15 @@
 
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
 
@@ -46,9 +46,21 @@ code {
   cursor: pointer;
   user-select: none;
   text-align: center;
-  text-transform: uppercase; 
+  text-transform: uppercase;
   background-color: #e6e6e6;
   color: #4d4d4d;
+}
+
+.btn.default[data-status="correct"] {
+  background-color: rgb(76, 161, 80);
+}
+
+.btn.default[data-status="contains"] {
+  background-color: rgb(220, 141, 55);
+}
+
+.btn.default[data-status="not in word"] {
+  background-color: #787c7e;
 }
 
 .btn.default:hover {
@@ -64,7 +76,7 @@ code {
   cursor: pointer;
   user-select: none;
   text-align: center;
-  text-transform: uppercase; 
+  text-transform: uppercase;
   background-color: #daf8da;
   color: #4d4d4d;
 }
@@ -82,7 +94,7 @@ code {
   cursor: pointer;
   user-select: none;
   text-align: center;
-  text-transform: uppercase; 
+  text-transform: uppercase;
   background-color: #f5bfbf;
   color: #4d4d4d;
 }
@@ -115,7 +127,7 @@ code {
   border-radius: 8px;
   margin: 2px;
   vertical-align: middle;
-  font-family: 'Ubuntu', sans-serif;
+  font-family: "Ubuntu", sans-serif;
   font-size: 2.5em;
   font-weight: bold;
   color: white;
@@ -126,7 +138,7 @@ code {
 }
 
 .letter_tile[data-status="correct"] {
- background-color: rgb(76, 161, 80);
+  background-color: rgb(76, 161, 80);
 }
 
 .letter_tile[data-status="contains"] {
@@ -253,7 +265,8 @@ code {
   color: #555;
 }
 
-.sidebar-title .logo, .title .logo {
+.sidebar-title .logo,
+.title .logo {
   font-size: 1rem;
 }
 
@@ -271,7 +284,8 @@ code {
   min-width: 250px;
 }
 
-.dice_top, .dice_bottom {
+.dice_top,
+.dice_bottom {
   display: inline-block;
 }
 

@@ -5,9 +5,11 @@ import { Home } from "./Home";
 import { SplashScreen } from "./SplashScreen";
 import { LobbyMenu } from "./LobbyMenu";
 import WordleConfig from "./WordleConfig";
+import { Button } from "./Button";
 
 const wordLength = 5;
 const numGuesses = 6;
+const puzzleRevealMs = 2000;
 
 export type Page =
   | "splash-screen"
@@ -51,6 +53,7 @@ export const App: React.FC = () => {
             mode="daily"
             defaultWordLength={wordLength}
             numGuesses={numGuesses}
+            puzzleRevealMs={puzzleRevealMs}
             setPage={setPage}
           />
         );
@@ -61,6 +64,7 @@ export const App: React.FC = () => {
             mode="repeat"
             defaultWordLength={wordLength}
             numGuesses={numGuesses}
+            puzzleRevealMs={puzzleRevealMs}
             setPage={setPage}
           />
         );
@@ -71,6 +75,7 @@ export const App: React.FC = () => {
             mode="limitless"
             defaultWordLength={4}
             numGuesses={numGuesses}
+            puzzleRevealMs={puzzleRevealMs}
             setPage={setPage}
           />
         );
@@ -81,11 +86,12 @@ export const App: React.FC = () => {
             mode="puzzle"
             defaultWordLength={10}
             numGuesses={1}
+            puzzleRevealMs={puzzleRevealMs}
             setPage={setPage}
           />
         );
 
-        /*
+      /*
         case "numbo":
         return (
           <Numbo></Numbo>
@@ -99,5 +105,18 @@ export const App: React.FC = () => {
     }
   })();
 
-  return <div className="app">{pageComponent}</div>;
+  return (
+    <div className="app">
+      {page !== "lobby" && page !== "home" && page !== "splash-screen" && (
+        <nav className="navigation">
+          <Button
+            mode="default"
+            onClick={() => setPage("lobby")}
+            label="Back"
+          />
+        </nav>
+      )}
+      {pageComponent}
+    </div>
+  );
 };
