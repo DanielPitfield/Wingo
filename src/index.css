@@ -261,8 +261,13 @@ code {
 }
 
 .sidebar-title {
-  font-weight: normal;
-  color: #555;
+  text-align: center;
+  background-color: #4d4d4ddd;
+  padding: 20px 0;
+  margin-bottom: 1em;
+  color: #e6e6e6;
+  font-weight: bold;
+  font-size: 1.5em;
 }
 
 .sidebar-title .logo,
@@ -294,7 +299,7 @@ code {
   justify-content: center;
   text-transform: uppercase;
   background-color: #4d4d4ddd;
-  color: #e6e6e6;
+  color: white;
   height: 15%;
   padding: 0.5em;
 }
@@ -305,32 +310,39 @@ code {
   font-weight: bold;
   border: 0;
   padding: 0;
-  height: 20em;
-  width: 20em;
+  height: 18em;
+  width: 20.5em;
   border-radius: 2px solid rgb(192, 174, 174);
   cursor: pointer;
   user-select: none;
 }
 
 .game-mode-button:hover .game-mode-title {
-background-color: #444;
+  background-color: #444;
 }
 
-
 .game-mode-button[data-game-mode="wordle_daily"] {
-
+  background-image: url(/src/images/daily.jpg);
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 
 .game-mode-button[data-game-mode="wordle_repeat"] {
-  
+  background-image: url(/src/images/repeat.jpg);
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 
 .game-mode-button[data-game-mode="wordle_limitless"] {
-  
+  background-image: url(/src/images/limitless.jpg);
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 
 .game-mode-button[data-game-mode="wordle_puzzle"] {
-  
+  background-image: url(/src/images/puzzle.jpg);
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 
 .dice_top,

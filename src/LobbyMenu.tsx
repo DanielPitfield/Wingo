@@ -18,7 +18,7 @@ export const LobbyMenu: React.FC<{ setPage: (page: Page) => void }> = (
   return (
     <div className="home">
       <div className="sidebar">
-        <h1 className="sidebar-title">WORDLE</h1>
+        <div className="sidebar-title">WORDLE</div>
         <ul className="sidebar-links">
           {renderGameModeTile("wordle_daily", "Daily", )}
           {renderGameModeTile("wordle_repeat", "Standard/Normal")}
@@ -28,7 +28,7 @@ export const LobbyMenu: React.FC<{ setPage: (page: Page) => void }> = (
       </div>
 
       <div className="sidebar">
-        <h1 className="sidebar-title">NUMBERS</h1>
+        <div className="sidebar-title">NUMBERS</div>
         <ul className="sidebar-links">
           {renderGameModeTile("numbo", "Numbo")}
           {renderGameModeTile("nubble", "Nubble")}
@@ -36,7 +36,7 @@ export const LobbyMenu: React.FC<{ setPage: (page: Page) => void }> = (
       </div>
 
       <div className="sidebar">
-        <h1 className="sidebar-title">OTHER</h1>
+        <div className="sidebar-title">OTHER</div>
         <ul className="sidebar-links">
           {renderGameModeTile("numbo", "Numbo")}
           {renderGameModeTile("nubble", "Nubble")}
