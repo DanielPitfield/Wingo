@@ -1,21 +1,28 @@
 import React from "react";
 import "../index.css";
-import DiceGrid from "./DiceGrid";
 import Nubble from "./Nubble";
 
 interface Props {
   numDice: number;
-  /* Add props for the minimum and maximum value of the dice? */
+  diceMin: number;
+  diceMax: number;
   gridSize: number;
   numTeams: number;
   timeLengthMins: number;
 }
 
 const NubbleConfig: React.FC<Props> = (props) => {
+  /* Just passes all props through, twss */
   return (
     <div className="App">
-      <DiceGrid numDice={props.numDice}></DiceGrid>
-      <Nubble gridSize={props.gridSize}></Nubble>
+      <Nubble
+        numDice={props.numDice}
+        diceMin={props.diceMin}
+        diceMax={props.diceMax}
+        gridSize={props.gridSize}
+        numTeams={props.numTeams}
+        timeLengthMins={props.timeLengthMins}
+      ></Nubble>
     </div>
   );
 };

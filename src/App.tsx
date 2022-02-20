@@ -99,7 +99,7 @@ export const App: React.FC = () => {
 
         case "nubble":
         return (
-          <NubbleConfig numDice={4} gridSize={100} numTeams={2} timeLengthMins={5}></NubbleConfig>
+          <NubbleConfig numDice={4} diceMin={1} diceMax={6} gridSize={100} numTeams={2} timeLengthMins={5}></NubbleConfig>
         );
     }
   })();
