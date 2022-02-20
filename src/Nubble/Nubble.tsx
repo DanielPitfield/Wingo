@@ -111,25 +111,23 @@ const Nubble: React.FC<Props> = (props) => {
     for (let i = 0; i < combinations.length; i++) {
       const combination = combinations[i];
 
-      const num = combination.operators[2].function(
-        combination.operators[1].function(
-          combination.operators[0].function(
-            combination.operands[0],
-            combination.operands[1]
-          ),
-          combination.operands[2]
-        ),
-        combination.operands[3]
+      let num = combination.operators[0].function(
+        combination.operands[0],
+        combination.operands[1]
       );
+
+      for (let index = 1; index < props.numDice - 1; index++) {
+        num = combination.operators[index].function(
+          num,
+          combination.operands[index + 1]
+        );
+      }
 
       if (Math.round(num) === num && num > 0) {
         validValues.add(num);
       }
     }
     console.log(validValues);
-
-    //console.log(operatorPermutations);
-    //console.log(operandPermutations);
   }
 
   function populateGrid() {
@@ -137,6 +135,7 @@ const Nubble: React.FC<Props> = (props) => {
     for (let i = 1; i <= props.gridSize; i++) {
       Grid.push(
         <button
+          key={i}
           className="nubble-button"
           data-isPrime={isPrime(i)}
           onClick={() => checkValid(i)}
