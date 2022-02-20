@@ -1,6 +1,5 @@
 import React from "react";
 import { Page } from "./App";
-import { Button } from "./Button";
 
 export const LobbyMenu: React.FC<{ setPage: (page: Page) => void }> = (
   props

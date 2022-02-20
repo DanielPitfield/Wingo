@@ -135,22 +135,30 @@ code {
   user-select: none;
   text-shadow: 0 2px 2px #333;
   background-color: rgb(13, 50, 134);
+  /*
+  transition: transform 0.8s;
+  transform-style: preserve-3d;
+  */
 }
 
 .letter_tile[data-status="correct"] {
   background-color: rgb(76, 161, 80);
+  /* transform: rotateX(180deg); */
 }
 
 .letter_tile[data-status="contains"] {
   background-color: rgb(220, 141, 55);
+  /* transform: rotateX(180deg); */
 }
 
 .letter_tile[data-status="incorrect"] {
   background-color: rgb(204, 33, 50);
+  /* transform: rotateX(180deg); */
 }
 
 .letter_tile[data-status="not in word"] {
   background-color: #787c7e;
+  /* transform: rotateX(180deg); */
 }
 
 .logo .letter_tile[data-status="incorrect"] {
@@ -317,10 +325,15 @@ code {
   user-select: none;
 }
 
+.game-mode-button:hover {
+  opacity: 0.8;
+}
+
 .game-mode-button:hover .game-mode-title {
   background-color: #444;
 }
 
+/*
 .game-mode-button[data-game-mode="wordle_daily"] {
   background-image: url(/src/images/daily.jpg);
   background-repeat: no-repeat;
@@ -344,10 +357,12 @@ code {
   background-repeat: no-repeat;
   background-size: cover;
 }
+*/
 
-.dice_top,
-.dice_bottom {
-  display: inline-block;
+.dice_row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .dice_square {

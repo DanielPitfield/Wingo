@@ -6,6 +6,7 @@ import { SplashScreen } from "./SplashScreen";
 import { LobbyMenu } from "./LobbyMenu";
 import WordleConfig from "./WordleConfig";
 import { Button } from "./Button";
+import NubbleConfig from "./Nubble/NubbleConfig";
 
 const wordLength = 5;
 const numGuesses = 6;
@@ -96,17 +97,10 @@ export const App: React.FC = () => {
           />
         );
 
-      /*
-        case "numbo":
-        return (
-          <Numbo></Numbo>
-        );
-
         case "nubble":
         return (
-          <Nubble></Nubble>
+          <NubbleConfig numDice={4} gridSize={100} numTeams={2} timeLengthMins={5}></NubbleConfig>
         );
-        */
     }
   })();
 
