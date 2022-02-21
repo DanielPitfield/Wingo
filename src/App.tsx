@@ -21,6 +21,7 @@ export type Page =
   | "wordle_repeat"
   | "wordle_limitless"
   | "wordle_puzzle"
+  | "wordle_interlinked"
   | "numbo"
   | "nubble";
 
@@ -97,9 +98,28 @@ export const App: React.FC = () => {
           />
         );
 
-        case "nubble":
+      case "wordle_interlinked":
         return (
-          <NubbleConfig numDice={4} diceMin={1} diceMax={6} gridSize={100} numTeams={2} timeLengthMins={5}></NubbleConfig>
+          <WordleConfig
+            mode="interlinked"
+            defaultWordLength={5}
+            numGuesses={numGuesses}
+            puzzleRevealMs={puzzleRevealMs}
+            puzzleLeaveNumBlanks={puzzleLeaveNumBlanks}
+            setPage={setPage}
+          />
+        );
+
+      case "nubble":
+        return (
+          <NubbleConfig
+            numDice={4}
+            diceMin={1}
+            diceMax={6}
+            gridSize={100}
+            numTeams={2}
+            timeLengthMins={5}
+          ></NubbleConfig>
         );
     }
   })();

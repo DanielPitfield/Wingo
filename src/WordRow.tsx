@@ -4,6 +4,7 @@ import LetterTile from "./LetterTile";
 interface Props {
   length: number;
   word: string;
+  isVertical: boolean;
   targetWord: string;
   hasSubmit: boolean;
   inDictionary: boolean;
@@ -34,7 +35,7 @@ export const WordRow: React.FC<Props> = (props) => {
   }
 
   return (
-    <div className="word_row">
+    <div className={props.isVertical ? "word_row_vertical" : "word_row"}>
       <>{CreateRow()}</>
     </div>
   );

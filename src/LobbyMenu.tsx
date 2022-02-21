@@ -23,6 +23,7 @@ export const LobbyMenu: React.FC<{ setPage: (page: Page) => void }> = (
           {renderGameModeTile("wordle_repeat", "Standard/Normal")}
           {renderGameModeTile("wordle_limitless", "Limitless/Survival")}
           {renderGameModeTile("wordle_puzzle", "Puzzle Word")}
+          {renderGameModeTile("wordle_interlinked", "Interlinked")}
         </ul>
       </div>
 

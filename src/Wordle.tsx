@@ -5,9 +5,10 @@ import { Page } from "./App";
 import { WordRow } from "./WordRow";
 import { Logo } from "./Logo";
 import { Button } from "./Button";
+import { isPropertySignature } from "typescript";
 
 interface Props {
-  mode: "daily" | "repeat" | "limitless" | "puzzle";
+  mode: "daily" | "repeat" | "limitless" | "puzzle" | "interlinked";
   wordLength: number;
   numGuesses: number;
   guesses: string[];
@@ -17,6 +18,7 @@ interface Props {
   inDictionary: boolean;
   hasSubmitLetter: boolean;
   targetWord: string;
+  interlinkedWord: string;
   targetHint: string;
   puzzleRevealMs: number;
   puzzleLeaveNumBlanks: number;
@@ -43,6 +45,7 @@ const Wordle: React.FC<Props> = (props) => {
     var Grid = [];
 
     if (props.mode === "puzzle") {
+      /* Create read only WordRow that slowly reveals puzzle word */
       let displayWord = "";
 
       for (let i = 0; i < props.targetWord.length; i++) {
@@ -57,6 +60,7 @@ const Wordle: React.FC<Props> = (props) => {
         <WordRow
           key={"read-only"}
           word={displayWord}
+          isVertical={false}
           length={wordLength}
           targetWord={props.targetWord}
           hasSubmit={true}
@@ -95,6 +99,7 @@ const Wordle: React.FC<Props> = (props) => {
       Grid.push(
         <WordRow
           key={i}
+          isVertical={false}
           word={word}
           length={wordLength}
           targetWord={props.targetWord}
@@ -103,6 +108,22 @@ const Wordle: React.FC<Props> = (props) => {
           inDictionary={props.inDictionary}
         ></WordRow>
       );
+
+      /* Push another WordRow for interlinked gamemode */
+      if (props.mode === "interlinked") {
+        Grid.push(
+          <WordRow
+            key={i}
+            isVertical={true}
+            word={word}
+            length={wordLength - 1} /* Length is 1 smaller than horizontal counterpart */
+            targetWord={props.targetWord}
+            hasSubmit={props.wordIndex > i || !props.inProgress}
+            getLetterStatus={props.getLetterStatus}
+            inDictionary={props.inDictionary}
+          ></WordRow>
+        );
+      }
     }
 
     return Grid;

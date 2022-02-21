@@ -172,6 +172,12 @@ code {
   vertical-align: middle;
 }
 
+.word_row_vertical {
+  align-items: center;
+  justify-content: center;
+  vertical-align: middle;
+}
+
 .target_number {
   width: 100px;
   height: 60px;
@@ -319,7 +325,7 @@ code {
   border: 0;
   padding: 0;
   height: 18em;
-  width: 20.5em;
+  width: 20em;
   border-radius: 2px solid rgb(192, 174, 174);
   cursor: pointer;
   user-select: none;
