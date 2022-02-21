@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { Button } from "../Button";
 import "../index.css";
 import DiceGrid from "./DiceGrid";
 
@@ -7,7 +6,7 @@ interface Props {
   numDice: number;
   diceMin: number;
   diceMax: number;
-  gridSize: number;
+  gridSize: 25 | 64 | 100;
   numTeams: number;
   timeLengthMins: number;
 }
@@ -16,6 +15,103 @@ const Nubble: React.FC<Props> = (props) => {
   const [diceValues, setdiceValues] = useState<number[]>(
     Array.from({ length: props.numDice }).map((x) => randomDiceNumber())
   );
+
+  const [pickedPins, setPickedPins] = useState<number>();
+  const gridPoints = Array.from({ length: props.gridSize }).map((_, i) => ({
+    number: i + 1,
+    points: determinePoints(i + 1),
+  }));
+
+  function determinePoints(number: number): number {
+    switch (props.gridSize) {
+      case 25: {
+        if (number >= 1 && number <= 6) {
+          return 20;
+        }
+
+        if (number >= 7 && number <= 10) {
+          return 50;
+        }
+
+        if (number >= 11 && number <= 15) {
+          return 100;
+        }
+
+        if (number >= 16 && number <= 19) {
+          return 200;
+        }
+
+        if (number >= 20 && number <= 22) {
+          return 300;
+        }
+
+        if (number >= 23 && number <= 25) {
+          return 500;
+        }
+        break;
+      }
+
+      case 64: {
+        if (number >= 1 && number <= 10) {
+          return 10;
+        }
+
+        if (number >= 11 && number <= 21) {
+          return 20;
+        }
+
+        if (number >= 22 && number <= 36) {
+          return 50;
+        }
+
+        if (number >= 37 && number <= 49) {
+          return 100;
+        }
+
+        if (number >= 50 && number <= 58) {
+          return 250;
+        }
+
+        if (number >= 59 && number <= 64) {
+          return 500;
+        }
+        break;
+      }
+
+      case 100: {
+        if (number >= 1 && number <= 15) {
+          return 10;
+        }
+
+        if (number >= 16 && number <= 28) {
+          return 20;
+        }
+
+        if (number >= 29 && number <= 45) {
+          return 50;
+        }
+
+        if (number >= 46 && number <= 64) {
+          return 100;
+        }
+
+        if (number >= 65 && number <= 79) {
+          return 200;
+        }
+
+        if (number >= 80 && number <= 90) {
+          return 300;
+        }
+
+        if (number >= 91 && number <= 100) {
+          return 500;
+        }
+        break;
+      }
+    }
+
+    throw new Error("Unexpected number for grid size");
+  }
 
   function randomIntFromInterval(min: number, max: number) {
     // min and max included
@@ -44,7 +140,7 @@ const Nubble: React.FC<Props> = (props) => {
     return true;
   }
 
-  function checkValid(value: number) {
+  function getValidValues(): number[] {
     // https://stackoverflow.com/a/20871714
     function permutator<T>(inputArr: T[]): T[][] {
       let result: any[] = [];
@@ -85,14 +181,6 @@ const Nubble: React.FC<Props> = (props) => {
       },
     ];
 
-    /* permutations[operators] [a,a,a,a]
-
-    ...........
-
-                              [a,b,a,a]
-
-    */
-
     const operatorPermutations = permutator(operators);
     const operandPermutations = permutator(diceValues);
 
@@ -106,28 +194,39 @@ const Nubble: React.FC<Props> = (props) => {
       }
     }
     console.log(combinations);
-
     var validValues = new Set<number>();
     for (let i = 0; i < combinations.length; i++) {
       const combination = combinations[i];
-
-      let num = combination.operators[0].function(
-        combination.operands[0],
-        combination.operands[1]
+      const num = combination.operators[2].function(
+        combination.operators[1].function(
+          combination.operators[0].function(
+            combination.operands[0],
+            combination.operands[1]
+          ),
+          combination.operands[2]
+        ),
+        combination.operands[3]
       );
-
-      for (let index = 1; index < props.numDice - 1; index++) {
-        num = combination.operators[index].function(
-          num,
-          combination.operands[index + 1]
-        );
-      }
-
       if (Math.round(num) === num && num > 0) {
         validValues.add(num);
       }
     }
     console.log(validValues);
+    //console.log(operatorPermutations);
+    //console.log(operandPermutations);
+
+    return Array.from(validValues);
+  }
+
+  function onClick(i: number) {
+    const validValues = getValidValues();
+
+    if (!validValues.includes(i)) {
+      // Invalid
+      return;
+    }
+
+    alert(gridPoints.find(x => x.number === i)?.points);
   }
 
   function populateGrid() {
@@ -138,7 +237,7 @@ const Nubble: React.FC<Props> = (props) => {
           key={i}
           className="nubble-button"
           data-isPrime={isPrime(i)}
-          onClick={() => checkValid(i)}
+          onClick={() => onClick(i)}
         >
           {i}
         </button>

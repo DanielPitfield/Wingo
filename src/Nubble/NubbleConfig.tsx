@@ -6,7 +6,7 @@ interface Props {
   numDice: number;
   diceMin: number;
   diceMax: number;
-  gridSize: number;
+  gridSize: 25 | 64 | 100;
   numTeams: number;
   timeLengthMins: number;
 }
