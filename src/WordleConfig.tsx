@@ -181,8 +181,13 @@ const WordleConfig: React.FC<Props> = (props) => {
         settargetWord(puzzle.word);
         settargetHint(puzzle.hint);
       } else {
-        const wordArray = wordLengthMappings.find((x) => x.value === wordLength)
-          ?.array!;
+        const wordArray = wordLengthMappings.find((x) => x.value === wordLength)?.array!;
+
+        // If the wordArray cannot be found
+        if (!wordArray) {
+          ResetGame();
+          return;
+        }
 
         const new_target_word =
           wordArray[Math.round(Math.random() * wordArray.length - 1)];
