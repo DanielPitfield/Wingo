@@ -181,9 +181,10 @@ const WordleConfig: React.FC<Props> = (props) => {
         settargetWord(puzzle.word);
         settargetHint(puzzle.hint);
       } else {
-        const wordArray = wordLengthMappings.find((x) => x.value === wordLength)?.array!;
+        const wordArray = wordLengthMappings.find((x) => x.value === wordLength)
+          ?.array!;
 
-        // If the wordArray cannot be found
+        // If the wordArray can't be found
         if (!wordArray) {
           ResetGame();
           return;
@@ -223,7 +224,8 @@ const WordleConfig: React.FC<Props> = (props) => {
           console.log("Target Word (2): " + interlinked_target_word);
 
           // Position of shared letter in second word
-          const shared_letter_index_word2 = interlinked_target_word.indexOf(sharedLetter);
+          const shared_letter_index_word2 =
+            interlinked_target_word.indexOf(sharedLetter);
           console.log("Index (2): " + shared_letter_index_word2);
 
           setinterlinkedWord(interlinked_target_word);
@@ -289,7 +291,15 @@ const WordleConfig: React.FC<Props> = (props) => {
   }
 
   function onEnter() {
+    //Pressing Enter to Continue or Restart
     if (!inProgress) {
+      if (props.mode !== "daily") {
+        if (props.mode === "limitless") {
+          ContinueGame();
+        } else {
+          ResetGame();
+        }
+      }
       return;
     }
 
