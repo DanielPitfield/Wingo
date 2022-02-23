@@ -1,11 +1,10 @@
-import React, { useState } from "react";
+import React from "react";
 import "./App.css";
 import { Keyboard } from "./Keyboard";
 import { Page } from "./App";
 import { WordRow } from "./WordRow";
 import { Logo } from "./Logo";
 import { Button } from "./Button";
-import { isPropertySignature } from "typescript";
 
 interface Props {
   mode: "daily" | "repeat" | "limitless" | "puzzle" | "interlinked";
