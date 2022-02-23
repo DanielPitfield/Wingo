@@ -181,7 +181,7 @@ export const App: React.FC = () => {
           </div>
           {page !== "lobby" && (
             <nav className="navigation">
-              <Button mode="default" onClick={() => setPage("lobby")}>
+              <Button mode="default" className="back-button" onClick={() => setPage("lobby")}>
                 Back
               </Button>
             </nav>
