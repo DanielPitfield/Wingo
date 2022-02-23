@@ -28,18 +28,14 @@ code {
 
 .btn {
   font-family: Arial;
-  padding: 0.5em;
   border: none;
-  border-bottom: 3px solid;
   outline: none;
   font-size: inherit;
   font-family: inherit;
   cursor: pointer;
-}
-
-.btn.default {
+  border-left: 2px solid #777;
+  border-bottom: 2px solid #777;
   font-weight: bold;
-  border: 0;
   padding: 15px 15px 15px 15px;
   margin: 5px 5px 0 0;
   border-radius: 4px;
@@ -47,6 +43,9 @@ code {
   user-select: none;
   text-align: center;
   text-transform: uppercase;
+}
+
+.btn.default {
   background-color: #e6e6e6;
   color: #4d4d4d;
 }
@@ -67,40 +66,36 @@ code {
   background-color: #c7c3c3;
 }
 
+.btn.default:hover:active {
+  background-color: #a1a1a1;
+}
+
 .btn.accept {
-  font-weight: bold;
-  border: 0;
-  padding: 20px 100px 20px 100px;
-  margin: 10px 5px 0 0;
-  border-radius: 4px;
-  cursor: pointer;
-  user-select: none;
-  text-align: center;
-  text-transform: uppercase;
-  background-color: #daf8da;
+  background-color: #abe0ab;
   color: #4d4d4d;
+  border-color: #739673;
 }
 
 .btn.accept:hover {
   background-color: #b9f7b9;
 }
 
+.btn.accept:hover:active {
+  background-color: #8acf8a;
+}
+
 .btn.destructive {
-  font-weight: bold;
-  border: 0;
-  padding: 15px 15px 15px 15px;
-  margin: 5px 5px 0 0;
-  border-radius: 4px;
-  cursor: pointer;
-  user-select: none;
-  text-align: center;
-  text-transform: uppercase;
   background-color: #f5bfbf;
   color: #4d4d4d;
+  border-color: #8d4c4c;
 }
 
 .btn.destructive:hover {
   background-color: #f39494;
+}
+
+.btn.destructive:hover:active {
+  background-color: #e97272;
 }
 
 .title {
@@ -303,6 +298,33 @@ code {
 
 .sidebar-link .btn.default {
   min-width: 250px;
+}
+
+.message-notification {
+  display: inline-block;
+  background-color: #ddd;
+  padding: 0.5em 1em;
+  flex-grow: 1;
+  min-width: 16em;
+  border: 2px solid #444;
+}
+
+.message-notification[data-type='success'] {
+  background-color: #d3ffc5;
+  border-color: #003b08;
+  color: #002004;
+}
+
+.message-notification[data-type='warning'] {
+  background-color: #ffe6b0;
+  border-color: #945400;
+  color: #442700;
+}
+
+.message-notification[data-type='error'] {
+  background-color: #ffb0b0;
+  border-color: #5a0000;
+  color: #520000;
 }
 
 .toolbar {
