@@ -305,6 +305,27 @@ code {
   min-width: 250px;
 }
 
+.toolbar {
+  height: 3em;
+  background-color: #4d4d4d
+}
+
+.gold_counter {
+  float: right;
+  color: white;
+  font-size: 2em;
+  font-weight: bold;
+  margin-right: 1.5em;
+  justify-content: center;
+  align-content: center;
+}
+
+.gold_coin_image {
+  height: 0.8em;
+  width: 0.8em;
+  padding: 0 6px;
+}
+
 .game-mode-title {
   display: flex;
   flex-grow: 1;

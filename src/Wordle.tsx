@@ -161,7 +161,6 @@ const Wordle: React.FC<Props> = (props) => {
     <div className="App">
       <div className="title">
         <Logo></Logo>
-        {props.gold /* TODO: Display in a toolbar (component) at top of the screen */}
       </div>
       <div>{displayOutcome()}</div>
       <div>

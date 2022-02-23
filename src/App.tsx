@@ -7,6 +7,7 @@ import { LobbyMenu } from "./LobbyMenu";
 import WordleConfig from "./WordleConfig";
 import { Button } from "./Button";
 import NubbleConfig from "./Nubble/NubbleConfig";
+import GoldCoin from './images/gold.png';
 
 const wordLength = 5;
 const numGuesses = 6;
@@ -69,7 +70,7 @@ export const App: React.FC = () => {
     if (gold) {
       const new_gold_value = (parseInt(gold) + value).toString();
       // Update the data item in local storage
-      saveData.setItem("gold", new_gold_value);       
+      saveData.setItem("gold", new_gold_value);
       // Update state
       setGold(new_gold_value);
     }
@@ -172,12 +173,20 @@ export const App: React.FC = () => {
 
   return (
     <div className="app">
-      {page !== "lobby" && page !== "home" && page !== "splash-screen" && (
-        <nav className="navigation">
-          <Button mode="default" onClick={() => setPage("lobby")}>
-            Back
-          </Button>
-        </nav>
+      {page !== "home" && page !== "splash-screen" && (
+        <div className="toolbar">
+          <div className="gold_counter">
+            <img className="gold_coin_image" src={GoldCoin} alt="Gold"/>
+            {gold}
+          </div>
+          {page !== "lobby" && (
+            <nav className="navigation">
+              <Button mode="default" onClick={() => setPage("lobby")}>
+                Back
+              </Button>
+            </nav>
+          )}
+        </div>
       )}
       {pageComponent}
     </div>
