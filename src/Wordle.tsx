@@ -9,6 +9,7 @@ import { isPropertySignature } from "typescript";
 
 interface Props {
   mode: "daily" | "repeat" | "limitless" | "puzzle" | "interlinked";
+  gold: string;
   wordLength: number;
   numGuesses: number;
   guesses: string[];
@@ -160,6 +161,7 @@ const Wordle: React.FC<Props> = (props) => {
     <div className="App">
       <div className="title">
         <Logo></Logo>
+        {props.gold}
       </div>
       <div>{displayOutcome()}</div>
       <div>

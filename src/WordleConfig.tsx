@@ -14,6 +14,7 @@ import { wordHintMappings } from "./WordArrays/words_puzzles";
 
 interface Props {
   mode: "daily" | "repeat" | "limitless" | "puzzle" | "interlinked";
+  gold: string;
   defaultWordLength: number;
   puzzleRevealMs: number;
   puzzleLeaveNumBlanks: number;
@@ -370,6 +371,7 @@ const WordleConfig: React.FC<Props> = (props) => {
   return (
     <Wordle
       mode={props.mode}
+      gold={props.gold}
       wordLength={wordLength}
       numGuesses={props.numGuesses}
       guesses={guesses}

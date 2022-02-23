@@ -33,14 +33,27 @@ export const App: React.FC = () => {
   );
   const [page, setPage] = useState<Page>("splash-screen");
 
+  /*
+  TODO: 
+  Can the initial value be saveData.getItem("gold")
+  Seems very risky to start it as empty string
+  Where's my gold gone??? reeeeeeeeeee
+
+  A good failsafe:
+  Record gold value when game session is started
+  Prevent setting gold value to anything below this value (you can't lose coins!)
+  */
+  const [gold, setGold] = useState("");
+
   useEffect(() => {
-    // If 'gold' data item is not created yet
-    if (!saveData.getItem("gold")) {
+    const gold = saveData.getItem("gold");
+    if (gold) {
+      setGold(gold);
+    } else {
+      // 'gold' data item is not created yet
       console.log("No gold coin save data found");
       // Create a 'gold' data item
       saveData.setItem("gold", "0");
-    } else {
-      console.log("Gold (on launch): " + saveData.getItem("gold"));
     }
 
     // TODO: Mask actual loading, rather than hard-coding seconds
@@ -52,16 +65,14 @@ export const App: React.FC = () => {
 
   function updateGoldCoins(value: number) {
     // String key value of current number of gold coins
-    const gold_storage_value = saveData.getItem("gold");
+    const gold = saveData.getItem("gold");
     // If there is a 'gold' data item
-    if (gold_storage_value) {
-      // Calculate new gold value
-      const new_gold_storage_value = (
-        parseInt(gold_storage_value) + value
-      ).toString();
+    if (gold) {
+      const new_gold_value = (parseInt(gold) + value).toString();
       // Update the data item in local storage
-      saveData.setItem("gold", new_gold_storage_value);
-      console.log("Gold (update): " + saveData.getItem("gold"));
+      saveData.setItem("gold", new_gold_value);       
+      // Update state
+      setGold(new_gold_value);
     }
   }
 
@@ -80,6 +91,7 @@ export const App: React.FC = () => {
         return (
           <WordleConfig
             mode="daily"
+            gold={gold}
             updateGoldCoins={updateGoldCoins}
             defaultWordLength={wordLength}
             numGuesses={numGuesses}
@@ -93,6 +105,7 @@ export const App: React.FC = () => {
         return (
           <WordleConfig
             mode="repeat"
+            gold={gold}
             updateGoldCoins={updateGoldCoins}
             defaultWordLength={wordLength}
             numGuesses={numGuesses}
@@ -106,6 +119,7 @@ export const App: React.FC = () => {
         return (
           <WordleConfig
             mode="limitless"
+            gold={gold}
             updateGoldCoins={updateGoldCoins}
             defaultWordLength={4}
             numGuesses={numGuesses}
@@ -119,6 +133,7 @@ export const App: React.FC = () => {
         return (
           <WordleConfig
             mode="puzzle"
+            gold={gold}
             updateGoldCoins={updateGoldCoins}
             defaultWordLength={10}
             numGuesses={1}
@@ -132,6 +147,7 @@ export const App: React.FC = () => {
         return (
           <WordleConfig
             mode="interlinked"
+            gold={gold}
             updateGoldCoins={updateGoldCoins}
             defaultWordLength={5}
             numGuesses={numGuesses}
