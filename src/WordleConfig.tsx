@@ -264,6 +264,58 @@ const WordleConfig: React.FC<Props> = (props) => {
     setletterStatuses(defaultLetterStatuses);
   }
 
+  function calculateGoldAwarded(
+    wordLength: number,
+    /*win_streak: number,*/
+    numGuesses: number
+  ) {
+    /* Base amount by gamemode */
+    const gamemode_Gold_Mappings = [
+      { mode: "daily", value: 1000 },
+      { mode: "repeat", value: 50 },
+      { mode: "limitless", value: 50 },
+      { mode: "puzzle", value: 20 }, /* TODO: Balancing, puzzle words are always 10 letters */
+      { mode: "interlinked", value: 125 },
+    ];
+
+    const gamemode_value = gamemode_Gold_Mappings.find(
+      (x) => x.mode === props.mode
+    )?.value!;
+
+    /* Incremental multiplier with wordLength */
+    const wordLength_Gold_Mappings = [
+      { value: 4, multiplier: 1},
+      { value: 5, multiplier: 1.05},
+      { value: 6, multiplier: 1.25},
+      { value: 7, multiplier: 1.5},
+      { value: 8, multiplier: 2},
+      { value: 9, multiplier: 3},
+      { value: 10, multiplier: 5},
+      { value: 11, multiplier: 7.5},
+    ];
+
+    const wordLength_multiplier = wordLength_Gold_Mappings.find(
+      (x) => x.value === wordLength
+    )?.multiplier!;
+
+    /* Small bonus for early guesses */
+    const numGuesses_Gold_Mappings = [
+      { guesses: 1, value: 250}, /* TODO: Balancing, puzzle words are always 1 guess */
+      { guesses: 2, value: 100},
+      { guesses: 3, value: 50},
+      { guesses: 4, value: 25},
+      { guesses: 5, value: 10},
+      { guesses: 6, value: 0},
+    ];
+
+    const numGuesses_bonus = numGuesses_Gold_Mappings.find(
+      (x) => x.guesses === numGuesses
+    )?.value!;
+
+    const goldTotal = Math.round(gamemode_value * wordLength_multiplier + numGuesses_bonus);
+    return goldTotal;
+  }
+
   function getLetterStatus(
     letter: string,
     index: number
@@ -327,17 +379,8 @@ const WordleConfig: React.FC<Props> = (props) => {
       if (currentWord.toUpperCase() === targetWord?.toUpperCase()) {
         /* Exact match */
         setinProgress(false);
-        /*
-        TODO: Amount of gold added dependent on gamemode
-        
-        Bonus for:
-        Game mode type (e.g Daily 1000, Repeat 100)
-        Longer word length
-        Fewer guesses used
-        Less time spent guessing
-        Consecutive wins (win streaks)
-        */
-        props.updateGoldCoins(10);
+        const goldBanked = calculateGoldAwarded(targetWord.length, wordIndex + 1);
+        props.updateGoldCoins(goldBanked);
       } else if (wordIndex + 1 === props.numGuesses) {
         setinProgress(false);
       } else {

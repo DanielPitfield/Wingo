@@ -33,17 +33,16 @@ export const App: React.FC = () => {
   );
   const [page, setPage] = useState<Page>("splash-screen");
 
-  /*
-  TODO: 
-  Can the initial value be saveData.getItem("gold")
-  Seems very risky to start it as empty string
+  /* TODO: Can the initial value be saveData.getItem("gold")
+
+  Seems very risky to start it as 0
   Where's my gold gone??? reeeeeeeeeee
 
   A good failsafe:
   Record gold value when game session is started
   Prevent setting gold value to anything below this value (you can't lose coins!)
   */
-  const [gold, setGold] = useState("");
+  const [gold, setGold] = useState("0");
 
   useEffect(() => {
     const gold = saveData.getItem("gold");
