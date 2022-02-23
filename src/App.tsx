@@ -26,18 +26,44 @@ export type Page =
   | "nubble";
 
 export const App: React.FC = () => {
+  const saveData = window.localStorage;
+
   const [loadingState, setLoadingState] = useState<"loading" | "loaded">(
     "loading"
   );
   const [page, setPage] = useState<Page>("splash-screen");
 
   useEffect(() => {
+    // If 'gold' data item is not created yet
+    if (!saveData.getItem("gold")) {
+      console.log("No gold coin save data found");
+      // Create a 'gold' data item
+      saveData.setItem("gold", "0");
+    } else {
+      console.log("Gold (on launch): " + saveData.getItem("gold"));
+    }
+
     // TODO: Mask actual loading, rather than hard-coding seconds
     window.setTimeout(() => setLoadingState("loaded"), 2000);
 
     // Set home page after load
     window.setTimeout(() => setPage("lobby"), 2500); // Change to "home"
   }, []);
+
+  function updateGoldCoins(value: number) {
+    // String key value of current number of gold coins
+    const gold_storage_value = saveData.getItem("gold");
+    // If there is a 'gold' data item
+    if (gold_storage_value) {
+      // Calculate new gold value
+      const new_gold_storage_value = (
+        parseInt(gold_storage_value) + value
+      ).toString();
+      // Update the data item in local storage
+      saveData.setItem("gold", new_gold_storage_value);
+      console.log("Gold (update): " + saveData.getItem("gold"));
+    }
+  }
 
   const pageComponent = (() => {
     switch (page) {
@@ -54,6 +80,7 @@ export const App: React.FC = () => {
         return (
           <WordleConfig
             mode="daily"
+            updateGoldCoins={updateGoldCoins}
             defaultWordLength={wordLength}
             numGuesses={numGuesses}
             puzzleRevealMs={puzzleRevealMs}
@@ -66,6 +93,7 @@ export const App: React.FC = () => {
         return (
           <WordleConfig
             mode="repeat"
+            updateGoldCoins={updateGoldCoins}
             defaultWordLength={wordLength}
             numGuesses={numGuesses}
             puzzleRevealMs={puzzleRevealMs}
@@ -78,6 +106,7 @@ export const App: React.FC = () => {
         return (
           <WordleConfig
             mode="limitless"
+            updateGoldCoins={updateGoldCoins}
             defaultWordLength={4}
             numGuesses={numGuesses}
             puzzleRevealMs={puzzleRevealMs}
@@ -90,6 +119,7 @@ export const App: React.FC = () => {
         return (
           <WordleConfig
             mode="puzzle"
+            updateGoldCoins={updateGoldCoins}
             defaultWordLength={10}
             numGuesses={1}
             puzzleRevealMs={puzzleRevealMs}
@@ -102,6 +132,7 @@ export const App: React.FC = () => {
         return (
           <WordleConfig
             mode="interlinked"
+            updateGoldCoins={updateGoldCoins}
             defaultWordLength={5}
             numGuesses={numGuesses}
             puzzleRevealMs={puzzleRevealMs}

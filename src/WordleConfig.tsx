@@ -19,6 +19,7 @@ interface Props {
   puzzleLeaveNumBlanks: number;
   numGuesses: number;
   setPage: (page: Page) => void;
+  updateGoldCoins: (value: number) => void;
 }
 
 const wordLengthMappings = [
@@ -325,6 +326,17 @@ const WordleConfig: React.FC<Props> = (props) => {
       if (currentWord.toUpperCase() === targetWord?.toUpperCase()) {
         /* Exact match */
         setinProgress(false);
+        /*
+        TODO: Amount of gold added dependent on gamemode
+        
+        Bonus for:
+        Game mode type (e.g Daily 1000, Repeat 100)
+        Longer word length
+        Fewer guesses used
+        Less time spent guessing
+        Consecutive wins (win streaks)
+        */
+        props.updateGoldCoins(10);
       } else if (wordIndex + 1 === props.numGuesses) {
         setinProgress(false);
       } else {
@@ -375,6 +387,7 @@ const WordleConfig: React.FC<Props> = (props) => {
       letterStatuses={letterStatuses}
       getLetterStatus={getLetterStatus}
       setPage={props.setPage}
+      updateGoldCoins={props.updateGoldCoins}
       onEnter={onEnter}
       onSubmitLetter={onSubmitLetter}
       onBackspace={onBackspace}

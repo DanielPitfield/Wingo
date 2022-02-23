@@ -28,6 +28,7 @@ interface Props {
   }[];
   revealedLetterIndexes: number[];
   setPage: (page: Page) => void;
+  updateGoldCoins: (value: number) => void;
   onEnter: () => void;
   onSubmitLetter: (letter: string) => void;
   onBackspace: () => void;
