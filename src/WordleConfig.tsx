@@ -15,6 +15,7 @@ import { wordHintMappings } from "./WordArrays/words_puzzles";
 interface Props {
   mode: "daily" | "repeat" | "limitless" | "puzzle" | "interlinked";
   gold: string;
+  firstLetterProvided: boolean;
   defaultWordLength: number;
   puzzleRevealMs: number;
   puzzleLeaveNumBlanks: number;
@@ -160,6 +161,7 @@ const WordleConfig: React.FC<Props> = (props) => {
 
   React.useEffect(() => {
     if (inProgress) {
+      /* --- DAILY ---  */
       if (props.mode === "daily") {
         const wordArray = wordLengthMappings.find((x) => x.value === wordLength)
           ?.array!;
@@ -174,6 +176,12 @@ const WordleConfig: React.FC<Props> = (props) => {
 
         console.log("Daily word: " + new_daily_word);
         settargetWord(new_daily_word);
+
+        /* Reveal the first letter from game start */
+        if (props.firstLetterProvided) {
+          setCurrentWord(new_daily_word.charAt(0));
+        }
+        /* --- PUZZLEWORD ---  */
       } else if (props.mode === "puzzle") {
         const puzzle =
           wordHintMappings[
@@ -182,11 +190,12 @@ const WordleConfig: React.FC<Props> = (props) => {
         console.log("Puzzle word: " + puzzle.word);
         settargetWord(puzzle.word);
         settargetHint(puzzle.hint);
+        /* --- REPEAT, LIMITLESS AND INTERLINKED ---  */
       } else {
         const wordArray = wordLengthMappings.find((x) => x.value === wordLength)
           ?.array!;
 
-        // If the wordArray can't be found
+        // If the wordArray can't be found (limitless mode runs out of long enough words!)
         if (!wordArray) {
           ResetGame();
           return;
@@ -198,6 +207,12 @@ const WordleConfig: React.FC<Props> = (props) => {
         console.log("Not daily word: " + new_target_word);
         settargetWord(new_target_word);
 
+        /* Reveal the first letter from game start */
+        if (props.firstLetterProvided) {
+          setCurrentWord(new_target_word.charAt(0));
+        }
+
+        /* --- INTERLINKED (2nd word) --- */
         if (props.mode === "interlinked") {
           console.log("Target Word (1): " + new_target_word);
           const target_word_letters = new_target_word.split(""); // Get letters of first target word
@@ -232,10 +247,6 @@ const WordleConfig: React.FC<Props> = (props) => {
 
           setinterlinkedWord(interlinked_target_word);
         }
-
-        /*
-        setInterlinkedWord to this word
-        */
       }
     }
   }, [wordLength, inProgress, props.mode]);
@@ -274,7 +285,10 @@ const WordleConfig: React.FC<Props> = (props) => {
       { mode: "daily", value: 1000 },
       { mode: "repeat", value: 50 },
       { mode: "limitless", value: 50 },
-      { mode: "puzzle", value: 20 }, /* TODO: Balancing, puzzle words are always 10 letters */
+      {
+        mode: "puzzle",
+        value: 20,
+      } /* TODO: Balancing, puzzle words are always 10 letters */,
       { mode: "interlinked", value: 125 },
     ];
 
@@ -284,14 +298,14 @@ const WordleConfig: React.FC<Props> = (props) => {
 
     /* Incremental multiplier with wordLength */
     const wordLength_Gold_Mappings = [
-      { value: 4, multiplier: 1},
-      { value: 5, multiplier: 1.05},
-      { value: 6, multiplier: 1.25},
-      { value: 7, multiplier: 1.5},
-      { value: 8, multiplier: 2},
-      { value: 9, multiplier: 3},
-      { value: 10, multiplier: 5},
-      { value: 11, multiplier: 7.5},
+      { value: 4, multiplier: 1 },
+      { value: 5, multiplier: 1.05 },
+      { value: 6, multiplier: 1.25 },
+      { value: 7, multiplier: 1.5 },
+      { value: 8, multiplier: 2 },
+      { value: 9, multiplier: 3 },
+      { value: 10, multiplier: 5 },
+      { value: 11, multiplier: 7.5 },
     ];
 
     const wordLength_multiplier = wordLength_Gold_Mappings.find(
@@ -300,19 +314,24 @@ const WordleConfig: React.FC<Props> = (props) => {
 
     /* Small bonus for early guesses */
     const numGuesses_Gold_Mappings = [
-      { guesses: 1, value: 250}, /* TODO: Balancing, puzzle words are always 1 guess */
-      { guesses: 2, value: 100},
-      { guesses: 3, value: 50},
-      { guesses: 4, value: 25},
-      { guesses: 5, value: 10},
-      { guesses: 6, value: 0},
+      {
+        guesses: 1,
+        value: 250,
+      } /* TODO: Balancing, puzzle words are always 1 guess */,
+      { guesses: 2, value: 100 },
+      { guesses: 3, value: 50 },
+      { guesses: 4, value: 25 },
+      { guesses: 5, value: 10 },
+      { guesses: 6, value: 0 },
     ];
 
     const numGuesses_bonus = numGuesses_Gold_Mappings.find(
       (x) => x.guesses === numGuesses
     )?.value!;
 
-    const goldTotal = Math.round(gamemode_value * wordLength_multiplier + numGuesses_bonus);
+    const goldTotal = Math.round(
+      gamemode_value * wordLength_multiplier + numGuesses_bonus
+    );
     return goldTotal;
   }
 
@@ -379,12 +398,21 @@ const WordleConfig: React.FC<Props> = (props) => {
       if (currentWord.toUpperCase() === targetWord?.toUpperCase()) {
         /* Exact match */
         setinProgress(false);
-        const goldBanked = calculateGoldAwarded(targetWord.length, wordIndex + 1);
+        const goldBanked = calculateGoldAwarded(
+          targetWord.length,
+          wordIndex + 1
+        );
         props.updateGoldCoins(goldBanked);
       } else if (wordIndex + 1 === props.numGuesses) {
         setinProgress(false);
       } else {
-        setCurrentWord(""); /* Start new word as empty string */
+        // Not yet guessed
+        if (props.firstLetterProvided) {
+          /* TODO: Reveal the first letter of the word for each new guess */
+          setCurrentWord(targetWord?.charAt(0)!);
+        } else {
+          setCurrentWord(""); /* Start new word as empty string */
+        }
         setWordIndex(
           wordIndex + 1
         ); /* Increment index to indicate new word has been started */
@@ -406,6 +434,10 @@ const WordleConfig: React.FC<Props> = (props) => {
 
   function onBackspace() {
     if (currentWord.length > 0 && inProgress) {
+      /* If only the first letter and it was provided to begin with */
+      if (currentWord.length === 1 && props.firstLetterProvided) {
+        return; // Don't allow backspace
+      }
       /* If there is a letter to remove */
       setCurrentWord(currentWord.substring(0, currentWord.length - 1));
     }

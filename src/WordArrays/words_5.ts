@@ -1,3 +1,6 @@
+// TODO: The daily words are chosen from here, can a shuffled version of this array be exported?
+// (Consider today's daily word is exits, the next will be exode which is too similar, boring!)
+
 export const words_five = [
   "cigar",
   "rebut",

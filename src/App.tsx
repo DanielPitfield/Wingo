@@ -33,17 +33,7 @@ export const App: React.FC = () => {
     "loading"
   );
   const [page, setPage] = useState<Page>("splash-screen");
-
-  /* TODO: Can the initial value be saveData.getItem("gold")
-
-  Seems very risky to start it as 0
-  Where's my gold gone??? reeeeeeeeeee
-
-  A good failsafe:
-  Record gold value when game session is started
-  Prevent setting gold value to anything below this value (you can't lose coins!)
-  */
-  const [gold, setGold] = useState("0");
+  const [gold, setGold] = useState("0" /*saveData.getItem("gold")*/);
 
   useEffect(() => {
     const gold = saveData.getItem("gold");
@@ -61,7 +51,7 @@ export const App: React.FC = () => {
 
     // Set home page after load
     window.setTimeout(() => setPage("lobby"), 2500); // Change to "home"
-  }, []);
+  }, [saveData]);
 
   function updateGoldCoins(value: number) {
     // String key value of current number of gold coins
@@ -92,6 +82,7 @@ export const App: React.FC = () => {
           <WordleConfig
             mode="daily"
             gold={gold}
+            firstLetterProvided={true}
             updateGoldCoins={updateGoldCoins}
             defaultWordLength={wordLength}
             numGuesses={numGuesses}
@@ -106,6 +97,7 @@ export const App: React.FC = () => {
           <WordleConfig
             mode="repeat"
             gold={gold}
+            firstLetterProvided={true}
             updateGoldCoins={updateGoldCoins}
             defaultWordLength={wordLength}
             numGuesses={numGuesses}
@@ -120,6 +112,7 @@ export const App: React.FC = () => {
           <WordleConfig
             mode="limitless"
             gold={gold}
+            firstLetterProvided={true}
             updateGoldCoins={updateGoldCoins}
             defaultWordLength={4}
             numGuesses={numGuesses}
@@ -134,6 +127,7 @@ export const App: React.FC = () => {
           <WordleConfig
             mode="puzzle"
             gold={gold}
+            firstLetterProvided={false}
             updateGoldCoins={updateGoldCoins}
             defaultWordLength={10}
             numGuesses={1}
@@ -148,6 +142,7 @@ export const App: React.FC = () => {
           <WordleConfig
             mode="interlinked"
             gold={gold}
+            firstLetterProvided={true}
             updateGoldCoins={updateGoldCoins}
             defaultWordLength={5}
             numGuesses={numGuesses}
