@@ -7,7 +7,7 @@ import { LobbyMenu } from "./LobbyMenu";
 import WordleConfig from "./WordleConfig";
 import { Button } from "./Button";
 import NubbleConfig from "./Nubble/NubbleConfig";
-import GoldCoin from './images/gold.png';
+import GoldCoin from "./images/gold.png";
 
 const wordLength = 5;
 const numGuesses = 6;
@@ -34,6 +34,16 @@ export const App: React.FC = () => {
   );
   const [page, setPage] = useState<Page>("splash-screen");
   const [gold, setGold] = useState("0" /*saveData.getItem("gold")*/);
+
+  const [gameOptionToggles, setgameOptionToggles] = useState<
+    { page: Page; firstLetter: boolean; timer: boolean }[]
+  >([
+    { page: "wordle_daily", firstLetter: false, timer: false },
+    { page: "wordle_repeat", firstLetter: false, timer: false },
+    { page: "wordle_limitless", firstLetter: false, timer: false },
+    { page: "wordle_puzzle", firstLetter: false, timer: false },
+    { page: "wordle_interlinked", firstLetter: false, timer: false },
+  ]);
 
   useEffect(() => {
     const gold = saveData.getItem("gold");
@@ -67,6 +77,15 @@ export const App: React.FC = () => {
   }
 
   const pageComponent = (() => {
+    const commonProps = {
+      gold: gold,
+      updateGoldCoins: updateGoldCoins,
+      numGuesses: numGuesses,
+      puzzleRevealMs: puzzleRevealMs,
+      puzzleLeaveNumBlanks: puzzleLeaveNumBlanks,
+      setPage: setPage,
+    };
+
     switch (page) {
       case "splash-screen":
         return <SplashScreen loadingState={loadingState} />;
@@ -75,80 +94,85 @@ export const App: React.FC = () => {
         return <Home setPage={setPage} />;
 
       case "lobby":
-        return <LobbyMenu setPage={setPage} />;
+        return (
+          <LobbyMenu
+            firstLetterToggle={(value, Page) => {
+              setgameOptionToggles(
+                gameOptionToggles.map((x) => {
+                  if(x.page === Page) {
+                    x.firstLetter = value;
+                  }
+                  return x;
+                })
+              );
+            }}
+            timerToggle={(value, Page) => {
+              setgameOptionToggles(
+                gameOptionToggles.map((x) => {
+                  if(x.page === Page) {
+                    x.timer = value;
+                  }
+                  return x;
+                })
+              );
+            }}
+            setPage={setPage}
+          />
+        );
 
       case "wordle_daily":
         return (
           <WordleConfig
+            {...commonProps}
             mode="daily"
-            gold={gold}
-            firstLetterProvided={true}
-            updateGoldCoins={updateGoldCoins}
+            firstLetterProvided={gameOptionToggles.find(x => x.page === "wordle_daily")?.firstLetter || false}
+            timerConfig={gameOptionToggles.find(x => x.page === "wordle_daily")?.timer ? {isTimed: true, seconds:30} : {isTimed:false}}
             defaultWordLength={wordLength}
-            numGuesses={numGuesses}
-            puzzleRevealMs={puzzleRevealMs}
-            puzzleLeaveNumBlanks={puzzleLeaveNumBlanks}
-            setPage={setPage}
           />
         );
 
       case "wordle_repeat":
         return (
           <WordleConfig
+            {...commonProps}
             mode="repeat"
-            gold={gold}
-            firstLetterProvided={true}
-            updateGoldCoins={updateGoldCoins}
+            firstLetterProvided={gameOptionToggles.find(x => x.page === "wordle_repeat")?.firstLetter || false}
+            timerConfig={gameOptionToggles.find(x => x.page === "wordle_repeat")?.timer ? {isTimed: true, seconds:30} : {isTimed:false}}
             defaultWordLength={wordLength}
-            numGuesses={numGuesses}
-            puzzleRevealMs={puzzleRevealMs}
-            puzzleLeaveNumBlanks={puzzleLeaveNumBlanks}
-            setPage={setPage}
           />
         );
 
       case "wordle_limitless":
         return (
           <WordleConfig
+            {...commonProps}
             mode="limitless"
-            gold={gold}
-            firstLetterProvided={true}
-            updateGoldCoins={updateGoldCoins}
-            defaultWordLength={4}
-            numGuesses={numGuesses}
-            puzzleRevealMs={puzzleRevealMs}
-            puzzleLeaveNumBlanks={puzzleLeaveNumBlanks}
-            setPage={setPage}
+            firstLetterProvided={gameOptionToggles.find(x => x.page === "wordle_limitless")?.firstLetter || false}
+            timerConfig={gameOptionToggles.find(x => x.page === "wordle_limitless")?.timer ? {isTimed: true, seconds:30} : {isTimed:false}}
+            defaultWordLength={wordLength}
           />
         );
 
       case "wordle_puzzle":
         return (
           <WordleConfig
+            {...commonProps}
             mode="puzzle"
-            gold={gold}
-            firstLetterProvided={false}
-            updateGoldCoins={updateGoldCoins}
+            firstLetterProvided={gameOptionToggles.find(x => x.page === "wordle_puzzle")?.firstLetter || false}
+            timerConfig={gameOptionToggles.find(x => x.page === "wordle_puzzle")?.timer ? {isTimed: true, seconds:30} : {isTimed:false}}
             defaultWordLength={10}
             numGuesses={1}
-            puzzleRevealMs={puzzleRevealMs}
-            puzzleLeaveNumBlanks={puzzleLeaveNumBlanks}
-            setPage={setPage}
           />
         );
 
       case "wordle_interlinked":
         return (
           <WordleConfig
+            {...commonProps}
             mode="interlinked"
-            gold={gold}
-            firstLetterProvided={true}
-            updateGoldCoins={updateGoldCoins}
-            defaultWordLength={5}
-            numGuesses={numGuesses}
-            puzzleRevealMs={puzzleRevealMs}
-            puzzleLeaveNumBlanks={puzzleLeaveNumBlanks}
-            setPage={setPage}
+            firstLetterProvided={gameOptionToggles.find(x => x.page === "wordle_interlinked")?.firstLetter || false}
+            timerConfig={gameOptionToggles.find(x => x.page === "wordle_interlinked")?.timer ? {isTimed: true, seconds:30} : {isTimed:false}}
+            defaultWordLength={wordLength}
           />
         );
 
@@ -171,12 +195,16 @@ export const App: React.FC = () => {
       {page !== "home" && page !== "splash-screen" && (
         <div className="toolbar">
           <div className="gold_counter">
-            <img className="gold_coin_image" src={GoldCoin} alt="Gold"/>
+            <img className="gold_coin_image" src={GoldCoin} alt="Gold" />
             {gold}
           </div>
           {page !== "lobby" && (
             <nav className="navigation">
-              <Button mode="default" className="back-button" onClick={() => setPage("lobby")}>
+              <Button
+                mode="default"
+                className="back-button"
+                onClick={() => setPage("lobby")}
+              >
                 Back
               </Button>
             </nav>

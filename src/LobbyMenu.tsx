@@ -1,15 +1,36 @@
-import React from "react";
+import React, { useState } from "react";
 import { Page } from "./App";
 
-export const LobbyMenu: React.FC<{ setPage: (page: Page) => void }> = (
-  props
-) => {
+interface Props {
+  setPage: (page: Page) => void;
+  firstLetterToggle: (value: boolean, page: Page) => void;
+  timerToggle: (value: boolean, page: Page) => void;
+}
+
+export const LobbyMenu: React.FC<Props> = (props) => {
+  const [optionsConfig, setOptionsConfig] = useState<
+    { isConfigShown: false } | { isConfigShown: true; Page: Page }
+  >({ isConfigShown: false });
+
   function renderGameModeTile(page: Page, displayName: string) {
     return (
       <li className="sidebar-link">
-        <button className="game-mode-button" data-game-mode={page} onClick={() => props.setPage(page)}>
-          <span className="game-mode-title">{displayName}</span>
-        </button>
+        <span className="game-mode-title">
+          {displayName}
+          <button
+            className="game_options"
+            onClick={() =>
+              setOptionsConfig({ isConfigShown: true, Page: page })
+            }
+          >
+            Icon
+          </button>
+        </span>
+        <button
+          className="game-mode-button"
+          data-game-mode={page}
+          onClick={() => props.setPage(page)}
+        ></button>
       </li>
     );
   }
@@ -19,7 +40,7 @@ export const LobbyMenu: React.FC<{ setPage: (page: Page) => void }> = (
       <div className="sidebar">
         <div className="sidebar-title">WORDLE</div>
         <ul className="sidebar-links">
-          {renderGameModeTile("wordle_daily", "Daily", )}
+          {renderGameModeTile("wordle_daily", "Daily")}
           {renderGameModeTile("wordle_repeat", "Standard/Normal")}
           {renderGameModeTile("wordle_limitless", "Limitless/Survival")}
           {renderGameModeTile("wordle_puzzle", "Puzzle Word")}
@@ -42,6 +63,32 @@ export const LobbyMenu: React.FC<{ setPage: (page: Page) => void }> = (
           {renderGameModeTile("nubble", "Nubble")}
         </ul>
       </div>
+      {optionsConfig.isConfigShown && (
+        <div className="modal">
+          <div className="options_body">
+            <div className="options_title">Options</div>
+            <button className="options_close" onClick={() => setOptionsConfig({isConfigShown: false})}>X</button>
+            <label>
+              <input
+                type="checkbox"
+                onChange={(e) =>
+                  props.firstLetterToggle(e.target.checked, optionsConfig.Page)
+                }
+              ></input>
+              First Letter Provided
+            </label>
+            <label>
+              <input
+                type="checkbox"
+                onChange={(e) =>
+                  props.timerToggle(e.target.checked, optionsConfig.Page)
+                }
+              ></input>
+              Timer
+            </label>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

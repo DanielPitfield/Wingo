@@ -16,6 +16,7 @@ interface Props {
   mode: "daily" | "repeat" | "limitless" | "puzzle" | "interlinked";
   gold: string;
   firstLetterProvided: boolean;
+  timerConfig: { isTimed: false } | { isTimed: true; seconds: number };
   defaultWordLength: number;
   puzzleRevealMs: number;
   puzzleLeaveNumBlanks: number;
@@ -87,6 +88,28 @@ const WordleConfig: React.FC<Props> = (props) => {
       status: "" | "contains" | "correct" | "not set" | "not in word";
     }[]
   >(defaultLetterStatuses);
+
+  const [seconds, setSeconds] = useState(
+    props.timerConfig.isTimed ? props.timerConfig.seconds : 0
+  );
+
+  React.useEffect(() => {
+    if (!props.timerConfig.isTimed) {
+      return;
+    }
+    const timer = setInterval(() => {
+      if (seconds > 0) {
+        setSeconds(seconds - 1);
+      }
+      else {
+        setinDictionary(false);
+        setinProgress(false);
+      }
+    }, 1000);
+    return () => {
+      clearInterval(timer);
+    };
+  }, [setSeconds, seconds, props.timerConfig.isTimed]);
 
   React.useEffect(() => {
     const letterStatusesCopy = letterStatuses.slice();
@@ -421,6 +444,10 @@ const WordleConfig: React.FC<Props> = (props) => {
       setinDictionary(false);
       setinProgress(false);
     }
+    if (props.timerConfig.isTimed) {
+      setSeconds(props.timerConfig.seconds);
+    }
+    
   }
 
   function onSubmitLetter(letter: string) {
@@ -446,6 +473,15 @@ const WordleConfig: React.FC<Props> = (props) => {
   return (
     <Wordle
       mode={props.mode}
+      timerConfig={
+        props.timerConfig.isTimed
+          ? {
+              isTimed: true,
+              elapsedSeconds: seconds,
+              totalSeconds: props.timerConfig.seconds,
+            }
+          : { isTimed: false }
+      }
       gold={props.gold}
       wordLength={wordLength}
       numGuesses={props.numGuesses}

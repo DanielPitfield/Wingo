@@ -6,10 +6,12 @@ import { WordRow } from './WordRow'
 import { Logo } from './Logo'
 import { Button } from './Button'
 import { MessageNotification } from './MessageNotification'
+import Timer from './Timer'
 
 interface Props {
   mode: 'daily' | 'repeat' | 'limitless' | 'puzzle' | 'interlinked'
   gold: string
+  timerConfig: {isTimed:false}|{isTimed:true, totalSeconds:number, elapsedSeconds: number}
   wordLength: number
   numGuesses: number
   guesses: string[]
@@ -148,7 +150,7 @@ const Wordle: React.FC<Props> = (props) => {
       )
     }
 
-    if (props.wordIndex === 0) {
+    if (props.wordIndex === 0 && props.currentWord.toUpperCase() === props.targetWord.toUpperCase()) {
       return (
         <MessageNotification type="success">
           You guessed the word in one guess
@@ -174,9 +176,6 @@ const Wordle: React.FC<Props> = (props) => {
 
   return (
     <div className="App">
-      <div className="title">
-        <Logo></Logo>
-      </div>
       <div>{displayOutcome()}</div>
       <div>
         {!props.inProgress && props.mode !== 'daily' && (
@@ -216,6 +215,10 @@ const Wordle: React.FC<Props> = (props) => {
           onBackspace={props.onBackspace}
           letterStatuses={props.letterStatuses}
         ></Keyboard>
+      </div>
+
+      <div>
+        {props.timerConfig.isTimed && <Timer elapsedSeconds={props.timerConfig.elapsedSeconds} totalSeconds={props.timerConfig.totalSeconds}></Timer>}
       </div>
     </div>
   )

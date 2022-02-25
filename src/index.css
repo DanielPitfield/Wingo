@@ -106,7 +106,8 @@ code {
 }
 
 .word_grid {
-  margin: 20px 0 20px 0;
+  margin-top: 2em;
+  margin-bottom: 1em;
   background-color: #323289;
   padding: 20px 20px;
   background-image: linear-gradient(318deg, #0d092e, transparent);
@@ -306,6 +307,7 @@ code {
   padding: 0.5em 1em;
   flex-grow: 1;
   min-width: 16em;
+  margin-top: 2em;
   border: 2px solid #444;
 }
 
@@ -385,6 +387,52 @@ code {
 
 .game-mode-button:hover .game-mode-title {
   background-color: #444;
+}
+
+.timer {
+  width: 5em;
+  border: 3px solid black;
+  border-radius: 15px;
+  margin-top: 0.5em;
+  height: 1em;
+}
+
+.timer_progress {
+  background: green;
+  border-radius: 15px;
+  height: 1em;
+}
+
+.modal {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #000a;
+}
+
+.modal .options_close {
+  
+}
+
+.modal .options_body {
+  display: flex;
+  flex-direction: column;
+  background-color: white;
+  padding: 0.5em;
+  margin: 1em;
+  flex-shrink: 0;
+  flex-grow: 1;
+  min-height: 10em;
+  max-width: 20em;
+}
+
+.modal .options_body .options_title {
+  font-size: 2em;
 }
 
 /*
