@@ -9,7 +9,7 @@ import { MessageNotification } from "./MessageNotification";
 import Timer from "./Timer";
 
 interface Props {
-  mode: "daily" | "repeat" | "limitless" | "puzzle" | "interlinked";
+  mode: "daily" | "repeat" | "increasing" | "limitless" | "puzzle" | "interlinked";
   timerConfig:
     | { isTimed: false }
     | { isTimed: true; totalSeconds: number; elapsedSeconds: number };
@@ -185,13 +185,13 @@ const Wordle: React.FC<Props> = (props) => {
           <Button
             mode={"accept"}
             onClick={() =>
-              props.mode === "limitless" &&
+              props.mode === "increasing" || props.mode === "limitless" &&
               props.targetWord.toUpperCase() === props.currentWord.toUpperCase()
                 ? props.ContinueGame()
                 : props.ResetGame()
             }
           >
-            {props.mode === "limitless" &&
+            {props.mode === "increasing" || props.mode === "limitless" &&
             props.targetWord.toUpperCase() === props.currentWord.toUpperCase()
               ? "Continue"
               : "Restart"}

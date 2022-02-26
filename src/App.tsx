@@ -21,6 +21,7 @@ export type Page =
   | "lobby"
   | "wordle_daily"
   | "wordle_repeat"
+  | "wordle_increasing"
   | "wordle_limitless"
   | "wordle_puzzle"
   | "wordle_interlinked"
@@ -40,6 +41,7 @@ export const App: React.FC = () => {
   >([
     { page: "wordle_daily", firstLetter: false, timer: false },
     { page: "wordle_repeat", firstLetter: false, timer: false },
+    { page: "wordle_increasing", firstLetter: false, timer: false },
     { page: "wordle_limitless", firstLetter: false, timer: false },
     { page: "wordle_puzzle", firstLetter: false, timer: false },
     { page: "wordle_interlinked", firstLetter: false, timer: false },
@@ -57,7 +59,7 @@ export const App: React.FC = () => {
   const pageComponent = (() => {
     const commonProps = {
       saveData: saveData,
-      numGuesses: numGuesses,
+      defaultnumGuesses: numGuesses,
       puzzleRevealMs: puzzleRevealMs,
       puzzleLeaveNumBlanks: puzzleLeaveNumBlanks,
       setPage: setPage,
@@ -133,7 +135,26 @@ export const App: React.FC = () => {
           />
         );
 
-      case "wordle_limitless":
+      case "wordle_increasing":
+        return (
+          <WordleConfig
+            {...commonProps}
+            mode="increasing"
+            firstLetterProvided={
+              gameOptionToggles.find((x) => x.page === "wordle_increasing")
+                ?.firstLetter || false
+            }
+            timerConfig={
+              gameOptionToggles.find((x) => x.page === "wordle_increasing")
+                ?.timer
+                ? { isTimed: true, seconds: 30 }
+                : { isTimed: false }
+            }
+            defaultWordLength={4}
+          />
+        );
+
+        case "wordle_limitless":
         return (
           <WordleConfig
             {...commonProps}
@@ -148,7 +169,7 @@ export const App: React.FC = () => {
                 ? { isTimed: true, seconds: 30 }
                 : { isTimed: false }
             }
-            defaultWordLength={wordLength}
+            defaultWordLength={4}
           />
         );
 
@@ -167,7 +188,7 @@ export const App: React.FC = () => {
                 : { isTimed: false }
             }
             defaultWordLength={10}
-            numGuesses={1}
+            defaultnumGuesses={1}
           />
         );
 

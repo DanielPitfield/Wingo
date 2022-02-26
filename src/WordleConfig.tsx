@@ -14,13 +14,13 @@ import { wordHintMappings } from "./WordArrays/words_puzzles";
 import { SaveData } from "./SaveData";
 
 interface Props {
-  mode: "daily" | "repeat" | "limitless" | "puzzle" | "interlinked";
+  mode: "daily" | "repeat" | "increasing" | "limitless" | "puzzle" | "interlinked";
   firstLetterProvided: boolean;
   timerConfig: { isTimed: false } | { isTimed: true; seconds: number };
   defaultWordLength: number;
   puzzleRevealMs: number;
   puzzleLeaveNumBlanks: number;
-  numGuesses: number;
+  defaultnumGuesses: number;
   setPage: (page: Page) => void;
 }
 
@@ -37,6 +37,7 @@ const wordLengthMappings = [
 
 const WordleConfig: React.FC<Props> = (props) => {
   const [guesses, setGuesses] = useState<string[]>([]);
+  const [numGuesses, setNumGuesses] = useState(props.defaultnumGuesses)
   const [currentWord, setCurrentWord] = useState("");
   const [wordIndex, setWordIndex] = useState(0);
   const [inProgress, setinProgress] = useState(true);
@@ -231,12 +232,12 @@ const WordleConfig: React.FC<Props> = (props) => {
         console.log("Puzzle word: " + puzzle.word);
         settargetWord(puzzle.word);
         settargetHint(puzzle.hint);
-        /* --- REPEAT, LIMITLESS AND INTERLINKED ---  */
+        /* --- REPEAT, INCREASING, LIMITLESS AND INTERLINKED ---  */
       } else {
         const wordArray = wordLengthMappings.find((x) => x.value === wordLength)
           ?.array!;
 
-        // If the wordArray can't be found (limitless mode runs out of long enough words!)
+        // If the wordArray can't be found (increasing/limitless mode runs out of long enough words!)
         if (!wordArray) {
           ResetGame();
           return;
@@ -307,6 +308,11 @@ const WordleConfig: React.FC<Props> = (props) => {
   function ContinueGame() {
     setGuesses([]);
     setCurrentWord("");
+    if (props.mode === "limitless") {
+      /* Calculate the number of rows not used */
+      const newLives = numGuesses - (wordIndex + 1);
+      setNumGuesses(numGuesses + newLives);
+    }
     setWordIndex(0);
     setinProgress(true);
     setinDictionary(true);
@@ -325,7 +331,7 @@ const WordleConfig: React.FC<Props> = (props) => {
     const gamemode_Gold_Mappings = [
       { mode: "daily", value: 1000 },
       { mode: "repeat", value: 50 },
-      { mode: "limitless", value: 50 },
+      { mode: "increasing", value: 50 },
       {
         mode: "puzzle",
         value: 20,
@@ -408,7 +414,7 @@ const WordleConfig: React.FC<Props> = (props) => {
     //Pressing Enter to Continue or Restart
     if (!inProgress) {
       if (props.mode !== "daily") {
-        if (props.mode === "limitless") {
+        if (props.mode === "increasing" || props.mode === "limitless" ) {
           ContinueGame();
         } else {
           ResetGame();
@@ -424,7 +430,7 @@ const WordleConfig: React.FC<Props> = (props) => {
       return;
     }
 
-    if (wordIndex >= props.numGuesses) {
+    if (wordIndex >= props.defaultnumGuesses) {
       /* Used all the available rows (out of guesses) */
       return;
     }
@@ -445,7 +451,7 @@ const WordleConfig: React.FC<Props> = (props) => {
         );
 
         SaveData.addGold(goldBanked);
-      } else if (wordIndex + 1 === props.numGuesses) {
+      } else if (wordIndex + 1 === props.defaultnumGuesses) {
         setinProgress(false);
       } else {
         // Not yet guessed
@@ -500,7 +506,7 @@ const WordleConfig: React.FC<Props> = (props) => {
           : { isTimed: false }
       }
       wordLength={wordLength}
-      numGuesses={props.numGuesses}
+      numGuesses={numGuesses}
       guesses={guesses}
       currentWord={currentWord}
       wordIndex={wordIndex}

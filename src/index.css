@@ -459,8 +459,8 @@ code {
   background-size: cover;
 }
 
-.game-mode-button[data-game-mode="wordle_limitless"] {
-  background-image: url(/src/images/limitless.jpg);
+.game-mode-button[data-game-mode="wordle_increasing"] {
+  background-image: url(/src/images/increasing.jpg);
   background-repeat: no-repeat;
   background-size: cover;
 }
