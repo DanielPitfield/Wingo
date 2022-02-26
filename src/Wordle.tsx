@@ -152,6 +152,8 @@ const Wordle: React.FC<Props> = (props) => {
           <strong>{props.currentWord}</strong> is not a valid word
           <br />
           The word was: <strong>{props.targetWord}</strong>
+          <br />
+          {props.mode === "limitless" && <strong>-1 life</strong>}
         </MessageNotification>
       );
     }
@@ -173,9 +175,13 @@ const Wordle: React.FC<Props> = (props) => {
           </MessageNotification>
         );
       } else {
-        <MessageNotification type="success">
-          <strong>Game over</strong>
-        </MessageNotification>;
+        return (
+          <MessageNotification type="default">
+            The word was: <strong>{props.targetWord}</strong>
+            <br />
+            <strong>-1 life</strong>
+          </MessageNotification>
+        );
       }
     }
 
