@@ -11,10 +11,10 @@ import { words_nine } from "./WordArrays/words_9";
 import { words_ten } from "./WordArrays/words_10";
 import { words_eleven } from "./WordArrays/words_11";
 import { wordHintMappings } from "./WordArrays/words_puzzles";
+import { SaveData } from "./SaveData";
 
 interface Props {
   mode: "daily" | "repeat" | "limitless" | "puzzle" | "interlinked";
-  gold: string;
   firstLetterProvided: boolean;
   timerConfig: { isTimed: false } | { isTimed: true; seconds: number };
   defaultWordLength: number;
@@ -22,7 +22,6 @@ interface Props {
   puzzleLeaveNumBlanks: number;
   numGuesses: number;
   setPage: (page: Page) => void;
-  updateGoldCoins: (value: number) => void;
 }
 
 const wordLengthMappings = [
@@ -100,8 +99,7 @@ const WordleConfig: React.FC<Props> = (props) => {
     const timer = setInterval(() => {
       if (seconds > 0) {
         setSeconds(seconds - 1);
-      }
-      else {
+      } else {
         setinDictionary(false);
         setinProgress(false);
       }
@@ -110,6 +108,18 @@ const WordleConfig: React.FC<Props> = (props) => {
       clearInterval(timer);
     };
   }, [setSeconds, seconds, props.timerConfig.isTimed]);
+
+  React.useEffect(() => {
+    if (props.mode === "daily" && targetWord) {
+      SaveData.setDailyWordGuesses(
+        targetWord,
+        guesses,
+        wordIndex,
+        inProgress,
+        currentWord
+      );
+    }
+  }, [targetWord, currentWord, guesses, wordIndex, inProgress]);
 
   React.useEffect(() => {
     const letterStatusesCopy = letterStatuses.slice();
@@ -196,6 +206,14 @@ const WordleConfig: React.FC<Props> = (props) => {
           days_since_epoch % wordArray.length
         ); // Number in the range (0, wordArray.length)
         const new_daily_word = wordArray[daily_word_index];
+
+        const daily_word_storage = SaveData.getDailyWordGuesses();
+        if (new_daily_word === daily_word_storage?.dailyWord) {
+          setGuesses(daily_word_storage.guesses);
+          setWordIndex(daily_word_storage.wordIndex);
+          setinProgress(daily_word_storage.inProgress);
+          setCurrentWord(daily_word_storage.currentWord);
+        }
 
         console.log("Daily word: " + new_daily_word);
         settargetWord(new_daily_word);
@@ -425,7 +443,8 @@ const WordleConfig: React.FC<Props> = (props) => {
           targetWord.length,
           wordIndex + 1
         );
-        props.updateGoldCoins(goldBanked);
+
+        SaveData.addGold(goldBanked);
       } else if (wordIndex + 1 === props.numGuesses) {
         setinProgress(false);
       } else {
@@ -446,7 +465,6 @@ const WordleConfig: React.FC<Props> = (props) => {
     if (props.timerConfig.isTimed) {
       setSeconds(props.timerConfig.seconds);
     }
-    
   }
 
   function onSubmitLetter(letter: string) {
@@ -481,7 +499,6 @@ const WordleConfig: React.FC<Props> = (props) => {
             }
           : { isTimed: false }
       }
-      gold={props.gold}
       wordLength={wordLength}
       numGuesses={props.numGuesses}
       guesses={guesses}
@@ -498,13 +515,12 @@ const WordleConfig: React.FC<Props> = (props) => {
       revealedLetterIndexes={revealedLetterIndexes}
       letterStatuses={letterStatuses}
       getLetterStatus={getLetterStatus}
-      setPage={props.setPage}
-      updateGoldCoins={props.updateGoldCoins}
       onEnter={onEnter}
       onSubmitLetter={onSubmitLetter}
       onBackspace={onBackspace}
       ResetGame={ResetGame}
       ContinueGame={ContinueGame}
+      setPage={props.setPage}
     ></Wordle>
   );
 };

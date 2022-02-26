@@ -8,6 +8,7 @@ import WordleConfig from "./WordleConfig";
 import { Button } from "./Button";
 import NubbleConfig from "./Nubble/NubbleConfig";
 import GoldCoin from "./images/gold.png";
+import { SaveData } from "./SaveData";
 
 const wordLength = 5;
 const numGuesses = 6;
@@ -33,7 +34,6 @@ export const App: React.FC = () => {
     "loading"
   );
   const [page, setPage] = useState<Page>("splash-screen");
-  const [gold, setGold] = useState("0" /*saveData.getItem("gold")*/);
 
   const [gameOptionToggles, setgameOptionToggles] = useState<
     { page: Page; firstLetter: boolean; timer: boolean }[]
@@ -46,16 +46,6 @@ export const App: React.FC = () => {
   ]);
 
   useEffect(() => {
-    const gold = saveData.getItem("gold");
-    if (gold) {
-      setGold(gold);
-    } else {
-      // 'gold' data item is not created yet
-      console.log("No gold coin save data found");
-      // Create a 'gold' data item
-      saveData.setItem("gold", "0");
-    }
-
     // TODO: Mask actual loading, rather than hard-coding seconds
     window.setTimeout(() => setLoadingState("loaded"), 2000);
 
@@ -63,23 +53,10 @@ export const App: React.FC = () => {
     window.setTimeout(() => setPage("lobby"), 2500); // Change to "home"
   }, [saveData]);
 
-  function updateGoldCoins(value: number) {
-    // String key value of current number of gold coins
-    const gold = saveData.getItem("gold");
-    // If there is a 'gold' data item
-    if (gold) {
-      const new_gold_value = (parseInt(gold) + value).toString();
-      // Update the data item in local storage
-      saveData.setItem("gold", new_gold_value);
-      // Update state
-      setGold(new_gold_value);
-    }
-  }
 
   const pageComponent = (() => {
     const commonProps = {
-      gold: gold,
-      updateGoldCoins: updateGoldCoins,
+      saveData: saveData,
       numGuesses: numGuesses,
       puzzleRevealMs: puzzleRevealMs,
       puzzleLeaveNumBlanks: puzzleLeaveNumBlanks,
@@ -99,7 +76,7 @@ export const App: React.FC = () => {
             firstLetterToggle={(value, Page) => {
               setgameOptionToggles(
                 gameOptionToggles.map((x) => {
-                  if(x.page === Page) {
+                  if (x.page === Page) {
                     x.firstLetter = value;
                   }
                   return x;
@@ -109,7 +86,7 @@ export const App: React.FC = () => {
             timerToggle={(value, Page) => {
               setgameOptionToggles(
                 gameOptionToggles.map((x) => {
-                  if(x.page === Page) {
+                  if (x.page === Page) {
                     x.timer = value;
                   }
                   return x;
@@ -125,8 +102,15 @@ export const App: React.FC = () => {
           <WordleConfig
             {...commonProps}
             mode="daily"
-            firstLetterProvided={gameOptionToggles.find(x => x.page === "wordle_daily")?.firstLetter || false}
-            timerConfig={gameOptionToggles.find(x => x.page === "wordle_daily")?.timer ? {isTimed: true, seconds:30} : {isTimed:false}}
+            firstLetterProvided={
+              gameOptionToggles.find((x) => x.page === "wordle_daily")
+                ?.firstLetter || false
+            }
+            timerConfig={
+              gameOptionToggles.find((x) => x.page === "wordle_daily")?.timer
+                ? { isTimed: true, seconds: 30 }
+                : { isTimed: false }
+            }
             defaultWordLength={wordLength}
           />
         );
@@ -136,8 +120,15 @@ export const App: React.FC = () => {
           <WordleConfig
             {...commonProps}
             mode="repeat"
-            firstLetterProvided={gameOptionToggles.find(x => x.page === "wordle_repeat")?.firstLetter || false}
-            timerConfig={gameOptionToggles.find(x => x.page === "wordle_repeat")?.timer ? {isTimed: true, seconds:30} : {isTimed:false}}
+            firstLetterProvided={
+              gameOptionToggles.find((x) => x.page === "wordle_repeat")
+                ?.firstLetter || false
+            }
+            timerConfig={
+              gameOptionToggles.find((x) => x.page === "wordle_repeat")?.timer
+                ? { isTimed: true, seconds: 30 }
+                : { isTimed: false }
+            }
             defaultWordLength={wordLength}
           />
         );
@@ -147,8 +138,16 @@ export const App: React.FC = () => {
           <WordleConfig
             {...commonProps}
             mode="limitless"
-            firstLetterProvided={gameOptionToggles.find(x => x.page === "wordle_limitless")?.firstLetter || false}
-            timerConfig={gameOptionToggles.find(x => x.page === "wordle_limitless")?.timer ? {isTimed: true, seconds:30} : {isTimed:false}}
+            firstLetterProvided={
+              gameOptionToggles.find((x) => x.page === "wordle_limitless")
+                ?.firstLetter || false
+            }
+            timerConfig={
+              gameOptionToggles.find((x) => x.page === "wordle_limitless")
+                ?.timer
+                ? { isTimed: true, seconds: 30 }
+                : { isTimed: false }
+            }
             defaultWordLength={wordLength}
           />
         );
@@ -158,8 +157,15 @@ export const App: React.FC = () => {
           <WordleConfig
             {...commonProps}
             mode="puzzle"
-            firstLetterProvided={gameOptionToggles.find(x => x.page === "wordle_puzzle")?.firstLetter || false}
-            timerConfig={gameOptionToggles.find(x => x.page === "wordle_puzzle")?.timer ? {isTimed: true, seconds:30} : {isTimed:false}}
+            firstLetterProvided={
+              gameOptionToggles.find((x) => x.page === "wordle_puzzle")
+                ?.firstLetter || false
+            }
+            timerConfig={
+              gameOptionToggles.find((x) => x.page === "wordle_puzzle")?.timer
+                ? { isTimed: true, seconds: 30 }
+                : { isTimed: false }
+            }
             defaultWordLength={10}
             numGuesses={1}
           />
@@ -170,8 +176,16 @@ export const App: React.FC = () => {
           <WordleConfig
             {...commonProps}
             mode="interlinked"
-            firstLetterProvided={gameOptionToggles.find(x => x.page === "wordle_interlinked")?.firstLetter || false}
-            timerConfig={gameOptionToggles.find(x => x.page === "wordle_interlinked")?.timer ? {isTimed: true, seconds:30} : {isTimed:false}}
+            firstLetterProvided={
+              gameOptionToggles.find((x) => x.page === "wordle_interlinked")
+                ?.firstLetter || false
+            }
+            timerConfig={
+              gameOptionToggles.find((x) => x.page === "wordle_interlinked")
+                ?.timer
+                ? { isTimed: true, seconds: 30 }
+                : { isTimed: false }
+            }
             defaultWordLength={wordLength}
           />
         );
@@ -196,7 +210,7 @@ export const App: React.FC = () => {
         <div className="toolbar">
           <div className="gold_counter">
             <img className="gold_coin_image" src={GoldCoin} alt="Gold" />
-            {gold}
+            {SaveData.readGold()}
           </div>
           {page !== "lobby" && (
             <nav className="navigation">
