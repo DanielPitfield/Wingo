@@ -242,7 +242,6 @@ const Nubble: React.FC<Props> = (props) => {
           {i}
         </button>
       );
-      // TODO: Make this into its own component instead of using Button component?
     }
     return Grid;
   }

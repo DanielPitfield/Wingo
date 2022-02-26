@@ -431,7 +431,6 @@ const WordleConfig: React.FC<Props> = (props) => {
       } else {
         // Not yet guessed
         if (props.firstLetterProvided) {
-          /* TODO: Reveal the first letter of the word for each new guess */
           setCurrentWord(targetWord?.charAt(0)!);
         } else {
           setCurrentWord(""); /* Start new word as empty string */

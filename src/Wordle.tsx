@@ -127,7 +127,7 @@ const Wordle: React.FC<Props> = (props) => {
             hasSubmit={props.wordIndex > i || !props.inProgress}
             getLetterStatus={props.getLetterStatus}
             inDictionary={props.inDictionary}
-          ></WordRow>,
+          ></WordRow>
         )
       }
     }
