@@ -14,7 +14,13 @@ import { wordHintMappings } from "./WordArrays/words_puzzles";
 import { SaveData } from "./SaveData";
 
 interface Props {
-  mode: "daily" | "repeat" | "increasing" | "limitless" | "puzzle" | "interlinked";
+  mode:
+    | "daily"
+    | "repeat"
+    | "increasing"
+    | "limitless"
+    | "puzzle"
+    | "interlinked";
   firstLetterProvided: boolean;
   timerConfig: { isTimed: false } | { isTimed: true; seconds: number };
   defaultWordLength: number;
@@ -37,7 +43,7 @@ const wordLengthMappings = [
 
 const WordleConfig: React.FC<Props> = (props) => {
   const [guesses, setGuesses] = useState<string[]>([]);
-  const [numGuesses, setNumGuesses] = useState(props.defaultnumGuesses)
+  const [numGuesses, setNumGuesses] = useState(props.defaultnumGuesses);
   const [currentWord, setCurrentWord] = useState("");
   const [wordIndex, setWordIndex] = useState(0);
   const [inProgress, setinProgress] = useState(true);
@@ -299,7 +305,18 @@ const WordleConfig: React.FC<Props> = (props) => {
     setWordIndex(0);
     setinProgress(true);
     setinDictionary(true);
-    setwordLength(props.defaultWordLength);
+    if (props.mode === "limitless") {
+      if (numGuesses > 1) { // Still a row to use
+        setNumGuesses(numGuesses - 1); // Remove a row
+      } else {
+        // Game failed
+        setNumGuesses(props.defaultnumGuesses); // Set back to default
+        setwordLength(props.defaultWordLength);
+      }
+    }
+    else {
+      setwordLength(props.defaultWordLength);
+    }
     sethasSubmitLetter(false);
     setRevealedLetterIndexes([]);
     setletterStatuses(defaultLetterStatuses);
@@ -414,7 +431,7 @@ const WordleConfig: React.FC<Props> = (props) => {
     //Pressing Enter to Continue or Restart
     if (!inProgress) {
       if (props.mode !== "daily") {
-        if (props.mode === "increasing" || props.mode === "limitless" ) {
+        if ((targetWord?.toUpperCase() === currentWord.toUpperCase()) && (props.mode === "increasing" || props.mode === "limitless")) {
           ContinueGame();
         } else {
           ResetGame();

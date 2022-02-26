@@ -21,11 +21,11 @@ export const WordRow: React.FC<Props> = (props) => {
       TileArray.push(
         <LetterTile
           key={i}
-          letter={props.word[i]}
+          letter={props.word?.[i]}
           status={
             !props.hasSubmit
               ? "not set"
-              : props.getLetterStatus(props.word[i], i)
+              : props.getLetterStatus(props.word?.[i], i)
           }
         ></LetterTile>
       );

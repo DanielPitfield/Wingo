@@ -164,12 +164,18 @@ const Wordle: React.FC<Props> = (props) => {
             <strong>+{newLives}</strong> lives
           </MessageNotification>
         );
-      } else {
+      } else if (
+        props.currentWord.toUpperCase() === props.targetWord.toUpperCase()
+      ) {
         return (
           <MessageNotification type="success">
             <strong>No lives added</strong>
           </MessageNotification>
         );
+      } else {
+        <MessageNotification type="success">
+          <strong>Game over</strong>
+        </MessageNotification>;
       }
     }
 
