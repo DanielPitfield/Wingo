@@ -6,7 +6,7 @@ import { WordRow } from "./WordRow";
 import { Logo } from "./Logo";
 import { Button } from "./Button";
 import { MessageNotification } from "./MessageNotification";
-import Timer from "./Timer";
+import ProgressBar from "./ProgressBar";
 
 interface Props {
   mode: "daily" | "repeat" | "limitless" | "puzzle" | "interlinked";
@@ -222,10 +222,10 @@ const Wordle: React.FC<Props> = (props) => {
 
       <div>
         {props.timerConfig.isTimed && (
-          <Timer
-            elapsedSeconds={props.timerConfig.elapsedSeconds}
-            totalSeconds={props.timerConfig.totalSeconds}
-          ></Timer>
+          <ProgressBar
+            progress={props.timerConfig.elapsedSeconds}
+            total={props.timerConfig.totalSeconds}
+          ></ProgressBar>
         )}
       </div>
     </div>

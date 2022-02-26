@@ -60,6 +60,7 @@ export const App: React.FC = () => {
       numGuesses: numGuesses,
       puzzleRevealMs: puzzleRevealMs,
       puzzleLeaveNumBlanks: puzzleLeaveNumBlanks,
+      page: page,
       setPage: setPage,
     };
 
