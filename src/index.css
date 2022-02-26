@@ -355,17 +355,28 @@ code {
   padding: 0 6px;
 }
 
+.game-mode-button-wrapper {
+  position: relative;
+}
+
+.game_options {
+  padding: 0.5em;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+}
+
 .game-mode-title {
   display: flex;
   flex-grow: 1;
   text-align: center;
   align-items: center;
   justify-content: center;
-  text-transform: uppercase;
+  font-weight: bold;
   background-color: #4d4d4ddd;
   color: white;
-  height: 15%;
-  padding: 0.5em;
+  height: 2em;
+  padding: 0.3em;
 }
 
 .game-mode-button {

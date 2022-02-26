@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Page } from "./App";
+import { BsGearFill } from "react-icons/bs";
 
 interface Props {
   setPage: (page: Page) => void;
@@ -15,22 +16,21 @@ export const LobbyMenu: React.FC<Props> = (props) => {
   function renderGameModeTile(page: Page, displayName: string) {
     return (
       <li className="sidebar-link">
-        <span className="game-mode-title">
-          {displayName}
+        <span className="game-mode-title">{displayName}</span>
+        <div className="game-mode-button-wrapper">
           <button
             className="game_options"
             onClick={() =>
               setOptionsConfig({ isConfigShown: true, Page: page })
             }
-          >
-            Icon
+          ><BsGearFill/>
           </button>
-        </span>
-        <button
-          className="game-mode-button"
-          data-game-mode={page}
-          onClick={() => props.setPage(page)}
-        ></button>
+          <button
+            className="game-mode-button"
+            data-game-mode={page}
+            onClick={() => props.setPage(page)}
+          ></button>
+        </div>
       </li>
     );
   }
@@ -67,7 +67,12 @@ export const LobbyMenu: React.FC<Props> = (props) => {
         <div className="modal">
           <div className="options_body">
             <div className="options_title">Options</div>
-            <button className="options_close" onClick={() => setOptionsConfig({isConfigShown: false})}>X</button>
+            <button
+              className="options_close"
+              onClick={() => setOptionsConfig({ isConfigShown: false })}
+            >
+              X
+            </button>
             <label>
               <input
                 type="checkbox"
