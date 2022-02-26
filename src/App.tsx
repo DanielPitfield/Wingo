@@ -62,6 +62,7 @@ export const App: React.FC = () => {
       defaultnumGuesses: numGuesses,
       puzzleRevealMs: puzzleRevealMs,
       puzzleLeaveNumBlanks: puzzleLeaveNumBlanks,
+      page: page,
       setPage: setPage,
     };
 

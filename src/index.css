@@ -400,7 +400,7 @@ code {
   background-color: #444;
 }
 
-.timer {
+.progress_bar {
   width: 5em;
   border: 3px solid black;
   border-radius: 15px;
@@ -408,7 +408,7 @@ code {
   height: 1em;
 }
 
-.timer_progress {
+.progress_bar_progress {
   background: green;
   border-radius: 15px;
   height: 1em;
@@ -427,7 +427,40 @@ code {
 }
 
 .modal .options_close {
-  
+}
+
+.challenges {
+}
+
+.challenges-title {
+  margin: 0;
+  padding: 0.2em;
+  background-color: #ddd;
+  color: #777;
+}
+
+.challenge {
+  border-bottom: 2px solid #ddd;
+  padding: 0.8em 0.6em;
+  color: #333;
+  background-color: #eee;
+}
+
+.challenge[data-is-acheived='true'] {
+  background-color: #a1ffa1;
+  opacity: 0.5;
+}
+
+.challenge-title {
+  margin: 0.2em 0;
+}
+
+.challenge-description {
+  margin: 0.3em 0;
+}
+
+.challenge:last-child {
+  border-bottom: none;
 }
 
 .modal .options_body {

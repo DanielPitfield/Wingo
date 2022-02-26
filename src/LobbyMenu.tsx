@@ -1,17 +1,20 @@
-import React, { useState } from "react";
-import { Page } from "./App";
-import { BsGearFill } from "react-icons/bs";
+import React, { useState } from 'react'
+import { Page } from './App'
+import { BsGearFill } from 'react-icons/bs'
+import { AllChallenges } from './Challenges/AllChallenges'
+import { SaveData } from './SaveData'
+import ProgressBar from './ProgressBar'
 
 interface Props {
-  setPage: (page: Page) => void;
-  firstLetterToggle: (value: boolean, page: Page) => void;
-  timerToggle: (value: boolean, page: Page) => void;
+  setPage: (page: Page) => void
+  firstLetterToggle: (value: boolean, page: Page) => void
+  timerToggle: (value: boolean, page: Page) => void
 }
 
 export const LobbyMenu: React.FC<Props> = (props) => {
   const [optionsConfig, setOptionsConfig] = useState<
     { isConfigShown: false } | { isConfigShown: true; Page: Page }
-  >({ isConfigShown: false });
+  >({ isConfigShown: false })
 
   function renderGameModeTile(page: Page, displayName: string) {
     return (
@@ -23,7 +26,8 @@ export const LobbyMenu: React.FC<Props> = (props) => {
             onClick={() =>
               setOptionsConfig({ isConfigShown: true, Page: page })
             }
-          ><BsGearFill/>
+          >
+            <BsGearFill />
           </button>
           <button
             className="game-mode-button"
@@ -32,7 +36,7 @@ export const LobbyMenu: React.FC<Props> = (props) => {
           ></button>
         </div>
       </li>
-    );
+    )
   }
 
   return (
@@ -52,18 +56,19 @@ export const LobbyMenu: React.FC<Props> = (props) => {
       <div className="sidebar">
         <div className="sidebar-title">NUMBERS</div>
         <ul className="sidebar-links">
-          {renderGameModeTile("numbo", "Numbo")}
-          {renderGameModeTile("nubble", "Nubble")}
+          {renderGameModeTile('numbo', 'Numbo')}
+          {renderGameModeTile('nubble', 'Nubble')}
         </ul>
       </div>
 
       <div className="sidebar">
         <div className="sidebar-title">OTHER</div>
         <ul className="sidebar-links">
-          {renderGameModeTile("numbo", "Numbo")}
-          {renderGameModeTile("nubble", "Nubble")}
+          {renderGameModeTile('numbo', 'Numbo')}
+          {renderGameModeTile('nubble', 'Nubble')}
         </ul>
       </div>
+
       {optionsConfig.isConfigShown && (
         <div className="modal">
           <div className="options_body">
@@ -95,6 +100,27 @@ export const LobbyMenu: React.FC<Props> = (props) => {
           </div>
         </div>
       )}
+
+      <section className="challenges">
+        <h2 className="challenges-title">Challenges</h2>
+        {AllChallenges.map((challenge) => {
+          const history = SaveData.getHistory()
+          const isAcheived = challenge.isAcheived(history)
+          const currentProgress = challenge.currentProgress(history)
+
+          return (
+            <div className="challenge" data-is-acheived={isAcheived}>
+              <h3 className="challenge-title">{challenge.title}</h3>
+              <p className="challenge-description">{challenge.description}</p>
+              {currentProgress} / {challenge.target}{' '}
+              <ProgressBar
+                progress={currentProgress}
+                total={challenge.target}
+              />
+            </div>
+          )
+        })}
+      </section>
     </div>
-  );
-};
+  )
+}
