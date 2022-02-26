@@ -9,7 +9,13 @@ import { MessageNotification } from "./MessageNotification";
 import Timer from "./Timer";
 
 interface Props {
-  mode: "daily" | "repeat" | "increasing" | "limitless" | "puzzle" | "interlinked";
+  mode:
+    | "daily"
+    | "repeat"
+    | "increasing"
+    | "limitless"
+    | "puzzle"
+    | "interlinked";
   timerConfig:
     | { isTimed: false }
     | { isTimed: true; totalSeconds: number; elapsedSeconds: number };
@@ -150,6 +156,23 @@ const Wordle: React.FC<Props> = (props) => {
       );
     }
 
+    const newLives = props.numGuesses - (props.wordIndex + 1);
+    if (props.mode === "limitless") {
+      if (newLives > 0) {
+        return (
+          <MessageNotification type="success">
+            <strong>+{newLives}</strong> lives
+          </MessageNotification>
+        );
+      } else {
+        return (
+          <MessageNotification type="success">
+            <strong>No lives added</strong>
+          </MessageNotification>
+        );
+      }
+    }
+
     if (
       props.wordIndex === 0 &&
       props.currentWord.toUpperCase() === props.targetWord.toUpperCase()
@@ -185,14 +208,18 @@ const Wordle: React.FC<Props> = (props) => {
           <Button
             mode={"accept"}
             onClick={() =>
-              props.mode === "increasing" || props.mode === "limitless" &&
-              props.targetWord.toUpperCase() === props.currentWord.toUpperCase()
+              props.mode === "increasing" ||
+              (props.mode === "limitless" &&
+                props.targetWord.toUpperCase() ===
+                  props.currentWord.toUpperCase())
                 ? props.ContinueGame()
                 : props.ResetGame()
             }
           >
-            {props.mode === "increasing" || props.mode === "limitless" &&
-            props.targetWord.toUpperCase() === props.currentWord.toUpperCase()
+            {props.mode === "increasing" ||
+            (props.mode === "limitless" &&
+              props.targetWord.toUpperCase() ===
+                props.currentWord.toUpperCase())
               ? "Continue"
               : "Restart"}
           </Button>
