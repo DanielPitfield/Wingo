@@ -200,7 +200,6 @@ const WordleConfig: React.FC<Props> = (props) => {
             newrevealedLetterIndexes.push(newIndex);
           }
         }
-        console.log(revealedLetterIndexes);
         setRevealedLetterIndexes(newrevealedLetterIndexes);
       }, props.puzzleRevealMs);
     }
