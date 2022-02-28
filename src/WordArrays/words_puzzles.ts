@@ -20,7 +20,7 @@ export const wordHintMappings = [
     { word: "basketball", hint: "Slam dunk" },
     { word: "bestseller", hint: "The most popular of books" },
     { word: "binoculars", hint: "This answer helps with viewing distant objects" },
-    { word: "breadcrumbs", hint: "Very small pieces of a loaf" },
+    { word: "breadcrumb", hint: "Very small piece of a loaf" },
     { word: "bronchitis", hint: "This answer has inflamed lungs" },
     { word: "calculator", hint: "This answer might be useful with some hard maths" },
     { word: "capitalism", hint: "Economic and political system based on the motive of profit" },

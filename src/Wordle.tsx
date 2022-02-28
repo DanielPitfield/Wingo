@@ -196,11 +196,17 @@ const Wordle: React.FC<Props> = (props) => {
       props.wordIndex === 0 &&
       props.currentWord.toUpperCase() === props.targetWord.toUpperCase()
     ) {
-      return (
-        <MessageNotification type="success">
-          You guessed the word in one guess
-        </MessageNotification>
-      );
+      if (props.mode === "puzzle") {
+        return (
+          <MessageNotification type="success">Correct</MessageNotification>
+        );
+      } else {
+        return (
+          <MessageNotification type="success">
+            You guessed the word in one guess
+          </MessageNotification>
+        );
+      }
     } else if (
       props.wordIndex < props.numGuesses &&
       props.currentWord.toUpperCase() === props.targetWord.toUpperCase()

@@ -329,7 +329,6 @@ const WordleConfig: React.FC<Props> = (props) => {
     setGameId(gameId);
   }, [props.page, targetWord]);
 
-  // TODO: Basic ResetGame() and additional function for limitless mode
   function ResetGame() {
     setGuesses([]);
     setCurrentWord("");
@@ -339,12 +338,15 @@ const WordleConfig: React.FC<Props> = (props) => {
     sethasSubmitLetter(false);
     setRevealedLetterIndexes([]);
     setletterStatuses(defaultLetterStatuses);
+    if (props.timerConfig.isTimed) {
+      // Reset the timer if it is enabled in the game options
+      setSeconds(props.timerConfig.seconds);
+    }
     if (props.mode !== "limitless" || numGuesses <= 1) {
       // Ending of any game mode
       setNumGuesses(props.defaultnumGuesses);
       setwordLength(props.defaultWordLength);
-    }
-    else {
+    } else {
       // Game mode is limitless and there are still rows
       setNumGuesses(numGuesses - 1); // Remove a row
     }
@@ -353,11 +355,6 @@ const WordleConfig: React.FC<Props> = (props) => {
   function ContinueGame() {
     setGuesses([]);
     setCurrentWord("");
-    if (props.mode === "limitless") {
-      // Calculate the number of rows not used
-      const newLives = numGuesses - (wordIndex + 1);
-      setNumGuesses(numGuesses + newLives);
-    }
     setWordIndex(0);
     setinProgress(true);
     setinDictionary(true);
@@ -365,6 +362,14 @@ const WordleConfig: React.FC<Props> = (props) => {
     sethasSubmitLetter(false);
     setRevealedLetterIndexes([]);
     setletterStatuses(defaultLetterStatuses);
+    if (props.timerConfig.isTimed) {
+      setSeconds(props.timerConfig.seconds);
+    }
+    if (props.mode === "limitless") {
+      // Calculate the number of rows not used
+      const newLives = numGuesses - (wordIndex + 1);
+      setNumGuesses(numGuesses + newLives);
+    }
   }
 
   function calculateGoldAwarded(
@@ -512,9 +517,7 @@ const WordleConfig: React.FC<Props> = (props) => {
         } else {
           setCurrentWord(""); // Start new word as empty string
         }
-        setWordIndex(
-          wordIndex + 1
-        ); // Increment index to indicate new word has been started
+        setWordIndex(wordIndex + 1); // Increment index to indicate new word has been started
         outcome = "in-progress";
       }
     } else {
@@ -544,9 +547,7 @@ const WordleConfig: React.FC<Props> = (props) => {
 
   function onSubmitLetter(letter: string) {
     if (currentWord.length < wordLength && inProgress) {
-      setCurrentWord(
-        currentWord + letter
-      ); // Append chosen letter to currentWord
+      setCurrentWord(currentWord + letter); // Append chosen letter to currentWord
       sethasSubmitLetter(true);
     }
   }
