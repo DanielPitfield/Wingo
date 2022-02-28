@@ -123,6 +123,7 @@ const Nubble: React.FC<Props> = (props) => {
   }
 
   function rollDice() {
+    // Determine random dice values for all the dice
     setdiceValues(
       Array.from({ length: props.numDice }).map((x) => randomDiceNumber())
     );
@@ -141,7 +142,7 @@ const Nubble: React.FC<Props> = (props) => {
   }
 
   function getValidValues(): number[] {
-    // https://stackoverflow.com/a/20871714
+    // Returns permutations of input array, https://stackoverflow.com/a/20871714
     function permutator<T>(inputArr: T[]): T[][] {
       let result: any[] = [];
 
@@ -181,39 +182,96 @@ const Nubble: React.FC<Props> = (props) => {
       },
     ];
 
+    // --- OPERATORS (+ - / *) ---
+
     const operatorPermutations = permutator(operators);
+
+    // Start new array as copy of progress so far (operatorPermutations)
+    const operatorSubsetPermutations = new Set(operatorPermutations.slice());
+
+    for (let i = 0; i < operatorPermutations.length; i++) {
+      // 3 value subset
+      operatorSubsetPermutations.add(operatorPermutations[i].slice(0, 3));
+      // 2 value subset
+      operatorSubsetPermutations.add(operatorPermutations[i].slice(0, 2));
+      // 1 value subset
+      operatorSubsetPermutations.add([operatorPermutations[i][0]]);
+    }
+
+    // Remove any subset larger in length than 3
+    const operatorSubsetPermutationsFiltered = Array.from(
+      operatorSubsetPermutations
+    ).filter((x) => x.length <= 3);
+
+    // --- OPERANDS (1-6) ---
+
+    // The different permutations of the 4 dice values
     const operandPermutations = permutator(diceValues);
 
-    var combinations = [];
+    // Start new array as copy of progress so far (operandPermutations)
+    const operandSubsetPermutations = new Set(operandPermutations.slice());
+
     for (let i = 0; i < operandPermutations.length; i++) {
-      for (let j = 0; j < operatorPermutations.length; j++) {
+      // 3 value subset
+      operandSubsetPermutations.add(operandPermutations[i].slice(0, 3));
+      // 2 value subset
+      operandSubsetPermutations.add(operandPermutations[i].slice(0, 2));
+      // 1 value subset
+      operandSubsetPermutations.add([operandPermutations[i][0]]);
+    }
+
+    // Write out all the operators and operands together (mathematical evaluations)
+    var combinations = [];
+    for (let i = 0; i < Array.from(operandSubsetPermutations).length; i++) {
+      for (let j = 0; j < operatorSubsetPermutationsFiltered.length; j++) {
         combinations.push({
-          operands: operandPermutations[i],
-          operators: operatorPermutations[j],
+          operands: Array.from(operandSubsetPermutations)[i],
+          operators: operatorSubsetPermutationsFiltered[j],
         });
       }
     }
-    console.log(combinations);
-    var validValues = new Set<number>();
+    //console.log(combinations);
+
+    // Compute the end result of every combination
+    var calculatedValues = new Set<number>();
     for (let i = 0; i < combinations.length; i++) {
-      const combination = combinations[i];
-      const num = combination.operators[2].function(
-        combination.operators[1].function(
-          combination.operators[0].function(
-            combination.operands[0],
-            combination.operands[1]
-          ),
-          combination.operands[2]
-        ),
-        combination.operands[3]
-      );
-      if (Math.round(num) === num && num > 0) {
-        validValues.add(num);
+      if (combinations[i].operands.length === 1) {
+        // Only one number
+        calculatedValues.add(combinations[i].operands[0]); // That number is valid
+      } else if (combinations[i].operands.length === 2 && combinations[i].operators.length === 1) {
+        const firstNum = combinations[i].operands[0];
+        const secondNum = combinations[i].operands[1];
+        const firstOperator = combinations[i].operators[0];
+        const result = firstOperator.function(firstNum, secondNum);
+        calculatedValues.add(result);
+      } else if (combinations[i].operands.length === 3 && combinations[i].operators.length === 2) {
+        const firstNum = combinations[i].operands[0];
+        const secondNum = combinations[i].operands[1];
+        const thirdNum = combinations[i].operands[2];
+        const firstOperator = combinations[i].operators[0];
+        const secondOperator = combinations[i].operators[1];
+        const firstCalculation = firstOperator.function(firstNum, secondNum);
+        const result = secondOperator.function(firstCalculation, thirdNum)
+        calculatedValues.add(result);
+      }
+      else if (combinations[i].operands.length === 4 && combinations[i].operators.length === 3) {
+        const firstNum = combinations[i].operands[0];
+        const secondNum = combinations[i].operands[1];
+        const thirdNum = combinations[i].operands[2];
+        const fourthNum = combinations[i].operands[3];
+        const firstOperator = combinations[i].operators[0];
+        const secondOperator = combinations[i].operators[1];
+        const thirdOperator = combinations[i].operators[2];
+        const firstCalculation = firstOperator.function(firstNum, secondNum);
+        const secondCalculation = secondOperator.function(firstCalculation, thirdNum);
+        const result = thirdOperator.function(secondCalculation, fourthNum);
+        calculatedValues.add(result);
       }
     }
+
+    // Remove results which aren't integers or are outside range of (0, gridSize)
+    const validValues = Array.from(calculatedValues).filter(x => x > 0 && x <= props.gridSize && (Math.round(x) === x));
     console.log(validValues);
-    //console.log(operatorPermutations);
-    //console.log(operandPermutations);
 
     return Array.from(validValues);
   }
@@ -226,7 +284,7 @@ const Nubble: React.FC<Props> = (props) => {
       return;
     }
 
-    alert(gridPoints.find(x => x.number === i)?.points);
+    alert(gridPoints.find((x) => x.number === i)?.points);
   }
 
   function populateGrid() {
