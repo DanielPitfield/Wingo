@@ -336,24 +336,20 @@ const WordleConfig: React.FC<Props> = (props) => {
     setWordIndex(0);
     setinProgress(true);
     setinDictionary(true);
-    if (props.mode === "limitless") {
-      if (numGuesses > 1) {
-        // Still a row to use
-        setNumGuesses(numGuesses - 1); // Remove a row
-      } else {
-        // Game failed
-        setNumGuesses(props.defaultnumGuesses); // Set back to default
-        setwordLength(props.defaultWordLength);
-      }
-    } else {
-      setwordLength(props.defaultWordLength);
-    }
     sethasSubmitLetter(false);
     setRevealedLetterIndexes([]);
     setletterStatuses(defaultLetterStatuses);
+    if (props.mode !== "limitless" || numGuesses <= 1) {
+      // Ending of any game mode
+      setNumGuesses(props.defaultnumGuesses);
+      setwordLength(props.defaultWordLength);
+    }
+    else {
+      // Game mode is limitless and there are still rows
+      setNumGuesses(numGuesses - 1); // Remove a row
+    }
   }
 
-  // TODO: Basic ContinueGame() and additional function for limitless mode
   function ContinueGame() {
     setGuesses([]);
     setCurrentWord("");

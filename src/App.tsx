@@ -139,7 +139,7 @@ export const App: React.FC = () => {
             }
             timerConfig={
               gameOptionToggles.find((x) => x.page === "wordle_repeat")?.timer
-                ? { isTimed: true, seconds: 30 } /* TODO: Confgiure timer value */
+                ? { isTimed: true, seconds: 30 } // TODO: Confgiure timer value
                 : { isTimed: false }
             }
             defaultWordLength={wordLength}
