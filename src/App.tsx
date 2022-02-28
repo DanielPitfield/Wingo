@@ -12,6 +12,12 @@ import { SaveData } from "./SaveData";
 
 const wordLength = 5;
 const numGuesses = 6;
+
+const wordLength_increasing = 4;
+const wordLength_limitless = 4;
+const wordLength_puzzle = 10;
+
+const numGuesses_puzzle = 1;
 const puzzleRevealMs = 2000;
 const puzzleLeaveNumBlanks = 3;
 
@@ -55,7 +61,6 @@ export const App: React.FC = () => {
     window.setTimeout(() => setPage("lobby"), 2500); // Change to "home"
   }, [saveData]);
 
-
   const pageComponent = (() => {
     const commonProps = {
       saveData: saveData,
@@ -76,6 +81,11 @@ export const App: React.FC = () => {
       case "lobby":
         return (
           <LobbyMenu
+            /**
+             * Updates game type configurations
+             * @param value Checkbox checked (true) or not checked (false)
+             * @param Page The page for the game type which options have just changed
+             */
             firstLetterToggle={(value, Page) => {
               setgameOptionToggles(
                 gameOptionToggles.map((x) => {
@@ -129,7 +139,7 @@ export const App: React.FC = () => {
             }
             timerConfig={
               gameOptionToggles.find((x) => x.page === "wordle_repeat")?.timer
-                ? { isTimed: true, seconds: 30 }
+                ? { isTimed: true, seconds: 30 } /* TODO: Confgiure timer value */
                 : { isTimed: false }
             }
             defaultWordLength={wordLength}
@@ -151,11 +161,11 @@ export const App: React.FC = () => {
                 ? { isTimed: true, seconds: 30 }
                 : { isTimed: false }
             }
-            defaultWordLength={4}
+            defaultWordLength={wordLength_increasing}
           />
         );
 
-        case "wordle_limitless":
+      case "wordle_limitless":
         return (
           <WordleConfig
             {...commonProps}
@@ -170,7 +180,7 @@ export const App: React.FC = () => {
                 ? { isTimed: true, seconds: 30 }
                 : { isTimed: false }
             }
-            defaultWordLength={4}
+            defaultWordLength={wordLength_limitless}
           />
         );
 
@@ -188,8 +198,8 @@ export const App: React.FC = () => {
                 ? { isTimed: true, seconds: 30 }
                 : { isTimed: false }
             }
-            defaultWordLength={10}
-            defaultnumGuesses={1}
+            defaultWordLength={wordLength_puzzle}
+            defaultnumGuesses={numGuesses_puzzle}
           />
         );
 

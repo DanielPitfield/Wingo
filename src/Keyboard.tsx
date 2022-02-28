@@ -25,6 +25,7 @@ export const Keyboard: React.FC<Props> = (props) => {
       } else if (input_key === "backspace") {
         props.onBackspace();
       } else if (Alphabet.includes(input_key)) {
+        // Any letter on the keyboard
         props.onSubmitLetter(input_key);
       }
     };
@@ -35,11 +36,12 @@ export const Keyboard: React.FC<Props> = (props) => {
   }, [props.onEnter, props.onBackspace, props.onSubmitLetter]);
 
   function populateKeyboard(RowString: string) {
+    // Adds a button for every letter within the provided string
     var KeyboardButtons = [];
     const RowLetters = RowString.split("");
 
     for (let i = 0; i < RowLetters.length; i++) {
-      /* Adds a button for every letter within the provided string, this letter is then used within a callback function (when clicked) */
+      // Find status (correct, not in word, wrong position)
       const letterStatus = props.letterStatuses.find(
         (x) => x.letter.toUpperCase() === RowLetters[i].toUpperCase()
       )?.status;
@@ -48,8 +50,10 @@ export const Keyboard: React.FC<Props> = (props) => {
         <Button
           key={i}
           mode="default"
+          // Data attribute used to colour button
           status={letterStatus}
           onClick={(e) =>
+            // Letter of button is used within a callback function
             props.onSubmitLetter((e.target as HTMLButtonElement).innerText)
           }
         >

@@ -3,7 +3,6 @@ import "./App.css";
 import { Keyboard } from "./Keyboard";
 import { Page } from "./App";
 import { WordRow } from "./WordRow";
-import { Logo } from "./Logo";
 import { Button } from "./Button";
 import { MessageNotification } from "./MessageNotification";
 import ProgressBar from "./ProgressBar";
@@ -50,12 +49,12 @@ interface Props {
 }
 
 const Wordle: React.FC<Props> = (props) => {
-  /* Create grid of rows (for guessing words) */
+  // Create grid of rows (for guessing words)
   function populateGrid(rowNumber: number, wordLength: number) {
     var Grid = [];
 
     if (props.mode === "puzzle") {
-      /* Create read only WordRow that slowly reveals puzzle word */
+      // Create read only WordRow that slowly reveals puzzle word
       let displayWord = "";
 
       for (let i = 0; i < props.targetWord.length; i++) {
@@ -119,7 +118,7 @@ const Wordle: React.FC<Props> = (props) => {
         ></WordRow>
       );
 
-      /* Push another WordRow for interlinked gamemode */
+      // Push another WordRow for interlinked gamemode
       if (props.mode === "interlinked") {
         Grid.push(
           <WordRow
@@ -142,10 +141,12 @@ const Wordle: React.FC<Props> = (props) => {
   }
 
   function displayOutcome() {
+    // Game still in progress, don't display anything
     if (props.inProgress) {
       return;
     }
 
+    // Invalid word (wrong spelling)
     if (!props.inDictionary) {
       return (
         <MessageNotification type="error">
@@ -158,14 +159,18 @@ const Wordle: React.FC<Props> = (props) => {
       );
     }
 
+    // The number of rows not used in guessing word
     const newLives = props.numGuesses - (props.wordIndex + 1);
+
     if (props.mode === "limitless") {
+      // Word guessed with rows to spare
       if (newLives > 0) {
         return (
           <MessageNotification type="success">
             <strong>+{newLives}</strong> lives
           </MessageNotification>
         );
+        // Word guessed with last guess
       } else if (
         props.currentWord.toUpperCase() === props.targetWord.toUpperCase()
       ) {
@@ -174,6 +179,7 @@ const Wordle: React.FC<Props> = (props) => {
             <strong>No lives added</strong>
           </MessageNotification>
         );
+        // Word was not guessed
       } else {
         return (
           <MessageNotification type="default">
@@ -185,6 +191,7 @@ const Wordle: React.FC<Props> = (props) => {
       }
     }
 
+    // Other modes
     if (
       props.wordIndex === 0 &&
       props.currentWord.toUpperCase() === props.targetWord.toUpperCase()
