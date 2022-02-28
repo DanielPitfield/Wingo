@@ -191,13 +191,16 @@ const WordleConfig: React.FC<Props> = (props) => {
 
           // Keep looping to find a random index that hasn't been used yet
           do {
-            newIndex = Math.round(Math.random() * targetWord!.length - 1);
+            newIndex = Math.round(Math.random() * (targetWord!.length - 1));
           } while (revealedLetterIndexes.includes(newIndex));
 
           // Reveal a random letter
-          newrevealedLetterIndexes.push(newIndex);
+          if (newIndex >= 0 && newIndex <= props.defaultWordLength - 1) {
+            // Check index is in the range (0, wordLength-1)
+            newrevealedLetterIndexes.push(newIndex);
+          }
         }
-
+        console.log(revealedLetterIndexes);
         setRevealedLetterIndexes(newrevealedLetterIndexes);
       }, props.puzzleRevealMs);
     }

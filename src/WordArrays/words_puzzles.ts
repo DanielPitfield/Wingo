@@ -33,7 +33,7 @@ export const wordHintMappings = [
     { word: "chopsticks", hint: "Eating utensils used especially by the Chinese and Japanese" },
     { word: "cloudburst", hint: "Extreme rain in a very short amount of time" },
     { word: "collection", hint: "This answer is a group of things" },
-    { word: "comesitble", hint: "This answer describes an something which can be eaten, similar to edible" },
+    { word: "comestible", hint: "This answer describes an something which can be eaten, similar to edible" },
     { word: "commercial", hint: "This answer intends to make a profit" },
     { word: "commission", hint: "A car salesman might get this answer for each time they sell a car" },
     { word: "commitment", hint: "This answer is sure to not give up" },
