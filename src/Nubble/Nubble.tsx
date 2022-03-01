@@ -142,6 +142,26 @@ const Nubble: React.FC<Props> = (props) => {
   }
 
   function getValidValues(): number[] {
+    // --- OPERATORS (+ - / *) ---
+    const operators = [
+      {
+        name: "division",
+        function: (num1: number, num2: number): number => num1 / num2,
+      },
+      {
+        name: "multiplication",
+        function: (num1: number, num2: number): number => num1 * num2,
+      },
+      {
+        name: "addition",
+        function: (num1: number, num2: number): number => num1 + num2,
+      },
+      {
+        name: "subtraction",
+        function: (num1: number, num2: number): number => num1 - num2,
+      },
+    ];
+
     // Returns permutations of input array, https://stackoverflow.com/a/20871714
     function permutator<T>(inputArr: T[]): T[][] {
       let result: any[] = [];
@@ -163,38 +183,54 @@ const Nubble: React.FC<Props> = (props) => {
       return result;
     }
 
-    const operators = [
-      {
-        name: "division",
-        function: (num1: number, num2: number): number => num1 / num2,
-      },
-      {
-        name: "multiplication",
-        function: (num1: number, num2: number): number => num1 * num2,
-      },
-      {
-        name: "addition",
-        function: (num1: number, num2: number): number => num1 + num2,
-      },
-      {
-        name: "subtraction",
-        function: (num1: number, num2: number): number => num1 - num2,
-      },
-    ];
+    // This does not include permutations having the same operator more than once
+    const operatorPermutations_no_repeats = permutator(operators);
 
-    // --- OPERATORS (+ - / *) ---
+    // https://stackoverflow.com/questions/32543936/combination-with-repetition
+    function combRep(
+      arr: { name: string; function: (num1: number, num2: number) => number }[],
+      l: number
+    ) {
+      if (l === void 0) l = arr.length; // Length of the combinations
+      var data = Array(l), // Used to store state
+        results = []; // Array of results
+      (function f(pos, start) {
+        // Recursive function
+        if (pos === l) {
+          // End reached
+          results.push(data.slice()); // Add a copy of data to results
+          return;
+        }
+        for (var i = start; i < arr.length; ++i) {
+          data[pos] = arr[i]; // Update data
+          f(pos + 1, i); // Call f recursively
+        }
+      })(0, 0); // Start at index 0
+      return results; // Return results
+    }
 
-    const operatorPermutations = permutator(operators);
+    const operatorPermutations_repeats_4 = combRep(operators, 4);
+    const operatorPermutations_repeats_3 = combRep(operators, 3);
+    const operatorPermutations_repeats_2 = combRep(operators, 2);
+    const operatorPermutations_repeats_1 = combRep(operators, 1);
 
-    // Start new array as copy of progress so far (operatorPermutations)
+    // Combine permutations  with and without repetition of operators (results from both the functions)
+    const operatorPermutations = operatorPermutations_no_repeats.concat(
+      operatorPermutations_repeats_4,
+      operatorPermutations_repeats_3,
+      operatorPermutations_repeats_2,
+      operatorPermutations_repeats_1
+    );
+
+    // Make a copy of all the unique permutations so far
     const operatorSubsetPermutations = new Set(operatorPermutations.slice());
 
     for (let i = 0; i < operatorPermutations.length; i++) {
-      // 3 value subset
+      // 3 value subsets
       operatorSubsetPermutations.add(operatorPermutations[i].slice(0, 3));
-      // 2 value subset
+      // 2 value subsets
       operatorSubsetPermutations.add(operatorPermutations[i].slice(0, 2));
-      // 1 value subset
+      // 1 value subsets
       operatorSubsetPermutations.add([operatorPermutations[i][0]]);
     }
 
@@ -203,9 +239,14 @@ const Nubble: React.FC<Props> = (props) => {
       operatorSubsetPermutations
     ).filter((x) => x.length <= 3);
 
+    // Use set again to return only unique permutations
+    const operatorPermutations_all = new Set(
+      operatorSubsetPermutationsFiltered.slice()
+    );
+
     // --- OPERANDS (1-6) ---
 
-    // The different permutations of the 4 dice values
+    // All the different permutations of the 4 dice values
     const operandPermutations = permutator(diceValues);
 
     // Start new array as copy of progress so far (operandPermutations)
@@ -223,14 +264,13 @@ const Nubble: React.FC<Props> = (props) => {
     // Write out all the operators and operands together (mathematical evaluations)
     var combinations = [];
     for (let i = 0; i < Array.from(operandSubsetPermutations).length; i++) {
-      for (let j = 0; j < operatorSubsetPermutationsFiltered.length; j++) {
+      for (let j = 0; j < Array.from(operatorPermutations_all).length; j++) {
         combinations.push({
           operands: Array.from(operandSubsetPermutations)[i],
-          operators: operatorSubsetPermutationsFiltered[j],
+          operators: Array.from(operatorPermutations_all)[j],
         });
       }
     }
-    //console.log(combinations);
 
     // Compute the end result of every combination
     var calculatedValues = new Set<number>();
@@ -238,23 +278,31 @@ const Nubble: React.FC<Props> = (props) => {
       if (combinations[i].operands.length === 1) {
         // Only one number
         calculatedValues.add(combinations[i].operands[0]); // That number is valid
-      } else if (combinations[i].operands.length === 2 && combinations[i].operators.length === 1) {
+      } else if (
+        combinations[i].operands.length === 2 &&
+        combinations[i].operators.length === 1
+      ) {
         const firstNum = combinations[i].operands[0];
         const secondNum = combinations[i].operands[1];
         const firstOperator = combinations[i].operators[0];
         const result = firstOperator.function(firstNum, secondNum);
         calculatedValues.add(result);
-      } else if (combinations[i].operands.length === 3 && combinations[i].operators.length === 2) {
+      } else if (
+        combinations[i].operands.length === 3 &&
+        combinations[i].operators.length === 2
+      ) {
         const firstNum = combinations[i].operands[0];
         const secondNum = combinations[i].operands[1];
         const thirdNum = combinations[i].operands[2];
         const firstOperator = combinations[i].operators[0];
         const secondOperator = combinations[i].operators[1];
         const firstCalculation = firstOperator.function(firstNum, secondNum);
-        const result = secondOperator.function(firstCalculation, thirdNum)
+        const result = secondOperator.function(firstCalculation, thirdNum);
         calculatedValues.add(result);
-      }
-      else if (combinations[i].operands.length === 4 && combinations[i].operators.length === 3) {
+      } else if (
+        combinations[i].operands.length === 4 &&
+        combinations[i].operators.length === 3
+      ) {
         const firstNum = combinations[i].operands[0];
         const secondNum = combinations[i].operands[1];
         const thirdNum = combinations[i].operands[2];
@@ -263,14 +311,19 @@ const Nubble: React.FC<Props> = (props) => {
         const secondOperator = combinations[i].operators[1];
         const thirdOperator = combinations[i].operators[2];
         const firstCalculation = firstOperator.function(firstNum, secondNum);
-        const secondCalculation = secondOperator.function(firstCalculation, thirdNum);
+        const secondCalculation = secondOperator.function(
+          firstCalculation,
+          thirdNum
+        );
         const result = thirdOperator.function(secondCalculation, fourthNum);
         calculatedValues.add(result);
       }
     }
 
     // Remove results which aren't integers or are outside range of (0, gridSize)
-    const validValues = Array.from(calculatedValues).filter(x => x > 0 && x <= props.gridSize && (Math.round(x) === x));
+    const validValues = Array.from(calculatedValues).filter(
+      (x) => x > 0 && x <= props.gridSize && Math.round(x) === x
+    );
     console.log(validValues);
 
     return Array.from(validValues);
