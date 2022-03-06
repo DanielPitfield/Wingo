@@ -209,14 +209,15 @@ const Nubble: React.FC<Props> = (props) => {
       return results; // Return results
     }
 
-    const operatorPermutations_repeats_4 = combRep(operators, 4);
     const operatorPermutations_repeats_3 = combRep(operators, 3);
     const operatorPermutations_repeats_2 = combRep(operators, 2);
+
+    console.log(operatorPermutations_repeats_2);
+
     const operatorPermutations_repeats_1 = combRep(operators, 1);
 
     // Combine permutations  with and without repetition of operators (results from both the functions)
     const operatorPermutations = operatorPermutations_no_repeats.concat(
-      operatorPermutations_repeats_4,
       operatorPermutations_repeats_3,
       operatorPermutations_repeats_2,
       operatorPermutations_repeats_1
@@ -280,7 +281,7 @@ const Nubble: React.FC<Props> = (props) => {
         calculatedValues.add(combinations[i].operands[0]); // That number is valid
       } else if (
         combinations[i].operands.length === 2 &&
-        combinations[i].operators.length === 1
+        combinations[i].operators.length >= 1
       ) {
         const firstNum = combinations[i].operands[0];
         const secondNum = combinations[i].operands[1];
@@ -289,7 +290,7 @@ const Nubble: React.FC<Props> = (props) => {
         calculatedValues.add(result);
       } else if (
         combinations[i].operands.length === 3 &&
-        combinations[i].operators.length === 2
+        combinations[i].operators.length >= 2
       ) {
         const firstNum = combinations[i].operands[0];
         const secondNum = combinations[i].operands[1];
@@ -301,7 +302,7 @@ const Nubble: React.FC<Props> = (props) => {
         calculatedValues.add(result);
       } else if (
         combinations[i].operands.length === 4 &&
-        combinations[i].operators.length === 3
+        combinations[i].operators.length >= 3
       ) {
         const firstNum = combinations[i].operands[0];
         const secondNum = combinations[i].operands[1];
@@ -324,7 +325,7 @@ const Nubble: React.FC<Props> = (props) => {
     const validValues = Array.from(calculatedValues).filter(
       (x) => x > 0 && x <= props.gridSize && Math.round(x) === x
     );
-    console.log(validValues);
+    //console.log(validValues);
 
     return Array.from(validValues);
   }
