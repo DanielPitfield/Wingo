@@ -142,31 +142,11 @@ const Nubble: React.FC<Props> = (props) => {
   }
 
   function getValidValues(): number[] {
-    // --- OPERATORS (+ - / *) ---
-    const operators = [
-      {
-        name: "division",
-        function: (num1: number, num2: number): number => num1 / num2,
-      },
-      {
-        name: "multiplication",
-        function: (num1: number, num2: number): number => num1 * num2,
-      },
-      {
-        name: "addition",
-        function: (num1: number, num2: number): number => num1 + num2,
-      },
-      {
-        name: "subtraction",
-        function: (num1: number, num2: number): number => num1 - num2,
-      },
-    ];
-
     // Returns permutations of input array, https://stackoverflow.com/a/20871714
     function permutator<T>(inputArr: T[]): T[][] {
       let result: any[] = [];
 
-      const permute = (arr: TextDecoderCommon[], m = []) => {
+      const permute = (arr: /* TODO: TextDecoderCommon? */ TextDecoderCommon[], m = []) => {
         if (arr.length === 0) {
           result.push(m);
         } else {
@@ -182,9 +162,6 @@ const Nubble: React.FC<Props> = (props) => {
 
       return result;
     }
-
-    // This does not include permutations having the same operator more than once
-    const operatorPermutations_no_repeats = permutator(operators);
 
     // https://stackoverflow.com/questions/32543936/combination-with-repetition
     function combRep(
@@ -209,19 +186,33 @@ const Nubble: React.FC<Props> = (props) => {
       return results; // Return results
     }
 
-    const operatorPermutations_repeats_3 = combRep(operators, 3);
-    const operatorPermutations_repeats_2 = combRep(operators, 2);
+    // --- OPERATORS (+ - / *) ---
+    const operators = [
+      {
+        name: "/",
+        function: (num1: number, num2: number): number => num1 / num2,
+      },
+      {
+        name: "*",
+        function: (num1: number, num2: number): number => num1 * num2,
+      },
+      {
+        name: "+",
+        function: (num1: number, num2: number): number => num1 + num2,
+      },
+      {
+        name: "-",
+        function: (num1: number, num2: number): number => num1 - num2,
+      },
+    ];
 
-    console.log(operatorPermutations_repeats_2);
+    // This does not include permutations having the same operator more than once
+    let operatorPermutations = permutator(operators);
 
-    const operatorPermutations_repeats_1 = combRep(operators, 1);
-
-    // Combine permutations  with and without repetition of operators (results from both the functions)
-    const operatorPermutations = operatorPermutations_no_repeats.concat(
-      operatorPermutations_repeats_3,
-      operatorPermutations_repeats_2,
-      operatorPermutations_repeats_1
-    );
+    // This adds permutations with repetition of operators
+    for (let i = 0; i < operators.length; i++) {
+      operatorPermutations.concat(combRep(operators, i));
+    }
 
     // Make a copy of all the unique permutations so far
     const operatorSubsetPermutations = new Set(operatorPermutations.slice());
@@ -240,11 +231,6 @@ const Nubble: React.FC<Props> = (props) => {
       operatorSubsetPermutations
     ).filter((x) => x.length <= 3);
 
-    // Use set again to return only unique permutations
-    const operatorPermutations_all = new Set(
-      operatorSubsetPermutationsFiltered.slice()
-    );
-
     // --- OPERANDS (1-6) ---
 
     // All the different permutations of the 4 dice values
@@ -262,62 +248,160 @@ const Nubble: React.FC<Props> = (props) => {
       operandSubsetPermutations.add([operandPermutations[i][0]]);
     }
 
-    // Write out all the operators and operands together (mathematical evaluations)
+    // Combine the permutations of operands and operators (not yet in reverse polish)
     var combinations = [];
     for (let i = 0; i < Array.from(operandSubsetPermutations).length; i++) {
-      for (let j = 0; j < Array.from(operatorPermutations_all).length; j++) {
+      for (
+        let j = 0;
+        j < Array.from(operatorSubsetPermutationsFiltered).length;
+        j++
+      ) {
         combinations.push({
           operands: Array.from(operandSubsetPermutations)[i],
-          operators: Array.from(operatorPermutations_all)[j],
+          operators: Array.from(operatorSubsetPermutationsFiltered)[j],
         });
       }
     }
 
-    // Compute the end result of every combination
-    var calculatedValues = new Set<number>();
+    // --- Reverse Polish Expressions ---
+
+    // TODO: polish_expressions_all, polish_expression - Types are absurd, must be a better way
+
+    // Array to store the polish_expression arrays
+    let polish_expressions_all: Array<
+      Array<
+        | { name: string; function: (num1: number, num2: number) => number }
+        | number
+      >
+    > = [];
+
     for (let i = 0; i < combinations.length; i++) {
+      // Define an array to push the operands and operators (as functions) to
+      var polish_expression: Array<
+        | { name: string; function: (num1: number, num2: number) => number }
+        | number
+      > = [];
+
       if (combinations[i].operands.length === 1) {
-        // Only one number
-        calculatedValues.add(combinations[i].operands[0]); // That number is valid
+        // Add just the number (example: 5)
+        polish_expression.push(combinations[i].operands[0]);
       } else if (
         combinations[i].operands.length === 2 &&
         combinations[i].operators.length >= 1
       ) {
-        const firstNum = combinations[i].operands[0];
-        const secondNum = combinations[i].operands[1];
-        const firstOperator = combinations[i].operators[0];
-        const result = firstOperator.function(firstNum, secondNum);
-        calculatedValues.add(result);
+        // Add the two numbers followed by operator (example: 5 2 +)
+        polish_expression.push(
+          combinations[i].operands[0],
+          combinations[i].operands[1],
+          combinations[i].operators[0]
+        );
       } else if (
         combinations[i].operands.length === 3 &&
         combinations[i].operators.length >= 2
       ) {
-        const firstNum = combinations[i].operands[0];
-        const secondNum = combinations[i].operands[1];
-        const thirdNum = combinations[i].operands[2];
-        const firstOperator = combinations[i].operators[0];
-        const secondOperator = combinations[i].operators[1];
-        const firstCalculation = firstOperator.function(firstNum, secondNum);
-        const result = secondOperator.function(firstCalculation, thirdNum);
-        calculatedValues.add(result);
+        // (example: 5 2 + 3 *)
+        polish_expression.push(
+          combinations[i].operands[0],
+          combinations[i].operands[1],
+          combinations[i].operators[0],
+          combinations[i].operands[2],
+          combinations[i].operators[1]
+        );
       } else if (
         combinations[i].operands.length === 4 &&
         combinations[i].operators.length >= 3
       ) {
-        const firstNum = combinations[i].operands[0];
-        const secondNum = combinations[i].operands[1];
-        const thirdNum = combinations[i].operands[2];
-        const fourthNum = combinations[i].operands[3];
-        const firstOperator = combinations[i].operators[0];
-        const secondOperator = combinations[i].operators[1];
-        const thirdOperator = combinations[i].operators[2];
-        const firstCalculation = firstOperator.function(firstNum, secondNum);
-        const secondCalculation = secondOperator.function(
-          firstCalculation,
-          thirdNum
+        // (example: 5 2 + 3 * 4 -)
+        polish_expression.push(
+          combinations[i].operands[0],
+          combinations[i].operands[1],
+          combinations[i].operators[0],
+          combinations[i].operands[2],
+          combinations[i].operators[1],
+          combinations[i].operands[3],
+          combinations[i].operators[2]
         );
-        const result = thirdOperator.function(secondCalculation, fourthNum);
-        calculatedValues.add(result);
+      }
+
+      // Push expression to higher level array
+      polish_expressions_all.push(polish_expression);
+    }
+
+    // Remove empty unformed polish expressions
+    polish_expressions_all = Array.from(polish_expressions_all).filter(
+      (x) => x.length >= 1
+    );
+
+    // --- Evaluating Expressions ---
+    var calculatedValues = new Set<number>();
+
+    for (let i = 0; i < polish_expressions_all.length; i++) {
+      const expression = polish_expressions_all[i];
+
+      if (expression.length === 1) {
+        if (typeof expression[0] === "number") {
+          const firstNum = expression[0];
+
+          const result = firstNum;
+          calculatedValues.add(result);
+        }
+      } else if (expression.length === 3) {
+        if (
+          typeof expression[0] === "number" &&
+          typeof expression[1] === "number" &&
+          typeof expression[2] !== "number"
+        ) {
+          const firstNum = expression[0];
+          const secondNum = expression[1];
+          const firstOperator = expression[2];
+
+          const result = firstOperator.function(firstNum, secondNum);
+          calculatedValues.add(result);
+        }
+      } else if (expression.length === 5) {
+        if (
+          typeof expression[0] === "number" &&
+          typeof expression[1] === "number" &&
+          typeof expression[2] !== "number" &&
+          typeof expression[3] === "number" &&
+          typeof expression[4] !== "number"
+        ) {
+          const firstNum = expression[0];
+          const secondNum = expression[1];
+          const firstOperator = expression[2];
+          const thirdNum = expression[3];
+          const secondOperator = expression[4];
+
+          const firstCalculation = firstOperator.function(firstNum, secondNum);
+          const result = secondOperator.function(firstCalculation, thirdNum);
+          calculatedValues.add(result);
+        }
+      } else if (expression.length === 7) {
+        if (
+          typeof expression[0] === "number" &&
+          typeof expression[1] === "number" &&
+          typeof expression[2] !== "number" &&
+          typeof expression[3] === "number" &&
+          typeof expression[4] !== "number" &&
+          typeof expression[5] === "number" &&
+          typeof expression[6] !== "number"
+        ) {
+          const firstNum = expression[0];
+          const secondNum = expression[1];
+          const firstOperator = expression[2];
+          const thirdNum = expression[3];
+          const secondOperator = expression[4];
+          const fourthNum = expression[5];
+          const thirdOperator = expression[6];
+
+          const firstCalculation = firstOperator.function(firstNum, secondNum);
+          const secondCalculation = secondOperator.function(
+            firstCalculation,
+            thirdNum
+          );
+          const result = thirdOperator.function(secondCalculation, fourthNum);
+          calculatedValues.add(result);
+        }
       }
     }
 
@@ -325,7 +409,9 @@ const Nubble: React.FC<Props> = (props) => {
     const validValues = Array.from(calculatedValues).filter(
       (x) => x > 0 && x <= props.gridSize && Math.round(x) === x
     );
-    //console.log(validValues);
+
+    // TODO: validValues still missing values
+    console.log(validValues);
 
     return Array.from(validValues);
   }
