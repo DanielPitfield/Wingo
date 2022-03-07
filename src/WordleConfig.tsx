@@ -133,7 +133,7 @@ const WordleConfig: React.FC<Props> = (props) => {
     }
   }, [targetWord, currentWord, guesses, wordIndex, inProgress]);
 
-  // TODO: Doucment this useEffect()
+  // Updates letter status of previous attempts of daily word
   React.useEffect(() => {
     const letterStatusesCopy = letterStatuses.slice();
 

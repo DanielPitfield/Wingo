@@ -146,14 +146,17 @@ const Nubble: React.FC<Props> = (props) => {
     function permutator<T>(inputArr: T[]): T[][] {
       let result: any[] = [];
 
-      const permute = (arr: /* TODO: TextDecoderCommon? */ TextDecoderCommon[], m = []) => {
+      const permute = (
+        arr: [],
+        m = []
+      ) => {
         if (arr.length === 0) {
           result.push(m);
         } else {
           for (let i = 0; i < arr.length; i++) {
             let curr = arr.slice();
             let next = curr.splice(i, 1);
-            permute(curr.slice(), m.concat(next as any));
+            permute(curr.slice() as any, m.concat(next as any));
           }
         }
       };
@@ -324,8 +327,22 @@ const Nubble: React.FC<Props> = (props) => {
           combinations[i].operands[3],
           combinations[i].operators[2]
         );
-      }
 
+        polish_expressions_all.push(polish_expression); // Push this
+        polish_expression = []; // Clear for second type of expression with this length
+
+        // (example: 2 1 + 5 4 * *)
+        polish_expression.push(
+          combinations[i].operands[0],
+          combinations[i].operands[1],
+          combinations[i].operators[0],
+          combinations[i].operands[2],
+          combinations[i].operands[3],
+          combinations[i].operators[1],
+          combinations[i].operators[2]
+        );
+        console.log(polish_expression);        
+      }
       // Push expression to higher level array
       polish_expressions_all.push(polish_expression);
     }
@@ -404,6 +421,33 @@ const Nubble: React.FC<Props> = (props) => {
           );
           const result = thirdOperator.function(secondCalculation, fourthNum);
           calculatedValues.add(result);
+        } else if (
+          typeof expression[0] === "number" &&
+          typeof expression[1] === "number" &&
+          typeof expression[2] !== "number" &&
+          typeof expression[3] === "number" &&
+          typeof expression[4] === "number" &&
+          typeof expression[5] !== "number" &&
+          typeof expression[6] !== "number"
+        ) {
+          const firstNum = expression[0];
+          const secondNum = expression[1];
+          const firstOperator = expression[2];
+          const thirdNum = expression[3];
+          const fourthNum = expression[4];
+          const secondOperator = expression[5];
+          const thirdOperator = expression[6];
+
+          const firstCalculation = firstOperator.function(firstNum, secondNum);
+          const secondCalculation = secondOperator.function(
+            thirdNum,
+            fourthNum
+          );
+          const result = thirdOperator.function(
+            firstCalculation,
+            secondCalculation
+          );
+          calculatedValues.add(result);
         }
       }
     }
@@ -414,19 +458,6 @@ const Nubble: React.FC<Props> = (props) => {
     );
 
     // TODO: validValues still missing values
-
-    /*
-    The following permutations are not yet included
-
-    21+54**
-
-    3
-    20
-    *
-    = 60
-
-    */
-   
     console.log(validValues);
 
     return Array.from(validValues);
