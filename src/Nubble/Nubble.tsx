@@ -210,8 +210,11 @@ const Nubble: React.FC<Props> = (props) => {
     let operatorPermutations = permutator(operators);
 
     // This adds permutations with repetition of operators
-    for (let i = 0; i < operators.length; i++) {
-      operatorPermutations.concat(combRep(operators, i));
+    for (let i = 1; i <= operators.length; i++) {
+      // Array of permutations of length i
+      let newPermutations = combRep(operators, i);
+      // Add on to operatorPermutations array
+      operatorPermutations = operatorPermutations.concat(newPermutations);
     }
 
     // Make a copy of all the unique permutations so far
@@ -287,7 +290,7 @@ const Nubble: React.FC<Props> = (props) => {
         polish_expression.push(combinations[i].operands[0]);
       } else if (
         combinations[i].operands.length === 2 &&
-        combinations[i].operators.length >= 1
+        combinations[i].operators.length === 1
       ) {
         // Add the two numbers followed by operator (example: 5 2 +)
         polish_expression.push(
@@ -297,7 +300,7 @@ const Nubble: React.FC<Props> = (props) => {
         );
       } else if (
         combinations[i].operands.length === 3 &&
-        combinations[i].operators.length >= 2
+        combinations[i].operators.length === 2
       ) {
         // (example: 5 2 + 3 *)
         polish_expression.push(
@@ -309,7 +312,7 @@ const Nubble: React.FC<Props> = (props) => {
         );
       } else if (
         combinations[i].operands.length === 4 &&
-        combinations[i].operators.length >= 3
+        combinations[i].operators.length === 3
       ) {
         // (example: 5 2 + 3 * 4 -)
         polish_expression.push(
@@ -327,7 +330,7 @@ const Nubble: React.FC<Props> = (props) => {
       polish_expressions_all.push(polish_expression);
     }
 
-    // Remove empty unformed polish expressions
+    // Remove empty/unformed polish expressions
     polish_expressions_all = Array.from(polish_expressions_all).filter(
       (x) => x.length >= 1
     );
@@ -411,6 +414,19 @@ const Nubble: React.FC<Props> = (props) => {
     );
 
     // TODO: validValues still missing values
+
+    /*
+    The following permutations are not yet included
+
+    21+54**
+
+    3
+    20
+    *
+    = 60
+
+    */
+   
     console.log(validValues);
 
     return Array.from(validValues);
