@@ -146,10 +146,7 @@ const Nubble: React.FC<Props> = (props) => {
     function permutator<T>(inputArr: T[]): T[][] {
       let result: any[] = [];
 
-      const permute = (
-        arr: [],
-        m = []
-      ) => {
+      const permute = (arr: [], m = []) => {
         if (arr.length === 0) {
           result.push(m);
         } else {
@@ -283,68 +280,60 @@ const Nubble: React.FC<Props> = (props) => {
 
     for (let i = 0; i < combinations.length; i++) {
       // Define an array to push the operands and operators (as functions) to
-      var polish_expression: Array<
-        | { name: string; function: (num1: number, num2: number) => number }
-        | number
-      > = [];
 
       if (combinations[i].operands.length === 1) {
         // Add just the number (example: 5)
-        polish_expression.push(combinations[i].operands[0]);
+        polish_expressions_all.push([combinations[i].operands[0]]);
       } else if (
         combinations[i].operands.length === 2 &&
         combinations[i].operators.length === 1
       ) {
         // Add the two numbers followed by operator (example: 5 2 +)
-        polish_expression.push(
+        polish_expressions_all.push([
           combinations[i].operands[0],
           combinations[i].operands[1],
-          combinations[i].operators[0]
-        );
+          combinations[i].operators[0],
+        ]);
       } else if (
         combinations[i].operands.length === 3 &&
         combinations[i].operators.length === 2
       ) {
         // (example: 5 2 + 3 *)
-        polish_expression.push(
+        polish_expressions_all.push([
           combinations[i].operands[0],
           combinations[i].operands[1],
           combinations[i].operators[0],
           combinations[i].operands[2],
-          combinations[i].operators[1]
-        );
+          combinations[i].operators[1],
+        ]);
       } else if (
         combinations[i].operands.length === 4 &&
         combinations[i].operators.length === 3
       ) {
         // (example: 5 2 + 3 * 4 -)
-        polish_expression.push(
+        polish_expressions_all.push([
           combinations[i].operands[0],
           combinations[i].operands[1],
           combinations[i].operators[0],
           combinations[i].operands[2],
           combinations[i].operators[1],
           combinations[i].operands[3],
-          combinations[i].operators[2]
-        );
-
-        polish_expressions_all.push(polish_expression); // Push this
-        polish_expression = []; // Clear for second type of expression with this length
+          combinations[i].operators[2],
+        ]);
 
         // (example: 2 1 + 5 4 * *)
-        polish_expression.push(
+        polish_expressions_all.push([
           combinations[i].operands[0],
           combinations[i].operands[1],
           combinations[i].operators[0],
           combinations[i].operands[2],
           combinations[i].operands[3],
           combinations[i].operators[1],
-          combinations[i].operators[2]
-        );
-        console.log(polish_expression);        
+          combinations[i].operators[2],
+        ]);
+      } else {
+        //
       }
-      // Push expression to higher level array
-      polish_expressions_all.push(polish_expression);
     }
 
     // Remove empty/unformed polish expressions
@@ -355,98 +344,149 @@ const Nubble: React.FC<Props> = (props) => {
     // --- Evaluating Expressions ---
     var calculatedValues = new Set<number>();
 
+    // Check whether expression part is an operator
+    function isOperator(
+      expression_part:
+        | { name: string; function: (num1: number, num2: number) => number }
+        | number
+    ): boolean {
+      return typeof expression_part !== "number";
+    }
+
+    // Check whether expression part is an operand (number)
+    function isOperand(
+      expression_part:
+        | { name: string; function: (num1: number, num2: number) => number }
+        | number
+    ): boolean {
+      return typeof expression_part === "number";
+    }
+
+    // Check whether expression skeleton matches with provided expression
+    function checkSkeleton(
+      expression: any[],
+      skeleton: ((expression_part: any) => boolean)[]
+    ): boolean {
+      for (let i = 0; i < expression.length; i++) {
+        if (!skeleton[i](expression[i])) {
+          return false; // Skeleton part different from expression part
+        }
+      }
+
+      return true;
+    }
+
     for (let i = 0; i < polish_expressions_all.length; i++) {
       const expression = polish_expressions_all[i];
 
       if (expression.length === 1) {
-        if (typeof expression[0] === "number") {
-          const firstNum = expression[0];
+        if (checkSkeleton(expression, [isOperand])) {
+          const [firstNum] = expression;
 
           const result = firstNum;
-          calculatedValues.add(result);
+          calculatedValues.add(result as any);
         }
       } else if (expression.length === 3) {
-        if (
-          typeof expression[0] === "number" &&
-          typeof expression[1] === "number" &&
-          typeof expression[2] !== "number"
-        ) {
-          const firstNum = expression[0];
-          const secondNum = expression[1];
-          const firstOperator = expression[2];
+        if (checkSkeleton(expression, [isOperand, isOperand, isOperator])) {
+          const [firstNum, secondNum, firstOperator] = expression;
 
-          const result = firstOperator.function(firstNum, secondNum);
+          const result = (firstOperator as any).function(firstNum, secondNum);
           calculatedValues.add(result);
         }
       } else if (expression.length === 5) {
         if (
-          typeof expression[0] === "number" &&
-          typeof expression[1] === "number" &&
-          typeof expression[2] !== "number" &&
-          typeof expression[3] === "number" &&
-          typeof expression[4] !== "number"
+          checkSkeleton(expression, [
+            isOperand,
+            isOperand,
+            isOperator,
+            isOperand,
+            isOperator,
+          ])
         ) {
-          const firstNum = expression[0];
-          const secondNum = expression[1];
-          const firstOperator = expression[2];
-          const thirdNum = expression[3];
-          const secondOperator = expression[4];
+          const [firstNum, secondNum, firstOperator, thirdNum, secondOperator] =
+            expression;
 
-          const firstCalculation = firstOperator.function(firstNum, secondNum);
-          const result = secondOperator.function(firstCalculation, thirdNum);
+          const firstCalculation = (firstOperator as any).function(
+            firstNum,
+            secondNum
+          );
+          const result = (secondOperator as any).function(
+            firstCalculation,
+            thirdNum
+          );
           calculatedValues.add(result);
         }
       } else if (expression.length === 7) {
         if (
-          typeof expression[0] === "number" &&
-          typeof expression[1] === "number" &&
-          typeof expression[2] !== "number" &&
-          typeof expression[3] === "number" &&
-          typeof expression[4] !== "number" &&
-          typeof expression[5] === "number" &&
-          typeof expression[6] !== "number"
+          checkSkeleton(expression, [
+            isOperand,
+            isOperand,
+            isOperator,
+            isOperand,
+            isOperator,
+            isOperand,
+            isOperator,
+          ])
         ) {
-          const firstNum = expression[0];
-          const secondNum = expression[1];
-          const firstOperator = expression[2];
-          const thirdNum = expression[3];
-          const secondOperator = expression[4];
-          const fourthNum = expression[5];
-          const thirdOperator = expression[6];
+          const [
+            firstNum,
+            secondNum,
+            firstOperator,
+            thirdNum,
+            secondOperator,
+            fourthNum,
+            thirdOperator,
+          ] = expression;
 
-          const firstCalculation = firstOperator.function(firstNum, secondNum);
-          const secondCalculation = secondOperator.function(
+          const firstCalculation = (firstOperator as any).function(
+            firstNum,
+            secondNum
+          );
+          const secondCalculation = (secondOperator as any).function(
             firstCalculation,
             thirdNum
           );
-          const result = thirdOperator.function(secondCalculation, fourthNum);
+          const result = (thirdOperator as any).function(
+            secondCalculation,
+            fourthNum
+          );
           calculatedValues.add(result);
         } else if (
-          typeof expression[0] === "number" &&
-          typeof expression[1] === "number" &&
-          typeof expression[2] !== "number" &&
-          typeof expression[3] === "number" &&
-          typeof expression[4] === "number" &&
-          typeof expression[5] !== "number" &&
-          typeof expression[6] !== "number"
+          checkSkeleton(expression, [
+            isOperand,
+            isOperand,
+            isOperator,
+            isOperand,
+            isOperand,
+            isOperator,
+            isOperator,
+          ])
         ) {
-          const firstNum = expression[0];
-          const secondNum = expression[1];
-          const firstOperator = expression[2];
-          const thirdNum = expression[3];
-          const fourthNum = expression[4];
-          const secondOperator = expression[5];
-          const thirdOperator = expression[6];
+          const [
+            firstNum,
+            secondNum,
+            firstOperator,
+            thirdNum,
+            fourthNum,
+            secondOperator,
+            thirdOperator,
+          ] = expression;
 
-          const firstCalculation = firstOperator.function(firstNum, secondNum);
-          const secondCalculation = secondOperator.function(
+          const firstCalculation = (firstOperator as any).function(
+            firstNum,
+            secondNum
+          );
+
+          const secondCalculation = (secondOperator as any).function(
             thirdNum,
             fourthNum
           );
-          const result = thirdOperator.function(
+
+          const result = (thirdOperator as any).function(
             firstCalculation,
             secondCalculation
           );
+
           calculatedValues.add(result);
         }
       }

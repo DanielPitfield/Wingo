@@ -445,6 +445,7 @@ const WordleConfig: React.FC<Props> = (props) => {
       | "not set"
       | "not in word";
 
+    // TODO: Words like STILL, how is status with two of the same letter handled
     if (!inDictionary) {
       // Red
       status = "incorrect";
