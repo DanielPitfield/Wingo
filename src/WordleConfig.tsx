@@ -42,6 +42,67 @@ const wordLengthMappings = [
   { value: 11, array: words_eleven },
 ];
 
+export function getWordSummary(word: string, targetWord: string, inDictionary: boolean) {
+  // Character and status array
+  let defaultCharacterStatuses = word.split("").map((character, index) => ({
+    character: character,
+    status: getLetterStatus(character, index, targetWord, inDictionary),
+  }));
+  let finalCharacterStatuses = defaultCharacterStatuses.map((x, index) => {
+    // If there is a green tile of a letter, don't show any orange tiles
+    if (
+      x.status === "contains" &&
+      defaultCharacterStatuses.some(
+        (y) => y.character === x.character && y.status === "correct"
+      )
+    ) {
+      x.status = "not in word";
+    }
+    // Only ever show 1 orange tile of each letter
+    if (
+      x.status === "contains" &&
+      defaultCharacterStatuses.findIndex(
+        (y) => y.character === x.character && y.status === "contains"
+      ) != index
+    ) {
+      x.status = "not in word";
+    }
+    return x;
+  });
+  return finalCharacterStatuses;
+}
+
+export function getLetterStatus(
+  letter: string,
+  index: number,
+  targetWord: string,
+  inDictionary: boolean
+  
+): "incorrect" | "contains" | "correct" | "not set" | "not in word" {
+  var status:
+    | "incorrect"
+    | "contains"
+    | "correct"
+    | "not set"
+    | "not in word";
+
+  if (!inDictionary) {
+    // Red
+    status = "incorrect";
+  } else if (targetWord?.[index]?.toUpperCase() === letter?.toUpperCase()) {
+    // Green
+    status = "correct";
+  } else if (targetWord?.toUpperCase().includes(letter?.toUpperCase())) {
+    // Yellow
+    status = "contains";
+  } else {
+    // Grey
+    status = "not in word";
+  }
+
+  return status;
+}
+
 const WordleConfig: React.FC<Props> = (props) => {
   const [guesses, setGuesses] = useState<string[]>([]);
   const [numGuesses, setNumGuesses] = useState(props.defaultnumGuesses);
@@ -145,7 +206,7 @@ const WordleConfig: React.FC<Props> = (props) => {
         const currentLetterStatus = letterStatusesCopy.find(
           (x) => x.letter.toLowerCase() === letter.toLowerCase()
         );
-        const newStatus = getLetterStatus(letter, i);
+        const newStatus = getLetterStatus(letter, i, targetWord!, inDictionary);
 
         if (newStatus !== "incorrect") {
           currentLetterStatus!.status = newStatus;
@@ -437,34 +498,6 @@ const WordleConfig: React.FC<Props> = (props) => {
     return goldTotal;
   }
 
-  function getLetterStatus(
-    letter: string,
-    index: number
-  ): "incorrect" | "contains" | "correct" | "not set" | "not in word" {
-    var status:
-      | "incorrect"
-      | "contains"
-      | "correct"
-      | "not set"
-      | "not in word";
-
-    if (!inDictionary) {
-      // Red
-      status = "incorrect";
-    } else if (targetWord?.[index]?.toUpperCase() === letter?.toUpperCase()) {
-      // Green
-      status = "correct";
-    } else if (targetWord?.toUpperCase().includes(letter?.toUpperCase())) {
-        // Yellow
-        status = "contains";
-    } else {
-      // Grey
-      status = "not in word";
-    }
-
-    return status;
-  }
-
   function onEnter() {
     // Pressing Enter to Continue or Restart
     if (!inProgress) {
@@ -595,7 +628,6 @@ const WordleConfig: React.FC<Props> = (props) => {
       puzzleLeaveNumBlanks={props.puzzleLeaveNumBlanks}
       revealedLetterIndexes={revealedLetterIndexes}
       letterStatuses={letterStatuses}
-      getLetterStatus={getLetterStatus}
       onEnter={onEnter}
       onSubmitLetter={onSubmitLetter}
       onBackspace={onBackspace}

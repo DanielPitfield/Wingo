@@ -42,10 +42,6 @@ interface Props {
   onBackspace: () => void;
   ResetGame: () => void;
   ContinueGame: () => void;
-  getLetterStatus: (
-    letter: string,
-    index: number
-  ) => "incorrect" | "contains" | "correct" | "not set" | "not in word";
 }
 
 const Wordle: React.FC<Props> = (props) => {
@@ -73,7 +69,6 @@ const Wordle: React.FC<Props> = (props) => {
           length={wordLength}
           targetWord={props.targetWord}
           hasSubmit={true}
-          getLetterStatus={props.getLetterStatus}
           inDictionary={props.inDictionary}
         ></WordRow>
       );
@@ -113,7 +108,6 @@ const Wordle: React.FC<Props> = (props) => {
           length={wordLength}
           targetWord={props.targetWord}
           hasSubmit={props.wordIndex > i || !props.inProgress}
-          getLetterStatus={props.getLetterStatus}
           inDictionary={props.inDictionary}
         ></WordRow>
       );
@@ -130,7 +124,6 @@ const Wordle: React.FC<Props> = (props) => {
             } /* Length is 1 smaller than horizontal counterpart */
             targetWord={props.targetWord}
             hasSubmit={props.wordIndex > i || !props.inProgress}
-            getLetterStatus={props.getLetterStatus}
             inDictionary={props.inDictionary}
           ></WordRow>
         );
@@ -268,6 +261,9 @@ const Wordle: React.FC<Props> = (props) => {
           onEnter={props.onEnter}
           onSubmitLetter={props.onSubmitLetter}
           onBackspace={props.onBackspace}
+          guesses={props.guesses}
+          targetWord={props.targetWord}
+          inDictionary={props.inDictionary}
           letterStatuses={props.letterStatuses}
         ></Keyboard>
       </div>
