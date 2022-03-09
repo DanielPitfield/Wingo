@@ -15,41 +15,40 @@ interface Props {
 }
 
 export const WordRow: React.FC<Props> = (props) => {
-  // Checks whether the letter will already have status 'correct' at any index
-  function isGreenLetter(letter: string) {
-    for (let i = 0; i < props.length; i++) {
-      if (props.getLetterStatus(letter, i) === "correct") {
-        return true;
+  function getWordSummary(word: string) {
+    // Character and status array
+    let defaultCharacterStatuses = word
+      .split("")
+      .map((character, index) => ({
+        character: character,
+        status: props.getLetterStatus(character, index),
+      }));
+    //
+    let finalCharacterStatuses = defaultCharacterStatuses.map((x, index) => {
+      // If there is a green tile of a letter, don't show any orange tiles
+      if (
+        x.status === "contains" &&
+        defaultCharacterStatuses.some(
+          (y) => y.character === x.character && y.status === "correct"
+        )
+      ) {
+        x.status = "not in word";
       }
-    }
-    return false;
+      // Only ever show 1 orange tile of each letter
+      if (
+        x.status === "contains" &&
+        defaultCharacterStatuses.findIndex(
+          (y) => y.character === x.character && y.status === "contains"
+        ) != index
+      ) {
+        x.status = "not in word";
+      }
+      return x;
+    });
+    return finalCharacterStatuses;
   }
 
-  // Checks whether the letter will already have a status 'contains' tile up to the index
-  function isOrangeLetterAlready(letter: string, index: number) {
-    for (let i = 0; i < index; i++) {
-      if (props.getLetterStatus(letter, i) === "contains") {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  function getFinalLetterStatus(letter: string, index: number) {
-    // If there is a green tile of that letter, don't show orange    
-    if (isGreenLetter(letter) && props.getLetterStatus(letter, index) === "contains") {
-      console.log("Green, no orange: " + letter);
-      return "not in word"; 
-    }
-    // Only ever show 1 orange tile of each letter
-    else if (isOrangeLetterAlready(letter, index) && props.getLetterStatus(letter, index) === "contains") {
-      console.log("Orange, not 2nd orange: " + letter);
-      return "not in word"; 
-    }
-    else {
-      return props.getLetterStatus(letter, index); 
-    }
-  }
+  const wordSummary = getWordSummary(props.word);
 
   function CreateRow() {
     var TileArray = [];
@@ -58,12 +57,7 @@ export const WordRow: React.FC<Props> = (props) => {
         <LetterTile
           key={i}
           letter={props.word?.[i]}
-          status={
-            !props.hasSubmit
-              ? "not set"
-              : getFinalLetterStatus(props.word?.[i], i)! /*props.getLetterStatus(props.word?.[i], i)*/
-            // TODO:
-          }
+          status={!props.hasSubmit ? "not set" : wordSummary[i]?.status}
         ></LetterTile>
       );
     }
