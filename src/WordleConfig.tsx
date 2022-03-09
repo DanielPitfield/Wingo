@@ -58,6 +58,7 @@ const WordleConfig: React.FC<Props> = (props) => {
   const [revealedLetterIndexes, setRevealedLetterIndexes] = useState<number[]>(
     []
   );
+
   const defaultLetterStatuses: {
     letter: string;
     status: "" | "contains" | "correct" | "not set" | "not in word";
@@ -133,7 +134,7 @@ const WordleConfig: React.FC<Props> = (props) => {
     }
   }, [targetWord, currentWord, guesses, wordIndex, inProgress]);
 
-  // Updates letter status of previous attempts of daily word
+  // Updates letter status (which is passed through to Keyboard to update button colours)
   React.useEffect(() => {
     const letterStatusesCopy = letterStatuses.slice();
 
@@ -447,7 +448,6 @@ const WordleConfig: React.FC<Props> = (props) => {
       | "not set"
       | "not in word";
 
-    // TODO: Words like STILL, how is status with two of the same letter handled
     if (!inDictionary) {
       // Red
       status = "incorrect";
