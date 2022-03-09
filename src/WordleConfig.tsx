@@ -266,8 +266,10 @@ const WordleConfig: React.FC<Props> = (props) => {
         const new_target_word =
           wordArray[Math.round(Math.random() * wordArray.length - 1)];
 
-        console.log("Not daily word: " + new_target_word);
-        settargetWord(new_target_word);
+        //console.log("Not daily word: " + new_target_word);
+        // TODO: this was changed for testing duplicate letters
+        //settargetWord(new_target_word);
+        settargetWord("still");
 
         // Reveal the first letter from game start
         if (props.firstLetterProvided) {
@@ -453,8 +455,8 @@ const WordleConfig: React.FC<Props> = (props) => {
       // Green
       status = "correct";
     } else if (targetWord?.toUpperCase().includes(letter?.toUpperCase())) {
-      // Yellow
-      status = "contains";
+        // Yellow
+        status = "contains";
     } else {
       // Grey
       status = "not in word";

@@ -268,8 +268,6 @@ const Nubble: React.FC<Props> = (props) => {
 
     // --- Reverse Polish Expressions ---
 
-    // TODO: polish_expressions_all, polish_expression - Types are absurd, must be a better way
-
     // Array to store the polish_expression arrays
     let polish_expressions_all: Array<
       Array<

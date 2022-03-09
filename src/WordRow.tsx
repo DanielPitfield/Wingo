@@ -14,7 +14,29 @@ interface Props {
   ) => "incorrect" | "contains" | "correct" | "not set" | "not in word";
 }
 
+
 export const WordRow: React.FC<Props> = (props) => {
+  /*
+  // Checks whether the letter will already have status 'correct' at some index
+  function isGreenLetterAlready(letter: string) {
+    for (let i = 0; i < wordLength; i++) {
+      if (targetWord?.[i]?.toUpperCase() === letter?.toUpperCase()) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  function isOrangeLetterAlready(letter: string) {
+    for (let i = 0; i < wordLength; i++) {
+      if (targetWord?.toUpperCase().includes(letter?.toUpperCase())) {
+        return true;
+      }
+    }
+    return false;
+  }
+  */
+
   function CreateRow() {
     var TileArray = [];
     for (let i = 0; i < props.length; i++) {
@@ -26,6 +48,7 @@ export const WordRow: React.FC<Props> = (props) => {
             !props.hasSubmit
               ? "not set"
               : props.getLetterStatus(props.word?.[i], i)
+            // TODO:
           }
         ></LetterTile>
       );
