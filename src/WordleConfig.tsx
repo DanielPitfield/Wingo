@@ -48,6 +48,7 @@ export function getWordSummary(word: string, targetWord: string, inDictionary: b
     character: character,
     status: getLetterStatus(character, index, targetWord, inDictionary),
   }));
+  // Changing status because of repeated letters
   let finalCharacterStatuses = defaultCharacterStatuses.map((x, index) => {
     // If there is a green tile of a letter, don't show any orange tiles
     if (
@@ -328,10 +329,8 @@ const WordleConfig: React.FC<Props> = (props) => {
         const new_target_word =
           wordArray[Math.round(Math.random() * wordArray.length - 1)];
 
-        //console.log("Not daily word: " + new_target_word);
-        // TODO: this was changed for testing duplicate letters
-        //settargetWord(new_target_word);
-        settargetWord("still");
+        console.log("Not daily word: " + new_target_word);
+        settargetWord(new_target_word);
 
         // Reveal the first letter from game start
         if (props.firstLetterProvided) {

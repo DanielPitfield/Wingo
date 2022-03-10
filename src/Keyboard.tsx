@@ -21,8 +21,8 @@ export const Keyboard: React.FC<Props> = (props) => {
     const handleKeyDown = (event: KeyboardEvent) => {
       var input_key = event.key.toString().toLowerCase();
 
-      var string = "abcdefghijklmnopqrstuvwxyz";
-      var Alphabet = string.split("");
+      var alphabet_string = "abcdefghijklmnopqrstuvwxyz";
+      var Alphabet = alphabet_string.split("");
 
       if (input_key === "enter") {
         props.onEnter();
@@ -41,13 +41,14 @@ export const Keyboard: React.FC<Props> = (props) => {
 
   function getKeyboardStatuses() {
     var alphabet_string = "abcdefghijklmnopqrstuvwxyz";
+    // Letter and status array
     let keyboardStatuses = alphabet_string
       .split("")
       .map((x) => ({ letter: x, status: "not set" }));
 
     // For each guess
     for (const guess of props.guesses) {
-      // Summary of each letter's status in the guess
+      // Returns summary of each letter's status in the guess
       const guessSummary = getWordSummary(
         guess,
         props.targetWord,
@@ -55,12 +56,13 @@ export const Keyboard: React.FC<Props> = (props) => {
       );
 
       for (const letterSummary of guessSummary) {
+        // Find element in keyboardStatuses for the letter in question
         const letter = keyboardStatuses.find(
           (x) => x.letter === letterSummary.character
         )!;
 
         if (letterSummary.status === "correct") {
-          // Always update keyboardStatuses to correct (highest precedence)
+          // Always update status for this letter in keyboardStatuses to correct (highest precedence)
           letter.status = "correct";
         }
 
@@ -79,10 +81,11 @@ export const Keyboard: React.FC<Props> = (props) => {
     // Adds a button for every letter within the provided string
     var KeyboardButtons = [];
     const RowLetters = RowString.split("");
+    // Assign array to variable for quicker access
     const keyboardStatuses = getKeyboardStatuses();
 
     for (let i = 0; i < RowLetters.length; i++) {
-      // Find status (correct, not in word, wrong position)
+      // Find status using keyboardStatuses (correct, not in word, wrong position)
       const letterStatus = keyboardStatuses.find(
         (x) => x.letter.toUpperCase() === RowLetters[i].toUpperCase()
       )?.status;

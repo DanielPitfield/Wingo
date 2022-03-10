@@ -12,6 +12,7 @@ interface Props {
 }
 
 export const WordRow: React.FC<Props> = (props) => {
+  // Array of (character, status) for every letter
   const wordSummary = getWordSummary(props.word, props.targetWord, props.inDictionary);
 
   function CreateRow() {
