@@ -64,7 +64,7 @@ export function getWordSummary(word: string, targetWord: string, inDictionary: b
       x.status === "contains" &&
       defaultCharacterStatuses.findIndex(
         (y) => y.character === x.character && y.status === "contains"
-      ) != index
+      ) !== index
     ) {
       x.status = "not in word";
     }

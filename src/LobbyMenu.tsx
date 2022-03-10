@@ -27,7 +27,7 @@ export const LobbyMenu: React.FC<Props> = (props) => {
               setOptionsConfig({ isConfigShown: true, Page: page })
             }
           >
-            <BsGearFill />
+          <BsGearFill />
           </button>
           <button
             className="game-mode-button"

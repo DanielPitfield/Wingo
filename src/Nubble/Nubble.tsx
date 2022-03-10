@@ -193,46 +193,57 @@ const Nubble: React.FC<Props> = (props) => {
         function: (num1: number, num2: number): number => num1 / num2,
       },
       {
-        name: "*",
-        function: (num1: number, num2: number): number => num1 * num2,
+        name: "-",
+        function: (num1: number, num2: number): number => num1 - num2,
       },
       {
         name: "+",
         function: (num1: number, num2: number): number => num1 + num2,
       },
       {
-        name: "-",
-        function: (num1: number, num2: number): number => num1 - num2,
-      },
+        name: "*",
+        function: (num1: number, num2: number): number => num1 * num2,
+      }
     ];
 
     // This does not include permutations having the same operator more than once
     let operatorPermutations = permutator(operators);
 
+    console.log(operatorPermutations);
+
     // This adds permutations with repetition of operators
-    for (let i = 1; i <= operators.length; i++) {
+    for (let i = 1; i <= operators.length + 1; i++) {
       // Array of permutations of length i
       let newPermutations = combRep(operators, i);
       // Add on to operatorPermutations array
       operatorPermutations = operatorPermutations.concat(newPermutations);
     }
 
+    console.log(operatorPermutations);
+
     // Make a copy of all the unique permutations so far
-    const operatorSubsetPermutations = new Set(operatorPermutations.slice());
+    //const operatorSubsetPermutations = new Set(operatorPermutations.slice());
+    //console.log(operatorSubsetPermutations);
+
+    let operatorSubsetPermutations = operatorPermutations.slice();
 
     for (let i = 0; i < operatorPermutations.length; i++) {
       // 3 value subsets
-      operatorSubsetPermutations.add(operatorPermutations[i].slice(0, 3));
+      operatorSubsetPermutations.push(operatorPermutations[i].slice(0, 3));
       // 2 value subsets
-      operatorSubsetPermutations.add(operatorPermutations[i].slice(0, 2));
+      operatorSubsetPermutations.push(operatorPermutations[i].slice(0, 2));
       // 1 value subsets
-      operatorSubsetPermutations.add([operatorPermutations[i][0]]);
+      operatorSubsetPermutations.push([operatorPermutations[i][0]]);
     }
+
+    console.log(operatorSubsetPermutations);
 
     // Remove any subset larger in length than 3
     const operatorSubsetPermutationsFiltered = Array.from(
       operatorSubsetPermutations
     ).filter((x) => x.length <= 3);
+
+    console.log(operatorSubsetPermutationsFiltered);
 
     // --- OPERANDS (1-6) ---
 
@@ -333,6 +344,8 @@ const Nubble: React.FC<Props> = (props) => {
         //
       }
     }
+
+    //console.log(polish_expressions_all);
 
     // Remove empty/unformed polish expressions
     polish_expressions_all = Array.from(polish_expressions_all).filter(
@@ -496,7 +509,7 @@ const Nubble: React.FC<Props> = (props) => {
     );
 
     // TODO: validValues still missing values
-    console.log(validValues);
+    //console.log(validValues);
 
     return Array.from(validValues);
   }
