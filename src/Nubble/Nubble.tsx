@@ -23,7 +23,7 @@ const Nubble: React.FC<Props> = (props) => {
   const [totalPoints, setTotalPoints] = useState(0);
   const [validValues, setValidValues] = useState<number[]>();
 
-  // Determine valid results on update of diceValues
+  // Determine valid results on update of diceValues (at start and on roll of dice)
   React.useEffect(() => {
     const newValidValues = getValidValues();
     setValidValues(newValidValues);
@@ -211,18 +211,13 @@ const Nubble: React.FC<Props> = (props) => {
         name: "*",
         function: (num1: number, num2: number): number => num1 * num2,
       },
-      // Add a repeat of multiplication as a dud (circumvents bug of missing expressions)
-      {
-        name: "*",
-        function: (num1: number, num2: number): number => num1 * num2,
-      },
     ];
 
     // This does not include permutations having the same operator more than once
     let operatorPermutations = permutator(operators);
 
     // This adds permutations with repetition of operators (length 5 just to be safe)
-    for (let i = 1; i <= operators.length; i++) {
+    for (let i = 1; i <= operators.length + 1; i++) {
       // Array of permutations of length i
       let newPermutations = combRep(operators, i);
       // Add on to operatorPermutations array
@@ -230,15 +225,15 @@ const Nubble: React.FC<Props> = (props) => {
     }
 
     // Make a copy of all the unique permutations so far
-    let operatorSubsetPermutations = new Set(operatorPermutations.slice());
+    let operatorSubsetPermutations = operatorPermutations.slice();
 
     for (let i = 0; i < operatorPermutations.length; i++) {
       // 3 value subsets
-      operatorSubsetPermutations.add(operatorPermutations[i].slice(0, 3));
+      operatorSubsetPermutations.push(operatorPermutations[i].slice(0, 3));
       // 2 value subsets
-      operatorSubsetPermutations.add(operatorPermutations[i].slice(0, 2));
+      operatorSubsetPermutations.push(operatorPermutations[i].slice(0, 2));
       // 1 value subsets
-      operatorSubsetPermutations.add([operatorPermutations[i][0]]);
+      operatorSubsetPermutations.push([operatorPermutations[i][0]]);
     }
 
     // Remove any subset larger in length than 3
@@ -252,15 +247,15 @@ const Nubble: React.FC<Props> = (props) => {
     const operandPermutations = permutator(diceValues);
 
     // Start new array as copy of progress so far (operandPermutations)
-    let operandSubsetPermutations = new Set(operandPermutations.slice());
+    let operandSubsetPermutations = operandPermutations.slice();
 
     for (let i = 0; i < operandPermutations.length; i++) {
       // 3 value subset
-      operandSubsetPermutations.add(operandPermutations[i].slice(0, 3));
+      operandSubsetPermutations.push(operandPermutations[i].slice(0, 3));
       // 2 value subset
-      operandSubsetPermutations.add(operandPermutations[i].slice(0, 2));
+      operandSubsetPermutations.push(operandPermutations[i].slice(0, 2));
       // 1 value subset
-      operandSubsetPermutations.add([operandPermutations[i][0]]);
+      operandSubsetPermutations.push([operandPermutations[i][0]]);
     }
 
     // Combine the permutations of operands and operators (not yet in reverse polish)
