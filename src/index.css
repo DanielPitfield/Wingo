@@ -521,5 +521,53 @@ code {
   padding: 10px;
 }
 
-.dice_square_prime {
+.nubble-button {
+  color: white;
+  font-weight: bold;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+  padding: 1em;
+  min-width: 4em;
+  min-height: 4em;
+  margin: 1px;
+}
+
+.nubble-button[data-prime='true'] {
+  border: 4px solid #9ca19d;
+}
+
+.nubble-button[data-colour='orange'] {
+  background-color: #aa5208bb;
+  border: 4px solid #aa5208;
+}
+
+.nubble-button[data-colour='light-blue'] {
+  background-color: #00a59bbb;
+  border: 4px solid #00a59b;
+}
+
+.nubble-button[data-colour='yellow'] {
+  background-color: #a5a803bb;
+  border: 4px solid #a5a803;
+}
+
+.nubble-button[data-colour='dark-blue'] {
+  background-color: #0002acbb;
+  border: 4px solid #0002ac;
+}
+
+.nubble-button[data-colour='green'] {
+  background-color: #05ab00bb;
+  border: 4px solid #05ab00;
+}
+
+.nubble-button[data-colour='pink'] {
+  background-color: #b801b5bb;
+  border: 4px solid #b801b5;
+}
+
+.nubble-button[data-colour='red'] {
+  background-color: #b10503bb;
+  border: 4px solid #b10503;
 }

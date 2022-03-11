@@ -15,12 +15,12 @@ const Nubble: React.FC<Props> = (props) => {
   const [diceValues, setdiceValues] = useState<number[]>(
     Array.from({ length: props.numDice }).map((x) => randomDiceNumber())
   );
-
-  const [pickedPins, setPickedPins] = useState<number>();
+  const [pickedPins, setPickedPins] = useState<number[]>([]);
   const gridPoints = Array.from({ length: props.gridSize }).map((_, i) => ({
     number: i + 1,
     points: determinePoints(i + 1),
   }));
+  const [totalPoints, setTotalPoints] = useState(0);
 
   function determinePoints(number: number): number {
     switch (props.gridSize) {
@@ -209,9 +209,7 @@ const Nubble: React.FC<Props> = (props) => {
     // This does not include permutations having the same operator more than once
     let operatorPermutations = permutator(operators);
 
-    console.log(operatorPermutations);
-
-    // This adds permutations with repetition of operators
+    // This adds permutations with repetition of operators (length 5 just to be safe)
     for (let i = 1; i <= operators.length + 1; i++) {
       // Array of permutations of length i
       let newPermutations = combRep(operators, i);
@@ -219,31 +217,22 @@ const Nubble: React.FC<Props> = (props) => {
       operatorPermutations = operatorPermutations.concat(newPermutations);
     }
 
-    console.log(operatorPermutations);
-
     // Make a copy of all the unique permutations so far
-    //const operatorSubsetPermutations = new Set(operatorPermutations.slice());
-    //console.log(operatorSubsetPermutations);
-
-    let operatorSubsetPermutations = operatorPermutations.slice();
+    let operatorSubsetPermutations = new Set(operatorPermutations.slice());
 
     for (let i = 0; i < operatorPermutations.length; i++) {
       // 3 value subsets
-      operatorSubsetPermutations.push(operatorPermutations[i].slice(0, 3));
+      operatorSubsetPermutations.add(operatorPermutations[i].slice(0, 3));
       // 2 value subsets
-      operatorSubsetPermutations.push(operatorPermutations[i].slice(0, 2));
+      operatorSubsetPermutations.add(operatorPermutations[i].slice(0, 2));
       // 1 value subsets
-      operatorSubsetPermutations.push([operatorPermutations[i][0]]);
+      operatorSubsetPermutations.add([operatorPermutations[i][0]]);
     }
-
-    console.log(operatorSubsetPermutations);
 
     // Remove any subset larger in length than 3
     const operatorSubsetPermutationsFiltered = Array.from(
       operatorSubsetPermutations
     ).filter((x) => x.length <= 3);
-
-    console.log(operatorSubsetPermutationsFiltered);
 
     // --- OPERANDS (1-6) ---
 
@@ -251,7 +240,7 @@ const Nubble: React.FC<Props> = (props) => {
     const operandPermutations = permutator(diceValues);
 
     // Start new array as copy of progress so far (operandPermutations)
-    const operandSubsetPermutations = new Set(operandPermutations.slice());
+    let operandSubsetPermutations = new Set(operandPermutations.slice());
 
     for (let i = 0; i < operandPermutations.length; i++) {
       // 3 value subset
@@ -341,11 +330,9 @@ const Nubble: React.FC<Props> = (props) => {
           combinations[i].operators[2],
         ]);
       } else {
-        //
+        // Invalid expression
       }
     }
-
-    //console.log(polish_expressions_all);
 
     // Remove empty/unformed polish expressions
     polish_expressions_all = Array.from(polish_expressions_all).filter(
@@ -508,9 +495,6 @@ const Nubble: React.FC<Props> = (props) => {
       (x) => x > 0 && x <= props.gridSize && Math.round(x) === x
     );
 
-    // TODO: validValues still missing values
-    //console.log(validValues);
-
     return Array.from(validValues);
   }
 
@@ -520,20 +504,45 @@ const Nubble: React.FC<Props> = (props) => {
     if (!validValues.includes(i)) {
       // Invalid
       return;
-    }
+    } else {
+      // Keep track that pin has now been correctly picked
+      let newPickedPins = pickedPins.slice();
+      newPickedPins.push(i);
+      setPickedPins(newPickedPins);
 
-    alert(gridPoints.find((x) => x.number === i)?.points);
+      // Find out how many points the pin is worth
+      const pinScore = gridPoints.find((x) => x.number === i)?.points;
+      // Add points to total points
+      if (pinScore) {
+        setTotalPoints(totalPoints + pinScore);
+      }
+    }
   }
+
+  const pointColourMappings = [
+    { points: 10, colour: "orange" },
+    { points: 20, colour: "light-blue" },
+    { points: 50, colour: "yellow" },
+    { points: 100, colour: "dark-blue" },
+    { points: 200, colour: "green" },
+    { points: 300, colour: "pink" },
+    { points: 500, colour: "red" }
+  ];
 
   function populateGrid() {
     var Grid = [];
     for (let i = 1; i <= props.gridSize; i++) {
+      let isPicked = pickedPins.includes(i);
+      let colour = pointColourMappings.find(x => x.points === determinePoints(i))?.colour;
       Grid.push(
         <button
           key={i}
           className="nubble-button"
-          data-isPrime={isPrime(i)}
+          data-prime={isPrime(i)}
+          data-picked={isPicked}
+          data-colour={colour}
           onClick={() => onClick(i)}
+          disabled={isPicked}
         >
           {i}
         </button>
@@ -549,7 +558,8 @@ const Nubble: React.FC<Props> = (props) => {
         diceValues={diceValues}
         rollDice={rollDice}
       ></DiceGrid>
-      <div className="number_grid">{populateGrid()}</div>
+      <div className="nubble_grid">{populateGrid()}</div>
+      <div className="nubble_score">{totalPoints}</div>
     </div>
   );
 };
