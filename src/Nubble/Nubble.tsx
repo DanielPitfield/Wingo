@@ -21,6 +21,13 @@ const Nubble: React.FC<Props> = (props) => {
     points: determinePoints(i + 1),
   }));
   const [totalPoints, setTotalPoints] = useState(0);
+  const [validValues, setValidValues] = useState<number[]>();
+
+  // Determine valid results on update of diceValues
+  React.useEffect(() => {
+    const newValidValues = getValidValues();
+    setValidValues(newValidValues);
+  }, [diceValues]);
 
   function determinePoints(number: number): number {
     switch (props.gridSize) {
@@ -203,14 +210,19 @@ const Nubble: React.FC<Props> = (props) => {
       {
         name: "*",
         function: (num1: number, num2: number): number => num1 * num2,
-      }
+      },
+      // Add a repeat of multiplication as a dud (circumvents bug of missing expressions)
+      {
+        name: "*",
+        function: (num1: number, num2: number): number => num1 * num2,
+      },
     ];
 
     // This does not include permutations having the same operator more than once
     let operatorPermutations = permutator(operators);
 
     // This adds permutations with repetition of operators (length 5 just to be safe)
-    for (let i = 1; i <= operators.length + 1; i++) {
+    for (let i = 1; i <= operators.length; i++) {
       // Array of permutations of length i
       let newPermutations = combRep(operators, i);
       // Add on to operatorPermutations array
@@ -499,10 +511,8 @@ const Nubble: React.FC<Props> = (props) => {
   }
 
   function onClick(i: number) {
-    const validValues = getValidValues();
-
-    if (!validValues.includes(i)) {
-      // Invalid
+    if (!validValues || !validValues.includes(i)) {
+      // No valid values or number is invalid
       return;
     } else {
       // Keep track that pin has now been correctly picked
@@ -526,14 +536,16 @@ const Nubble: React.FC<Props> = (props) => {
     { points: 100, colour: "dark-blue" },
     { points: 200, colour: "green" },
     { points: 300, colour: "pink" },
-    { points: 500, colour: "red" }
+    { points: 500, colour: "red" },
   ];
 
   function populateGrid() {
     var Grid = [];
     for (let i = 1; i <= props.gridSize; i++) {
       let isPicked = pickedPins.includes(i);
-      let colour = pointColourMappings.find(x => x.points === determinePoints(i))?.colour;
+      let colour = pointColourMappings.find(
+        (x) => x.points === determinePoints(i)
+      )?.colour;
       Grid.push(
         <button
           key={i}
@@ -558,8 +570,8 @@ const Nubble: React.FC<Props> = (props) => {
         diceValues={diceValues}
         rollDice={rollDice}
       ></DiceGrid>
-      <div className="nubble_grid">{populateGrid()}</div>
-      <div className="nubble_score">{totalPoints}</div>
+      <div className="nubble-grid">{populateGrid()}</div>
+      <div className="nubble-score">{totalPoints}</div>
     </div>
   );
 };

@@ -527,6 +527,7 @@ code {
   text-align: center;
   align-items: center;
   justify-content: center;
+  cursor: pointer;
   padding: 1em;
   min-width: 4em;
   min-height: 4em;
@@ -534,7 +535,7 @@ code {
 }
 
 .nubble-button[data-prime='true'] {
-  border: 4px solid #9ca19d;
+  border: 4px solid #3d3d3d !important;
 }
 
 .nubble-button[data-colour='orange'] {
@@ -542,9 +543,17 @@ code {
   border: 4px solid #aa5208;
 }
 
+.nubble-button[data-colour='orange']:hover {
+  background-color: #aa5208;
+}
+
 .nubble-button[data-colour='light-blue'] {
   background-color: #00a59bbb;
   border: 4px solid #00a59b;
+}
+
+.nubble-button[data-colour='light-blue']:hover {
+  background-color: #00a59b;
 }
 
 .nubble-button[data-colour='yellow'] {
@@ -552,9 +561,17 @@ code {
   border: 4px solid #a5a803;
 }
 
+.nubble-button[data-colour='yellow']:hover {
+  background-color: #a5a803;
+}
+
 .nubble-button[data-colour='dark-blue'] {
   background-color: #0002acbb;
   border: 4px solid #0002ac;
+}
+
+.nubble-button[data-colour='dark-blue']:hover {
+  background-color: #0002ac;
 }
 
 .nubble-button[data-colour='green'] {
@@ -562,12 +579,35 @@ code {
   border: 4px solid #05ab00;
 }
 
+.nubble-button[data-colour='green']:hover {
+  background-color: #05ab00;
+}
+
 .nubble-button[data-colour='pink'] {
   background-color: #b801b5bb;
   border: 4px solid #b801b5;
 }
 
+.nubble-button[data-colour='pink']:hover {
+  background-color: #b801b5;
+}
+
 .nubble-button[data-colour='red'] {
   background-color: #b10503bb;
   border: 4px solid #b10503;
+}
+
+.nubble-button[data-colour='red']:hover {
+  background-color: #b10503;
+}
+
+.nubble-grid {
+  margin-top: 1em;
+  padding: 0em 10em;
+}
+
+.nubble-score {
+  margin-top: 1em;
+  padding: 0.5em 2em;
+  border: 2px solid black;
 }
