@@ -12,8 +12,10 @@ interface Props {
 }
 
 export const WordRow: React.FC<Props> = (props) => {
-  // TODO: Is there a better way of doing this?  
-  let wordSummary: any = [];
+  let wordSummary: {
+    character: string;
+    status: "incorrect" | "contains" | "correct" | "not set" | "not in word";
+  }[] = [];
   // Only get wordSummary if word and targetWord are defined
   if (props.word && props.targetWord) {
     // Array of (character, status) for every letter
@@ -32,7 +34,9 @@ export const WordRow: React.FC<Props> = (props) => {
           key={i}
           letter={props.word?.[i]}
           status={
-            !props.hasSubmit || !props.word || !props.targetWord ? "not set" : wordSummary[i]?.status
+            !props.hasSubmit || !props.word || !props.targetWord
+              ? "not set"
+              : wordSummary[i]?.status
           }
         ></LetterTile>
       );
