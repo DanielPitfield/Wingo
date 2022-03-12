@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import "../index.css";
+import "../index.scss";
 import DiceGrid from "./DiceGrid";
 import {
   adjacentMappings_25,

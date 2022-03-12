@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import "../index.css";
+import React from "react";
+import "../index.scss";
 
 interface Props {
   value: number;

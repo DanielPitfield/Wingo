@@ -1,6 +1,5 @@
 import React from "react";
-import { isPropertySignature } from "typescript";
-import '../index.css';
+import '../index.scss';
 
 interface Props {
 

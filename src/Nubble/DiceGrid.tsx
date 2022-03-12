@@ -1,6 +1,6 @@
 import React from "react";
 import { Button } from "../Button";
-import "../index.css";
+import "../index.scss";
 import Dice from "./Dice";
 
 interface Props {

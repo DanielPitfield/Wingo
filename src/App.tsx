@@ -1,6 +1,4 @@
-import React from "react";
-import { useEffect } from "react";
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Home } from "./Home";
 import { SplashScreen } from "./SplashScreen";
 import { LobbyMenu } from "./LobbyMenu";
@@ -58,7 +56,7 @@ export const App: React.FC = () => {
     window.setTimeout(() => setLoadingState("loaded"), 2000);
 
     // Set home page after load
-    window.setTimeout(() => setPage("lobby"), 2500); // Change to "home"
+    window.setTimeout(() => setPage("lobby"), 2500);
   }, [saveData]);
 
   const pageComponent = (() => {

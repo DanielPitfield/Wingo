@@ -1,5 +1,5 @@
 import React from "react";
-import "./index.css";
+import "./index.scss";
 import { Button } from "./Button";
 import { getWordSummary } from "./WordleConfig";
 

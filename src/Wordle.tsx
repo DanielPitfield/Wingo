@@ -1,5 +1,5 @@
 import React from "react";
-import "./App.css";
+import "./App.scss";
 import { Keyboard } from "./Keyboard";
 import { Page } from "./App";
 import { WordRow } from "./WordRow";

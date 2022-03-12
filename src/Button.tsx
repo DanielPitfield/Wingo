@@ -1,5 +1,5 @@
 import React, { MouseEventHandler } from "react";
-import "./index.css";
+import "./index.scss";
 
 export const Button: React.FC<{
   mode: "destructive" | "accept" | "default";
