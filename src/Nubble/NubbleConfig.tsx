@@ -7,12 +7,12 @@ interface Props {
   diceMin: number;
   diceMax: number;
   gridSize: 25 | 64 | 100;
+  // TODO: gridShape: "square" | "parallelogram"
   numTeams: number;
   timeLengthMins: number;
 }
 
 const NubbleConfig: React.FC<Props> = (props) => {
-  /* Just passes all props through, twss */
   return (
     <div className="App">
       <Nubble

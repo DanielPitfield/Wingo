@@ -1,6 +1,11 @@
 import React, { useState } from "react";
 import "../index.css";
 import DiceGrid from "./DiceGrid";
+import {
+  adjacentMappings_25,
+  adjacentMappings_64,
+  adjacentMappings_100,
+} from "./nubble_adjacent";
 
 interface Props {
   numDice: number;
@@ -118,6 +123,20 @@ const Nubble: React.FC<Props> = (props) => {
     }
 
     throw new Error("Unexpected number for grid size");
+  }
+
+  function getAdjacentMappings() {
+    switch (props.gridSize) {
+      case 25: {
+        return adjacentMappings_25;
+      }
+      case 64: {
+        return adjacentMappings_64;
+      }
+      case 100: {
+        return adjacentMappings_100;
+      }
+    }
   }
 
   function randomIntFromInterval(min: number, max: number) {
@@ -505,18 +524,49 @@ const Nubble: React.FC<Props> = (props) => {
     return Array.from(validValues);
   }
 
-  function onClick(i: number) {
-    if (!validValues || !validValues.includes(i)) {
+  function isAdjacentTriangle(pinNumber: number) {
+    // Array deatiling pin adjacency for this gridSize
+    const adjacentMappings = getAdjacentMappings();
+    // Adjacent pins of the clicked pin
+    const adjacent_pins = adjacentMappings.find(
+      (x) => x.pin === pinNumber
+    )?.adjacent_pins;
+    // All the adjacent pins which have also previously been picked
+    const picked_adjacent_pins = pickedPins.filter((x) =>
+      adjacent_pins?.includes(x)
+    );
+    // Determine if there is a nubble triangle (3 adjacent picked pins)
+    if (picked_adjacent_pins.length >= 3) {
+      return true;
+    }
+    return false;
+  }
+
+  function onClick(pinNumber: number) {
+    if (!validValues || !validValues.includes(pinNumber)) {
       // No valid values or number is invalid
       return;
     } else {
-      // Keep track that pin has now been correctly picked
+      // Keep track that the pin has now been correctly picked
       let newPickedPins = pickedPins.slice();
-      newPickedPins.push(i);
+      newPickedPins.push(pinNumber);
       setPickedPins(newPickedPins);
 
-      // Find out how many points the pin is worth
-      const pinScore = gridPoints.find((x) => x.number === i)?.points;
+      // Find out how many base points the pin is worth
+      let pinScore = gridPoints.find((x) => x.number === pinNumber)?.points;
+
+      if (isPrime(pinNumber)) {
+        // Double points if the picked pin is a prime number
+        pinScore = pinScore! * 2;
+      }
+      
+      // Bonus points awarded for nubble triangle
+      const adjacentBonus = 200;
+
+      if (isAdjacentTriangle(pinNumber)) {
+        pinScore = pinScore! + adjacentBonus;
+      }
+
       // Add points to total points
       if (pinScore) {
         setTotalPoints(totalPoints + pinScore);
