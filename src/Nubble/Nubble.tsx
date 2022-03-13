@@ -87,8 +87,14 @@ export function getValidValues(
   // This does not include permutations having the same operator more than once
   let operatorPermutations = permutator(operators);
 
-  // This adds permutations with repetition of operators (+1 to length just to be safe)
-  for (let i = 1; i <= (inputNumbers.length + 1); i++) {
+  // Always atleast the number of operators (and +1 just to be safe)
+  const maxOperatorPermutation_length =
+    inputNumbers.length <= operators.length
+      ? operators.length + 1
+      : inputNumbers.length + 1;
+
+  // This adds permutations with repetition of operators
+  for (let i = 1; i <= maxOperatorPermutation_length; i++) {
     // Array of permutations of length i
     let newPermutations = combRep(operators, i);
     // Add on to operatorPermutations array
@@ -108,7 +114,7 @@ export function getValidValues(
   // Remove any subset larger in length than the (number of values - 1)
   const operatorSubsetPermutationsFiltered = Array.from(
     operatorSubsetPermutations
-  ).filter((x) => x.length <= (inputNumbers.length - 1));
+  ).filter((x) => x.length <= inputNumbers.length - 1);
 
   // --- OPERANDS (1-6) ---
 
@@ -203,8 +209,50 @@ export function getValidValues(
         combinations[i].operators[1],
         combinations[i].operators[2],
       ]);
-    } else {
-      // Invalid expression
+    } else if (
+      combinations[i].operands.length === 5 &&
+      combinations[i].operators.length === 4
+    ) {
+      // TODO: Are there more types of polish expression which can be made?
+
+      // (example: 5 2 + 3 * 4 - 1 +)
+      polish_expressions_all.push([
+        combinations[i].operands[0],
+        combinations[i].operands[1],
+        combinations[i].operators[0],
+        combinations[i].operands[2],
+        combinations[i].operators[1],
+        combinations[i].operands[3],
+        combinations[i].operators[2],
+        combinations[i].operands[4],
+        combinations[i].operators[3],
+      ]);
+
+      // (example: 2 1 + 5 4 * * 3 *)
+      polish_expressions_all.push([
+        combinations[i].operands[0],
+        combinations[i].operands[1],
+        combinations[i].operators[0],
+        combinations[i].operands[2],
+        combinations[i].operands[3],
+        combinations[i].operators[1],
+        combinations[i].operators[2],
+        combinations[i].operands[4],
+        combinations[i].operators[3],
+      ]);
+
+      // (example: 2 1 + 5 * 4 3 * *)
+      polish_expressions_all.push([
+        combinations[i].operands[0],
+        combinations[i].operands[1],
+        combinations[i].operators[0],
+        combinations[i].operands[2],
+        combinations[i].operators[1],
+        combinations[i].operands[3],
+        combinations[i].operands[4],
+        combinations[i].operators[2],
+        combinations[i].operators[3],
+      ]);
     }
   }
 
@@ -359,6 +407,137 @@ export function getValidValues(
           secondCalculation
         );
 
+        calculatedValues.add(result);
+      }
+    } else if (expression.length === 9) {
+      if (
+        checkSkeleton(expression, [
+          isOperand,
+          isOperand,
+          isOperator,
+          isOperand,
+          isOperator,
+          isOperand,
+          isOperator,
+          isOperand,
+          isOperator,
+        ])
+      ) {
+        const [
+          firstNum,
+          secondNum,
+          firstOperator,
+          thirdNum,
+          secondOperator,
+          fourthNum,
+          thirdOperator,
+          fifthNum,
+          fourthOperator,
+        ] = expression;
+
+        const firstCalculation = (firstOperator as any).function(
+          firstNum,
+          secondNum
+        );
+        const secondCalculation = (secondOperator as any).function(
+          firstCalculation,
+          thirdNum
+        );
+        const thirdCalculation = (thirdOperator as any).function(
+          secondCalculation,
+          fourthNum
+        );
+        const result = (fourthOperator as any).function(
+          thirdCalculation,
+          fifthNum
+        );
+        calculatedValues.add(result);
+      }
+      else if (
+        checkSkeleton(expression, [
+          isOperand,
+          isOperand,
+          isOperator,
+          isOperand,
+          isOperand,
+          isOperator,
+          isOperator,
+          isOperand,
+          isOperator,
+        ])
+      ) {
+        const [
+          firstNum,
+          secondNum,
+          firstOperator,
+          thirdNum,
+          fourthNum,
+          secondOperator,
+          thirdOperator,
+          fifthNum,
+          fourthOperator,
+        ] = expression;
+
+        const firstCalculation = (firstOperator as any).function(
+          firstNum,
+          secondNum
+        );
+        const secondCalculation = (secondOperator as any).function(
+          thirdNum,
+          fourthNum
+        );
+        const thirdCalculation = (thirdOperator as any).function(
+          firstCalculation,
+          secondCalculation
+        );
+        const result = (fourthOperator as any).function(
+          thirdCalculation,
+          fifthNum
+        );
+        calculatedValues.add(result);
+      }
+      // (example: 2 1 + 5 * 4 3 * *)
+      else if (
+        checkSkeleton(expression, [
+          isOperand,
+          isOperand,
+          isOperator,
+          isOperand,
+          isOperator,
+          isOperand,
+          isOperand,
+          isOperator,
+          isOperator,
+        ])
+      ) {
+        const [
+          firstNum,
+          secondNum,
+          firstOperator,
+          thirdNum,
+          secondOperator,
+          fourthNum,
+          fifthNum,
+          thirdOperator,
+          fourthOperator,
+        ] = expression;
+
+        const firstCalculation = (firstOperator as any).function(
+          firstNum,
+          secondNum
+        );
+        const secondCalculation = (secondOperator as any).function(
+          firstCalculation,
+          thirdNum
+        );
+        const thirdCalculation = (thirdOperator as any).function(
+          fourthNum,
+          fifthNum
+        );
+        const result = (fourthOperator as any).function(
+          secondCalculation,
+          thirdCalculation
+        );
         calculatedValues.add(result);
       }
     }
