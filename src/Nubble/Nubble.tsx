@@ -16,6 +16,362 @@ interface Props {
   timeLengthMins: number;
 }
 
+export function getValidValues(
+  inputNumbers: number[],
+  maxLimit: number
+): number[] {
+  // Returns permutations of input array, https://stackoverflow.com/a/20871714
+  function permutator<T>(inputArr: T[]): T[][] {
+    let result: any[] = [];
+
+    const permute = (arr: [], m = []) => {
+      if (arr.length === 0) {
+        result.push(m);
+      } else {
+        for (let i = 0; i < arr.length; i++) {
+          let curr = arr.slice();
+          let next = curr.splice(i, 1);
+          permute(curr.slice() as any, m.concat(next as any));
+        }
+      }
+    };
+
+    permute(inputArr as any);
+
+    return result;
+  }
+
+  // https://stackoverflow.com/questions/32543936/combination-with-repetition
+  function combRep(
+    arr: { name: string; function: (num1: number, num2: number) => number }[],
+    l: number
+  ) {
+    if (l === void 0) l = arr.length; // Length of the combinations
+    var data = Array(l), // Used to store state
+      results = []; // Array of results
+    (function f(pos, start) {
+      // Recursive function
+      if (pos === l) {
+        // End reached
+        results.push(data.slice()); // Add a copy of data to results
+        return;
+      }
+      for (var i = start; i < arr.length; ++i) {
+        data[pos] = arr[i]; // Update data
+        f(pos + 1, i); // Call f recursively
+      }
+    })(0, 0); // Start at index 0
+    return results; // Return results
+  }
+
+  // --- OPERATORS (+ - / *) ---
+  const operators = [
+    {
+      name: "/",
+      function: (num1: number, num2: number): number => num1 / num2,
+    },
+    {
+      name: "-",
+      function: (num1: number, num2: number): number => num1 - num2,
+    },
+    {
+      name: "+",
+      function: (num1: number, num2: number): number => num1 + num2,
+    },
+    {
+      name: "*",
+      function: (num1: number, num2: number): number => num1 * num2,
+    },
+  ];
+
+  // This does not include permutations having the same operator more than once
+  let operatorPermutations = permutator(operators);
+
+  // This adds permutations with repetition of operators (+1 to length just to be safe)
+  for (let i = 1; i <= (inputNumbers.length + 1); i++) {
+    // Array of permutations of length i
+    let newPermutations = combRep(operators, i);
+    // Add on to operatorPermutations array
+    operatorPermutations = operatorPermutations.concat(newPermutations);
+  }
+
+  // Make a copy of all the unique permutations so far
+  let operatorSubsetPermutations = operatorPermutations.slice();
+
+  for (let i = 0; i < operatorPermutations.length; i++) {
+    for (let j = 1; j < inputNumbers.length; j++) {
+      // Add smaller length subsets
+      operatorSubsetPermutations.push(operatorPermutations[i].slice(0, j));
+    }
+  }
+
+  // Remove any subset larger in length than the (number of values - 1)
+  const operatorSubsetPermutationsFiltered = Array.from(
+    operatorSubsetPermutations
+  ).filter((x) => x.length <= (inputNumbers.length - 1));
+
+  // --- OPERANDS (1-6) ---
+
+  // All the different permutations of the inputNumbers (e.g 4 dice values)
+  const operandPermutations = permutator(inputNumbers);
+
+  // Start new array as copy of progress so far (operandPermutations)
+  let operandSubsetPermutations = operandPermutations.slice();
+
+  for (let i = 0; i < operandPermutations.length; i++) {
+    for (let j = 1; j < inputNumbers.length; j++) {
+      // Add smaller length subsets
+      operandSubsetPermutations.push(operandPermutations[i].slice(0, j));
+    }
+  }
+
+  // Combine the permutations of operands and operators (not yet in reverse polish)
+  var combinations = [];
+  for (let i = 0; i < Array.from(operandSubsetPermutations).length; i++) {
+    for (
+      let j = 0;
+      j < Array.from(operatorSubsetPermutationsFiltered).length;
+      j++
+    ) {
+      combinations.push({
+        operands: Array.from(operandSubsetPermutations)[i],
+        operators: Array.from(operatorSubsetPermutationsFiltered)[j],
+      });
+    }
+  }
+
+  // --- Reverse Polish Expressions ---
+
+  // Array to store the polish_expression arrays
+  let polish_expressions_all: Array<
+    Array<
+      | { name: string; function: (num1: number, num2: number) => number }
+      | number
+    >
+  > = [];
+
+  for (let i = 0; i < combinations.length; i++) {
+    // Define an array to push the operands and operators (as functions) to
+
+    if (combinations[i].operands.length === 1) {
+      // Add just the number (example: 5)
+      polish_expressions_all.push([combinations[i].operands[0]]);
+    } else if (
+      combinations[i].operands.length === 2 &&
+      combinations[i].operators.length === 1
+    ) {
+      // Add the two numbers followed by operator (example: 5 2 +)
+      polish_expressions_all.push([
+        combinations[i].operands[0],
+        combinations[i].operands[1],
+        combinations[i].operators[0],
+      ]);
+    } else if (
+      combinations[i].operands.length === 3 &&
+      combinations[i].operators.length === 2
+    ) {
+      // (example: 5 2 + 3 *)
+      polish_expressions_all.push([
+        combinations[i].operands[0],
+        combinations[i].operands[1],
+        combinations[i].operators[0],
+        combinations[i].operands[2],
+        combinations[i].operators[1],
+      ]);
+    } else if (
+      combinations[i].operands.length === 4 &&
+      combinations[i].operators.length === 3
+    ) {
+      // (example: 5 2 + 3 * 4 -)
+      polish_expressions_all.push([
+        combinations[i].operands[0],
+        combinations[i].operands[1],
+        combinations[i].operators[0],
+        combinations[i].operands[2],
+        combinations[i].operators[1],
+        combinations[i].operands[3],
+        combinations[i].operators[2],
+      ]);
+
+      // (example: 2 1 + 5 4 * *)
+      polish_expressions_all.push([
+        combinations[i].operands[0],
+        combinations[i].operands[1],
+        combinations[i].operators[0],
+        combinations[i].operands[2],
+        combinations[i].operands[3],
+        combinations[i].operators[1],
+        combinations[i].operators[2],
+      ]);
+    } else {
+      // Invalid expression
+    }
+  }
+
+  // Remove empty/unformed polish expressions
+  polish_expressions_all = Array.from(polish_expressions_all).filter(
+    (x) => x.length >= 1
+  );
+
+  // --- Evaluating Expressions ---
+  var calculatedValues = new Set<number>();
+
+  // Check whether expression part is an operator
+  function isOperator(
+    expression_part:
+      | { name: string; function: (num1: number, num2: number) => number }
+      | number
+  ): boolean {
+    return typeof expression_part !== "number";
+  }
+
+  // Check whether expression part is an operand (number)
+  function isOperand(
+    expression_part:
+      | { name: string; function: (num1: number, num2: number) => number }
+      | number
+  ): boolean {
+    return typeof expression_part === "number";
+  }
+
+  // Check whether expression skeleton matches with provided expression
+  function checkSkeleton(
+    expression: any[],
+    skeleton: ((expression_part: any) => boolean)[]
+  ): boolean {
+    for (let i = 0; i < expression.length; i++) {
+      if (!skeleton[i](expression[i])) {
+        return false; // Skeleton part different from expression part
+      }
+    }
+
+    return true;
+  }
+
+  for (let i = 0; i < polish_expressions_all.length; i++) {
+    const expression = polish_expressions_all[i];
+
+    if (expression.length === 1) {
+      if (checkSkeleton(expression, [isOperand])) {
+        const [firstNum] = expression;
+
+        const result = firstNum;
+        calculatedValues.add(result as any);
+      }
+    } else if (expression.length === 3) {
+      if (checkSkeleton(expression, [isOperand, isOperand, isOperator])) {
+        const [firstNum, secondNum, firstOperator] = expression;
+
+        const result = (firstOperator as any).function(firstNum, secondNum);
+        calculatedValues.add(result);
+      }
+    } else if (expression.length === 5) {
+      if (
+        checkSkeleton(expression, [
+          isOperand,
+          isOperand,
+          isOperator,
+          isOperand,
+          isOperator,
+        ])
+      ) {
+        const [firstNum, secondNum, firstOperator, thirdNum, secondOperator] =
+          expression;
+
+        const firstCalculation = (firstOperator as any).function(
+          firstNum,
+          secondNum
+        );
+        const result = (secondOperator as any).function(
+          firstCalculation,
+          thirdNum
+        );
+        calculatedValues.add(result);
+      }
+    } else if (expression.length === 7) {
+      if (
+        checkSkeleton(expression, [
+          isOperand,
+          isOperand,
+          isOperator,
+          isOperand,
+          isOperator,
+          isOperand,
+          isOperator,
+        ])
+      ) {
+        const [
+          firstNum,
+          secondNum,
+          firstOperator,
+          thirdNum,
+          secondOperator,
+          fourthNum,
+          thirdOperator,
+        ] = expression;
+
+        const firstCalculation = (firstOperator as any).function(
+          firstNum,
+          secondNum
+        );
+        const secondCalculation = (secondOperator as any).function(
+          firstCalculation,
+          thirdNum
+        );
+        const result = (thirdOperator as any).function(
+          secondCalculation,
+          fourthNum
+        );
+        calculatedValues.add(result);
+      } else if (
+        checkSkeleton(expression, [
+          isOperand,
+          isOperand,
+          isOperator,
+          isOperand,
+          isOperand,
+          isOperator,
+          isOperator,
+        ])
+      ) {
+        const [
+          firstNum,
+          secondNum,
+          firstOperator,
+          thirdNum,
+          fourthNum,
+          secondOperator,
+          thirdOperator,
+        ] = expression;
+
+        const firstCalculation = (firstOperator as any).function(
+          firstNum,
+          secondNum
+        );
+
+        const secondCalculation = (secondOperator as any).function(
+          thirdNum,
+          fourthNum
+        );
+
+        const result = (thirdOperator as any).function(
+          firstCalculation,
+          secondCalculation
+        );
+
+        calculatedValues.add(result);
+      }
+    }
+  }
+
+  // Remove results which aren't integers or are outside range of (0, maxLimit)
+  const validValues = Array.from(calculatedValues).filter(
+    (x) => x > 0 && x <= maxLimit && Math.round(x) === x
+  );
+
+  return Array.from(validValues);
+}
+
 const Nubble: React.FC<Props> = (props) => {
   const [diceValues, setdiceValues] = useState<number[]>(
     Array.from({ length: props.numDice }).map((x) => randomDiceNumber())
@@ -30,7 +386,7 @@ const Nubble: React.FC<Props> = (props) => {
 
   // Determine valid results on update of diceValues (at start and on roll of dice)
   React.useEffect(() => {
-    const newValidValues = getValidValues();
+    const newValidValues = getValidValues(diceValues, props.gridSize);
     setValidValues(newValidValues);
   }, [diceValues]);
 
@@ -167,363 +523,6 @@ const Nubble: React.FC<Props> = (props) => {
     return true;
   }
 
-  function getValidValues(): number[] {
-    // Returns permutations of input array, https://stackoverflow.com/a/20871714
-    function permutator<T>(inputArr: T[]): T[][] {
-      let result: any[] = [];
-
-      const permute = (arr: [], m = []) => {
-        if (arr.length === 0) {
-          result.push(m);
-        } else {
-          for (let i = 0; i < arr.length; i++) {
-            let curr = arr.slice();
-            let next = curr.splice(i, 1);
-            permute(curr.slice() as any, m.concat(next as any));
-          }
-        }
-      };
-
-      permute(inputArr as any);
-
-      return result;
-    }
-
-    // https://stackoverflow.com/questions/32543936/combination-with-repetition
-    function combRep(
-      arr: { name: string; function: (num1: number, num2: number) => number }[],
-      l: number
-    ) {
-      if (l === void 0) l = arr.length; // Length of the combinations
-      var data = Array(l), // Used to store state
-        results = []; // Array of results
-      (function f(pos, start) {
-        // Recursive function
-        if (pos === l) {
-          // End reached
-          results.push(data.slice()); // Add a copy of data to results
-          return;
-        }
-        for (var i = start; i < arr.length; ++i) {
-          data[pos] = arr[i]; // Update data
-          f(pos + 1, i); // Call f recursively
-        }
-      })(0, 0); // Start at index 0
-      return results; // Return results
-    }
-
-    // --- OPERATORS (+ - / *) ---
-    const operators = [
-      {
-        name: "/",
-        function: (num1: number, num2: number): number => num1 / num2,
-      },
-      {
-        name: "-",
-        function: (num1: number, num2: number): number => num1 - num2,
-      },
-      {
-        name: "+",
-        function: (num1: number, num2: number): number => num1 + num2,
-      },
-      {
-        name: "*",
-        function: (num1: number, num2: number): number => num1 * num2,
-      },
-    ];
-
-    // This does not include permutations having the same operator more than once
-    let operatorPermutations = permutator(operators);
-
-    // This adds permutations with repetition of operators (length 5 just to be safe)
-    for (let i = 1; i <= operators.length + 1; i++) {
-      // Array of permutations of length i
-      let newPermutations = combRep(operators, i);
-      // Add on to operatorPermutations array
-      operatorPermutations = operatorPermutations.concat(newPermutations);
-    }
-
-    // Make a copy of all the unique permutations so far
-    let operatorSubsetPermutations = operatorPermutations.slice();
-
-    for (let i = 0; i < operatorPermutations.length; i++) {
-      // 3 value subsets
-      operatorSubsetPermutations.push(operatorPermutations[i].slice(0, 3));
-      // 2 value subsets
-      operatorSubsetPermutations.push(operatorPermutations[i].slice(0, 2));
-      // 1 value subsets
-      operatorSubsetPermutations.push([operatorPermutations[i][0]]);
-    }
-
-    // Remove any subset larger in length than 3
-    const operatorSubsetPermutationsFiltered = Array.from(
-      operatorSubsetPermutations
-    ).filter((x) => x.length <= 3);
-
-    // --- OPERANDS (1-6) ---
-
-    // All the different permutations of the 4 dice values
-    const operandPermutations = permutator(diceValues);
-
-    // Start new array as copy of progress so far (operandPermutations)
-    let operandSubsetPermutations = operandPermutations.slice();
-
-    for (let i = 0; i < operandPermutations.length; i++) {
-      // 3 value subset
-      operandSubsetPermutations.push(operandPermutations[i].slice(0, 3));
-      // 2 value subset
-      operandSubsetPermutations.push(operandPermutations[i].slice(0, 2));
-      // 1 value subset
-      operandSubsetPermutations.push([operandPermutations[i][0]]);
-    }
-
-    // Combine the permutations of operands and operators (not yet in reverse polish)
-    var combinations = [];
-    for (let i = 0; i < Array.from(operandSubsetPermutations).length; i++) {
-      for (
-        let j = 0;
-        j < Array.from(operatorSubsetPermutationsFiltered).length;
-        j++
-      ) {
-        combinations.push({
-          operands: Array.from(operandSubsetPermutations)[i],
-          operators: Array.from(operatorSubsetPermutationsFiltered)[j],
-        });
-      }
-    }
-
-    // --- Reverse Polish Expressions ---
-
-    // Array to store the polish_expression arrays
-    let polish_expressions_all: Array<
-      Array<
-        | { name: string; function: (num1: number, num2: number) => number }
-        | number
-      >
-    > = [];
-
-    for (let i = 0; i < combinations.length; i++) {
-      // Define an array to push the operands and operators (as functions) to
-
-      if (combinations[i].operands.length === 1) {
-        // Add just the number (example: 5)
-        polish_expressions_all.push([combinations[i].operands[0]]);
-      } else if (
-        combinations[i].operands.length === 2 &&
-        combinations[i].operators.length === 1
-      ) {
-        // Add the two numbers followed by operator (example: 5 2 +)
-        polish_expressions_all.push([
-          combinations[i].operands[0],
-          combinations[i].operands[1],
-          combinations[i].operators[0],
-        ]);
-      } else if (
-        combinations[i].operands.length === 3 &&
-        combinations[i].operators.length === 2
-      ) {
-        // (example: 5 2 + 3 *)
-        polish_expressions_all.push([
-          combinations[i].operands[0],
-          combinations[i].operands[1],
-          combinations[i].operators[0],
-          combinations[i].operands[2],
-          combinations[i].operators[1],
-        ]);
-      } else if (
-        combinations[i].operands.length === 4 &&
-        combinations[i].operators.length === 3
-      ) {
-        // (example: 5 2 + 3 * 4 -)
-        polish_expressions_all.push([
-          combinations[i].operands[0],
-          combinations[i].operands[1],
-          combinations[i].operators[0],
-          combinations[i].operands[2],
-          combinations[i].operators[1],
-          combinations[i].operands[3],
-          combinations[i].operators[2],
-        ]);
-
-        // (example: 2 1 + 5 4 * *)
-        polish_expressions_all.push([
-          combinations[i].operands[0],
-          combinations[i].operands[1],
-          combinations[i].operators[0],
-          combinations[i].operands[2],
-          combinations[i].operands[3],
-          combinations[i].operators[1],
-          combinations[i].operators[2],
-        ]);
-      } else {
-        // Invalid expression
-      }
-    }
-
-    // Remove empty/unformed polish expressions
-    polish_expressions_all = Array.from(polish_expressions_all).filter(
-      (x) => x.length >= 1
-    );
-
-    // --- Evaluating Expressions ---
-    var calculatedValues = new Set<number>();
-
-    // Check whether expression part is an operator
-    function isOperator(
-      expression_part:
-        | { name: string; function: (num1: number, num2: number) => number }
-        | number
-    ): boolean {
-      return typeof expression_part !== "number";
-    }
-
-    // Check whether expression part is an operand (number)
-    function isOperand(
-      expression_part:
-        | { name: string; function: (num1: number, num2: number) => number }
-        | number
-    ): boolean {
-      return typeof expression_part === "number";
-    }
-
-    // Check whether expression skeleton matches with provided expression
-    function checkSkeleton(
-      expression: any[],
-      skeleton: ((expression_part: any) => boolean)[]
-    ): boolean {
-      for (let i = 0; i < expression.length; i++) {
-        if (!skeleton[i](expression[i])) {
-          return false; // Skeleton part different from expression part
-        }
-      }
-
-      return true;
-    }
-
-    for (let i = 0; i < polish_expressions_all.length; i++) {
-      const expression = polish_expressions_all[i];
-
-      if (expression.length === 1) {
-        if (checkSkeleton(expression, [isOperand])) {
-          const [firstNum] = expression;
-
-          const result = firstNum;
-          calculatedValues.add(result as any);
-        }
-      } else if (expression.length === 3) {
-        if (checkSkeleton(expression, [isOperand, isOperand, isOperator])) {
-          const [firstNum, secondNum, firstOperator] = expression;
-
-          const result = (firstOperator as any).function(firstNum, secondNum);
-          calculatedValues.add(result);
-        }
-      } else if (expression.length === 5) {
-        if (
-          checkSkeleton(expression, [
-            isOperand,
-            isOperand,
-            isOperator,
-            isOperand,
-            isOperator,
-          ])
-        ) {
-          const [firstNum, secondNum, firstOperator, thirdNum, secondOperator] =
-            expression;
-
-          const firstCalculation = (firstOperator as any).function(
-            firstNum,
-            secondNum
-          );
-          const result = (secondOperator as any).function(
-            firstCalculation,
-            thirdNum
-          );
-          calculatedValues.add(result);
-        }
-      } else if (expression.length === 7) {
-        if (
-          checkSkeleton(expression, [
-            isOperand,
-            isOperand,
-            isOperator,
-            isOperand,
-            isOperator,
-            isOperand,
-            isOperator,
-          ])
-        ) {
-          const [
-            firstNum,
-            secondNum,
-            firstOperator,
-            thirdNum,
-            secondOperator,
-            fourthNum,
-            thirdOperator,
-          ] = expression;
-
-          const firstCalculation = (firstOperator as any).function(
-            firstNum,
-            secondNum
-          );
-          const secondCalculation = (secondOperator as any).function(
-            firstCalculation,
-            thirdNum
-          );
-          const result = (thirdOperator as any).function(
-            secondCalculation,
-            fourthNum
-          );
-          calculatedValues.add(result);
-        } else if (
-          checkSkeleton(expression, [
-            isOperand,
-            isOperand,
-            isOperator,
-            isOperand,
-            isOperand,
-            isOperator,
-            isOperator,
-          ])
-        ) {
-          const [
-            firstNum,
-            secondNum,
-            firstOperator,
-            thirdNum,
-            fourthNum,
-            secondOperator,
-            thirdOperator,
-          ] = expression;
-
-          const firstCalculation = (firstOperator as any).function(
-            firstNum,
-            secondNum
-          );
-
-          const secondCalculation = (secondOperator as any).function(
-            thirdNum,
-            fourthNum
-          );
-
-          const result = (thirdOperator as any).function(
-            firstCalculation,
-            secondCalculation
-          );
-
-          calculatedValues.add(result);
-        }
-      }
-    }
-
-    // Remove results which aren't integers or are outside range of (0, gridSize)
-    const validValues = Array.from(calculatedValues).filter(
-      (x) => x > 0 && x <= props.gridSize && Math.round(x) === x
-    );
-
-    return Array.from(validValues);
-  }
-
   function isAdjacentTriangle(pinNumber: number) {
     // Array deatiling pin adjacency for this gridSize
     const adjacentMappings = getAdjacentMappings();
@@ -559,7 +558,7 @@ const Nubble: React.FC<Props> = (props) => {
         // Double points if the picked pin is a prime number
         pinScore = pinScore! * 2;
       }
-      
+
       // Bonus points awarded for nubble triangle
       const adjacentBonus = 200;
 
