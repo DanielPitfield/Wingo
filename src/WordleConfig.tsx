@@ -20,7 +20,8 @@ interface Props {
     | "increasing"
     | "limitless"
     | "puzzle"
-    | "interlinked";
+    | "interlinked"
+    | "countdown_letters";
   page: Page;
   firstLetterProvided: boolean;
   timerConfig: { isTimed: false } | { isTimed: true; seconds: number };

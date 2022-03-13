@@ -616,3 +616,17 @@ code {
   padding: 0.5em 2em;
   border: 2px solid black;
 }
+
+.add-letter-buttons-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1em 0;
+}
+
+.add-vowel, .add-consonant {
+  text-align: center;
+  cursor: pointer;
+  padding: 1em;
+  min-width: 4em;
+}

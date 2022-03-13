@@ -14,7 +14,8 @@ interface Props {
     | "increasing"
     | "limitless"
     | "puzzle"
-    | "interlinked";
+    | "interlinked"
+    | "countdown_letters";
   timerConfig:
     | { isTimed: false }
     | { isTimed: true; totalSeconds: number; elapsedSeconds: number };
@@ -71,6 +72,55 @@ const Wordle: React.FC<Props> = (props) => {
           hasSubmit={true}
           inDictionary={props.inDictionary}
         ></WordRow>
+      );
+    }
+
+    function addVowel() {
+      const vowels_string = "aeiou";
+      const vowels = vowels_string.split("");
+
+      const random_vowel_index = Math.round(
+        Math.random() * (vowels.length - 1)
+      );
+      const random_vowel = vowels[random_vowel_index];
+
+      // TODO: This sets current word (but both the WordRows update with this word!)
+      // props.onSubmitLetter(random_vowel);
+    }
+
+    function addConsonant() {
+      const consonant_string = "qwrtypsdfghjklzxcvbnm";
+      const consonants = consonant_string.split("");
+
+      const random_consonant_index = Math.round(
+        Math.random() * (consonants.length - 1)
+      );
+      const random_consonant = consonants[random_consonant_index];
+
+      // props.onSubmitLetter(random_consonant);
+    }
+
+    if (props.mode === "countdown_letters") {
+      Grid.push(
+        <div className="countdown-letters-wrapper">
+          <WordRow
+            key={"letter_selection"}
+            word={props.currentWord}
+            isVertical={false}
+            length={wordLength}
+            targetWord={props.targetWord}
+            hasSubmit={true}
+            inDictionary={props.inDictionary}
+          ></WordRow>
+          <div className="add-letter-buttons-wrapper">
+            <Button mode={"default"} onClick={addVowel}>
+              Vowel
+            </Button>
+            <Button mode={"default"} onClick={addConsonant}>
+              Consonant
+            </Button>
+          </div>
+        </div>
       );
     }
 

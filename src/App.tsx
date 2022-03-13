@@ -10,10 +10,12 @@ import { SaveData } from "./SaveData";
 
 const wordLength = 5;
 const numGuesses = 6;
+const numGuesses_countdown_letters = 1;
 
 const wordLength_increasing = 4;
 const wordLength_limitless = 4;
 const wordLength_puzzle = 10;
+const wordLength_countdown_letters = 9;
 
 const numGuesses_puzzle = 1;
 const puzzleRevealMs = 2000;
@@ -29,6 +31,7 @@ export type Page =
   | "wordle_limitless"
   | "wordle_puzzle"
   | "wordle_interlinked"
+  | "countdown_letters"
   | "numbo"
   | "nubble";
 
@@ -49,6 +52,7 @@ export const App: React.FC = () => {
     { page: "wordle_limitless", firstLetter: false, timer: false },
     { page: "wordle_puzzle", firstLetter: false, timer: false },
     { page: "wordle_interlinked", firstLetter: false, timer: false },
+    { page: "countdown_letters", firstLetter: false, timer: false },
   ]);
 
   useEffect(() => {
@@ -217,6 +221,26 @@ export const App: React.FC = () => {
                 : { isTimed: false }
             }
             defaultWordLength={wordLength}
+          />
+        );
+
+        case "countdown_letters":
+        return (
+          <WordleConfig
+            {...commonProps}
+            mode="countdown_letters"
+            firstLetterProvided={
+              gameOptionToggles.find((x) => x.page === "countdown_letters")
+                ?.firstLetter || false
+            }
+            timerConfig={
+              gameOptionToggles.find((x) => x.page === "countdown_letters")
+                ?.timer
+                ? { isTimed: true, seconds: 30 }
+                : { isTimed: false }
+            }
+            defaultWordLength={wordLength_countdown_letters}
+            defaultnumGuesses={numGuesses_countdown_letters}
           />
         );
 
