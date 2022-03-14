@@ -497,6 +497,21 @@ const WordleConfig: React.FC<Props> = (props) => {
     return goldTotal;
   }
 
+  function isWordValid(validLetters: string[], attemptedWord: string[]) {
+    // For every letter in the guess
+    return attemptedWord.every((attemptedLetter) => {
+      // The letter must be one of the 9 letters allowed (within validLetters)
+      const letterIndex = validLetters.indexOf(attemptedLetter);
+      if (letterIndex > -1) {
+        // Delete the letterfrom validLetters (so that the same letter can't be used more than once)
+        validLetters.splice(letterIndex, 1);
+        return true;
+      } else {
+        return false;
+      }
+    });
+  }
+
   function onEnter() {
     // Pressing Enter to Continue or Restart
     if (!inProgress) {
@@ -517,14 +532,11 @@ const WordleConfig: React.FC<Props> = (props) => {
 
     setinDictionary(true);
 
-   
-   
-    let outcome: "success" | "failure" | "in-progress";
-    
     /*
     Guesses don't have to be full length in Countdown Letters
     Also, a time limit is used not a limit on the number of guesses
-    */  
+    */
+    let outcome: "success" | "failure" | "in-progress" = "in-progress";
 
     if (props.mode !== "countdown_letters") {
       if (currentWord.length !== wordLength) {
@@ -534,43 +546,77 @@ const WordleConfig: React.FC<Props> = (props) => {
       if (wordIndex >= props.defaultnumGuesses) {
         // Used all the available rows (out of guesses)
         return;
-      }
-    }
+      }      
 
-    const wordArray = wordLengthMappings.find((x) => x.value === wordLength)
-      ?.array!;
+      const wordArray = wordLengthMappings.find((x) => x.value === wordLength)
+        ?.array!;
 
-    if (wordArray.includes(currentWord.toLowerCase())) {
-      // Full length and accepted word
-      setGuesses(guesses.concat(currentWord)); // Add word to guesses
+      if (wordArray.includes(currentWord.toLowerCase())) {
+        // Full length and accepted word
+        setGuesses(guesses.concat(currentWord)); // Add word to guesses
 
-      if (currentWord.toUpperCase() === targetWord?.toUpperCase()) {
-        // Exact match
-        setinProgress(false);
-        const goldBanked = calculateGoldAwarded(
-          targetWord.length,
-          wordIndex + 1
-        );
-        SaveData.addGold(goldBanked);
-        outcome = "success";
-      } else if (wordIndex + 1 === numGuesses) {
-        // Out of guesses
+        if (currentWord.toUpperCase() === targetWord?.toUpperCase()) {
+          // Exact match
+          setinProgress(false);
+          const goldBanked = calculateGoldAwarded(
+            targetWord.length,
+            wordIndex + 1
+          );
+          SaveData.addGold(goldBanked);
+          outcome = "success";
+        } else if (wordIndex + 1 === numGuesses) {
+          // Out of guesses
+          setinProgress(false);
+          outcome = "failure";
+        } else {
+          // Not yet guessed
+          if (props.firstLetterProvided) {
+            setCurrentWord(targetWord?.charAt(0)!);
+          } else {
+            setCurrentWord(""); // Start new word as empty string
+          }
+          setWordIndex(wordIndex + 1); // Increment index to indicate new word has been started
+          //outcome = "in-progress";
+        }
+      } else {
+        setinDictionary(false);
         setinProgress(false);
         outcome = "failure";
-      } else {
-        // Not yet guessed
-        if (props.firstLetterProvided) {
-          setCurrentWord(targetWord?.charAt(0)!);
-        } else {
-          setCurrentWord(""); // Start new word as empty string
-        }
-        setWordIndex(wordIndex + 1); // Increment index to indicate new word has been started
-        outcome = "in-progress";
       }
-    } else {
-      setinDictionary(false);
-      setinProgress(false);
-      outcome = "failure";
+    }
+    // Countdown Letters
+    else {
+      // The 9 vowels and consonants available have not all been picked
+      if (countdownWord.length !== props.defaultWordLength) {
+        return;
+      }
+
+      // Guessed word is not 2 characters or longer
+      if (currentWord.length < 2) {
+        setinDictionary(false);
+        setinProgress(false);
+        outcome = "failure";
+      }
+
+      const wordArray = wordLengthMappings.find(
+        (x) => x.value === currentWord.length
+      )?.array!;
+
+      const available_letters = countdownWord.split("");
+      const currentWord_letters = currentWord.split("");
+
+      // Accepted word
+      if (wordArray.includes(currentWord.toLowerCase())) {
+        // Word can be made with the picked/available letters
+        if (isWordValid(available_letters, currentWord_letters)) {
+          // Set the target word to the guessed word so all letters show as green
+          settargetWord(currentWord);
+          setinProgress(false);
+          outcome = "success";
+          setGuesses(guesses.concat(currentWord)); // Add word to guesses
+          // TODO: SetCountdownGuesses and then display these words somewhere in white area
+        }
+      }
     }
 
     if (outcome !== "in-progress" && gameId) {
