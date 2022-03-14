@@ -43,7 +43,11 @@ const wordLengthMappings = [
   { value: 11, array: words_eleven },
 ];
 
-export function getWordSummary(word: string, targetWord: string, inDictionary: boolean) {
+export function getWordSummary(
+  word: string,
+  targetWord: string,
+  inDictionary: boolean
+) {
   // Character and status array
   let defaultCharacterStatuses = word.split("").map((character, index) => ({
     character: character,
@@ -79,14 +83,8 @@ export function getLetterStatus(
   index: number,
   targetWord: string,
   inDictionary: boolean
-  
 ): "incorrect" | "contains" | "correct" | "not set" | "not in word" {
-  var status:
-    | "incorrect"
-    | "contains"
-    | "correct"
-    | "not set"
-    | "not in word";
+  var status: "incorrect" | "contains" | "correct" | "not set" | "not in word";
 
   if (!inDictionary) {
     // Red
@@ -121,6 +119,7 @@ const WordleConfig: React.FC<Props> = (props) => {
   const [revealedLetterIndexes, setRevealedLetterIndexes] = useState<number[]>(
     []
   );
+  const [countdownWord, setCountdownWord] = useState("");
 
   const defaultLetterStatuses: {
     letter: string;
@@ -501,11 +500,13 @@ const WordleConfig: React.FC<Props> = (props) => {
   function onEnter() {
     // Pressing Enter to Continue or Restart
     if (!inProgress) {
+      // Daily mode should have neither 'Continue' or 'Restart' game
       if (props.mode !== "daily") {
         if (
           targetWord?.toUpperCase() === currentWord.toUpperCase() &&
           (props.mode === "increasing" || props.mode === "limitless")
         ) {
+          // Increasing and limitless should show 'Continue' game
           ContinueGame();
         } else {
           ResetGame();
@@ -516,20 +517,28 @@ const WordleConfig: React.FC<Props> = (props) => {
 
     setinDictionary(true);
 
-    if (currentWord.length !== wordLength) {
-      // Incomplete word
-      return;
-    }
+   
+   
+    let outcome: "success" | "failure" | "in-progress";
+    
+    /*
+    Guesses don't have to be full length in Countdown Letters
+    Also, a time limit is used not a limit on the number of guesses
+    */  
 
-    if (wordIndex >= props.defaultnumGuesses) {
-      // Used all the available rows (out of guesses)
-      return;
+    if (props.mode !== "countdown_letters") {
+      if (currentWord.length !== wordLength) {
+        // Incomplete word
+        return;
+      }
+      if (wordIndex >= props.defaultnumGuesses) {
+        // Used all the available rows (out of guesses)
+        return;
+      }
     }
 
     const wordArray = wordLengthMappings.find((x) => x.value === wordLength)
       ?.array!;
-
-    let outcome: "success" | "failure" | "in-progress";
 
     if (wordArray.includes(currentWord.toLowerCase())) {
       // Full length and accepted word
@@ -583,9 +592,16 @@ const WordleConfig: React.FC<Props> = (props) => {
     }
   }
 
+  function onSubmitCountdownLetter(letter: string) {
+    if (countdownWord.length < wordLength && inProgress) {
+      setCountdownWord(countdownWord + letter); // Append chosen letter to currentWord
+      sethasSubmitLetter(true);
+    }
+  }
+
   function onSubmitLetter(letter: string) {
     if (currentWord.length < wordLength && inProgress) {
-      setCurrentWord(currentWord + letter); // Append chosen letter to currentWord
+      setCurrentWord(currentWord + letter);
       sethasSubmitLetter(true);
     }
   }
@@ -617,6 +633,7 @@ const WordleConfig: React.FC<Props> = (props) => {
       numGuesses={numGuesses}
       guesses={guesses}
       currentWord={currentWord}
+      countdownWord={countdownWord}
       wordIndex={wordIndex}
       inProgress={inProgress}
       inDictionary={inDictionary}
@@ -629,6 +646,7 @@ const WordleConfig: React.FC<Props> = (props) => {
       revealedLetterIndexes={revealedLetterIndexes}
       letterStatuses={letterStatuses}
       onEnter={onEnter}
+      onSubmitCountdownLetter={onSubmitCountdownLetter}
       onSubmitLetter={onSubmitLetter}
       onBackspace={onBackspace}
       ResetGame={ResetGame}

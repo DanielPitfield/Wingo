@@ -23,6 +23,7 @@ interface Props {
   numGuesses: number;
   guesses: string[];
   currentWord: string;
+  countdownWord: string;
   wordIndex: number;
   inProgress: boolean;
   inDictionary: boolean;
@@ -39,6 +40,7 @@ interface Props {
   revealedLetterIndexes: number[];
   setPage: (page: Page) => void;
   onEnter: () => void;
+  onSubmitCountdownLetter: (letter: string) => void;
   onSubmitLetter: (letter: string) => void;
   onBackspace: () => void;
   ResetGame: () => void;
@@ -85,7 +87,7 @@ const Wordle: React.FC<Props> = (props) => {
       const random_vowel = vowels[random_vowel_index];
 
       // TODO: This sets current word (but both the WordRows update with this word!)
-      // props.onSubmitLetter(random_vowel);
+      props.onSubmitCountdownLetter(random_vowel);
     }
 
     function addConsonant() {
@@ -97,7 +99,7 @@ const Wordle: React.FC<Props> = (props) => {
       );
       const random_consonant = consonants[random_consonant_index];
 
-      // props.onSubmitLetter(random_consonant);
+      props.onSubmitCountdownLetter(random_consonant);
     }
 
     if (props.mode === "countdown_letters") {
@@ -105,10 +107,10 @@ const Wordle: React.FC<Props> = (props) => {
         <div className="countdown-letters-wrapper">
           <WordRow
             key={"letter_selection"}
-            word={props.currentWord}
+            word={props.countdownWord}
             isVertical={false}
             length={wordLength}
-            targetWord={props.targetWord}
+            targetWord={""}
             hasSubmit={true}
             inDictionary={props.inDictionary}
           ></WordRow>
