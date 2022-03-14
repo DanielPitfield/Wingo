@@ -427,9 +427,11 @@ const WordleConfig: React.FC<Props> = (props) => {
     sethasSubmitLetter(false);
     setRevealedLetterIndexes([]);
     setletterStatuses(defaultLetterStatuses);
+    
     if (props.timerConfig.isTimed) {
       setSeconds(props.timerConfig.seconds);
     }
+
     if (props.mode === "limitless") {
       // Calculate the number of rows not used
       const newLives = numGuesses - (wordIndex + 1);
@@ -532,12 +534,12 @@ const WordleConfig: React.FC<Props> = (props) => {
 
     setinDictionary(true);
 
+    let outcome: "success" | "failure" | "in-progress" = "in-progress";
+
     /*
     Guesses don't have to be full length in Countdown Letters
     Also, a time limit is used not a limit on the number of guesses
     */
-    let outcome: "success" | "failure" | "in-progress" = "in-progress";
-
     if (props.mode !== "countdown_letters") {
       if (currentWord.length !== wordLength) {
         // Incomplete word
@@ -546,7 +548,7 @@ const WordleConfig: React.FC<Props> = (props) => {
       if (wordIndex >= props.defaultnumGuesses) {
         // Used all the available rows (out of guesses)
         return;
-      }      
+      }
 
       const wordArray = wordLengthMappings.find((x) => x.value === wordLength)
         ?.array!;
@@ -605,17 +607,22 @@ const WordleConfig: React.FC<Props> = (props) => {
       const available_letters = countdownWord.split("");
       const currentWord_letters = currentWord.split("");
 
-      // Accepted word
-      if (wordArray.includes(currentWord.toLowerCase())) {
-        // Word can be made with the picked/available letters
-        if (isWordValid(available_letters, currentWord_letters)) {
-          // Set the target word to the guessed word so all letters show as green
-          settargetWord(currentWord);
-          setinProgress(false);
-          outcome = "success";
-          setGuesses(guesses.concat(currentWord)); // Add word to guesses
-          // TODO: SetCountdownGuesses and then display these words somewhere in white area
-        }
+      // Accepted word (known word in dictionary)
+      const wordInDictionary = wordArray.includes(currentWord.toLowerCase());
+      // Word can be made with available letters
+      const isValidWord = isWordValid(available_letters, currentWord_letters);
+
+      if (wordInDictionary && isValidWord) {
+        // Set the target word to the guessed word so all letters show as green
+        settargetWord(currentWord);
+        setinProgress(false);
+        outcome = "success";
+        setGuesses(guesses.concat(currentWord)); // Add word to guesses
+        // TODO: SetCountdownGuesses and then display these words somewhere in white area
+      } else {
+        setinDictionary(false);
+        setinProgress(false);
+        outcome = "failure";
       }
     }
 

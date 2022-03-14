@@ -98,6 +98,11 @@ const Wordle: React.FC<Props> = (props) => {
     }
 
     function addVowel() {
+      // Already 9 picked letters, don't add any more
+      if (props.countdownWord.length === 9) {
+        return;
+      }
+
       // Scrabble distribution (https://en.wikipedia.org/wiki/Scrabble_letter_distributions)
       let vowel_weightings = [
         { letter: "a", weighting: 9 },
@@ -121,6 +126,10 @@ const Wordle: React.FC<Props> = (props) => {
     }
 
     function addConsonant() {
+      if (props.countdownWord.length === 9) {
+        return;
+      }
+
       let consonant_weightings = [
         { letter: "b", weighting: 2 },
         { letter: "c", weighting: 2 },
@@ -159,6 +168,8 @@ const Wordle: React.FC<Props> = (props) => {
     }
 
     if (props.mode === "countdown_letters") {
+      // Check if 9 letters have been selected
+      const isSelectionFinished = props.countdownWord.length == 9;
       Grid.push(
         <div className="countdown-letters-wrapper">
           <WordRow
@@ -171,10 +182,10 @@ const Wordle: React.FC<Props> = (props) => {
             inDictionary={props.inDictionary}
           ></WordRow>
           <div className="add-letter-buttons-wrapper">
-            <Button mode={"default"} onClick={addVowel}>
+            <Button mode={"default"} disabled={isSelectionFinished} onClick={addVowel}>
               Vowel
             </Button>
-            <Button mode={"default"} onClick={addConsonant}>
+            <Button mode={"default"} disabled={isSelectionFinished} onClick={addConsonant}>
               Consonant
             </Button>
           </div>

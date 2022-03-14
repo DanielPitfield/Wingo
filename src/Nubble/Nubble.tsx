@@ -254,6 +254,7 @@ export function getValidValues(
         combinations[i].operators[3],
       ]);
     }
+    // TODO: 6 operand combinations
   }
 
   // Remove empty/unformed polish expressions
@@ -548,6 +549,7 @@ export function getValidValues(
     (x) => x > 0 && x <= maxLimit && Math.round(x) === x
   );
 
+  // TODO: Still missing some values (try dud in operators?)
   return Array.from(validValues);
 }
 
