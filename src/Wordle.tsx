@@ -77,29 +77,85 @@ const Wordle: React.FC<Props> = (props) => {
       );
     }
 
+    function getWeightedLetter(
+      letter_weightings: { letter: string; weighting: number }[]
+    ) {
+      var weighted_array: string[] = [];
+
+      // For each object in input array
+      for (let i = 0; i < letter_weightings.length; i++) {
+        // For the 'weighting' value number of times
+        for (var j = 0; j < letter_weightings[i].weighting; j++) {
+          // Push the related letter to the array
+          weighted_array.push(letter_weightings[i].letter);
+        }
+      }
+
+      // Select a random value from this array
+      return weighted_array[
+        Math.floor(Math.random() * (weighted_array.length - 1))
+      ];
+    }
+
     function addVowel() {
-      const vowels_string = "aeiou";
-      const vowels = vowels_string.split("");
+      // Scrabble distribution (https://en.wikipedia.org/wiki/Scrabble_letter_distributions)
+      let vowel_weightings = [
+        { letter: "a", weighting: 9 },
+        { letter: "e", weighting: 12 },
+        { letter: "i", weighting: 9 },
+        { letter: "o", weighting: 8 },
+        { letter: "u", weighting: 4 },
+      ];
 
-      const random_vowel_index = Math.round(
-        Math.random() * (vowels.length - 1)
-      );
-      const random_vowel = vowels[random_vowel_index];
+      /*
+      if (turnOffWeighting) {
+        vowel_weightings.map((x) => {
+          x.weighting = 1;
+          return x;
+        });
+      }
+      */
 
-      // TODO: This sets current word (but both the WordRows update with this word!)
-      props.onSubmitCountdownLetter(random_vowel);
+      const weighted_vowel = getWeightedLetter(vowel_weightings);
+      props.onSubmitCountdownLetter(weighted_vowel);
     }
 
     function addConsonant() {
-      const consonant_string = "qwrtypsdfghjklzxcvbnm";
-      const consonants = consonant_string.split("");
+      let consonant_weightings = [
+        { letter: "b", weighting: 2 },
+        { letter: "c", weighting: 2 },
+        { letter: "d", weighting: 4 },
+        { letter: "f", weighting: 2 },
+        { letter: "g", weighting: 3 },
+        { letter: "h", weighting: 2 },
+        { letter: "j", weighting: 1 },
+        { letter: "k", weighting: 1 },
+        { letter: "l", weighting: 4 },
+        { letter: "m", weighting: 2 },
+        { letter: "n", weighting: 6 },
+        { letter: "p", weighting: 2 },
+        { letter: "q", weighting: 1 },
+        { letter: "r", weighting: 6 },
+        { letter: "s", weighting: 4 },
+        { letter: "t", weighting: 6 },
+        { letter: "v", weighting: 2 },
+        { letter: "w", weighting: 2 },
+        { letter: "x", weighting: 1 },
+        { letter: "y", weighting: 2 },
+        { letter: "z", weighting: 1 },
+      ];
 
-      const random_consonant_index = Math.round(
-        Math.random() * (consonants.length - 1)
-      );
-      const random_consonant = consonants[random_consonant_index];
+      /*
+      if (turnOffWeighting) {
+        consonant_weightings.map((x) => {
+          x.weighting = 1;
+          return x;
+        });
+      }
+      */
 
-      props.onSubmitCountdownLetter(random_consonant);
+      const weighted_consonant = getWeightedLetter(consonant_weightings);
+      props.onSubmitCountdownLetter(weighted_consonant);
     }
 
     if (props.mode === "countdown_letters") {
