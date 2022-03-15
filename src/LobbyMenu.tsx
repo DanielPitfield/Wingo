@@ -10,6 +10,12 @@ interface Props {
   firstLetterToggle: (value: boolean, page: Page) => void;
   timerToggle: (value: boolean, page: Page) => void;
   keyboardToggle: (value: boolean, page: Page) => void;
+  gameOptionToggles: {
+    page: Page;
+    firstLetter: boolean;
+    timer: boolean;
+    keyboard: boolean;
+  }[];
 }
 
 export const LobbyMenu: React.FC<Props> = (props) => {
@@ -37,6 +43,55 @@ export const LobbyMenu: React.FC<Props> = (props) => {
           ></button>
         </div>
       </li>
+    );
+  }
+
+  function renderConfigModal(page: Page): React.ReactNode {
+    return (
+      <div className="modal">
+        <div className="options_body">
+          <div className="options_title">Options</div>
+          <button
+            className="options_close"
+            onClick={() => setOptionsConfig({ isConfigShown: false })}
+          >
+            X
+          </button>
+          <label>
+            <input
+              checked={
+                props.gameOptionToggles.find((x) => x.page === page)
+                  ?.firstLetter || false
+              }
+              type="checkbox"
+              onChange={(e) => props.firstLetterToggle(e.target.checked, page)}
+            ></input>
+            First Letter Provided
+          </label>
+          <label>
+            <input
+              checked={
+                props.gameOptionToggles.find((x) => x.page === page)
+                  ?.timer || false
+              }
+              type="checkbox"
+              onChange={(e) => props.timerToggle(e.target.checked, page)}
+            ></input>
+            Timer
+          </label>
+          <label>
+            <input
+              checked={
+                props.gameOptionToggles.find((x) => x.page === page)
+                  ?.keyboard || false
+              }
+              type="checkbox"
+              onChange={(e) => props.keyboardToggle(e.target.checked, page)}
+            ></input>
+            Keyboard
+          </label>
+        </div>
+      </div>
     );
   }
 
@@ -69,46 +124,7 @@ export const LobbyMenu: React.FC<Props> = (props) => {
         </ul>
       </div>
 
-      {optionsConfig.isConfigShown && (
-        <div className="modal">
-          <div className="options_body">
-            <div className="options_title">Options</div>
-            <button
-              className="options_close"
-              onClick={() => setOptionsConfig({ isConfigShown: false })}
-            >
-              X
-            </button>
-            <label>
-              <input
-                type="checkbox"
-                onChange={(e) =>
-                  props.firstLetterToggle(e.target.checked, optionsConfig.Page)
-                }
-              ></input>
-              First Letter Provided
-            </label>
-            <label>
-              <input
-                type="checkbox"
-                onChange={(e) =>
-                  props.timerToggle(e.target.checked, optionsConfig.Page)
-                }
-              ></input>
-              Timer
-            </label>
-            <label>
-              <input /* TODO: Needs to be checked by default */
-                type="checkbox"
-                onChange={(e) =>
-                  props.keyboardToggle(e.target.checked, optionsConfig.Page)
-                }
-              ></input>
-              Keyboard
-            </label>
-          </div>
-        </div>
-      )}
+      {optionsConfig.isConfigShown && renderConfigModal(optionsConfig.Page)}
 
       <section className="challenges">
         <h2 className="challenges-title">Challenges</h2>

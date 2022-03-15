@@ -126,6 +126,19 @@ const CountdownLetters: React.FC<Props> = (props) => {
       props.onSubmitCountdownLetter(weighted_consonant);
     }
 
+    // TODO: Renders only once after first letter added?
+    function quickLetterSelection() {
+      for (let i = 0; i < wordLength; i++) {
+        let x = Math.floor(Math.random() * 2) == 0;
+        if (x) {
+          addVowel();
+        }
+        else {
+          addConsonant();
+        }
+      }
+    }
+
     var Grid = [];
 
     // Check if 9 letters have been selected
@@ -157,6 +170,13 @@ const CountdownLetters: React.FC<Props> = (props) => {
             onClick={addConsonant}
           >
             Consonant
+          </Button>
+          <Button
+            mode={"default"}
+            disabled={props.countdownWord.length !== 0 || isSelectionFinished}
+            onClick={quickLetterSelection}
+          >
+            Quick Pick
           </Button>
         </div>
       </div>
@@ -234,9 +254,10 @@ const CountdownLetters: React.FC<Props> = (props) => {
       </div>
 
       <div className="countdown_letters_guesses">
-        {props.guesses.map((guess) => <p className="countdown_letters_guess">{guess}</p>)}
+        {props.guesses.map((guess) => (
+          <p className="countdown_letters_guess">{guess}</p>
+        ))}
       </div>
-      
     </div>
   );
 };

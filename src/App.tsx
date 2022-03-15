@@ -119,6 +119,7 @@ export const App: React.FC = () => {
               );
             }}
             setPage={setPage}
+            gameOptionToggles={gameOptionToggles}
           />
         );
 
