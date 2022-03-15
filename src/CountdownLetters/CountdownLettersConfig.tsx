@@ -12,7 +12,6 @@ import { words_ten } from "../WordArrays/words_10";
 import { words_eleven } from "../WordArrays/words_11";
 import { SaveData } from "../SaveData";
 
-
 interface Props {
   page: Page;
   timerConfig: { isTimed: false } | { isTimed: true; seconds: number };
@@ -220,9 +219,16 @@ const CountdownLettersConfig: React.FC<Props> = (props) => {
   // TODO: Add game to SaveData history
   // TODO: Calculate gold reward
 
-  function isWordValid(validLetters: string[], attemptedWord: string[]) {
+  function isWordValid(countdownWord: string, guessedWord: string) {
+    if (!countdownWord || !guessedWord) {
+      return false;
+    }
+
+    const validLetters = countdownWord.split("");
+    const guessedWordLetters = guessedWord.split("");
+
     // For every letter in the guess
-    return attemptedWord.every((attemptedLetter) => {
+    return guessedWordLetters.every((attemptedLetter) => {
       // The letter must be one of the 9 letters allowed (within validLetters)
       const letterIndex = validLetters.indexOf(attemptedLetter);
       if (letterIndex > -1) {
@@ -233,6 +239,33 @@ const CountdownLettersConfig: React.FC<Props> = (props) => {
         return false;
       }
     });
+  }
+
+  function getBestWords(countdownWord: string) {
+    // Array to store best words that are found
+    var best_words = [];
+
+    // Start with bigger words first
+    for (let i = props.defaultWordLength; i >= 4; i--) {
+      // Get word array containng words of i size
+      const wordArray = wordLengthMappings.find((x) => x.value === i)?.array!;
+      // Safety check for wordArray
+      if (wordArray) {
+        // Check the entire array for any valid words
+        for (let j = 0; j < wordArray.length; j++) {
+          const word = wordArray[j];
+          // Safety check for word
+          if (word) {
+            if (isWordValid(countdownWord, word)) {
+              // Push to array if word is valid
+              best_words.push(word);
+            }
+          }
+        }
+      }
+    }
+
+    return best_words;
   }
 
   function onEnter() {
@@ -272,13 +305,12 @@ const CountdownLettersConfig: React.FC<Props> = (props) => {
       (x) => x.value === currentWord.length
     )?.array!;
 
-    const available_letters = countdownWord.split("");
-    const currentWord_letters = currentWord.split("");
-
     // Accepted word (known word in dictionary)
     const wordInDictionary = wordArray.includes(currentWord.toLowerCase());
     // Word can be made with available letters
-    const isValidWord = isWordValid(available_letters, currentWord_letters);
+    const isValidWord = isWordValid(countdownWord, currentWord);
+
+    console.log(getBestWords(countdownWord));
 
     if (wordInDictionary && isValidWord) {
       // Set the target word to the guessed word so all letters show as green
@@ -308,7 +340,11 @@ const CountdownLettersConfig: React.FC<Props> = (props) => {
 
   function onSubmitLetter(letter: string) {
     // Additional condition of all 9 letters having been selected
-    if (currentWord.length < wordLength && countdownWord.length === 9 && inProgress) {
+    if (
+      currentWord.length < wordLength &&
+      countdownWord.length === 9 &&
+      inProgress
+    ) {
       setCurrentWord(currentWord + letter); // Append chosen letter to currentWord
       sethasSubmitLetter(true);
     }

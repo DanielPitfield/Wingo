@@ -234,7 +234,7 @@ const CountdownLetters: React.FC<Props> = (props) => {
       </div>
 
       <div className="countdown_letters_guesses">
-        {props.inProgress && props.guesses.map((guess) => <p>{guess}</p>)}
+        {props.guesses.map((guess) => <p className="countdown_letters_guess">{guess}</p>)}
       </div>
       
     </div>
