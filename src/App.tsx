@@ -7,10 +7,10 @@ import { Button } from "./Button";
 import NubbleConfig from "./Nubble/NubbleConfig";
 import GoldCoin from "./images/gold.png";
 import { SaveData } from "./SaveData";
+import CountdownLettersConfig from "./CountdownLetters/CountdownLettersConfig";
 
 const wordLength = 5;
 const numGuesses = 6;
-const numGuesses_countdown_letters = 1;
 
 const wordLength_increasing = 4;
 const wordLength_limitless = 4;
@@ -224,15 +224,9 @@ export const App: React.FC = () => {
           />
         );
 
-        case "countdown_letters":
+      case "countdown_letters":
         return (
-          <WordleConfig
-            {...commonProps}
-            mode="countdown_letters"
-            firstLetterProvided={
-              gameOptionToggles.find((x) => x.page === "countdown_letters")
-                ?.firstLetter || false
-            }
+          <CountdownLettersConfig
             timerConfig={
               gameOptionToggles.find((x) => x.page === "countdown_letters")
                 ?.timer
@@ -240,7 +234,8 @@ export const App: React.FC = () => {
                 : { isTimed: false }
             }
             defaultWordLength={wordLength_countdown_letters}
-            defaultnumGuesses={numGuesses_countdown_letters}
+            page = {page}
+            setPage = {setPage}
           />
         );
 
