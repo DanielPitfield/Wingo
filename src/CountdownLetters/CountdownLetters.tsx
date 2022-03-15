@@ -11,6 +11,7 @@ interface Props {
   timerConfig:
     | { isTimed: false }
     | { isTimed: true; totalSeconds: number; elapsedSeconds: number };
+  keyboard: boolean;
   wordLength: number;
   guesses: string[];
   currentWord: string;
@@ -194,40 +195,36 @@ const CountdownLetters: React.FC<Props> = (props) => {
       );
     }
 
-    if (
-      props.currentWord.toUpperCase() === props.targetWord.toUpperCase()
-    ) {
-        return (
-          <MessageNotification type="success">
-            Valid Word
-          </MessageNotification>
-        );
+    if (props.currentWord.toUpperCase() === props.targetWord.toUpperCase()) {
+      return (
+        <MessageNotification type="success">Valid Word</MessageNotification>
+      );
     }
   }
 
   return (
     <div className="App">
       <div>{displayOutcome()}</div>
-      <div>
-        {/*!props.inProgress && ()*/}
-      </div>
+      <div>{/*!props.inProgress && ()*/}</div>
 
       <div className="word_grid">{populateGrid(props.wordLength)}</div>
 
       <div className="keyboard">
-        <Keyboard
-          onEnter={props.onEnter}
-          onSubmitLetter={props.onSubmitLetter}
-          onBackspace={props.onBackspace}
-          guesses={props.guesses}
-          targetWord={props.targetWord}
-          inDictionary={props.inDictionary}
-          /* TODO: Send CountdownLetters keyboard letterStatuses
+        {props.keyboard && (
+          <Keyboard
+            onEnter={props.onEnter}
+            onSubmitLetter={props.onSubmitLetter}
+            onBackspace={props.onBackspace}
+            guesses={props.guesses}
+            targetWord={props.targetWord}
+            inDictionary={props.inDictionary}
+            /* TODO: Send CountdownLetters keyboard letterStatuses
           All letters as not in word with real time evaluation of word OFF
           Same letterStauses as Wordle with real time evaluation of word ON
           */
-          letterStatuses={props.letterStatuses}
-        ></Keyboard>
+            letterStatuses={props.letterStatuses}
+          ></Keyboard>
+        )}
       </div>
 
       <div>

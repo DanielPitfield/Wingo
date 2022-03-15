@@ -19,6 +19,7 @@ interface Props {
   timerConfig:
     | { isTimed: false }
     | { isTimed: true; totalSeconds: number; elapsedSeconds: number };
+  keyboard: boolean;
   wordLength: number;
   numGuesses: number;
   guesses: string[];
@@ -182,10 +183,18 @@ const Wordle: React.FC<Props> = (props) => {
             inDictionary={props.inDictionary}
           ></WordRow>
           <div className="add-letter-buttons-wrapper">
-            <Button mode={"default"} disabled={isSelectionFinished} onClick={addVowel}>
+            <Button
+              mode={"default"}
+              disabled={isSelectionFinished}
+              onClick={addVowel}
+            >
               Vowel
             </Button>
-            <Button mode={"default"} disabled={isSelectionFinished} onClick={addConsonant}>
+            <Button
+              mode={"default"}
+              disabled={isSelectionFinished}
+              onClick={addConsonant}
+            >
               Consonant
             </Button>
           </div>
@@ -376,15 +385,17 @@ const Wordle: React.FC<Props> = (props) => {
       </div>
 
       <div className="keyboard">
-        <Keyboard
-          onEnter={props.onEnter}
-          onSubmitLetter={props.onSubmitLetter}
-          onBackspace={props.onBackspace}
-          guesses={props.guesses}
-          targetWord={props.targetWord}
-          inDictionary={props.inDictionary}
-          letterStatuses={props.letterStatuses}
-        ></Keyboard>
+        {/* TODO: Add options to turn keyboard/timer/first letter after Wordle has been launched (during the game) */ props.keyboard && (
+          <Keyboard
+            onEnter={props.onEnter}
+            onSubmitLetter={props.onSubmitLetter}
+            onBackspace={props.onBackspace}
+            guesses={props.guesses}
+            targetWord={props.targetWord}
+            inDictionary={props.inDictionary}
+            letterStatuses={props.letterStatuses}
+          ></Keyboard>
+        )}
       </div>
 
       <div>

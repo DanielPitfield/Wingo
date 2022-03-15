@@ -9,6 +9,7 @@ interface Props {
   setPage: (page: Page) => void;
   firstLetterToggle: (value: boolean, page: Page) => void;
   timerToggle: (value: boolean, page: Page) => void;
+  keyboardToggle: (value: boolean, page: Page) => void;
 }
 
 export const LobbyMenu: React.FC<Props> = (props) => {
@@ -95,6 +96,15 @@ export const LobbyMenu: React.FC<Props> = (props) => {
                 }
               ></input>
               Timer
+            </label>
+            <label>
+              <input /* TODO: Needs to be checked by default */
+                type="checkbox"
+                onChange={(e) =>
+                  props.keyboardToggle(e.target.checked, optionsConfig.Page)
+                }
+              ></input>
+              Keyboard
             </label>
           </div>
         </div>

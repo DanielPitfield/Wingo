@@ -16,6 +16,7 @@ import { SaveData } from "../SaveData";
 interface Props {
   page: Page;
   timerConfig: { isTimed: false } | { isTimed: true; seconds: number };
+  keyboard: boolean;
   defaultWordLength: number;
   setPage: (page: Page) => void;
 }
@@ -328,6 +329,7 @@ const CountdownLettersConfig: React.FC<Props> = (props) => {
             }
           : { isTimed: false }
       }
+      keyboard={props.keyboard}
       wordLength={wordLength}
       guesses={guesses}
       currentWord={currentWord}

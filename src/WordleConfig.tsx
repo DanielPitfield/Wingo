@@ -25,6 +25,7 @@ interface Props {
   page: Page;
   firstLetterProvided: boolean;
   timerConfig: { isTimed: false } | { isTimed: true; seconds: number };
+  keyboard: boolean;
   defaultWordLength: number;
   puzzleRevealMs: number;
   puzzleLeaveNumBlanks: number;
@@ -682,6 +683,7 @@ const WordleConfig: React.FC<Props> = (props) => {
             }
           : { isTimed: false }
       }
+      keyboard={props.keyboard}
       wordLength={wordLength}
       numGuesses={numGuesses}
       guesses={guesses}
