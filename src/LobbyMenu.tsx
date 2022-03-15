@@ -139,7 +139,7 @@ export const LobbyMenu: React.FC<Props> = (props) => {
               <p className="challenge-description">{challenge.description}</p>
               {currentProgress} / {challenge.target}{" "}
               <ProgressBar
-                progress={currentProgress}
+                progress={Math.min(challenge.target, currentProgress)}
                 total={challenge.target}
               />
             </div>

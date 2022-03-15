@@ -151,17 +151,15 @@ const CountdownLettersConfig: React.FC<Props> = (props) => {
       return;
     }
 
-    /*
-    // TODO: Make timer start as soon as countdownWord is complete
     if (countdownWord.length !== 9) {
       return;
     }
-    */
 
     const timer = setInterval(() => {
       if (seconds > 0) {
         setSeconds(seconds - 1);
       } else {
+        // TODO: Timer ends
         setinDictionary(false);
         setinProgress(false);
       }
@@ -169,7 +167,7 @@ const CountdownLettersConfig: React.FC<Props> = (props) => {
     return () => {
       clearInterval(timer);
     };
-  }, [setSeconds, seconds, props.timerConfig.isTimed]);
+  }, [setSeconds, seconds, props.timerConfig.isTimed, countdownWord]);
 
   // Updates letter status (which is passed through to Keyboard to update button colours)
   React.useEffect(() => {
@@ -326,7 +324,7 @@ const CountdownLettersConfig: React.FC<Props> = (props) => {
     setGuesses(guesses.concat(currentWord)); // Add word to guesses
 
     // TODO: Continue immediately if 'hard' mode where player is NOT told whether word is valid when as it is entered
-    ContinueGame();
+    //ContinueGame();
 
     // TODO: Add completed round to game history
   }

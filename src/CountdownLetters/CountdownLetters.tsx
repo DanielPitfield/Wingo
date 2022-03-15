@@ -129,7 +129,7 @@ const CountdownLetters: React.FC<Props> = (props) => {
     // TODO: Renders only once after first letter added?
     function quickLetterSelection() {
       for (let i = 0; i < wordLength; i++) {
-        let x = Math.floor(Math.random() * 2) == 0;
+        let x = Math.floor(Math.random() * 2) === 0;
         if (x) {
           addVowel();
         }
@@ -142,7 +142,7 @@ const CountdownLetters: React.FC<Props> = (props) => {
     var Grid = [];
 
     // Check if 9 letters have been selected
-    const isSelectionFinished = props.countdownWord.length == 9;
+    const isSelectionFinished = props.countdownWord.length === 9;
 
     // Read only letter selection WordRow
     Grid.push(
