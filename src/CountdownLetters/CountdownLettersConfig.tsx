@@ -152,6 +152,13 @@ const CountdownLettersConfig: React.FC<Props> = (props) => {
       return;
     }
 
+    /*
+    // TODO: Make timer start as soon as countdownWord is complete
+    if (countdownWord.length !== 9) {
+      return;
+    }
+    */
+
     const timer = setInterval(() => {
       if (seconds > 0) {
         setSeconds(seconds - 1);
@@ -208,10 +215,6 @@ const CountdownLettersConfig: React.FC<Props> = (props) => {
     setwordLength(wordLength);
     sethasSubmitLetter(false);
     setletterStatuses(defaultLetterStatuses);
-
-    if (props.timerConfig.isTimed) {
-      setSeconds(props.timerConfig.seconds);
-    }
   }
 
   // TODO: Add game to SaveData history
@@ -223,7 +226,7 @@ const CountdownLettersConfig: React.FC<Props> = (props) => {
       // The letter must be one of the 9 letters allowed (within validLetters)
       const letterIndex = validLetters.indexOf(attemptedLetter);
       if (letterIndex > -1) {
-        // Delete the letterfrom validLetters (so that the same letter can't be used more than once)
+        // Delete the letter from validLetters (so that the same letter can't be used more than once)
         validLetters.splice(letterIndex, 1);
         return true;
       } else {
@@ -252,7 +255,6 @@ const CountdownLettersConfig: React.FC<Props> = (props) => {
     Also, a time limit is used not a limit on the number of guesses
     */
 
-    // Countdown Letters
     // The 9 vowels and consonants available have not all been picked
     if (countdownWord.length !== props.defaultWordLength) {
       return;
@@ -263,6 +265,7 @@ const CountdownLettersConfig: React.FC<Props> = (props) => {
       setinDictionary(false);
       setinProgress(false);
       outcome = "failure";
+      return;
     }
 
     const wordArray = wordLengthMappings.find(
@@ -282,19 +285,18 @@ const CountdownLettersConfig: React.FC<Props> = (props) => {
       settargetWord(currentWord);
       setinProgress(false);
       outcome = "success";
-      setGuesses(guesses.concat(currentWord)); // Add word to guesses
-      // TODO: SetCountdownGuesses and then display these words somewhere in white area
     } else {
       setinDictionary(false);
       setinProgress(false);
       outcome = "failure";
     }
 
-    // TODO: Add completed round to game history
+    setGuesses(guesses.concat(currentWord)); // Add word to guesses
 
-    if (props.timerConfig.isTimed) {
-      setSeconds(props.timerConfig.seconds);
-    }
+    // TODO: Continue immediately if 'hard' mode where player is NOT told whether word is valid when as it is entered
+    ContinueGame();
+
+    // TODO: Add completed round to game history
   }
 
   function onSubmitCountdownLetter(letter: string) {
@@ -305,7 +307,8 @@ const CountdownLettersConfig: React.FC<Props> = (props) => {
   }
 
   function onSubmitLetter(letter: string) {
-    if (currentWord.length < wordLength && inProgress) {
+    // Additional condition of all 9 letters having been selected
+    if (currentWord.length < wordLength && countdownWord.length === 9 && inProgress) {
       setCurrentWord(currentWord + letter); // Append chosen letter to currentWord
       sethasSubmitLetter(true);
     }

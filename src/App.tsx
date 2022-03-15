@@ -52,7 +52,7 @@ export const App: React.FC = () => {
     { page: "wordle_limitless", firstLetter: false, timer: false, keyboard: true  },
     { page: "wordle_puzzle", firstLetter: false, timer: false, keyboard: true  },
     { page: "wordle_interlinked", firstLetter: false, timer: false, keyboard: true  },
-    { page: "countdown_letters", firstLetter: false, timer: false, keyboard: true  },
+    { page: "countdown_letters", firstLetter: false, timer: true, keyboard: true  },
   ]);
 
   useEffect(() => {

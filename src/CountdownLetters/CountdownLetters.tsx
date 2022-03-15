@@ -162,14 +162,12 @@ const CountdownLetters: React.FC<Props> = (props) => {
       </div>
     );
 
-    var word = props.currentWord;
-
     // WordRow to enter words using available letters
     Grid.push(
       <WordRow
         key={"countdown_letters_input"}
         isVertical={false}
-        word={word}
+        word={props.currentWord}
         length={wordLength}
         targetWord={props.targetWord}
         hasSubmit={!props.inProgress}
@@ -205,7 +203,6 @@ const CountdownLetters: React.FC<Props> = (props) => {
   return (
     <div className="App">
       <div>{displayOutcome()}</div>
-      <div>{/*!props.inProgress && ()*/}</div>
 
       <div className="word_grid">{populateGrid(props.wordLength)}</div>
 
@@ -219,9 +216,9 @@ const CountdownLetters: React.FC<Props> = (props) => {
             targetWord={props.targetWord}
             inDictionary={props.inDictionary}
             /* TODO: Send CountdownLetters keyboard letterStatuses
-          All letters as not in word with real time evaluation of word OFF
-          Same letterStauses as Wordle with real time evaluation of word ON
-          */
+              All letters as not in word with real time evaluation of word OFF
+              Same letterStauses as Wordle with real time evaluation of word ON
+            */
             letterStatuses={props.letterStatuses}
           ></Keyboard>
         )}
@@ -235,6 +232,11 @@ const CountdownLetters: React.FC<Props> = (props) => {
           ></ProgressBar>
         )}
       </div>
+
+      <div className="countdown_letters_guesses">
+        {props.inProgress && props.guesses.map((guess) => <p>{guess}</p>)}
+      </div>
+      
     </div>
   );
 };
