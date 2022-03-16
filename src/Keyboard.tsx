@@ -16,13 +16,13 @@ interface Props {
   }[];
 }
 
+export const alphabet_string = "abcdefghijklmnopqrstuvwxyz";
+export const Alphabet = alphabet_string.split("");
+
 export const Keyboard: React.FC<Props> = (props) => {
   React.useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       var input_key = event.key.toString().toLowerCase();
-
-      var alphabet_string = "abcdefghijklmnopqrstuvwxyz";
-      var Alphabet = alphabet_string.split("");
 
       if (input_key === "enter") {
         props.onEnter();
@@ -40,11 +40,11 @@ export const Keyboard: React.FC<Props> = (props) => {
   }, [props.onEnter, props.onBackspace, props.onSubmitLetter]);
 
   function getKeyboardStatuses() {
-    var alphabet_string = "abcdefghijklmnopqrstuvwxyz";
     // Letter and status array
-    let keyboardStatuses = alphabet_string
-      .split("")
-      .map((x) => ({ letter: x, status: "not set" }));
+    let keyboardStatuses = Alphabet.map((x) => ({
+      letter: x,
+      status: "not set",
+    }));
 
     // For each guess
     for (const guess of props.guesses) {

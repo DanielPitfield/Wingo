@@ -1,6 +1,6 @@
 import React from "react";
 import "../App.scss";
-import { Keyboard } from "../Keyboard";
+import { Alphabet, Keyboard } from "../Keyboard";
 import { Page } from "../App";
 import { WordRow } from "../WordRow";
 import { Button } from "../Button";
@@ -27,6 +27,7 @@ interface Props {
   setPage: (page: Page) => void;
   onEnter: () => void;
   onSubmitCountdownLetter: (letter: string) => void;
+  onSubmitCountdownWord: (word: string) => void;
   onSubmitLetter: (letter: string) => void;
   onBackspace: () => void;
   ResetGame: () => void;
@@ -126,17 +127,17 @@ const CountdownLetters: React.FC<Props> = (props) => {
       props.onSubmitCountdownLetter(weighted_consonant);
     }
 
-    // TODO: Renders only once after first letter added?
     function quickLetterSelection() {
+      let newCountdownWord = "";
+
+      // TODO: This will not use letter weightings
+      // Build wordLength size word from random letters
       for (let i = 0; i < wordLength; i++) {
-        let x = Math.floor(Math.random() * 2) === 0;
-        if (x) {
-          addVowel();
-        }
-        else {
-          addConsonant();
-        }
+        const randomIndex = Math.floor(Math.random() * (Alphabet.length - 1));
+        const randomLetter = Alphabet[randomIndex];
+        newCountdownWord += randomLetter;
       }
+      props.onSubmitCountdownWord(newCountdownWord);
     }
 
     var Grid = [];

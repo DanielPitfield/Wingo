@@ -336,6 +336,13 @@ const CountdownLettersConfig: React.FC<Props> = (props) => {
     }
   }
 
+  function onSubmitCountdownWord(word: string) {
+    if (countdownWord.length === 0 && inProgress) {
+      setCountdownWord(word);
+      sethasSubmitLetter(true);
+    }
+  }
+
   function onSubmitLetter(letter: string) {
     // Additional condition of all 9 letters having been selected
     if (
@@ -378,6 +385,7 @@ const CountdownLettersConfig: React.FC<Props> = (props) => {
       letterStatuses={letterStatuses}
       onEnter={onEnter}
       onSubmitCountdownLetter={onSubmitCountdownLetter}
+      onSubmitCountdownWord={onSubmitCountdownWord}
       onSubmitLetter={onSubmitLetter}
       onBackspace={onBackspace}
       ResetGame={ResetGame}
