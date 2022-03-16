@@ -57,10 +57,10 @@ const CountdownLetters: React.FC<Props> = (props) => {
       ];
     }
 
-    function addVowel() {
+    function getVowel(): string {
       // Already 9 picked letters, don't add any more
       if (props.countdownWord.length === 9) {
-        return;
+        return "";
       }
 
       // Scrabble distribution (https://en.wikipedia.org/wiki/Scrabble_letter_distributions)
@@ -82,12 +82,12 @@ const CountdownLetters: React.FC<Props> = (props) => {
       */
 
       const weighted_vowel = getWeightedLetter(vowel_weightings);
-      props.onSubmitCountdownLetter(weighted_vowel);
+      return weighted_vowel;
     }
 
-    function addConsonant() {
+    function getConsonant(): string {
       if (props.countdownWord.length === 9) {
-        return;
+        return "";
       }
 
       let consonant_weightings = [
@@ -124,19 +124,24 @@ const CountdownLetters: React.FC<Props> = (props) => {
       */
 
       const weighted_consonant = getWeightedLetter(consonant_weightings);
-      props.onSubmitCountdownLetter(weighted_consonant);
+      return weighted_consonant;
     }
 
     function quickLetterSelection() {
       let newCountdownWord = "";
 
-      // TODO: This will not use letter weightings
-      // Build wordLength size word from random letters
+      // Build word by randomly adding vowels and consonants
       for (let i = 0; i < wordLength; i++) {
-        const randomIndex = Math.floor(Math.random() * (Alphabet.length - 1));
-        const randomLetter = Alphabet[randomIndex];
-        newCountdownWord += randomLetter;
+        let x = Math.floor(Math.random() * 2) === 0;
+        // Equal chance (to add a vowel or consonant)
+        if (x) {
+          newCountdownWord += getVowel();
+        }
+        else {
+          newCountdownWord += getConsonant();
+        }
       }
+      // Set the entire word at once
       props.onSubmitCountdownWord(newCountdownWord);
     }
 
@@ -161,14 +166,14 @@ const CountdownLetters: React.FC<Props> = (props) => {
           <Button
             mode={"default"}
             disabled={isSelectionFinished}
-            onClick={addVowel}
+            onClick={() => props.onSubmitCountdownLetter(getVowel())}
           >
             Vowel
           </Button>
           <Button
             mode={"default"}
             disabled={isSelectionFinished}
-            onClick={addConsonant}
+            onClick={() => props.onSubmitCountdownLetter(getConsonant())}
           >
             Consonant
           </Button>
