@@ -273,6 +273,11 @@ const CountdownLettersConfig: React.FC<Props> = (props) => {
       return;
     }
 
+    // Nothing entered yet
+    if (!hasSubmitLetter) {
+      return;
+    }
+
     if (props.mode === "realistic") {
       // Don't need to do any evaluation of the guess and just add to guesses regardless
       setGuesses(guesses.concat(currentWord));
@@ -283,6 +288,7 @@ const CountdownLettersConfig: React.FC<Props> = (props) => {
     // Evalution for Casual game mode type
 
     setinDictionary(true);
+    //setinProgress(false);
 
     const wordArray = wordLengthMappings.find(
       (x) => x.value === currentWord.length
@@ -297,17 +303,15 @@ const CountdownLettersConfig: React.FC<Props> = (props) => {
     if (wordInDictionary && isValidWord) {
       // Set the target word to the guessed word so all letters show as green
       settargetWord(currentWord);
+      setinProgress(false);
       // Only add word to guesses if valid
       setGuesses(guesses.concat(currentWord)); // Add word to guesses
     } else {
-      setinProgress(false);
       setinDictionary(false);
+      setinProgress(false);
     }
 
-    // Give half a second to show word validity to player
-    setTimeout(function() { ContinueGame(); }, 500);
-
-    ContinueGame();
+    //ContinueGame();
 
     // TODO: Add completed round to game history
   }
@@ -315,14 +319,12 @@ const CountdownLettersConfig: React.FC<Props> = (props) => {
   function onSubmitCountdownLetter(letter: string) {
     if (countdownWord.length < wordLength && inProgress) {
       setCountdownWord(countdownWord + letter); // Append chosen letter to countdownWord
-      sethasSubmitLetter(true);
     }
   }
 
   function onSubmitCountdownWord(word: string) {
     if (countdownWord.length === 0 && inProgress) {
       setCountdownWord(word);
-      sethasSubmitLetter(true);
     }
   }
 

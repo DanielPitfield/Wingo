@@ -16,15 +16,15 @@ export const WordRow: React.FC<Props> = (props) => {
     character: string;
     status: "incorrect" | "contains" | "correct" | "not set" | "not in word";
   }[] = [];
-  // Only get wordSummary if word and targetWord are defined
-  if (props.word && props.targetWord) {
-    // Array of (character, status) for every letter
-    wordSummary = getWordSummary(
-      props.word,
-      props.targetWord,
-      props.inDictionary
-    );
-  }
+
+  // NOTE: The targetWord will be "" (empty string) with the WordRow that handles guessed words during the 'Countdown Letters' mode
+
+  // Array of (character, status) for every letter
+  wordSummary = getWordSummary(
+    props.word,
+    props.targetWord,
+    props.inDictionary
+  );
 
   function CreateRow() {
     var TileArray = [];
@@ -33,11 +33,7 @@ export const WordRow: React.FC<Props> = (props) => {
         <LetterTile
           key={i}
           letter={props.word?.[i]}
-          status={
-            !props.hasSubmit || !props.word || !props.targetWord
-              ? "not set"
-              : wordSummary[i]?.status
-          }
+          status={!props.hasSubmit || !props.word ? "not set" : wordSummary[i]?.status}
         ></LetterTile>
       );
     }

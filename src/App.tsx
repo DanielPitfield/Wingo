@@ -262,7 +262,7 @@ export const App: React.FC = () => {
       case "countdown_letters":
         return (
           <CountdownLettersConfig
-          mode={"realistic"}
+          mode={"casual"}
             timerConfig={
               gameOptionToggles.find((x) => x.page === "countdown_letters")
                 ?.timer
