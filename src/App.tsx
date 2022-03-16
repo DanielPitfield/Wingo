@@ -38,21 +38,59 @@ export type Page =
 export const App: React.FC = () => {
   const saveData = window.localStorage;
 
-  const [loadingState, setLoadingState] = useState<"loading" | "loaded">(
-    "loading"
-  );
+  const [loadingState, setLoadingState] = useState<"loading" | "loaded">("loading");
   const [page, setPage] = useState<Page>("splash-screen");
 
   const [gameOptionToggles, setgameOptionToggles] = useState<
-    { page: Page; firstLetter: boolean; timer: boolean, keyboard: boolean }[]
+    {
+      page: Page;
+      firstLetter: boolean;
+      timer: boolean;
+      keyboard: boolean;
+    }[]
   >([
-    { page: "wordle_daily", firstLetter: false, timer: false, keyboard: true },
-    { page: "wordle_repeat", firstLetter: false, timer: false, keyboard: true  },
-    { page: "wordle_increasing", firstLetter: false, timer: false, keyboard: true  },
-    { page: "wordle_limitless", firstLetter: false, timer: false, keyboard: true  },
-    { page: "wordle_puzzle", firstLetter: false, timer: false, keyboard: true  },
-    { page: "wordle_interlinked", firstLetter: false, timer: false, keyboard: true  },
-    { page: "countdown_letters", firstLetter: false, timer: true, keyboard: true  },
+    {
+      page: "wordle_daily",
+      firstLetter: false,
+      timer: false,
+      keyboard: true,
+    },
+    {
+      page: "wordle_repeat",
+      firstLetter: false,
+      timer: false,
+      keyboard: true,
+    },
+    {
+      page: "wordle_increasing",
+      firstLetter: false,
+      timer: false,
+      keyboard: true,
+    },
+    {
+      page: "wordle_limitless",
+      firstLetter: false,
+      timer: false,
+      keyboard: true,
+    },
+    {
+      page: "wordle_puzzle",
+      firstLetter: false,
+      timer: false,
+      keyboard: true,
+    },
+    {
+      page: "wordle_interlinked",
+      firstLetter: false,
+      timer: false,
+      keyboard: true,
+    },
+    {
+      page: "countdown_letters",
+      firstLetter: false,
+      timer: true,
+      keyboard: true,
+    },
   ]);
 
   useEffect(() => {
@@ -128,19 +166,13 @@ export const App: React.FC = () => {
           <WordleConfig
             {...commonProps}
             mode="daily"
-            firstLetterProvided={
-              gameOptionToggles.find((x) => x.page === "wordle_daily")
-                ?.firstLetter || false
-            }
+            firstLetterProvided={gameOptionToggles.find((x) => x.page === "wordle_daily")?.firstLetter || false}
             timerConfig={
               gameOptionToggles.find((x) => x.page === "wordle_daily")?.timer
                 ? { isTimed: true, seconds: 30 }
                 : { isTimed: false }
             }
-            keyboard={
-              gameOptionToggles.find((x) => x.page === "wordle_daily")
-                ?.keyboard || false
-            }
+            keyboard={gameOptionToggles.find((x) => x.page === "wordle_daily")?.keyboard || false}
             defaultWordLength={wordLength}
           />
         );
@@ -150,19 +182,13 @@ export const App: React.FC = () => {
           <WordleConfig
             {...commonProps}
             mode="repeat"
-            firstLetterProvided={
-              gameOptionToggles.find((x) => x.page === "wordle_repeat")
-                ?.firstLetter || false
-            }
+            firstLetterProvided={gameOptionToggles.find((x) => x.page === "wordle_repeat")?.firstLetter || false}
             timerConfig={
               gameOptionToggles.find((x) => x.page === "wordle_repeat")?.timer
                 ? { isTimed: true, seconds: 30 } // TODO: Confgiure timer value
                 : { isTimed: false }
             }
-            keyboard={
-              gameOptionToggles.find((x) => x.page === "wordle_repeat")
-                ?.keyboard || false
-            }
+            keyboard={gameOptionToggles.find((x) => x.page === "wordle_repeat")?.keyboard || false}
             defaultWordLength={wordLength}
           />
         );
@@ -172,20 +198,13 @@ export const App: React.FC = () => {
           <WordleConfig
             {...commonProps}
             mode="increasing"
-            firstLetterProvided={
-              gameOptionToggles.find((x) => x.page === "wordle_increasing")
-                ?.firstLetter || false
-            }
+            firstLetterProvided={gameOptionToggles.find((x) => x.page === "wordle_increasing")?.firstLetter || false}
             timerConfig={
-              gameOptionToggles.find((x) => x.page === "wordle_increasing")
-                ?.timer
+              gameOptionToggles.find((x) => x.page === "wordle_increasing")?.timer
                 ? { isTimed: true, seconds: 30 }
                 : { isTimed: false }
             }
-            keyboard={
-              gameOptionToggles.find((x) => x.page === "wordle_increasing")
-                ?.keyboard || false
-            }
+            keyboard={gameOptionToggles.find((x) => x.page === "wordle_increasing")?.keyboard || false}
             defaultWordLength={wordLength_increasing}
           />
         );
@@ -195,20 +214,13 @@ export const App: React.FC = () => {
           <WordleConfig
             {...commonProps}
             mode="limitless"
-            firstLetterProvided={
-              gameOptionToggles.find((x) => x.page === "wordle_limitless")
-                ?.firstLetter || false
-            }
+            firstLetterProvided={gameOptionToggles.find((x) => x.page === "wordle_limitless")?.firstLetter || false}
             timerConfig={
-              gameOptionToggles.find((x) => x.page === "wordle_limitless")
-                ?.timer
+              gameOptionToggles.find((x) => x.page === "wordle_limitless")?.timer
                 ? { isTimed: true, seconds: 30 }
                 : { isTimed: false }
             }
-            keyboard={
-              gameOptionToggles.find((x) => x.page === "wordle_limitless")
-                ?.keyboard || false
-            }
+            keyboard={gameOptionToggles.find((x) => x.page === "wordle_limitless")?.keyboard || false}
             defaultWordLength={wordLength_limitless}
           />
         );
@@ -218,19 +230,13 @@ export const App: React.FC = () => {
           <WordleConfig
             {...commonProps}
             mode="puzzle"
-            firstLetterProvided={
-              gameOptionToggles.find((x) => x.page === "wordle_puzzle")
-                ?.firstLetter || false
-            }
+            firstLetterProvided={gameOptionToggles.find((x) => x.page === "wordle_puzzle")?.firstLetter || false}
             timerConfig={
               gameOptionToggles.find((x) => x.page === "wordle_puzzle")?.timer
                 ? { isTimed: true, seconds: 30 }
                 : { isTimed: false }
             }
-            keyboard={
-              gameOptionToggles.find((x) => x.page === "wordle_puzzle")
-                ?.keyboard || false
-            }
+            keyboard={gameOptionToggles.find((x) => x.page === "wordle_puzzle")?.keyboard || false}
             defaultWordLength={wordLength_puzzle}
             defaultnumGuesses={numGuesses_puzzle}
           />
@@ -241,20 +247,13 @@ export const App: React.FC = () => {
           <WordleConfig
             {...commonProps}
             mode="interlinked"
-            firstLetterProvided={
-              gameOptionToggles.find((x) => x.page === "wordle_interlinked")
-                ?.firstLetter || false
-            }
+            firstLetterProvided={gameOptionToggles.find((x) => x.page === "wordle_interlinked")?.firstLetter || false}
             timerConfig={
-              gameOptionToggles.find((x) => x.page === "wordle_interlinked")
-                ?.timer
+              gameOptionToggles.find((x) => x.page === "wordle_interlinked")?.timer
                 ? { isTimed: true, seconds: 30 }
                 : { isTimed: false }
             }
-            keyboard={
-              gameOptionToggles.find((x) => x.page === "wordle_interlinked")
-                ?.keyboard || false
-            }
+            keyboard={gameOptionToggles.find((x) => x.page === "wordle_interlinked")?.keyboard || false}
             defaultWordLength={wordLength}
           />
         );
@@ -262,20 +261,16 @@ export const App: React.FC = () => {
       case "countdown_letters":
         return (
           <CountdownLettersConfig
-          mode={"casual"}
+            mode={"casual"}
             timerConfig={
-              gameOptionToggles.find((x) => x.page === "countdown_letters")
-                ?.timer
+              gameOptionToggles.find((x) => x.page === "countdown_letters")?.timer
                 ? { isTimed: true, seconds: 30 }
                 : { isTimed: false }
             }
-            keyboard={
-              gameOptionToggles.find((x) => x.page === "countdown_letters")
-                ?.keyboard || false
-            }
+            keyboard={gameOptionToggles.find((x) => x.page === "countdown_letters")?.keyboard || false}
             defaultWordLength={wordLength_countdown_letters}
-            page = {page}
-            setPage = {setPage}
+            page={page}
+            setPage={setPage}
           />
         );
 
@@ -303,11 +298,7 @@ export const App: React.FC = () => {
           </div>
           {page !== "lobby" && (
             <nav className="navigation">
-              <Button
-                mode="default"
-                className="back-button"
-                onClick={() => setPage("lobby")}
-              >
+              <Button mode="default" className="back-button" onClick={() => setPage("lobby")}>
                 Back
               </Button>
             </nav>

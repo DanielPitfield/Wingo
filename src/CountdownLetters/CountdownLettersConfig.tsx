@@ -2,15 +2,7 @@ import React, { useState } from "react";
 import "../App.scss";
 import { Page } from "../App";
 import CountdownLetters from "./CountdownLetters";
-import { words_four } from "../WordArrays/words_4";
-import { words_five } from "../WordArrays/words_5";
-import { words_six } from "../WordArrays/words_6";
-import { words_seven } from "../WordArrays/words_7";
-import { words_eight } from "../WordArrays/words_8";
-import { words_nine } from "../WordArrays/words_9";
-import { words_ten } from "../WordArrays/words_10";
-import { words_eleven } from "../WordArrays/words_11";
-import { SaveData } from "../SaveData";
+import { wordLengthMappings } from "../WordleConfig";
 
 interface Props {
   page: Page;
@@ -21,22 +13,7 @@ interface Props {
   setPage: (page: Page) => void;
 }
 
-const wordLengthMappings = [
-  { value: 4, array: words_four },
-  { value: 5, array: words_five },
-  { value: 6, array: words_six },
-  { value: 7, array: words_seven },
-  { value: 8, array: words_eight },
-  { value: 9, array: words_nine },
-  { value: 10, array: words_ten },
-  { value: 11, array: words_eleven },
-];
-
-export function getWordSummary(
-  word: string,
-  targetWord: string,
-  inDictionary: boolean
-) {
+export function getWordSummary(word: string, targetWord: string, inDictionary: boolean) {
   // Character and status array
   let defaultCharacterStatuses = word.split("").map((character, index) => ({
     character: character,
@@ -47,18 +24,14 @@ export function getWordSummary(
     // If there is a green tile of a letter, don't show any orange tiles
     if (
       x.status === "contains" &&
-      defaultCharacterStatuses.some(
-        (y) => y.character === x.character && y.status === "correct"
-      )
+      defaultCharacterStatuses.some((y) => y.character === x.character && y.status === "correct")
     ) {
       x.status = "not in word";
     }
     // Only ever show 1 orange tile of each letter
     if (
       x.status === "contains" &&
-      defaultCharacterStatuses.findIndex(
-        (y) => y.character === x.character && y.status === "contains"
-      ) !== index
+      defaultCharacterStatuses.findIndex((y) => y.character === x.character && y.status === "contains") !== index
     ) {
       x.status = "not in word";
     }
@@ -116,7 +89,6 @@ export function isWordValid(countdownWord: string, guessedWord: string) {
 
 const CountdownLettersConfig: React.FC<Props> = (props) => {
   const [guesses, setGuesses] = useState<string[]>([]);
-  const [gameId, setGameId] = useState<string | null>(null);
   const [countdownWord, setCountdownWord] = useState("");
   const [currentWord, setCurrentWord] = useState("");
   const [inProgress, setinProgress] = useState(true);
@@ -165,9 +137,7 @@ const CountdownLettersConfig: React.FC<Props> = (props) => {
     }[]
   >(defaultLetterStatuses);
 
-  const [seconds, setSeconds] = useState(
-    props.timerConfig.isTimed ? props.timerConfig.seconds : 0
-  );
+  const [seconds, setSeconds] = useState(props.timerConfig.isTimed ? props.timerConfig.seconds : 0);
 
   // Timer Setup
   React.useEffect(() => {
@@ -200,9 +170,7 @@ const CountdownLettersConfig: React.FC<Props> = (props) => {
       for (let i = 0; i < guess.length; i++) {
         const letter = guess[i];
 
-        const currentLetterStatus = letterStatusesCopy.find(
-          (x) => x.letter.toLowerCase() === letter.toLowerCase()
-        );
+        const currentLetterStatus = letterStatusesCopy.find((x) => x.letter.toLowerCase() === letter.toLowerCase());
         const newStatus = getLetterStatus(letter, i, targetWord!, inDictionary);
 
         if (newStatus !== "incorrect") {
@@ -237,36 +205,6 @@ const CountdownLettersConfig: React.FC<Props> = (props) => {
     setletterStatuses(defaultLetterStatuses);
   }
 
-  // TODO: Add game to SaveData history
-  // TODO: Calculate gold reward
-
-  function getBestWords(countdownWord: string) {
-    // Array to store best words that are found
-    var best_words = [];
-
-    // Start with bigger words first
-    for (let i = props.defaultWordLength; i >= 4; i--) {
-      // Get word array containng words of i size
-      const wordArray = wordLengthMappings.find((x) => x.value === i)?.array!;
-      // Safety check for wordArray
-      if (wordArray) {
-        // Check the entire array for any valid words
-        for (let j = 0; j < wordArray.length; j++) {
-          const word = wordArray[j];
-          // Safety check for word
-          if (word) {
-            if (isWordValid(countdownWord, word)) {
-              // Push to array if word is valid
-              best_words.push(word);
-            }
-          }
-        }
-      }
-    }
-
-    return best_words;
-  }
-
   function onEnter() {
     if (!inProgress) {
       return;
@@ -292,9 +230,7 @@ const CountdownLettersConfig: React.FC<Props> = (props) => {
     // Stop progress for evalution for Casual game mode type
     setinProgress(false);
 
-    const wordArray = wordLengthMappings.find(
-      (x) => x.value === currentWord.length
-    )?.array!;
+    const wordArray = wordLengthMappings.find((x) => x.value === currentWord.length)?.array!;
 
     // Accepted word (known word in dictionary)
     const wordInDictionary = wordArray.includes(currentWord.toLowerCase());
@@ -302,7 +238,7 @@ const CountdownLettersConfig: React.FC<Props> = (props) => {
     const isValidWord = isWordValid(countdownWord, currentWord);
 
     // Check the validity of the word for the player
-    if (wordInDictionary && isValidWord) {    
+    if (wordInDictionary && isValidWord) {
       setinDictionary(true);
       // Set the target word to the guessed word so all letters show as green
       settargetWord(currentWord);
@@ -334,11 +270,7 @@ const CountdownLettersConfig: React.FC<Props> = (props) => {
 
   function onSubmitLetter(letter: string) {
     // Additional condition of all 9 letters having been selected
-    if (
-      currentWord.length < wordLength &&
-      countdownWord.length === 9 &&
-      inProgress
-    ) {
+    if (currentWord.length < wordLength && countdownWord.length === 9 && inProgress) {
       setCurrentWord(currentWord + letter); // Append chosen letter to currentWord
       sethasSubmitLetter(true);
     }

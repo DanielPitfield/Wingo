@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Ubuntu&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Ubuntu&display=swap");
 
 .App {
   text-align: center;
@@ -10,16 +10,14 @@
 
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans",
+    "Droid Sans", "Helvetica Neue", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;
 }
 
 .logo {
@@ -55,15 +53,15 @@ code {
   color: #4d4d4d;
 }
 
-.btn.default[data-status='correct'] {
+.btn.default[data-status="correct"] {
   background-color: rgb(76, 161, 80);
 }
 
-.btn.default[data-status='contains'] {
+.btn.default[data-status="contains"] {
   background-color: rgb(220, 141, 55);
 }
 
-.btn.default[data-status='not in word'] {
+.btn.default[data-status="not in word"] {
   background-color: #787c7e;
 }
 
@@ -128,7 +126,7 @@ code {
   border-radius: 8px;
   margin: 2px;
   vertical-align: middle;
-  font-family: 'Ubuntu', sans-serif;
+  font-family: "Ubuntu", sans-serif;
   font-size: 2.5em;
   font-weight: bold;
   color: white;
@@ -142,27 +140,27 @@ code {
   */
 }
 
-.letter_tile[data-status='correct'] {
+.letter_tile[data-status="correct"] {
   background-color: rgb(76, 161, 80);
   /* transform: rotateX(180deg); */
 }
 
-.letter_tile[data-status='contains'] {
+.letter_tile[data-status="contains"] {
   background-color: rgb(220, 141, 55);
   /* transform: rotateX(180deg); */
 }
 
-.letter_tile[data-status='incorrect'] {
+.letter_tile[data-status="incorrect"] {
   background-color: rgb(204, 33, 50);
   /* transform: rotateX(180deg); */
 }
 
-.letter_tile[data-status='not in word'] {
+.letter_tile[data-status="not in word"] {
   background-color: #787c7e;
   /* transform: rotateX(180deg); */
 }
 
-.logo .letter_tile[data-status='incorrect'] {
+.logo .letter_tile[data-status="incorrect"] {
   background-color: rgb(204, 33, 50);
 }
 
@@ -232,11 +230,11 @@ code {
   transition: opacity 0.5s ease;
 }
 
-[data-loading-state='loading'] {
+[data-loading-state="loading"] {
   opacity: 1;
 }
 
-[data-loading-state='loaded'] {
+[data-loading-state="loaded"] {
   opacity: 0;
 }
 
@@ -316,22 +314,32 @@ code {
   border: 2px solid #444;
 }
 
-.message-notification[data-type='success'] {
+.message-notification[data-type="success"] {
   background-color: #d3ffc5;
   border-color: #003b08;
   color: #002004;
 }
 
-.message-notification[data-type='warning'] {
+.message-notification[data-type="warning"] {
   background-color: #ffe6b0;
   border-color: #945400;
   color: #442700;
 }
 
-.message-notification[data-type='error'] {
+.message-notification[data-type="error"] {
   background-color: #ffb0b0;
   border-color: #5a0000;
   color: #520000;
+}
+
+.best_words_list {
+  background-color: #eee;
+  padding: 0.5em;
+  padding-left: 2em;
+  text-align: left;
+  text-transform: uppercase;
+  border: 1px solid #ddd;
+  color: #333;
 }
 
 .toolbar {
@@ -451,7 +459,7 @@ code {
   background-color: #eee;
 }
 
-.challenge[data-is-acheived='true'] {
+.challenge[data-is-acheived="true"] {
   background-color: #a1ffa1;
   opacity: 0.5;
 }
@@ -540,74 +548,74 @@ code {
 }
 
 .nubble-button:disabled {
-  background-color:  grey !important;
+  background-color: grey !important;
   border: 4px solid grey !important;
 }
 
-.nubble-button[data-prime='true'] {
+.nubble-button[data-prime="true"] {
   border: 4px solid #3d3d3d !important;
 }
 
-.nubble-button[data-colour='orange'] {
+.nubble-button[data-colour="orange"] {
   background-color: #aa5208bb;
   border: 4px solid #aa5208;
 }
 
-.nubble-button[data-colour='orange']:hover {
+.nubble-button[data-colour="orange"]:hover {
   background-color: #aa5208;
 }
 
-.nubble-button[data-colour='light-blue'] {
+.nubble-button[data-colour="light-blue"] {
   background-color: #00a59bbb;
   border: 4px solid #00a59b;
 }
 
-.nubble-button[data-colour='light-blue']:hover {
+.nubble-button[data-colour="light-blue"]:hover {
   background-color: #00a59b;
 }
 
-.nubble-button[data-colour='yellow'] {
+.nubble-button[data-colour="yellow"] {
   background-color: #a5a803bb;
   border: 4px solid #a5a803;
 }
 
-.nubble-button[data-colour='yellow']:hover {
+.nubble-button[data-colour="yellow"]:hover {
   background-color: #a5a803;
 }
 
-.nubble-button[data-colour='dark-blue'] {
+.nubble-button[data-colour="dark-blue"] {
   background-color: #0002acbb;
   border: 4px solid #0002ac;
 }
 
-.nubble-button[data-colour='dark-blue']:hover {
+.nubble-button[data-colour="dark-blue"]:hover {
   background-color: #0002ac;
 }
 
-.nubble-button[data-colour='green'] {
+.nubble-button[data-colour="green"] {
   background-color: #05ab00bb;
   border: 4px solid #05ab00;
 }
 
-.nubble-button[data-colour='green']:hover {
+.nubble-button[data-colour="green"]:hover {
   background-color: #05ab00;
 }
 
-.nubble-button[data-colour='pink'] {
+.nubble-button[data-colour="pink"] {
   background-color: #b801b5bb;
   border: 4px solid #b801b5;
 }
 
-.nubble-button[data-colour='pink']:hover {
+.nubble-button[data-colour="pink"]:hover {
   background-color: #b801b5;
 }
 
-.nubble-button[data-colour='red'] {
+.nubble-button[data-colour="red"] {
   background-color: #b10503bb;
   border: 4px solid #b10503;
 }
 
-.nubble-button[data-colour='red']:hover {
+.nubble-button[data-colour="red"]:hover {
   background-color: #b10503;
 }
 
@@ -629,7 +637,8 @@ code {
   padding: 1em 0;
 }
 
-.add-vowel, .add-consonant {
+.add-vowel,
+.add-consonant {
   text-align: center;
   cursor: pointer;
   padding: 1em;
@@ -640,6 +649,11 @@ code {
   margin-top: 1.5em;
   display: flex;
   flex-direction: column;
+  text-align: left;
+  width: 250px;
+  background-color: #eee;
+  border: 1px solid #ccc;
+  padding: 0.5em;
 }
 
 .countdown_letters_guess_label {
@@ -649,5 +663,4 @@ code {
 }
 
 .countdown_letters_guess_input {
-
 }

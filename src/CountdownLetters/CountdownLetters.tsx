@@ -1,18 +1,17 @@
 import React, { useState } from "react";
 import "../App.scss";
-import { Alphabet, Keyboard } from "../Keyboard";
+import { Keyboard } from "../Keyboard";
 import { Page } from "../App";
 import { WordRow } from "../WordRow";
 import { Button } from "../Button";
 import { MessageNotification } from "../MessageNotification";
 import ProgressBar from "../ProgressBar";
 import { isWordValid } from "./CountdownLettersConfig";
+import { wordLengthMappings } from "../WordleConfig";
 
 interface Props {
   mode: "casual" | "realistic";
-  timerConfig:
-    | { isTimed: false }
-    | { isTimed: true; totalSeconds: number; elapsedSeconds: number };
+  timerConfig: { isTimed: false } | { isTimed: true; totalSeconds: number; elapsedSeconds: number };
   keyboard: boolean;
   wordLength: number;
   guesses: string[];
@@ -38,13 +37,15 @@ interface Props {
 }
 
 const CountdownLetters: React.FC<Props> = (props) => {
-  const [finalGuess, setFinalGuess] = useState("");
+  // Currently selected guess, to be used as the final guess when time runs out
+  const [selectedFinalGuess, setSelectedFinalGuess] = useState("");
+
+  // Stores whether a manual selection has been made (to stop us overwriting that manual decision)
+  const [manualGuessSelectionMade, setManualGuessSelectionMade] = useState(false);
 
   // Create grid of rows (for guessing words)
   function populateGrid(wordLength: number) {
-    function getWeightedLetter(
-      letter_weightings: { letter: string; weighting: number }[]
-    ) {
+    function getWeightedLetter(letter_weightings: { letter: string; weighting: number }[]) {
       var weighted_array: string[] = [];
 
       // For each object in input array
@@ -57,9 +58,7 @@ const CountdownLetters: React.FC<Props> = (props) => {
       }
 
       // Select a random value from this array
-      return weighted_array[
-        Math.floor(Math.random() * (weighted_array.length - 1))
-      ];
+      return weighted_array[Math.floor(Math.random() * (weighted_array.length - 1))];
     }
 
     function getVowel(): string {
@@ -216,74 +215,125 @@ const CountdownLetters: React.FC<Props> = (props) => {
     return Grid;
   }
 
+  // TODO: Add game to SaveData history
+  // TODO: Calculate gold reward
+  function getBestWords(countdownWord: string) {
+    const MAX_WORDS_TO_RETURN = 5;
+
+    // Array to store best words that are found
+    const best_words = [];
+
+    // Start with bigger words first
+    for (let i = countdownWord.length; i >= 4; i--) {
+      // Get word array containng words of i size
+      const wordArray = wordLengthMappings.find((x) => x.value === i)?.array!;
+      // Safety check for wordArray
+      if (wordArray) {
+        // Check the entire array for any valid words
+        for (const word of wordArray) {
+          // Safety check for word
+          if (word) {
+            if (isWordValid(countdownWord, word)) {
+              // Push to array if word is valid
+              best_words.push(word);
+
+              if (best_words.length >= MAX_WORDS_TO_RETURN) {
+                return best_words;
+              }
+            }
+          }
+        }
+      }
+    }
+
+    return best_words;
+  }
+
   function displayOutcome() {
     // TODO: Probably best this doesn't do all the scoring logic and simply just displays outcome!
 
+    const bestWords = getBestWords(props.countdownWord);
+    const bestWordsList = (
+      <ul className="best_words_list">
+        {bestWords.map((bestWord) => (
+          <li key={bestWord}>{bestWord}</li>
+        ))}
+      </ul>
+    );
+
     // When timer runs out and if a guess has been made
     if (!props.inProgress && props.hasTimerEnded) {
-      if (!finalGuess) {
+      if (!selectedFinalGuess) {
         // finalGuess is empty (no guess was made), no points
         return (
-          <MessageNotification type="error">
-            <strong>No guess was made</strong>
-            <br />
-            <strong>0 points</strong>
-          </MessageNotification>
+          <>
+            <MessageNotification type="error">
+              <strong>No guess was made</strong>
+              <br />
+              <strong>0 points</strong>
+            </MessageNotification>
+            {bestWordsList}
+          </>
         );
       }
       if (props.mode === "casual") {
         // Already evaluated that guess is valid, so just display result
         return (
-          <MessageNotification type="success">
-            <strong>{finalGuess.toUpperCase()}</strong>
-            <br />
-            <strong>{finalGuess.length} points</strong>
-          </MessageNotification>
+          <>
+            <MessageNotification type="success">
+              <strong>{selectedFinalGuess.toUpperCase()}</strong>
+              <br />
+              <strong>{selectedFinalGuess.length} points</strong>
+            </MessageNotification>
+            {bestWordsList}
+          </>
         );
       } else {
         // Realistic mode, guess (has not yet and so) needs to be evaluated
-        if (
-          props.inDictionary &&
-          isWordValid(props.countdownWord, finalGuess)
-        ) {
+        if (props.inDictionary && isWordValid(props.countdownWord, selectedFinalGuess)) {
           return (
-            <MessageNotification type="success">
-              <strong>{finalGuess.toUpperCase()}</strong>
-              <br />
-              <strong>{finalGuess.length} points</strong>
-            </MessageNotification>
+            <>
+              <MessageNotification type="success">
+                <strong>{selectedFinalGuess.toUpperCase()}</strong>
+                <br />
+                <strong>{selectedFinalGuess.length} points</strong>
+              </MessageNotification>
+              {bestWordsList}
+            </>
           );
         } else {
           // Invalid word
           return (
-            <MessageNotification type="error">
-              <strong>{finalGuess.toUpperCase()} is an invalid word</strong>
-              <br />
-              <strong>0 points</strong>
-            </MessageNotification>
+            <>
+              <MessageNotification type="error">
+                <strong>{selectedFinalGuess.toUpperCase()} is an invalid word</strong>
+                <br />
+                <strong>0 points</strong>
+              </MessageNotification>
+              {bestWordsList}
+            </>
           );
         }
       }
     }
   }
 
-  function isLongestWord(guess: string) {
+  // Set the selected final guess to the longest word (as long as `manualGuessSelectionMade` is false)
+  React.useEffect(() => {
+    // If a manual selection has been made
+    if (manualGuessSelectionMade) {
+      // Keep it as the manual selection
+      return;
+    }
+
     // Compares words and returns a single value of the longest word
-    const longestWord = props.guesses.reduce((currentWord, nextWord) =>
-      currentWord.length > nextWord.length ? currentWord : nextWord
+    const longestWord = props.guesses.reduce(
+      (currentWord, nextWord) => (currentWord.length > nextWord.length ? currentWord : nextWord),
+      ""
     );
 
-    if (guess === longestWord) {
-      return true;
-    } else {
-      return false;
-    }
-  }
-
-  function updateSelectedGuess(event: React.ChangeEvent<HTMLInputElement>) {
-    const newGuess = event.target.value;
-    setFinalGuess(newGuess);
-  }
+    setSelectedFinalGuess(longestWord);
+  }, [manualGuessSelectionMade, props.guesses]);
 
   return (
     <div className="App">
@@ -308,10 +358,7 @@ const CountdownLetters: React.FC<Props> = (props) => {
 
       <div>
         {props.timerConfig.isTimed && (
-          <ProgressBar
-            progress={props.timerConfig.elapsedSeconds}
-            total={props.timerConfig.totalSeconds}
-          ></ProgressBar>
+          <ProgressBar progress={props.timerConfig.elapsedSeconds} total={props.timerConfig.totalSeconds}></ProgressBar>
         )}
       </div>
 
@@ -320,13 +367,15 @@ const CountdownLetters: React.FC<Props> = (props) => {
           <label className="countdown_letters_guess_label">
             <input
               type="radio"
-              // TODO: Can't override this and choose a guess which isn't the longest
-              checked={props.mode === "casual" && isLongestWord(guess)}
-              onChange={(event) => updateSelectedGuess(event)}
+              checked={selectedFinalGuess === guess}
+              onChange={(event) => {
+                setManualGuessSelectionMade(true);
+                setSelectedFinalGuess(event.target.value);
+              }}
               className="countdown_letters_guess_input"
               name="countdown_letters_guess"
               value={guess}
-            ></input>
+            />
             {guess}
           </label>
         ))}

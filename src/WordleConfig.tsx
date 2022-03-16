@@ -14,13 +14,7 @@ import { wordHintMappings } from "./WordArrays/words_puzzles";
 import { SaveData } from "./SaveData";
 
 interface Props {
-  mode:
-    | "daily"
-    | "repeat"
-    | "increasing"
-    | "limitless"
-    | "puzzle"
-    | "interlinked";
+  mode: "daily" | "repeat" | "increasing" | "limitless" | "puzzle" | "interlinked";
   page: Page;
   firstLetterProvided: boolean;
   timerConfig: { isTimed: false } | { isTimed: true; seconds: number };
@@ -32,7 +26,7 @@ interface Props {
   setPage: (page: Page) => void;
 }
 
-const wordLengthMappings = [
+export const wordLengthMappings = [
   { value: 4, array: words_four },
   { value: 5, array: words_five },
   { value: 6, array: words_six },
@@ -43,11 +37,7 @@ const wordLengthMappings = [
   { value: 11, array: words_eleven },
 ];
 
-export function getWordSummary(
-  word: string,
-  targetWord: string,
-  inDictionary: boolean
-) {
+export function getWordSummary(word: string, targetWord: string, inDictionary: boolean) {
   // Character and status array
   let defaultCharacterStatuses = word.split("").map((character, index) => ({
     character: character,
@@ -58,18 +48,14 @@ export function getWordSummary(
     // If there is a green tile of a letter, don't show any orange tiles
     if (
       x.status === "contains" &&
-      defaultCharacterStatuses.some(
-        (y) => y.character === x.character && y.status === "correct"
-      )
+      defaultCharacterStatuses.some((y) => y.character === x.character && y.status === "correct")
     ) {
       x.status = "not in word";
     }
     // Only ever show 1 orange tile of each letter
     if (
       x.status === "contains" &&
-      defaultCharacterStatuses.findIndex(
-        (y) => y.character === x.character && y.status === "contains"
-      ) !== index
+      defaultCharacterStatuses.findIndex((y) => y.character === x.character && y.status === "contains") !== index
     ) {
       x.status = "not in word";
     }
@@ -116,9 +102,7 @@ const WordleConfig: React.FC<Props> = (props) => {
   const [interlinkedWord, setinterlinkedWord] = useState<string>();
   const [targetHint, settargetHint] = useState("");
   const [hasSubmitLetter, sethasSubmitLetter] = useState(false);
-  const [revealedLetterIndexes, setRevealedLetterIndexes] = useState<number[]>(
-    []
-  );
+  const [revealedLetterIndexes, setRevealedLetterIndexes] = useState<number[]>([]);
   const [countdownWord, setCountdownWord] = useState("");
 
   const defaultLetterStatuses: {
@@ -160,9 +144,7 @@ const WordleConfig: React.FC<Props> = (props) => {
     }[]
   >(defaultLetterStatuses);
 
-  const [seconds, setSeconds] = useState(
-    props.timerConfig.isTimed ? props.timerConfig.seconds : 0
-  );
+  const [seconds, setSeconds] = useState(props.timerConfig.isTimed ? props.timerConfig.seconds : 0);
 
   // Timer Setup
   React.useEffect(() => {
@@ -186,13 +168,7 @@ const WordleConfig: React.FC<Props> = (props) => {
   // Save gameplay progress of daily wordle
   React.useEffect(() => {
     if (props.mode === "daily" && targetWord) {
-      SaveData.setDailyWordGuesses(
-        targetWord,
-        guesses,
-        wordIndex,
-        inProgress,
-        currentWord
-      );
+      SaveData.setDailyWordGuesses(targetWord, guesses, wordIndex, inProgress, currentWord);
     }
   }, [targetWord, currentWord, guesses, wordIndex, inProgress]);
 
@@ -204,9 +180,7 @@ const WordleConfig: React.FC<Props> = (props) => {
       for (let i = 0; i < guess.length; i++) {
         const letter = guess[i];
 
-        const currentLetterStatus = letterStatusesCopy.find(
-          (x) => x.letter.toLowerCase() === letter.toLowerCase()
-        );
+        const currentLetterStatus = letterStatusesCopy.find((x) => x.letter.toLowerCase() === letter.toLowerCase());
         const newStatus = getLetterStatus(letter, i, targetWord!, inDictionary);
 
         if (newStatus !== "incorrect") {
@@ -277,15 +251,12 @@ const WordleConfig: React.FC<Props> = (props) => {
       /* --- DAILY ---  */
       if (props.mode === "daily") {
         // Find array of 5 (wordLength) letter words
-        const wordArray = wordLengthMappings.find((x) => x.value === wordLength)
-          ?.array!;
+        const wordArray = wordLengthMappings.find((x) => x.value === wordLength)?.array!;
 
         const timestamp = +new Date(); // Unix timestamp (in milliseconds)
         const ms_per_day = 24 * 60 * 60 * 1000;
         const days_since_epoch = Math.floor(timestamp / ms_per_day);
-        const daily_word_index = Math.round(
-          days_since_epoch % wordArray.length
-        ); // Number in the range (0, wordArray.length)
+        const daily_word_index = Math.round(days_since_epoch % wordArray.length); // Number in the range (0, wordArray.length)
         const new_daily_word = wordArray[daily_word_index];
 
         const daily_word_storage = SaveData.getDailyWordGuesses();
@@ -308,17 +279,13 @@ const WordleConfig: React.FC<Props> = (props) => {
         /* --- PUZZLEWORD ---  */
       } else if (props.mode === "puzzle") {
         // Get a random puzzle and hint (from words_puzzles.ts)
-        const puzzle =
-          wordHintMappings[
-            Math.round(Math.random() * wordHintMappings.length - 1)
-          ];
+        const puzzle = wordHintMappings[Math.round(Math.random() * wordHintMappings.length - 1)];
         console.log("Puzzle word: " + puzzle.word);
         settargetWord(puzzle.word);
         settargetHint(puzzle.hint);
         /* --- REPEAT, INCREASING, LIMITLESS AND INTERLINKED ---  */
       } else {
-        const wordArray = wordLengthMappings.find((x) => x.value === wordLength)
-          ?.array!;
+        const wordArray = wordLengthMappings.find((x) => x.value === wordLength)?.array!;
 
         // If the wordArray can't be found (increasing/limitless mode runs out of long enough words!)
         if (!wordArray) {
@@ -326,8 +293,7 @@ const WordleConfig: React.FC<Props> = (props) => {
           return;
         }
 
-        const new_target_word =
-          wordArray[Math.round(Math.random() * wordArray.length - 1)];
+        const new_target_word = wordArray[Math.round(Math.random() * wordArray.length - 1)];
 
         console.log("Not daily word: " + new_target_word);
         settargetWord(new_target_word);
@@ -343,9 +309,7 @@ const WordleConfig: React.FC<Props> = (props) => {
           const target_word_letters = new_target_word.split(""); // Get letters of first target word
 
           // Choose a random letter from these letters to be the shared letter between two interlinked words
-          const shared_letter_index_word1 = Math.round(
-            Math.random() * target_word_letters.length - 1
-          ); // Position of shared letter in first word
+          const shared_letter_index_word1 = Math.round(Math.random() * target_word_letters.length - 1); // Position of shared letter in first word
           console.log("Index (1): " + shared_letter_index_word1);
 
           const sharedLetter = target_word_letters[shared_letter_index_word1];
@@ -354,20 +318,15 @@ const WordleConfig: React.FC<Props> = (props) => {
           // Look for another word which contains the shared letter
           let interlinked_target_word = "";
           do {
-            const randomWord =
-              wordArray[Math.round(Math.random() * wordArray.length - 1)];
-            if (
-              randomWord.includes(sharedLetter) &&
-              randomWord !== new_target_word
-            ) {
+            const randomWord = wordArray[Math.round(Math.random() * wordArray.length - 1)];
+            if (randomWord.includes(sharedLetter) && randomWord !== new_target_word) {
               interlinked_target_word = randomWord;
             }
           } while (interlinked_target_word === "");
           console.log("Target Word (2): " + interlinked_target_word);
 
           // Position of shared letter in second word
-          const shared_letter_index_word2 =
-            interlinked_target_word.indexOf(sharedLetter);
+          const shared_letter_index_word2 = interlinked_target_word.indexOf(sharedLetter);
           console.log("Index (2): " + shared_letter_index_word2);
 
           setinterlinkedWord(interlinked_target_word);
@@ -456,9 +415,7 @@ const WordleConfig: React.FC<Props> = (props) => {
       { mode: "interlinked", value: 125 },
     ];
 
-    const gamemode_value = gamemode_Gold_Mappings.find(
-      (x) => x.mode === props.mode
-    )?.value!;
+    const gamemode_value = gamemode_Gold_Mappings.find((x) => x.mode === props.mode)?.value!;
 
     // Incremental multiplier with wordLength
     const wordLength_Gold_Mappings = [
@@ -472,9 +429,7 @@ const WordleConfig: React.FC<Props> = (props) => {
       { value: 11, multiplier: 7.5 },
     ];
 
-    const wordLength_multiplier = wordLength_Gold_Mappings.find(
-      (x) => x.value === wordLength
-    )?.multiplier!;
+    const wordLength_multiplier = wordLength_Gold_Mappings.find((x) => x.value === wordLength)?.multiplier!;
 
     // Small bonus for early guesses
     const numGuesses_Gold_Mappings = [
@@ -489,13 +444,9 @@ const WordleConfig: React.FC<Props> = (props) => {
       { guesses: 6, value: 0 },
     ];
 
-    const numGuesses_bonus = numGuesses_Gold_Mappings.find(
-      (x) => x.guesses === numGuesses
-    )?.value!;
+    const numGuesses_bonus = numGuesses_Gold_Mappings.find((x) => x.guesses === numGuesses)?.value!;
 
-    const goldTotal = Math.round(
-      gamemode_value * wordLength_multiplier + numGuesses_bonus
-    );
+    const goldTotal = Math.round(gamemode_value * wordLength_multiplier + numGuesses_bonus);
     return goldTotal;
   }
 
@@ -530,8 +481,7 @@ const WordleConfig: React.FC<Props> = (props) => {
       return;
     }
 
-    const wordArray = wordLengthMappings.find((x) => x.value === wordLength)
-      ?.array!;
+    const wordArray = wordLengthMappings.find((x) => x.value === wordLength)?.array!;
 
     if (wordArray.includes(currentWord.toLowerCase())) {
       // Full length and accepted word
@@ -540,10 +490,7 @@ const WordleConfig: React.FC<Props> = (props) => {
       if (currentWord.toUpperCase() === targetWord?.toUpperCase()) {
         // Exact match
         setinProgress(false);
-        const goldBanked = calculateGoldAwarded(
-          targetWord.length,
-          wordIndex + 1
-        );
+        const goldBanked = calculateGoldAwarded(targetWord.length, wordIndex + 1);
         SaveData.addGold(goldBanked);
         outcome = "success";
       } else if (wordIndex + 1 === numGuesses) {
