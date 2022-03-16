@@ -233,6 +233,19 @@ const CountdownLetters: React.FC<Props> = (props) => {
     }
   }
 
+  function isLongestWord(guess: string) {
+    // Compares words and returns a single value of the longest word
+    const longestWord = props.guesses.reduce((currentWord, nextWord) =>
+      currentWord.length > nextWord.length ? currentWord : nextWord
+    );
+
+    if (guess === longestWord) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   return (
     <div className="App">
       <div>{displayOutcome()}</div>
@@ -268,7 +281,17 @@ const CountdownLetters: React.FC<Props> = (props) => {
 
       <div className="countdown_letters_guesses">
         {props.guesses.map((guess) => (
-          <p className="countdown_letters_guess">{guess}</p>
+          <label className="countdown_letters_guess_label">
+            <input
+              type="radio"
+              // TODO: Can't override this and choose a guess which isn't the longest
+              checked={isLongestWord(guess)}
+              className="countdown_letters_guess_input"
+              name="countdown_letters_guess"
+              value={guess}
+            ></input>
+            {guess}
+          </label>
         ))}
       </div>
     </div>

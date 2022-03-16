@@ -635,3 +635,19 @@ code {
   padding: 1em;
   min-width: 4em;
 }
+
+.countdown_letters_guesses {
+  margin-top: 1.5em;
+  display: flex;
+  flex-direction: column;
+}
+
+.countdown_letters_guess_label {
+  font-family: "Ubuntu", sans-serif;
+  font-size: 1.2em;
+  text-transform: uppercase;
+}
+
+.countdown_letters_guess_input {
+
+}

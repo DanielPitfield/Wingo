@@ -324,7 +324,7 @@ const CountdownLettersConfig: React.FC<Props> = (props) => {
     setGuesses(guesses.concat(currentWord)); // Add word to guesses
 
     // TODO: Continue immediately if 'hard' mode where player is NOT told whether word is valid when as it is entered
-    //ContinueGame();
+    ContinueGame();
 
     // TODO: Add completed round to game history
   }
