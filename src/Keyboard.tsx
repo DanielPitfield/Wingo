@@ -7,6 +7,7 @@ interface Props {
   onSubmitLetter: (letter: string) => void;
   onEnter: () => void;
   onBackspace: () => void;
+  isCountdownMode: boolean;
   guesses: string[];
   targetWord: string;
   inDictionary: boolean;
@@ -45,6 +46,12 @@ export const Keyboard: React.FC<Props> = (props) => {
       letter: x,
       status: "not set",
     }));
+
+    // Don't need updated keyboard statuses if Countdown Letters
+    if (props.isCountdownMode) {
+      // Just use standard statuses (where all are "not set")
+      return keyboardStatuses;
+    }
 
     // For each guess
     for (const guess of props.guesses) {

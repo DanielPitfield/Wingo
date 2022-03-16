@@ -288,7 +288,7 @@ const CountdownLettersConfig: React.FC<Props> = (props) => {
     // Evalution for Casual game mode type
 
     setinDictionary(true);
-    //setinProgress(false);
+    setinProgress(false);
 
     const wordArray = wordLengthMappings.find(
       (x) => x.value === currentWord.length
@@ -303,12 +303,10 @@ const CountdownLettersConfig: React.FC<Props> = (props) => {
     if (wordInDictionary && isValidWord) {
       // Set the target word to the guessed word so all letters show as green
       settargetWord(currentWord);
-      setinProgress(false);
       // Only add word to guesses if valid
       setGuesses(guesses.concat(currentWord)); // Add word to guesses
     } else {
       setinDictionary(false);
-      setinProgress(false);
     }
 
     //ContinueGame();

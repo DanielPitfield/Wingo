@@ -238,16 +238,13 @@ const CountdownLetters: React.FC<Props> = (props) => {
       <div className="keyboard">
         {props.keyboard && (
           <Keyboard
+            isCountdownMode={true}
             onEnter={props.onEnter}
             onSubmitLetter={props.onSubmitLetter}
             onBackspace={props.onBackspace}
             guesses={props.guesses}
             targetWord={props.targetWord}
             inDictionary={props.inDictionary}
-            /* TODO: Send CountdownLetters keyboard letterStatuses
-              All letters as not in word with real time evaluation of word OFF
-              Same letterStauses as Wordle with real time evaluation of word ON
-            */
             letterStatuses={props.letterStatuses}
           ></Keyboard>
         )}
