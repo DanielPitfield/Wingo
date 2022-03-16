@@ -14,6 +14,7 @@ import { SaveData } from "../SaveData";
 
 interface Props {
   page: Page;
+  mode: "casual" | "realistic";
   timerConfig: { isTimed: false } | { isTimed: true; seconds: number };
   keyboard: boolean;
   defaultWordLength: number;
@@ -267,37 +268,21 @@ const CountdownLettersConfig: React.FC<Props> = (props) => {
   }
 
   function onEnter() {
-    // Pressing Enter to Continue or Restart
-    if (!inProgress) {
-      if (targetWord?.toUpperCase() === currentWord.toUpperCase()) {
-        ContinueGame();
-      } else {
-        ResetGame();
-      }
-      return;
-    }
-
-    setinDictionary(true);
-
-    let outcome: "success" | "failure" | "in-progress" = "in-progress";
-
-    /*
-    Guesses don't have to be full length in Countdown Letters
-    Also, a time limit is used not a limit on the number of guesses
-    */
-
     // The 9 vowels and consonants available have not all been picked
     if (countdownWord.length !== props.defaultWordLength) {
       return;
     }
 
-    // Guessed word is not 2 characters or longer
-    if (currentWord.length < 2) {
-      setinDictionary(false);
-      setinProgress(false);
-      outcome = "failure";
+    if (props.mode === "realistic") {
+      // Don't need to do any evaluation of the guess and just add to guesses regardless
+      setGuesses(guesses.concat(currentWord));
+      ContinueGame();
       return;
     }
+
+    // Evalution for Casual game mode type
+
+    setinDictionary(true);
 
     const wordArray = wordLengthMappings.find(
       (x) => x.value === currentWord.length
@@ -308,22 +293,20 @@ const CountdownLettersConfig: React.FC<Props> = (props) => {
     // Word can be made with available letters
     const isValidWord = isWordValid(countdownWord, currentWord);
 
-    console.log(getBestWords(countdownWord));
-
+    // Check the validity of the word for the player
     if (wordInDictionary && isValidWord) {
       // Set the target word to the guessed word so all letters show as green
       settargetWord(currentWord);
-      setinProgress(false);
-      outcome = "success";
+      // Only add word to guesses if valid
+      setGuesses(guesses.concat(currentWord)); // Add word to guesses
     } else {
-      setinDictionary(false);
       setinProgress(false);
-      outcome = "failure";
+      setinDictionary(false);
     }
 
-    setGuesses(guesses.concat(currentWord)); // Add word to guesses
+    // Give half a second to show word validity to player
+    setTimeout(function() { ContinueGame(); }, 500);
 
-    // TODO: Continue immediately if 'hard' mode where player is NOT told whether word is valid when as it is entered
     ContinueGame();
 
     // TODO: Add completed round to game history
@@ -364,6 +347,7 @@ const CountdownLettersConfig: React.FC<Props> = (props) => {
 
   return (
     <CountdownLetters
+      mode={props.mode}
       timerConfig={
         props.timerConfig.isTimed
           ? {

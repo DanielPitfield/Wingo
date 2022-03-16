@@ -8,6 +8,7 @@ import { MessageNotification } from "../MessageNotification";
 import ProgressBar from "../ProgressBar";
 
 interface Props {
+  mode: "casual" | "realistic";
   timerConfig:
     | { isTimed: false }
     | { isTimed: true; totalSeconds: number; elapsedSeconds: number };
@@ -212,25 +213,7 @@ const CountdownLetters: React.FC<Props> = (props) => {
   }
 
   function displayOutcome() {
-    // Game still in progress, don't display anything
-    if (props.inProgress) {
-      return;
-    }
-
-    // Invalid word (wrong spelling)
-    if (!props.inDictionary) {
-      return (
-        <MessageNotification type="error">
-          <strong>{props.currentWord}</strong> is not a valid word
-        </MessageNotification>
-      );
-    }
-
-    if (props.currentWord.toUpperCase() === props.targetWord.toUpperCase()) {
-      return (
-        <MessageNotification type="success">Valid Word</MessageNotification>
-      );
-    }
+    // Final outcome (e.g 7 letter word was correct)
   }
 
   function isLongestWord(guess: string) {
@@ -248,7 +231,7 @@ const CountdownLetters: React.FC<Props> = (props) => {
 
   return (
     <div className="App">
-      <div>{displayOutcome()}</div>
+      <div>{/*displayOutcome()*/}</div>
 
       <div className="word_grid">{populateGrid(props.wordLength)}</div>
 
@@ -285,7 +268,7 @@ const CountdownLetters: React.FC<Props> = (props) => {
             <input
               type="radio"
               // TODO: Can't override this and choose a guess which isn't the longest
-              checked={isLongestWord(guess)}
+              checked={props.mode === "casual" && isLongestWord(guess)}
               className="countdown_letters_guess_input"
               name="countdown_letters_guess"
               value={guess}

@@ -14,7 +14,7 @@ interface Props {
     | "increasing"
     | "limitless"
     | "puzzle"
-    | "interlinked"
+    | "interlinked";
   timerConfig:
     | { isTimed: false }
     | { isTimed: true; totalSeconds: number; elapsedSeconds: number };
