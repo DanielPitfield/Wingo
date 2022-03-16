@@ -73,11 +73,15 @@ const CountdownLetters: React.FC<Props> = (props) => {
       ];
 
       /*
-      if (turnOffWeighting) {
-        vowel_weightings.map((x) => {
-          x.weighting = 1;
-          return x;
-        });
+      if (!useWeightings) {
+        const randomIndex = Math.floor(
+          Math.random() * (vowel_weightings.length - 1)
+        );
+        const randomLetter = vowel_weightings[randomIndex].letter;
+        return randomLetter;
+      } else {
+        const weighted_vowel = getWeightedLetter(vowel_weightings);
+        return weighted_vowel;
       }
       */
 
@@ -115,11 +119,15 @@ const CountdownLetters: React.FC<Props> = (props) => {
       ];
 
       /*
-      if (turnOffWeighting) {
-        consonant_weightings.map((x) => {
-          x.weighting = 1;
-          return x;
-        });
+      if (!useWeightings) {
+        const randomIndex = Math.floor(
+          Math.random() * (consonant_weightings.length - 1)
+        );
+        const randomLetter = consonant_weightings[randomIndex].letter;
+        return randomLetter;
+      } else {
+        const weighted_consonant = getWeightedLetter(consonant_weightings);
+        return weighted_consonant;
       }
       */
 
@@ -136,8 +144,7 @@ const CountdownLetters: React.FC<Props> = (props) => {
         // Equal chance (to add a vowel or consonant)
         if (x) {
           newCountdownWord += getVowel();
-        }
-        else {
+        } else {
           newCountdownWord += getConsonant();
         }
       }
