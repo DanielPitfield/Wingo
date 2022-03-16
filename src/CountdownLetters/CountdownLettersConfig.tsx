@@ -92,12 +92,35 @@ export function getLetterStatus(
   return status;
 }
 
+export function isWordValid(countdownWord: string, guessedWord: string) {
+  if (!countdownWord || !guessedWord) {
+    return false;
+  }
+
+  const validLetters = countdownWord.split("");
+  const guessedWordLetters = guessedWord.split("");
+
+  // For every letter in the guess
+  return guessedWordLetters.every((attemptedLetter) => {
+    // The letter must be one of the 9 letters allowed (within validLetters)
+    const letterIndex = validLetters.indexOf(attemptedLetter);
+    if (letterIndex > -1) {
+      // Delete the letter from validLetters (so that the same letter can't be used more than once)
+      validLetters.splice(letterIndex, 1);
+      return true;
+    } else {
+      return false;
+    }
+  });
+}
+
 const CountdownLettersConfig: React.FC<Props> = (props) => {
   const [guesses, setGuesses] = useState<string[]>([]);
   const [gameId, setGameId] = useState<string | null>(null);
   const [countdownWord, setCountdownWord] = useState("");
   const [currentWord, setCurrentWord] = useState("");
   const [inProgress, setinProgress] = useState(true);
+  const [hasTimerEnded, sethasTimerEnded] = useState(false);
   const [inDictionary, setinDictionary] = useState(true);
   const [wordLength, setwordLength] = useState(props.defaultWordLength);
   const [targetWord, settargetWord] = useState<string>();
@@ -160,8 +183,7 @@ const CountdownLettersConfig: React.FC<Props> = (props) => {
       if (seconds > 0) {
         setSeconds(seconds - 1);
       } else {
-        // TODO: Timer ends
-        setinDictionary(false);
+        sethasTimerEnded(true);
         setinProgress(false);
       }
     }, 1000);
@@ -218,28 +240,6 @@ const CountdownLettersConfig: React.FC<Props> = (props) => {
   // TODO: Add game to SaveData history
   // TODO: Calculate gold reward
 
-  function isWordValid(countdownWord: string, guessedWord: string) {
-    if (!countdownWord || !guessedWord) {
-      return false;
-    }
-
-    const validLetters = countdownWord.split("");
-    const guessedWordLetters = guessedWord.split("");
-
-    // For every letter in the guess
-    return guessedWordLetters.every((attemptedLetter) => {
-      // The letter must be one of the 9 letters allowed (within validLetters)
-      const letterIndex = validLetters.indexOf(attemptedLetter);
-      if (letterIndex > -1) {
-        // Delete the letter from validLetters (so that the same letter can't be used more than once)
-        validLetters.splice(letterIndex, 1);
-        return true;
-      } else {
-        return false;
-      }
-    });
-  }
-
   function getBestWords(countdownWord: string) {
     // Array to store best words that are found
     var best_words = [];
@@ -268,6 +268,10 @@ const CountdownLettersConfig: React.FC<Props> = (props) => {
   }
 
   function onEnter() {
+    if (!inProgress) {
+      return;
+    }
+
     // The 9 vowels and consonants available have not all been picked
     if (countdownWord.length !== props.defaultWordLength) {
       return;
@@ -285,9 +289,7 @@ const CountdownLettersConfig: React.FC<Props> = (props) => {
       return;
     }
 
-    // Evalution for Casual game mode type
-
-    setinDictionary(true);
+    // Stop progress for evalution for Casual game mode type
     setinProgress(false);
 
     const wordArray = wordLengthMappings.find(
@@ -300,7 +302,8 @@ const CountdownLettersConfig: React.FC<Props> = (props) => {
     const isValidWord = isWordValid(countdownWord, currentWord);
 
     // Check the validity of the word for the player
-    if (wordInDictionary && isValidWord) {
+    if (wordInDictionary && isValidWord) {    
+      setinDictionary(true);
       // Set the target word to the guessed word so all letters show as green
       settargetWord(currentWord);
       // Only add word to guesses if valid
@@ -309,7 +312,10 @@ const CountdownLettersConfig: React.FC<Props> = (props) => {
       setinDictionary(false);
     }
 
-    //ContinueGame();
+    // Wait half a second to show validity of word, then continue
+    setTimeout(() => {
+      ContinueGame();
+    }, 500);
 
     // TODO: Add completed round to game history
   }
@@ -363,6 +369,7 @@ const CountdownLettersConfig: React.FC<Props> = (props) => {
       currentWord={currentWord}
       countdownWord={countdownWord}
       inProgress={inProgress}
+      hasTimerEnded={hasTimerEnded}
       inDictionary={inDictionary}
       hasSubmitLetter={hasSubmitLetter}
       targetWord={targetWord || ""}

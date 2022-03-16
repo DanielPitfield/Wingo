@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import "../App.scss";
 import { Alphabet, Keyboard } from "../Keyboard";
 import { Page } from "../App";
@@ -6,6 +6,7 @@ import { WordRow } from "../WordRow";
 import { Button } from "../Button";
 import { MessageNotification } from "../MessageNotification";
 import ProgressBar from "../ProgressBar";
+import { isWordValid } from "./CountdownLettersConfig";
 
 interface Props {
   mode: "casual" | "realistic";
@@ -18,6 +19,7 @@ interface Props {
   currentWord: string;
   countdownWord: string;
   inProgress: boolean;
+  hasTimerEnded: boolean;
   inDictionary: boolean;
   hasSubmitLetter: boolean;
   targetWord: string;
@@ -36,6 +38,8 @@ interface Props {
 }
 
 const CountdownLetters: React.FC<Props> = (props) => {
+  const [finalGuess, setFinalGuess] = useState("");
+
   // Create grid of rows (for guessing words)
   function populateGrid(wordLength: number) {
     function getWeightedLetter(
@@ -213,7 +217,54 @@ const CountdownLetters: React.FC<Props> = (props) => {
   }
 
   function displayOutcome() {
-    // Final outcome (e.g 7 letter word was correct)
+    // TODO: Probably best this doesn't do all the scoring logic and simply just displays outcome!
+
+    // When timer runs out and if a guess has been made
+    if (!props.inProgress && props.hasTimerEnded) {
+      if (!finalGuess) {
+        // finalGuess is empty (no guess was made), no points
+        return (
+          <MessageNotification type="error">
+            <strong>No guess was made</strong>
+            <br />
+            <strong>0 points</strong>
+          </MessageNotification>
+        );
+      }
+      if (props.mode === "casual") {
+        // Already evaluated that guess is valid, so just display result
+        return (
+          <MessageNotification type="success">
+            <strong>{finalGuess.toUpperCase()}</strong>
+            <br />
+            <strong>{finalGuess.length} points</strong>
+          </MessageNotification>
+        );
+      } else {
+        // Realistic mode, guess (has not yet and so) needs to be evaluated
+        if (
+          props.inDictionary &&
+          isWordValid(props.countdownWord, finalGuess)
+        ) {
+          return (
+            <MessageNotification type="success">
+              <strong>{finalGuess.toUpperCase()}</strong>
+              <br />
+              <strong>{finalGuess.length} points</strong>
+            </MessageNotification>
+          );
+        } else {
+          // Invalid word
+          return (
+            <MessageNotification type="error">
+              <strong>{finalGuess.toUpperCase()} is an invalid word</strong>
+              <br />
+              <strong>0 points</strong>
+            </MessageNotification>
+          );
+        }
+      }
+    }
   }
 
   function isLongestWord(guess: string) {
@@ -229,9 +280,14 @@ const CountdownLetters: React.FC<Props> = (props) => {
     }
   }
 
+  function updateSelectedGuess(event: React.ChangeEvent<HTMLInputElement>) {
+    const newGuess = event.target.value;
+    setFinalGuess(newGuess);
+  }
+
   return (
     <div className="App">
-      <div>{/*displayOutcome()*/}</div>
+      <div>{displayOutcome()}</div>
 
       <div className="word_grid">{populateGrid(props.wordLength)}</div>
 
@@ -266,6 +322,7 @@ const CountdownLetters: React.FC<Props> = (props) => {
               type="radio"
               // TODO: Can't override this and choose a guess which isn't the longest
               checked={props.mode === "casual" && isLongestWord(guess)}
+              onChange={(event) => updateSelectedGuess(event)}
               className="countdown_letters_guess_input"
               name="countdown_letters_guess"
               value={guess}
