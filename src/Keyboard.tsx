@@ -56,17 +56,15 @@ export const Keyboard: React.FC<Props> = (props) => {
     // For each guess
     for (const guess of props.guesses) {
       // Returns summary of each letter's status in the guess
-      const guessSummary = getWordSummary(
-        guess,
-        props.targetWord,
-        props.inDictionary
-      );
+      const guessSummary = getWordSummary(guess, props.targetWord, props.inDictionary);
 
       for (const letterSummary of guessSummary) {
         // Find element in keyboardStatuses for the letter in question
-        const letter = keyboardStatuses.find(
-          (x) => x.letter === letterSummary.character
-        )!;
+        const letter = keyboardStatuses.find((x) => x.letter === letterSummary.character);
+
+        if (!letter) {
+          continue;
+        }
 
         if (letterSummary.status === "correct") {
           // Always update status for this letter in keyboardStatuses to correct (highest precedence)
@@ -93,9 +91,7 @@ export const Keyboard: React.FC<Props> = (props) => {
 
     for (let i = 0; i < RowLetters.length; i++) {
       // Find status using keyboardStatuses (correct, not in word, wrong position)
-      const letterStatus = keyboardStatuses.find(
-        (x) => x.letter.toUpperCase() === RowLetters[i].toUpperCase()
-      )?.status;
+      const letterStatus = keyboardStatuses.find((x) => x.letter.toUpperCase() === RowLetters[i].toUpperCase())?.status;
 
       KeyboardButtons.push(
         <Button
