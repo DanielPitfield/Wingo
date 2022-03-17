@@ -1,3 +1,4 @@
+@use "sass:map";
 @import url("https://fonts.googleapis.com/css2?family=Ubuntu&display=swap");
 
 .App {
@@ -53,16 +54,30 @@ code {
   color: #4d4d4d;
 }
 
+/* Add Vowel, Consonant and Quick Pick */
+.add-letter-buttons-wrapper .btn.default {
+  border: none;
+  border-radius: 0px;
+  background-color: rgb(44, 44, 184);
+  color: white;
+}
+
+$data-statuses: (
+  "correct": rgb(76, 161, 80),
+  "contains": rgb(220, 141, 55),
+  "not in word": #787c7e,
+);
+
 .btn.default[data-status="correct"] {
-  background-color: rgb(76, 161, 80);
+  background-color: map.get($data-statuses, "correct");
 }
 
 .btn.default[data-status="contains"] {
-  background-color: rgb(220, 141, 55);
+  background-color: map.get($data-statuses, "contains");
 }
 
 .btn.default[data-status="not in word"] {
-  background-color: #787c7e;
+  background-color: map.get($data-statuses, "not in word");
 }
 
 .btn.default:hover {
@@ -108,12 +123,19 @@ code {
   margin: 20px 0 20px 0;
 }
 
-.word_grid {
+.word_grid, .countdown_word_grid {
   margin-top: 2em;
   margin-bottom: 1em;
   background-color: #323289;
   padding: 20px 20px;
   background-image: linear-gradient(318deg, #0d092e, transparent);
+}
+
+/* Background color of countdown word grid is slightly different */
+.countdown_word_grid {
+  background-color: #2474bb !important;
+  background-image: none !important;
+  border: 10px solid rgb(44, 44, 184);
 }
 
 .letter_tile {
@@ -138,6 +160,14 @@ code {
   transition: transform 0.8s;
   transform-style: preserve-3d;
   */
+}
+
+/* The letter tiles of Countdown Letters */
+.countdown-letters-wrapper .word_row .letter_tile, .countdown_word_grid .word_row .letter_tile {
+  border: none;
+  border-radius: 0px;
+  background-color: rgb(44, 44, 184);
+  text-shadow: none;
 }
 
 .letter_tile[data-status="correct"] {
@@ -555,6 +585,13 @@ code {
 .nubble-button[data-prime="true"] {
   border: 4px solid #3d3d3d !important;
 }
+
+$data-colours: (
+  // Background colour
+  orange: #aa5208bb,
+  // Border and on hover colour
+  orange-border: #aa5208
+);
 
 .nubble-button[data-colour="orange"] {
   background-color: #aa5208bb;

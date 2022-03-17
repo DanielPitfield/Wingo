@@ -250,8 +250,7 @@ const CountdownLetters: React.FC<Props> = (props) => {
   }
 
   function displayOutcome() {
-    // TODO: Probably best this doesn't do all the scoring logic and simply just displays outcome!
-
+    // Create a list of the longest words that can be made with the available letters
     const bestWords = getBestWords(props.countdownWord);
     const bestWordsList = (
       <ul className="best_words_list">
@@ -339,7 +338,7 @@ const CountdownLetters: React.FC<Props> = (props) => {
     <div className="App">
       <div>{displayOutcome()}</div>
 
-      <div className="word_grid">{populateGrid(props.wordLength)}</div>
+      <div className="countdown_word_grid">{populateGrid(props.wordLength)}</div>
 
       <div className="keyboard">
         {props.keyboard && (
