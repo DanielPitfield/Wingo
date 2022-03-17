@@ -183,11 +183,14 @@ const CountdownLettersConfig: React.FC<Props> = (props) => {
   }, [guesses]);
 
   function ResetGame() {
-    setGuesses([]);
+    setGuesses([]);    
+    setCountdownWord("");
     setCurrentWord("");
+    settargetWord("");
     setinProgress(true);
+    sethasTimerEnded(false)
     setinDictionary(true);
-    setwordLength(wordLength);
+    setwordLength(props.defaultWordLength);
     sethasSubmitLetter(false);
     setletterStatuses(defaultLetterStatuses);
     if (props.timerConfig.isTimed) {

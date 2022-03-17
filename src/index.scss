@@ -62,24 +62,6 @@ code {
   color: white;
 }
 
-$data-statuses: (
-  "correct": rgb(76, 161, 80),
-  "contains": rgb(220, 141, 55),
-  "not in word": #787c7e,
-);
-
-.btn.default[data-status="correct"] {
-  background-color: map.get($data-statuses, "correct");
-}
-
-.btn.default[data-status="contains"] {
-  background-color: map.get($data-statuses, "contains");
-}
-
-.btn.default[data-status="not in word"] {
-  background-color: map.get($data-statuses, "not in word");
-}
-
 .btn.default:hover {
   background-color: #c7c3c3;
 }
@@ -123,7 +105,8 @@ $data-statuses: (
   margin: 20px 0 20px 0;
 }
 
-.word_grid, .countdown_word_grid {
+.word_grid,
+.countdown_word_grid {
   margin-top: 2em;
   margin-bottom: 1em;
   background-color: #323289;
@@ -163,35 +146,47 @@ $data-statuses: (
 }
 
 /* The letter tiles of Countdown Letters */
-.countdown-letters-wrapper .word_row .letter_tile, .countdown_word_grid .word_row .letter_tile {
+.countdown-letters-wrapper .word_row .letter_tile,
+.countdown_word_grid .word_row .letter_tile {
   border: none;
   border-radius: 0px;
   background-color: rgb(44, 44, 184);
   text-shadow: none;
 }
 
-.letter_tile[data-status="correct"] {
-  background-color: rgb(76, 161, 80);
+$data-statuses: (
+  "correct": rgb(76, 161, 80),
+  "contains": rgb(220, 141, 55),
+  "incorrect": rgb(204, 33, 50),
+  "not in word": #787c7e,
+);
+
+.btn.default[data-status="correct"] {
+  background-color: map.get($data-statuses, "correct");
+}
+
+.letter_tile[data-status="correct"], .countdown_word_grid .word_row .letter_tile[data-status="correct"] {
+  background-color: map.get($data-statuses, "correct");
   /* transform: rotateX(180deg); */
 }
 
-.letter_tile[data-status="contains"] {
-  background-color: rgb(220, 141, 55);
+.letter_tile[data-status="contains"], .countdown_word_grid .word_row .letter_tile[data-status="contains"] {
+  background-color: map.get($data-statuses, "contains");
   /* transform: rotateX(180deg); */
 }
 
-.letter_tile[data-status="incorrect"] {
-  background-color: rgb(204, 33, 50);
+.letter_tile[data-status="incorrect"], .countdown_word_grid .word_row .letter_tile[data-status="incorrect"] {
+  background-color: map.get($data-statuses, "incorrect");
   /* transform: rotateX(180deg); */
 }
 
-.letter_tile[data-status="not in word"] {
-  background-color: #787c7e;
+.letter_tile[data-status="not in word"], .countdown_word_grid .word_row .letter_tile[data-status="not in word"] {
+  background-color: map.get($data-statuses, "not in word");
   /* transform: rotateX(180deg); */
 }
 
 .logo .letter_tile[data-status="incorrect"] {
-  background-color: rgb(204, 33, 50);
+  background-color: map.get($data-statuses, "incorrect");
 }
 
 .word_row {
@@ -586,74 +581,49 @@ $data-statuses: (
   border: 4px solid #3d3d3d !important;
 }
 
-$data-colours: (
-  // Background colour
+$nubble-colors: (
   orange: #aa5208bb,
-  // Border and on hover colour
-  orange-border: #aa5208
+  orange-border: #aa5208,
+  light-blue: #00a59bbb,
+  light-blue-border: #00a59b,
+  yellow: #a5a803bb,
+  yellow-border: #a5a803,
+  dark-blue: #0002acbb,
+  dark-blue-border: #0002ac,
+  green: #05ab00bb,
+  green-border: #05ab00,
+  pink: #b801b5bb,
+  pink-border: #b801b5,
+  red: #b10503bb,
+  red-border: #b10503,
 );
 
-.nubble-button[data-colour="orange"] {
-  background-color: #aa5208bb;
-  border: 4px solid #aa5208;
+@mixin setNubbleColours($colorName) {
+  background-color: map-get($nubble-colors, $colorName);
+  // Border has darker tone of colour
+  border: 4px solid map-get($nubble-colors, #{$colorName}-border);
+  &:hover {
+    // On hover, make background color same as border
+    background-color: map-get($nubble-colors, #{$colorName}-border);
+  }
 }
 
-.nubble-button[data-colour="orange"]:hover {
-  background-color: #aa5208;
-}
+$nubble-colors-names: (
+  orange: "orange",
+  light-blue: "light-blue",
+  yellow: "yellow",
+  dark-blue: "dark-blue",
+  green: "green",
+  pink: "pink",
+  red: "red",
+);
 
-.nubble-button[data-colour="light-blue"] {
-  background-color: #00a59bbb;
-  border: 4px solid #00a59b;
-}
-
-.nubble-button[data-colour="light-blue"]:hover {
-  background-color: #00a59b;
-}
-
-.nubble-button[data-colour="yellow"] {
-  background-color: #a5a803bb;
-  border: 4px solid #a5a803;
-}
-
-.nubble-button[data-colour="yellow"]:hover {
-  background-color: #a5a803;
-}
-
-.nubble-button[data-colour="dark-blue"] {
-  background-color: #0002acbb;
-  border: 4px solid #0002ac;
-}
-
-.nubble-button[data-colour="dark-blue"]:hover {
-  background-color: #0002ac;
-}
-
-.nubble-button[data-colour="green"] {
-  background-color: #05ab00bb;
-  border: 4px solid #05ab00;
-}
-
-.nubble-button[data-colour="green"]:hover {
-  background-color: #05ab00;
-}
-
-.nubble-button[data-colour="pink"] {
-  background-color: #b801b5bb;
-  border: 4px solid #b801b5;
-}
-
-.nubble-button[data-colour="pink"]:hover {
-  background-color: #b801b5;
-}
-
-.nubble-button[data-colour="red"] {
-  background-color: #b10503bb;
-  border: 4px solid #b10503;
-}
-
-.nubble-button[data-colour="red"]:hover {
-  background-color: #b10503;
+// Calls setNubbleColours with every colour
+@each $color in $nubble-colors-names {
+  // TODO: Quotation marks wrong
+  .nubble-button[data-colour="#{$color}"] {
+    @include setNubbleColours(#{$color});
+  }
 }
 
 .nubble-grid {

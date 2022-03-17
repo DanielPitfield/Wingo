@@ -8,6 +8,7 @@ import { MessageNotification } from "../MessageNotification";
 import ProgressBar from "../ProgressBar";
 import { isWordValid } from "./CountdownLettersConfig";
 import { wordLengthMappings } from "../WordleConfig";
+import { SaveData } from "../SaveData";
 
 interface Props {
   mode: "casual" | "realistic";
@@ -37,11 +38,34 @@ interface Props {
 }
 
 const CountdownLetters: React.FC<Props> = (props) => {
+  // Used for saving completed rounds
+  const [gameId, setGameId] = useState<string | null>(null);
+
   // Currently selected guess, to be used as the final guess when time runs out
   const [selectedFinalGuess, setSelectedFinalGuess] = useState("");
 
   // Stores whether a manual selection has been made (to stop us overwriting that manual decision)
   const [manualGuessSelectionMade, setManualGuessSelectionMade] = useState(false);
+
+  // TODO: Save CountdownLetters game
+  /*
+  React.useEffect(() => {
+    if (!targetWord) {
+      return;
+    }
+
+    const gameId = SaveData.addGameToHistory(props.page, {
+      timestamp: new Date().toISOString(),
+      firstLetterProvided: props.firstLetterProvided,
+      wordLength,
+      numGuesses,
+      puzzleLeaveNumBlanks: props.puzzleLeaveNumBlanks,
+      puzzleRevealMs: props.puzzleRevealMs,
+    });
+
+    setGameId(gameId);
+  }, [props.page, countdownWord]);
+  */
 
   // Create grid of rows (for guessing words)
   function populateGrid(wordLength: number) {
@@ -260,10 +284,14 @@ const CountdownLetters: React.FC<Props> = (props) => {
       </ul>
     );
 
+    let outcome: "success" | "failure" | "in-progress" = "in-progress";
+    const GOLD_PER_LETTER = 30;
+
     // When timer runs out and if a guess has been made
     if (!props.inProgress && props.hasTimerEnded) {
       if (!selectedFinalGuess) {
         // finalGuess is empty (no guess was made), no points
+        outcome = "failure";
         return (
           <>
             <MessageNotification type="error">
@@ -277,6 +305,9 @@ const CountdownLetters: React.FC<Props> = (props) => {
       }
       if (props.mode === "casual") {
         // Already evaluated that guess is valid, so just display result
+        outcome = "success";
+        // Reward gold based on how long the selected guess is
+        SaveData.addGold(selectedFinalGuess.length * GOLD_PER_LETTER);
         return (
           <>
             <MessageNotification type="success">
@@ -290,6 +321,8 @@ const CountdownLetters: React.FC<Props> = (props) => {
       } else {
         // Realistic mode, guess (has not yet and so) needs to be evaluated
         if (props.inDictionary && isWordValid(props.countdownWord, selectedFinalGuess)) {
+          outcome = "success";
+          SaveData.addGold(selectedFinalGuess.length * GOLD_PER_LETTER);
           return (
             <>
               <MessageNotification type="success">
@@ -302,6 +335,7 @@ const CountdownLetters: React.FC<Props> = (props) => {
           );
         } else {
           // Invalid word
+          outcome = "failure";
           return (
             <>
               <MessageNotification type="error">
@@ -315,6 +349,23 @@ const CountdownLetters: React.FC<Props> = (props) => {
         }
       }
     }
+
+    // TODO: Save CountdownLetters round
+    /*
+    if (outcome !== "in-progress" && gameId) {
+      SaveData.addCompletedRoundToGameHistory(gameId, {
+        timestamp: new Date().toISOString(),
+        outcome,
+        currentWord,
+        guesses,
+        wordLength,
+        numGuesses,
+        firstLetterProvided: props.firstLetterProvided,
+        puzzleLeaveNumBlanks: props.puzzleLeaveNumBlanks,
+        puzzleRevealMs: props.puzzleRevealMs,
+      });
+    }
+    */
   }
 
   // Set the selected final guess to the longest word (as long as `manualGuessSelectionMade` is false)
@@ -337,6 +388,14 @@ const CountdownLetters: React.FC<Props> = (props) => {
   return (
     <div className="App">
       <div>{displayOutcome()}</div>
+
+      <div>
+        {props.hasTimerEnded && !props.inProgress && (
+          <Button mode={"accept"} onClick={() => props.ResetGame()}>
+            Restart
+          </Button>
+        )}
+      </div>
 
       <div className="countdown_word_grid">{populateGrid(props.wordLength)}</div>
 
