@@ -37,6 +37,16 @@ export const wordLengthMappings = [
   { value: 11, array: words_eleven },
 ];
 
+export function getNewLives(numGuesses: number, wordIndex: number): number {
+  // Calculate the number of rows not used
+    const extraRows = numGuesses - (wordIndex + 1);
+    // TODO: A game option toggle could change this value (e.g extraRows would remove cap on new lives)
+    const MAX_NEW_LIVES = 5;
+    // The number of new lives is the number of extra rows (capped at a max of above variable)
+    const newLives = Math.min(extraRows, MAX_NEW_LIVES);
+    return newLives;
+}
+
 export function getWordSummary(word: string, targetWord: string, inDictionary: boolean) {
   // Character and status array
   let defaultCharacterStatuses = word.split("").map((character, index) => ({
@@ -392,13 +402,8 @@ const WordleConfig: React.FC<Props> = (props) => {
     }
 
     if (props.mode === "limitless") {
-      // Calculate the number of rows not used
-      const extraRows = numGuesses - (wordIndex + 1);
-      // TODO: A game option toggle could change this value (e.g max of 5 new lives)
-      const MAX_NEW_LIVES = extraRows;
-      // The number of new lives is the number of extra rows (capped at a max of above variable)
-      const newLives = Math.min(extraRows, MAX_NEW_LIVES);
-      setNumGuesses(numGuesses + newLives);
+      const newLives = getNewLives(numGuesses, wordIndex);
+      setNumGuesses(numGuesses + newLives);      
     }
   }
 

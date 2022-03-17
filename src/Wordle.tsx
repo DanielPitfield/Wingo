@@ -6,6 +6,7 @@ import { WordRow } from "./WordRow";
 import { Button } from "./Button";
 import { MessageNotification } from "./MessageNotification";
 import ProgressBar from "./ProgressBar";
+import { getNewLives } from "./WordleConfig";
 
 interface Props {
   mode: "daily" | "repeat" | "increasing" | "limitless" | "puzzle" | "interlinked";
@@ -142,9 +143,9 @@ const Wordle: React.FC<Props> = (props) => {
         </MessageNotification>
       );
     }
-
+    
     // The number of rows not used in guessing word
-    const newLives = props.numGuesses - (props.wordIndex + 1);
+    const newLives = getNewLives(props.numGuesses, props.wordIndex);
 
     if (props.mode === "limitless") {
       // Word guessed with rows to spare
