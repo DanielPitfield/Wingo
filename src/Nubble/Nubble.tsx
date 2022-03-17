@@ -1,11 +1,7 @@
 import React, { useState } from "react";
 import "../index.scss";
 import DiceGrid from "./DiceGrid";
-import {
-  adjacentMappings_25,
-  adjacentMappings_64,
-  adjacentMappings_100,
-} from "./nubble_adjacent";
+import { adjacentMappings_25, adjacentMappings_64, adjacentMappings_100 } from "./nubble_adjacent";
 
 interface Props {
   numDice: number;
@@ -16,10 +12,7 @@ interface Props {
   timeLengthMins: number;
 }
 
-export function getValidValues(
-  inputNumbers: number[],
-  maxLimit: number
-): number[] {
+export function getValidValues(inputNumbers: number[], maxLimit: number): number[] {
   // Returns permutations of input array, https://stackoverflow.com/a/20871714
   function permutator<T>(inputArr: T[]): T[][] {
     let result: any[] = [];
@@ -42,10 +35,7 @@ export function getValidValues(
   }
 
   // https://stackoverflow.com/questions/32543936/combination-with-repetition
-  function combRep(
-    arr: { name: string; function: (num1: number, num2: number) => number }[],
-    l: number
-  ) {
+  function combRep(arr: { name: string; function: (num1: number, num2: number) => number }[], l: number) {
     if (l === void 0) l = arr.length; // Length of the combinations
     var data = Array(l), // Used to store state
       results = []; // Array of results
@@ -89,9 +79,7 @@ export function getValidValues(
 
   // Always atleast the number of operators (and +1 just to be safe)
   const maxOperatorPermutation_length =
-    inputNumbers.length <= operators.length
-      ? operators.length + 1
-      : inputNumbers.length + 1;
+    inputNumbers.length <= operators.length ? operators.length + 1 : inputNumbers.length + 1;
 
   // This adds permutations with repetition of operators
   for (let i = 1; i <= maxOperatorPermutation_length; i++) {
@@ -112,9 +100,9 @@ export function getValidValues(
   }
 
   // Remove any subset larger in length than the (number of values - 1)
-  const operatorSubsetPermutationsFiltered = Array.from(
-    operatorSubsetPermutations
-  ).filter((x) => x.length <= inputNumbers.length - 1);
+  const operatorSubsetPermutationsFiltered = Array.from(operatorSubsetPermutations).filter(
+    (x) => x.length <= inputNumbers.length - 1
+  );
 
   // --- OPERANDS (1-6) ---
 
@@ -134,11 +122,7 @@ export function getValidValues(
   // Combine the permutations of operands and operators (not yet in reverse polish)
   var combinations = [];
   for (let i = 0; i < Array.from(operandSubsetPermutations).length; i++) {
-    for (
-      let j = 0;
-      j < Array.from(operatorSubsetPermutationsFiltered).length;
-      j++
-    ) {
+    for (let j = 0; j < Array.from(operatorSubsetPermutationsFiltered).length; j++) {
       combinations.push({
         operands: Array.from(operandSubsetPermutations)[i],
         operators: Array.from(operatorSubsetPermutationsFiltered)[j],
@@ -150,10 +134,7 @@ export function getValidValues(
 
   // Array to store the polish_expression arrays
   let polish_expressions_all: Array<
-    Array<
-      | { name: string; function: (num1: number, num2: number) => number }
-      | number
-    >
+    Array<{ name: string; function: (num1: number, num2: number) => number } | number>
   > = [];
 
   for (let i = 0; i < combinations.length; i++) {
@@ -162,20 +143,14 @@ export function getValidValues(
     if (combinations[i].operands.length === 1) {
       // Add just the number (example: 5)
       polish_expressions_all.push([combinations[i].operands[0]]);
-    } else if (
-      combinations[i].operands.length === 2 &&
-      combinations[i].operators.length === 1
-    ) {
+    } else if (combinations[i].operands.length === 2 && combinations[i].operators.length === 1) {
       // Add the two numbers followed by operator (example: 5 2 +)
       polish_expressions_all.push([
         combinations[i].operands[0],
         combinations[i].operands[1],
         combinations[i].operators[0],
       ]);
-    } else if (
-      combinations[i].operands.length === 3 &&
-      combinations[i].operators.length === 2
-    ) {
+    } else if (combinations[i].operands.length === 3 && combinations[i].operators.length === 2) {
       // (example: 5 2 + 3 *)
       polish_expressions_all.push([
         combinations[i].operands[0],
@@ -184,10 +159,7 @@ export function getValidValues(
         combinations[i].operands[2],
         combinations[i].operators[1],
       ]);
-    } else if (
-      combinations[i].operands.length === 4 &&
-      combinations[i].operators.length === 3
-    ) {
+    } else if (combinations[i].operands.length === 4 && combinations[i].operators.length === 3) {
       // (example: 5 2 + 3 * 4 -)
       polish_expressions_all.push([
         combinations[i].operands[0],
@@ -209,10 +181,7 @@ export function getValidValues(
         combinations[i].operators[1],
         combinations[i].operators[2],
       ]);
-    } else if (
-      combinations[i].operands.length === 5 &&
-      combinations[i].operators.length === 4
-    ) {
+    } else if (combinations[i].operands.length === 5 && combinations[i].operators.length === 4) {
       // TODO: Are there more types of polish expression which can be made?
 
       // (example: 5 2 + 3 * 4 - 1 +)
@@ -258,36 +227,27 @@ export function getValidValues(
   }
 
   // Remove empty/unformed polish expressions
-  polish_expressions_all = Array.from(polish_expressions_all).filter(
-    (x) => x.length >= 1
-  );
+  polish_expressions_all = Array.from(polish_expressions_all).filter((x) => x.length >= 1);
 
   // --- Evaluating Expressions ---
   var calculatedValues = new Set<number>();
 
   // Check whether expression part is an operator
   function isOperator(
-    expression_part:
-      | { name: string; function: (num1: number, num2: number) => number }
-      | number
+    expression_part: { name: string; function: (num1: number, num2: number) => number } | number
   ): boolean {
     return typeof expression_part !== "number";
   }
 
   // Check whether expression part is an operand (number)
   function isOperand(
-    expression_part:
-      | { name: string; function: (num1: number, num2: number) => number }
-      | number
+    expression_part: { name: string; function: (num1: number, num2: number) => number } | number
   ): boolean {
     return typeof expression_part === "number";
   }
 
   // Check whether expression skeleton matches with provided expression
-  function checkSkeleton(
-    expression: any[],
-    skeleton: ((expression_part: any) => boolean)[]
-  ): boolean {
+  function checkSkeleton(expression: any[], skeleton: ((expression_part: any) => boolean)[]): boolean {
     for (let i = 0; i < expression.length; i++) {
       if (!skeleton[i](expression[i])) {
         return false; // Skeleton part different from expression part
@@ -315,98 +275,31 @@ export function getValidValues(
         calculatedValues.add(result);
       }
     } else if (expression.length === 5) {
-      if (
-        checkSkeleton(expression, [
-          isOperand,
-          isOperand,
-          isOperator,
-          isOperand,
-          isOperator,
-        ])
-      ) {
-        const [firstNum, secondNum, firstOperator, thirdNum, secondOperator] =
-          expression;
+      if (checkSkeleton(expression, [isOperand, isOperand, isOperator, isOperand, isOperator])) {
+        const [firstNum, secondNum, firstOperator, thirdNum, secondOperator] = expression;
 
-        const firstCalculation = (firstOperator as any).function(
-          firstNum,
-          secondNum
-        );
-        const result = (secondOperator as any).function(
-          firstCalculation,
-          thirdNum
-        );
+        const firstCalculation = (firstOperator as any).function(firstNum, secondNum);
+        const result = (secondOperator as any).function(firstCalculation, thirdNum);
         calculatedValues.add(result);
       }
     } else if (expression.length === 7) {
-      if (
-        checkSkeleton(expression, [
-          isOperand,
-          isOperand,
-          isOperator,
-          isOperand,
-          isOperator,
-          isOperand,
-          isOperator,
-        ])
-      ) {
-        const [
-          firstNum,
-          secondNum,
-          firstOperator,
-          thirdNum,
-          secondOperator,
-          fourthNum,
-          thirdOperator,
-        ] = expression;
+      if (checkSkeleton(expression, [isOperand, isOperand, isOperator, isOperand, isOperator, isOperand, isOperator])) {
+        const [firstNum, secondNum, firstOperator, thirdNum, secondOperator, fourthNum, thirdOperator] = expression;
 
-        const firstCalculation = (firstOperator as any).function(
-          firstNum,
-          secondNum
-        );
-        const secondCalculation = (secondOperator as any).function(
-          firstCalculation,
-          thirdNum
-        );
-        const result = (thirdOperator as any).function(
-          secondCalculation,
-          fourthNum
-        );
+        const firstCalculation = (firstOperator as any).function(firstNum, secondNum);
+        const secondCalculation = (secondOperator as any).function(firstCalculation, thirdNum);
+        const result = (thirdOperator as any).function(secondCalculation, fourthNum);
         calculatedValues.add(result);
       } else if (
-        checkSkeleton(expression, [
-          isOperand,
-          isOperand,
-          isOperator,
-          isOperand,
-          isOperand,
-          isOperator,
-          isOperator,
-        ])
+        checkSkeleton(expression, [isOperand, isOperand, isOperator, isOperand, isOperand, isOperator, isOperator])
       ) {
-        const [
-          firstNum,
-          secondNum,
-          firstOperator,
-          thirdNum,
-          fourthNum,
-          secondOperator,
-          thirdOperator,
-        ] = expression;
+        const [firstNum, secondNum, firstOperator, thirdNum, fourthNum, secondOperator, thirdOperator] = expression;
 
-        const firstCalculation = (firstOperator as any).function(
-          firstNum,
-          secondNum
-        );
+        const firstCalculation = (firstOperator as any).function(firstNum, secondNum);
 
-        const secondCalculation = (secondOperator as any).function(
-          thirdNum,
-          fourthNum
-        );
+        const secondCalculation = (secondOperator as any).function(thirdNum, fourthNum);
 
-        const result = (thirdOperator as any).function(
-          firstCalculation,
-          secondCalculation
-        );
+        const result = (thirdOperator as any).function(firstCalculation, secondCalculation);
 
         calculatedValues.add(result);
       }
@@ -436,25 +329,12 @@ export function getValidValues(
           fourthOperator,
         ] = expression;
 
-        const firstCalculation = (firstOperator as any).function(
-          firstNum,
-          secondNum
-        );
-        const secondCalculation = (secondOperator as any).function(
-          firstCalculation,
-          thirdNum
-        );
-        const thirdCalculation = (thirdOperator as any).function(
-          secondCalculation,
-          fourthNum
-        );
-        const result = (fourthOperator as any).function(
-          thirdCalculation,
-          fifthNum
-        );
+        const firstCalculation = (firstOperator as any).function(firstNum, secondNum);
+        const secondCalculation = (secondOperator as any).function(firstCalculation, thirdNum);
+        const thirdCalculation = (thirdOperator as any).function(secondCalculation, fourthNum);
+        const result = (fourthOperator as any).function(thirdCalculation, fifthNum);
         calculatedValues.add(result);
-      }
-      else if (
+      } else if (
         checkSkeleton(expression, [
           isOperand,
           isOperand,
@@ -479,22 +359,10 @@ export function getValidValues(
           fourthOperator,
         ] = expression;
 
-        const firstCalculation = (firstOperator as any).function(
-          firstNum,
-          secondNum
-        );
-        const secondCalculation = (secondOperator as any).function(
-          thirdNum,
-          fourthNum
-        );
-        const thirdCalculation = (thirdOperator as any).function(
-          firstCalculation,
-          secondCalculation
-        );
-        const result = (fourthOperator as any).function(
-          thirdCalculation,
-          fifthNum
-        );
+        const firstCalculation = (firstOperator as any).function(firstNum, secondNum);
+        const secondCalculation = (secondOperator as any).function(thirdNum, fourthNum);
+        const thirdCalculation = (thirdOperator as any).function(firstCalculation, secondCalculation);
+        const result = (fourthOperator as any).function(thirdCalculation, fifthNum);
         calculatedValues.add(result);
       }
       // (example: 2 1 + 5 * 4 3 * *)
@@ -523,31 +391,17 @@ export function getValidValues(
           fourthOperator,
         ] = expression;
 
-        const firstCalculation = (firstOperator as any).function(
-          firstNum,
-          secondNum
-        );
-        const secondCalculation = (secondOperator as any).function(
-          firstCalculation,
-          thirdNum
-        );
-        const thirdCalculation = (thirdOperator as any).function(
-          fourthNum,
-          fifthNum
-        );
-        const result = (fourthOperator as any).function(
-          secondCalculation,
-          thirdCalculation
-        );
+        const firstCalculation = (firstOperator as any).function(firstNum, secondNum);
+        const secondCalculation = (secondOperator as any).function(firstCalculation, thirdNum);
+        const thirdCalculation = (thirdOperator as any).function(fourthNum, fifthNum);
+        const result = (fourthOperator as any).function(secondCalculation, thirdCalculation);
         calculatedValues.add(result);
       }
     }
   }
 
   // Remove results which aren't integers or are outside range of (0, maxLimit)
-  const validValues = Array.from(calculatedValues).filter(
-    (x) => x > 0 && x <= maxLimit && Math.round(x) === x
-  );
+  const validValues = Array.from(calculatedValues).filter((x) => x > 0 && x <= maxLimit && Math.round(x) === x);
 
   // TODO: Still missing some values (try dud in operators?)
   return Array.from(validValues);
@@ -687,9 +541,7 @@ const Nubble: React.FC<Props> = (props) => {
 
   function rollDice() {
     // Determine random dice values for all the dice
-    setdiceValues(
-      Array.from({ length: props.numDice }).map((x) => randomDiceNumber())
-    );
+    setdiceValues(Array.from({ length: props.numDice }).map((x) => randomDiceNumber()));
   }
 
   function isPrime(value: number) {
@@ -708,13 +560,9 @@ const Nubble: React.FC<Props> = (props) => {
     // Array deatiling pin adjacency for this gridSize
     const adjacentMappings = getAdjacentMappings();
     // Adjacent pins of the clicked pin
-    const adjacent_pins = adjacentMappings.find(
-      (x) => x.pin === pinNumber
-    )?.adjacent_pins;
+    const adjacent_pins = adjacentMappings.find((x) => x.pin === pinNumber)?.adjacent_pins;
     // All the adjacent pins which have also previously been picked
-    const picked_adjacent_pins = pickedPins.filter((x) =>
-      adjacent_pins?.includes(x)
-    );
+    const picked_adjacent_pins = pickedPins.filter((x) => adjacent_pins?.includes(x));
     // Determine if there is a nubble triangle (3 adjacent picked pins)
     if (picked_adjacent_pins.length >= 3) {
       return true;
@@ -723,7 +571,7 @@ const Nubble: React.FC<Props> = (props) => {
   }
 
   function onClick(pinNumber: number) {
-    if (!validValues || !validValues.includes(pinNumber)) {
+    if (!validValues || !validValues.includes(pinNumber) || pinNumber < 1) {
       // No valid values or number is invalid
       return;
     } else {
@@ -768,9 +616,7 @@ const Nubble: React.FC<Props> = (props) => {
     var Grid = [];
     for (let i = 1; i <= props.gridSize; i++) {
       let isPicked = pickedPins.includes(i);
-      let colour = pointColourMappings.find(
-        (x) => x.points === determinePoints(i)
-      )?.colour;
+      let colour = pointColourMappings.find((x) => x.points === determinePoints(i))?.colour;
       Grid.push(
         <button
           key={i}
@@ -788,15 +634,52 @@ const Nubble: React.FC<Props> = (props) => {
     return Grid;
   }
 
+  function displayPinScores() {
+    var Grid = [];
+    // Create nubble pin of each colour with text of how many points it awards
+    for (let i = 0; i < pointColourMappings.length; i++) {
+      Grid.push(
+        <button
+          key={i}
+          // TODO: Change class name so doesnt change colour on hover
+          className="nubble-button"
+          data-prime={false}
+          data-picked={false}
+          data-colour={pointColourMappings[i].colour}
+          // Do nothing
+          onClick={() => onClick(0)}
+          disabled={false}
+        >
+          {pointColourMappings[i].points}
+        </button>
+      );
+    }
+    // Create a prime nubble pin to show it awards double points
+    Grid.push(
+      <button
+        key={"prime-read-only"}
+        // TODO: Change class name so doesnt change colour on hover
+        className="nubble-button"
+        data-prime={true}
+        data-picked={false}
+        // Choose last colour mapping (red)
+        data-colour={pointColourMappings[pointColourMappings.length - 1].colour}
+        // Do nothing
+        onClick={() => onClick(0)}
+        disabled={false}
+      >
+        {pointColourMappings[pointColourMappings.length - 1].points * 2}
+      </button>
+    );
+    return Grid;
+  }
+
   return (
     <div className="App">
-      <DiceGrid
-        numDice={props.numDice}
-        diceValues={diceValues}
-        rollDice={rollDice}
-      ></DiceGrid>
+      <DiceGrid numDice={props.numDice} diceValues={diceValues} rollDice={rollDice}></DiceGrid>
       <div className="nubble-grid">{populateGrid()}</div>
       <div className="nubble-score">{totalPoints}</div>
+      <div className="nubble-pin-scores">{displayPinScores()}</div>
     </div>
   );
 };
