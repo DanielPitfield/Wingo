@@ -393,7 +393,11 @@ const WordleConfig: React.FC<Props> = (props) => {
 
     if (props.mode === "limitless") {
       // Calculate the number of rows not used
-      const newLives = numGuesses - (wordIndex + 1);
+      const extraRows = numGuesses - (wordIndex + 1);
+      // TODO: A game option toggle could change this value (e.g max of 5 new lives)
+      const MAX_NEW_LIVES = extraRows;
+      // The number of new lives is the number of extra rows (capped at a max of above variable)
+      const newLives = Math.min(extraRows, MAX_NEW_LIVES);
       setNumGuesses(numGuesses + newLives);
     }
   }
