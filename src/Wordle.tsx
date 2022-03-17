@@ -200,10 +200,12 @@ const Wordle: React.FC<Props> = (props) => {
   }
 
   function isOutcomeContinue(): boolean {
-    const isLimitlessContinue = props.mode === "limitless" && props.numGuesses > 1;
-    const isIncreasingContinue = props.mode === "increasing" && props.targetWord.toUpperCase() === props.currentWord.toUpperCase();
+    const correctAnswer = props.targetWord.toUpperCase() === props.currentWord.toUpperCase();
+    // There are still rows to use or correct answer on only row left
+    const LimitlessContinue = (props.mode === "limitless" && props.numGuesses > 1) || (props.numGuesses === 1 && correctAnswer);
+    const IncreasingContinue = props.mode === "increasing" && correctAnswer;
     
-    if (isLimitlessContinue || isIncreasingContinue) {
+    if (LimitlessContinue || IncreasingContinue) {
       return true;
     }
     else {
