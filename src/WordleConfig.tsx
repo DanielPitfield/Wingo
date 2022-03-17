@@ -453,13 +453,12 @@ const WordleConfig: React.FC<Props> = (props) => {
   function onEnter() {
     // Pressing Enter to Continue or Restart
     if (!inProgress) {
-      // Daily mode should have neither 'Continue' or 'Restart' game
+      // Daily mode is strictly one attempt only (no continue or restart)
       if (props.mode !== "daily") {
         if (
           targetWord?.toUpperCase() === currentWord.toUpperCase() &&
           (props.mode === "increasing" || props.mode === "limitless")
         ) {
-          // Increasing and limitless should show 'Continue' game
           ContinueGame();
         } else {
           ResetGame();

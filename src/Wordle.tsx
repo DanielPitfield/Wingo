@@ -8,16 +8,8 @@ import { MessageNotification } from "./MessageNotification";
 import ProgressBar from "./ProgressBar";
 
 interface Props {
-  mode:
-    | "daily"
-    | "repeat"
-    | "increasing"
-    | "limitless"
-    | "puzzle"
-    | "interlinked";
-  timerConfig:
-    | { isTimed: false }
-    | { isTimed: true; totalSeconds: number; elapsedSeconds: number };
+  mode: "daily" | "repeat" | "increasing" | "limitless" | "puzzle" | "interlinked";
+  timerConfig: { isTimed: false } | { isTimed: true; totalSeconds: number; elapsedSeconds: number };
   keyboard: boolean;
   wordLength: number;
   numGuesses: number;
@@ -120,9 +112,7 @@ const Wordle: React.FC<Props> = (props) => {
             key={i}
             isVertical={true}
             word={word}
-            length={
-              wordLength - 1
-            } /* Length is 1 smaller than horizontal counterpart */
+            length={wordLength - 1} /* Length is 1 smaller than horizontal counterpart */
             targetWord={props.targetWord}
             hasSubmit={props.wordIndex > i || !props.inProgress}
             inDictionary={props.inDictionary}
@@ -165,9 +155,7 @@ const Wordle: React.FC<Props> = (props) => {
           </MessageNotification>
         );
         // Word guessed with last guess
-      } else if (
-        props.currentWord.toUpperCase() === props.targetWord.toUpperCase()
-      ) {
+      } else if (props.currentWord.toUpperCase() === props.targetWord.toUpperCase()) {
         return (
           <MessageNotification type="success">
             <strong>No lives added</strong>
@@ -186,20 +174,11 @@ const Wordle: React.FC<Props> = (props) => {
     }
 
     // Other modes
-    if (
-      props.wordIndex === 0 &&
-      props.currentWord.toUpperCase() === props.targetWord.toUpperCase()
-    ) {
+    if (props.wordIndex === 0 && props.currentWord.toUpperCase() === props.targetWord.toUpperCase()) {
       if (props.mode === "puzzle") {
-        return (
-          <MessageNotification type="success">Correct</MessageNotification>
-        );
+        return <MessageNotification type="success">Correct</MessageNotification>;
       } else {
-        return (
-          <MessageNotification type="success">
-            You guessed the word in one guess
-          </MessageNotification>
-        );
+        return <MessageNotification type="success">You guessed the word in one guess</MessageNotification>;
       }
     } else if (
       props.wordIndex < props.numGuesses &&
@@ -219,6 +198,18 @@ const Wordle: React.FC<Props> = (props) => {
     }
   }
 
+  function isOutcomeContinue(): boolean {
+    const isLimitlessContinue = props.mode === "limitless" && props.numGuesses > 1;
+    const isIncreasingContinue = props.mode === "increasing" && props.targetWord.toUpperCase() === props.currentWord.toUpperCase();
+    
+    if (isLimitlessContinue || isIncreasingContinue) {
+      return true;
+    }
+    else {
+      return false;
+    }
+  }
+
   return (
     <div className="App">
       <div>{displayOutcome()}</div>
@@ -228,34 +219,23 @@ const Wordle: React.FC<Props> = (props) => {
             mode={"accept"}
             onClick={() =>
               props.mode === "increasing" ||
-              (props.mode === "limitless" &&
-                props.targetWord.toUpperCase() ===
-                  props.currentWord.toUpperCase())
+              (props.mode === "limitless" && props.targetWord.toUpperCase() === props.currentWord.toUpperCase())
                 ? props.ContinueGame()
                 : props.ResetGame()
             }
           >
-            {props.mode === "increasing" ||
-            (props.mode === "limitless" &&
-              props.targetWord.toUpperCase() ===
-                props.currentWord.toUpperCase())
-              ? "Continue"
-              : "Restart"}
+            {isOutcomeContinue() ? "Continue" : "Restart"}
           </Button>
         )}
       </div>
 
       <div className="puzzle_hint">
         {props.inProgress && props.mode === "puzzle" && (
-          <MessageNotification type="default">
-            {props.targetHint}
-          </MessageNotification>
+          <MessageNotification type="default">{props.targetHint}</MessageNotification>
         )}
       </div>
 
-      <div className="word_grid">
-        {populateGrid(props.numGuesses, props.wordLength)}
-      </div>
+      <div className="word_grid">{populateGrid(props.numGuesses, props.wordLength)}</div>
 
       <div className="keyboard">
         {
@@ -276,10 +256,7 @@ const Wordle: React.FC<Props> = (props) => {
 
       <div>
         {props.timerConfig.isTimed && (
-          <ProgressBar
-            progress={props.timerConfig.elapsedSeconds}
-            total={props.timerConfig.totalSeconds}
-          ></ProgressBar>
+          <ProgressBar progress={props.timerConfig.elapsedSeconds} total={props.timerConfig.totalSeconds}></ProgressBar>
         )}
       </div>
     </div>
