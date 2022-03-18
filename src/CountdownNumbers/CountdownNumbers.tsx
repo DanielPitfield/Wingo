@@ -1,0 +1,223 @@
+import React, { useState } from "react";
+import "../App.scss";
+import { Page } from "../App";
+import { Button } from "../Button";
+import { MessageNotification } from "../MessageNotification";
+import ProgressBar from "../ProgressBar";
+import { SaveData } from "../SaveData";
+import { NumberRow } from "./NumberRow";
+
+interface Props {
+  mode: "casual" | "realistic";
+  timerConfig: { isTimed: false } | { isTimed: true; totalSeconds: number; elapsedSeconds: number };
+  guesses: number[];
+  defaultNumOperands: number;
+  defaultNumGuesses: number;
+  expressionLength: number;
+  currentExpression: number[];
+  countdownExpression: number[];
+  inProgress: boolean;
+  hasTimerEnded: boolean;
+  hasSubmitNumber: boolean;
+  targetNumber: string;
+  setPage: (page: Page) => void;
+  onEnter: () => void;
+  onSubmitCountdownNumber: (number: number) => void;
+  onSubmitCountdownExpression: (numberExpression: number[]) => void;
+  onSubmitNumber: (number: number) => void;
+  onBackspace: () => void;
+  ResetGame: () => void;
+  ContinueGame: () => void;
+}
+
+const CountdownNumbers: React.FC<Props> = (props) => {
+  // Currently selected guess, to be used as the final guess when time runs out
+  const [selectedFinalGuess, setSelectedFinalGuess] = useState("");
+
+  // Create grid of rows (for guessing numbers)
+  function populateGrid(expressionLength: number) {
+    function getSmallNumber(): number {
+      // Already 6 picked numbers, don't add any more
+      if (props.countdownExpression.length === props.expressionLength) {
+        return -1; // There is another check when this number is submitted
+      }
+
+      // Array of numbers 1 through 10
+      const smallNumbers = [];
+      for (let i = 1; i <= 10; i++) {
+        smallNumbers.push(i);
+      }
+
+      const random_index = Math.floor(Math.random() * (smallNumbers.length - 1));
+      const random_small_number = smallNumbers[random_index];
+
+      return random_small_number;
+    }
+
+    function getBigNumber(): number {
+      if (props.countdownExpression.length === 6) {
+        return -1;
+      }
+
+      const bigNumbers = [25, 50, 75, 100];
+
+      const random_index = Math.floor(Math.random() * (bigNumbers.length - 1));
+      const random_big_number = bigNumbers[random_index];
+
+      return random_big_number;
+    }
+
+    function quickNumberSelection() {
+      let newCountdownExpression = [];
+      const numCountdownNumbers = 6;
+
+      // Build word by randomly adding small numbers or big numbers
+      for (let i = 0; i < numCountdownNumbers; i++) {
+        let x = Math.floor(Math.random() * 3) === 0;
+        // 66% chance small number, 33% chance big number
+        if (x) {
+          newCountdownExpression.push(getBigNumber());
+        } else {
+          newCountdownExpression.push(getSmallNumber());
+        }
+      }
+      // Set the entire expression at once
+      props.onSubmitCountdownExpression(newCountdownExpression);
+    }
+    var Grid = [];
+
+    // Check if 9 letters have been selected
+    const isSelectionFinished = props.countdownExpression.length === 6;
+    console.log(props.countdownExpression.length);
+
+    // Read-only NumberRow for number selection
+    Grid.push(
+      <div className="countdown-numbers-wrapper">
+        <NumberRow
+          key={"number_selection"}
+          isReadOnly={true}
+          expression={props.countdownExpression}
+          length={props.defaultNumOperands}
+          targetNumber={""}
+          hasSubmit={false}
+        ></NumberRow>
+        <div className="add-number-buttons-wrapper">
+          <Button
+            mode={"default"}
+            disabled={isSelectionFinished}
+            onClick={() => props.onSubmitCountdownNumber(getSmallNumber())}
+          >
+            Small
+          </Button>
+          <Button
+            mode={"default"}
+            disabled={isSelectionFinished}
+            onClick={() => props.onSubmitCountdownNumber(getBigNumber())}
+          >
+            Big
+          </Button>
+          <Button
+            mode={"default"}
+            disabled={props.countdownExpression.length !== 0 || isSelectionFinished}
+            onClick={quickNumberSelection}
+          >
+            Quick Pick
+          </Button>
+        </div>
+      </div>
+    );
+
+    for (let i = 0; i < props.defaultNumGuesses; i++) {
+      Grid.push(
+        <NumberRow
+          key={`countdown_numbers_input ${i}`}
+          isReadOnly={false}
+          expression={props.currentExpression}
+          length={expressionLength}
+          targetNumber={props.targetNumber}
+          hasSubmit={!props.inProgress}
+        ></NumberRow>
+      );
+    }
+
+    return Grid;
+  }
+
+  function determineScore() {
+    const difference = Math.abs(parseInt(selectedFinalGuess) - parseInt(props.targetNumber));
+  }
+
+  function displayOutcome() {
+    let outcome: "success" | "failure" | "in-progress" = "in-progress";
+    const GOLD_PER_NUMBER = 30;
+
+    // When timer runs out and if a guess has been made
+    if (!props.inProgress && props.hasTimerEnded) {
+      if (!selectedFinalGuess) {
+        // finalGuess is empty (no guess was made), no points
+        outcome = "failure";
+        return (
+          <>
+            <MessageNotification type="error">
+              <strong>No guess was made</strong>
+              <br />
+              <strong>0 points</strong>
+            </MessageNotification>
+          </>
+        );
+      }
+      if (props.mode === "casual") {
+        // Already evaluated that guess is valid, so just display result
+        outcome = "success";
+        // Reward gold based on how long the selected guess is
+        SaveData.addGold(selectedFinalGuess.length * GOLD_PER_NUMBER);
+        return (
+          <>
+            <MessageNotification type="success">
+              <strong>{selectedFinalGuess}</strong>
+              <br />
+              <strong>{determineScore()} points</strong>
+            </MessageNotification>
+          </>
+        );
+      } else {
+        // Realistic mode
+        outcome = "success";
+        SaveData.addGold(selectedFinalGuess.length * GOLD_PER_NUMBER);
+        return (
+          <>
+            <MessageNotification type="success">
+              <strong>{selectedFinalGuess}</strong>
+              <br />
+              <strong>{determineScore()} points</strong>
+            </MessageNotification>
+          </>
+        );
+      }
+    }
+  }
+
+  return (
+    <div className="App">
+      <div>{displayOutcome()}</div>
+
+      <div>
+        {props.hasTimerEnded && !props.inProgress && (
+          <Button mode={"accept"} onClick={() => props.ResetGame()}>
+            Restart
+          </Button>
+        )}
+      </div>
+
+      <div className="countdown_numbers_grid">{populateGrid(props.expressionLength)}</div>
+
+      <div>
+        {props.timerConfig.isTimed && (
+          <ProgressBar progress={props.timerConfig.elapsedSeconds} total={props.timerConfig.totalSeconds}></ProgressBar>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default CountdownNumbers;

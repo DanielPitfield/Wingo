@@ -54,7 +54,7 @@ code {
   color: #4d4d4d;
 }
 
-/* Add Vowel, Consonant and Quick Pick */
+// Add Vowel, Consonant and Quick Pick
 .add-letter-buttons-wrapper .btn.default {
   border: none;
   border-radius: 0px;
@@ -106,7 +106,8 @@ code {
 }
 
 .word_grid,
-.countdown_word_grid {
+.countdown_word_grid,
+.countdown_numbers_grid {
   margin-top: 2em;
   margin-bottom: 1em;
   background-color: #323289;
@@ -161,10 +162,24 @@ $data-statuses: (
   "not in word": #787c7e,
 );
 
+// Keyboard buttons
 .btn.default[data-status="correct"] {
   background-color: map.get($data-statuses, "correct");
 }
 
+.btn.default[data-status="contains"] {
+  background-color: map.get($data-statuses, "contains");
+}
+
+.btn.default[data-status="incorrect"] {
+  background-color: map.get($data-statuses, "incorrect");
+}
+
+.btn.default[data-status="not in word"] {
+  background-color: map.get($data-statuses, "not in word");
+}
+
+// Wordle and CountdownLetter letter tiles
 .letter_tile[data-status="correct"],
 .countdown_word_grid .word_row .letter_tile[data-status="correct"] {
   background-color: map.get($data-statuses, "correct");
@@ -187,10 +202,6 @@ $data-statuses: (
 .countdown_word_grid .word_row .letter_tile[data-status="not in word"] {
   background-color: map.get($data-statuses, "not in word");
   /* transform: rotateX(180deg); */
-}
-
-.logo .letter_tile[data-status="incorrect"] {
-  background-color: map.get($data-statuses, "incorrect");
 }
 
 .word_row {
@@ -220,7 +231,7 @@ $data-statuses: (
   user-select: none;
 }
 
-.number_tile {
+.number_tile, .operator_tile, .equals_tile {
   width: 60px;
   height: 60px;
   border: 2px solid #969595;

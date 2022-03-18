@@ -8,6 +8,7 @@ import NubbleConfig from "./Nubble/NubbleConfig";
 import GoldCoin from "./images/gold.png";
 import { SaveData } from "./SaveData";
 import CountdownLettersConfig from "./CountdownLetters/CountdownLettersConfig";
+import CountdownNumbersConfig from "./CountdownNumbers/CountdownNumbersConfig";
 
 const wordLength = 5;
 const numGuesses = 6;
@@ -21,6 +22,10 @@ const numGuesses_puzzle = 1;
 const puzzleRevealMs = 2000;
 const puzzleLeaveNumBlanks = 3;
 
+const countdown_numbers_NumOperands = 6;
+const countdown_numbers_ExpressionLength = 5;
+const countdown_numbers_NumGuesses = 5;
+
 export type Page =
   | "splash-screen"
   | "home"
@@ -32,7 +37,7 @@ export type Page =
   | "wordle_puzzle"
   | "wordle_interlinked"
   | "countdown_letters"
-  | "numbo"
+  | "countdown_numbers"
   | "nubble";
 
 export const App: React.FC = () => {
@@ -90,6 +95,12 @@ export const App: React.FC = () => {
       firstLetter: false,
       timer: true,
       keyboard: true,
+    },
+    {
+      page: "countdown_numbers",
+      firstLetter: false,
+      timer: true,
+      keyboard: false,
     },
   ]);
 
@@ -269,6 +280,23 @@ export const App: React.FC = () => {
             }
             keyboard={gameOptionToggles.find((x) => x.page === "countdown_letters")?.keyboard || false}
             defaultWordLength={wordLength_countdown_letters}
+            page={page}
+            setPage={setPage}
+          />
+        );
+
+        case "countdown_numbers":
+        return (
+          <CountdownNumbersConfig
+            mode={"casual"}
+            timerConfig={
+              gameOptionToggles.find((x) => x.page === "countdown_numbers")?.timer
+                ? { isTimed: true, seconds: 30 }
+                : { isTimed: false }
+            }
+            defaultNumOperands={countdown_numbers_NumOperands}
+            defaultExpressionLength={countdown_numbers_ExpressionLength}
+            defaultNumGuesses={countdown_numbers_NumGuesses}
             page={page}
             setPage={setPage}
           />

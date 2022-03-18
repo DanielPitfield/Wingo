@@ -12,6 +12,26 @@ interface Props {
   timeLengthMins: number;
 }
 
+  // --- OPERATORS (+ - / *) ---
+  export const operators = [
+    {
+      name: "/",
+      function: (num1: number, num2: number): number => num1 / num2,
+    },
+    {
+      name: "-",
+      function: (num1: number, num2: number): number => num1 - num2,
+    },
+    {
+      name: "+",
+      function: (num1: number, num2: number): number => num1 + num2,
+    },
+    {
+      name: "*",
+      function: (num1: number, num2: number): number => num1 * num2,
+    },
+  ];
+
 export function getValidValues(inputNumbers: number[], maxLimit: number): number[] {
   // Returns permutations of input array, https://stackoverflow.com/a/20871714
   function permutator<T>(inputArr: T[]): T[][] {
@@ -53,26 +73,6 @@ export function getValidValues(inputNumbers: number[], maxLimit: number): number
     })(0, 0); // Start at index 0
     return results; // Return results
   }
-
-  // --- OPERATORS (+ - / *) ---
-  const operators = [
-    {
-      name: "/",
-      function: (num1: number, num2: number): number => num1 / num2,
-    },
-    {
-      name: "-",
-      function: (num1: number, num2: number): number => num1 - num2,
-    },
-    {
-      name: "+",
-      function: (num1: number, num2: number): number => num1 + num2,
-    },
-    {
-      name: "*",
-      function: (num1: number, num2: number): number => num1 * num2,
-    },
-  ];
 
   // This does not include permutations having the same operator more than once
   let operatorPermutations = permutator(operators);
