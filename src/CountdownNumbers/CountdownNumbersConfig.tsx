@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import "../App.scss";
 import { Page } from "../App";
 import CountdownNumbers from "./CountdownNumbers";
+import { operators } from "../Nubble/Nubble";
 
 interface Props {
   page: Page;
@@ -17,19 +18,20 @@ export function isNumberValid(currentExpression: string) {
   if (!currentExpression) {
     return false;
   }
-
-
 }
 
+export type Guess = { operand1: number | null; operand2: number | null; operator: typeof operators[0]["name"] };
+
 const CountdownNumbersConfig: React.FC<Props> = (props) => {
-  const [guesses, setGuesses] = useState<number[]>([]);
+  const [guesses, setGuesses] = useState<Guess[]>([]);
   const [countdownExpression, setCountdownExpression] = useState<number[]>([]);
-  const [currentExpression, setCurrentExpression] = useState<number[]>([]);
+  const [currentGuess, setCurrentGuess] = useState<Guess>({ operand1: null, operand2: null, operator: "+" });
   const [inProgress, setinProgress] = useState(true);
   const [hasTimerEnded, sethasTimerEnded] = useState(false);
   const [expressionLength, setExpressionLength] = useState(props.defaultExpressionLength);
-  const [targetNumber, settargetNumber] = useState<string>();
+  const [targetNumber, settargetNumber] = useState<number | null>(null);
   const [hasSubmitNumber, sethasSubmitNumber] = useState(false);
+  const [wordIndex, setWordIndex] = useState(0);
 
   const [seconds, setSeconds] = useState(props.timerConfig.isTimed ? props.timerConfig.seconds : 0);
 
@@ -56,13 +58,19 @@ const CountdownNumbersConfig: React.FC<Props> = (props) => {
     };
   }, [setSeconds, seconds, props.timerConfig.isTimed, countdownExpression]);
 
+  function getTargetNumber(min: number, max: number) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min) + min);
+  }
+
   function ResetGame() {
-    setGuesses([]);    
+    setGuesses([]);
     setCountdownExpression([]);
-    setCurrentExpression([]);
-    settargetNumber("");
+    setCurrentGuess({ operand1: null, operand2: null, operator: "+" });
+    settargetNumber(0);
     setinProgress(true);
-    sethasTimerEnded(false)
+    sethasTimerEnded(false);
     setExpressionLength(props.defaultExpressionLength);
     sethasSubmitNumber(false);
     if (props.timerConfig.isTimed) {
@@ -72,7 +80,7 @@ const CountdownNumbersConfig: React.FC<Props> = (props) => {
   }
 
   function ContinueGame() {
-    setCurrentExpression([]);
+    setCurrentGuess({ operand1: null, operand2: null, operator: "+" });
     setinProgress(true);
     setExpressionLength(props.defaultExpressionLength);
     sethasSubmitNumber(false);
@@ -95,7 +103,7 @@ const CountdownNumbersConfig: React.FC<Props> = (props) => {
 
     if (props.mode === "realistic") {
       // Don't need to do any evaluation of the guess and just add to guesses regardless
-      setGuesses(guesses.concat(currentExpression));
+      setGuesses(guesses.concat(currentGuess));
       ContinueGame();
       return;
     }
@@ -103,7 +111,7 @@ const CountdownNumbersConfig: React.FC<Props> = (props) => {
     // Stop progress for evalution for Casual game mode type
     setinProgress(false);
 
-    // 
+    //
     //const isValidNumber = isNumberValid(currentExpression);
 
     // Wait half a second to show validity of word, then continue
@@ -115,25 +123,44 @@ const CountdownNumbersConfig: React.FC<Props> = (props) => {
   }
 
   function onSubmitCountdownNumber(number: number) {
+    // Still more numbers available to pick/choose
     if (countdownExpression.length < props.defaultNumOperands && inProgress) {
       const newCountdownExpression = countdownExpression.slice();
       newCountdownExpression.push(number);
       setCountdownExpression(newCountdownExpression);
+      // Determine target number when last number has been picked
+      if (countdownExpression.length === props.defaultNumOperands - 1) {
+        const newTargetNumber = getTargetNumber(100, 999);
+        settargetNumber(newTargetNumber);
+      }
     }
   }
 
   function onSubmitCountdownExpression(expression: number[]) {
     if (countdownExpression.length === 0 && inProgress) {
       setCountdownExpression(expression);
+      // Determine target number
+      const newTargetNumber = getTargetNumber(100, 999);
+      settargetNumber(newTargetNumber);
     }
   }
 
   function onSubmitNumber(number: number) {
     // Additional condition of all 6 numbers having been selected
-    if (currentExpression.length < expressionLength && countdownExpression.length === props.defaultNumOperands && inProgress) {
-      const newCurrentExpression = currentExpression.slice();
-      newCurrentExpression.push(number);
-      setCurrentExpression(newCurrentExpression);
+    if (
+      currentGuess.operand1 !== null &&
+      currentGuess.operand2 !== null &&
+      countdownExpression.length === props.defaultNumOperands &&
+      inProgress
+    ) {
+      // If operand1 has been populated, then set operand2
+      if (currentGuess.operand1 !== null) {
+        setCurrentGuess({ ...currentGuess, operand2: number });
+      } else if (currentGuess.operand2 === null) {
+        // Else; if operand2 has not been populated, then set operand1
+        setCurrentGuess({ ...currentGuess, operand1: number });
+      }
+
       sethasSubmitNumber(true);
     }
   }
@@ -145,6 +172,16 @@ const CountdownNumbersConfig: React.FC<Props> = (props) => {
       setCurrentExpression(currentExpression.substring(0, currentExpression.length - 1));
     }
     */
+  }
+
+  function moveOperand(number: number) {
+    // If operand1 has been populated, then set operand2
+    if (currentGuess.operand1 !== null) {
+      setCurrentGuess({ ...currentGuess, operand2: number });
+    } else if (currentGuess.operand2 === null) {
+      // Else; if operand2 has not been populated, then set operand1
+      setCurrentGuess({ ...currentGuess, operand1: number });
+    }
   }
 
   return (
@@ -160,15 +197,17 @@ const CountdownNumbersConfig: React.FC<Props> = (props) => {
           : { isTimed: false }
       }
       expressionLength={expressionLength}
+      wordIndex={wordIndex}
       guesses={guesses}
       defaultNumOperands={props.defaultNumOperands}
       defaultNumGuesses={props.defaultNumGuesses}
-      currentExpression={currentExpression}
+      currentGuess={currentGuess}
       countdownExpression={countdownExpression}
       inProgress={inProgress}
       hasTimerEnded={hasTimerEnded}
       hasSubmitNumber={hasSubmitNumber}
-      targetNumber={targetNumber || ""}
+      targetNumber={targetNumber}
+      onClick={moveOperand}
       onEnter={onEnter}
       onSubmitCountdownNumber={onSubmitCountdownNumber}
       onSubmitCountdownExpression={onSubmitCountdownExpression}
@@ -177,6 +216,7 @@ const CountdownNumbersConfig: React.FC<Props> = (props) => {
       ResetGame={ResetGame}
       ContinueGame={ContinueGame}
       setPage={props.setPage}
+      setOperator={(operator) => setCurrentGuess({...currentGuess, operator})}
     ></CountdownNumbers>
   );
 };

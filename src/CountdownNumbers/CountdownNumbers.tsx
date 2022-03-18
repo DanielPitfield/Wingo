@@ -6,20 +6,26 @@ import { MessageNotification } from "../MessageNotification";
 import ProgressBar from "../ProgressBar";
 import { SaveData } from "../SaveData";
 import { NumberRow } from "./NumberRow";
+import NumberTile from "./NumberTile";
+import { operators } from "../Nubble/Nubble";
+import { Guess} from "./CountdownNumbersConfig";
+import { CountdownRow } from "./CountdownRow";
 
 interface Props {
   mode: "casual" | "realistic";
   timerConfig: { isTimed: false } | { isTimed: true; totalSeconds: number; elapsedSeconds: number };
-  guesses: number[];
+  wordIndex: number;
+  guesses: Guess[];
   defaultNumOperands: number;
   defaultNumGuesses: number;
   expressionLength: number;
-  currentExpression: number[];
+  currentGuess: Guess;
   countdownExpression: number[];
   inProgress: boolean;
   hasTimerEnded: boolean;
   hasSubmitNumber: boolean;
-  targetNumber: string;
+  targetNumber: number | null;
+  onClick: (value: number) => void;
   setPage: (page: Page) => void;
   onEnter: () => void;
   onSubmitCountdownNumber: (number: number) => void;
@@ -28,6 +34,7 @@ interface Props {
   onBackspace: () => void;
   ResetGame: () => void;
   ContinueGame: () => void;
+  setOperator: (operator: Guess["operator"]) => void;
 }
 
 const CountdownNumbers: React.FC<Props> = (props) => {
@@ -36,10 +43,10 @@ const CountdownNumbers: React.FC<Props> = (props) => {
 
   // Create grid of rows (for guessing numbers)
   function populateGrid(expressionLength: number) {
-    function getSmallNumber(): number {
+    function getSmallNumber(): number | null {
       // Already 6 picked numbers, don't add any more
       if (props.countdownExpression.length === props.expressionLength) {
-        return -1; // There is another check when this number is submitted
+        return null; // There is another check when this number is submitted
       }
 
       // Array of numbers 1 through 10
@@ -54,9 +61,9 @@ const CountdownNumbers: React.FC<Props> = (props) => {
       return random_small_number;
     }
 
-    function getBigNumber(): number {
+    function getBigNumber(): number | null {
       if (props.countdownExpression.length === 6) {
-        return -1;
+        return null;
       }
 
       const bigNumbers = [25, 50, 75, 100];
@@ -76,9 +83,9 @@ const CountdownNumbers: React.FC<Props> = (props) => {
         let x = Math.floor(Math.random() * 3) === 0;
         // 66% chance small number, 33% chance big number
         if (x) {
-          newCountdownExpression.push(getBigNumber());
+          newCountdownExpression.push(getBigNumber()!);
         } else {
-          newCountdownExpression.push(getSmallNumber());
+          newCountdownExpression.push(getSmallNumber()!);
         }
       }
       // Set the entire expression at once
@@ -90,29 +97,40 @@ const CountdownNumbers: React.FC<Props> = (props) => {
     const isSelectionFinished = props.countdownExpression.length === 6;
     console.log(props.countdownExpression.length);
 
-    // Read-only NumberRow for number selection
+    /*
+    Target Number
+    Read-only NumberRow for number selection
+    Add 'Small' and 'Big' number buttons
+    NumberRows for intemediary calculations
+    */   
     Grid.push(
       <div className="countdown-numbers-wrapper">
-        <NumberRow
+        <div className="target-number">
+          <NumberTile 
+          number={isSelectionFinished ? props.targetNumber : null}
+          isReadOnly={true}
+          onClick={()=>{}}>
+          </NumberTile>
+        </div>
+        <CountdownRow
           key={"number_selection"}
           isReadOnly={true}
+          onClick={(value) => props.onClick(value)}
           expression={props.countdownExpression}
           length={props.defaultNumOperands}
-          targetNumber={""}
-          hasSubmit={false}
-        ></NumberRow>
+        ></CountdownRow>
         <div className="add-number-buttons-wrapper">
           <Button
             mode={"default"}
             disabled={isSelectionFinished}
-            onClick={() => props.onSubmitCountdownNumber(getSmallNumber())}
+            onClick={() => props.onSubmitCountdownNumber(getSmallNumber()!)}
           >
             Small
           </Button>
           <Button
             mode={"default"}
             disabled={isSelectionFinished}
-            onClick={() => props.onSubmitCountdownNumber(getBigNumber())}
+            onClick={() => props.onSubmitCountdownNumber(getBigNumber()!)}
           >
             Big
           </Button>
@@ -132,10 +150,12 @@ const CountdownNumbers: React.FC<Props> = (props) => {
         <NumberRow
           key={`countdown_numbers_input ${i}`}
           isReadOnly={false}
-          expression={props.currentExpression}
+          onClick={props.onClick}
+          expression={props.wordIndex === i ? props.currentGuess : props.guesses?.[i] || { operand1: null, operand2: null, operator: "+"}}
           length={expressionLength}
           targetNumber={props.targetNumber}
           hasSubmit={!props.inProgress}
+          setOperator={props.setOperator}
         ></NumberRow>
       );
     }
@@ -144,7 +164,7 @@ const CountdownNumbers: React.FC<Props> = (props) => {
   }
 
   function determineScore() {
-    const difference = Math.abs(parseInt(selectedFinalGuess) - parseInt(props.targetNumber));
+    const difference = Math.abs(parseInt(selectedFinalGuess) - (props.targetNumber || 0));
   }
 
   function displayOutcome() {
