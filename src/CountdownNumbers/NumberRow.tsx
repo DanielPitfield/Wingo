@@ -7,6 +7,7 @@ import { Guess } from "./CountdownNumbersConfig";
 
 interface Props {
   onClick: (value: number) => void;
+  onContextMenu: (value: number | null) => void;
   isReadOnly: boolean;
   expression: Guess;
   length: number;
@@ -33,25 +34,15 @@ export const NumberRow: React.FC<Props> = (props) => {
 
   function CreateRow() {
     var TileArray = [];
-
-    // if (props.isReadOnly) {
-    //   for (let i = 0; i < props.length; i++) {
-    //     TileArray.push(
-    //       <NumberTile
-    //         key={i}
-    //         number={props.expression?.[i]}
-    //         isReadOnly={props.isReadOnly}
-    //         onClick={() => props.onClick(props.expression?.[i])}
-    //       ></NumberTile>
-    //     );
-    //   }
-    // } else {
       TileArray.push(
         <NumberTile
           key={"first-operand"}
           number={props.expression.operand1}
           isReadOnly={props.isReadOnly}
+          // Do nothing on left click
           onClick={() => {}}
+          // Remove operand from current guess on right click
+          onContextMenu={() => props.onContextMenu(props.expression.operand1)}
         ></NumberTile>
       );
       TileArray.push(<OperatorTile setOperator={props.setOperator} operator={props.expression.operator} key={"first-operator"}></OperatorTile>);
@@ -61,6 +52,7 @@ export const NumberRow: React.FC<Props> = (props) => {
           number={props.expression.operand2}
           isReadOnly={props.isReadOnly}
           onClick={() => {}}
+          onContextMenu={() => props.onContextMenu(props.expression.operand2)}
         ></NumberTile>
       );
       TileArray.push(
@@ -74,9 +66,9 @@ export const NumberRow: React.FC<Props> = (props) => {
           number={calculateTotal() || -1}
           isReadOnly={props.isReadOnly}
           onClick={() =>{}}
+          onContextMenu={() => {}}
         ></NumberTile>
       );
-    // }
 
     return TileArray;
   }

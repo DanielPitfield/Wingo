@@ -1,9 +1,5 @@
 import React from "react";
-import EqualsTile from "./EqualsTile";
 import NumberTile from "./NumberTile";
-import OperatorTile from "./OperatorTile";
-import { operators } from "../Nubble/Nubble";
-import { Guess } from "./CountdownNumbersConfig";
 
 interface Props {
   onClick: (value: number) => void;
@@ -22,6 +18,7 @@ export const CountdownRow: React.FC<Props> = (props) => {
           number={props.expression?.[i]}
           isReadOnly={props.isReadOnly}
           onClick={() => props.onClick(props.expression?.[i])}
+          onContextMenu={() => {}}
         ></NumberTile>
       );
     }

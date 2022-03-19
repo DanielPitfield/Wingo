@@ -8,7 +8,7 @@ import { SaveData } from "../SaveData";
 import { NumberRow } from "./NumberRow";
 import NumberTile from "./NumberTile";
 import { operators } from "../Nubble/Nubble";
-import { Guess} from "./CountdownNumbersConfig";
+import { Guess } from "./CountdownNumbersConfig";
 import { CountdownRow } from "./CountdownRow";
 
 interface Props {
@@ -26,6 +26,7 @@ interface Props {
   hasSubmitNumber: boolean;
   targetNumber: number | null;
   onClick: (value: number) => void;
+  onContextMenu: (value: number | null) => void;
   setPage: (page: Page) => void;
   onEnter: () => void;
   onSubmitCountdownNumber: (number: number) => void;
@@ -93,24 +94,25 @@ const CountdownNumbers: React.FC<Props> = (props) => {
     }
     var Grid = [];
 
-    // Check if 9 letters have been selected
+    // Check if 6 numbers have been selected
     const isSelectionFinished = props.countdownExpression.length === 6;
-    console.log(props.countdownExpression.length);
 
     /*
     Target Number
     Read-only NumberRow for number selection
     Add 'Small' and 'Big' number buttons
     NumberRows for intemediary calculations
-    */   
+    */
     Grid.push(
       <div className="countdown-numbers-wrapper">
         <div className="target-number">
-          <NumberTile 
-          number={isSelectionFinished ? props.targetNumber : null}
-          isReadOnly={true}
-          onClick={()=>{}}>
-          </NumberTile>
+          <NumberTile
+            number={isSelectionFinished ? props.targetNumber : null}
+            isReadOnly={true}
+            // Ignore left and right clicks on the target number
+            onClick={() => {}}
+            onContextMenu={() => {}}
+          ></NumberTile>
         </div>
         <CountdownRow
           key={"number_selection"}
@@ -151,7 +153,12 @@ const CountdownNumbers: React.FC<Props> = (props) => {
           key={`countdown_numbers_input ${i}`}
           isReadOnly={false}
           onClick={props.onClick}
-          expression={props.wordIndex === i ? props.currentGuess : props.guesses?.[i] || { operand1: null, operand2: null, operator: "+"}}
+          onContextMenu={(value) => props.onContextMenu(value)}
+          expression={
+            props.wordIndex === i
+              ? props.currentGuess
+              : props.guesses?.[i] || { operand1: null, operand2: null, operator: "+" }
+          }
           length={expressionLength}
           targetNumber={props.targetNumber}
           hasSubmit={!props.inProgress}

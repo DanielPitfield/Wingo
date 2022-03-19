@@ -174,13 +174,28 @@ const CountdownNumbersConfig: React.FC<Props> = (props) => {
     */
   }
 
-  function moveOperand(number: number) {
+  function addOperandToGuess(number: number) {
     // If operand1 has been populated, then set operand2
     if (currentGuess.operand1 !== null) {
       setCurrentGuess({ ...currentGuess, operand2: number });
     } else if (currentGuess.operand2 === null) {
       // Else; if operand2 has not been populated, then set operand1
       setCurrentGuess({ ...currentGuess, operand1: number });
+    }
+  }
+
+  function removeOperandFromGuess(number: number | null) {
+    // TODO: Prevent default (context menu appearing)
+    // Tile that was right clicked had no value (empty)
+    if (!number) {
+      return;
+    }
+    // If the first operand was (right) clicked
+    if (currentGuess.operand1 === number) {
+      setCurrentGuess({ ...currentGuess, operand1: null });
+      // TODO: 'Put back' in CountdownRow by allowing left clicks again
+    } else if (currentGuess.operand2 === number) {
+      setCurrentGuess({ ...currentGuess, operand2: null });
     }
   }
 
@@ -207,7 +222,8 @@ const CountdownNumbersConfig: React.FC<Props> = (props) => {
       hasTimerEnded={hasTimerEnded}
       hasSubmitNumber={hasSubmitNumber}
       targetNumber={targetNumber}
-      onClick={moveOperand}
+      onClick={addOperandToGuess}
+      onContextMenu={removeOperandFromGuess}
       onEnter={onEnter}
       onSubmitCountdownNumber={onSubmitCountdownNumber}
       onSubmitCountdownExpression={onSubmitCountdownExpression}
