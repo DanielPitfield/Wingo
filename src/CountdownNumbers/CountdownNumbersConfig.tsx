@@ -258,25 +258,34 @@ const CountdownNumbersConfig: React.FC<Props> = (props) => {
       return;
     }
 
+    if (hasTimerEnded) {
+      return;
+    }
+
     // Find all the elements of the respective number (where picked is also false)
     const numberStatus = countdownStatuses.filter((x) => x.number === number && !x.picked);
 
     // No suitable element in countdownStatuses to accomodate adding this new number
-    if (!numberStatus) {
+    if (numberStatus.length <= 0) {
       return;
     }
 
     const bothOperandsEmpty = currentGuess.operand1 === null && currentGuess.operand2 === null;
     const onlyFirstOperand = currentGuess.operand1 !== null && currentGuess.operand2 === null;
     const onlySecondOperand = currentGuess.operand1 === null && currentGuess.operand2 !== null;
+    const bothOperands = currentGuess.operand1 !== null && currentGuess.operand2 !== null;
 
     if (bothOperandsEmpty || onlySecondOperand) {
       // Set operand1 to number
       setCurrentGuess({ ...currentGuess, operand1: number });
-    }
-    else if (onlyFirstOperand) {
+    } else if (onlyFirstOperand) {
       // Set operand2 to number
       setCurrentGuess({ ...currentGuess, operand2: number });
+    } else if (bothOperands) {
+      // Remove the second operand
+      removeOperandFromGuess(currentGuess.operand2);
+      // Replace with (add) new second operand
+      setCurrentGuess({ ...currentGuess, operand2: number }); 
     }
 
     const newCountdownStatuses = countdownStatuses.slice();
@@ -295,26 +304,40 @@ const CountdownNumbersConfig: React.FC<Props> = (props) => {
       return;
     }
 
+    if (hasTimerEnded) {
+      return;
+    }
+
     // If both operands are the same number
     if (currentGuess.operand1 === number && currentGuess.operand2 === number) {
       // TODO: Is there way of determining which (of the two operands with the same numbers) was right clicked?
       // Remove the second occurence of the number
       setCurrentGuess({ ...currentGuess, operand2: null });
     }
-
     // If the first operand was (right) clicked
-    if (currentGuess.operand1 === number) {
+    else if (currentGuess.operand1 === number) {
       setCurrentGuess({ ...currentGuess, operand1: null });
       // If the other operand was also empty, go back a row
+      /*
       if (currentGuess.operand2 === null && wordIndex > 0) {
         setWordIndex(wordIndex - 1); // Decrement index to go back a row
       }
+      */
     } else if (currentGuess.operand2 === number) {
       setCurrentGuess({ ...currentGuess, operand2: null });
+      /*
       if (currentGuess.operand1 === null && wordIndex > 0) {
         setWordIndex(wordIndex - 1); // Decrement index to go back a row
       }
+      */
     }
+
+    const newCountdownStatuses = countdownStatuses.slice();
+    // Find first occurence of this number being picked
+    const numberStatusIndex = countdownStatuses.findIndex((x) => x.number === number && x.picked);
+    // Flag as not picked so it can be added again
+    newCountdownStatuses[numberStatusIndex].picked = false;
+    setCountdownStatuses(newCountdownStatuses);
   }
 
   return (

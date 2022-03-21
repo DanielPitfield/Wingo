@@ -19,6 +19,7 @@ export const CountdownRow: React.FC<Props> = (props) => {
         <NumberTile
           key={i}
           number={props.expression?.[i].number}
+          disabled={props.expression?.[i].picked}
           isReadOnly={props.isReadOnly}
           onClick={() => props.onClick(props.expression?.[i].number)}
           onContextMenu={() => {}}

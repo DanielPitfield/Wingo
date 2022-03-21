@@ -111,6 +111,7 @@ const CountdownNumbers: React.FC<Props> = (props) => {
         <div className="target-number">
           <NumberTile
             number={isSelectionFinished ? props.targetNumber : null}
+            disabled={false}
             isReadOnly={true}
             // Ignore left and right clicks on the target number
             onClick={() => {}}
@@ -180,6 +181,7 @@ const CountdownNumbers: React.FC<Props> = (props) => {
         <NumberRow
           key={`countdown_numbers_input ${i}`}
           isReadOnly={false}
+          hasTimerEnded={props.hasTimerEnded}
           onClick={props.onClick}
           onContextMenu={(value) => props.onContextMenu(value)}
           expression={guess}
