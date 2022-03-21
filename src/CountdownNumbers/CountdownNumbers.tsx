@@ -8,7 +8,7 @@ import { SaveData } from "../SaveData";
 import { NumberRow } from "./NumberRow";
 import NumberTile from "./NumberTile";
 import { operators } from "../Nubble/Nubble";
-import { Guess } from "./CountdownNumbersConfig";
+import { Guess, hasNumberSelectionFinished, hasNumberSelectionStarted } from "./CountdownNumbersConfig";
 import { CountdownRow } from "./CountdownRow";
 
 interface Props {
@@ -20,12 +20,15 @@ interface Props {
   defaultNumGuesses: number;
   expressionLength: number;
   currentGuess: Guess;
-  countdownExpression: number[];
+  countdownExpression: {
+    number: number | null;
+    picked: boolean;
+  }[]
   inProgress: boolean;
   hasTimerEnded: boolean;
   hasSubmitNumber: boolean;
   targetNumber: number | null;
-  onClick: (value: number) => void;
+  onClick: (value: number | null) => void;
   onContextMenu: (value: number | null) => void;
   setPage: (page: Page) => void;
   onEnter: () => void;
@@ -46,8 +49,8 @@ const CountdownNumbers: React.FC<Props> = (props) => {
   function populateGrid(expressionLength: number) {
     function getSmallNumber(): number | null {
       // Already 6 picked numbers, don't add any more
-      if (props.countdownExpression.length === props.expressionLength) {
-        return null; // There is another check when this number is submitted
+      if (hasNumberSelectionFinished(props.countdownExpression)) {
+        return null;
       }
 
       // Array of numbers 1 through 10
@@ -63,7 +66,7 @@ const CountdownNumbers: React.FC<Props> = (props) => {
     }
 
     function getBigNumber(): number | null {
-      if (props.countdownExpression.length === 6) {
+      if (hasNumberSelectionFinished(props.countdownExpression)) {
         return null;
       }
 
@@ -95,7 +98,7 @@ const CountdownNumbers: React.FC<Props> = (props) => {
     var Grid = [];
 
     // Check if 6 numbers have been selected
-    const isSelectionFinished = props.countdownExpression.length === 6;
+    const isSelectionFinished = hasNumberSelectionFinished(props.countdownExpression);
 
     /*
     Target Number
@@ -132,13 +135,13 @@ const CountdownNumbers: React.FC<Props> = (props) => {
           <Button
             mode={"default"}
             disabled={isSelectionFinished}
-            onClick={() => props.onSubmitCountdownNumber(getBigNumber()!)}
+            onClick={() => /* TODO: Big numbers not being added */ props.onSubmitCountdownNumber(getBigNumber()!)}
           >
             Big
           </Button>
           <Button
             mode={"default"}
-            disabled={props.countdownExpression.length !== 0 || isSelectionFinished}
+            disabled={hasNumberSelectionStarted(props.countdownExpression) || isSelectionFinished}
             onClick={quickNumberSelection}
           >
             Quick Pick
@@ -148,17 +151,38 @@ const CountdownNumbers: React.FC<Props> = (props) => {
     );
 
     for (let i = 0; i < props.defaultNumGuesses; i++) {
+      let guess: Guess;
+
+      if (props.wordIndex === i) {
+        /* 
+        If the wordIndex and the row number are the same
+        (i.e the row is currently being used)
+        Show the currentGuess
+        */
+        guess = props.currentGuess;
+      } else if (props.wordIndex <= i) {
+        /*
+        If the wordIndex is behind the currently iterated row
+        (i.e the row has not been used yet)
+        Show an empty guess
+        */
+        guess = { operand1: null, operand2: null, operator: "+" };
+      } else {
+        /* 
+        If the wordIndex is ahead of the currently iterated row
+        (i.e the row has already been used)
+        Show the respectgive guess
+        */
+        guess = props.guesses[i];
+      }
+
       Grid.push(
         <NumberRow
           key={`countdown_numbers_input ${i}`}
           isReadOnly={false}
           onClick={props.onClick}
           onContextMenu={(value) => props.onContextMenu(value)}
-          expression={
-            props.wordIndex === i
-              ? props.currentGuess
-              : props.guesses?.[i] || { operand1: null, operand2: null, operator: "+" }
-          }
+          expression={guess}
           length={expressionLength}
           targetNumber={props.targetNumber}
           hasSubmit={!props.inProgress}

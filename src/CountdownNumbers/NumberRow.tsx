@@ -24,6 +24,7 @@ export const NumberRow: React.FC<Props> = (props) => {
       throw new Error("Unable to find operator");
     }
     
+    // Either operand is missing, show nothing
     if (props.expression.operand1 === null || props.expression.operand2 === null) {
       return null;
     }
@@ -63,7 +64,7 @@ export const NumberRow: React.FC<Props> = (props) => {
       TileArray.push(
         <NumberTile
           key={"row_result"}
-          number={calculateTotal() || -1}
+          number={calculateTotal() || null}
           isReadOnly={props.isReadOnly}
           onClick={() =>{}}
           onContextMenu={() => {}}
