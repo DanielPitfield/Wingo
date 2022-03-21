@@ -258,26 +258,31 @@ const CountdownNumbersConfig: React.FC<Props> = (props) => {
       return;
     }
 
-    // Find the element of the respective number
-    // TODO: What happens if there is more than one occurency of a number?
-    const numberStatus = countdownStatuses.find((x) => x.number === number);
-    // If it has already been picked
-    if (numberStatus?.picked) {
+    // Find all the elements of the respective number (where picked is also false)
+    const numberStatus = countdownStatuses.filter((x) => x.number === number && !x.picked);
+
+    // No suitable element in countdownStatuses to accomodate adding this new number
+    if (!numberStatus) {
       return;
     }
 
-    const newCountdownStatuses = countdownStatuses.slice();
-    const numberStatusIndex = countdownStatuses.findIndex((x) => x.number === number && !x.picked);
+    const bothOperandsEmpty = currentGuess.operand1 === null && currentGuess.operand2 === null;
+    const onlyFirstOperand = currentGuess.operand1 !== null && currentGuess.operand2 === null;
+    const onlySecondOperand = currentGuess.operand1 === null && currentGuess.operand2 !== null;
 
-    // If operand1 has been populated, then set operand2
-    if (currentGuess.operand1 !== null) {
-      setCurrentGuess({ ...currentGuess, operand2: number });
-      //setWordIndex(wordIndex + 1); // Increment index to indicate new row has been started
-    } else if (currentGuess.operand2 === null) {
-      // Else; if operand2 has not been populated, then set operand1
+    if (bothOperandsEmpty || onlySecondOperand) {
+      // Set operand1 to number
       setCurrentGuess({ ...currentGuess, operand1: number });
     }
+    else if (onlyFirstOperand) {
+      // Set operand2 to number
+      setCurrentGuess({ ...currentGuess, operand2: number });
+    }
 
+    const newCountdownStatuses = countdownStatuses.slice();
+    // Find first suitable index to accomodate adding this new number
+    const numberStatusIndex = countdownStatuses.findIndex((x) => x.number === number && !x.picked);
+    // Flag as picked so it can't be added again
     newCountdownStatuses[numberStatusIndex].picked = true;
     setCountdownStatuses(newCountdownStatuses);
   }
@@ -288,6 +293,13 @@ const CountdownNumbersConfig: React.FC<Props> = (props) => {
     // Tile that was right clicked had no value (empty)
     if (!number) {
       return;
+    }
+
+    // If both operands are the same number
+    if (currentGuess.operand1 === number && currentGuess.operand2 === number) {
+      // TODO: Is there way of determining which (of the two operands with the same numbers) was right clicked?
+      // Remove the second occurence of the number
+      setCurrentGuess({ ...currentGuess, operand2: null });
     }
 
     // If the first operand was (right) clicked
