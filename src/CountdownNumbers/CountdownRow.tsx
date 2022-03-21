@@ -15,14 +15,12 @@ export const CountdownRow: React.FC<Props> = (props) => {
   function CreateRow() {
     var TileArray = [];
     for (let i = 0; i < props.length; i++) {
-      // If picked property is true, use number property value, otherwise use null
-      const number = props.expression?.[i].picked ? props.expression?.[i].number : null
       TileArray.push(
         <NumberTile
           key={i}
-          number={number}
+          number={props.expression?.[i].number}
           isReadOnly={props.isReadOnly}
-          onClick={() => props.onClick(number)}
+          onClick={() => props.onClick(props.expression?.[i].number)}
           onContextMenu={() => {}}
         ></NumberTile>
       );

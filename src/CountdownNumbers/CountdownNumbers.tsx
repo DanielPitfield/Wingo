@@ -135,7 +135,7 @@ const CountdownNumbers: React.FC<Props> = (props) => {
           <Button
             mode={"default"}
             disabled={isSelectionFinished}
-            onClick={() => /* TODO: Big numbers not being added */ props.onSubmitCountdownNumber(getBigNumber()!)}
+            onClick={() => props.onSubmitCountdownNumber(getBigNumber()!)}
           >
             Big
           </Button>

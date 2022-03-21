@@ -43,10 +43,9 @@ export function hasNumberSelectionFinished(
   }[]
 ): boolean {
   for (let i = 0; i < statuses.length; i++) {
-    // Get the 'picked' boolean flag for every number
-    const pickedStatus = statuses[i].picked;
+    const number = statuses[i].number;
     // If any number is not picked, return false
-    if (!pickedStatus) {
+    if (!number) {
       return false;
     }
   }
@@ -186,10 +185,9 @@ const CountdownNumbersConfig: React.FC<Props> = (props) => {
       const newCountdownStatuses = countdownStatuses.slice();
       // Find index of first object without a number
       const index = newCountdownStatuses.findIndex((element) => element.number === null);
-      // Update with new number
+      // Update element with new number
       newCountdownStatuses[index].number = number;
-      newCountdownStatuses[index].picked = true;
-      // Set with new update
+      // Set with this element updated
       setCountdownStatuses(newCountdownStatuses);
 
       // Determine target number if last number is being picked
@@ -211,11 +209,10 @@ const CountdownNumbersConfig: React.FC<Props> = (props) => {
         for (let i = 0; i < expression.length; i++) {
           // Update with the number
           newCountdownStatuses[i].number = expression[i];
-          newCountdownStatuses[i].picked = true;
         }
         // Update countdownStatuses
         setCountdownStatuses(newCountdownStatuses);
-        
+
         // Determine target number
         const newTargetNumber = getTargetNumber(100, 999);
         settargetNumber(newTargetNumber);
@@ -253,14 +250,36 @@ const CountdownNumbersConfig: React.FC<Props> = (props) => {
   }
 
   function addOperandToGuess(number: number | null) {
+    if (!number) {
+      return;
+    }
+
+    if (!hasNumberSelectionFinished(countdownStatuses)) {
+      return;
+    }
+
+    // Find the element of the respective number
+    // TODO: What happens if there is more than one occurency of a number?
+    const numberStatus = countdownStatuses.find((x) => x.number === number);
+    // If it has already been picked
+    if (numberStatus?.picked) {
+      return;
+    }
+
+    const newCountdownStatuses = countdownStatuses.slice();
+    const numberStatusIndex = countdownStatuses.findIndex((x) => x.number === number && !x.picked);
+
     // If operand1 has been populated, then set operand2
     if (currentGuess.operand1 !== null) {
       setCurrentGuess({ ...currentGuess, operand2: number });
-      // setWordIndex(wordIndex + 1); // Increment index to indicate new row has been started
+      //setWordIndex(wordIndex + 1); // Increment index to indicate new row has been started
     } else if (currentGuess.operand2 === null) {
       // Else; if operand2 has not been populated, then set operand1
       setCurrentGuess({ ...currentGuess, operand1: number });
     }
+
+    newCountdownStatuses[numberStatusIndex].picked = true;
+    setCountdownStatuses(newCountdownStatuses);
   }
 
   function removeOperandFromGuess(number: number | null) {
@@ -270,8 +289,6 @@ const CountdownNumbersConfig: React.FC<Props> = (props) => {
     if (!number) {
       return;
     }
-
-    // TODO: 'Put back' in CountdownRow by allowing left clicks again
 
     // If the first operand was (right) clicked
     if (currentGuess.operand1 === number) {
