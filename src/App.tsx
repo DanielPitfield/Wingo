@@ -309,6 +309,7 @@ export const App: React.FC = () => {
             diceMin={1}
             diceMax={6}
             gridSize={100}
+            gridShape={"square"}
             numTeams={2}
             timeLengthMins={5}
           ></NubbleConfig>

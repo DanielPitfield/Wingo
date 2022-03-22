@@ -8,6 +8,8 @@ interface Props {
   diceMin: number;
   diceMax: number;
   gridSize: 25 | 64 | 100;
+  gridShape: "square" | "parallelogram";
+  determinePoints: (value: number) => number;
   numTeams: number;
   timeLengthMins: number;
 }
@@ -423,7 +425,7 @@ const Nubble: React.FC<Props> = (props) => {
   const [pickedPins, setPickedPins] = useState<number[]>([]);
   const gridPoints = Array.from({ length: props.gridSize }).map((_, i) => ({
     number: i + 1,
-    points: determinePoints(i + 1),
+    points: props.determinePoints(i + 1),
   }));
   const [totalPoints, setTotalPoints] = useState(0);
   const [validValues, setValidValues] = useState<number[]>();
@@ -433,97 +435,6 @@ const Nubble: React.FC<Props> = (props) => {
     const newValidValues = getValidValues(diceValues, props.gridSize);
     setValidValues(newValidValues);
   }, [diceValues]);
-
-  function determinePoints(number: number): number {
-    switch (props.gridSize) {
-      case 25: {
-        if (number >= 1 && number <= 6) {
-          return 20;
-        }
-
-        if (number >= 7 && number <= 10) {
-          return 50;
-        }
-
-        if (number >= 11 && number <= 15) {
-          return 100;
-        }
-
-        if (number >= 16 && number <= 19) {
-          return 200;
-        }
-
-        if (number >= 20 && number <= 22) {
-          return 300;
-        }
-
-        if (number >= 23 && number <= 25) {
-          return 500;
-        }
-        break;
-      }
-
-      case 64: {
-        if (number >= 1 && number <= 10) {
-          return 10;
-        }
-
-        if (number >= 11 && number <= 21) {
-          return 20;
-        }
-
-        if (number >= 22 && number <= 36) {
-          return 50;
-        }
-
-        if (number >= 37 && number <= 49) {
-          return 100;
-        }
-
-        if (number >= 50 && number <= 58) {
-          return 250;
-        }
-
-        if (number >= 59 && number <= 64) {
-          return 500;
-        }
-        break;
-      }
-
-      case 100: {
-        if (number >= 1 && number <= 15) {
-          return 10;
-        }
-
-        if (number >= 16 && number <= 28) {
-          return 20;
-        }
-
-        if (number >= 29 && number <= 45) {
-          return 50;
-        }
-
-        if (number >= 46 && number <= 64) {
-          return 100;
-        }
-
-        if (number >= 65 && number <= 79) {
-          return 200;
-        }
-
-        if (number >= 80 && number <= 90) {
-          return 300;
-        }
-
-        if (number >= 91 && number <= 100) {
-          return 500;
-        }
-        break;
-      }
-    }
-
-    throw new Error("Unexpected number for grid size");
-  }
 
   function getAdjacentMappings() {
     switch (props.gridSize) {
@@ -616,16 +527,54 @@ const Nubble: React.FC<Props> = (props) => {
     { points: 20, colour: "light-blue" },
     { points: 50, colour: "yellow" },
     { points: 100, colour: "dark-blue" },
+    //{ points: 150, colour: "" },
     { points: 200, colour: "green" },
+    //{ points: 250, colour: "" },
     { points: 300, colour: "pink" },
+    //{ points: 400, colour: "" },
     { points: 500, colour: "red" },
   ];
 
+  function populateRow(rowLength: number, rowNumber: number) {
+    return (
+      <div className="nubble-grid-row">
+        {Array.from({length: rowLength}).map((_, i) => {
+          let value = ((rowNumber * rowLength) + i) + 1;
+          let isPicked = pickedPins.includes(value);
+          let colour = pointColourMappings.find((x) => x.points === props.determinePoints(value))?.colour;
+
+          return (
+            <button
+              key={i}
+              className="nubble-button"
+              data-prime={isPrime(value)}
+              data-picked={isPicked}
+              data-colour={colour}
+              onClick={() => onClick(value)}
+              disabled={isPicked}
+            >
+              {value}
+            </button>
+          );
+        })}
+      </div>
+    );
+  }
+
   function populateGrid() {
     var Grid = [];
+
+    if (props.gridShape === "square") {
+      const rowLength = Math.sqrt(props.gridSize);
+      for (let i = 0; i < rowLength; i++) {
+        Grid.push(populateRow(rowLength, i));
+      }
+    }
+
+    /*
     for (let i = 1; i <= props.gridSize; i++) {
       let isPicked = pickedPins.includes(i);
-      let colour = pointColourMappings.find((x) => x.points === determinePoints(i))?.colour;
+      let colour = pointColourMappings.find((x) => x.points === props.determinePoints(i))?.colour;
       Grid.push(
         <button
           key={i}
@@ -640,6 +589,7 @@ const Nubble: React.FC<Props> = (props) => {
         </button>
       );
     }
+    */
     return Grid;
   }
 

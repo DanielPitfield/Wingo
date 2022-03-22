@@ -82,6 +82,9 @@ export const wordHintMappings = [
     { word: "disclaimer", hint: "This answer is not responsible for any damage caused" },
     { word: "discretion", hint: "The freedom to decide what should be done in a particular situation" },
     { word: "dishwasher", hint: "This answer cleans plates and cutlery" },
+    { word: "discussion", hint: "Let's just talk about this" },
+    { word: "disruption", hint: "This answer is being rude and interrupting" },
+    { word: "dishwasher", hint: "This answer cleans plates and cutlery" },
     
   ];
 
@@ -94,8 +97,6 @@ export const wordHintMappings = [
   */
 
   export const words_ten = [
-    "discussion",
-    "disruption",
     "dissonance",
     "distortion",
     "domination",
