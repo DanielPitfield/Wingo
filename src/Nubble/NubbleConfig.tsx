@@ -1,6 +1,8 @@
 import React from "react";
 import "../index.scss";
+import { square_100_adj, square_25_adj, square_64_adj } from "./adjacentMappings";
 import Nubble from "./Nubble";
+import { parallelogram_100, parallelogram_25, parallelogram_64, square_100, square_25, square_64 } from "./pointColourMappings";
 
 interface Props {
   numDice: number;
@@ -18,80 +20,58 @@ const NubbleConfig: React.FC<Props> = (props) => {
       case "parallelogram": {
         switch (props.gridSize) {
           case 100: {
-            return [
-              { points: 10, colour: "orange" },
-              { points: 20, colour: "light-blue" },
-              { points: 50, colour: "yellow" },
-              { points: 100, colour: "dark-blue" },
-              { points: 150, colour: "pink" },
-              { points: 200, colour: "green" },
-              { points: 250, colour: "blue-gray" },
-              { points: 300, colour: "purple" },
-              { points: 400, colour: "dark-orange" },
-              { points: 500, colour: "red" },
-            ];
+            return parallelogram_100;
           }
           case 64: {
-            return [
-              { points: 10, colour: "orange" },
-              { points: 20, colour: "light-blue" },
-              { points: 50, colour: "yellow" },
-              { points: 100, colour: "dark-blue" },
-              { points: 150, colour: "pink" },
-              { points: 200, colour: "green" },
-              { points: 300, colour: "purple" },
-              { points: 500, colour: "red" },
-            ];
-
+            return parallelogram_64;
           }
           case 25: {
-            return [
-              { points: 50, colour: "yellow" },
-              { points: 100, colour: "dark-blue" },
-              { points: 200, colour: "green" },
-              { points: 300, colour: "purple" },
-              { points: 500, colour: "red" },
-            ];
+            return parallelogram_25;
           }
         }
       }
       case "square": {
         switch (props.gridSize) {
           case 100: {
-            return [
-              { points: 10, colour: "orange" },
-              { points: 20, colour: "light-blue" },
-              { points: 50, colour: "yellow" },
-              { points: 100, colour: "dark-blue" },
-              { points: 150, colour: "pink" },
-              { points: 200, colour: "green" },
-              { points: 250, colour: "blue-gray" },
-              { points: 300, colour: "purple" },
-              { points: 400, colour: "dark-orange" },
-              { points: 500, colour: "red" },
-            ];
+            return square_100;
           }
           case 64: {
-            return [
-              { points: 10, colour: "orange" },
-              { points: 20, colour: "light-blue" },
-              { points: 50, colour: "yellow" },
-              { points: 100, colour: "dark-blue" },
-              { points: 150, colour: "pink" },
-              { points: 200, colour: "green" },
-              { points: 300, colour: "purple" },
-              { points: 500, colour: "red" },
-            ];
-
+            return square_64;
           }
           case 25: {
-            return [
-              { points: 50, colour: "yellow" },
-              { points: 100, colour: "dark-blue" },
-              { points: 200, colour: "green" },
-              { points: 300, colour: "purple" },
-              { points: 500, colour: "red" },
-            ];
+            return square_25;
+          }
+        }
+      }
+    }
+  }
+
+  function determineAdjacentMappings(): {pin: number, adjacent_pins: number[] }[]  {
+    switch (props.gridShape) {
+      case "parallelogram": {
+        switch (props.gridSize) {
+          case 100: {
+            // Use square adjacent mappings for now
+            return square_100_adj;
+          }
+          case 64: {
+            return square_64_adj
+          }
+          case 25: {
+            return square_25_adj;
+          }
+        }
+      }
+      case "square": {
+        switch (props.gridSize) {
+          case 100: {
+            return square_100_adj;
+          }
+          case 64: {
+            return square_64_adj;
+          }
+          case 25: {
+            return square_25_adj;
           }
         }
       }
@@ -306,6 +286,7 @@ const NubbleConfig: React.FC<Props> = (props) => {
         gridShape={props.gridShape}
         determinePoints={determinePoints}
         determinePointColourMappings={determinePointColourMappings}
+        determineAdjacentMappings={determineAdjacentMappings}
         numTeams={props.numTeams}
         timeLengthMins={props.timeLengthMins}
       ></Nubble>

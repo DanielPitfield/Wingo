@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import "../index.scss";
 import DiceGrid from "./DiceGrid";
-import { adjacentMappings_25, adjacentMappings_64, adjacentMappings_100 } from "./nubble_adjacent";
 
 interface Props {
   numDice: number;
@@ -11,7 +10,7 @@ interface Props {
   gridShape: "square" | "parallelogram";
   determinePoints: (value: number) => number;
   determinePointColourMappings: () => {points: number, colour: string }[];
-
+  determineAdjacentMappings: () => {pin: number, adjacent_pins: number[] }[];
   numTeams: number;
   timeLengthMins: number;
 }
@@ -438,20 +437,6 @@ const Nubble: React.FC<Props> = (props) => {
     setValidValues(newValidValues);
   }, [diceValues]);
 
-  function getAdjacentMappings() {
-    switch (props.gridSize) {
-      case 25: {
-        return adjacentMappings_25;
-      }
-      case 64: {
-        return adjacentMappings_64;
-      }
-      case 100: {
-        return adjacentMappings_100;
-      }
-    }
-  }
-
   function randomIntFromInterval(min: number, max: number) {
     // min and max included
     return Math.floor(Math.random() * (max - min + 1) + min);
@@ -480,7 +465,8 @@ const Nubble: React.FC<Props> = (props) => {
 
   function isAdjacentTriangle(pinNumber: number) {
     // Array deatiling pin adjacency for this gridSize
-    const adjacentMappings = getAdjacentMappings();
+    const adjacentMappings = props.determineAdjacentMappings();
+    console.log(adjacentMappings);
     // Adjacent pins of the clicked pin
     const adjacent_pins = adjacentMappings.find((x) => x.pin === pinNumber)?.adjacent_pins;
     // All the adjacent pins which have also previously been picked
