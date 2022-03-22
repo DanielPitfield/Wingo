@@ -33,48 +33,73 @@ export const operators: { name: "/" | "-" | "+" | "*"; function: (num1: number, 
   },
 ];
 
+// Returns permutations of input array, https://stackoverflow.com/a/20871714
+function permutator<T>(inputArr: T[]): T[][] {
+  let result: any[] = [];
+
+  const permute = (arr: [], m = []) => {
+    if (arr.length === 0) {
+      result.push(m);
+    } else {
+      for (let i = 0; i < arr.length; i++) {
+        let curr = arr.slice();
+        let next = curr.splice(i, 1);
+        permute(curr.slice() as any, m.concat(next as any));
+      }
+    }
+  };
+
+  permute(inputArr as any);
+
+  return result;
+}
+
+// https://stackoverflow.com/questions/32543936/combination-with-repetition
+function combRep(arr: { name: string; function: (num1: number, num2: number) => number }[], l: number) {
+  if (l === void 0) l = arr.length; // Length of the combinations
+  var data = Array(l), // Used to store state
+    results = []; // Array of results
+  (function f(pos, start) {
+    // Recursive function
+    if (pos === l) {
+      // End reached
+      results.push(data.slice()); // Add a copy of data to results
+      return;
+    }
+    for (var i = start; i < arr.length; ++i) {
+      data[pos] = arr[i]; // Update data
+      f(pos + 1, i); // Call f recursively
+    }
+  })(0, 0); // Start at index 0
+  return results; // Return results
+}
+
+// Check whether expression part is an operator
+function isOperator(
+  expression_part: { name: string; function: (num1: number, num2: number) => number } | number
+): boolean {
+  return typeof expression_part !== "number";
+}
+
+// Check whether expression part is an operand (number)
+function isOperand(
+  expression_part: { name: string; function: (num1: number, num2: number) => number } | number
+): boolean {
+  return typeof expression_part === "number";
+}
+
+// Check whether expression skeleton matches with provided expression
+function checkSkeleton(expression: any[], skeleton: ((expression_part: any) => boolean)[]): boolean {
+  for (let i = 0; i < expression.length; i++) {
+    if (!skeleton[i](expression[i])) {
+      return false; // Skeleton part different from expression part
+    }
+  }
+
+  return true;
+}
+
 export function getValidValues(inputNumbers: number[], maxLimit: number): number[] {
-  // Returns permutations of input array, https://stackoverflow.com/a/20871714
-  function permutator<T>(inputArr: T[]): T[][] {
-    let result: any[] = [];
-
-    const permute = (arr: [], m = []) => {
-      if (arr.length === 0) {
-        result.push(m);
-      } else {
-        for (let i = 0; i < arr.length; i++) {
-          let curr = arr.slice();
-          let next = curr.splice(i, 1);
-          permute(curr.slice() as any, m.concat(next as any));
-        }
-      }
-    };
-
-    permute(inputArr as any);
-
-    return result;
-  }
-
-  // https://stackoverflow.com/questions/32543936/combination-with-repetition
-  function combRep(arr: { name: string; function: (num1: number, num2: number) => number }[], l: number) {
-    if (l === void 0) l = arr.length; // Length of the combinations
-    var data = Array(l), // Used to store state
-      results = []; // Array of results
-    (function f(pos, start) {
-      // Recursive function
-      if (pos === l) {
-        // End reached
-        results.push(data.slice()); // Add a copy of data to results
-        return;
-      }
-      for (var i = start; i < arr.length; ++i) {
-        data[pos] = arr[i]; // Update data
-        f(pos + 1, i); // Call f recursively
-      }
-    })(0, 0); // Start at index 0
-    return results; // Return results
-  }
-
   // Add two duds to circumvent missing values bug
   let operators_duds = operators.slice();
 
@@ -244,31 +269,6 @@ export function getValidValues(inputNumbers: number[], maxLimit: number): number
 
   // --- Evaluating Expressions ---
   var calculatedValues = new Set<number>();
-
-  // Check whether expression part is an operator
-  function isOperator(
-    expression_part: { name: string; function: (num1: number, num2: number) => number } | number
-  ): boolean {
-    return typeof expression_part !== "number";
-  }
-
-  // Check whether expression part is an operand (number)
-  function isOperand(
-    expression_part: { name: string; function: (num1: number, num2: number) => number } | number
-  ): boolean {
-    return typeof expression_part === "number";
-  }
-
-  // Check whether expression skeleton matches with provided expression
-  function checkSkeleton(expression: any[], skeleton: ((expression_part: any) => boolean)[]): boolean {
-    for (let i = 0; i < expression.length; i++) {
-      if (!skeleton[i](expression[i])) {
-        return false; // Skeleton part different from expression part
-      }
-    }
-
-    return true;
-  }
 
   for (let i = 0; i < polish_expressions_all.length; i++) {
     const expression = polish_expressions_all[i];
