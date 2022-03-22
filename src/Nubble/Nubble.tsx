@@ -12,25 +12,34 @@ interface Props {
   timeLengthMins: number;
 }
 
-  // --- OPERATORS (+ - / *) ---
-  export const operators: {name: "/" | "-" | "+" | "*", function: (num1: number, num2: number) => number}[] = [
-    {
-      name: "/",
-      function: (num1: number, num2: number): number => num1 / num2,
-    },
-    {
-      name: "-",
-      function: (num1: number, num2: number): number => num1 - num2,
-    },
-    {
-      name: "+",
-      function: (num1: number, num2: number): number => num1 + num2,
-    },
-    {
-      name: "*",
-      function: (num1: number, num2: number): number => num1 * num2,
-    },
-  ];
+// --- OPERATORS (+ - / *) ---
+export let operators: { name: "/" | "-" | "+" | "*"; function: (num1: number, num2: number) => number }[] = [
+  {
+    name: "/",
+    function: (num1: number, num2: number): number => num1 / num2,
+  },
+  {
+    name: "-",
+    function: (num1: number, num2: number): number => num1 - num2,
+  },
+  {
+    name: "+",
+    function: (num1: number, num2: number): number => num1 + num2,
+  },
+  {
+    name: "*",
+    function: (num1: number, num2: number): number => num1 * num2,
+  },
+  /* Add two duds to circumvent missing values bug */
+  {
+    name: "-",
+    function: (num1: number, num2: number): number => num1 - num2,
+  },
+  {
+    name: "+",
+    function: (num1: number, num2: number): number => num1 + num2,
+  },
+];
 
 export function getValidValues(inputNumbers: number[], maxLimit: number): number[] {
   // Returns permutations of input array, https://stackoverflow.com/a/20871714
@@ -77,9 +86,9 @@ export function getValidValues(inputNumbers: number[], maxLimit: number): number
   // This does not include permutations having the same operator more than once
   let operatorPermutations = permutator(operators);
 
-  // Always atleast the number of operators (and +1 just to be safe)
+  // Always atleast the number of operators
   const maxOperatorPermutation_length =
-    inputNumbers.length <= operators.length ? operators.length + 1 : inputNumbers.length + 1;
+    inputNumbers.length <= operators.length ? operators.length : inputNumbers.length + 1;
 
   // This adds permutations with repetition of operators
   for (let i = 1; i <= maxOperatorPermutation_length; i++) {
@@ -100,7 +109,7 @@ export function getValidValues(inputNumbers: number[], maxLimit: number): number
   }
 
   // Remove any subset larger in length than the (number of values - 1)
-  const operatorSubsetPermutationsFiltered = Array.from(operatorSubsetPermutations).filter(
+  const operatorSubsetPermutationsFiltered = operatorSubsetPermutations.filter(
     (x) => x.length <= inputNumbers.length - 1
   );
 
@@ -121,11 +130,11 @@ export function getValidValues(inputNumbers: number[], maxLimit: number): number
 
   // Combine the permutations of operands and operators (not yet in reverse polish)
   var combinations = [];
-  for (let i = 0; i < Array.from(operandSubsetPermutations).length; i++) {
-    for (let j = 0; j < Array.from(operatorSubsetPermutationsFiltered).length; j++) {
+  for (let i = 0; i < operandSubsetPermutations.length; i++) {
+    for (let j = 0; j < operatorSubsetPermutationsFiltered.length; j++) {
       combinations.push({
-        operands: Array.from(operandSubsetPermutations)[i],
-        operators: Array.from(operatorSubsetPermutationsFiltered)[j],
+        operands: operandSubsetPermutations[i],
+        operators: operatorSubsetPermutationsFiltered[j],
       });
     }
   }
@@ -227,7 +236,7 @@ export function getValidValues(inputNumbers: number[], maxLimit: number): number
   }
 
   // Remove empty/unformed polish expressions
-  polish_expressions_all = Array.from(polish_expressions_all).filter((x) => x.length >= 1);
+  polish_expressions_all = polish_expressions_all.filter((x) => x.length >= 1);
 
   // --- Evaluating Expressions ---
   var calculatedValues = new Set<number>();
@@ -296,11 +305,8 @@ export function getValidValues(inputNumbers: number[], maxLimit: number): number
         const [firstNum, secondNum, firstOperator, thirdNum, fourthNum, secondOperator, thirdOperator] = expression;
 
         const firstCalculation = (firstOperator as any).function(firstNum, secondNum);
-
         const secondCalculation = (secondOperator as any).function(thirdNum, fourthNum);
-
         const result = (thirdOperator as any).function(firstCalculation, secondCalculation);
-
         calculatedValues.add(result);
       }
     } else if (expression.length === 9) {
