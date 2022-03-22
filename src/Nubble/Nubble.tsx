@@ -16,6 +16,7 @@ interface Props {
 export const operators: { name: "/" | "-" | "+" | "*"; function: (num1: number, num2: number) => number }[] = [
   {
     name: "/",
+    // TODO: Is having large arrays of these objects (which include these functions) slowing down the function getValidValues()
     function: (num1: number, num2: number): number => num1 / num2,
   },
   {
@@ -101,12 +102,12 @@ export function getValidValues(inputNumbers: number[], maxLimit: number): number
     operatorPermutations = operatorPermutations.concat(newPermutations);
   }
 
-  // Make a copy of all the unique permutations so far
+  // Make a copy of the permutations so far
   let operatorSubsetPermutations = operatorPermutations.slice();
 
   for (let i = 0; i < operatorPermutations.length; i++) {
     for (let j = 1; j < inputNumbers.length; j++) {
-      // Add smaller length subsets
+      // Add smaller length subsets (to new copy)
       operatorSubsetPermutations.push(operatorPermutations[i].slice(0, j));
     }
   }
@@ -412,8 +413,7 @@ export function getValidValues(inputNumbers: number[], maxLimit: number): number
   // Remove results which aren't integers or are outside range of (0, maxLimit)
   const validValues = Array.from(calculatedValues).filter((x) => x > 0 && x <= maxLimit && Math.round(x) === x);
 
-  // TODO: Still missing some values (try dud in operators?)
-  return Array.from(validValues);
+  return validValues;
 }
 
 const Nubble: React.FC<Props> = (props) => {
