@@ -13,7 +13,7 @@ interface Props {
 }
 
 // --- OPERATORS (+ - / *) ---
-export let operators: { name: "/" | "-" | "+" | "*"; function: (num1: number, num2: number) => number }[] = [
+export const operators: { name: "/" | "-" | "+" | "*"; function: (num1: number, num2: number) => number }[] = [
   {
     name: "/",
     function: (num1: number, num2: number): number => num1 / num2,
@@ -29,15 +29,6 @@ export let operators: { name: "/" | "-" | "+" | "*"; function: (num1: number, nu
   {
     name: "*",
     function: (num1: number, num2: number): number => num1 * num2,
-  },
-  /* Add two duds to circumvent missing values bug */
-  {
-    name: "-",
-    function: (num1: number, num2: number): number => num1 - num2,
-  },
-  {
-    name: "+",
-    function: (num1: number, num2: number): number => num1 + num2,
   },
 ];
 
@@ -83,17 +74,29 @@ export function getValidValues(inputNumbers: number[], maxLimit: number): number
     return results; // Return results
   }
 
+  // Add two duds to circumvent missing values bug
+  let operators_duds = operators.slice();
+
+  operators_duds.push({
+    name: "-",
+    function: (num1: number, num2: number): number => num1 - num2,
+  });
+  operators_duds.push({
+    name: "+",
+    function: (num1: number, num2: number): number => num1 + num2,
+  });
+
   // This does not include permutations having the same operator more than once
-  let operatorPermutations = permutator(operators);
+  let operatorPermutations = permutator(operators_duds);
 
   // Always atleast the number of operators
   const maxOperatorPermutation_length =
-    inputNumbers.length <= operators.length ? operators.length : inputNumbers.length + 1;
+    inputNumbers.length <= operators_duds.length ? operators_duds.length : inputNumbers.length + 1;
 
   // This adds permutations with repetition of operators
   for (let i = 1; i <= maxOperatorPermutation_length; i++) {
     // Array of permutations of length i
-    let newPermutations = combRep(operators, i);
+    let newPermutations = combRep(operators_duds, i);
     // Add on to operatorPermutations array
     operatorPermutations = operatorPermutations.concat(newPermutations);
   }
