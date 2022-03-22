@@ -13,6 +13,91 @@ interface Props {
 }
 
 const NubbleConfig: React.FC<Props> = (props) => {
+  function determinePointColourMappings(): {points: number, colour: string }[]  {
+    switch (props.gridShape) {
+      case "parallelogram": {
+        switch (props.gridSize) {
+          case 100: {
+            return [
+              { points: 10, colour: "orange" },
+              { points: 20, colour: "light-blue" },
+              { points: 50, colour: "yellow" },
+              { points: 100, colour: "dark-blue" },
+              { points: 150, colour: "pink" },
+              { points: 200, colour: "green" },
+              { points: 250, colour: "blue-gray" },
+              { points: 300, colour: "purple" },
+              { points: 400, colour: "dark-orange" },
+              { points: 500, colour: "red" },
+            ];
+          }
+          case 64: {
+            return [
+              { points: 10, colour: "orange" },
+              { points: 20, colour: "light-blue" },
+              { points: 50, colour: "yellow" },
+              { points: 100, colour: "dark-blue" },
+              { points: 150, colour: "pink" },
+              { points: 200, colour: "green" },
+              { points: 300, colour: "purple" },
+              { points: 500, colour: "red" },
+            ];
+
+          }
+          case 25: {
+            return [
+              { points: 50, colour: "yellow" },
+              { points: 100, colour: "dark-blue" },
+              { points: 200, colour: "green" },
+              { points: 300, colour: "purple" },
+              { points: 500, colour: "red" },
+            ];
+          }
+        }
+      }
+      case "square": {
+        switch (props.gridSize) {
+          case 100: {
+            return [
+              { points: 10, colour: "orange" },
+              { points: 20, colour: "light-blue" },
+              { points: 50, colour: "yellow" },
+              { points: 100, colour: "dark-blue" },
+              { points: 150, colour: "pink" },
+              { points: 200, colour: "green" },
+              { points: 250, colour: "blue-gray" },
+              { points: 300, colour: "purple" },
+              { points: 400, colour: "dark-orange" },
+              { points: 500, colour: "red" },
+            ];
+          }
+          case 64: {
+            return [
+              { points: 10, colour: "orange" },
+              { points: 20, colour: "light-blue" },
+              { points: 50, colour: "yellow" },
+              { points: 100, colour: "dark-blue" },
+              { points: 150, colour: "pink" },
+              { points: 200, colour: "green" },
+              { points: 300, colour: "purple" },
+              { points: 500, colour: "red" },
+            ];
+
+          }
+          case 25: {
+            return [
+              { points: 50, colour: "yellow" },
+              { points: 100, colour: "dark-blue" },
+              { points: 200, colour: "green" },
+              { points: 300, colour: "purple" },
+              { points: 500, colour: "red" },
+            ];
+          }
+        }
+      }
+    }
+  }
+
   function determinePoints(number: number): number {
     switch (props.gridShape) {
       case "parallelogram": {
@@ -220,6 +305,7 @@ const NubbleConfig: React.FC<Props> = (props) => {
         gridSize={props.gridSize}
         gridShape={props.gridShape}
         determinePoints={determinePoints}
+        determinePointColourMappings={determinePointColourMappings}
         numTeams={props.numTeams}
         timeLengthMins={props.timeLengthMins}
       ></Nubble>

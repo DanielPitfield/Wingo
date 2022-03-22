@@ -10,6 +10,8 @@ interface Props {
   gridSize: 25 | 64 | 100;
   gridShape: "square" | "parallelogram";
   determinePoints: (value: number) => number;
+  determinePointColourMappings: () => {points: number, colour: string }[];
+
   numTeams: number;
   timeLengthMins: number;
 }
@@ -522,25 +524,15 @@ const Nubble: React.FC<Props> = (props) => {
     }
   }
 
-  const pointColourMappings = [
-    { points: 10, colour: "orange" },
-    { points: 20, colour: "light-blue" },
-    { points: 50, colour: "yellow" },
-    { points: 100, colour: "dark-blue" },
-    //{ points: 150, colour: "" },
-    { points: 200, colour: "green" },
-    //{ points: 250, colour: "" },
-    { points: 300, colour: "pink" },
-    //{ points: 400, colour: "" },
-    { points: 500, colour: "red" },
-  ];
-
+  // Array (length of rowLength) of buttons
   function populateRow(rowLength: number, rowNumber: number) {
     return (
       <div className="nubble-grid-row">
         {Array.from({length: rowLength}).map((_, i) => {
           let value = ((rowNumber * rowLength) + i) + 1;
           let isPicked = pickedPins.includes(value);
+
+          const pointColourMappings = props.determinePointColourMappings();
           let colour = pointColourMappings.find((x) => x.points === props.determinePoints(value))?.colour;
 
           return (
@@ -594,10 +586,11 @@ const Nubble: React.FC<Props> = (props) => {
   }
 
   function displayPinScores() {
-    var Grid = [];
+    var all_pin_scores = [];
+    const pointColourMappings = props.determinePointColourMappings();
     // Create nubble pin of each colour with text of how many points it awards
     for (let i = 0; i < pointColourMappings.length; i++) {
-      Grid.push(
+      all_pin_scores.push(
         <button
           key={i}
           // TODO: Change class name so doesnt change colour on hover
@@ -613,8 +606,18 @@ const Nubble: React.FC<Props> = (props) => {
         </button>
       );
     }
+
+    let trimmed_pin_scores = [];
+    if (props.gridShape === "square") {
+      const numRows = Math.sqrt(props.gridSize);
+      trimmed_pin_scores = all_pin_scores.slice(all_pin_scores.length - numRows, all_pin_scores.length);
+    }
+    else {
+      trimmed_pin_scores = all_pin_scores.slice();
+    }
+
     // Create a prime nubble pin to show it awards double points
-    Grid.push(
+    trimmed_pin_scores.push(
       <button
         key={"prime-read-only"}
         // TODO: Change class name so doesnt change colour on hover
@@ -630,7 +633,7 @@ const Nubble: React.FC<Props> = (props) => {
         {pointColourMappings[pointColourMappings.length - 1].points * 2}
       </button>
     );
-    return Grid;
+    return trimmed_pin_scores;
   }
 
   return (

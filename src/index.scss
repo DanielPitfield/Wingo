@@ -608,10 +608,16 @@ $yellow: #a5a803bb;
 $yellow-border: #a5a803;
 $dark-blue: #0002acbb;
 $dark-blue-border: #0002ac;
+$pink: #e757b7bb;
+$pink-border: #e757b7;
 $green: #05ab00bb;
 $green-border: #05ab00;
-$pink: #b801b5bb;
-$pink-border: #b801b5;
+$blue-gray: #6699CC;
+$blue-gray-border: #5f95cc;
+$purple: #b801b5bb;
+$purple-border: #b801b5;
+$dark-orange: #e27e0bbb;
+$dark-orange-border: #e27e0b;
 $red: #b10503bb;
 $red-border: #b10503;
 
@@ -620,8 +626,11 @@ $nubble-colors-names: (
   light-blue: $light-blue,
   yellow: $yellow,
   dark-blue: $dark-blue,
-  green: $green,
   pink: $pink,
+  green: $green,
+  blue-gray: $blue-gray,
+  purple: $purple,
+  dark-orange: $dark-orange,
   red: $red,
 );
 
