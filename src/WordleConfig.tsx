@@ -2,14 +2,14 @@ import React, { useState } from "react";
 import "./App.scss";
 import { Page } from "./App";
 import Wordle from "./Wordle";
-import { words_four } from "./WordArrays/Lengths/words_4";
-import { words_five } from "./WordArrays/Lengths/words_5";
-import { words_six } from "./WordArrays/Lengths/words_6";
-import { words_seven } from "./WordArrays/Lengths/words_7";
-import { words_eight } from "./WordArrays/Lengths/words_8";
-import { words_nine } from "./WordArrays/Lengths/words_9";
-import { words_ten } from "./WordArrays/Lengths/words_10";
-import { words_eleven } from "./WordArrays/Lengths/words_11";
+import { words_four_guessable, words_four_targets } from "./WordArrays/Lengths/words_4";
+import { words_five_guessable, words_five_targets } from "./WordArrays/Lengths/words_5";
+import { words_six_guessable, words_six_targets } from "./WordArrays/Lengths/words_6";
+import { words_seven_guessable, words_seven_targets } from "./WordArrays/Lengths/words_7";
+import { words_eight_guessable, words_eight_targets } from "./WordArrays/Lengths/words_8";
+import { words_nine_guessable, words_nine_targets } from "./WordArrays/Lengths/words_9";
+import { words_ten_guessable, words_ten_targets } from "./WordArrays/Lengths/words_10";
+import { words_eleven_guessable, words_eleven_targets } from "./WordArrays/Lengths/words_11";
 import { wordHintMappings } from "./WordArrays/words_puzzles";
 import { SaveData } from "./SaveData";
 import { words_dogs } from "./WordArrays/Categories/dogs";
@@ -28,15 +28,26 @@ interface Props {
   setPage: (page: Page) => void;
 }
 
-export const wordLengthMappings = [
-  { value: 4, array: words_four },
-  { value: 5, array: words_five },
-  { value: 6, array: words_six },
-  { value: 7, array: words_seven },
-  { value: 8, array: words_eight },
-  { value: 9, array: words_nine },
-  { value: 10, array: words_ten },
-  { value: 11, array: words_eleven },
+export const wordLengthMappingsGuessable = [
+  { value: 4, array: words_four_guessable },
+  { value: 5, array: words_five_guessable },
+  { value: 6, array: words_six_guessable },
+  { value: 7, array: words_seven_guessable },
+  { value: 8, array: words_eight_guessable },
+  { value: 9, array: words_nine_guessable },
+  { value: 10, array: words_ten_guessable },
+  { value: 11, array: words_eleven_guessable },
+];
+
+export const wordLengthMappingsTargets = [
+  { value: 4, array: words_four_targets },
+  { value: 5, array: words_five_targets },
+  { value: 6, array: words_six_targets },
+  { value: 7, array: words_seven_targets },
+  { value: 8, array: words_eight_targets },
+  { value: 9, array: words_nine_targets },
+  { value: 10, array: words_ten_targets },
+  { value: 11, array: words_eleven_targets },
 ];
 
 export const categoryMappings = [
@@ -268,13 +279,13 @@ const WordleConfig: React.FC<Props> = (props) => {
       /* --- DAILY ---  */
       if (props.mode === "daily") {
         // Find array of 5 (wordLength) letter words
-        const wordArray = wordLengthMappings.find((x) => x.value === wordLength)?.array!;
+        const targetWordArray = wordLengthMappingsTargets.find((x) => x.value === wordLength)?.array!;
 
         const timestamp = +new Date(); // Unix timestamp (in milliseconds)
         const ms_per_day = 24 * 60 * 60 * 1000;
         const days_since_epoch = Math.floor(timestamp / ms_per_day);
-        const daily_word_index = Math.round(days_since_epoch % wordArray.length); // Number in the range (0, wordArray.length)
-        const new_daily_word = wordArray[daily_word_index];
+        const daily_word_index = Math.round(days_since_epoch % targetWordArray.length); // Number in the range (0, wordArray.length)
+        const new_daily_word = targetWordArray[daily_word_index];
 
         const daily_word_storage = SaveData.getDailyWordGuesses();
         // The actual daily word and the daily word set in local storage are the same
@@ -320,15 +331,15 @@ const WordleConfig: React.FC<Props> = (props) => {
         }
       } else {
         /* --- REPEAT, INCREASING, LIMITLESS AND INTERLINKED ---  */
-        const wordArray = wordLengthMappings.find((x) => x.value === wordLength)?.array!;
+        const targetWordArray = wordLengthMappingsTargets.find((x) => x.value === wordLength)?.array!;
 
         // If the wordArray can't be found (increasing/limitless mode runs out of long enough words!)
-        if (!wordArray) {
+        if (!targetWordArray) {
           ResetGame();
           return;
         }
 
-        const new_target_word = wordArray[Math.round(Math.random() * (wordArray.length - 1))];
+        const new_target_word = targetWordArray[Math.round(Math.random() * (targetWordArray.length - 1))];
 
         console.log("Not daily word: " + new_target_word);
         settargetWord(new_target_word);
@@ -353,7 +364,7 @@ const WordleConfig: React.FC<Props> = (props) => {
           // Look for another word which contains the shared letter
           let interlinked_target_word = "";
           do {
-            const randomWord = wordArray[Math.round(Math.random() * wordArray.length - 1)];
+            const randomWord = targetWordArray[Math.round(Math.random() * targetWordArray.length - 1)];
             if (randomWord.includes(sharedLetter) && randomWord !== new_target_word) {
               interlinked_target_word = randomWord;
             }
@@ -528,7 +539,7 @@ const WordleConfig: React.FC<Props> = (props) => {
       }
     } else {
       // Find the array by length of word
-      wordArray = wordLengthMappings.find((x) => x.value === wordLength)?.array!;
+      wordArray = wordLengthMappingsGuessable.find((x) => x.value === wordLength)?.array!;
     }
 
     if (!wordArray || wordArray.length === 0) {

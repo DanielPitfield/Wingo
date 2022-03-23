@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import "../App.scss";
 import { Page } from "../App";
 import CountdownLetters from "./CountdownLetters";
-import { wordLengthMappings } from "../WordleConfig";
+import { wordLengthMappingsGuessable } from "../WordleConfig";
 
 interface Props {
   page: Page;
@@ -233,7 +233,7 @@ const CountdownLettersConfig: React.FC<Props> = (props) => {
     // Stop progress for evalution for Casual game mode type
     setinProgress(false);
 
-    const wordArray = wordLengthMappings.find((x) => x.value === currentWord.length)?.array!;
+    const wordArray = wordLengthMappingsGuessable.find((x) => x.value === currentWord.length)?.array!;
 
     // Accepted word (known word in dictionary)
     const wordInDictionary = wordArray.includes(currentWord.toLowerCase());

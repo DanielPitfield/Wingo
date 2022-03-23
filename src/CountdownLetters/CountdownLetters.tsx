@@ -7,7 +7,7 @@ import { Button } from "../Button";
 import { MessageNotification } from "../MessageNotification";
 import ProgressBar from "../ProgressBar";
 import { isWordValid } from "./CountdownLettersConfig";
-import { wordLengthMappings } from "../WordleConfig";
+import { wordLengthMappingsGuessable } from "../WordleConfig";
 import { SaveData } from "../SaveData";
 
 interface Props {
@@ -250,7 +250,7 @@ const CountdownLetters: React.FC<Props> = (props) => {
     // Start with bigger words first
     for (let i = countdownWord.length; i >= 4; i--) {
       // Get word array containng words of i size
-      const wordArray = wordLengthMappings.find((x) => x.value === i)?.array!;
+      const wordArray = wordLengthMappingsGuessable.find((x) => x.value === i)?.array!;
       // Safety check for wordArray
       if (wordArray) {
         // Check the entire array for any valid words
