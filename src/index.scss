@@ -122,6 +122,10 @@ code {
   border: 10px solid rgb(44, 44, 184);
 }
 
+.word_row[data-has-been-submitted="true"] .letter_tile {
+  animation: flipRevealLetter 1.5s;
+}
+
 .letter_tile {
   display: flex;
   align-items: center;
@@ -151,17 +155,15 @@ code {
 // For when checking a guess in Wordle (each letter tile flips to reveal status)
 @keyframes flipRevealLetter {
   0% {
-    opacity: 0;
     transform: perspective(400px) rotateX(90deg);
   }
   40% {
-    transform: perspective(400px) rotateX(-10deg);
+    transform: perspective(400px) rotateX(-20deg);
   }
   70% {
-    transform: perspective(400px) rotateX(10deg);
+    transform: perspective(400px) rotateX(20deg);
   }
   100% {
-    opacity: 1;
     transform: perspective(400px) rotateX(0deg);
   }
 }

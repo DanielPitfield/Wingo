@@ -32,6 +32,7 @@ export const WordRow: React.FC<Props> = (props) => {
       TileArray.push(
         <LetterTile
           key={i}
+          indexInWord={i}
           letter={props.word?.[i]}
           status={!props.hasSubmit || !props.word ? "not set" : wordSummary[i]?.status}
         ></LetterTile>
@@ -42,7 +43,7 @@ export const WordRow: React.FC<Props> = (props) => {
   }
 
   return (
-    <div className={props.isVertical ? "word_row_vertical" : "word_row"}>
+    <div className={props.isVertical ? "word_row_vertical" : "word_row"} data-has-been-submitted={props.hasSubmit}>
       <>{CreateRow()}</>
     </div>
   );
