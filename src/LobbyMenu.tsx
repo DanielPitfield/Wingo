@@ -135,7 +135,7 @@ export const LobbyMenu: React.FC<Props> = (props) => {
           const currentProgress = challenge.currentProgress(history);
 
           return (
-            <div className="challenge" data-is-acheived={isAcheived}>
+            <div className="challenge" key={challenge.title} data-is-acheived={isAcheived}>
               <h3 className="challenge-title">{challenge.title}</h3>
               <p className="challenge-description">{challenge.description}</p>
               {currentProgress} / {challenge.target}{" "}

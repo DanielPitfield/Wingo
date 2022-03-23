@@ -121,7 +121,6 @@ const WordleConfig: React.FC<Props> = (props) => {
   const [targetCategory, settargetCategory] = useState("");
   const [hasSubmitLetter, sethasSubmitLetter] = useState(false);
   const [revealedLetterIndexes, setRevealedLetterIndexes] = useState<number[]>([]);
-  const [countdownWord, setCountdownWord] = useState("");
 
   const defaultLetterStatuses: {
     letter: string;
