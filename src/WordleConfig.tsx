@@ -306,8 +306,6 @@ const WordleConfig: React.FC<Props> = (props) => {
         const random_category = categoryMappings[Math.round(Math.random() * (categoryMappings.length - 1))];
         const wordArray = random_category.array;
         settargetCategory(random_category.name);
-        
-        // TODO: Chooses target word multiple times, think something to do with dependency arrays
 
         // TODO: These new target words can have spaces in them (e.g United Kingdom)
         const new_target_word = wordArray[Math.round(Math.random() * (wordArray.length - 1))];
@@ -315,7 +313,6 @@ const WordleConfig: React.FC<Props> = (props) => {
         console.log("Category word: " + new_target_word);
         settargetWord(new_target_word);
 
-        // TODO: Visible re-render of WordRow with this new length
         setwordLength(new_target_word.length);
 
         // Reveal the first letter from game start
@@ -332,7 +329,7 @@ const WordleConfig: React.FC<Props> = (props) => {
           return;
         }
 
-        const new_target_word = wordArray[Math.round(Math.random() * wordArray.length - 1)];
+        const new_target_word = wordArray[Math.round(Math.random() * (wordArray.length - 1))];
 
         console.log("Not daily word: " + new_target_word);
         settargetWord(new_target_word);
@@ -372,7 +369,7 @@ const WordleConfig: React.FC<Props> = (props) => {
         }
       }
     }
-  }, [wordLength, inProgress, props.mode]);
+  }, [/* Short circuit boolean evaluation */ props.mode === "category" || wordLength, inProgress, props.mode]);
 
   // Save the game
   React.useEffect(() => {
