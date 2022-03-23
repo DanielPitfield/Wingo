@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import "./App.scss";
 import { Page } from "./App";
 import Wordle from "./Wordle";
+import { words_three_guessable, words_three_targets } from "./WordArrays/Lengths/words_3";
 import { words_four_guessable, words_four_targets } from "./WordArrays/Lengths/words_4";
 import { words_five_guessable, words_five_targets } from "./WordArrays/Lengths/words_5";
 import { words_six_guessable, words_six_targets } from "./WordArrays/Lengths/words_6";
@@ -29,6 +30,7 @@ interface Props {
 }
 
 export const wordLengthMappingsGuessable = [
+  { value: 3, array: words_three_guessable },
   { value: 4, array: words_four_guessable },
   { value: 5, array: words_five_guessable },
   { value: 6, array: words_six_guessable },
@@ -40,6 +42,7 @@ export const wordLengthMappingsGuessable = [
 ];
 
 export const wordLengthMappingsTargets = [
+  { value: 3, array: words_three_targets },
   { value: 4, array: words_four_targets },
   { value: 5, array: words_five_targets },
   { value: 6, array: words_six_targets },
