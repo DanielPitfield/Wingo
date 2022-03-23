@@ -648,7 +648,7 @@ $data-statuses: (
   padding: 10px;
 }
 
-.nubble-button {
+.nubble-button, .nubble-button-display {
   color: white;
   font-weight: bold;
   text-align: center;
@@ -661,12 +661,16 @@ $data-statuses: (
   margin: 1px;
 }
 
+.nubble-button-display {
+  cursor: default;
+}
+
 .nubble-button:disabled {
   background-color: grey !important;
   border: 4px solid grey !important;
 }
 
-.nubble-button[data-prime="true"] {
+.nubble-button[data-prime="true"], .nubble-button-display[data-prime="true"] {
   border: 4px solid #3d3d3d !important;
 }
 
@@ -714,6 +718,11 @@ $nubble-colors-names: (
       // On hover, make background color same as border
       background-color: darken($color, 10%);
     }
+  }
+  .nubble-button-display[data-colour="#{$colourName}"] {
+    background-color: $color;
+    // Border has darker tone of colour
+    border: 4px solid darken($color, 10%);
   }
 }
 

@@ -588,7 +588,7 @@ const Nubble: React.FC<Props> = (props) => {
         <button
           key={i}
           // TODO: Change class name so doesnt change colour on hover
-          className="nubble-button"
+          className="nubble-button-display"
           data-prime={false}
           data-picked={false}
           data-colour={pointColourMappings[i].colour}
@@ -614,7 +614,7 @@ const Nubble: React.FC<Props> = (props) => {
       <button
         key={"prime-read-only"}
         // TODO: Change class name so doesnt change colour on hover
-        className="nubble-button"
+        className="nubble-button-display"
         data-prime={true}
         data-picked={false}
         // Choose last colour mapping (red)
