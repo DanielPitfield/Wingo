@@ -102,6 +102,7 @@ export const LobbyMenu: React.FC<Props> = (props) => {
         <ul className="sidebar-links">
           {renderGameModeTile("wordle_daily", "Daily")}
           {renderGameModeTile("wordle_repeat", "Standard/Normal")}
+          {renderGameModeTile("wordle_category", "Categories")}
           {renderGameModeTile("wordle_increasing", "Increasing Length")}
           {renderGameModeTile("wordle_limitless", "Limitless/Survival")}
           {renderGameModeTile("wordle_puzzle", "Puzzle Word")}

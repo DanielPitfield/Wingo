@@ -32,6 +32,7 @@ export type Page =
   | "lobby"
   | "wordle_daily"
   | "wordle_repeat"
+  | "wordle_category"
   | "wordle_increasing"
   | "wordle_limitless"
   | "wordle_puzzle"
@@ -62,6 +63,12 @@ export const App: React.FC = () => {
     },
     {
       page: "wordle_repeat",
+      firstLetter: false,
+      timer: false,
+      keyboard: true,
+    },
+    {
+      page: "wordle_category",
       firstLetter: false,
       timer: false,
       keyboard: true,
@@ -200,6 +207,22 @@ export const App: React.FC = () => {
                 : { isTimed: false }
             }
             keyboard={gameOptionToggles.find((x) => x.page === "wordle_repeat")?.keyboard || false}
+            defaultWordLength={wordLength}
+          />
+        );
+
+        case "wordle_category":
+        return (
+          <WordleConfig
+            {...commonProps}
+            mode="category"
+            firstLetterProvided={gameOptionToggles.find((x) => x.page === "wordle_category")?.firstLetter || false}
+            timerConfig={
+              gameOptionToggles.find((x) => x.page === "wordle_category")?.timer
+                ? { isTimed: true, seconds: 30 }
+                : { isTimed: false }
+            }
+            keyboard={gameOptionToggles.find((x) => x.page === "wordle_category")?.keyboard || false}
             defaultWordLength={wordLength}
           />
         );

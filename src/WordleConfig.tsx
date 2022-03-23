@@ -14,7 +14,7 @@ import { wordHintMappings } from "./WordArrays/words_puzzles";
 import { SaveData } from "./SaveData";
 
 interface Props {
-  mode: "daily" | "repeat" | "increasing" | "limitless" | "puzzle" | "interlinked";
+  mode: "daily" | "repeat" | "category" | "increasing" | "limitless" | "puzzle" | "interlinked";
   page: Page;
   firstLetterProvided: boolean;
   timerConfig: { isTimed: false } | { isTimed: true; seconds: number };
@@ -39,12 +39,12 @@ export const wordLengthMappings = [
 
 export function getNewLives(numGuesses: number, wordIndex: number): number {
   // Calculate the number of rows not used
-    const extraRows = numGuesses - (wordIndex + 1);
-    // TODO: A game option toggle could change this value (e.g extraRows would remove cap on new lives)
-    const MAX_NEW_LIVES = 5;
-    // The number of new lives is the number of extra rows (capped at a max of above variable)
-    const newLives = Math.min(extraRows, MAX_NEW_LIVES);
-    return newLives;
+  const extraRows = numGuesses - (wordIndex + 1);
+  // TODO: A game option toggle could change this value (e.g extraRows would remove cap on new lives)
+  const MAX_NEW_LIVES = 5;
+  // The number of new lives is the number of extra rows (capped at a max of above variable)
+  const newLives = Math.min(extraRows, MAX_NEW_LIVES);
+  return newLives;
 }
 
 export function getWordSummary(word: string, targetWord: string, inDictionary: boolean) {
@@ -293,8 +293,14 @@ const WordleConfig: React.FC<Props> = (props) => {
         console.log("Puzzle word: " + puzzle.word);
         settargetWord(puzzle.word);
         settargetHint(puzzle.hint);
-        /* --- REPEAT, INCREASING, LIMITLESS AND INTERLINKED ---  */
-      } else {
+      } 
+      /* --- Category ---  */ 
+      else if (props.mode === "category") {
+
+      } 
+      /* --- REPEAT, INCREASING, LIMITLESS AND INTERLINKED ---  */
+      else {
+      
         const wordArray = wordLengthMappings.find((x) => x.value === wordLength)?.array!;
 
         // If the wordArray can't be found (increasing/limitless mode runs out of long enough words!)
@@ -403,7 +409,7 @@ const WordleConfig: React.FC<Props> = (props) => {
 
     if (props.mode === "limitless") {
       const newLives = getNewLives(numGuesses, wordIndex);
-      setNumGuesses(numGuesses + newLives);      
+      setNumGuesses(numGuesses + newLives);
     }
   }
 

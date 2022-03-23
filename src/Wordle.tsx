@@ -9,7 +9,7 @@ import ProgressBar from "./ProgressBar";
 import { getNewLives } from "./WordleConfig";
 
 interface Props {
-  mode: "daily" | "repeat" | "increasing" | "limitless" | "puzzle" | "interlinked";
+  mode: "daily" | "repeat" | "category" | "increasing" | "limitless" | "puzzle" | "interlinked";
   timerConfig: { isTimed: false } | { isTimed: true; totalSeconds: number; elapsedSeconds: number };
   keyboard: boolean;
   wordLength: number;
