@@ -43,7 +43,7 @@ export const WordRow: React.FC<Props> = (props) => {
   }
 
   return (
-    <div className={props.isVertical ? "word_row_vertical" : "word_row"} data-has-been-submitted={props.hasSubmit}>
+    <div className={props.isVertical ? "word_row_vertical" : "word_row"} data-has-been-submitted={props.word && props.hasSubmit}>
       <>{CreateRow()}</>
     </div>
   );
