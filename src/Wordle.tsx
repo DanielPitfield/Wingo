@@ -23,6 +23,7 @@ interface Props {
   targetWord: string;
   interlinkedWord: string;
   targetHint: string;
+  targetCategory: string;
   puzzleRevealMs: number;
   puzzleLeaveNumBlanks: number;
   letterStatuses: {
@@ -235,6 +236,12 @@ const Wordle: React.FC<Props> = (props) => {
       <div className="puzzle_hint">
         {props.inProgress && props.mode === "puzzle" && (
           <MessageNotification type="default">{props.targetHint}</MessageNotification>
+        )}
+      </div>
+
+      <div className="category_label">
+        {props.mode === "category" && (
+          <MessageNotification type="default">{props.targetCategory}</MessageNotification>
         )}
       </div>
 

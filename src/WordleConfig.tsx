@@ -2,16 +2,18 @@ import React, { useState } from "react";
 import "./App.scss";
 import { Page } from "./App";
 import Wordle from "./Wordle";
-import { words_four } from "./WordArrays/words_4";
-import { words_five } from "./WordArrays/words_5";
-import { words_six } from "./WordArrays/words_6";
-import { words_seven } from "./WordArrays/words_7";
-import { words_eight } from "./WordArrays/words_8";
-import { words_nine } from "./WordArrays/words_9";
-import { words_ten } from "./WordArrays/words_10";
-import { words_eleven } from "./WordArrays/words_11";
+import { words_four } from "./WordArrays/Lengths/words_4";
+import { words_five } from "./WordArrays/Lengths/words_5";
+import { words_six } from "./WordArrays/Lengths/words_6";
+import { words_seven } from "./WordArrays/Lengths/words_7";
+import { words_eight } from "./WordArrays/Lengths/words_8";
+import { words_nine } from "./WordArrays/Lengths/words_9";
+import { words_ten } from "./WordArrays/Lengths/words_10";
+import { words_eleven } from "./WordArrays/Lengths/words_11";
 import { wordHintMappings } from "./WordArrays/words_puzzles";
 import { SaveData } from "./SaveData";
+import { words_dogs } from "./WordArrays/Categories/dogs";
+import { words_countries } from "./WordArrays/Categories/countries";
 
 interface Props {
   mode: "daily" | "repeat" | "category" | "increasing" | "limitless" | "puzzle" | "interlinked";
@@ -35,6 +37,11 @@ export const wordLengthMappings = [
   { value: 9, array: words_nine },
   { value: 10, array: words_ten },
   { value: 11, array: words_eleven },
+];
+
+export const categoryMappings = [
+  { name: "Dog Breeds", array: words_dogs },
+  { name: "Countries", array: words_countries },
 ];
 
 export function getNewLives(numGuesses: number, wordIndex: number): number {
@@ -111,6 +118,7 @@ const WordleConfig: React.FC<Props> = (props) => {
   const [targetWord, settargetWord] = useState<string>();
   const [interlinkedWord, setinterlinkedWord] = useState<string>();
   const [targetHint, settargetHint] = useState("");
+  const [targetCategory, settargetCategory] = useState("");
   const [hasSubmitLetter, sethasSubmitLetter] = useState(false);
   const [revealedLetterIndexes, setRevealedLetterIndexes] = useState<number[]>([]);
   const [countdownWord, setCountdownWord] = useState("");
@@ -293,14 +301,29 @@ const WordleConfig: React.FC<Props> = (props) => {
         console.log("Puzzle word: " + puzzle.word);
         settargetWord(puzzle.word);
         settargetHint(puzzle.hint);
-      } 
-      /* --- Category ---  */ 
-      else if (props.mode === "category") {
+      } else if (props.mode === "category") {
+        /* --- Category ---  */
+        const random_category = categoryMappings[Math.round(Math.random() * (categoryMappings.length - 1))];
+        const wordArray = random_category.array;
+        settargetCategory(random_category.name);
+        
+        // TODO: Chooses target word multiple times, think something to do with dependency arrays
 
-      } 
-      /* --- REPEAT, INCREASING, LIMITLESS AND INTERLINKED ---  */
-      else {
-      
+        // TODO: These new target words can have spaces in them (e.g United Kingdom)
+        const new_target_word = wordArray[Math.round(Math.random() * (wordArray.length - 1))];
+
+        console.log("Category word: " + new_target_word);
+        settargetWord(new_target_word);
+
+        // TODO: Visible re-render of WordRow with this new length
+        setwordLength(new_target_word.length);
+
+        // Reveal the first letter from game start
+        if (props.firstLetterProvided) {
+          setCurrentWord(new_target_word.charAt(0));
+        }
+      } else {
+        /* --- REPEAT, INCREASING, LIMITLESS AND INTERLINKED ---  */
         const wordArray = wordLengthMappings.find((x) => x.value === wordLength)?.array!;
 
         // If the wordArray can't be found (increasing/limitless mode runs out of long enough words!)
@@ -486,19 +509,38 @@ const WordleConfig: React.FC<Props> = (props) => {
 
     let outcome: "success" | "failure" | "in-progress" = "in-progress";
 
-    if (currentWord.length !== wordLength) {
-      // Incomplete word
-      return;
+    // Allow incomplete words for the category gamemode
+    if (props.mode !== "category") {
+      if (currentWord.length !== wordLength) {
+        // Incomplete (length of) word
+        return;
+      }
     }
+
     if (wordIndex >= props.defaultnumGuesses) {
       // Used all the available rows (out of guesses)
       return;
     }
 
-    const wordArray = wordLengthMappings.find((x) => x.value === wordLength)?.array!;
+    let wordArray: string[];
+    if (props.mode === "category") {
+      if (!targetWord) {
+        return;
+      } else {
+        // Find the array which includes the target word
+        wordArray = categoryMappings.find((x) => x.array.includes(targetWord))?.array!;
+      }
+    } else {
+      // Find the array by length of word
+      wordArray = wordLengthMappings.find((x) => x.value === wordLength)?.array!;
+    }
+
+    if (!wordArray || wordArray.length === 0) {
+      return;
+    }
 
     if (wordArray.includes(currentWord.toLowerCase())) {
-      // Full length and accepted word
+      // Accepted word
       setGuesses(guesses.concat(currentWord)); // Add word to guesses
 
       if (currentWord.toUpperCase() === targetWord?.toUpperCase()) {
@@ -588,6 +630,7 @@ const WordleConfig: React.FC<Props> = (props) => {
       targetWord={targetWord || ""}
       interlinkedWord={interlinkedWord || ""}
       targetHint={targetHint || ""}
+      targetCategory={targetCategory || ""}
       puzzleRevealMs={props.puzzleRevealMs}
       puzzleLeaveNumBlanks={props.puzzleLeaveNumBlanks}
       revealedLetterIndexes={revealedLetterIndexes}
