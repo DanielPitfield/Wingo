@@ -115,7 +115,7 @@ code {
   background-image: linear-gradient(318deg, #0d092e, transparent);
 }
 
-/* Background color of countdown word grid is slightly different */
+// Background color of countdown word grid is slightly different
 .countdown_word_grid {
   background-color: #2474bb !important;
   background-image: none !important;
@@ -144,6 +144,74 @@ code {
   transition: transform 0.8s;
   transform-style: preserve-3d;
   */
+}
+
+// TODO: Add these animations to letter tiles (when needed)
+
+// For when checking a guess in Wordle (each letter tile flips to reveal status)
+@keyframes flipRevealLetter {
+  0% {
+    opacity: 0;
+    transform: perspective(400px) rotateX(90deg);
+  }
+  40% {
+    transform: perspective(400px) rotateX(-10deg);
+  }
+  70% {
+    transform: perspective(400px) rotateX(10deg);
+  }
+  100% {
+    opacity: 1;
+    transform: perspective(400px) rotateX(0deg);
+  }
+}
+
+// For when an incomplete guess is entered during Wordle
+@keyframes shakeIncorrectInput {
+  0% {
+    -ms-transform: translateX(0);
+    transform: translateX(0);
+  }
+  5% {
+    -ms-transform: translateX(-10px);
+    transform: translateX(-10px);
+  }
+  10% {
+    -ms-transform: translateX(10px);
+    transform: translateX(10px);
+  }
+  15% {
+    -ms-transform: translateX(-10px);
+    transform: translateX(-10px);
+  }
+  20% {
+    -ms-transform: translateX(10px);
+    transform: translateX(10px);
+  }
+  25% {
+    -ms-transform: translateX(-10px);
+    transform: translateX(-10px);
+  }
+  30% {
+    -ms-transform: translateX(10px);
+    transform: translateX(10px);
+  }
+  35% {
+    -ms-transform: translateX(-10px);
+    transform: translateX(-10px);
+  }
+  40% {
+    -ms-transform: translateX(10px);
+    transform: translateX(10px);
+  }
+  45% {
+    -ms-transform: translateX(-10px);
+    transform: translateX(-10px);
+  }
+  50% {
+    -ms-transform: translateX(0);
+    transform: translateX(0);
+  }
 }
 
 // The letter tiles of Countdown Letters
@@ -231,7 +299,9 @@ $data-statuses: (
   user-select: none;
 }
 
-.number_tile, .operator_tile, .equals_tile {
+.number_tile,
+.operator_tile,
+.equals_tile {
   width: 60px;
   height: 60px;
   border: 2px solid #969595;
@@ -612,7 +682,7 @@ $pink: #e757b7bb;
 $pink-border: #e757b7;
 $green: #05ab00bb;
 $green-border: #05ab00;
-$blue-gray: #6699CC;
+$blue-gray: #6699cc;
 $blue-gray-border: #5f95cc;
 $purple: #b801b5bb;
 $purple-border: #b801b5;
