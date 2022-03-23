@@ -9,8 +9,8 @@ interface Props {
   gridSize: 25 | 64 | 100;
   gridShape: "square" | "parallelogram";
   determinePoints: (value: number) => number;
-  determinePointColourMappings: () => {points: number, colour: string }[];
-  determineAdjacentMappings: () => {pin: number, adjacent_pins: number[] }[];
+  determinePointColourMappings: () => { points: number; colour: string }[];
+  determineAdjacentMappings: () => { pin: number; adjacent_pins: number[] }[];
   numTeams: number;
   timeLengthMins: number;
 }
@@ -420,6 +420,7 @@ export function getValidValues(inputNumbers: number[], maxLimit: number): number
 }
 
 const Nubble: React.FC<Props> = (props) => {
+  const [isDiceRolling, setisDiceRolling] = useState(false);
   const [diceValues, setdiceValues] = useState<number[]>(
     Array.from({ length: props.numDice }).map((x) => randomDiceNumber())
   );
@@ -435,6 +436,8 @@ const Nubble: React.FC<Props> = (props) => {
   React.useEffect(() => {
     const newValidValues = getValidValues(diceValues, props.gridSize);
     setValidValues(newValidValues);
+    // Once new values have been set, show the dice as having stopped rolling
+    setisDiceRolling(false);
   }, [diceValues]);
 
   function randomIntFromInterval(min: number, max: number) {
@@ -447,8 +450,13 @@ const Nubble: React.FC<Props> = (props) => {
   }
 
   function rollDice() {
-    // Determine random dice values for all the dice
-    setdiceValues(Array.from({ length: props.numDice }).map((x) => randomDiceNumber()));
+    // If dice isn't already rolling
+    if (!isDiceRolling) {
+      // Dice is now being rolled
+      setisDiceRolling(true);
+      // Determine random dice values for all the dice
+      setdiceValues(Array.from({ length: props.numDice }).map((x) => randomDiceNumber()));
+    }
   }
 
   function isPrime(value: number) {
@@ -479,8 +487,8 @@ const Nubble: React.FC<Props> = (props) => {
   }
 
   function onClick(pinNumber: number) {
-    if (!validValues || !validValues.includes(pinNumber) || pinNumber < 1) {
-      // No valid values or number is invalid
+    if (!validValues || !validValues.includes(pinNumber) || pinNumber < 1 || isDiceRolling) {
+      // No valid values, number is invalid or dice is rolling
       return;
     } else {
       // Keep track that the pin has now been correctly picked
@@ -514,8 +522,8 @@ const Nubble: React.FC<Props> = (props) => {
   function populateRow(rowLength: number, rowNumber: number) {
     return (
       <div className="nubble-grid-row">
-        {Array.from({length: rowLength}).map((_, i) => {
-          let value = ((rowNumber * rowLength) + i) + 1;
+        {Array.from({ length: rowLength }).map((_, i) => {
+          let value = rowNumber * rowLength + i + 1;
           let isPicked = pickedPins.includes(value);
 
           const pointColourMappings = props.determinePointColourMappings();
@@ -597,8 +605,7 @@ const Nubble: React.FC<Props> = (props) => {
     if (props.gridShape === "square") {
       const numRows = Math.sqrt(props.gridSize);
       trimmed_pin_scores = all_pin_scores.slice(all_pin_scores.length - numRows, all_pin_scores.length);
-    }
-    else {
+    } else {
       trimmed_pin_scores = all_pin_scores.slice();
     }
 
@@ -624,7 +631,7 @@ const Nubble: React.FC<Props> = (props) => {
 
   return (
     <div className="App">
-      <DiceGrid numDice={props.numDice} diceValues={diceValues} rollDice={rollDice}></DiceGrid>
+      <DiceGrid numDice={props.numDice} diceValues={diceValues} rollDice={rollDice} disabled={isDiceRolling}></DiceGrid>
       <div className="nubble-grid">{populateGrid()}</div>
       <div className="nubble-score">{totalPoints}</div>
       <div className="nubble-pin-scores">{displayPinScores()}</div>

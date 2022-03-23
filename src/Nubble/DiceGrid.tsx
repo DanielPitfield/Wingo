@@ -7,6 +7,7 @@ interface Props {
   diceValues: number[];
   numDice: number;
   rollDice: () => void;
+  disabled: boolean;
 }
 
 const DiceGrid: React.FC<Props> = (props) => {
@@ -21,8 +22,8 @@ const DiceGrid: React.FC<Props> = (props) => {
   return (
     <div className="dice_wrapper">
       <div className="dice_row">{populateGrid()}</div>
-      <Button mode={"default"} onClick={props.rollDice}>
-        Roll Dice
+      <Button mode={"default"} onClick={props.rollDice} disabled={props.disabled}>
+        {!props.disabled ? "Roll Dice" : "Rolling..."}
       </Button>
     </div>
   );
