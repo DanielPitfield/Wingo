@@ -121,6 +121,7 @@ export const LobbyMenu: React.FC<Props> = (props) => {
       <div className="sidebar">
         <div className="sidebar-title">OTHER</div>
         <ul className="sidebar-links">
+          {renderGameModeTile("campaign", "Campaign")}
           {renderGameModeTile("countdown_letters", "Countdown Letters")}
         </ul>
       </div>

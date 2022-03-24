@@ -16,9 +16,8 @@ import { SaveData } from "./SaveData";
 import { words_dogs } from "./WordArrays/Categories/dogs";
 import { words_countries } from "./WordArrays/Categories/countries";
 
-interface Props {
+export interface WordleConfigProps {
   mode: "daily" | "repeat" | "category" | "increasing" | "limitless" | "puzzle" | "interlinked";
-  page: Page;
   firstLetterProvided: boolean;
   timerConfig: { isTimed: false } | { isTimed: true; seconds: number };
   keyboard: boolean;
@@ -26,6 +25,12 @@ interface Props {
   puzzleRevealMs: number;
   puzzleLeaveNumBlanks: number;
   defaultnumGuesses: number;
+  finishingButtonText?: string;
+  onComplete?: () => void;
+}
+
+interface Props extends WordleConfigProps {
+  page: Page;
   setPage: (page: Page) => void;
 }
 
@@ -403,6 +408,7 @@ const WordleConfig: React.FC<Props> = (props) => {
   }, [props.page, targetWord]);
 
   function ResetGame() {
+    props.onComplete?.();
     setGuesses([]);
     setCurrentWord("");
     setWordIndex(0);
@@ -426,6 +432,7 @@ const WordleConfig: React.FC<Props> = (props) => {
   }
 
   function ContinueGame() {
+    props.onComplete?.();
     setGuesses([]);
     setCurrentWord("");
     setWordIndex(0);
@@ -645,6 +652,7 @@ const WordleConfig: React.FC<Props> = (props) => {
       puzzleLeaveNumBlanks={props.puzzleLeaveNumBlanks}
       revealedLetterIndexes={revealedLetterIndexes}
       letterStatuses={letterStatuses}
+      finishingButtonText={props.finishingButtonText}
       onEnter={onEnter}
       onSubmitLetter={onSubmitLetter}
       onBackspace={onBackspace}

@@ -31,6 +31,7 @@ interface Props {
     status: "" | "contains" | "correct" | "not set" | "not in word";
   }[];
   revealedLetterIndexes: number[];
+  finishingButtonText?: string;
   setPage: (page: Page) => void;
   onEnter: () => void;
   onSubmitLetter: (letter: string) => void;
@@ -136,15 +137,15 @@ const Wordle: React.FC<Props> = (props) => {
     if (!props.inDictionary) {
       return (
         <MessageNotification type="error">
-          <strong>{props.currentWord}</strong> is not a valid word
+          <strong>{props.currentWord.toUpperCase()}</strong> is not a valid word
           <br />
-          The word was: <strong>{props.targetWord}</strong>
+          The word was: <strong>{props.targetWord.toUpperCase()}</strong>
           <br />
           {props.mode === "limitless" && <strong>-1 life</strong>}
         </MessageNotification>
       );
     }
-    
+
     // The number of rows not used in guessing word
     const newLives = getNewLives(props.numGuesses, props.wordIndex);
 
@@ -167,7 +168,7 @@ const Wordle: React.FC<Props> = (props) => {
       } else {
         return (
           <MessageNotification type="default">
-            The word was: <strong>{props.targetWord}</strong>
+            The word was: <strong>{props.targetWord.toUpperCase()}</strong>
             <br />
             <strong>-1 life</strong>
           </MessageNotification>
@@ -194,7 +195,7 @@ const Wordle: React.FC<Props> = (props) => {
     } else {
       return (
         <MessageNotification type="default">
-          The word was: <strong>{props.targetWord}</strong>
+          The word was: <strong>{props.targetWord.toUpperCase()}</strong>
         </MessageNotification>
       );
     }
@@ -203,13 +204,13 @@ const Wordle: React.FC<Props> = (props) => {
   function isOutcomeContinue(): boolean {
     const correctAnswer = props.targetWord.toUpperCase() === props.currentWord.toUpperCase();
     // There are still rows to use or correct answer on only row left
-    const LimitlessContinue = (props.mode === "limitless" && props.numGuesses > 1) || (props.numGuesses === 1 && correctAnswer);
+    const LimitlessContinue =
+      (props.mode === "limitless" && props.numGuesses > 1) || (props.numGuesses === 1 && correctAnswer);
     const IncreasingContinue = props.mode === "increasing" && correctAnswer;
-    
+
     if (LimitlessContinue || IncreasingContinue) {
       return true;
-    }
-    else {
+    } else {
       return false;
     }
   }
@@ -222,13 +223,13 @@ const Wordle: React.FC<Props> = (props) => {
           <Button
             mode={"accept"}
             onClick={() =>
-              (props.mode === "increasing" ||
-              props.mode === "limitless") && props.targetWord.toUpperCase() === props.currentWord.toUpperCase()
+              (props.mode === "increasing" || props.mode === "limitless") &&
+              props.targetWord.toUpperCase() === props.currentWord.toUpperCase()
                 ? props.ContinueGame()
                 : props.ResetGame()
             }
           >
-            {isOutcomeContinue() ? "Continue" : "Restart"}
+            {props.finishingButtonText || (isOutcomeContinue() ? "Continue" : "Restart")}
           </Button>
         )}
       </div>
@@ -240,9 +241,7 @@ const Wordle: React.FC<Props> = (props) => {
       </div>
 
       <div className="category_label">
-        {props.mode === "category" && (
-          <MessageNotification type="default">{props.targetCategory}</MessageNotification>
-        )}
+        {props.mode === "category" && <MessageNotification type="default">{props.targetCategory}</MessageNotification>}
       </div>
 
       <div className="word_grid">{populateGrid(props.numGuesses, props.wordLength)}</div>

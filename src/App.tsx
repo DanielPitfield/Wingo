@@ -9,6 +9,9 @@ import GoldCoin from "./images/gold.png";
 import { SaveData } from "./SaveData";
 import CountdownLettersConfig from "./CountdownLetters/CountdownLettersConfig";
 import CountdownNumbersConfig from "./CountdownNumbers/CountdownNumbersConfig";
+import { Campaign } from "./Campaign";
+import { Area, AreaConfig } from "./Area";
+import { Level, LevelConfig } from "./Level";
 
 const wordLength = 5;
 const numGuesses = 6;
@@ -39,13 +42,18 @@ export type Page =
   | "wordle_interlinked"
   | "countdown_letters"
   | "countdown_numbers"
-  | "nubble";
+  | "nubble"
+  | "campaign"
+  | "campaign-area"
+  | "campaign-level";
 
 export const App: React.FC = () => {
   const saveData = window.localStorage;
 
   const [loadingState, setLoadingState] = useState<"loading" | "loaded">("loading");
   const [page, setPage] = useState<Page>("splash-screen");
+  const [selectedCampaignArea, setSelectedCampaignArea] = useState<AreaConfig | null>(null);
+  const [selectedCampaignLevel, setSelectedCampaignLevel] = useState<LevelConfig | null>(null);
 
   const [gameOptionToggles, setgameOptionToggles] = useState<
     {
@@ -178,6 +186,19 @@ export const App: React.FC = () => {
             gameOptionToggles={gameOptionToggles}
           />
         );
+
+      case "campaign":
+        return <Campaign setPage={setPage} setSelectedArea={setSelectedCampaignArea} />;
+
+      case "campaign-area":
+        return (
+          selectedCampaignArea && (
+            <Area area={selectedCampaignArea} setSelectedCampaignLevel={setSelectedCampaignLevel} setPage={setPage} />
+          )
+        );
+
+      case "campaign-level":
+        return selectedCampaignLevel && <Level level={selectedCampaignLevel} page={page} setPage={setPage} />;
 
       case "wordle_daily":
         return (
