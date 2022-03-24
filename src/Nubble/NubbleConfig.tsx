@@ -2,22 +2,29 @@ import React from "react";
 import "../index.scss";
 import { square_100_adj, square_25_adj, square_64_adj } from "./adjacentMappings";
 import Nubble from "./Nubble";
-import { parallelogram_100, parallelogram_25, parallelogram_64, square_100, square_25, square_64 } from "./pointColourMappings";
+import {
+  parallelogram_100,
+  parallelogram_25,
+  parallelogram_64,
+  square_100,
+  square_25,
+  square_64,
+} from "./pointColourMappings";
 
 interface Props {
   numDice: number;
   diceMin: number;
   diceMax: number;
   gridSize: 25 | 64 | 100;
-  gridShape: "square" | "parallelogram";
+  gridShape: "square" | "hexagon";
   numTeams: number;
   timeLengthMins: number;
 }
 
 const NubbleConfig: React.FC<Props> = (props) => {
-  function determinePointColourMappings(): {points: number, colour: string }[]  {
+  function determinePointColourMappings(): { points: number; colour: string }[] {
     switch (props.gridShape) {
-      case "parallelogram": {
+      case "hexagon": {
         switch (props.gridSize) {
           case 100: {
             return parallelogram_100;
@@ -46,16 +53,16 @@ const NubbleConfig: React.FC<Props> = (props) => {
     }
   }
 
-  function determineAdjacentMappings(): {pin: number, adjacent_pins: number[] }[]  {
+  function determineAdjacentMappings(): { pin: number; adjacent_pins: number[] }[] {
     switch (props.gridShape) {
-      case "parallelogram": {
+      case "hexagon": {
         switch (props.gridSize) {
           case 100: {
             // Use square adjacent mappings for now
             return square_100_adj;
           }
           case 64: {
-            return square_64_adj
+            return square_64_adj;
           }
           case 25: {
             return square_25_adj;
@@ -80,7 +87,7 @@ const NubbleConfig: React.FC<Props> = (props) => {
 
   function determinePoints(number: number): number {
     switch (props.gridShape) {
-      case "parallelogram": {
+      case "hexagon": {
         switch (props.gridSize) {
           case 25: {
             if (number >= 1 && number <= 6) {
@@ -166,7 +173,8 @@ const NubbleConfig: React.FC<Props> = (props) => {
             }
             break;
           }
-        } break;
+        }
+        break;
       }
       case "square": {
         switch (props.gridSize) {

@@ -211,7 +211,7 @@ export const App: React.FC = () => {
           />
         );
 
-        case "wordle_category":
+      case "wordle_category":
         return (
           <WordleConfig
             {...commonProps}
@@ -308,7 +308,7 @@ export const App: React.FC = () => {
           />
         );
 
-        case "countdown_numbers":
+      case "countdown_numbers":
         return (
           <CountdownNumbersConfig
             mode={"casual"}
@@ -332,7 +332,7 @@ export const App: React.FC = () => {
             diceMin={1}
             diceMax={6}
             gridSize={100}
-            gridShape={"square"}
+            gridShape={"hexagon"}
             numTeams={2}
             timeLengthMins={5}
           ></NubbleConfig>

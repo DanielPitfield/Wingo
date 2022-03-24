@@ -7,7 +7,7 @@ interface Props {
   diceMin: number;
   diceMax: number;
   gridSize: 25 | 64 | 100;
-  gridShape: "square" | "parallelogram";
+  gridShape: "square" | "hexagon";
   determinePoints: (value: number) => number;
   determinePointColourMappings: () => { points: number; colour: string }[];
   determineAdjacentMappings: () => { pin: number; adjacent_pins: number[] }[];
@@ -520,8 +520,26 @@ const Nubble: React.FC<Props> = (props) => {
 
   // Array (length of rowLength) of buttons
   function populateRow(rowLength: number, rowNumber: number) {
+    // Calculate the middle row
+    const middle = Math.sqrt(props.gridSize) / 2;
+
+    // Calculate the offset from the middle row (negative is below middle)
+    const offset = middle - rowNumber;
+
+    // How much to slant the parallelogram
+    const X_SLANT = 2.2;
+    const Y_SLANT = 1.9;
+
     return (
-      <div className="nubble-grid-row">
+      <div
+        className="nubble-grid-row"
+        style={{
+          transform:
+            props.gridShape === "hexagon"
+              ? `translate(${offset * 10 * X_SLANT}px, ${offset * 10 * Y_SLANT}px)`
+              : undefined,
+        }}
+      >
         {Array.from({ length: rowLength }).map((_, i) => {
           let value = rowNumber * rowLength + i + 1;
           let isPicked = pickedPins.includes(value);
@@ -534,12 +552,16 @@ const Nubble: React.FC<Props> = (props) => {
               key={i}
               className="nubble-button"
               data-prime={isPrime(value)}
+              data-shape={props.gridShape}
               data-picked={isPicked}
               data-colour={colour}
               onClick={() => onClick(value)}
               disabled={isPicked}
             >
-              {value}
+              {props.gridShape === "hexagon" && <span className="top"></span>}
+              {props.gridShape === "hexagon" && <span className="middle">{value}</span>}
+              {props.gridShape === "hexagon" && <span className="bottom"></span>}
+              {props.gridShape === "square" && value}
             </button>
           );
         })}
@@ -550,32 +572,10 @@ const Nubble: React.FC<Props> = (props) => {
   function populateGrid() {
     var Grid = [];
 
-    if (props.gridShape === "square") {
-      const rowLength = Math.sqrt(props.gridSize);
-      for (let i = 0; i < rowLength; i++) {
-        Grid.push(populateRow(rowLength, i));
-      }
+    const rowLength = Math.sqrt(props.gridSize);
+    for (let i = 0; i < rowLength; i++) {
+      Grid.push(populateRow(rowLength, i));
     }
-
-    /*
-    for (let i = 1; i <= props.gridSize; i++) {
-      let isPicked = pickedPins.includes(i);
-      let colour = pointColourMappings.find((x) => x.points === props.determinePoints(i))?.colour;
-      Grid.push(
-        <button
-          key={i}
-          className="nubble-button"
-          data-prime={isPrime(i)}
-          data-picked={isPicked}
-          data-colour={colour}
-          onClick={() => onClick(i)}
-          disabled={isPicked}
-        >
-          {i}
-        </button>
-      );
-    }
-    */
     return Grid;
   }
 

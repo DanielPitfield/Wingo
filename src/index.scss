@@ -650,7 +650,7 @@ $data-statuses: (
   padding: 10px;
 }
 
-.nubble-button, .nubble-button-display {
+.nubble-button-display {
   color: white;
   font-weight: bold;
   text-align: center;
@@ -663,6 +663,47 @@ $data-statuses: (
   margin: 1px;
 }
 
+.nubble-button {
+  cursor: pointer;
+  color: white;
+  font-weight: bold;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+  &[data-shape="square"] {
+    padding: 1em;
+    min-width: 4em;
+    min-height: 4em;
+    margin: 1px;
+  }
+  &[data-shape="hexagon"] {
+    .top {
+      display: block;
+      width: 0;
+      border-bottom: 15px solid #6c6;
+      border-left: 26px solid transparent;
+      border-right: 26px solid transparent;
+    }
+    .middle {
+      display: block;
+      width: 52px;
+      height: 30px;
+      background-color: #6c6;
+      display: flex;
+      text-align: center;
+      align-items: center;
+      justify-content: center;
+    }
+    .bottom {
+      display: block;
+      width: 0;
+      border-top: 15px solid #6c6;
+      border-left: 26px solid transparent;
+      border-right: 26px solid transparent;
+    }
+  }
+}
+
 .nubble-button-display {
   cursor: default;
 }
@@ -672,7 +713,8 @@ $data-statuses: (
   border: 4px solid grey !important;
 }
 
-.nubble-button[data-prime="true"], .nubble-button-display[data-prime="true"] {
+.nubble-button[data-shape="square"][data-prime="true"],
+.nubble-button-display[data-prime="true"] {
   border: 4px solid #3d3d3d !important;
 }
 
@@ -712,10 +754,30 @@ $nubble-colors-names: (
 
 // Sets background, border and on hover colours for nubble pins
 @each $colourName, $color in $nubble-colors-names {
-  .nubble-button[data-colour="#{$colourName}"] {
+  .nubble-button[data-shape="square"][data-colour="#{$colourName}"] {
     background-color: $color;
     // Border has darker tone of colour
     border: 4px solid darken($color, 10%);
+    &:hover {
+      // On hover, make background color same as border
+      background-color: darken($color, 10%);
+    }
+  }
+  .nubble-button[data-shape="hexagon"][data-colour="#{$colourName}"] {
+    background: none;
+    border: none;
+    padding: 0.1em;
+    .middle {
+      background-color: $color;
+    }
+    .top {
+      border-bottom-color: $color;
+    }
+    .bottom {
+      border-top-color: $color;
+    }
+    // Border has darker tone of colour
+    //border: 4px solid darken($color, 10%);
     &:hover {
       // On hover, make background color same as border
       background-color: darken($color, 10%);
