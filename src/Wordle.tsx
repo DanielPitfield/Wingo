@@ -222,8 +222,8 @@ const Wordle: React.FC<Props> = (props) => {
           <Button
             mode={"accept"}
             onClick={() =>
-              props.mode === "increasing" ||
-              (props.mode === "limitless" && props.targetWord.toUpperCase() === props.currentWord.toUpperCase())
+              (props.mode === "increasing" ||
+              props.mode === "limitless") && props.targetWord.toUpperCase() === props.currentWord.toUpperCase()
                 ? props.ContinueGame()
                 : props.ResetGame()
             }
