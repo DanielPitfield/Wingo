@@ -14,8 +14,9 @@ const LetterTile: React.FC<Props> = (props) => {
 
   const [delayedStatus, setDelayedStatus] = useState<Props["status"]>("not set");
 
-  React.useEffect(() => {
+  React.useEffect(() => { 
     if (props.status === "not set") {
+      setDelayedStatus(props.status);
       return;
     }
 
