@@ -245,24 +245,26 @@ const Wordle: React.FC<Props> = (props) => {
         {props.mode === "category" && <MessageNotification type="default">{props.targetCategory}</MessageNotification>}
       </div>
 
-      <div className="category_selection">
-        <label className="category_label">
-          <select
-            onChange={(event) => {
-              props.onSubmitTargetCategory(event.target.value);
-            }}
-            className="category_input"
-            name="category"
-            value={props.targetCategory}
-          >
-            {categoryMappings.map((category) => (
-              <option key={category.name} value={category.name}>
-                {category.name}
-              </option>
-            ))}
-          </select>
-        </label>
-      </div>
+      {props.mode === "category" && (
+        <div className="category_selection">
+          <label className="category_label">
+            <select
+              onChange={(event) => {
+                props.onSubmitTargetCategory(event.target.value);
+              }}
+              className="category_input"
+              name="category"
+              value={props.targetCategory}
+            >
+              {categoryMappings.map((category) => (
+                <option key={category.name} value={category.name}>
+                  {category.name}
+                </option>
+              ))}
+            </select>
+          </label>
+        </div>
+      )}
 
       <div className="word_grid">{populateGrid(props.numGuesses, props.wordLength)}</div>
 
