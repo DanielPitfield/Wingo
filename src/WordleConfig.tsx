@@ -219,6 +219,21 @@ const WordleConfig: React.FC<Props> = (props) => {
     }
   }, [targetWord]);
 
+  // Update targetWord every time the targetCategory changes
+  React.useEffect(() => {
+    if (props.mode === "category") {
+      const wordArray = categoryMappings.find((x) => x.name === targetCategory)?.array;
+
+      if (!wordArray) {
+        return;
+      }
+
+      const random_word = wordArray[Math.round(Math.random() * (wordArray.length - 1))];
+      console.log(random_word);
+      settargetWord(random_word);
+    }
+  }, [targetCategory]);
+
   // Updates letter status (which is passed through to Keyboard to update button colours)
   React.useEffect(() => {
     const letterStatusesCopy = letterStatuses.slice();
@@ -623,6 +638,12 @@ const WordleConfig: React.FC<Props> = (props) => {
     }
   }
 
+  function onSubmitTargetCategory(category: string) {
+    if (categoryMappings.find((x) => x.name === category)) {
+      settargetCategory(category);
+    }
+  }
+
   function onBackspace() {
     if (currentWord.length > 0 && inProgress) {
       // If only the first letter and it was provided to begin with
@@ -666,6 +687,7 @@ const WordleConfig: React.FC<Props> = (props) => {
       finishingButtonText={props.finishingButtonText}
       onEnter={onEnter}
       onSubmitLetter={onSubmitLetter}
+      onSubmitTargetCategory={onSubmitTargetCategory}
       onBackspace={onBackspace}
       ResetGame={ResetGame}
       ContinueGame={ContinueGame}
