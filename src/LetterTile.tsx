@@ -10,7 +10,7 @@ interface Props {
 const LetterTile: React.FC<Props> = (props) => {
   const DELAY_BETWEEN_TILE_REVEAL_SECONDS = 0.4;
   const delayForThisLetterSeconds =
-    props.indexInWord !== undefined ? props.indexInWord * DELAY_BETWEEN_TILE_REVEAL_SECONDS : undefined;
+    props.indexInWord !== undefined && props.status !== "incorrect" ? props.indexInWord * DELAY_BETWEEN_TILE_REVEAL_SECONDS : undefined;
 
   const [delayedStatus, setDelayedStatus] = useState<Props["status"]>("not set");
 

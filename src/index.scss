@@ -122,6 +122,10 @@ code {
   border: 10px solid rgb(44, 44, 184);
 }
 
+.word_row[data-invalid-word-submitted="true"] {
+  animation: shakeIncorrectInput 1.5s;
+}
+
 .word_row[data-has-been-submitted="true"] .letter_tile {
   animation: flipRevealLetter 1.5s;
 }

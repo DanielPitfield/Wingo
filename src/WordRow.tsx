@@ -43,7 +43,11 @@ export const WordRow: React.FC<Props> = (props) => {
   }
 
   return (
-    <div className={props.isVertical ? "word_row_vertical" : "word_row"} data-has-been-submitted={props.word && props.hasSubmit}>
+    /*
+    [data-invalid-word-submitted="true"] - Shake animation is applied to WordRow
+    [data-has-been-submitted="true"] - Reveal animation is applied to every LetterTile
+    */
+    <div className={props.isVertical ? "word_row_vertical" : "word_row"} data-invalid-word-submitted={props.word && props.hasSubmit && !props.inDictionary} data-has-been-submitted={props.word && props.hasSubmit && props.inDictionary}>
       <>{CreateRow()}</>
     </div>
   );
