@@ -116,6 +116,12 @@ code {
   max-width: 95vw;
 }
 
+.level {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+
 // Background color of countdown word grid is slightly different
 .countdown_word_grid {
   background-color: #2474bb !important;

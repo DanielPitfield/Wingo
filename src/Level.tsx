@@ -1,5 +1,6 @@
 import React from "react";
 import { Page } from "./App";
+import { MessageNotification } from "./MessageNotification";
 import WordleConfig, { WordleConfigProps } from "./WordleConfig";
 
 export interface LevelConfig {
@@ -10,7 +11,7 @@ export interface LevelConfig {
 export const Level: React.FC<{ level: LevelConfig; page: Page; setPage: (page: Page) => void }> = (props) => {
   return (
     <div className="level">
-      <p className="level-description">{props.level.description}</p>
+      <MessageNotification type="default">{props.level.description}</MessageNotification>
       <WordleConfig
         {...props.level.levelProps}
         page={props.page}
