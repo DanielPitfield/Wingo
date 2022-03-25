@@ -250,7 +250,7 @@ const Wordle: React.FC<Props> = (props) => {
         {
           /* TODO: Add options to turn keyboard/timer/first letter after Wordle has been launched (during the game) */ props.keyboard && (
             <Keyboard
-              isCountdownMode={false}
+              mode={props.mode}
               onEnter={props.onEnter}
               onSubmitLetter={props.onSubmitLetter}
               onBackspace={props.onBackspace}

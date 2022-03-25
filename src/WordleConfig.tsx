@@ -171,6 +171,8 @@ const WordleConfig: React.FC<Props> = (props) => {
     { letter: "x", status: "" },
     { letter: "y", status: "" },
     { letter: "z", status: "" },
+    { letter: "-", status: "" },
+    { letter: "'", status: "" },
   ];
 
   const [letterStatuses, setletterStatuses] = useState<
@@ -207,6 +209,15 @@ const WordleConfig: React.FC<Props> = (props) => {
       SaveData.setDailyWordGuesses(targetWord, guesses, wordIndex, inProgress, currentWord);
     }
   }, [targetWord, currentWord, guesses, wordIndex, inProgress]);
+
+  // Update word length every time the target word changes during category mode
+  React.useEffect(() => {
+    if (props.mode === "category") {
+      if (targetWord) {
+        setwordLength(targetWord.length);
+      }
+    }
+  }, [targetWord]);
 
   // Updates letter status (which is passed through to Keyboard to update button colours)
   React.useEffect(() => {
@@ -331,8 +342,6 @@ const WordleConfig: React.FC<Props> = (props) => {
         console.log("Category word: " + new_target_word);
         settargetWord(new_target_word);
 
-        setwordLength(new_target_word.length);
-
         // Reveal the first letter from game start
         if (props.firstLetterProvided) {
           setCurrentWord(new_target_word.charAt(0));
@@ -424,7 +433,9 @@ const WordleConfig: React.FC<Props> = (props) => {
     if (props.mode !== "limitless" || numGuesses <= 1) {
       // Ending of any game mode
       setNumGuesses(props.defaultnumGuesses);
-      setwordLength(props.defaultWordLength);
+      if (props.mode !== "category") {
+        setwordLength(props.defaultWordLength);
+      }
     } else {
       // Game mode is limitless and there are still rows
       setNumGuesses(numGuesses - 1); // Remove a row

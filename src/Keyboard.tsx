@@ -7,7 +7,7 @@ interface Props {
   onSubmitLetter: (letter: string) => void;
   onEnter: () => void;
   onBackspace: () => void;
-  isCountdownMode: boolean;
+  mode: string;
   guesses: string[];
   targetWord: string;
   inDictionary: boolean;
@@ -32,6 +32,11 @@ export const Keyboard: React.FC<Props> = (props) => {
       } else if (Alphabet.includes(input_key)) {
         // Any letter on the keyboard
         props.onSubmitLetter(input_key);
+      } else if (props.mode === "category") {
+        // Allow dash and apostrophe for category gamemode
+        if (input_key === "-" || input_key === "'") {
+          props.onSubmitLetter(input_key);
+        }
       }
     };
     window.addEventListener("keydown", handleKeyDown);
@@ -47,8 +52,15 @@ export const Keyboard: React.FC<Props> = (props) => {
       status: "not set",
     }));
 
+    if (props.mode === "category") {
+      keyboardStatuses.push({letter: "-",
+      status: "not set"});
+      keyboardStatuses.push({letter: "'",
+      status: "not set"});
+    }
+
     // Don't need updated keyboard statuses if Countdown Letters
-    if (props.isCountdownMode) {
+    if (props.mode === "countdown_letters") {
       // Just use standard statuses (where all are "not set")
       return keyboardStatuses;
     }
@@ -115,10 +127,10 @@ export const Keyboard: React.FC<Props> = (props) => {
   return (
     <div className="keyboard_wrapper">
       <div className="keyboard_row_top">
-        <>{populateKeyboard("QWERTYUIOP")}</>
+        <>{populateKeyboard(props.mode !== "category" ? "QWERTYUIOP" : "QWERTYUIOP-")}</>
       </div>
       <div className="keyboard_row_middle">
-        <>{populateKeyboard("ASDFGHJKL")}</>
+        <>{populateKeyboard(props.mode !== "category" ? "ASDFGHJKL" : "ASDFGHJKL'")}</>
       </div>
       <div className="keyboard_row_bottom">
         <>{populateKeyboard("ZXCVBNM")}</>

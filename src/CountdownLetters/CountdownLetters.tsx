@@ -402,7 +402,7 @@ const CountdownLetters: React.FC<Props> = (props) => {
       <div className="keyboard">
         {props.keyboard && (
           <Keyboard
-            isCountdownMode={true}
+            mode={props.mode}
             onEnter={props.onEnter}
             onSubmitLetter={props.onSubmitLetter}
             onBackspace={props.onBackspace}
