@@ -1,6 +1,1 @@
-export const words_dogs = [
-"labrador",
-"retriever",
-"spaniel",
-"poodle",
-];
+export const words_dogs = ["labrador", "retriever", "spaniel", "poodle"];
