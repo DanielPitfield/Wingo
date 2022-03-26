@@ -215,10 +215,16 @@ export class SaveData {
   public static readGold(): number {
     const gold = localStorage.getItem("gold");
 
-    if (gold) {
-      return parseInt(gold);
+    if (!gold) {
+      return 0;
     }
 
-    return 0;
+    const parsedGold = parseInt(gold);
+
+    if (isNaN(parsedGold)) {
+      return 0;
+    }
+
+    return parsedGold;
   }
 }
