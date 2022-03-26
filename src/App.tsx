@@ -454,10 +454,6 @@ export const App: React.FC = () => {
       {page !== "splash-screen" && (
         <>
           <div className="toolbar">
-            <div className="gold_counter">
-              <img className="gold_coin_image" src={GoldCoin} alt="Gold" />
-              {gold.toLocaleString("en-GB")}
-            </div>
             {page !== "home" && (
               <nav className="navigation">
                 <Button mode="default" className="back-button" onClick={() => window.history.back()}>
@@ -465,12 +461,12 @@ export const App: React.FC = () => {
                 </Button>
               </nav>
             )}
+            <h1 className="title">{pages.find((x) => x.page === page)?.title || "Wingo"}</h1>
+            <div className="gold_counter">
+              <img className="gold_coin_image" src={GoldCoin} alt="Gold" />
+              {gold.toLocaleString("en-GB")}
+            </div>
           </div>
-          {page !== "home" && (
-            <header>
-              <h1 className="title">{pages.find((x) => x.page === page)?.title || "Wingo"}</h1>
-            </header>
-          )}
         </>
       )}
       {pageComponent}

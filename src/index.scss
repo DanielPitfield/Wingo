@@ -469,7 +469,7 @@ $data-statuses: (
 }
 
 .toolbar {
-  height: 2.6em;
+  height: 3em;
   display: flex;
   align-items: stretch;
   background-color: #4b4b4b;
@@ -477,9 +477,20 @@ $data-statuses: (
     padding: 0.52em 0.6em;
     margin: 0.3em;
   }
+  .title {
+    flex-grow: 1;
+    font-size: 1.2rem;
+    font-weight: normal;
+    margin: 0;
+    padding: 0.5em;
+    color: #ccc;
+    text-align: center;
+    text-transform: none;
+  }
   .gold_counter {
     cursor: pointer;
-    display: block;
+    display: flex;
+    align-items: center;
     background: linear-gradient(122deg, #d1b600 0%, #d5bb01 18%, #e3c800 46%);
     border-bottom: 3px solid #d8bf00;
     color: white;
@@ -499,19 +510,6 @@ $data-statuses: (
     height: 0.8em;
     width: 0.8em;
     padding: 0 6px;
-  }
-}
-
-header {
-  background-color: #e1ffb0;
-  border-bottom: 3px solid #c8e0a4;
-  color: #596659;
-  margin-bottom: 1em;
-  .title {
-    font-size: 1.2rem;
-    font-weight: normal;
-    margin: 0;
-    padding: 0.7em;
   }
 }
 
