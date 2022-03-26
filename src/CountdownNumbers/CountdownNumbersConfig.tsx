@@ -12,6 +12,7 @@ interface Props {
   defaultExpressionLength: number;
   timerConfig: { isTimed: false } | { isTimed: true; seconds: number };
   setPage: (page: Page) => void;
+  addGold: (gold: number) => void;
 }
 
 export function isNumberValid(currentExpression: string) {
@@ -285,7 +286,7 @@ const CountdownNumbersConfig: React.FC<Props> = (props) => {
       // Remove the second operand
       removeOperandFromGuess(currentGuess.operand2);
       // Replace with (add) new second operand
-      setCurrentGuess({ ...currentGuess, operand2: number }); 
+      setCurrentGuess({ ...currentGuess, operand2: number });
     }
 
     const newCountdownStatuses = countdownStatuses.slice();
@@ -374,6 +375,7 @@ const CountdownNumbersConfig: React.FC<Props> = (props) => {
       ContinueGame={ContinueGame}
       setPage={props.setPage}
       setOperator={(operator) => setCurrentGuess({ ...currentGuess, operator })}
+      addGold={props.addGold}
     ></CountdownNumbers>
   );
 };

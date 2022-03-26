@@ -73,6 +73,7 @@ export const App: React.FC = () => {
   const [page, setPage] = useState<Page>("splash-screen");
   const [selectedCampaignArea, setSelectedCampaignArea] = useState<AreaConfig | null>(null);
   const [selectedCampaignLevel, setSelectedCampaignLevel] = useState<LevelConfig | null>(null);
+  const [gold, setGold] = useState<number>(SaveData.readGold());
 
   const [gameOptionToggles, setgameOptionToggles] = useState<
     {
@@ -157,6 +158,10 @@ export const App: React.FC = () => {
     window.setTimeout(() => setPage(pageFromUrl || "home"), LOADING_TIMEOUT_MS + FADE_OUT_DURATION_MS);
   }, [saveData]);
 
+  useEffect(() => {
+    SaveData.setGold(gold);
+  }, [gold]);
+
   /**
    *
    * @returns
@@ -185,6 +190,10 @@ export const App: React.FC = () => {
     window.onpopstate = () => setPage(getPageFromUrl() || "home");
   }, []);
 
+  function addGold(additionalGold: number) {
+    setGold(gold + additionalGold);
+  }
+
   const pageComponent = (() => {
     const commonProps = {
       saveData: saveData,
@@ -193,6 +202,7 @@ export const App: React.FC = () => {
       puzzleLeaveNumBlanks: puzzleLeaveNumBlanks,
       page: page,
       setPage: setPage,
+      addGold: addGold,
     };
 
     switch (page) {
@@ -238,6 +248,7 @@ export const App: React.FC = () => {
               );
             }}
             setPage={setPage}
+            addGold={addGold}
             gameOptionToggles={gameOptionToggles}
           />
         );
@@ -253,7 +264,11 @@ export const App: React.FC = () => {
         );
 
       case "campaign/area/level":
-        return selectedCampaignLevel && <Level level={selectedCampaignLevel} page={page} setPage={setPage} />;
+        return (
+          selectedCampaignLevel && (
+            <Level level={selectedCampaignLevel} page={page} setPage={setPage} addGold={addGold} />
+          )
+        );
 
       case "wingo/daily":
         return (
@@ -381,6 +396,7 @@ export const App: React.FC = () => {
             defaultWordLength={wordLength_countdown_letters}
             page={page}
             setPage={setPage}
+            addGold={addGold}
           />
         );
 
@@ -414,6 +430,7 @@ export const App: React.FC = () => {
             defaultNumGuesses={countdown_numbers_NumGuesses}
             page={page}
             setPage={setPage}
+            addGold={addGold}
           />
         );
 
@@ -439,7 +456,7 @@ export const App: React.FC = () => {
           <div className="toolbar">
             <div className="gold_counter">
               <img className="gold_coin_image" src={GoldCoin} alt="Gold" />
-              {SaveData.readGold()}
+              {gold.toLocaleString("en-GB")}
             </div>
             {page !== "home" && (
               <nav className="navigation">

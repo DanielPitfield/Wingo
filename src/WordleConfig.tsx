@@ -33,6 +33,7 @@ export interface WordleConfigProps {
 interface Props extends WordleConfigProps {
   page: Page;
   setPage: (page: Page) => void;
+  addGold: (gold: number) => void;
 }
 
 export const wordLengthMappingsGuessable = [
@@ -364,8 +365,7 @@ const WordleConfig: React.FC<Props> = (props) => {
         if (props.firstLetterProvided) {
           setCurrentWord(new_target_word.charAt(0));
         }
-      } 
-      else if (props.mode === "letters_categories") {
+      } else if (props.mode === "letters_categories") {
         // Get a random letter from the Alphabet
         const random_letter = Alphabet[Math.round(Math.random() * (Alphabet.length - 1))];
         // Set this letter as the letter that all words must begin with
@@ -383,8 +383,7 @@ const WordleConfig: React.FC<Props> = (props) => {
         } while (category_indexes.size < 5);
 
         setCategoryIndexes(Array.from(category_indexes));
-      }
-      else {
+      } else {
         /* --- REPEAT, INCREASING, LIMITLESS AND INTERLINKED ---  */
         const targetWordArray = wordLengthMappingsTargets.find((x) => x.value === wordLength)?.array!;
 
@@ -602,8 +601,7 @@ const WordleConfig: React.FC<Props> = (props) => {
       // Find the array using this unique category index
       wordArray = categoryMappings[row_category_index].array;
       // TODO: Letters Categories mode
-    }    
-    else {
+    } else {
       // Otherwise, find the array by length of word
       wordArray = wordLengthMappingsGuessable.find((x) => x.value === wordLength)?.array!;
     }
@@ -620,7 +618,7 @@ const WordleConfig: React.FC<Props> = (props) => {
         // Exact match
         setinProgress(false);
         const goldBanked = calculateGoldAwarded(targetWord.length, wordIndex + 1);
-        SaveData.addGold(goldBanked);
+        props.addGold(goldBanked);
         outcome = "success";
       } else if (wordIndex + 1 === numGuesses) {
         // Out of guesses

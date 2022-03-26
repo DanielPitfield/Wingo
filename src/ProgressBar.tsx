@@ -87,6 +87,7 @@ const ProgressBar: React.FC<Props> = (props) => {
 
   return (
     <div className="progress_bar">
+      <div className="progress_bar_content">{props.children}</div>
       <div className="progress_bar_progress" style={{ width: `${percentage}%`, backgroundColor }}></div>
     </div>
   );

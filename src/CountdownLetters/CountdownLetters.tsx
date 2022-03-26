@@ -28,6 +28,7 @@ interface Props {
     status: "" | "contains" | "correct" | "not set" | "not in word";
   }[];
   setPage: (page: Page) => void;
+  addGold: (gold: number) => void;
   onEnter: () => void;
   onSubmitCountdownLetter: (letter: string) => void;
   onSubmitCountdownWord: (word: string) => void;
@@ -304,7 +305,7 @@ const CountdownLetters: React.FC<Props> = (props) => {
         // Already evaluated that guess is valid, so just display result
         outcome = "success";
         // Reward gold based on how long the selected guess is
-        SaveData.addGold(selectedFinalGuess.length * GOLD_PER_LETTER);
+        props.addGold(selectedFinalGuess.length * GOLD_PER_LETTER);
         return (
           <>
             <MessageNotification type="success">
@@ -319,7 +320,7 @@ const CountdownLetters: React.FC<Props> = (props) => {
         // Realistic mode, guess (has not yet and so) needs to be evaluated
         if (props.inDictionary && isWordValid(props.countdownWord, selectedFinalGuess)) {
           outcome = "success";
-          SaveData.addGold(selectedFinalGuess.length * GOLD_PER_LETTER);
+          props.addGold(selectedFinalGuess.length * GOLD_PER_LETTER);
           return (
             <>
               <MessageNotification type="success">

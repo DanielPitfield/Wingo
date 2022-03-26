@@ -39,6 +39,7 @@ interface Props {
   ResetGame: () => void;
   ContinueGame: () => void;
   setOperator: (operator: Guess["operator"]) => void;
+  addGold: (gold: number) => void;
 }
 
 const CountdownNumbers: React.FC<Props> = (props) => {
@@ -223,7 +224,7 @@ const CountdownNumbers: React.FC<Props> = (props) => {
         // Already evaluated that guess is valid, so just display result
         outcome = "success";
         // Reward gold based on how long the selected guess is
-        SaveData.addGold(selectedFinalGuess.length * GOLD_PER_NUMBER);
+        props.addGold(selectedFinalGuess.length * GOLD_PER_NUMBER);
         return (
           <>
             <MessageNotification type="success">
@@ -236,7 +237,7 @@ const CountdownNumbers: React.FC<Props> = (props) => {
       } else {
         // Realistic mode
         outcome = "success";
-        SaveData.addGold(selectedFinalGuess.length * GOLD_PER_NUMBER);
+        props.addGold(selectedFinalGuess.length * GOLD_PER_NUMBER);
         return (
           <>
             <MessageNotification type="success">

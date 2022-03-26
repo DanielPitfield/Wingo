@@ -11,6 +11,7 @@ interface Props {
   keyboard: boolean;
   defaultWordLength: number;
   setPage: (page: Page) => void;
+  addGold: (gold: number) => void;
 }
 
 export function getWordSummary(word: string, targetWord: string, inDictionary: boolean) {
@@ -183,12 +184,12 @@ const CountdownLettersConfig: React.FC<Props> = (props) => {
   }, [guesses]);
 
   function ResetGame() {
-    setGuesses([]);    
+    setGuesses([]);
     setCountdownWord("");
     setCurrentWord("");
     settargetWord("");
     setinProgress(true);
-    sethasTimerEnded(false)
+    sethasTimerEnded(false);
     setinDictionary(true);
     setwordLength(props.defaultWordLength);
     sethasSubmitLetter(false);
@@ -317,6 +318,7 @@ const CountdownLettersConfig: React.FC<Props> = (props) => {
       ResetGame={ResetGame}
       ContinueGame={ContinueGame}
       setPage={props.setPage}
+      addGold={props.addGold}
     ></CountdownLetters>
   );
 };

@@ -1,62 +1,68 @@
-import { Page } from './App'
+import { Page } from "./App";
+import { BaseChallenge } from "./Challenges/BaseChallenge";
 
 export type DailyWordSaveData = {
-  dailyWord: string
-  guesses: string[]
-  wordIndex: number
-  inProgress: boolean
-  currentWord: string
-}
+  dailyWord: string;
+  guesses: string[];
+  wordIndex: number;
+  inProgress: boolean;
+  currentWord: string;
+};
+
+export type RedeemedChallengesData = {
+  id: BaseChallenge["userFacingTitle"];
+  redeemedTimestamp: string;
+}[];
 
 export type HistorySaveData = {
   games: {
     /** Unique identifer of the game */
-    id: string
+    id: string;
 
     /** Page/mode of the game */
-    page: Page
+    page: Page;
 
     /** Configuration at the start of the game */
     configAtStartOfGame: {
-      timestamp: string
-      wordLength: number
-      numGuesses: number
-      firstLetterProvided: boolean
-      puzzleRevealMs: number
-      puzzleLeaveNumBlanks: number
-    }
+      timestamp: string;
+      wordLength: number;
+      numGuesses: number;
+      firstLetterProvided: boolean;
+      puzzleRevealMs: number;
+      puzzleLeaveNumBlanks: number;
+    };
 
     /** Configuration of the rounds in the game (including the last) */
     completedRounds: {
       /** Unique identifer of the game */
-      id: string
+      id: string;
 
-      timestamp: string
-      wordLength: number
-      numGuesses: number
-      firstLetterProvided: boolean
-      puzzleRevealMs: number
-      puzzleLeaveNumBlanks: number
-      currentWord: string
-      guesses: string[]
-      outcome: 'success' | 'failure'
-    }[]
-  }[]
-}
+      timestamp: string;
+      wordLength: number;
+      numGuesses: number;
+      firstLetterProvided: boolean;
+      puzzleRevealMs: number;
+      puzzleLeaveNumBlanks: number;
+      currentWord: string;
+      guesses: string[];
+      outcome: "success" | "failure";
+    }[];
+  }[];
+};
 
 /** Generates a new identifier. */
 export function newGuid(): string {
-  const guidTemplate = 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx'
+  const guidTemplate = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx";
 
   return guidTemplate
-    .split('')
+    .split("")
     .map((char) => {
-      if (char === 'x') {
-        return Math.round(Math.random() * 16).toString(16)
+      if (char === "x") {
+        return Math.round(Math.random() * 16).toString(16);
       }
-      return char
+      return char;
     })
-    .join('')
+    .join("");
 }
 
 /** */
@@ -68,21 +74,21 @@ export class SaveData {
    */
   public static addGameToHistory(
     page: Page,
-    configAtStartOfGame: HistorySaveData['games'][0]['configAtStartOfGame'],
+    configAtStartOfGame: HistorySaveData["games"][0]["configAtStartOfGame"]
   ): string {
-    const history = SaveData.getHistory()
-    const id = newGuid()
+    const history = SaveData.getHistory();
+    const id = newGuid();
 
     history.games.push({
       id,
       page,
       configAtStartOfGame,
       completedRounds: [],
-    })
+    });
 
-    localStorage.setItem('history', JSON.stringify(history))
+    localStorage.setItem("history", JSON.stringify(history));
 
-    return id
+    return id;
   }
 
   /**
@@ -93,9 +99,9 @@ export class SaveData {
    */
   public static addCompletedRoundToGameHistory(
     gameId: string,
-    round: Omit<HistorySaveData['games'][0]['completedRounds'][0], 'id'>,
+    round: Omit<HistorySaveData["games"][0]["completedRounds"][0], "id">
   ) {
-    const history = SaveData.getHistory()
+    const history = SaveData.getHistory();
 
     const newHistory: HistorySaveData = {
       ...history,
@@ -103,14 +109,14 @@ export class SaveData {
         // Find the game
         if (game.id === gameId) {
           // Add the round
-          game.completedRounds.push({ id: newGuid(), ...round })
+          game.completedRounds.push({ id: newGuid(), ...round });
         }
 
-        return game
+        return game;
       }),
-    }
+    };
 
-    localStorage.setItem('history', JSON.stringify(newHistory))
+    localStorage.setItem("history", JSON.stringify(newHistory));
   }
 
   /**
@@ -118,15 +124,15 @@ export class SaveData {
    * @returns Save history.
    */
   public static getHistory(): HistorySaveData {
-    const history = localStorage.getItem('history')
+    const history = localStorage.getItem("history");
 
     if (history) {
-      return JSON.parse(history) as HistorySaveData
+      return JSON.parse(history) as HistorySaveData;
     }
 
     return {
       games: [],
-    }
+    };
   }
 
   /**
@@ -139,56 +145,80 @@ export class SaveData {
     guesses: string[],
     wordIndex: number,
     inProgress: boolean,
-    currentWord: string,
+    currentWord: string
   ) {
     localStorage.setItem(
-      'dailyWordGuesses',
+      "dailyWordGuesses",
       JSON.stringify({
         dailyWord,
         guesses,
         wordIndex,
         inProgress,
         currentWord,
-      }),
-    )
+      })
+    );
+  }
+
+  /**
+   * Adds a redeemed challeng.
+   * @param challege Redeemed challenge.
+   */
+  public static addRedeemedChallenge(challenge: BaseChallenge) {
+    const redeemedChallenges = SaveData.getRedeemedChallenges() || [];
+
+    redeemedChallenges.push({
+      id: challenge.id(),
+      redeemedTimestamp: new Date().toISOString(),
+    });
+
+    localStorage.setItem("redeemedChallenges", JSON.stringify(redeemedChallenges));
   }
 
   /**
    * Gets the last daily word guesses played, or null if not yet played.
    */
   public static getDailyWordGuesses(): DailyWordSaveData | null {
-    const dailyWordGuesses = localStorage.getItem('dailyWordGuesses')
+    const dailyWordGuesses = localStorage.getItem("dailyWordGuesses");
 
     if (dailyWordGuesses) {
-      return JSON.parse(dailyWordGuesses) as DailyWordSaveData
+      return JSON.parse(dailyWordGuesses) as DailyWordSaveData;
     }
 
-    return null
+    return null;
   }
 
   /**
-   * Adds the specified amount of gold, and saves it in storage.
-   * @param gold Gold to add.
+   * Gets the redeemed challenges, or null if not yet played.
    */
-  public static addGold(gold: number) {
-    const existingGold = SaveData.readGold()
+  public static getRedeemedChallenges(): RedeemedChallengesData | null {
+    const redeemedChallenges = localStorage.getItem("redeemedChallenges");
 
-    const newGold = existingGold + gold
+    if (redeemedChallenges) {
+      return JSON.parse(redeemedChallenges) as RedeemedChallengesData;
+    }
 
+    return null;
+  }
+
+  /**
+   * Sets the specified amount of gold, and saves it in storage.
+   * @param gold Gold to set to.
+   */
+  public static setGold(gold: number) {
     // Update the data item in local storage
-    localStorage.setItem('gold', newGold.toString())
+    localStorage.setItem("gold", gold.toString());
   }
 
   /**
    * Reads the stored amount of gold from storage.
    */
   public static readGold(): number {
-    const gold = localStorage.getItem('gold')
+    const gold = localStorage.getItem("gold");
 
     if (gold) {
-      return parseInt(gold)
+      return parseInt(gold);
     }
 
-    return 0
+    return 0;
   }
 }

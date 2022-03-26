@@ -4,10 +4,21 @@ import { BaseChallenge } from "./BaseChallenge";
 /** Completion of the Daily Wingo */
 export class DailyWingo extends BaseChallenge {
   /** @inheritdoc */
-  public title = "Daily Wingo";
+  public internalClassName = "DailyWingo";
 
   /** @inheritdoc */
-  public description = "Complete today's Daily Wingo";
+  public userFacingTitle = "Daily Wingo";
+
+  /** @inheritdoc */
+  public description = () => "Complete today's Daily Wingo";
+
+  /** @inheritdoc */
+  public reward = () => ({ goldCoins: 500, xp: 0 });
+
+  /** @inheritdoc */
+  public id(): string {
+    return `${this.internalClassName}-${new Date().toLocaleDateString()}`;
+  }
 
   /** @inheritdoc */
   public currentProgress(history: HistorySaveData): number {
@@ -23,5 +34,5 @@ export class DailyWingo extends BaseChallenge {
   }
 
   /** @inheritdoc */
-  public target = 1;
+  public target = () => 1;
 }
