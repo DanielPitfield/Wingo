@@ -17,7 +17,7 @@ import { words_dogs } from "./WordArrays/Categories/dogs";
 import { words_countries } from "./WordArrays/Categories/countries";
 
 export interface WordleConfigProps {
-  mode: "daily" | "repeat" | "category" | "increasing" | "limitless" | "puzzle" | "interlinked";
+  mode: "daily" | "repeat" | "category" | "increasing" | "limitless" | "puzzle" | "interlinked" | "letters_categories";
   firstLetterProvided: boolean;
   timerConfig: { isTimed: false } | { isTimed: true; seconds: number };
   keyboard: boolean;

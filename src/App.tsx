@@ -41,6 +41,7 @@ export type Page =
   | "wordle_puzzle"
   | "wordle_interlinked"
   | "countdown_letters"
+  | "letters_categories"
   | "countdown_numbers"
   | "nubble"
   | "campaign"
@@ -107,6 +108,12 @@ export const App: React.FC = () => {
     },
     {
       page: "countdown_letters",
+      firstLetter: false,
+      timer: true,
+      keyboard: true,
+    },
+    {
+      page: "letters_categories",
       firstLetter: false,
       timer: true,
       keyboard: true,
@@ -326,6 +333,22 @@ export const App: React.FC = () => {
             defaultWordLength={wordLength_countdown_letters}
             page={page}
             setPage={setPage}
+          />
+        );
+
+        case "letters_categories":
+        return (
+          <WordleConfig
+            {...commonProps}
+            mode="letters_categories"
+            firstLetterProvided={gameOptionToggles.find((x) => x.page === "wordle_interlinked")?.firstLetter || false}
+            timerConfig={
+              gameOptionToggles.find((x) => x.page === "wordle_interlinked")?.timer
+                ? { isTimed: true, seconds: 30 }
+                : { isTimed: false }
+            }
+            keyboard={gameOptionToggles.find((x) => x.page === "wordle_interlinked")?.keyboard || false}
+            defaultWordLength={wordLength}
           />
         );
 
