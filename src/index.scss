@@ -108,9 +108,11 @@ input {
 .countdown_numbers_grid {
   margin-top: 2em;
   margin-bottom: 1em;
-  background-color: #323289;
+  background-color: #e6e6e6;
   padding: 20px 20px;
-  background-image: linear-gradient(318deg, #0d092e, transparent);
+  background-image: linear-gradient(318deg, #ccc, transparent);
+  border-bottom: 3px solid #bbb;
+  border-right: 3px solid #bbb;
   max-width: 95vw;
 }
 
@@ -141,18 +143,18 @@ input {
   justify-content: center;
   width: 1.6em;
   height: 1.6em;
-  border: 2px solid #666;
+  border: 2px solid #6664;
   border-radius: 8px;
   margin: 2px;
   vertical-align: middle;
   font-family: "Ubuntu", sans-serif;
   font-size: 2.5em;
   font-weight: bold;
-  color: white;
+  color: #444;
   text-transform: uppercase;
   user-select: none;
-  text-shadow: 0 2px 2px #333;
-  background-color: rgb(13, 50, 134);
+  text-shadow: 0 2px 2px #999;
+  background-color: #e0e4e7;
   /*
   transition: transform 0.8s;
   transform-style: preserve-3d;
@@ -238,47 +240,55 @@ $data-statuses: (
   "correct": rgb(76, 161, 80),
   "contains": rgb(220, 141, 55),
   "incorrect": rgb(204, 33, 50),
-  "not in word": #787c7e,
+  "not in word": #cbcbcb,
 );
 
 // Keyboard buttons
 .btn.default[data-status="correct"] {
+  color: white;
   background-color: map.get($data-statuses, "correct");
 }
 
 .btn.default[data-status="contains"] {
+  color: white;
   background-color: map.get($data-statuses, "contains");
 }
 
 .btn.default[data-status="incorrect"] {
+  color: white;
   background-color: map.get($data-statuses, "incorrect");
 }
 
 .btn.default[data-status="not in word"] {
+  color: white;
   background-color: map.get($data-statuses, "not in word");
 }
 
 // Wordle and CountdownLetter letter tiles
 .letter_tile[data-status="correct"],
 .countdown_word_grid .word_row .letter_tile[data-status="correct"] {
+  color: white;
   background-color: map.get($data-statuses, "correct");
   /* transform: rotateX(180deg); */
 }
 
 .letter_tile[data-status="contains"],
 .countdown_word_grid .word_row .letter_tile[data-status="contains"] {
+  color: white;
   background-color: map.get($data-statuses, "contains");
   /* transform: rotateX(180deg); */
 }
 
 .letter_tile[data-status="incorrect"],
 .countdown_word_grid .word_row .letter_tile[data-status="incorrect"] {
+  color: white;
   background-color: map.get($data-statuses, "incorrect");
   /* transform: rotateX(180deg); */
 }
 
 .letter_tile[data-status="not in word"],
 .countdown_word_grid .word_row .letter_tile[data-status="not in word"] {
+  color: white;
   background-color: map.get($data-statuses, "not in word");
   /* transform: rotateX(180deg); */
 }
@@ -394,7 +404,7 @@ $data-statuses: (
     flex-grow: 1;
     flex-direction: column;
     .sidebar {
-      background: #e1e1e1;
+      background: #ddd;
       padding: 1.2em;
       padding-bottom: 2em;
       margin: 0.6em;
@@ -405,6 +415,7 @@ $data-statuses: (
         margin: 0;
         color: #fff;
         font-size: 3rem;
+        user-select: none;
         .logo {
           font-size: 1rem;
         }
@@ -425,6 +436,10 @@ $data-statuses: (
           border-bottom: 3px solid #ccc;
           padding: 1em;
           padding-top: 0.5em;
+          user-select: none;
+          &:hover {
+            background-color: #fafafa;
+          }
           .game-mode-title {
             display: flex;
             flex-grow: 1;
