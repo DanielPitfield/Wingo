@@ -77,7 +77,7 @@ export function getNewLives(numGuesses: number, wordIndex: number): number {
 
 export function getWordSummary(word: string, targetWord: string, inDictionary: boolean) {
   // Character and status array
-  let defaultCharacterStatuses = word.split("").map((character, index) => ({
+  let defaultCharacterStatuses = (word || "").split("").map((character, index) => ({
     character: character,
     status: getLetterStatus(character, index, targetWord, inDictionary),
   }));
