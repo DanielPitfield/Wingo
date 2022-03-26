@@ -391,43 +391,80 @@ $data-statuses: (
   display: flex;
   flex-grow: 1;
   font-size: 2vmin;
+  .games {
+    display: flex;
+    flex-grow: 1;
+    flex-direction: column;
+    .sidebar {
+      background: #e1e1e1;
+      padding: 1.2em;
+      padding-bottom: 2em;
+      margin: 0.6em;
+      margin-bottom: 0;
+      .sidebar-title {
+        padding: 10px;
+        padding-bottom: 20px;
+        margin: 0;
+        color: #fff;
+        font-size: 3rem;
+        .logo {
+          font-size: 1rem;
+        }
+      }
+      .sidebar-links {
+        padding: 0;
+        margin: 0;
+        display: flex;
+        flex-wrap: wrap;
+        .sidebar-link {
+          display: flex;
+          flex-direction: column;
+          list-style-type: none;
+          margin: 0.4em;
+          width: 12.8em;
+          height: 7.5em;
+          background-color: #eee;
+          border-bottom: 3px solid #ccc;
+          padding: 1em;
+          padding-top: 0.5em;
+          .game-mode-title {
+            display: flex;
+            flex-grow: 1;
+            font-weight: normal;
+            align-items: center;
+            color: #999;
+            font-size: 1.2em;
+            padding: 0.4em 0.2em;
+            text-transform: uppercase;
+          }
+          .game-mode-button-wrapper {
+            position: relative;
+            .game-mode-button {
+              display: flex;
+              flex-shrink: 0;
+              font-weight: bold;
+              border: 0;
+              padding: 0;
+              height: 11em;
+              width: 13em;
+              cursor: pointer;
+              user-select: none;
+              &:hover {
+                opacity: 0.8;
+                .game-mode-title {
+                  background-color: #444;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
 }
 
-.sidebar {
-  flex-basis: 33.3%;
-  background-color: white;
-  padding: 2em;
-}
-
-.sidebar-title {
-  text-align: center;
-  background-color: #4d4d4ddd;
-  padding: 20px 0;
-  margin-bottom: 1em;
-  color: #e6e6e6;
-  font-weight: bold;
-  font-size: 1.5em;
-}
-
-.sidebar-title .logo,
 .title .logo {
   font-size: 1rem;
-}
-
-.sidebar-links {
-  padding: 0;
-  margin: 0;
-  display: flex;
-  flex-wrap: wrap;
-}
-
-.sidebar-links .sidebar-link {
-  list-style-type: none;
-  margin: 0.2em;
-}
-
-.sidebar-link .btn.default {
-  min-width: 250px;
 }
 
 .message-notification {
@@ -513,51 +550,6 @@ $data-statuses: (
   }
 }
 
-.game-mode-button-wrapper {
-  position: relative;
-}
-
-.game_options {
-  padding: 0.5em;
-  position: absolute;
-  bottom: 0;
-  right: 0;
-}
-
-.game-mode-title {
-  display: flex;
-  flex-grow: 1;
-  text-align: center;
-  align-items: center;
-  justify-content: center;
-  font-weight: bold;
-  background-color: #4d4d4ddd;
-  color: white;
-  height: 2em;
-  padding: 0.3em;
-}
-
-.game-mode-button {
-  display: flex;
-  flex-shrink: 0;
-  font-weight: bold;
-  border: 0;
-  padding: 0;
-  height: 18em;
-  width: 20em;
-  border-radius: 2px solid rgb(192, 174, 174);
-  cursor: pointer;
-  user-select: none;
-}
-
-.game-mode-button:hover {
-  opacity: 0.8;
-}
-
-.game-mode-button:hover .game-mode-title {
-  background-color: #444;
-}
-
 .progress_bar {
   position: relative;
   width: 15em;
@@ -592,6 +584,7 @@ $data-statuses: (
   right: 0;
   bottom: 0;
   background-color: #000a;
+  z-index: 999;
 }
 
 .modal .options_close {

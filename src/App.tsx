@@ -49,7 +49,7 @@ export type Page =
 // This is needed for runtime; make sure it matches the Page type
 export const pages: { page: Page; title: string }[] = [
   { page: "splash-screen", title: "Wingo" },
-  { page: "home", title: "Home" },
+  { page: "home", title: "" },
   { page: "wingo/daily", title: "Daily Wingo" },
   { page: "wingo/repeat", title: "Repeat Wingo" },
   { page: "wingo/category", title: "Wingo Categories" },
@@ -461,7 +461,7 @@ export const App: React.FC = () => {
                 </Button>
               </nav>
             )}
-            <h1 className="title">{pages.find((x) => x.page === page)?.title || "Wingo"}</h1>
+            <h1 className="title">{pages.find((x) => x.page === page)?.title}</h1>
             <div className="gold_counter">
               <img className="gold_coin_image" src={GoldCoin} alt="Gold" />
               {gold.toLocaleString("en-GB")}

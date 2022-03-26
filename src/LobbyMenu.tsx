@@ -32,10 +32,16 @@ export const LobbyMenu: React.FC<Props> = (props) => {
       <li className="sidebar-link">
         <span className="game-mode-title">{displayName}</span>
         <div className="game-mode-button-wrapper">
-          <button className="game_options" onClick={() => setOptionsConfig({ isConfigShown: true, Page: page })}>
+          <Button mode="accept" data-game-mode={page} onClick={() => props.setPage(page)}>
+            Play
+          </Button>
+          <Button
+            mode="default"
+            className="game_options"
+            onClick={() => setOptionsConfig({ isConfigShown: true, Page: page })}
+          >
             <BsGearFill />
-          </button>
-          <button className="game-mode-button" data-game-mode={page} onClick={() => props.setPage(page)}></button>
+          </Button>
         </div>
       </li>
     );
@@ -80,36 +86,37 @@ export const LobbyMenu: React.FC<Props> = (props) => {
 
   return (
     <div className="home">
-      <div className="sidebar">
-        <div className="sidebar-title">WORDLE</div>
-        <ul className="sidebar-links">
-          {renderGameModeTile("wingo/daily", "Daily")}
-          {renderGameModeTile("wingo/repeat", "Standard/Normal")}
-          {renderGameModeTile("wingo/category", "Categories")}
-          {renderGameModeTile("wingo/increasing", "Increasing Length")}
-          {renderGameModeTile("wingo/limitless", "Limitless/Survival")}
-          {renderGameModeTile("wingo/puzzle", "Puzzle Word")}
-          {renderGameModeTile("wingo/interlinked", "Interlinked")}
-        </ul>
-      </div>
+      <div className="games">
+        <div className="sidebar">
+          <div className="sidebar-title">WORDLE</div>
+          <ul className="sidebar-links">
+            {renderGameModeTile("wingo/daily", "Daily")}
+            {renderGameModeTile("wingo/repeat", "Standard/Normal")}
+            {renderGameModeTile("wingo/category", "Categories")}
+            {renderGameModeTile("wingo/increasing", "Increasing Length")}
+            {renderGameModeTile("wingo/limitless", "Limitless/Survival")}
+            {renderGameModeTile("wingo/puzzle", "Puzzle Word")}
+            {renderGameModeTile("wingo/interlinked", "Interlinked")}
+          </ul>
+        </div>
 
-      <div className="sidebar">
-        <div className="sidebar-title">NUMBERS</div>
-        <ul className="sidebar-links">
-          {renderGameModeTile("countdown/numbers", "Countdown Numbers")}
-          {renderGameModeTile("nubble", "Nubble")}
-        </ul>
-      </div>
+        <div className="sidebar">
+          <div className="sidebar-title">NUMBERS</div>
+          <ul className="sidebar-links">
+            {renderGameModeTile("countdown/numbers", "Countdown Numbers")}
+            {renderGameModeTile("nubble", "Nubble")}
+          </ul>
+        </div>
 
-      <div className="sidebar">
-        <div className="sidebar-title">OTHER</div>
-        <ul className="sidebar-links">
-          {renderGameModeTile("campaign", "Campaign")}
-          {renderGameModeTile("countdown/letters", "Countdown Letters")}
-          {renderGameModeTile("letters_categories", "Categories (5)")}
-        </ul>
+        <div className="sidebar">
+          <div className="sidebar-title">OTHER</div>
+          <ul className="sidebar-links">
+            {renderGameModeTile("campaign", "Campaign")}
+            {renderGameModeTile("countdown/letters", "Countdown Letters")}
+            {renderGameModeTile("letters_categories", "Categories (5)")}
+          </ul>
+        </div>
       </div>
-
       {optionsConfig.isConfigShown && renderConfigModal(optionsConfig.Page)}
 
       <section className="challenges">
