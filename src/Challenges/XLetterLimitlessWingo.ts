@@ -13,6 +13,9 @@ export class XLetterLimitlessWingo extends BaseChallenge {
   public description = () => `Complete a ${this.config.numberOfLetters}-letter word in Limitless Wingo`;
 
   /** @inheritdoc */
+  public unit = "letters (best)";
+
+  /** @inheritdoc */
   public reward = () => this.config.reward;
 
   /** @inheritdoc */
@@ -35,16 +38,26 @@ export class XLetterLimitlessWingo extends BaseChallenge {
 
   /** @inheritdoc */
   public currentProgress(history: HistorySaveData): number {
-    // Return the count of 'wingo/repeat' games completed successfully
-    return history.games.filter(
-      (game) =>
-        game.page === "wingo/limitless" &&
-        game.completedRounds.some(
-          (round) => round.currentWord.length >= this.config.numberOfLetters && round.outcome === "success"
+    // Get the word length of successfully completed 'wingo/repeat' games
+    const gameWordLengths = history.games
+      .filter(
+        (game) =>
+          game.page === "wingo/limitless" &&
+          game.completedRounds.some(
+            (round) => round.currentWord.length >= this.config.numberOfLetters && round.outcome === "success"
+          )
+      )
+      .map((game) =>
+        Math.max.apply(
+          undefined,
+          game.completedRounds.flatMap((round) => round.wordLength)
         )
-    ).length;
+      );
+
+    // Get the highest word length successfully completed so far (defaulting to 0)
+    return gameWordLengths.length === 0 ? 0 : Math.max.apply(undefined, gameWordLengths);
   }
 
   /** @inheritdoc */
-  public target = () => 1;
+  public target = () => this.config.numberOfLetters;
 }

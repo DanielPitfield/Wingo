@@ -132,7 +132,10 @@ export const LobbyMenu: React.FC<Props> = (props) => {
             : isAcheived
             ? "acheived"
             : AllChallenges.some(
-                (x) => x.internalClassName === challenge.internalClassName && x.target() < challenge.target()
+                (x) =>
+                  x.internalClassName === challenge.internalClassName &&
+                  x.target() < challenge.target() &&
+                  !x.isAcheived(history)
               )
             ? "superseded"
             : "in-progress";
@@ -152,6 +155,10 @@ export const LobbyMenu: React.FC<Props> = (props) => {
                 return "Challenge in progress";
             }
           };
+
+          if (status === "redeemed") {
+            return null;
+          }
 
           if (status === "superseded") {
             return null;
@@ -176,7 +183,7 @@ export const LobbyMenu: React.FC<Props> = (props) => {
                 total={challenge.target()}
                 display={{ type: "solid", color: "#ffd613" }}
               >
-                {currentProgress} / {challenge.target()}
+                {currentProgress} / {challenge.target()} {challenge.unit}
               </ProgressBar>
               {isAcheived && !isRedeemed && (
                 <Button

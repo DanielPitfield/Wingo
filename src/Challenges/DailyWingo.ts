@@ -13,6 +13,9 @@ export class DailyWingo extends BaseChallenge {
   public description = () => "Complete today's Daily Wingo";
 
   /** @inheritdoc */
+  public unit = "";
+  
+  /** @inheritdoc */
   public reward = () => ({ goldCoins: 500, xp: 0 });
 
   /** @inheritdoc */

@@ -16,6 +16,9 @@ export abstract class BaseChallenge {
   /** Progress towards the @see target */
   public abstract currentProgress(history: HistorySaveData): number;
 
+  /** Unit to describe the current progression to the target i.e. 1 / 5 units */
+  public abstract unit: string;
+
   /** Target to reach */
   public abstract target(): number;
 

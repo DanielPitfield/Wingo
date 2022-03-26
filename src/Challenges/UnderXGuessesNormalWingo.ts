@@ -13,6 +13,9 @@ export class UnderXGuessesNormalWingo extends BaseChallenge {
   public description = () => `Complete a 'Standard/Normal' Wingo round within ${this.config.numberOfGuesses} guesses`;
 
   /** @inheritdoc */
+  public unit = "";
+
+  /** @inheritdoc */
   public reward = () => this.config.reward;
 
   /** @inheritdoc */

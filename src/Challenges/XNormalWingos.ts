@@ -13,6 +13,9 @@ export class XNormalWingos extends BaseChallenge {
   public description = () => `Complete ${this.config.numberOfGames} Wingo 'Standard/Normal' games`;
 
   /** @inheritdoc */
+  public unit = "games";
+
+  /** @inheritdoc */
   public reward = () => this.config.reward;
 
   /** @inheritdoc */
