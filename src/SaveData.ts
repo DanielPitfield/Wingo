@@ -6,6 +6,7 @@ export type DailyWordSaveData = {
   guesses: string[];
   wordIndex: number;
   inProgress: boolean;
+  inDictionary: boolean;
   currentWord: string;
 };
 
@@ -139,12 +140,17 @@ export class SaveData {
    * Sets the last daily word guesses played.
    * @param dailyWord The word being played.
    * @param guesses The guesses made.
+   * @param wordIndex
+   * @param inProgress
+   * @param inDictionary
+   * @param currentWord
    */
   public static setDailyWordGuesses(
     dailyWord: string,
     guesses: string[],
     wordIndex: number,
     inProgress: boolean,
+    inDictionary: boolean,
     currentWord: string
   ) {
     localStorage.setItem(
@@ -153,9 +159,10 @@ export class SaveData {
         dailyWord,
         guesses,
         wordIndex,
+        inDictionary,
         inProgress,
         currentWord,
-      })
+      } as DailyWordSaveData)
     );
   }
 

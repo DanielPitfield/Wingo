@@ -210,9 +210,9 @@ const WordleConfig: React.FC<Props> = (props) => {
   // Save gameplay progress of daily wingo
   React.useEffect(() => {
     if (props.mode === "daily" && targetWord) {
-      SaveData.setDailyWordGuesses(targetWord, guesses, wordIndex, inProgress, currentWord);
+      SaveData.setDailyWordGuesses(targetWord, guesses, wordIndex, inProgress, inDictionary, currentWord);
     }
-  }, [targetWord, currentWord, guesses, wordIndex, inProgress]);
+  }, [targetWord, currentWord, guesses, wordIndex, inProgress, inDictionary]);
 
   // Update word length every time the target word changes during category mode
   React.useEffect(() => {
@@ -333,6 +333,7 @@ const WordleConfig: React.FC<Props> = (props) => {
           setWordIndex(daily_word_storage.wordIndex);
           setinProgress(daily_word_storage.inProgress);
           setCurrentWord(daily_word_storage.currentWord);
+          setinDictionary(daily_word_storage.inDictionary);
         }
 
         console.log("Daily word: " + new_daily_word);
