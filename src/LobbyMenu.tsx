@@ -52,9 +52,9 @@ export const LobbyMenu: React.FC<Props> = (props) => {
       <div className="modal">
         <div className="options_body">
           <div className="options_title">Options</div>
-          <button className="options_close" onClick={() => setOptionsConfig({ isConfigShown: false })}>
+          <Button mode="default" className="options_close" onClick={() => setOptionsConfig({ isConfigShown: false })}>
             X
-          </button>
+          </Button>
           <label>
             <input
               checked={props.gameOptionToggles.find((x) => x.page === page)?.firstLetter || false}

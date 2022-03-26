@@ -17,10 +17,6 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;
-}
-
 .logo {
   display: flex;
 }
@@ -42,16 +38,42 @@ code {
   user-select: none;
   text-align: center;
   text-transform: uppercase;
-}
-
-.btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.btn.default {
-  background-color: #e6e6e6;
-  color: #4d4d4d;
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  &.default {
+    background-color: #e6e6e6;
+    color: #4d4d4d;
+    &:hover {
+      background-color: #c7c3c3;
+      &:active {
+        background-color: #a1a1a1;
+      }
+    }
+  }
+  &.accept {
+    background-color: #abe0ab;
+    color: #4d4d4d;
+    border-color: #739673;
+    &:hover {
+      background-color: #b9f7b9;
+      &:active {
+        background-color: #8acf8a;
+      }
+    }
+  }
+  &.destructive {
+    background-color: #f5bfbf;
+    color: #4d4d4d;
+    border-color: #8d4c4c;
+    &:hover {
+      background-color: #f39494;
+      &:active {
+        background-color: #e97272;
+      }
+    }
+  }
 }
 
 // Add Vowel, Consonant and Quick Pick
@@ -62,40 +84,16 @@ code {
   color: white;
 }
 
-.btn.default:hover {
-  background-color: #c7c3c3;
-}
-
-.btn.default:hover:active {
-  background-color: #a1a1a1;
-}
-
-.btn.accept {
-  background-color: #abe0ab;
-  color: #4d4d4d;
-  border-color: #739673;
-}
-
-.btn.accept:hover {
-  background-color: #b9f7b9;
-}
-
-.btn.accept:hover:active {
-  background-color: #8acf8a;
-}
-
-.btn.destructive {
-  background-color: #f5bfbf;
-  color: #4d4d4d;
-  border-color: #8d4c4c;
-}
-
-.btn.destructive:hover {
-  background-color: #f39494;
-}
-
-.btn.destructive:hover:active {
-  background-color: #e97272;
+select,
+input {
+  font-size: 1rem;
+  color: inherit;
+  padding: 0.35em;
+  &[type="checkbox"] {
+    font-size: 1.2rem;
+    height: 1.2em;
+    width: 1.2em;
+  }
 }
 
 .title {
@@ -574,22 +572,6 @@ $data-statuses: (
   }
 }
 
-.modal {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: absolute;
-  left: 0;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #000a;
-  z-index: 999;
-}
-
-.modal .options_close {
-}
-
 .challenges {
   font-size: 0.75em;
   background-color: #fff0c8;
@@ -677,22 +659,63 @@ $data-statuses: (
   }
 }
 
-.modal .options_body {
+.modal {
   display: flex;
-  flex-direction: column;
-  background-color: white;
-  padding: 0.5em;
-  margin: 1em;
-  flex-shrink: 0;
-  flex-grow: 1;
-  min-height: 10em;
-  max-width: 20em;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #000a;
+  z-index: 999;
+  .options_body {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+    margin: 1em;
+    flex-shrink: 0;
+    flex-grow: 1;
+    min-height: 10em;
+    max-width: 25em;
+    label {
+      display: flex;
+      align-items: center;
+      padding: 0.2em;
+      color: #333;
+      margin: 0.1em;
+      input[type="checkbox"] {
+        margin-right: 0.3em;
+      }
+    }
+    .options_title {
+      font-size: 1.2em;
+      padding: 0.6em;
+      background-color: #333;
+      color: #eee;
+    }
+    .options_close {
+      position: absolute;
+      top: 0;
+      right: 0;
+      font-size: 0.6em;
+    }
+  }
 }
 
-.modal .options_body .options_title {
-  font-size: 2em;
+.category_label {
+  display: flex;
+  align-items: center;
+  strong {
+    margin-right: 0.5em;
+    margin-bottom: 0.1em;
+  }
+  select {
+    flex-grow: 1;
+  }
 }
-
 /*
 .game-mode-button[data-game-mode="wingo/daily"] {
   background-image: url(/src/images/daily.jpg);
