@@ -21,7 +21,7 @@ export const Area: React.FC<{
           key={level.description}
           onClick={() => {
             props.setSelectedCampaignLevel(level);
-            props.setPage("campaign-level");
+            props.setPage("campaign/area/level");
           }}
         >
           <strong className="level-name">Level {i + 1}</strong>

@@ -206,7 +206,7 @@ const WordleConfig: React.FC<Props> = (props) => {
     };
   }, [setSeconds, seconds, props.timerConfig.isTimed]);
 
-  // Save gameplay progress of daily wordle
+  // Save gameplay progress of daily wingo
   React.useEffect(() => {
     if (props.mode === "daily" && targetWord) {
       SaveData.setDailyWordGuesses(targetWord, guesses, wordIndex, inProgress, currentWord);

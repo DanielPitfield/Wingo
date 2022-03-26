@@ -3,7 +3,7 @@ import "../App.scss";
 import { Page } from "../App";
 import { Button } from "../Button";
 import { MessageNotification } from "../MessageNotification";
-import ProgressBar from "../ProgressBar";
+import ProgressBar, { GreenToRedColorTransition } from "../ProgressBar";
 import { SaveData } from "../SaveData";
 import { NumberRow } from "./NumberRow";
 import NumberTile from "./NumberTile";
@@ -23,7 +23,7 @@ interface Props {
   countdownExpression: {
     number: number | null;
     picked: boolean;
-  }[]
+  }[];
   inProgress: boolean;
   hasTimerEnded: boolean;
   hasSubmitNumber: boolean;
@@ -262,11 +262,15 @@ const CountdownNumbers: React.FC<Props> = (props) => {
         )}
       </div>
 
-      <div className="countdown_numbers_grid">{populateGrid(props.expressionLength)}</div>
+      <div className="countdown/numbers_grid">{populateGrid(props.expressionLength)}</div>
 
       <div>
         {props.timerConfig.isTimed && (
-          <ProgressBar progress={props.timerConfig.elapsedSeconds} total={props.timerConfig.totalSeconds}></ProgressBar>
+          <ProgressBar
+            progress={props.timerConfig.elapsedSeconds}
+            total={props.timerConfig.totalSeconds}
+            display={{ type: "transition", colorTransition: GreenToRedColorTransition }}
+          ></ProgressBar>
         )}
       </div>
     </div>

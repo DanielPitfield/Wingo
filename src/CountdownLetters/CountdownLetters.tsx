@@ -5,7 +5,7 @@ import { Page } from "../App";
 import { WordRow } from "../WordRow";
 import { Button } from "../Button";
 import { MessageNotification } from "../MessageNotification";
-import ProgressBar from "../ProgressBar";
+import ProgressBar, { GreenToRedColorTransition } from "../ProgressBar";
 import { isWordValid } from "./CountdownLettersConfig";
 import { wordLengthMappingsGuessable } from "../WordleConfig";
 import { SaveData } from "../SaveData";
@@ -38,9 +38,6 @@ interface Props {
 }
 
 const CountdownLetters: React.FC<Props> = (props) => {
-  // Used for saving completed rounds
-  const [gameId, setGameId] = useState<string | null>(null);
-
   // Currently selected guess, to be used as the final guess when time runs out
   const [selectedFinalGuess, setSelectedFinalGuess] = useState("");
 
@@ -226,7 +223,7 @@ const CountdownLetters: React.FC<Props> = (props) => {
     // WordRow to enter words using available letters
     Grid.push(
       <WordRow
-        key={"countdown_letters_input"}
+        key={"countdown/letters_input"}
         isVertical={false}
         word={props.currentWord}
         length={wordLength}
@@ -397,7 +394,7 @@ const CountdownLetters: React.FC<Props> = (props) => {
         )}
       </div>
 
-      <div className="countdown_word_grid">{populateGrid(props.wordLength)}</div>
+      <div className="countdown/word_grid">{populateGrid(props.wordLength)}</div>
 
       <div className="keyboard">
         {props.keyboard && (
@@ -416,13 +413,17 @@ const CountdownLetters: React.FC<Props> = (props) => {
 
       <div>
         {props.timerConfig.isTimed && (
-          <ProgressBar progress={props.timerConfig.elapsedSeconds} total={props.timerConfig.totalSeconds}></ProgressBar>
+          <ProgressBar
+            progress={props.timerConfig.elapsedSeconds}
+            total={props.timerConfig.totalSeconds}
+            display={{ type: "transition", colorTransition: GreenToRedColorTransition }}
+          ></ProgressBar>
         )}
       </div>
 
-      <div className="countdown_letters_guesses">
+      <div className="countdown/letters_guesses">
         {props.guesses.map((guess) => (
-          <label className="countdown_letters_guess_label">
+          <label className="countdown/letters_guess_label">
             <input
               type="radio"
               checked={selectedFinalGuess === guess}
@@ -430,8 +431,8 @@ const CountdownLetters: React.FC<Props> = (props) => {
                 setManualGuessSelectionMade(true);
                 setSelectedFinalGuess(event.target.value);
               }}
-              className="countdown_letters_guess_input"
-              name="countdown_letters_guess"
+              className="countdown/letters_guess_input"
+              name="countdown/letters_guess"
               value={guess}
             />
             {guess}

@@ -8309,7 +8309,7 @@ const words_five = [
   { word: "loave", canBeTargetWord: true },
   { word: "lobal", canBeTargetWord: true },
   { word: "lobar", canBeTargetWord: true },
-  { word: "lobby", canBeTargetWord: true },
+  { word: "home", canBeTargetWord: true },
   { word: "lobed", canBeTargetWord: true },
   { word: "lobes", canBeTargetWord: true },
   { word: "lobos", canBeTargetWord: true },

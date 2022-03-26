@@ -18,7 +18,7 @@ export const Level: React.FC<{ level: LevelConfig; page: Page; setPage: (page: P
         setPage={props.setPage}
         finishingButtonText={"Back to area"}
         onComplete={() => {
-          props.setPage("campaign-area");
+          props.setPage("campaign/area");
         }}
       />
     </div>

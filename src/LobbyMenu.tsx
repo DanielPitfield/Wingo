@@ -19,28 +19,19 @@ interface Props {
 }
 
 export const LobbyMenu: React.FC<Props> = (props) => {
-  const [optionsConfig, setOptionsConfig] = useState<
-    { isConfigShown: false } | { isConfigShown: true; Page: Page }
-  >({ isConfigShown: false });
+  const [optionsConfig, setOptionsConfig] = useState<{ isConfigShown: false } | { isConfigShown: true; Page: Page }>({
+    isConfigShown: false,
+  });
 
   function renderGameModeTile(page: Page, displayName: string) {
     return (
       <li className="sidebar-link">
         <span className="game-mode-title">{displayName}</span>
         <div className="game-mode-button-wrapper">
-          <button
-            className="game_options"
-            onClick={() =>
-              setOptionsConfig({ isConfigShown: true, Page: page })
-            }
-          >
+          <button className="game_options" onClick={() => setOptionsConfig({ isConfigShown: true, Page: page })}>
             <BsGearFill />
           </button>
-          <button
-            className="game-mode-button"
-            data-game-mode={page}
-            onClick={() => props.setPage(page)}
-          ></button>
+          <button className="game-mode-button" data-game-mode={page} onClick={() => props.setPage(page)}></button>
         </div>
       </li>
     );
@@ -51,18 +42,12 @@ export const LobbyMenu: React.FC<Props> = (props) => {
       <div className="modal">
         <div className="options_body">
           <div className="options_title">Options</div>
-          <button
-            className="options_close"
-            onClick={() => setOptionsConfig({ isConfigShown: false })}
-          >
+          <button className="options_close" onClick={() => setOptionsConfig({ isConfigShown: false })}>
             X
           </button>
           <label>
             <input
-              checked={
-                props.gameOptionToggles.find((x) => x.page === page)
-                  ?.firstLetter || false
-              }
+              checked={props.gameOptionToggles.find((x) => x.page === page)?.firstLetter || false}
               type="checkbox"
               onChange={(e) => props.firstLetterToggle(e.target.checked, page)}
             ></input>
@@ -70,10 +55,7 @@ export const LobbyMenu: React.FC<Props> = (props) => {
           </label>
           <label>
             <input
-              checked={
-                props.gameOptionToggles.find((x) => x.page === page)
-                  ?.timer || false
-              }
+              checked={props.gameOptionToggles.find((x) => x.page === page)?.timer || false}
               type="checkbox"
               onChange={(e) => props.timerToggle(e.target.checked, page)}
             ></input>
@@ -81,10 +63,7 @@ export const LobbyMenu: React.FC<Props> = (props) => {
           </label>
           <label>
             <input
-              checked={
-                props.gameOptionToggles.find((x) => x.page === page)
-                  ?.keyboard || false
-              }
+              checked={props.gameOptionToggles.find((x) => x.page === page)?.keyboard || false}
               type="checkbox"
               onChange={(e) => props.keyboardToggle(e.target.checked, page)}
             ></input>
@@ -100,20 +79,20 @@ export const LobbyMenu: React.FC<Props> = (props) => {
       <div className="sidebar">
         <div className="sidebar-title">WORDLE</div>
         <ul className="sidebar-links">
-          {renderGameModeTile("wordle_daily", "Daily")}
-          {renderGameModeTile("wordle_repeat", "Standard/Normal")}
-          {renderGameModeTile("wordle_category", "Categories")}
-          {renderGameModeTile("wordle_increasing", "Increasing Length")}
-          {renderGameModeTile("wordle_limitless", "Limitless/Survival")}
-          {renderGameModeTile("wordle_puzzle", "Puzzle Word")}
-          {renderGameModeTile("wordle_interlinked", "Interlinked")}
+          {renderGameModeTile("wingo/daily", "Daily")}
+          {renderGameModeTile("wingo/repeat", "Standard/Normal")}
+          {renderGameModeTile("wingo/category", "Categories")}
+          {renderGameModeTile("wingo/increasing", "Increasing Length")}
+          {renderGameModeTile("wingo/limitless", "Limitless/Survival")}
+          {renderGameModeTile("wingo/puzzle", "Puzzle Word")}
+          {renderGameModeTile("wingo/interlinked", "Interlinked")}
         </ul>
       </div>
 
       <div className="sidebar">
         <div className="sidebar-title">NUMBERS</div>
         <ul className="sidebar-links">
-          {renderGameModeTile("countdown_numbers", "Countdown Numbers")}
+          {renderGameModeTile("countdown/numbers", "Countdown Numbers")}
           {renderGameModeTile("nubble", "Nubble")}
         </ul>
       </div>
@@ -122,7 +101,7 @@ export const LobbyMenu: React.FC<Props> = (props) => {
         <div className="sidebar-title">OTHER</div>
         <ul className="sidebar-links">
           {renderGameModeTile("campaign", "Campaign")}
-          {renderGameModeTile("countdown_letters", "Countdown Letters")}
+          {renderGameModeTile("countdown/letters", "Countdown Letters")}
           {renderGameModeTile("letters_categories", "Categories (5)")}
         </ul>
       </div>
@@ -144,6 +123,7 @@ export const LobbyMenu: React.FC<Props> = (props) => {
               <ProgressBar
                 progress={Math.min(challenge.target, currentProgress)}
                 total={challenge.target}
+                display={{ type: "solid", color: "green" }}
               />
             </div>
           );

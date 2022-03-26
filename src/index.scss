@@ -354,7 +354,7 @@ $data-statuses: (
   text-align: center;
   align-items: center;
   font-size: 1.2em;
-  transition: opacity 0.5s ease;
+  transition: opacity 0.6s ease;
 }
 
 [data-loading-state="loading"] {
@@ -549,9 +549,10 @@ $data-statuses: (
 }
 
 .progress_bar_progress {
-  background: green;
+  background-color: #ddd;
   border-radius: 15px;
   height: 1.5em;
+  transition: all 1s linear;
 }
 
 .modal {
@@ -620,25 +621,25 @@ $data-statuses: (
 }
 
 /*
-.game-mode-button[data-game-mode="wordle_daily"] {
+.game-mode-button[data-game-mode="wingo/daily"] {
   background-image: url(/src/images/daily.jpg);
   background-repeat: no-repeat;
   background-size: cover;
 }
 
-.game-mode-button[data-game-mode="wordle_repeat"] {
+.game-mode-button[data-game-mode="wingo/repeat"] {
   background-image: url(/src/images/repeat.jpg);
   background-repeat: no-repeat;
   background-size: cover;
 }
 
-.game-mode-button[data-game-mode="wordle_increasing"] {
+.game-mode-button[data-game-mode="wingo/increasing"] {
   background-image: url(/src/images/increasing.jpg);
   background-repeat: no-repeat;
   background-size: cover;
 }
 
-.game-mode-button[data-game-mode="wordle_puzzle"] {
+.game-mode-button[data-game-mode="wingo/puzzle"] {
   background-image: url(/src/images/puzzle.jpg);
   background-repeat: no-repeat;
   background-size: cover;

@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { Home } from "./Home";
 import { SplashScreen } from "./SplashScreen";
 import { LobbyMenu } from "./LobbyMenu";
 import WordleConfig from "./WordleConfig";
@@ -32,21 +31,40 @@ const countdown_numbers_NumGuesses = 5;
 export type Page =
   | "splash-screen"
   | "home"
-  | "lobby"
-  | "wordle_daily"
-  | "wordle_repeat"
-  | "wordle_category"
-  | "wordle_increasing"
-  | "wordle_limitless"
-  | "wordle_puzzle"
-  | "wordle_interlinked"
-  | "countdown_letters"
+  | "wingo/daily"
+  | "wingo/repeat"
+  | "wingo/category"
+  | "wingo/increasing"
+  | "wingo/limitless"
+  | "wingo/puzzle"
+  | "wingo/interlinked"
   | "letters_categories"
-  | "countdown_numbers"
+  | "countdown/letters"
+  | "countdown/numbers"
   | "nubble"
   | "campaign"
-  | "campaign-area"
-  | "campaign-level";
+  | "campaign/area"
+  | "campaign/area/level";
+
+// This is needed for runtime; make sure it matches the Page type
+export const pages: { page: Page; title: string }[] = [
+  { page: "splash-screen", title: "Wingo" },
+  { page: "home", title: "Home" },
+  { page: "wingo/daily", title: "Daily Wingo" },
+  { page: "wingo/repeat", title: "Repeat Wingo" },
+  { page: "wingo/category", title: "Wingo Categories" },
+  { page: "wingo/increasing", title: "Wingo Increasing" },
+  { page: "wingo/limitless", title: "Wingo Limitless" },
+  { page: "wingo/puzzle", title: "Wingo Puzzle" },
+  { page: "wingo/interlinked", title: "Wingo Interlinked" },
+  { page: "letters_categories", title: "Letters Categories" },
+  { page: "countdown/letters", title: "Countdown Letters" },
+  { page: "countdown/numbers", title: "Countdown Numbers" },
+  { page: "nubble", title: "Nubble" },
+  { page: "campaign", title: "Campaign" },
+  { page: "campaign/area", title: "Campaign Areas" },
+  { page: "campaign/area/level", title: "Campaign Level" },
+];
 
 export const App: React.FC = () => {
   const saveData = window.localStorage;
@@ -65,49 +83,49 @@ export const App: React.FC = () => {
     }[]
   >([
     {
-      page: "wordle_daily",
+      page: "wingo/daily",
       firstLetter: false,
       timer: false,
       keyboard: true,
     },
     {
-      page: "wordle_repeat",
+      page: "wingo/repeat",
       firstLetter: false,
       timer: false,
       keyboard: true,
     },
     {
-      page: "wordle_category",
+      page: "wingo/category",
       firstLetter: false,
       timer: false,
       keyboard: true,
     },
     {
-      page: "wordle_increasing",
+      page: "wingo/increasing",
       firstLetter: false,
       timer: false,
       keyboard: true,
     },
     {
-      page: "wordle_limitless",
+      page: "wingo/limitless",
       firstLetter: false,
       timer: false,
       keyboard: true,
     },
     {
-      page: "wordle_puzzle",
+      page: "wingo/puzzle",
       firstLetter: false,
       timer: false,
       keyboard: true,
     },
     {
-      page: "wordle_interlinked",
+      page: "wingo/interlinked",
       firstLetter: false,
       timer: false,
       keyboard: true,
     },
     {
-      page: "countdown_letters",
+      page: "countdown/letters",
       firstLetter: false,
       timer: true,
       keyboard: true,
@@ -119,7 +137,7 @@ export const App: React.FC = () => {
       keyboard: true,
     },
     {
-      page: "countdown_numbers",
+      page: "countdown/numbers",
       firstLetter: false,
       timer: true,
       keyboard: false,
@@ -127,12 +145,45 @@ export const App: React.FC = () => {
   ]);
 
   useEffect(() => {
+    const LOADING_TIMEOUT_MS = 1500;
+    const FADE_OUT_DURATION_MS = 500;
+
     // TODO: Mask actual loading, rather than hard-coding seconds
-    window.setTimeout(() => setLoadingState("loaded"), 2000);
+    window.setTimeout(() => setLoadingState("loaded"), LOADING_TIMEOUT_MS);
+
+    const pageFromUrl = getPageFromUrl();
 
     // Set home page after load
-    window.setTimeout(() => setPage("lobby"), 2500);
+    window.setTimeout(() => setPage(pageFromUrl || "home"), LOADING_TIMEOUT_MS + FADE_OUT_DURATION_MS);
   }, [saveData]);
+
+  /**
+   *
+   * @returns
+   */
+  function getPageFromUrl(): Page | undefined {
+    const urlPathWithoutLeadingTrailingSlashes = window.location.pathname.replace(/^\//g, "").replace(/\/$/g, "");
+
+    return pages.find((page) => page.page === urlPathWithoutLeadingTrailingSlashes)?.page;
+  }
+
+  useEffect(() => {
+    const DEFAULT_PAGE_TITLE = "Wingo";
+
+    // If the page has changed (and its not the splash screen)
+    if (getPageFromUrl() !== page && page !== "splash-screen") {
+      // Update the URL in the browser to the new page
+      window.history.pushState({}, "", `/${page}`);
+
+      // Update the window title in the browser
+      document.title = pages.find((x) => x.page === page)?.title || DEFAULT_PAGE_TITLE;
+    }
+  }, [page]);
+
+  useEffect(() => {
+    // On clicking 'Back' in the browser, update the page from the URL
+    window.onpopstate = () => setPage(getPageFromUrl() || "home");
+  }, []);
 
   const pageComponent = (() => {
     const commonProps = {
@@ -149,9 +200,6 @@ export const App: React.FC = () => {
         return <SplashScreen loadingState={loadingState} />;
 
       case "home":
-        return <Home setPage={setPage} />;
-
-      case "lobby":
         return (
           <LobbyMenu
             /**
@@ -197,167 +245,167 @@ export const App: React.FC = () => {
       case "campaign":
         return <Campaign setPage={setPage} setSelectedArea={setSelectedCampaignArea} />;
 
-      case "campaign-area":
+      case "campaign/area":
         return (
           selectedCampaignArea && (
             <Area area={selectedCampaignArea} setSelectedCampaignLevel={setSelectedCampaignLevel} setPage={setPage} />
           )
         );
 
-      case "campaign-level":
+      case "campaign/area/level":
         return selectedCampaignLevel && <Level level={selectedCampaignLevel} page={page} setPage={setPage} />;
 
-      case "wordle_daily":
+      case "wingo/daily":
         return (
           <WordleConfig
             {...commonProps}
             mode="daily"
-            firstLetterProvided={gameOptionToggles.find((x) => x.page === "wordle_daily")?.firstLetter || false}
+            firstLetterProvided={gameOptionToggles.find((x) => x.page === "wingo/daily")?.firstLetter || false}
             timerConfig={
-              gameOptionToggles.find((x) => x.page === "wordle_daily")?.timer
+              gameOptionToggles.find((x) => x.page === "wingo/daily")?.timer
                 ? { isTimed: true, seconds: 30 }
                 : { isTimed: false }
             }
-            keyboard={gameOptionToggles.find((x) => x.page === "wordle_daily")?.keyboard || false}
+            keyboard={gameOptionToggles.find((x) => x.page === "wingo/daily")?.keyboard || false}
             defaultWordLength={wordLength}
           />
         );
 
-      case "wordle_repeat":
+      case "wingo/repeat":
         return (
           <WordleConfig
             {...commonProps}
             mode="repeat"
-            firstLetterProvided={gameOptionToggles.find((x) => x.page === "wordle_repeat")?.firstLetter || false}
+            firstLetterProvided={gameOptionToggles.find((x) => x.page === "wingo/repeat")?.firstLetter || false}
             timerConfig={
-              gameOptionToggles.find((x) => x.page === "wordle_repeat")?.timer
+              gameOptionToggles.find((x) => x.page === "wingo/repeat")?.timer
                 ? { isTimed: true, seconds: 30 } // TODO: Confgiure timer value
                 : { isTimed: false }
             }
-            keyboard={gameOptionToggles.find((x) => x.page === "wordle_repeat")?.keyboard || false}
+            keyboard={gameOptionToggles.find((x) => x.page === "wingo/repeat")?.keyboard || false}
             defaultWordLength={wordLength}
           />
         );
 
-      case "wordle_category":
+      case "wingo/category":
         return (
           <WordleConfig
             {...commonProps}
             mode="category"
-            firstLetterProvided={gameOptionToggles.find((x) => x.page === "wordle_category")?.firstLetter || false}
+            firstLetterProvided={gameOptionToggles.find((x) => x.page === "wingo/category")?.firstLetter || false}
             timerConfig={
-              gameOptionToggles.find((x) => x.page === "wordle_category")?.timer
+              gameOptionToggles.find((x) => x.page === "wingo/category")?.timer
                 ? { isTimed: true, seconds: 30 }
                 : { isTimed: false }
             }
-            keyboard={gameOptionToggles.find((x) => x.page === "wordle_category")?.keyboard || false}
+            keyboard={gameOptionToggles.find((x) => x.page === "wingo/category")?.keyboard || false}
             defaultWordLength={wordLength}
           />
         );
 
-      case "wordle_increasing":
+      case "wingo/increasing":
         return (
           <WordleConfig
             {...commonProps}
             mode="increasing"
-            firstLetterProvided={gameOptionToggles.find((x) => x.page === "wordle_increasing")?.firstLetter || false}
+            firstLetterProvided={gameOptionToggles.find((x) => x.page === "wingo/increasing")?.firstLetter || false}
             timerConfig={
-              gameOptionToggles.find((x) => x.page === "wordle_increasing")?.timer
+              gameOptionToggles.find((x) => x.page === "wingo/increasing")?.timer
                 ? { isTimed: true, seconds: 30 }
                 : { isTimed: false }
             }
-            keyboard={gameOptionToggles.find((x) => x.page === "wordle_increasing")?.keyboard || false}
+            keyboard={gameOptionToggles.find((x) => x.page === "wingo/increasing")?.keyboard || false}
             defaultWordLength={wordLength_increasing}
           />
         );
 
-      case "wordle_limitless":
+      case "wingo/limitless":
         return (
           <WordleConfig
             {...commonProps}
             mode="limitless"
-            firstLetterProvided={gameOptionToggles.find((x) => x.page === "wordle_limitless")?.firstLetter || false}
+            firstLetterProvided={gameOptionToggles.find((x) => x.page === "wingo/limitless")?.firstLetter || false}
             timerConfig={
-              gameOptionToggles.find((x) => x.page === "wordle_limitless")?.timer
+              gameOptionToggles.find((x) => x.page === "wingo/limitless")?.timer
                 ? { isTimed: true, seconds: 30 }
                 : { isTimed: false }
             }
-            keyboard={gameOptionToggles.find((x) => x.page === "wordle_limitless")?.keyboard || false}
+            keyboard={gameOptionToggles.find((x) => x.page === "wingo/limitless")?.keyboard || false}
             defaultWordLength={wordLength_limitless}
           />
         );
 
-      case "wordle_puzzle":
+      case "wingo/puzzle":
         return (
           <WordleConfig
             {...commonProps}
             mode="puzzle"
-            firstLetterProvided={gameOptionToggles.find((x) => x.page === "wordle_puzzle")?.firstLetter || false}
+            firstLetterProvided={gameOptionToggles.find((x) => x.page === "wingo/puzzle")?.firstLetter || false}
             timerConfig={
-              gameOptionToggles.find((x) => x.page === "wordle_puzzle")?.timer
+              gameOptionToggles.find((x) => x.page === "wingo/puzzle")?.timer
                 ? { isTimed: true, seconds: 30 }
                 : { isTimed: false }
             }
-            keyboard={gameOptionToggles.find((x) => x.page === "wordle_puzzle")?.keyboard || false}
+            keyboard={gameOptionToggles.find((x) => x.page === "wingo/puzzle")?.keyboard || false}
             defaultWordLength={wordLength_puzzle}
             defaultnumGuesses={numGuesses_puzzle}
           />
         );
 
-      case "wordle_interlinked":
+      case "wingo/interlinked":
         return (
           <WordleConfig
             {...commonProps}
             mode="interlinked"
-            firstLetterProvided={gameOptionToggles.find((x) => x.page === "wordle_interlinked")?.firstLetter || false}
+            firstLetterProvided={gameOptionToggles.find((x) => x.page === "wingo/interlinked")?.firstLetter || false}
             timerConfig={
-              gameOptionToggles.find((x) => x.page === "wordle_interlinked")?.timer
+              gameOptionToggles.find((x) => x.page === "wingo/interlinked")?.timer
                 ? { isTimed: true, seconds: 30 }
                 : { isTimed: false }
             }
-            keyboard={gameOptionToggles.find((x) => x.page === "wordle_interlinked")?.keyboard || false}
+            keyboard={gameOptionToggles.find((x) => x.page === "wingo/interlinked")?.keyboard || false}
             defaultWordLength={wordLength}
           />
         );
 
-      case "countdown_letters":
+      case "countdown/letters":
         return (
           <CountdownLettersConfig
             mode={"casual"}
             timerConfig={
-              gameOptionToggles.find((x) => x.page === "countdown_letters")?.timer
+              gameOptionToggles.find((x) => x.page === "countdown/letters")?.timer
                 ? { isTimed: true, seconds: 30 }
                 : { isTimed: false }
             }
-            keyboard={gameOptionToggles.find((x) => x.page === "countdown_letters")?.keyboard || false}
+            keyboard={gameOptionToggles.find((x) => x.page === "countdown/letters")?.keyboard || false}
             defaultWordLength={wordLength_countdown_letters}
             page={page}
             setPage={setPage}
           />
         );
 
-        case "letters_categories":
+      case "letters_categories":
         return (
           <WordleConfig
             {...commonProps}
             mode="letters_categories"
-            firstLetterProvided={gameOptionToggles.find((x) => x.page === "wordle_interlinked")?.firstLetter || false}
+            firstLetterProvided={gameOptionToggles.find((x) => x.page === "wingo/interlinked")?.firstLetter || false}
             timerConfig={
-              gameOptionToggles.find((x) => x.page === "wordle_interlinked")?.timer
+              gameOptionToggles.find((x) => x.page === "wingo/interlinked")?.timer
                 ? { isTimed: true, seconds: 30 }
                 : { isTimed: false }
             }
-            keyboard={gameOptionToggles.find((x) => x.page === "wordle_interlinked")?.keyboard || false}
+            keyboard={gameOptionToggles.find((x) => x.page === "wingo/interlinked")?.keyboard || false}
             defaultWordLength={wordLength}
           />
         );
 
-      case "countdown_numbers":
+      case "countdown/numbers":
         return (
           <CountdownNumbersConfig
             mode={"casual"}
             timerConfig={
-              gameOptionToggles.find((x) => x.page === "countdown_numbers")?.timer
+              gameOptionToggles.find((x) => x.page === "countdown/numbers")?.timer
                 ? { isTimed: true, seconds: 30 }
                 : { isTimed: false }
             }
@@ -386,15 +434,15 @@ export const App: React.FC = () => {
 
   return (
     <div className="app">
-      {page !== "home" && page !== "splash-screen" && (
+      {page !== "splash-screen" && (
         <div className="toolbar">
           <div className="gold_counter">
             <img className="gold_coin_image" src={GoldCoin} alt="Gold" />
             {SaveData.readGold()}
           </div>
-          {page !== "lobby" && (
+          {page !== "home" && (
             <nav className="navigation">
-              <Button mode="default" className="back-button" onClick={() => setPage("lobby")}>
+              <Button mode="default" className="back-button" onClick={() => window.history.back()}>
                 Back
               </Button>
             </nav>

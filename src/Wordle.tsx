@@ -5,7 +5,7 @@ import { Page } from "./App";
 import { WordRow } from "./WordRow";
 import { Button } from "./Button";
 import { MessageNotification } from "./MessageNotification";
-import ProgressBar from "./ProgressBar";
+import ProgressBar, { GreenToRedColorTransition } from "./ProgressBar";
 import { categoryMappings, getNewLives } from "./WordleConfig";
 
 interface Props {
@@ -289,7 +289,11 @@ const Wordle: React.FC<Props> = (props) => {
 
       <div>
         {props.timerConfig.isTimed && (
-          <ProgressBar progress={props.timerConfig.elapsedSeconds} total={props.timerConfig.totalSeconds}></ProgressBar>
+          <ProgressBar
+            progress={props.timerConfig.elapsedSeconds}
+            total={props.timerConfig.totalSeconds}
+            display={{ type: "transition", colorTransition: GreenToRedColorTransition }}
+          ></ProgressBar>
         )}
       </div>
     </div>

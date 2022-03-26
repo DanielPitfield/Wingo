@@ -40,7 +40,7 @@ export const Campaign: React.FC<{
           key={area.name}
           onClick={() => {
             props.setSelectedArea(area);
-            props.setPage("campaign-area");
+            props.setPage("campaign/area");
           }}
         >
           <strong className="area-name">{area.name}</strong>
