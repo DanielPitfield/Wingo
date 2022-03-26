@@ -435,19 +435,26 @@ export const App: React.FC = () => {
   return (
     <div className="app">
       {page !== "splash-screen" && (
-        <div className="toolbar">
-          <div className="gold_counter">
-            <img className="gold_coin_image" src={GoldCoin} alt="Gold" />
-            {SaveData.readGold()}
+        <>
+          <div className="toolbar">
+            <div className="gold_counter">
+              <img className="gold_coin_image" src={GoldCoin} alt="Gold" />
+              {SaveData.readGold()}
+            </div>
+            {page !== "home" && (
+              <nav className="navigation">
+                <Button mode="default" className="back-button" onClick={() => window.history.back()}>
+                  Back
+                </Button>
+              </nav>
+            )}
           </div>
           {page !== "home" && (
-            <nav className="navigation">
-              <Button mode="default" className="back-button" onClick={() => window.history.back()}>
-                Back
-              </Button>
-            </nav>
+            <header>
+              <h1 className="title">{pages.find((x) => x.page === page)?.title || "Wingo"}</h1>
+            </header>
           )}
-        </div>
+        </>
       )}
       {pageComponent}
     </div>
