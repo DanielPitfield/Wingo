@@ -15,6 +15,7 @@ import { wordHintMappings } from "./WordArrays/words_puzzles";
 import { SaveData } from "./SaveData";
 import { words_dogs } from "./WordArrays/Categories/dogs";
 import { words_countries } from "./WordArrays/Categories/countries";
+import { Alphabet } from "./Keyboard";
 
 export interface WordleConfigProps {
   mode: "daily" | "repeat" | "category" | "increasing" | "limitless" | "puzzle" | "interlinked" | "letters_categories";
@@ -138,6 +139,8 @@ const WordleConfig: React.FC<Props> = (props) => {
   const [interlinkedWord, setinterlinkedWord] = useState<string>();
   const [targetHint, settargetHint] = useState("");
   const [targetCategory, settargetCategory] = useState("");
+  const [categoryRequiredStartingLetter, setCategoryRequiredStartingLetter] = useState("");
+  const [categoryIndexes, setCategoryIndexes] = useState<number[]>([]);
   const [hasSubmitLetter, sethasSubmitLetter] = useState(false);
   const [revealedLetterIndexes, setRevealedLetterIndexes] = useState<number[]>([]);
 
@@ -361,7 +364,27 @@ const WordleConfig: React.FC<Props> = (props) => {
         if (props.firstLetterProvided) {
           setCurrentWord(new_target_word.charAt(0));
         }
-      } else {
+      } 
+      else if (props.mode === "letters_categories") {
+        // Get a random letter from the Alphabet
+        const random_letter = Alphabet[Math.round(Math.random() * (Alphabet.length - 1))];
+        // Set this letter as the letter that all words must begin with
+        setCategoryRequiredStartingLetter(random_letter);
+
+        let category_indexes = new Set<number>();
+
+        do {
+          // Get a random index of categoryMappings
+          const newIndex = Math.round(Math.random() * (categoryMappings.length - 1));
+          // If not already in the set of categories
+          if (!category_indexes.has(newIndex)) {
+            category_indexes.add(newIndex);
+          }
+        } while (category_indexes.size < 5);
+
+        setCategoryIndexes(Array.from(category_indexes));
+      }
+      else {
         /* --- REPEAT, INCREASING, LIMITLESS AND INTERLINKED ---  */
         const targetWordArray = wordLengthMappingsTargets.find((x) => x.value === wordLength)?.array!;
 
@@ -552,8 +575,8 @@ const WordleConfig: React.FC<Props> = (props) => {
 
     let outcome: "success" | "failure" | "in-progress" = "in-progress";
 
-    // Allow incomplete words for the category gamemode
-    if (props.mode !== "category") {
+    // Allow incomplete words for the category gamemodes
+    if (props.mode !== "category" && props.mode !== "letters_categories") {
       if (currentWord.length !== wordLength) {
         // Incomplete (length of) word
         return;
@@ -570,11 +593,18 @@ const WordleConfig: React.FC<Props> = (props) => {
       if (!targetWord) {
         return;
       } else {
-        // Find the array which includes the target word
+        // Category mode - Find the array which includes the target word
         wordArray = categoryMappings.find((x) => x.array.includes(targetWord))?.array!;
       }
-    } else {
-      // Find the array by length of word
+    } else if (props.mode === "letters_categories") {
+      // Each wordIndex has a unique category index
+      const row_category_index = categoryIndexes[wordIndex];
+      // Find the array using this unique category index
+      wordArray = categoryMappings[row_category_index].array;
+      // TODO: Letters Categories mode
+    }    
+    else {
+      // Otherwise, find the array by length of word
       wordArray = wordLengthMappingsGuessable.find((x) => x.value === wordLength)?.array!;
     }
 
@@ -680,6 +710,8 @@ const WordleConfig: React.FC<Props> = (props) => {
       interlinkedWord={interlinkedWord || ""}
       targetHint={targetHint || ""}
       targetCategory={targetCategory || ""}
+      categoryRequiredStartingLetter={categoryRequiredStartingLetter || ""}
+      categoryIndexes={categoryIndexes || []}
       puzzleRevealMs={props.puzzleRevealMs}
       puzzleLeaveNumBlanks={props.puzzleLeaveNumBlanks}
       revealedLetterIndexes={revealedLetterIndexes}

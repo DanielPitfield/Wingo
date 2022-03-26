@@ -24,6 +24,8 @@ interface Props {
   interlinkedWord: string;
   targetHint: string;
   targetCategory: string;
+  categoryRequiredStartingLetter: string;
+  categoryIndexes: number[];
   puzzleRevealMs: number;
   puzzleLeaveNumBlanks: number;
   letterStatuses: {
