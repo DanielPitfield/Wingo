@@ -140,6 +140,7 @@ const WordleConfig: React.FC<Props> = (props) => {
   const [interlinkedWord, setinterlinkedWord] = useState<string>();
   const [targetHint, settargetHint] = useState("");
   const [targetCategory, settargetCategory] = useState("");
+  const [hasSelectedTargetCategory, sethasSelectedTargetCategory] = useState(false);
   const [categoryRequiredStartingLetter, setCategoryRequiredStartingLetter] = useState("");
   const [categoryIndexes, setCategoryIndexes] = useState<number[]>([]);
   const [hasSubmitLetter, sethasSubmitLetter] = useState(false);
@@ -357,10 +358,31 @@ const WordleConfig: React.FC<Props> = (props) => {
         settargetHint(puzzle.hint);
       } else if (props.mode === "category") {
         /* --- Category ---  */
-        const random_category = categoryMappings[Math.round(Math.random() * (categoryMappings.length - 1))];
-        // Initially set to a random category (can be changed afterwards)
-        settargetCategory(random_category.name);
-        // A random word from this category is set in a useEffect()
+        // A target category has been manually selected from dropdown
+        if (hasSelectedTargetCategory) {
+          // Continue using that category
+          const wordArray = categoryMappings.find((x) => x.name === targetCategory)?.array;
+
+          if (!wordArray) {
+            return;
+          }
+
+          // Need to set word here as targetCategory doesn't change (the useEffect() wont be triggered)
+
+          const random_word = wordArray[Math.round(Math.random() * (wordArray.length - 1))];
+          console.log(random_word);
+          settargetWord(random_word);
+
+          // Reveal the first letter from game start
+          if (props.firstLetterProvided) {
+            setCurrentWord(random_word.charAt(0));
+          }
+        } else {
+          // Otherwise, randomly choose a category (can be changed afterwards)
+          const random_category = categoryMappings[Math.round(Math.random() * (categoryMappings.length - 1))];
+          settargetCategory(random_category.name);
+          // A random word from this category is set in a useEffect()
+        }
       } else if (props.mode === "letters_categories") {
         // Get a random letter from the Alphabet
         const random_letter = Alphabet[Math.round(Math.random() * (Alphabet.length - 1))];
@@ -668,6 +690,7 @@ const WordleConfig: React.FC<Props> = (props) => {
       const gameStart = wordIndex === 0 && currentWord.length === 0;
       if (gameStart) {
         settargetCategory(category);
+        sethasSelectedTargetCategory(true);
       }
     }
   }
