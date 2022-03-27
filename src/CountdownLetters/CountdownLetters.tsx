@@ -11,7 +11,7 @@ import { wordLengthMappingsGuessable } from "../WordleConfig";
 import { SaveData } from "../SaveData";
 
 interface Props {
-  mode: "casual" | "realistic";
+  mode: "countdown_letters_casual" | "countdown_letters_realistic";
   timerConfig: { isTimed: false } | { isTimed: true; totalSeconds: number; elapsedSeconds: number };
   keyboard: boolean;
   wordLength: number;
@@ -188,6 +188,7 @@ const CountdownLetters: React.FC<Props> = (props) => {
       <div className="countdown-letters-wrapper">
         <WordRow
           key={"letter_selection"}
+          mode={props.mode}
           word={props.countdownWord}
           isVertical={false}
           length={wordLength}
@@ -225,6 +226,7 @@ const CountdownLetters: React.FC<Props> = (props) => {
     Grid.push(
       <WordRow
         key={"countdown/letters_input"}
+        mode={props.mode}
         isVertical={false}
         word={props.currentWord}
         length={wordLength}
@@ -301,7 +303,7 @@ const CountdownLetters: React.FC<Props> = (props) => {
           </>
         );
       }
-      if (props.mode === "casual") {
+      if (props.mode === "countdown_letters_casual") {
         // Already evaluated that guess is valid, so just display result
         outcome = "success";
         // Reward gold based on how long the selected guess is

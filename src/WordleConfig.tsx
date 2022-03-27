@@ -405,9 +405,30 @@ const WordleConfig: React.FC<Props> = (props) => {
         /* --- REPEAT, INCREASING, LIMITLESS AND INTERLINKED ---  */
         const targetWordArray = wordLengthMappingsTargets.find((x) => x.value === wordLength)?.array!;
 
-        // If the wordArray can't be found (increasing/limitless mode runs out of long enough words!)
+        // If the wordArray can't be found (requesting too long a word)
         if (!targetWordArray) {
-          ResetGame();
+          if (props.mode === "increasing") {
+            // Increasing mode can just reset (reached the end)
+            ResetGame();
+          } else if (props.mode === "limitless") {
+            /* 
+            Limitless mode can't be reset otherwise the number of lives would be lost
+            Keep lives by just going back to 4 letter words
+            */
+
+            setwordLength(4);
+            const targetWordArray = wordLengthMappingsTargets.find((x) => x.value === 4)?.array!;
+            const new_target_word = targetWordArray[Math.round(Math.random() * (targetWordArray.length - 1))];
+
+            console.log("Not daily word: " + new_target_word);
+            settargetWord(new_target_word);
+
+            // Reveal the first letter from game start
+            if (props.firstLetterProvided) {
+              setCurrentWord(new_target_word.charAt(0));
+            }
+          }
+
           return;
         }
 
