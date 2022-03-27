@@ -16,6 +16,10 @@ import { SaveData } from "./SaveData";
 import { words_dogs } from "./WordArrays/Categories/dogs";
 import { words_countries } from "./WordArrays/Categories/countries";
 import { Alphabet } from "./Keyboard";
+import { words_chemical_elements } from "./WordArrays/Categories/chemical_elements";
+import { words_colours } from "./WordArrays/Categories/colours";
+import { words_fruits_and_vegetables } from "./WordArrays/Categories/fruits_and_vegetables";
+import { words_sports } from "./WordArrays/Categories/sports";
 
 export interface WordleConfigProps {
   mode: "daily" | "repeat" | "category" | "increasing" | "limitless" | "puzzle" | "interlinked" | "letters_categories";
@@ -60,9 +64,17 @@ export const wordLengthMappingsTargets = [
   { value: 11, array: words_eleven_targets },
 ];
 
+// TODO: Populate empty category word lists
 export const categoryMappings = [
-  { name: "Dog Breeds", array: words_dogs },
+  { name: "Capital Cities", array: words_capital_cities },
+  { name: "Chemical Elements", array: words_chemical_elements },
+  { name: "Colours", array: words_colours },
   { name: "Countries", array: words_countries },
+  { name: "Dog Breeds", array: words_dogs },
+  { name: "Fruits and Vegetables", array: words_fruits_and_vegetables },
+  //{ name: "Jobs", array: words_jobs },
+  //{ name: "Pizza Toppings", array: words_pizza_toppings },
+  { name: "Sports", array: words_sports },
 ];
 
 export function getNewLives(numGuesses: number, wordIndex: number): number {
@@ -405,9 +417,30 @@ const WordleConfig: React.FC<Props> = (props) => {
         /* --- REPEAT, INCREASING, LIMITLESS AND INTERLINKED ---  */
         const targetWordArray = wordLengthMappingsTargets.find((x) => x.value === wordLength)?.array!;
 
-        // If the wordArray can't be found (increasing/limitless mode runs out of long enough words!)
+        // If the wordArray can't be found (requesting too long a word)
         if (!targetWordArray) {
-          ResetGame();
+          if (props.mode === "increasing") {
+            // Increasing mode can just reset (reached the end)
+            ResetGame();
+          } else if (props.mode === "limitless") {
+            /* 
+            Limitless mode can't be reset otherwise the number of lives would be lost
+            Keep lives by just going back to 4 letter words
+            */
+
+            setwordLength(4);
+            const targetWordArray = wordLengthMappingsTargets.find((x) => x.value === 4)?.array!;
+            const new_target_word = targetWordArray[Math.round(Math.random() * (targetWordArray.length - 1))];
+
+            console.log("Not daily word: " + new_target_word);
+            settargetWord(new_target_word);
+
+            // Reveal the first letter from game start
+            if (props.firstLetterProvided) {
+              setCurrentWord(new_target_word.charAt(0));
+            }
+          }
+
           return;
         }
 
