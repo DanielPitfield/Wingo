@@ -183,7 +183,7 @@ export const LobbyMenu: React.FC<Props> = (props) => {
                 total={challenge.target()}
                 display={{ type: "solid", color: "#ffd613" }}
               >
-                {currentProgress} / {challenge.target()} {challenge.unit}
+                {Math.min(challenge.target(), currentProgress)} / {challenge.target()} {challenge.unit}
               </ProgressBar>
               {isAcheived && !isRedeemed && (
                 <Button
