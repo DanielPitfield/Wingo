@@ -133,7 +133,7 @@ input {
   animation: shakeIncorrectInput 1.5s;
 }
 
-.word_row[data-has-been-submitted="true"] .letter_tile {
+.letter_tile[data-has-been-submitted="true"] {
   animation: flipRevealLetter 1.5s;
 }
 

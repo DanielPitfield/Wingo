@@ -20,20 +20,19 @@ export const WordRow: React.FC<Props> = (props) => {
   // NOTE: The targetWord will be "" (empty string) with the WordRow that handles guessed words during the 'Countdown Letters' mode
 
   // Array of (character, status) for every letter
-  wordSummary = getWordSummary(
-    props.word,
-    props.targetWord,
-    props.inDictionary
-  );
+  wordSummary = getWordSummary(props.word, props.targetWord, props.inDictionary);
 
   function CreateRow() {
     var TileArray = [];
     for (let i = 0; i < props.length; i++) {
+      const applyAnimation =
+        props.hasSubmit && props.word !== undefined && props.word?.[i] !== undefined && props.inDictionary;
       TileArray.push(
         <LetterTile
           key={i}
           indexInWord={i}
           letter={props.word?.[i]}
+          applyAnimation={applyAnimation}
           status={!props.hasSubmit || !props.word ? "not set" : wordSummary[i]?.status}
         ></LetterTile>
       );
@@ -43,11 +42,11 @@ export const WordRow: React.FC<Props> = (props) => {
   }
 
   return (
-    /*
-    [data-invalid-word-submitted="true"] - Shake animation is applied to WordRow
-    [data-has-been-submitted="true"] - Reveal animation is applied to every LetterTile
-    */
-    <div className={props.isVertical ? "word_row_vertical" : "word_row"} data-invalid-word-submitted={props.word && props.hasSubmit && !props.inDictionary} data-has-been-submitted={props.word && props.hasSubmit && props.inDictionary}>
+    // [data-invalid-word-submitted="true"] - Shake animation is applied to WordRow
+    <div
+      className={props.isVertical ? "word_row_vertical" : "word_row"}
+      data-invalid-word-submitted={props.word && props.hasSubmit && !props.inDictionary}
+    >
       <>{CreateRow()}</>
     </div>
   );
