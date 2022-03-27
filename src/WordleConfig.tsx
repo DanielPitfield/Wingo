@@ -235,6 +235,11 @@ const WordleConfig: React.FC<Props> = (props) => {
       const random_word = wordArray[Math.round(Math.random() * (wordArray.length - 1))];
       console.log(random_word);
       settargetWord(random_word);
+
+      // Reveal the first letter from game start
+      if (props.firstLetterProvided) {
+        setCurrentWord(random_word.charAt(0));
+      }
     }
   }, [targetCategory]);
 
@@ -353,19 +358,9 @@ const WordleConfig: React.FC<Props> = (props) => {
       } else if (props.mode === "category") {
         /* --- Category ---  */
         const random_category = categoryMappings[Math.round(Math.random() * (categoryMappings.length - 1))];
-        const wordArray = random_category.array;
+        // Initially set to a random category (can be changed afterwards)
         settargetCategory(random_category.name);
-
-        // TODO: These new target words can have spaces in them (e.g United Kingdom)
-        const new_target_word = wordArray[Math.round(Math.random() * (wordArray.length - 1))];
-
-        console.log("Category word: " + new_target_word);
-        settargetWord(new_target_word);
-
-        // Reveal the first letter from game start
-        if (props.firstLetterProvided) {
-          setCurrentWord(new_target_word.charAt(0));
-        }
+        // A random word from this category is set in a useEffect()
       } else if (props.mode === "letters_categories") {
         // Get a random letter from the Alphabet
         const random_letter = Alphabet[Math.round(Math.random() * (Alphabet.length - 1))];
@@ -669,7 +664,11 @@ const WordleConfig: React.FC<Props> = (props) => {
 
   function onSubmitTargetCategory(category: string) {
     if (categoryMappings.find((x) => x.name === category)) {
-      settargetCategory(category);
+      // Only allow changing of the category, if no attempts have been made
+      const gameStart = wordIndex === 0 && currentWord.length === 0;
+      if (gameStart) {
+        settargetCategory(category);
+      }
     }
   }
 
