@@ -133,6 +133,10 @@ input {
   animation: shakeIncorrectInput 1.5s;
 }
 
+.letter_tile[data-new-letter-added="true"] {
+  animation: popLetterInput 0.2s;
+}
+
 .letter_tile[data-has-been-submitted="true"] {
   animation: flipRevealLetter 1.5s;
 }
@@ -165,7 +169,12 @@ input {
   */
 }
 
-// TODO: Add these animations to letter tiles (when needed)
+// For when a letter is entered during Wordle
+@keyframes popLetterInput {
+  0%{ -ms-transform: scale(1); transform: scale(1); }
+  50%{ -ms-transform: scale(1.2); transform: scale(1.2); }
+  100%{ -ms-transform: scale(1); transform: scale(1); }
+  }
 
 // For when checking a guess in Wordle (each letter tile flips to reveal status)
 @keyframes flipRevealLetter {

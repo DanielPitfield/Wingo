@@ -26,10 +26,11 @@ const LetterTile: React.FC<Props> = (props) => {
     return () => clearTimeout(timeoutId);
   }, [props.status]);
 
-  return (
+  return (    
+    // [data-new-letter-added="true"] - Pop animation is applied to LetterTile
     // [data-has-been-submitted="true"] - Reveal animation is applied to LetterTile
     <div
-      className="letter_tile" data-has-been-submitted={props.applyAnimation}
+      className="letter_tile" data-new-letter-added={Boolean((props.status === "not set" && props.letter))} data-has-been-submitted={props.applyAnimation}
       data-status={delayedStatus}
       style={delayForThisLetterSeconds ? { animationDelay: `${delayForThisLetterSeconds}s` } : undefined}
     >
