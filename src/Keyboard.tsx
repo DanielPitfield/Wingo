@@ -58,7 +58,7 @@ export const Keyboard: React.FC<Props> = (props) => {
     }
 
     // Don't need updated keyboard statuses if Countdown Letters
-    if (props.mode === "countdown/letters") {
+    if (props.mode === "countdown_letters_casual" || props.mode === "countdown_letters_realistic") {
       // Just use standard statuses (where all are "not set")
       return keyboardStatuses;
     }

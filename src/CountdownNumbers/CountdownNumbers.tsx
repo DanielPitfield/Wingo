@@ -12,7 +12,7 @@ import { Guess, hasNumberSelectionFinished, hasNumberSelectionStarted } from "./
 import { CountdownRow } from "./CountdownRow";
 
 interface Props {
-  mode: "casual" | "realistic";
+  mode: "countdown_numbers_casual" | "countdown_numbers_realistic";
   timerConfig: { isTimed: false } | { isTimed: true; totalSeconds: number; elapsedSeconds: number };
   wordIndex: number;
   guesses: Guess[];
@@ -220,7 +220,7 @@ const CountdownNumbers: React.FC<Props> = (props) => {
           </>
         );
       }
-      if (props.mode === "casual") {
+      if (props.mode === "countdown_numbers_casual") {
         // Already evaluated that guess is valid, so just display result
         outcome = "success";
         // Reward gold based on how long the selected guess is

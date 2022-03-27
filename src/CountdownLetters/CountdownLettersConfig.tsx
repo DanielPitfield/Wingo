@@ -6,7 +6,7 @@ import { wordLengthMappingsGuessable } from "../WordleConfig";
 
 interface Props {
   page: Page;
-  mode: "casual" | "realistic";
+  mode: "countdown_letters_casual" | "countdown_letters_realistic";
   timerConfig: { isTimed: false } | { isTimed: true; seconds: number };
   keyboard: boolean;
   defaultWordLength: number;
@@ -224,7 +224,7 @@ const CountdownLettersConfig: React.FC<Props> = (props) => {
       return;
     }
 
-    if (props.mode === "realistic") {
+    if (props.mode === "countdown_letters_realistic") {
       // Don't need to do any evaluation of the guess and just add to guesses regardless
       setGuesses(guesses.concat(currentWord));
       ContinueGame();
