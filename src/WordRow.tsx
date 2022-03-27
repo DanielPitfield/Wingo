@@ -35,7 +35,7 @@ export const WordRow: React.FC<Props> = (props) => {
     // Apply animation only to LetterTiles which have been revealed in Puzzle mode
     else if (props.mode === "puzzle") {
       if (animation_criteria && props.revealedLetterIndexes && props.revealedLetterIndexes.includes(letterIndex)) {
-        return true;
+        return false;
       }
     } 
     // Apply animation to LetterTiles if the minimum criteria is met (in any other mode)
