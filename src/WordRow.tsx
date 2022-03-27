@@ -64,9 +64,11 @@ export const WordRow: React.FC<Props> = (props) => {
 
   return (
     // [data-invalid-word-submitted="true"] - Shake animation is applied to WordRow
+    // [data-correct-word-submitted="true"] - Jump animation is applied to WordRow
     <div
       className={props.isVertical ? "word_row_vertical" : "word_row"}
       data-invalid-word-submitted={Boolean((props.word && props.hasSubmit && !props.inDictionary) || (props.isIncompleteWord && props.word))}
+      data-correct-word-submitted={Boolean(props.hasSubmit && (props.word === props.targetWord))}
     >
       <>{CreateRow()}</>
     </div>
