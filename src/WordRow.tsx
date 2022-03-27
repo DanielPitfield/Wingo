@@ -11,6 +11,7 @@ interface Props {
   revealedLetterIndexes?: number[];
   hasSubmit: boolean;
   inDictionary: boolean;
+  isIncompleteWord?: boolean;
 }
 
 export const WordRow: React.FC<Props> = (props) => {
@@ -65,7 +66,7 @@ export const WordRow: React.FC<Props> = (props) => {
     // [data-invalid-word-submitted="true"] - Shake animation is applied to WordRow
     <div
       className={props.isVertical ? "word_row_vertical" : "word_row"}
-      data-invalid-word-submitted={props.word && props.hasSubmit && !props.inDictionary}
+      data-invalid-word-submitted={Boolean((props.word && props.hasSubmit && !props.inDictionary) || (props.isIncompleteWord && props.word))}
     >
       <>{CreateRow()}</>
     </div>

@@ -19,6 +19,7 @@ interface Props {
   wordIndex: number;
   inProgress: boolean;
   inDictionary: boolean;
+  isIncompleteWord: boolean;
   hasSubmitLetter: boolean;
   targetWord: string;
   interlinkedWord: string;
@@ -111,6 +112,7 @@ const Wordle: React.FC<Props> = (props) => {
           targetWord={props.targetWord}
           hasSubmit={props.wordIndex > i || !props.inProgress}
           inDictionary={props.inDictionary}
+          isIncompleteWord={props.isIncompleteWord}
         ></WordRow>
       );
 
@@ -126,6 +128,7 @@ const Wordle: React.FC<Props> = (props) => {
             targetWord={props.targetWord}
             hasSubmit={props.wordIndex > i || !props.inProgress}
             inDictionary={props.inDictionary}
+            isIncompleteWord={props.isIncompleteWord}
           ></WordRow>
         );
       }

@@ -66,7 +66,7 @@ export const wordLengthMappingsTargets = [
 
 // TODO: Populate empty category word lists
 export const categoryMappings = [
-  { name: "Capital Cities", array: words_capital_cities },
+  //{ name: "Capital Cities", array: words_capital_cities },
   { name: "Chemical Elements", array: words_chemical_elements },
   { name: "Colours", array: words_colours },
   { name: "Countries", array: words_countries },
@@ -147,6 +147,7 @@ const WordleConfig: React.FC<Props> = (props) => {
   const [wordIndex, setWordIndex] = useState(0);
   const [inProgress, setinProgress] = useState(true);
   const [inDictionary, setinDictionary] = useState(true);
+  const [isIncompleteWord, setisIncompleteWord] = useState(false);
   const [wordLength, setwordLength] = useState(props.defaultWordLength);
   const [targetWord, settargetWord] = useState<string>();
   const [interlinkedWord, setinterlinkedWord] = useState<string>();
@@ -621,6 +622,7 @@ const WordleConfig: React.FC<Props> = (props) => {
       return;
     }
 
+    // Start as true until proven otherwise
     setinDictionary(true);
 
     let outcome: "success" | "failure" | "in-progress" = "in-progress";
@@ -629,9 +631,13 @@ const WordleConfig: React.FC<Props> = (props) => {
     if (props.mode !== "category" && props.mode !== "letters_categories") {
       if (currentWord.length !== wordLength) {
         // Incomplete (length of) word
+        setisIncompleteWord(true);
         return;
       }
-    }
+    }    
+    
+    // Reached here, the word is complete
+    setisIncompleteWord(false);
 
     if (wordIndex >= props.defaultnumGuesses) {
       // Used all the available rows (out of guesses)
@@ -759,6 +765,7 @@ const WordleConfig: React.FC<Props> = (props) => {
       wordIndex={wordIndex}
       inProgress={inProgress}
       inDictionary={inDictionary}
+      isIncompleteWord={isIncompleteWord}
       hasSubmitLetter={hasSubmitLetter}
       targetWord={targetWord || ""}
       interlinkedWord={interlinkedWord || ""}
