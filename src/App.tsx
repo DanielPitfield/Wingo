@@ -386,7 +386,7 @@ export const App: React.FC = () => {
       case "countdown/letters":
         return (
           <CountdownLettersConfig
-            mode={"casual"}
+            mode={"countdown_letters_casual"}
             timerConfig={
               gameOptionToggles.find((x) => x.page === "countdown/letters")?.timer
                 ? { isTimed: true, seconds: 30 }
@@ -419,7 +419,7 @@ export const App: React.FC = () => {
       case "countdown/numbers":
         return (
           <CountdownNumbersConfig
-            mode={"casual"}
+            mode={"countdown_numbers_casual"}
             timerConfig={
               gameOptionToggles.find((x) => x.page === "countdown/numbers")?.timer
                 ? { isTimed: true, seconds: 30 }

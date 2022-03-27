@@ -19,6 +19,7 @@ interface Props {
   wordIndex: number;
   inProgress: boolean;
   inDictionary: boolean;
+  isIncompleteWord: boolean;
   hasSubmitLetter: boolean;
   targetWord: string;
   interlinkedWord: string;
@@ -63,10 +64,12 @@ const Wordle: React.FC<Props> = (props) => {
       Grid.push(
         <WordRow
           key={"read-only"}
+          mode={props.mode}
           word={displayWord}
           isVertical={false}
           length={wordLength}
           targetWord={props.targetWord}
+          revealedLetterIndexes={props.revealedLetterIndexes}
           hasSubmit={true}
           inDictionary={props.inDictionary}
         ></WordRow>
@@ -102,12 +105,14 @@ const Wordle: React.FC<Props> = (props) => {
       Grid.push(
         <WordRow
           key={i}
+          mode={props.mode}
           isVertical={false}
           word={word}
           length={wordLength}
           targetWord={props.targetWord}
           hasSubmit={props.wordIndex > i || !props.inProgress}
           inDictionary={props.inDictionary}
+          isIncompleteWord={props.isIncompleteWord}
         ></WordRow>
       );
 
@@ -116,12 +121,14 @@ const Wordle: React.FC<Props> = (props) => {
         Grid.push(
           <WordRow
             key={i}
+            mode={props.mode}
             isVertical={true}
             word={word}
             length={wordLength - 1} /* Length is 1 smaller than horizontal counterpart */
             targetWord={props.targetWord}
             hasSubmit={props.wordIndex > i || !props.inProgress}
             inDictionary={props.inDictionary}
+            isIncompleteWord={props.isIncompleteWord}
           ></WordRow>
         );
       }
