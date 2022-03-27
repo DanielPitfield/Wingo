@@ -6,7 +6,7 @@ import { operators } from "../Nubble/Nubble";
 
 interface Props {
   page: Page;
-  mode: "casual" | "realistic";
+  mode: "countdown_numbers_casual" | "countdown_numbers_realistic";
   defaultNumOperands: number;
   defaultNumGuesses: number;
   defaultExpressionLength: number;
@@ -154,7 +154,7 @@ const CountdownNumbersConfig: React.FC<Props> = (props) => {
     }
 
     // TODO: Realistic: ask for result of calculation, then add guess
-    if (props.mode === "realistic") {
+    if (props.mode === "countdown_numbers_realistic") {
       // Don't need to do any evaluation of the guess and just add to guesses regardless
       setGuesses(guesses.concat(currentGuess));
       ContinueGame();

@@ -63,10 +63,12 @@ const Wordle: React.FC<Props> = (props) => {
       Grid.push(
         <WordRow
           key={"read-only"}
+          mode={props.mode}
           word={displayWord}
           isVertical={false}
           length={wordLength}
           targetWord={props.targetWord}
+          revealedLetterIndexes={props.revealedLetterIndexes}
           hasSubmit={true}
           inDictionary={props.inDictionary}
         ></WordRow>
@@ -102,6 +104,7 @@ const Wordle: React.FC<Props> = (props) => {
       Grid.push(
         <WordRow
           key={i}
+          mode={props.mode}
           isVertical={false}
           word={word}
           length={wordLength}
@@ -116,6 +119,7 @@ const Wordle: React.FC<Props> = (props) => {
         Grid.push(
           <WordRow
             key={i}
+            mode={props.mode}
             isVertical={true}
             word={word}
             length={wordLength - 1} /* Length is 1 smaller than horizontal counterpart */
