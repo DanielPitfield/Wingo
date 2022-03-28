@@ -4,6 +4,7 @@ import { getWordSummary } from "./WordleConfig";
 
 interface Props {
   mode: string;
+  inProgress?: boolean;
   length: number;
   word: string;
   isVertical: boolean;
@@ -29,16 +30,20 @@ export const WordRow: React.FC<Props> = (props) => {
     // Minimum set of criteria that must be satisfied for animation to be applied
     const animation_criteria =
       props.hasSubmit && props.word !== undefined && props.word?.[letterIndex] !== undefined && props.inDictionary;
-      // Don't apply animation for WordRows in Countdown Letters mode
+    // Don't apply animation for LetterTiles in Countdown Letters mode
     if (props.mode === "countdown_letters_casual" || props.mode === "countdown_letters_realistic") {
       return false;
-    } 
+    }
+    // Don't apply animation for LetterTiles in daily mode, when the game reports as having ended
+    else if (props.mode === "daily" && !props.inProgress && props.word && props.hasSubmit) {
+      return false;
+    }
     // Apply animation only to LetterTiles which have been revealed in Puzzle mode
     else if (props.mode === "puzzle") {
       if (animation_criteria && props.revealedLetterIndexes && props.revealedLetterIndexes.includes(letterIndex)) {
-        return false;
+        return false; // TODO: Set to true when animationDelay is fixed
       }
-    } 
+    }
     // Apply animation to LetterTiles if the minimum criteria is met (in any other mode)
     else if (!props.revealedLetterIndexes && animation_criteria) {
       return true;
@@ -67,8 +72,10 @@ export const WordRow: React.FC<Props> = (props) => {
     // [data-correct-word-submitted="true"] - Jump animation is applied to WordRow
     <div
       className={props.isVertical ? "word_row_vertical" : "word_row"}
-      data-invalid-word-submitted={Boolean((props.word && props.hasSubmit && !props.inDictionary) || (props.isIncompleteWord && props.word))}
-      data-correct-word-submitted={Boolean(props.hasSubmit && (props.word === props.targetWord))}
+      data-invalid-word-submitted={Boolean(
+        (props.word && props.hasSubmit && !props.inDictionary) || (props.isIncompleteWord && props.word)
+      )}
+      data-correct-word-submitted={Boolean(props.hasSubmit && props.word === props.targetWord)}
     >
       <>{CreateRow()}</>
     </div>

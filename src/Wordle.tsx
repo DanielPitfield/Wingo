@@ -106,6 +106,7 @@ const Wordle: React.FC<Props> = (props) => {
         <WordRow
           key={i}
           mode={props.mode}
+          inProgress={props.inProgress}
           isVertical={false}
           word={word}
           length={wordLength}

@@ -11,11 +11,13 @@ interface Props {
 const LetterTile: React.FC<Props> = (props) => {
   const DELAY_BETWEEN_TILE_REVEAL_SECONDS = 0.4;
   const delayForThisLetterSeconds =
-    props.indexInWord !== undefined && props.status !== "incorrect" && props.letter && props.applyAnimation ? props.indexInWord * DELAY_BETWEEN_TILE_REVEAL_SECONDS : undefined;
+    props.indexInWord !== undefined && props.status !== "incorrect" && props.letter && props.applyAnimation
+      ? props.indexInWord * DELAY_BETWEEN_TILE_REVEAL_SECONDS
+      : undefined;
 
   const [delayedStatus, setDelayedStatus] = useState<Props["status"]>("not set");
 
-  React.useEffect(() => { 
+  React.useEffect(() => {
     if (props.status === "not set") {
       setDelayedStatus(props.status);
       return;
@@ -26,11 +28,13 @@ const LetterTile: React.FC<Props> = (props) => {
     return () => clearTimeout(timeoutId);
   }, [props.status]);
 
-  return (    
+  return (
     // [data-new-letter-added="true"] - Pop animation is applied to LetterTile
     // [data-has-been-submitted="true"] - Reveal animation is applied to LetterTile
     <div
-      className="letter_tile" data-new-letter-added={Boolean((props.status === "not set" && props.letter))} data-has-been-submitted={props.applyAnimation}
+      className="letter_tile"
+      data-new-letter-added={Boolean(props.status === "not set" && props.letter)}
+      data-has-been-submitted={props.applyAnimation}
       data-status={delayedStatus}
       style={delayForThisLetterSeconds ? { animationDelay: `${delayForThisLetterSeconds}s` } : undefined}
     >
