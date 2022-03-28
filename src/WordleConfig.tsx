@@ -433,7 +433,7 @@ const WordleConfig: React.FC<Props> = (props) => {
             const targetWordArray = wordLengthMappingsTargets.find((x) => x.value === 4)?.array!;
             const new_target_word = targetWordArray[Math.round(Math.random() * (targetWordArray.length - 1))];
 
-            console.log("Not daily word: " + new_target_word);
+            console.log("Not daily word (reset 4): " + new_target_word);
             settargetWord(new_target_word);
 
             // Reveal the first letter from game start
@@ -442,6 +442,15 @@ const WordleConfig: React.FC<Props> = (props) => {
             }
           }
 
+          return;
+        }
+
+        /*
+        If a gamemode where the wordLength can increase
+        AND there is already a targetWord which is of the current wordLength
+        Return early, a new targetWord does not need to be determined
+        */
+        if ((props.mode === "limitless" || props.mode === "increasing") && targetWord && (targetWord.length === wordLength)) {
           return;
         }
 
