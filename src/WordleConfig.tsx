@@ -24,7 +24,7 @@ import { words_sports } from "./WordArrays/Categories/sports";
 export interface WordleConfigProps {
   mode: "daily" | "repeat" | "category" | "increasing" | "limitless" | "puzzle" | "interlinked" | "letters_categories";
   // TODO: If targetWord is a specified prop, defaultWordLength MUST also be this word's length
-  targetword?: string;
+  targetWord?: string;
   wordArray? : string[];
   enforceFullLengthGuesses: boolean;
   firstLetterProvided: boolean;
@@ -153,7 +153,7 @@ const WordleConfig: React.FC<Props> = (props) => {
   const [inDictionary, setinDictionary] = useState(true);
   const [isIncompleteWord, setisIncompleteWord] = useState(false);
   const [wordLength, setwordLength] = useState(props.defaultWordLength);
-  const [targetWord, settargetWord] = useState<string>();
+  const [targetWord, settargetWord] = useState(props.targetWord ? props.targetWord : "");
   const [interlinkedWord, setinterlinkedWord] = useState<string>();
   const [targetHint, settargetHint] = useState("");
   const [targetCategory, settargetCategory] = useState("");
@@ -335,8 +335,13 @@ const WordleConfig: React.FC<Props> = (props) => {
     };
   }, [props.mode, targetWord, revealedLetterIndexes, hasSubmitLetter]);
 
+  // targetWord generation
   React.useEffect(() => {
     if (inProgress) {
+      // Don't need to determine a target word, if it is explicitly specified
+      if (props.targetWord) {
+        return;
+      }
       /* --- DAILY ---  */
       if (props.mode === "daily") {
         // Find array of 5 (wordLength) letter words
@@ -658,6 +663,8 @@ const WordleConfig: React.FC<Props> = (props) => {
     }
 
     // TODO: Optimisation: Not determining all the words which are valid guesses EVERY and every time enter is pressed?
+
+    // wordArray generation
     let wordArray: string[] = [];
     // wordArray was explicitly specified, so use that
     if (props.wordArray) {

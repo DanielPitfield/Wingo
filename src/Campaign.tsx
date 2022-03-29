@@ -13,7 +13,7 @@ const areas: AreaConfig[] = [
         description: "1",
         levelProps: {
           mode: "repeat",
-          targetword: "start",
+          targetWord: "start",
           enforceFullLengthGuesses: true,
           defaultWordLength: 5,
           defaultnumGuesses: 6,
