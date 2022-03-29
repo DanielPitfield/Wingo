@@ -3,17 +3,19 @@ import { Page } from "./App";
 import { AreaConfig } from "./Area";
 
 // Define the game areas
-// NOTE: Remmeber not to do the "repeat" mode!
 const areas: AreaConfig[] = [
   {
     name: "Alpha",
-    description: "Enjoy the tutorial",
+    description: "Tutorial",
     levels: [
+      // Define the levels in each area
       {
-        description: "Start off easy with this simple Wordle!",
+        description: "1",
         levelProps: {
           mode: "repeat",
-          defaultWordLength: 3,
+          targetword: "start",
+          enforceFullLengthGuesses: true,
+          defaultWordLength: 5,
           defaultnumGuesses: 6,
           keyboard: true,
           firstLetterProvided: true,

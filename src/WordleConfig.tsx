@@ -23,6 +23,10 @@ import { words_sports } from "./WordArrays/Categories/sports";
 
 export interface WordleConfigProps {
   mode: "daily" | "repeat" | "category" | "increasing" | "limitless" | "puzzle" | "interlinked" | "letters_categories";
+  // TODO: If targetWord is a specified prop, defaultWordLength MUST also be this word's length
+  targetword?: string;
+  wordArray? : string[];
+  enforceFullLengthGuesses: boolean;
   firstLetterProvided: boolean;
   timerConfig: { isTimed: false } | { isTimed: true; seconds: number };
   keyboard: boolean;
@@ -636,8 +640,8 @@ const WordleConfig: React.FC<Props> = (props) => {
 
     let outcome: "success" | "failure" | "in-progress" = "in-progress";
 
-    // Allow incomplete words for the category gamemodes
-    if (props.mode !== "category" && props.mode !== "letters_categories") {
+    // Don't allow incomplete words (if specified in props)
+    if (props.enforceFullLengthGuesses) {
       if (currentWord.length !== wordLength) {
         // Incomplete (length of) word
         setisIncompleteWord(true);
@@ -645,7 +649,7 @@ const WordleConfig: React.FC<Props> = (props) => {
       }
     }    
     
-    // Reached here, the word is complete
+    // Reached here, the word is complete or enforce full length guesses is off
     setisIncompleteWord(false);
 
     if (wordIndex >= props.defaultnumGuesses) {
@@ -653,8 +657,13 @@ const WordleConfig: React.FC<Props> = (props) => {
       return;
     }
 
-    let wordArray: string[];
-    if (props.mode === "category") {
+    // TODO: Optimisation: Not determining all the words which are valid guesses EVERY and every time enter is pressed?
+    let wordArray: string[] = [];
+    // wordArray was explicitly specified, so use that
+    if (props.wordArray) {
+      wordArray = props.wordArray;
+    }
+    else if (props.mode === "category") {
       if (!targetWord) {
         return;
       } else {
@@ -668,8 +677,24 @@ const WordleConfig: React.FC<Props> = (props) => {
       wordArray = categoryMappings[row_category_index].array;
       // TODO: Letters Categories mode
     } else {
-      // Otherwise, find the array by length of word
-      wordArray = wordLengthMappingsGuessable.find((x) => x.value === wordLength)?.array!;
+      // Most gamemodes
+
+      // Only full length guesses - Find the array by length of word
+      if (props.enforceFullLengthGuesses) {
+        wordArray = wordLengthMappingsGuessable.find((x) => x.value === wordLength)?.array!;
+      }
+      // Full AND partial length guesses - All arrays containing words up to the wordLength (inclusive)
+      else {
+        for (let i = 3; i <= wordLength; i++) {
+          // Find array of containing words of i length
+          const currentLengthWordArray = wordLengthMappingsGuessable.find((x) => x.value === i)?.array!;
+          if (currentLengthWordArray) {
+            // Add smaller word array to larger wordArray
+            wordArray = wordArray.concat(currentLengthWordArray);
+            console.log(wordArray);
+          }
+        }
+      }
     }
 
     if (!wordArray || wordArray.length === 0) {

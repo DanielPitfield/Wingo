@@ -283,6 +283,7 @@ export const App: React.FC = () => {
             }
             keyboard={gameOptionToggles.find((x) => x.page === "wingo/daily")?.keyboard || false}
             defaultWordLength={wordLength}
+            enforceFullLengthGuesses={true}
           />
         );
 
@@ -299,6 +300,7 @@ export const App: React.FC = () => {
             }
             keyboard={gameOptionToggles.find((x) => x.page === "wingo/repeat")?.keyboard || false}
             defaultWordLength={wordLength}
+            enforceFullLengthGuesses={false}
           />
         );
 
@@ -315,6 +317,7 @@ export const App: React.FC = () => {
             }
             keyboard={gameOptionToggles.find((x) => x.page === "wingo/category")?.keyboard || false}
             defaultWordLength={wordLength}
+            enforceFullLengthGuesses={false}
           />
         );
 
@@ -331,6 +334,7 @@ export const App: React.FC = () => {
             }
             keyboard={gameOptionToggles.find((x) => x.page === "wingo/increasing")?.keyboard || false}
             defaultWordLength={wordLength_increasing}
+            enforceFullLengthGuesses={true}
           />
         );
 
@@ -347,6 +351,7 @@ export const App: React.FC = () => {
             }
             keyboard={gameOptionToggles.find((x) => x.page === "wingo/limitless")?.keyboard || false}
             defaultWordLength={wordLength_limitless}
+            enforceFullLengthGuesses={true}
           />
         );
 
@@ -364,6 +369,7 @@ export const App: React.FC = () => {
             keyboard={gameOptionToggles.find((x) => x.page === "wingo/puzzle")?.keyboard || false}
             defaultWordLength={wordLength_puzzle}
             defaultnumGuesses={numGuesses_puzzle}
+            enforceFullLengthGuesses={true}
           />
         );
 
@@ -380,6 +386,7 @@ export const App: React.FC = () => {
             }
             keyboard={gameOptionToggles.find((x) => x.page === "wingo/interlinked")?.keyboard || false}
             defaultWordLength={wordLength}
+            enforceFullLengthGuesses={true}
           />
         );
 
@@ -413,6 +420,7 @@ export const App: React.FC = () => {
             }
             keyboard={gameOptionToggles.find((x) => x.page === "wingo/interlinked")?.keyboard || false}
             defaultWordLength={wordLength}
+            enforceFullLengthGuesses={false}
           />
         );
 
