@@ -5,6 +5,7 @@ import { LevelConfig } from "./Level";
 export interface AreaConfig {
   name: string;
   description: string;
+  unlock_level: LevelConfig;
   levels: LevelConfig[];
 }
 
@@ -24,7 +25,7 @@ export const Area: React.FC<{
             props.setPage("campaign/area/level");
           }}
         >
-          <strong className="level-name">Level {i + 1}</strong>
+          <strong className="level-name">{i + 1}</strong>
           <span className="level-description">{level.description}</span>
         </button>
       ))}

@@ -254,7 +254,7 @@ export const App: React.FC = () => {
         );
 
       case "campaign":
-        return <Campaign setPage={setPage} setSelectedArea={setSelectedCampaignArea} />;
+        return <Campaign setPage={setPage} setSelectedArea={setSelectedCampaignArea} setSelectedCampaignLevel={setSelectedCampaignLevel} />;
 
       case "campaign/area":
         return (
