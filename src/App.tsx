@@ -8,7 +8,7 @@ import GoldCoin from "./images/gold.png";
 import { SaveData } from "./SaveData";
 import CountdownLettersConfig from "./CountdownLetters/CountdownLettersConfig";
 import CountdownNumbersConfig from "./CountdownNumbers/CountdownNumbersConfig";
-import { Campaign } from "./Campaign";
+import { areas, Campaign } from "./Campaign";
 import { Area, AreaConfig } from "./Area";
 import { Level, LevelConfig } from "./Level";
 
@@ -144,6 +144,22 @@ export const App: React.FC = () => {
       keyboard: false,
     },
   ]);
+  
+  const defaultAreaStatuses: {
+    name: string;
+    status: "locked" | "unlockable" | "unlocked";
+  }[] = areas.map((area) => ({
+    name: area.name,
+    // TODO: Status is read from saveData
+    status: "unlockable",
+  }));
+
+  const [areaStatuses, setareaStatuses] = useState<
+    {
+      name: string;
+      status: "locked" | "unlockable" | "unlocked";
+    }[]
+  >(defaultAreaStatuses);
 
   useEffect(() => {
     const LOADING_TIMEOUT_MS = 1500;
@@ -170,6 +186,17 @@ export const App: React.FC = () => {
     const urlPathWithoutLeadingTrailingSlashes = window.location.pathname.replace(/^\//g, "").replace(/\/$/g, "");
 
     return pages.find((page) => page.page === urlPathWithoutLeadingTrailingSlashes)?.page;
+  }
+
+  function onSubmitAreaStatus(status: "locked" | "unlockable" | "unlocked") {
+    const current_area = selectedCampaignArea?.name;
+    const newAreaStatuses = areaStatuses.map(areaStatus => {
+      if (areaStatus.name === current_area) {
+        areaStatus.status = status;
+      }
+      return areaStatus;
+    })
+    setareaStatuses(newAreaStatuses);
   }
 
   useEffect(() => {
@@ -254,7 +281,7 @@ export const App: React.FC = () => {
         );
 
       case "campaign":
-        return <Campaign setPage={setPage} setSelectedArea={setSelectedCampaignArea} setSelectedCampaignLevel={setSelectedCampaignLevel} />;
+        return <Campaign setPage={setPage} setSelectedArea={setSelectedCampaignArea} setSelectedCampaignLevel={setSelectedCampaignLevel} areaStatuses={areaStatuses}/>;
 
       case "campaign/area":
         return (
@@ -266,7 +293,7 @@ export const App: React.FC = () => {
       case "campaign/area/level":
         return (
           selectedCampaignLevel && (
-            <Level level={selectedCampaignLevel} page={page} setPage={setPage} addGold={addGold} />
+            <Level level={selectedCampaignLevel} page={page} setPage={setPage} addGold={addGold} onSubmitAreaStatus={onSubmitAreaStatus} />
           )
         );
 
