@@ -4,7 +4,7 @@ import { MessageNotification } from "./MessageNotification";
 import WordleConfig, { WordleConfigProps } from "./WordleConfig";
 
 export interface LevelConfig {
-  hint: string;
+  hint?: string;
   isUnlockLevel?: boolean;
   levelProps: WordleConfigProps;
 }
@@ -14,7 +14,7 @@ export const Level: React.FC<{
   page: Page;
   setPage: (page: Page) => void;
   addGold: (gold: number) => void;
-  onSubmitAreaStatus: (status: "locked" | "unlockable" | "unlocked") => void;
+  onCompleteLevel: (level: LevelConfig) => void;
 }> = (props) => {
   return (
     <div className="level">
@@ -27,7 +27,7 @@ export const Level: React.FC<{
         finishingButtonText={"Back to area"}
         onComplete={() => {
           if (props.level.isUnlockLevel) {
-            props.onSubmitAreaStatus("unlocked");
+            props.onCompleteLevel(props.level);
           }
           props.setPage("campaign/area");
         }}

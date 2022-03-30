@@ -14,6 +14,7 @@ export const Area: React.FC<{
   setPage: (page: Page) => void;
 }> = (props) => {
   return (
+    // LEVEL SELECTION
     <div className="area">
       {props.area.levels.map((level, i) => (
         <button

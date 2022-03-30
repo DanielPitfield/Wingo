@@ -144,20 +144,25 @@ export const App: React.FC = () => {
       keyboard: false,
     },
   ]);
-  
+
+  // Read progress from SaveData
   const defaultAreaStatuses: {
     name: string;
     status: "locked" | "unlockable" | "unlocked";
+    current_level: number;
   }[] = areas.map((area) => ({
     name: area.name,
     // TODO: Status is read from saveData
     status: "unlockable",
+    current_level: 0,
   }));
 
+  // Initialise state to SaveData progress
   const [areaStatuses, setareaStatuses] = useState<
     {
       name: string;
       status: "locked" | "unlockable" | "unlocked";
+      current_level: number;
     }[]
   >(defaultAreaStatuses);
 
@@ -188,15 +193,33 @@ export const App: React.FC = () => {
     return pages.find((page) => page.page === urlPathWithoutLeadingTrailingSlashes)?.page;
   }
 
-  function onSubmitAreaStatus(status: "locked" | "unlockable" | "unlocked") {
-    const current_area = selectedCampaignArea?.name;
-    const newAreaStatuses = areaStatuses.map(areaStatus => {
-      if (areaStatus.name === current_area) {
-        areaStatus.status = status;
+  function onCompleteLevel(level: LevelConfig) {
+    // Completed level was the unlock level for an area
+    if (level === selectedCampaignArea?.unlock_level) {
+      // Update area status
+      const newAreaStatuses = areaStatuses.map((area) => {
+        if (area.name === selectedCampaignArea?.name && area.status === "unlockable") {
+          area.status = "unlocked";
+          // The first 'real' level of the area is now the current level
+          area.current_level = 1;
+        }
+        return area;
+      });
+      setareaStatuses(newAreaStatuses);
+    }
+    // Normal level
+    else {
+      const current_level = selectedCampaignArea?.levels.findIndex((x) => x === level);
+      if (current_level) {
+        const newAreaStatuses = areaStatuses.map((area) => {
+          if (area.name === selectedCampaignArea?.name && area.status === "unlocked") {
+            area.current_level = current_level + 1;
+          }
+          return area;
+        });
+        setareaStatuses(newAreaStatuses);
       }
-      return areaStatus;
-    })
-    setareaStatuses(newAreaStatuses);
+    }
   }
 
   useEffect(() => {
@@ -281,7 +304,14 @@ export const App: React.FC = () => {
         );
 
       case "campaign":
-        return <Campaign setPage={setPage} setSelectedArea={setSelectedCampaignArea} setSelectedCampaignLevel={setSelectedCampaignLevel} areaStatuses={areaStatuses}/>;
+        return (
+          <Campaign
+            setPage={setPage}
+            setSelectedArea={setSelectedCampaignArea}
+            setSelectedCampaignLevel={setSelectedCampaignLevel}
+            areaStatuses={areaStatuses}
+          />
+        );
 
       case "campaign/area":
         return (
@@ -293,7 +323,13 @@ export const App: React.FC = () => {
       case "campaign/area/level":
         return (
           selectedCampaignLevel && (
-            <Level level={selectedCampaignLevel} page={page} setPage={setPage} addGold={addGold} onSubmitAreaStatus={onSubmitAreaStatus} />
+            <Level
+              level={selectedCampaignLevel}
+              page={page}
+              setPage={setPage}
+              addGold={addGold}
+              onCompleteLevel={onCompleteLevel}
+            />
           )
         );
 

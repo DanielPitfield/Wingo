@@ -99,17 +99,21 @@ export const Campaign: React.FC<{
   areaStatuses: {
     name: string;
     status: "locked" | "unlockable" | "unlocked";
+    current_level: number;
   }[];
   setSelectedArea: (areaConfig: AreaConfig) => void;
   setSelectedCampaignLevel: (level: LevelConfig) => void;
   setPage: (page: Page) => void;
 }> = (props) => {
 
-  return (
+  return (  
+    // AREA SELECTION
     <div className="campaign">
       {areas.map((area, index) => {
         // Find out if area is locked, unlockable or unlocked
-        const unlock_status = props.areaStatuses.find((x) => x.name === area.name)?.status;
+        const areaInfo = props.areaStatuses.find((x) => x.name === area.name);
+        const unlock_status = areaInfo?.status;
+        const current_level = areaInfo?.current_level;
 
         return <button
           className="area-button"
@@ -135,7 +139,7 @@ export const Campaign: React.FC<{
           }}
         >
           <strong className="area-name">{unlock_status === "unlocked" ? `${index + 1}. ${area.name}` : `${index + 1}. ???`}</strong>
-          <span className="level-count">{/* TODO: Completed levels / Total levels */area.levels.length} levels</span>
+          <span className="level-count">{unlock_status === "unlocked" ? `${current_level} / ${area.levels.length} levels` : "??? / ???"}</span>
         </button>
       })}
     </div>
