@@ -316,7 +316,12 @@ export const App: React.FC = () => {
       case "campaign/area":
         return (
           selectedCampaignArea && (
-            <Area area={selectedCampaignArea} setSelectedCampaignLevel={setSelectedCampaignLevel} setPage={setPage} />
+            <Area
+              area={selectedCampaignArea}
+              setSelectedCampaignLevel={setSelectedCampaignLevel}
+              areaStatuses={areaStatuses}
+              setPage={setPage}
+            />
           )
         );
 
