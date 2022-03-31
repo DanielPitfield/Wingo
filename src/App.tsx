@@ -282,11 +282,7 @@ export const App: React.FC = () => {
       case "campaign/area":
         return (
           selectedCampaignArea && (
-            <Area
-              area={selectedCampaignArea}
-              setSelectedCampaignLevel={setSelectedCampaignLevel}
-              setPage={setPage}
-            />
+            <Area area={selectedCampaignArea} setSelectedCampaignLevel={setSelectedCampaignLevel} setPage={setPage} />
           )
         );
 
@@ -497,7 +493,20 @@ export const App: React.FC = () => {
           <div className="toolbar">
             {page !== "home" && (
               <nav className="navigation">
-                <Button mode="default" className="back-button" onClick={() => window.history.back()}>
+                <Button
+                  mode="default"
+                  className="back-button"
+                  onClick={() => {
+                    if (page === "campaign/area/level") {
+                      setPage("campaign/area");
+                    } else if (page === "campaign/area") {
+                      setPage("campaign");
+                    } else {
+                      setPage("home");
+                      //window.history.back();
+                    }
+                  }}
+                >
                   Back
                 </Button>
               </nav>
