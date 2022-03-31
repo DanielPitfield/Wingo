@@ -25,7 +25,7 @@ export interface WordleConfigProps {
   mode: "daily" | "repeat" | "category" | "increasing" | "limitless" | "puzzle" | "interlinked" | "letters_categories";
   // TODO: If targetWord is a specified prop, defaultWordLength MUST also be this word's length
   targetWord?: string;
-  wordArray? : string[];
+  wordArray?: string[];
   enforceFullLengthGuesses: boolean;
   firstLetterProvided: boolean;
   timerConfig: { isTimed: false } | { isTimed: true; seconds: number };
@@ -340,6 +340,9 @@ const WordleConfig: React.FC<Props> = (props) => {
     if (inProgress) {
       // Don't need to determine a target word, if it is explicitly specified
       if (props.targetWord) {
+        if (props.firstLetterProvided) {
+          setCurrentWord(props.targetWord.charAt(0));
+        }
         return;
       }
       /* --- DAILY ---  */
@@ -459,7 +462,11 @@ const WordleConfig: React.FC<Props> = (props) => {
         AND there is already a targetWord which is of the current wordLength
         Return early, a new targetWord does not need to be determined
         */
-        if ((props.mode === "limitless" || props.mode === "increasing") && targetWord && (targetWord.length === wordLength)) {
+        if (
+          (props.mode === "limitless" || props.mode === "increasing") &&
+          targetWord &&
+          targetWord.length === wordLength
+        ) {
           return;
         }
 
@@ -652,8 +659,8 @@ const WordleConfig: React.FC<Props> = (props) => {
         setisIncompleteWord(true);
         return;
       }
-    }    
-    
+    }
+
     // Reached here, the word is complete or enforce full length guesses is off
     setisIncompleteWord(false);
 
@@ -669,8 +676,7 @@ const WordleConfig: React.FC<Props> = (props) => {
     // wordArray was explicitly specified, so use that
     if (props.wordArray) {
       wordArray = props.wordArray;
-    }
-    else if (props.mode === "category") {
+    } else if (props.mode === "category") {
       if (!targetWord) {
         return;
       } else {
