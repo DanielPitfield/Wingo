@@ -1,6 +1,7 @@
 import React from "react";
 import { Page } from "./App";
 import { LevelConfig } from "./Level";
+import { SaveData } from "./SaveData";
 
 export interface AreaConfig {
   name: string;
@@ -10,11 +11,6 @@ export interface AreaConfig {
 
 export const Area: React.FC<{
   area: AreaConfig;
-  areaStatuses: {
-    name: string;
-    status: "locked" | "unlockable" | "unlocked";
-    current_level: number;
-  }[];
   setSelectedCampaignLevel: (level: LevelConfig) => void;
   setPage: (page: Page) => void;
 }> = (props) => {
@@ -22,12 +18,13 @@ export const Area: React.FC<{
     // LEVEL SELECTION
     <div className="area">
       {props.area.levels.map((level, i) => {
-        const areaInfo = props.areaStatuses.find((x) => x.name === props.area.name);
-        const level_unlocked = areaInfo?.current_level ? i <= areaInfo?.current_level : false;
-        <button
+        const campaignProgress = SaveData.getCampaignProgress();
+        const areaInfo = campaignProgress.find((x) => x.name === props.area.name);
+        const level_unlocked = areaInfo?.current_level ? i + 1 <= areaInfo?.current_level : false;
+        return <button
           className="level-button"
           disabled={!level_unlocked}
-          key={level.hint}
+          key={`Area ${areaInfo?.name} Level ${i + 1}`}
           onClick={() => {
             if (level_unlocked) {
               props.setSelectedCampaignLevel(level);
@@ -35,7 +32,7 @@ export const Area: React.FC<{
             }
           }}
         >
-          <strong className="level-name">{i + 1}</strong>
+          <strong className="level-number">{i + 1}</strong>
           <span className="level-description">{level.hint}</span>
         </button>;
       })}

@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React from "react";
 import { Page } from "./App";
 import { AreaConfig } from "./Area";
 import { LevelConfig } from "./Level";
+import { SaveData } from "./SaveData";
 
 // Define the game areas
 export const areas: AreaConfig[] = [
@@ -28,6 +29,51 @@ export const areas: AreaConfig[] = [
     // Tutorial Levels
     levels: [
       // Level 1
+      {
+        hint: "",
+        levelProps: {
+          mode: "repeat",
+          targetWord: "start",
+          enforceFullLengthGuesses: true,
+          defaultWordLength: 5,
+          defaultnumGuesses: 6,
+          keyboard: true,
+          firstLetterProvided: true,
+          puzzleLeaveNumBlanks: 0,
+          puzzleRevealMs: 0,
+          timerConfig: { isTimed: false },
+        },
+      },
+      {
+        hint: "",
+        levelProps: {
+          mode: "repeat",
+          targetWord: "start",
+          enforceFullLengthGuesses: true,
+          defaultWordLength: 5,
+          defaultnumGuesses: 6,
+          keyboard: true,
+          firstLetterProvided: true,
+          puzzleLeaveNumBlanks: 0,
+          puzzleRevealMs: 0,
+          timerConfig: { isTimed: false },
+        },
+      },
+      {
+        hint: "",
+        levelProps: {
+          mode: "repeat",
+          targetWord: "start",
+          enforceFullLengthGuesses: true,
+          defaultWordLength: 5,
+          defaultnumGuesses: 6,
+          keyboard: true,
+          firstLetterProvided: true,
+          puzzleLeaveNumBlanks: 0,
+          puzzleRevealMs: 0,
+          timerConfig: { isTimed: false },
+        },
+      },
       {
         hint: "",
         levelProps: {
@@ -96,11 +142,6 @@ export const areas: AreaConfig[] = [
 ];
 
 export const Campaign: React.FC<{
-  areaStatuses: {
-    name: string;
-    status: "locked" | "unlockable" | "unlocked";
-    current_level: number;
-  }[];
   setSelectedArea: (areaConfig: AreaConfig) => void;
   setSelectedCampaignLevel: (level: LevelConfig) => void;
   setPage: (page: Page) => void;
@@ -111,7 +152,8 @@ export const Campaign: React.FC<{
     <div className="campaign">
       {areas.map((area, index) => {
         // Find out if area is locked, unlockable or unlocked
-        const areaInfo = props.areaStatuses.find((x) => x.name === area.name);
+        const campaignProgress = SaveData.getCampaignProgress();
+        const areaInfo = campaignProgress.find((x) => x.name === area.name);
         const unlock_status = areaInfo?.status;
         const current_level = areaInfo?.current_level;
 
@@ -131,7 +173,7 @@ export const Campaign: React.FC<{
               props.setSelectedCampaignLevel(area.unlock_level);
               props.setPage("campaign/area/level");
             }
-            // Already unlocked, go to area selection screen 
+            // Already unlocked, go to level selection screen 
             else {
               props.setSelectedArea(area);
               props.setPage("campaign/area");
@@ -139,7 +181,7 @@ export const Campaign: React.FC<{
           }}
         >
           <strong className="area-name">{unlock_status === "unlocked" ? `${index + 1}. ${area.name}` : `${index + 1}. ???`}</strong>
-          <span className="level-count">{unlock_status === "unlocked" ? `${current_level} / ${area.levels.length} levels` : "??? / ???"}</span>
+          <span className="level-count">{unlock_status === "unlocked" && current_level ? `${current_level - 1} / ${area.levels.length}` : "? / ?"}</span>
         </button>
       })}
     </div>

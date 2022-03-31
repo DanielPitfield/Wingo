@@ -66,6 +66,17 @@ export const pages: { page: Page; title: string }[] = [
   { page: "campaign/area/level", title: "Campaign Level" },
 ];
 
+// Initial (first launch) Campaign Progress
+export const defaultAreaStatuses: {
+  name: string;
+  status: "locked" | "unlockable" | "unlocked";
+  current_level: number;
+}[] = areas.map((area, index) => ({
+  name: area.name,
+  status: index === 0 ? "unlockable" : "locked",
+  current_level: 0,
+}));
+
 export const App: React.FC = () => {
   const saveData = window.localStorage;
 
@@ -145,27 +156,6 @@ export const App: React.FC = () => {
     },
   ]);
 
-  // Read progress from SaveData
-  const defaultAreaStatuses: {
-    name: string;
-    status: "locked" | "unlockable" | "unlocked";
-    current_level: number;
-  }[] = areas.map((area) => ({
-    name: area.name,
-    // TODO: Status is read from saveData
-    status: "unlockable",
-    current_level: 0,
-  }));
-
-  // Initialise state to SaveData progress
-  const [areaStatuses, setareaStatuses] = useState<
-    {
-      name: string;
-      status: "locked" | "unlockable" | "unlocked";
-      current_level: number;
-    }[]
-  >(defaultAreaStatuses);
-
   useEffect(() => {
     const LOADING_TIMEOUT_MS = 1500;
     const FADE_OUT_DURATION_MS = 500;
@@ -194,31 +184,8 @@ export const App: React.FC = () => {
   }
 
   function onCompleteLevel(level: LevelConfig) {
-    // Completed level was the unlock level for an area
-    if (level === selectedCampaignArea?.unlock_level) {
-      // Update area status
-      const newAreaStatuses = areaStatuses.map((area) => {
-        if (area.name === selectedCampaignArea?.name && area.status === "unlockable") {
-          area.status = "unlocked";
-          // The first 'real' level of the area is now the current level
-          area.current_level = 1;
-        }
-        return area;
-      });
-      setareaStatuses(newAreaStatuses);
-    }
-    // Normal level
-    else {
-      const current_level = selectedCampaignArea?.levels.findIndex((x) => x === level);
-      if (current_level) {
-        const newAreaStatuses = areaStatuses.map((area) => {
-          if (area.name === selectedCampaignArea?.name && area.status === "unlocked") {
-            area.current_level = current_level + 1;
-          }
-          return area;
-        });
-        setareaStatuses(newAreaStatuses);
-      }
+    if (selectedCampaignArea) {
+      SaveData.setCampaignProgress(selectedCampaignArea, level);
     }
   }
 
@@ -309,7 +276,6 @@ export const App: React.FC = () => {
             setPage={setPage}
             setSelectedArea={setSelectedCampaignArea}
             setSelectedCampaignLevel={setSelectedCampaignLevel}
-            areaStatuses={areaStatuses}
           />
         );
 
@@ -319,7 +285,6 @@ export const App: React.FC = () => {
             <Area
               area={selectedCampaignArea}
               setSelectedCampaignLevel={setSelectedCampaignLevel}
-              areaStatuses={areaStatuses}
               setPage={setPage}
             />
           )

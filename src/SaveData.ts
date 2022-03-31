@@ -1,5 +1,13 @@
-import { Page } from "./App";
+import { defaultAreaStatuses, Page } from "./App";
+import { AreaConfig } from "./Area";
 import { BaseChallenge } from "./Challenges/BaseChallenge";
+import { LevelConfig } from "./Level";
+
+export type CampaignSaveData = {
+  name: string;
+  status: "locked" | "unlockable" | "unlocked";
+  current_level: number;
+}[];
 
 export type DailyWordSaveData = {
   dailyWord: string;
@@ -68,6 +76,62 @@ export function newGuid(): string {
 
 /** */
 export class SaveData {
+  /**
+   * Sets the latest campaign progress.
+   * @param selectedArea AreaConfig of the selected campaign area
+   * @param level LevelConfig of most recently completed level
+   */
+
+  public static setCampaignProgress(selectedArea: AreaConfig, level: LevelConfig) {
+    // Get the current campaign progress (which is to be updated)
+    const campaignProgress = SaveData.getCampaignProgress();
+
+    // Completed level was the unlock level for the area
+    if (level === selectedArea?.unlock_level) {
+      // Update area status
+      const newCampaignProgress = campaignProgress.map((area) => {
+        if (area.name === selectedArea?.name && area.status === "unlockable") {
+          area.status = "unlocked";
+          // The first 'real' level of the area is now the current level
+          area.current_level = 1;
+        }
+        return area;
+      });
+      // Update local storage
+      localStorage.setItem("campaign_progress", JSON.stringify(newCampaignProgress));
+    }
+    // Normal level
+    else {
+      // Index 0 is Level 1 (so add 1)
+      const current_level = selectedArea?.levels.findIndex((x) => x === level) + 1;
+      if (current_level) {
+        const newCampaignProgress = campaignProgress.map((area) => {
+          if (area.name === selectedArea?.name && area.status === "unlocked") {
+            // The current level becomes the next level
+            area.current_level = current_level + 1;
+          }
+          return area;
+        });
+        localStorage.setItem("campaign_progress", JSON.stringify(newCampaignProgress));
+        console.log(newCampaignProgress);
+      }
+    }
+  }
+
+  /**
+   * Gets the campaign progress.
+   * @returns Campaign progress (default campaign start if not found in save data).
+   */
+  public static getCampaignProgress(): CampaignSaveData {
+    const campaign_progress = localStorage.getItem("campaign_progress");
+
+    if (campaign_progress) {
+      return JSON.parse(campaign_progress) as CampaignSaveData;
+    }
+
+    return defaultAreaStatuses as CampaignSaveData;
+  }
+
   /**
    * Adds a game to the save history.
    * @param game Game to save to history.

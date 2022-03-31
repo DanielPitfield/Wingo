@@ -26,10 +26,14 @@ export const Level: React.FC<{
         addGold={props.addGold}
         finishingButtonText={"Back to area"}
         onComplete={() => {
+          props.onCompleteLevel(props.level);
           if (props.level.isUnlockLevel) {
-            props.onCompleteLevel(props.level);
+            // Go back to area selection to show discovered area name
+            props.setPage("campaign");
+          } else {
+            // Go to level selection (likely to choose next level)
+            props.setPage("campaign/area");
           }
-          props.setPage("campaign/area");
         }}
       />
     </div>
