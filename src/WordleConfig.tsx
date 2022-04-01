@@ -91,31 +91,51 @@ export function getNewLives(numGuesses: number, wordIndex: number): number {
   return newLives;
 }
 
-export function getWordSummary(word: string, targetWord: string, inDictionary: boolean) {
+export function getWordSummary(mode: string, word: string, targetWord: string, inDictionary: boolean) {
   // Character and status array
   let defaultCharacterStatuses = (word || "").split("").map((character, index) => ({
     character: character,
     status: getLetterStatus(character, index, targetWord, inDictionary),
   }));
-  // Changing status because of repeated letters
-  let finalCharacterStatuses = defaultCharacterStatuses.map((x, index) => {
-    // If there is a green tile of a letter, don't show any orange tiles
-    if (
-      x.status === "contains" &&
-      defaultCharacterStatuses.some((y) => y.character === x.character && y.status === "correct")
-    ) {
-      x.status = "not in word";
-    }
-    // Only ever show 1 orange tile of each letter
-    if (
-      x.status === "contains" &&
-      defaultCharacterStatuses.findIndex((y) => y.character === x.character && y.status === "contains") !== index
-    ) {
-      x.status = "not in word";
-    }
-    return x;
-  });
-  return finalCharacterStatuses;
+
+  // The target word is set to the current word if correct in letter categories
+  if (mode === "letter_categories" && word === targetWord) {
+    let finalCharacterStatuses = defaultCharacterStatuses.map((x) => {
+      x.status = "correct";
+      return x;
+    });
+    return finalCharacterStatuses;
+  }
+  // Only other outcome in letter categories is word is incorrect (never shows any other types of status) 
+  else if (mode === "letter_categories" && word !== targetWord) {
+    let finalCharacterStatuses = defaultCharacterStatuses.map((x) => {
+      x.status = "incorrect";
+      return x;
+    });
+    return finalCharacterStatuses;
+  }
+  // Normal modes 
+  else {
+    // Changing status because of repeated letters
+    let finalCharacterStatuses = defaultCharacterStatuses.map((x, index) => {
+      // If there is a green tile of a letter, don't show any orange tiles
+      if (
+        x.status === "contains" &&
+        defaultCharacterStatuses.some((y) => y.character === x.character && y.status === "correct")
+      ) {
+        x.status = "not in word";
+      }
+      // Only ever show 1 orange tile of each letter
+      if (
+        x.status === "contains" &&
+        defaultCharacterStatuses.findIndex((y) => y.character === x.character && y.status === "contains") !== index
+      ) {
+        x.status = "not in word";
+      }
+      return x;
+    });
+    return finalCharacterStatuses;
+  }
 }
 
 export function getLetterStatus(
@@ -160,7 +180,7 @@ const WordleConfig: React.FC<Props> = (props) => {
   const [hasSelectedTargetCategory, sethasSelectedTargetCategory] = useState(false);
   const [categoryRequiredStartingLetter, setCategoryRequiredStartingLetter] = useState("");
   const [categoryIndexes, setCategoryIndexes] = useState<number[]>([]);
-  const [categoryWordTargets, setCategoryWordTargets] = useState<string[]>([]);
+  const [categoryWordTargets, setCategoryWordTargets] = useState<string[][]>([[]]);
   const [hasSubmitLetter, sethasSubmitLetter] = useState(false);
   const [revealedLetterIndexes, setRevealedLetterIndexes] = useState<number[]>([]);
 
@@ -264,13 +284,6 @@ const WordleConfig: React.FC<Props> = (props) => {
 
   // Updates letter status (which is passed through to Keyboard to update button colours)
   React.useEffect(() => {
-    if (props.mode === "letters_categories") {
-      settargetWord(categoryWordTargets[wordIndex]);
-
-      console.log(targetWord);
-      console.log("Chosen from: " + categoryWordTargets);
-    }
-
     const letterStatusesCopy = letterStatuses.slice();
 
     for (const guess of guesses) {
@@ -421,10 +434,11 @@ const WordleConfig: React.FC<Props> = (props) => {
         const start_letter = Alphabet[Math.round(Math.random() * (Alphabet.length - 1))];
         // Set this letter as the letter that all words must begin with
         setCategoryRequiredStartingLetter(start_letter);
-        console.log("Start Lettr: " + start_letter);
+        console.log("Start Letter: " + start_letter);
 
         let category_indexes = new Set<number>();
-        let category_target_words: string[] = [];
+        let category_target_words: string[][] = [[]];
+        let failed_search_count = 0;
 
         do {
           // Get a random index of categoryMappings
@@ -433,22 +447,54 @@ const WordleConfig: React.FC<Props> = (props) => {
           if (!category_indexes.has(newIndex)) {
             // Get all the words in that category starting with start_letter
             const words = categoryMappings[newIndex].array.filter((x) => x.charAt(0) === start_letter);
-            if (words.length > 0) {
-              // Choose a random word from this filtered array
-              const random_index = Math.round(Math.random() * (words.length - 1));
-              const random_word = words[random_index];
-              category_target_words.push(random_word);
-
-              // Keep track that a word has been chosen from this category
+            if (words && words.length >= 1) {
+              // Push these words as an array
+              category_target_words.push(words);
+              // Keep track this category has been used
               category_indexes.add(newIndex);
+            } else {
+              failed_search_count += 1;
             }
           }
-        } while (category_indexes.size < 5);
+        } while (
+          category_indexes.size < 5 &&
+          category_indexes.size + failed_search_count !== categoryMappings.length &&
+          failed_search_count <= 20
+        );
 
+        // Keep reference of which categories have been used
         setCategoryIndexes(Array.from(category_indexes));
 
-        console.log("Set category word targets: " + category_target_words);
+        // Remove/filter out malformed category target arrays
+        category_target_words = category_target_words.slice(1, category_target_words.length);
+
+        console.log(category_target_words);
+
         setCategoryWordTargets(category_target_words);
+
+        // Number of rows needs to be the same as the number of categories
+        setNumGuesses(category_target_words.length);
+
+        // TODO: Set the wordLength to the length of the largest valid word in any of the categories
+
+        /*
+        // Start wordLength at 4
+        let longest_valid_length = 4;
+        // Find the longest word in the array of valid words for each category
+        for (let i = 0; i < category_target_words.length; i++) {
+          const longestWordInArray = category_target_words[i].reduce(
+            (currentWord, nextWord) => (currentWord.length > nextWord.length ? currentWord : nextWord),
+            ""
+          );
+          // Increase wordLength if a valid word is longer than the current wordLength
+          if (longestWordInArray.length > longest_valid_length) {
+            longest_valid_length = longestWordInArray.length;
+          }
+        }
+
+        // TODO: Endless loop because this useEffect has wordLength in dependency array
+        setwordLength(longest_valid_length);
+        */
       } else {
         /* --- REPEAT, INCREASING, LIMITLESS AND INTERLINKED ---  */
         const targetWordArray = wordLengthMappingsTargets.find((x) => x.value === wordLength)?.array!;
@@ -707,11 +753,7 @@ const WordleConfig: React.FC<Props> = (props) => {
         wordArray = categoryMappings.find((x) => x.array.includes(targetWord))?.array!;
       }
     } else if (props.mode === "letters_categories") {
-      // Each wordIndex has a unique category index
-      const row_category_index = categoryIndexes[wordIndex];
-      // Find the array using this unique category index
-      wordArray = categoryMappings[row_category_index].array;
-      // TODO: Letters Categories mode
+      wordArray = categoryWordTargets[wordIndex];
     } else {
       // Most gamemodes
 
@@ -741,6 +783,11 @@ const WordleConfig: React.FC<Props> = (props) => {
       // Accepted word
       setGuesses(guesses.concat(currentWord)); // Add word to guesses
 
+      if (props.mode === "letters_categories") {
+        // Set the target word to the guessed word so all letters show as green
+        settargetWord(currentWord);
+      }
+
       if (currentWord.toUpperCase() === targetWord?.toUpperCase()) {
         // Exact match
         setinProgress(false);
@@ -762,9 +809,11 @@ const WordleConfig: React.FC<Props> = (props) => {
         //outcome = "in-progress";
       }
     } else {
-      setinDictionary(false);
-      setinProgress(false);
-      outcome = "failure";
+      if (props.mode !== "letters_categories") {
+        setinDictionary(false);
+        setinProgress(false);
+        outcome = "failure";
+      }
     }
 
     if (outcome !== "in-progress" && gameId) {
@@ -843,7 +892,7 @@ const WordleConfig: React.FC<Props> = (props) => {
       targetCategory={targetCategory || ""}
       categoryRequiredStartingLetter={categoryRequiredStartingLetter || ""}
       categoryIndexes={categoryIndexes || []}
-      categoryWordTargets={categoryWordTargets || []}
+      categoryWordTargets={categoryWordTargets || [[]]}
       puzzleRevealMs={props.puzzleRevealMs}
       puzzleLeaveNumBlanks={props.puzzleLeaveNumBlanks}
       revealedLetterIndexes={revealedLetterIndexes}

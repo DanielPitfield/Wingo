@@ -66,7 +66,7 @@ export const Keyboard: React.FC<Props> = (props) => {
     // For each guess
     for (const guess of props.guesses) {
       // Returns summary of each letter's status in the guess
-      const guessSummary = getWordSummary(guess, props.targetWord, props.inDictionary);
+      const guessSummary = getWordSummary(props.mode, guess, props.targetWord, props.inDictionary);
 
       for (const letterSummary of guessSummary) {
         // Find element in keyboardStatuses for the letter in question

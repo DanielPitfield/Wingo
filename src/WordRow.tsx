@@ -24,7 +24,7 @@ export const WordRow: React.FC<Props> = (props) => {
   // NOTE: The targetWord will be "" (empty string) with the WordRow that handles guessed words during the 'Countdown Letters' mode
 
   // Array of (character, status) for every letter
-  wordSummary = getWordSummary(props.word, props.targetWord, props.inDictionary);
+  wordSummary = getWordSummary(props.mode, props.word, props.targetWord, props.inDictionary);
 
   function isAnimationEnabled(letterIndex: number) {
     // Minimum set of criteria that must be satisfied for animation to be applied

@@ -26,7 +26,7 @@ interface Props {
   targetHint?: string;
   targetCategory?: string;
   categoryRequiredStartingLetter?: string;
-  categoryWordTargets?: string[];
+  categoryWordTargets?: string[][];
   categoryIndexes?: number[];
   puzzleRevealMs?: number;
   puzzleLeaveNumBlanks?: number;
@@ -111,7 +111,7 @@ const Wordle: React.FC<Props> = (props) => {
           isVertical={false}
           word={word}
           length={wordLength}
-          targetWord={props.mode === "letters_categories" && props.categoryWordTargets ? props.categoryWordTargets[i] : props.targetWord}
+          targetWord={props.targetWord}
           hasSubmit={props.wordIndex > i || !props.inProgress}
           inDictionary={props.inDictionary}
           isIncompleteWord={props.isIncompleteWord}
