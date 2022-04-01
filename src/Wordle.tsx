@@ -22,13 +22,14 @@ interface Props {
   isIncompleteWord: boolean;
   hasSubmitLetter: boolean;
   targetWord: string;
-  interlinkedWord: string;
-  targetHint: string;
-  targetCategory: string;
-  categoryRequiredStartingLetter: string;
-  categoryIndexes: number[];
-  puzzleRevealMs: number;
-  puzzleLeaveNumBlanks: number;
+  interlinkedWord?: string;
+  targetHint?: string;
+  targetCategory?: string;
+  categoryRequiredStartingLetter?: string;
+  categoryWordTargets?: string[];
+  categoryIndexes?: number[];
+  puzzleRevealMs?: number;
+  puzzleLeaveNumBlanks?: number;
   letterStatuses: {
     letter: string;
     status: "" | "contains" | "correct" | "not set" | "not in word";
@@ -110,7 +111,7 @@ const Wordle: React.FC<Props> = (props) => {
           isVertical={false}
           word={word}
           length={wordLength}
-          targetWord={props.targetWord}
+          targetWord={props.mode === "letters_categories" && props.categoryWordTargets ? props.categoryWordTargets[i] : props.targetWord}
           hasSubmit={props.wordIndex > i || !props.inProgress}
           inDictionary={props.inDictionary}
           isIncompleteWord={props.isIncompleteWord}

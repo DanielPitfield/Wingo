@@ -160,6 +160,7 @@ const WordleConfig: React.FC<Props> = (props) => {
   const [hasSelectedTargetCategory, sethasSelectedTargetCategory] = useState(false);
   const [categoryRequiredStartingLetter, setCategoryRequiredStartingLetter] = useState("");
   const [categoryIndexes, setCategoryIndexes] = useState<number[]>([]);
+  const [categoryWordTargets, setCategoryWordTargets] = useState<string[]>([]);
   const [hasSubmitLetter, sethasSubmitLetter] = useState(false);
   const [revealedLetterIndexes, setRevealedLetterIndexes] = useState<number[]>([]);
 
@@ -263,6 +264,13 @@ const WordleConfig: React.FC<Props> = (props) => {
 
   // Updates letter status (which is passed through to Keyboard to update button colours)
   React.useEffect(() => {
+    if (props.mode === "letters_categories") {
+      settargetWord(categoryWordTargets[wordIndex]);
+
+      console.log(targetWord);
+      console.log("Chosen from: " + categoryWordTargets);
+    }
+
     const letterStatusesCopy = letterStatuses.slice();
 
     for (const guess of guesses) {
@@ -410,22 +418,37 @@ const WordleConfig: React.FC<Props> = (props) => {
         }
       } else if (props.mode === "letters_categories") {
         // Get a random letter from the Alphabet
-        const random_letter = Alphabet[Math.round(Math.random() * (Alphabet.length - 1))];
+        const start_letter = Alphabet[Math.round(Math.random() * (Alphabet.length - 1))];
         // Set this letter as the letter that all words must begin with
-        setCategoryRequiredStartingLetter(random_letter);
+        setCategoryRequiredStartingLetter(start_letter);
+        console.log("Start Lettr: " + start_letter);
 
         let category_indexes = new Set<number>();
+        let category_target_words: string[] = [];
 
         do {
           // Get a random index of categoryMappings
           const newIndex = Math.round(Math.random() * (categoryMappings.length - 1));
-          // If not already in the set of categories
+          // If the category has not already been used
           if (!category_indexes.has(newIndex)) {
-            category_indexes.add(newIndex);
+            // Get all the words in that category starting with start_letter
+            const words = categoryMappings[newIndex].array.filter((x) => x.charAt(0) === start_letter);
+            if (words.length > 0) {
+              // Choose a random word from this filtered array
+              const random_index = Math.round(Math.random() * (words.length - 1));
+              const random_word = words[random_index];
+              category_target_words.push(random_word);
+
+              // Keep track that a word has been chosen from this category
+              category_indexes.add(newIndex);
+            }
           }
         } while (category_indexes.size < 5);
 
         setCategoryIndexes(Array.from(category_indexes));
+
+        console.log("Set category word targets: " + category_target_words);
+        setCategoryWordTargets(category_target_words);
       } else {
         /* --- REPEAT, INCREASING, LIMITLESS AND INTERLINKED ---  */
         const targetWordArray = wordLengthMappingsTargets.find((x) => x.value === wordLength)?.array!;
@@ -820,6 +843,7 @@ const WordleConfig: React.FC<Props> = (props) => {
       targetCategory={targetCategory || ""}
       categoryRequiredStartingLetter={categoryRequiredStartingLetter || ""}
       categoryIndexes={categoryIndexes || []}
+      categoryWordTargets={categoryWordTargets || []}
       puzzleRevealMs={props.puzzleRevealMs}
       puzzleLeaveNumBlanks={props.puzzleLeaveNumBlanks}
       revealedLetterIndexes={revealedLetterIndexes}

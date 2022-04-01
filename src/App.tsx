@@ -441,14 +441,14 @@ export const App: React.FC = () => {
           <WordleConfig
             {...commonProps}
             mode="letters_categories"
-            firstLetterProvided={gameOptionToggles.find((x) => x.page === "wingo/interlinked")?.firstLetter || false}
+            firstLetterProvided={gameOptionToggles.find((x) => x.page === "letters_categories")?.firstLetter || false}
             timerConfig={
-              gameOptionToggles.find((x) => x.page === "wingo/interlinked")?.timer
+              gameOptionToggles.find((x) => x.page === "letters_categories")?.timer
                 ? { isTimed: true, seconds: 30 }
                 : { isTimed: false }
             }
-            keyboard={gameOptionToggles.find((x) => x.page === "wingo/interlinked")?.keyboard || false}
-            defaultWordLength={wordLength}
+            keyboard={gameOptionToggles.find((x) => x.page === "letters_categories")?.keyboard || false}
+            defaultWordLength={10}
             enforceFullLengthGuesses={false}
           />
         );

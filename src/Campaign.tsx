@@ -9,7 +9,7 @@ export const areas: AreaConfig[] = [
   {
     // TODO: Tutorial
 
-    // START
+    // START node
     name: "Start",
     // The properties of the level to unlock this area
     unlock_level: {
@@ -31,6 +31,7 @@ export const areas: AreaConfig[] = [
     },
     levels: [],
   },
+  // Area 1 - Space
   {
     name: "Space",
     unlock_level: {
@@ -43,7 +44,7 @@ export const areas: AreaConfig[] = [
         defaultWordLength: 5,
         defaultnumGuesses: 6,
         keyboard: true,
-        firstLetterProvided: true,
+        firstLetterProvided: false,
         puzzleLeaveNumBlanks: 0,
         puzzleRevealMs: 0,
         timerConfig: { isTimed: false },
