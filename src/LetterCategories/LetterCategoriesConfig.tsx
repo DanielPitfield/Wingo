@@ -102,8 +102,8 @@ const LetterCategoriesConfig: React.FC<Props> = (props) => {
       console.log("Start Letter: " + start_letter);
 
       let category_indexes = new Set<number>();
-      // TODO: Always an empty array at index 0 after pushing to this
-      let category_target_words: string[][] = [[]];
+
+      let category_target_words: string[][] = [];
       let failed_search_count = 0;
 
       do {
@@ -132,9 +132,6 @@ const LetterCategoriesConfig: React.FC<Props> = (props) => {
       setCategoryIndexes(Array.from(category_indexes));
 
       // Remove/filter out malformed category target arrays
-
-      // TODO: Fix the empty array at index 0 issue where category_target_words is initialised and you can get rid of this
-      category_target_words = category_target_words.slice(1, category_target_words.length);
 
       // NOTE: Make sure to use wordArrays with more words, otherwise this won't find any words to use
       console.log(category_target_words);
