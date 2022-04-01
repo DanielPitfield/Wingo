@@ -142,7 +142,7 @@ input {
 }
 
 .word_row[data-correct-word-submitted="true"][data-apply-animation="true"] .letter_tile {
-  animation: jumpCorrectInput 1.5s;
+  animation: jumpCorrectInput 1.2s;
 }
 
 .letter_tile {
@@ -230,13 +230,13 @@ input {
     transform: translateY(0);
   }
   40% {
-    transform: translateY(-30px);
+    transform: translateY(-25px);
   }
   50% {
     transform: translateY(0);
   }
   60% {
-    transform: translateY(-15px);
+    transform: translateY(-20px);
   }
   80% {
     transform: translateY(0);

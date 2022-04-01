@@ -54,6 +54,8 @@ export const WordRow: React.FC<Props> = (props) => {
   function CreateRow() {
     var TileArray = [];
     for (let i = 0; i < props.length; i++) {
+      const allCorrect = wordSummary.every((letter) => letter.status === "correct");
+
       TileArray.push(
         <LetterTile
           key={i}
@@ -61,6 +63,8 @@ export const WordRow: React.FC<Props> = (props) => {
           letter={props.word?.[i]}
           // Either the props.applyAnimation is not specified (undefined) or is true, and this word should be animated
           applyAnimation={(props.applyAnimation === undefined || props.applyAnimation) && isAnimationEnabled(i)}
+          // If the word is correct, show a faster animation
+          animationDelayMultiplier={allCorrect ? 0.3 : undefined}
           status={!props.hasSubmit || !props.word ? "not set" : wordSummary[i]?.status}
         ></LetterTile>
       );
