@@ -115,6 +115,7 @@ const Wordle: React.FC<Props> = (props) => {
           hasSubmit={props.wordIndex > i || !props.inProgress}
           inDictionary={props.inDictionary}
           isIncompleteWord={props.isIncompleteWord}
+          applyAnimation={props.inProgress ? i >= props.wordIndex - 1 : i >= props.wordIndex}
         ></WordRow>
       );
 

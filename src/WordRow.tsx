@@ -13,6 +13,7 @@ interface Props {
   hasSubmit: boolean;
   inDictionary: boolean;
   isIncompleteWord?: boolean;
+  applyAnimation?: boolean;
 }
 
 export const WordRow: React.FC<Props> = (props) => {
@@ -58,7 +59,8 @@ export const WordRow: React.FC<Props> = (props) => {
           key={i}
           indexInWord={props.revealedLetterIndexes ? props.revealedLetterIndexes.length : i}
           letter={props.word?.[i]}
-          applyAnimation={isAnimationEnabled(i)}
+          // Either the props.applyAnimation is not specified (undefined) or is true, and this word should be animated
+          applyAnimation={(props.applyAnimation === undefined || props.applyAnimation) && isAnimationEnabled(i)}
           status={!props.hasSubmit || !props.word ? "not set" : wordSummary[i]?.status}
         ></LetterTile>
       );
@@ -68,10 +70,12 @@ export const WordRow: React.FC<Props> = (props) => {
   }
 
   return (
+    // [data-apply-animation="false"] - No animations are applied to WordRow
     // [data-invalid-word-submitted="true"] - Shake animation is applied to WordRow
     // [data-correct-word-submitted="true"] - Jump animation is applied to WordRow
     <div
       className={props.isVertical ? "word_row_vertical" : "word_row"}
+      data-apply-animation={props.applyAnimation}
       data-invalid-word-submitted={Boolean(
         (props.word && props.hasSubmit && !props.inDictionary) || (props.isIncompleteWord && props.word)
       )}

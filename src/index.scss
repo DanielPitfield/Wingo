@@ -129,19 +129,19 @@ input {
   border: 10px solid rgb(44, 44, 184);
 }
 
-.word_row[data-invalid-word-submitted="true"] {
+.word_row[data-invalid-word-submitted="true"][data-apply-animation="true"] {
   animation: shakeIncorrectInput 1.5s;
 }
 
-.letter_tile[data-new-letter-added="true"] {
+.letter_tile[data-new-letter-added="true"][data-apply-animation="true"] {
   animation: popLetterInput 0.2s;
 }
 
-.letter_tile[data-has-been-submitted="true"] {
+.letter_tile[data-has-been-submitted="true"][data-apply-animation="true"] {
   animation: flipRevealLetter 1.5s;
 }
 
-.word_row[data-correct-word-submitted="true"] .letter_tile {
+.word_row[data-correct-word-submitted="true"][data-apply-animation="true"] .letter_tile {
   animation: jumpCorrectInput 1.5s;
 }
 
@@ -171,10 +171,19 @@ input {
 
 // For when a letter is entered during Wordle
 @keyframes popLetterInput {
-  0%{ -ms-transform: scale(1); transform: scale(1); }
-  50%{ -ms-transform: scale(1.2); transform: scale(1.2); }
-  100%{ -ms-transform: scale(1); transform: scale(1); }
+  0% {
+    -ms-transform: scale(1);
+    transform: scale(1);
   }
+  50% {
+    -ms-transform: scale(1.2);
+    transform: scale(1.2);
+  }
+  100% {
+    -ms-transform: scale(1);
+    transform: scale(1);
+  }
+}
 
 // For when checking a guess in Wordle (each letter tile flips to reveal status)
 @keyframes flipRevealLetter {
@@ -241,15 +250,29 @@ input {
 }
 
 // For when the target word is correctly guessed during Wordle
-@keyframes jumpCorrectInput{
-  0%{ transform:translateY(0); }
-  20%{ transform:translateY(0); }
-  40%{ transform:translateY(-30px); }
-  50%{ transform:translateY(0); }
-  60%{ transform:translateY(-15px); }
-  80%{ transform:translateY(0); }
-  100%{ transform:translateY(0); }
+@keyframes jumpCorrectInput {
+  0% {
+    transform: translateY(0);
   }
+  20% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-30px);
+  }
+  50% {
+    transform: translateY(0);
+  }
+  60% {
+    transform: translateY(-15px);
+  }
+  80% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
 
 // The letter tiles of Countdown Letters
 .countdown-letters-wrapper .word_row .letter_tile,
