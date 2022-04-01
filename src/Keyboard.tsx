@@ -108,7 +108,7 @@ export const Keyboard: React.FC<Props> = (props) => {
           key={i}
           mode="default"
           // Data attribute used to colour button
-          status={letterStatus}
+          status={props.mode !== "letters_categories" ? letterStatus : "not set"}
           onClick={(e) =>
             // Letter of button is used within a callback function
             props.onSubmitLetter((e.target as HTMLButtonElement).innerText)

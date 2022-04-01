@@ -11,6 +11,7 @@ import CountdownNumbersConfig from "./CountdownNumbers/CountdownNumbersConfig";
 import { areas, Campaign } from "./Campaign";
 import { Area, AreaConfig } from "./Area";
 import { Level, LevelConfig } from "./Level";
+import LetterCategoriesConfig from "./LetterCategories/LetterCategoriesConfig";
 
 const wordLength = 5;
 const numGuesses = 6;
@@ -438,10 +439,8 @@ export const App: React.FC = () => {
 
       case "letters_categories":
         return (
-          <WordleConfig
+          <LetterCategoriesConfig
             {...commonProps}
-            mode="letters_categories"
-            firstLetterProvided={gameOptionToggles.find((x) => x.page === "letters_categories")?.firstLetter || false}
             timerConfig={
               gameOptionToggles.find((x) => x.page === "letters_categories")?.timer
                 ? { isTimed: true, seconds: 30 }

@@ -22,7 +22,7 @@ import { words_fruits_and_vegetables } from "./WordArrays/Categories/fruits_and_
 import { words_sports } from "./WordArrays/Categories/sports";
 
 export interface WordleConfigProps {
-  mode: "daily" | "repeat" | "category" | "increasing" | "limitless" | "puzzle" | "interlinked" | "letters_categories";
+  mode: "daily" | "repeat" | "category" | "increasing" | "limitless" | "puzzle" | "interlinked";
   // TODO: If targetWord is a specified prop, defaultWordLength MUST also be this word's length
   targetWord?: string;
   wordArray?: string[];
@@ -98,24 +98,19 @@ export function getWordSummary(mode: string, word: string, targetWord: string, i
     status: getLetterStatus(character, index, targetWord, inDictionary),
   }));
 
-  // The target word is set to the current word if correct in letter categories
-  if (mode === "letter_categories" && word === targetWord) {
+  if (mode === "letters_categories" && word === targetWord) {
     let finalCharacterStatuses = defaultCharacterStatuses.map((x) => {
       x.status = "correct";
       return x;
     });
     return finalCharacterStatuses;
-  }
-  // Only other outcome in letter categories is word is incorrect (never shows any other types of status) 
-  else if (mode === "letter_categories" && word !== targetWord) {
+  } else if (mode === "letters_categories" && word !== targetWord) {
     let finalCharacterStatuses = defaultCharacterStatuses.map((x) => {
       x.status = "incorrect";
       return x;
     });
     return finalCharacterStatuses;
-  }
-  // Normal modes 
-  else {
+  } else {
     // Changing status because of repeated letters
     let finalCharacterStatuses = defaultCharacterStatuses.map((x, index) => {
       // If there is a green tile of a letter, don't show any orange tiles
@@ -429,72 +424,6 @@ const WordleConfig: React.FC<Props> = (props) => {
           settargetCategory(random_category.name);
           // A random word from this category is set in a useEffect()
         }
-      } else if (props.mode === "letters_categories") {
-        // Get a random letter from the Alphabet
-        const start_letter = Alphabet[Math.round(Math.random() * (Alphabet.length - 1))];
-        // Set this letter as the letter that all words must begin with
-        setCategoryRequiredStartingLetter(start_letter);
-        console.log("Start Letter: " + start_letter);
-
-        let category_indexes = new Set<number>();
-        let category_target_words: string[][] = [[]];
-        let failed_search_count = 0;
-
-        do {
-          // Get a random index of categoryMappings
-          const newIndex = Math.round(Math.random() * (categoryMappings.length - 1));
-          // If the category has not already been used
-          if (!category_indexes.has(newIndex)) {
-            // Get all the words in that category starting with start_letter
-            const words = categoryMappings[newIndex].array.filter((x) => x.charAt(0) === start_letter);
-            if (words && words.length >= 1) {
-              // Push these words as an array
-              category_target_words.push(words);
-              // Keep track this category has been used
-              category_indexes.add(newIndex);
-            } else {
-              failed_search_count += 1;
-            }
-          }
-        } while (
-          category_indexes.size < 5 &&
-          category_indexes.size + failed_search_count !== categoryMappings.length &&
-          failed_search_count <= 20
-        );
-
-        // Keep reference of which categories have been used
-        setCategoryIndexes(Array.from(category_indexes));
-
-        // Remove/filter out malformed category target arrays
-        category_target_words = category_target_words.slice(1, category_target_words.length);
-
-        console.log(category_target_words);
-
-        setCategoryWordTargets(category_target_words);
-
-        // Number of rows needs to be the same as the number of categories
-        setNumGuesses(category_target_words.length);
-
-        // TODO: Set the wordLength to the length of the largest valid word in any of the categories
-
-        /*
-        // Start wordLength at 4
-        let longest_valid_length = 4;
-        // Find the longest word in the array of valid words for each category
-        for (let i = 0; i < category_target_words.length; i++) {
-          const longestWordInArray = category_target_words[i].reduce(
-            (currentWord, nextWord) => (currentWord.length > nextWord.length ? currentWord : nextWord),
-            ""
-          );
-          // Increase wordLength if a valid word is longer than the current wordLength
-          if (longestWordInArray.length > longest_valid_length) {
-            longest_valid_length = longestWordInArray.length;
-          }
-        }
-
-        // TODO: Endless loop because this useEffect has wordLength in dependency array
-        setwordLength(longest_valid_length);
-        */
       } else {
         /* --- REPEAT, INCREASING, LIMITLESS AND INTERLINKED ---  */
         const targetWordArray = wordLengthMappingsTargets.find((x) => x.value === wordLength)?.array!;
@@ -752,8 +681,6 @@ const WordleConfig: React.FC<Props> = (props) => {
         // Category mode - Find the array which includes the target word
         wordArray = categoryMappings.find((x) => x.array.includes(targetWord))?.array!;
       }
-    } else if (props.mode === "letters_categories") {
-      wordArray = categoryWordTargets[wordIndex];
     } else {
       // Most gamemodes
 
@@ -783,11 +710,6 @@ const WordleConfig: React.FC<Props> = (props) => {
       // Accepted word
       setGuesses(guesses.concat(currentWord)); // Add word to guesses
 
-      if (props.mode === "letters_categories") {
-        // Set the target word to the guessed word so all letters show as green
-        settargetWord(currentWord);
-      }
-
       if (currentWord.toUpperCase() === targetWord?.toUpperCase()) {
         // Exact match
         setinProgress(false);
@@ -809,11 +731,9 @@ const WordleConfig: React.FC<Props> = (props) => {
         //outcome = "in-progress";
       }
     } else {
-      if (props.mode !== "letters_categories") {
-        setinDictionary(false);
-        setinProgress(false);
-        outcome = "failure";
-      }
+      setinDictionary(false);
+      setinProgress(false);
+      outcome = "failure";
     }
 
     if (outcome !== "in-progress" && gameId) {
