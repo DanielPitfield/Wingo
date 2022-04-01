@@ -102,6 +102,7 @@ const LetterCategoriesConfig: React.FC<Props> = (props) => {
       console.log("Start Letter: " + start_letter);
 
       let category_indexes = new Set<number>();
+      // TODO: Always an empty array at index 0 after pushing to this
       let category_target_words: string[][] = [[]];
       let failed_search_count = 0;
 
@@ -131,8 +132,11 @@ const LetterCategoriesConfig: React.FC<Props> = (props) => {
       setCategoryIndexes(Array.from(category_indexes));
 
       // Remove/filter out malformed category target arrays
+
+      // TODO: Fix the empty array at index 0 issue where category_target_words is initialised and you can get rid of this
       category_target_words = category_target_words.slice(1, category_target_words.length);
 
+      // NOTE: Make sure to use wordArrays with more words, otherwise this won't find any words to use
       console.log(category_target_words);
 
       setCategoryWordTargets(category_target_words);
@@ -140,28 +144,24 @@ const LetterCategoriesConfig: React.FC<Props> = (props) => {
       // Number of rows needs to be the same as the number of categories
       setNumGuesses(category_target_words.length);
 
-      // TODO: Set the wordLength to the length of the largest valid word in any of the categories
-
-      /*
-        // Start wordLength at 4
-        let longest_valid_length = 4;
-        // Find the longest word in the array of valid words for each category
-        for (let i = 0; i < category_target_words.length; i++) {
-          const longestWordInArray = category_target_words[i].reduce(
-            (currentWord, nextWord) => (currentWord.length > nextWord.length ? currentWord : nextWord),
-            ""
-          );
-          // Increase wordLength if a valid word is longer than the current wordLength
-          if (longestWordInArray.length > longest_valid_length) {
-            longest_valid_length = longestWordInArray.length;
-          }
+      // Start wordLength at 4
+      let longest_valid_length = 4;
+      // Find the longest word in the array of valid words for each category
+      for (let i = 0; i < category_target_words.length; i++) {
+        const longestWordInArray = category_target_words[i].reduce(
+          (currentWord, nextWord) => (currentWord.length > nextWord.length ? currentWord : nextWord),
+          ""
+        );
+        // Increase wordLength if a valid word is longer than the current wordLength
+        if (longestWordInArray.length > longest_valid_length) {
+          longest_valid_length = longestWordInArray.length;
         }
+      }
 
-        // TODO: Endless loop because this useEffect has wordLength in dependency array
-        setwordLength(longest_valid_length);
-        */
+      // Set the wordLength to the length of the largest valid word in any of the categories
+      setwordLength(longest_valid_length);
     }
-  }, [wordLength, inProgress]);
+  }, [inProgress]);
 
   function ResetGame() {
     props.onComplete?.();
@@ -251,7 +251,9 @@ const LetterCategoriesConfig: React.FC<Props> = (props) => {
     }
 
     if (wordArray.includes(currentWord.toLowerCase())) {
-      // Correct word      
+      // Correct word
+
+      // Easiest way to show all green letter statuses
       settargetWord(currentWord);
     } else {
       // Incorrect word
