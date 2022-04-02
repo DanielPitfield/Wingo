@@ -6,6 +6,7 @@ import { WordRow } from "../WordRow";
 import { Button } from "../Button";
 import { MessageNotification } from "../MessageNotification";
 import ProgressBar, { GreenToRedColorTransition } from "../ProgressBar";
+import { categoryMappings } from "../WordleConfig";
 
 interface Props {
   timerConfig: { isTimed: false } | { isTimed: true; totalSeconds: number; elapsedSeconds: number };
@@ -21,7 +22,7 @@ interface Props {
   targetWord: string;
   categoryRequiredStartingLetter?: string;
   categoryWordTargets?: string[][];
-  categoryIndexes?: number[];
+  categoryNames?: string[];
   finishingButtonText?: string;
   setPage: (page: Page) => void;
   onEnter: () => void;
@@ -100,6 +101,10 @@ const LetterCategories: React.FC<Props> = (props) => {
           </Button>
         )}
       </div>
+
+      <MessageNotification type="default">
+        {/*TODO: Format text, ideally would position near respective WordRow */ JSON.stringify(props.categoryNames)}
+        </MessageNotification>
 
       <div className="word_grid">{populateGrid(props.numGuesses, props.wordLength)}</div>
 

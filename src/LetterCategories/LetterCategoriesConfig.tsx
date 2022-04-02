@@ -3,13 +3,7 @@ import "../App.scss";
 import { Page } from "../App";
 import LetterCategories from "./LetterCategories";
 import { SaveData } from "../SaveData";
-import { words_dogs } from "../WordArrays/Categories/dogs";
-import { words_countries } from "../WordArrays/Categories/countries";
 import { Alphabet } from "../Keyboard";
-import { words_chemical_elements } from "../WordArrays/Categories/chemical_elements";
-import { words_colours } from "../WordArrays/Categories/colours";
-import { words_fruits_and_vegetables } from "../WordArrays/Categories/fruits_and_vegetables";
-import { words_sports } from "../WordArrays/Categories/sports";
 import { categoryMappings } from "../WordleConfig";
 
 interface Props {
@@ -36,7 +30,7 @@ const LetterCategoriesConfig: React.FC<Props> = (props) => {
   const [wordLength, setwordLength] = useState(props.defaultWordLength);
   const [targetWord, settargetWord] = useState("");
   const [categoryRequiredStartingLetter, setCategoryRequiredStartingLetter] = useState("");
-  const [categoryIndexes, setCategoryIndexes] = useState<number[]>([]);
+  const [categoryNames, setCategoryNames] = useState<string[]>([]);
   const [categoryWordTargets, setCategoryWordTargets] = useState<string[][]>([[]]);
   const [hasSubmitLetter, sethasSubmitLetter] = useState(false);
   const [seconds, setSeconds] = useState(props.timerConfig.isTimed ? props.timerConfig.seconds : 0);
@@ -71,7 +65,7 @@ const LetterCategoriesConfig: React.FC<Props> = (props) => {
 
       console.log("Start Letter: " + start_letter);
 
-      let category_indexes = new Set<number>();
+      let category_names: string[] = [];
 
       let category_target_words: string[][] = [];
       let failed_search_count = 0;
@@ -80,30 +74,27 @@ const LetterCategoriesConfig: React.FC<Props> = (props) => {
         // Get a random index of categoryMappings
         const newIndex = Math.round(Math.random() * (categoryMappings.length - 1));
         // If the category has not already been used
-        if (!category_indexes.has(newIndex)) {
+        if (!category_names.includes(categoryMappings[newIndex].name)) {
           // Get all the words in that category starting with start_letter
           const words = categoryMappings[newIndex].array.filter((x) => x.charAt(0) === start_letter);
           if (words && words.length >= 1) {
             // Push these words as an array
             category_target_words.push(words);
             // Keep track this category has been used
-            category_indexes.add(newIndex);
+            category_names.push(categoryMappings[newIndex].name);
           } else {
             failed_search_count += 1;
           }
         }
       } while (
-        category_indexes.size < 5 &&
-        category_indexes.size + failed_search_count !== categoryMappings.length &&
+        category_names.length < 5 &&
+        category_names.length + failed_search_count !== categoryMappings.length &&
         failed_search_count <= 20
       );
 
       // Keep reference of which categories have been used
-      setCategoryIndexes(Array.from(category_indexes));
+      setCategoryNames(category_names);
 
-      // Remove/filter out malformed category target arrays
-
-      // NOTE: Make sure to use wordArrays with more words, otherwise this won't find any words to use
       console.log(category_target_words);
 
       setCategoryWordTargets(category_target_words);
@@ -277,7 +268,7 @@ const LetterCategoriesConfig: React.FC<Props> = (props) => {
       hasSubmitLetter={hasSubmitLetter}
       targetWord={targetWord || ""}
       categoryRequiredStartingLetter={categoryRequiredStartingLetter || ""}
-      categoryIndexes={categoryIndexes || []}
+      categoryNames={categoryNames || []}
       categoryWordTargets={categoryWordTargets || [[]]}
       finishingButtonText={props.finishingButtonText}
       onEnter={onEnter}
