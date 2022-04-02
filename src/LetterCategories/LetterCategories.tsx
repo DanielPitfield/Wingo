@@ -80,10 +80,10 @@ const LetterCategories: React.FC<Props> = (props) => {
     return Grid;
   }
 
-  function displayOutcome() {
+  function displayOutcome(): JSX.Element {
     // Game still in progress, don't display anything
     if (props.inProgress) {
-      return;
+      return <></>;
     }
 
     // All correct
@@ -104,9 +104,11 @@ const LetterCategories: React.FC<Props> = (props) => {
     }
     // Some (atleast one) words were right
     else {
+      return (
       <MessageNotification type="default">
         <strong>{`You guessed a correct word for ${props.correctGuessesCount} of the ${props.numGuesses} categories`}</strong>
-      </MessageNotification>;
+      </MessageNotification>
+      );
     }
   }
 
