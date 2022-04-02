@@ -2,15 +2,6 @@ import React, { useState } from "react";
 import "../App.scss";
 import { Page } from "../App";
 import LetterCategories from "./LetterCategories";
-import { words_three_guessable, words_three_targets } from "../WordArrays/Lengths/words_3";
-import { words_four_guessable, words_four_targets } from "../WordArrays/Lengths/words_4";
-import { words_five_guessable, words_five_targets } from "../WordArrays/Lengths/words_5";
-import { words_six_guessable, words_six_targets } from "../WordArrays/Lengths/words_6";
-import { words_seven_guessable, words_seven_targets } from "../WordArrays/Lengths/words_7";
-import { words_eight_guessable, words_eight_targets } from "../WordArrays/Lengths/words_8";
-import { words_nine_guessable, words_nine_targets } from "../WordArrays/Lengths/words_9";
-import { words_ten_guessable, words_ten_targets } from "../WordArrays/Lengths/words_10";
-import { words_eleven_guessable, words_eleven_targets } from "../WordArrays/Lengths/words_11";
 import { SaveData } from "../SaveData";
 import { words_dogs } from "../WordArrays/Categories/dogs";
 import { words_countries } from "../WordArrays/Categories/countries";
@@ -33,30 +24,6 @@ interface Props {
   setPage: (page: Page) => void;
   addGold: (gold: number) => void;
 }
-
-export const wordLengthMappingsGuessable = [
-  { value: 3, array: words_three_guessable },
-  { value: 4, array: words_four_guessable },
-  { value: 5, array: words_five_guessable },
-  { value: 6, array: words_six_guessable },
-  { value: 7, array: words_seven_guessable },
-  { value: 8, array: words_eight_guessable },
-  { value: 9, array: words_nine_guessable },
-  { value: 10, array: words_ten_guessable },
-  { value: 11, array: words_eleven_guessable },
-];
-
-export const wordLengthMappingsTargets = [
-  { value: 3, array: words_three_targets },
-  { value: 4, array: words_four_targets },
-  { value: 5, array: words_five_targets },
-  { value: 6, array: words_six_targets },
-  { value: 7, array: words_seven_targets },
-  { value: 8, array: words_eight_targets },
-  { value: 9, array: words_nine_targets },
-  { value: 10, array: words_ten_targets },
-  { value: 11, array: words_eleven_targets },
-];
 
 const LetterCategoriesConfig: React.FC<Props> = (props) => {
   const [guesses, setGuesses] = useState<string[]>([]);
@@ -264,10 +231,6 @@ const LetterCategoriesConfig: React.FC<Props> = (props) => {
     } else {
       setCurrentWord(""); // Start new word as empty string
       setWordIndex(wordIndex + 1); // Increment index to indicate new word has been started
-    }
-
-    if (props.timerConfig.isTimed) {
-      setSeconds(props.timerConfig.seconds);
     }
   }
 
