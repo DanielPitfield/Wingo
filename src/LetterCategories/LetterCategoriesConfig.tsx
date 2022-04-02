@@ -66,6 +66,9 @@ const LetterCategoriesConfig: React.FC<Props> = (props) => {
       const start_letter = Alphabet[Math.round(Math.random() * (Alphabet.length - 1))];
       // Set this letter as the letter that all words must begin with
       setCategoryRequiredStartingLetter(start_letter);
+
+      setCurrentWord(start_letter);
+
       console.log("Start Letter: " + start_letter);
 
       let category_indexes = new Set<number>();
@@ -229,7 +232,7 @@ const LetterCategoriesConfig: React.FC<Props> = (props) => {
       // Out of guesses
       setinProgress(false);
     } else {
-      setCurrentWord(""); // Start new word as empty string
+      setCurrentWord(categoryRequiredStartingLetter);
       setWordIndex(wordIndex + 1); // Increment index to indicate new word has been started
     }
   }
@@ -243,6 +246,10 @@ const LetterCategoriesConfig: React.FC<Props> = (props) => {
 
   function onBackspace() {
     if (currentWord.length > 0 && inProgress) {
+      // Never remove first letter
+      if (currentWord.length === 1) {
+        return; // Don't allow backspace
+      }
       // If there is a letter to remove
       setCurrentWord(currentWord.substring(0, currentWord.length - 1));
     }

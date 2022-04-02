@@ -9,6 +9,7 @@ interface Props {
   word: string;
   isVertical: boolean;
   targetWord: string;
+  targetArray?: string[];
   revealedLetterIndexes?: number[];
   hasSubmit: boolean;
   inDictionary: boolean;
@@ -26,6 +27,22 @@ export const WordRow: React.FC<Props> = (props) => {
 
   // Array of (character, status) for every letter
   wordSummary = getWordSummary(props.mode, props.word, props.targetWord, props.inDictionary);
+
+  // Overwrite wordSummary if LettersCategories mode
+  if (props.mode === "letters_categories" && props.targetArray) {
+    if (props.targetArray.includes(props.word)) {
+      wordSummary.map((x) => {
+        x.status = "correct";
+        return x;
+      });
+    }
+    else {
+      wordSummary.map((x) => {
+        x.status = "incorrect";
+        return x;
+      });
+    }
+  }
 
   function isAnimationEnabled(letterIndex: number) {
     // Minimum set of criteria that must be satisfied for animation to be applied
