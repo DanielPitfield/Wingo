@@ -26,9 +26,8 @@ const LetterCategoriesConfig: React.FC<Props> = (props) => {
   const [currentWord, setCurrentWord] = useState("");
   const [wordIndex, setWordIndex] = useState(0);
   const [inProgress, setinProgress] = useState(true);
-  const [isIncompleteWord, setisIncompleteWord] = useState(false);
   const [wordLength, setwordLength] = useState(props.defaultWordLength);
-  const [targetWord, settargetWord] = useState("");
+  const [correctGuessesCount, setCorrectGuessesCount] = useState(0);
   const [categoryRequiredStartingLetter, setCategoryRequiredStartingLetter] = useState("");
   const [categoryNames, setCategoryNames] = useState<string[]>([]);
   const [categoryWordTargets, setCategoryWordTargets] = useState<string[][]>([[]]);
@@ -178,21 +177,8 @@ const LetterCategoriesConfig: React.FC<Props> = (props) => {
     // Pressing Enter to Restart
     if (!inProgress) {
       ResetGame();
-      console.log("Reset");
       return;
     }
-
-    // Don't allow incomplete words (if specified in props)
-    if (props.enforceFullLengthGuesses) {
-      if (currentWord.length !== wordLength) {
-        // Incomplete (length of) word
-        setisIncompleteWord(true);
-        return;
-      }
-    }
-
-    // Reached here, the word is complete or enforce full length guesses is off
-    setisIncompleteWord(false);
 
     if (wordIndex >= props.defaultnumGuesses) {
       // Used all the available rows (out of guesses)
@@ -210,14 +196,10 @@ const LetterCategoriesConfig: React.FC<Props> = (props) => {
 
     if (wordArray.includes(currentWord.toLowerCase())) {
       // Correct word
-
-      // Easiest way to show all green letter statuses
-      settargetWord(currentWord);
-    } else {
-      // Incorrect word
+      setCorrectGuessesCount(correctGuessesCount + 1);
     }
 
-    setGuesses(guesses.concat(currentWord)); // ALways show guess
+    setGuesses(guesses.concat(currentWord)); // Always show guess
 
     if (wordIndex + 1 === numGuesses) {
       // Out of guesses
@@ -264,9 +246,8 @@ const LetterCategoriesConfig: React.FC<Props> = (props) => {
       currentWord={currentWord}
       wordIndex={wordIndex}
       inProgress={inProgress}
-      isIncompleteWord={isIncompleteWord}
       hasSubmitLetter={hasSubmitLetter}
-      targetWord={targetWord || ""}
+      correctGuessesCount={correctGuessesCount}
       categoryRequiredStartingLetter={categoryRequiredStartingLetter || ""}
       categoryNames={categoryNames || []}
       categoryWordTargets={categoryWordTargets || [[]]}

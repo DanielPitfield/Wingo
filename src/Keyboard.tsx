@@ -21,6 +21,9 @@ export const alphabet_string = "abcdefghijklmnopqrstuvwxyz";
 export const Alphabet = alphabet_string.split("");
 
 export const Keyboard: React.FC<Props> = (props) => {
+  const modesWithDash = ["category", "letters_categories"];
+  const modesWithoutKeyboardStatuses = ["letters_categories", "countdown_letters_casual", "countdown_letters_realistic"];
+
   React.useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       var input_key = event.key.toString().toLowerCase();
@@ -32,7 +35,7 @@ export const Keyboard: React.FC<Props> = (props) => {
       } else if (Alphabet.includes(input_key)) {
         // Any letter on the keyboard
         props.onSubmitLetter(input_key);
-      } else if (props.mode === "category") {
+      } else if (modesWithDash.includes(props.mode)) {
         // Allow dash and apostrophe for category gamemode
         if (input_key === "-" || input_key === "'") {
           props.onSubmitLetter(input_key);
@@ -52,13 +55,13 @@ export const Keyboard: React.FC<Props> = (props) => {
       status: "not set",
     }));
 
-    if (props.mode === "category") {
+    if (modesWithDash.includes(props.mode)) {
       keyboardStatuses.push({ letter: "-", status: "not set" });
       keyboardStatuses.push({ letter: "'", status: "not set" });
     }
 
     // Don't need updated keyboard statuses if Countdown Letters
-    if (props.mode === "countdown_letters_casual" || props.mode === "countdown_letters_realistic") {
+    if (modesWithoutKeyboardStatuses.includes(props.mode)) {
       // Just use standard statuses (where all are "not set")
       return keyboardStatuses;
     }
@@ -108,7 +111,7 @@ export const Keyboard: React.FC<Props> = (props) => {
           key={i}
           mode="default"
           // Data attribute used to colour button
-          status={props.mode !== "letters_categories" ? letterStatus : "not set"}
+          status={letterStatus}
           onClick={(e) =>
             // Letter of button is used within a callback function
             props.onSubmitLetter((e.target as HTMLButtonElement).innerText)

@@ -17,9 +17,8 @@ interface Props {
   currentWord: string;
   wordIndex: number;
   inProgress: boolean;
-  isIncompleteWord: boolean;
   hasSubmitLetter: boolean;
-  targetWord: string;
+  correctGuessesCount: number;
   categoryRequiredStartingLetter?: string;
   categoryWordTargets?: string[][];
   categoryNames?: string[];
@@ -70,11 +69,10 @@ const LetterCategories: React.FC<Props> = (props) => {
           isVertical={false}
           word={word}
           length={wordLength}
-          targetWord={props.targetWord}
+          targetWord={""}
           targetArray={props.categoryWordTargets ? props.categoryWordTargets[i] : []}
           hasSubmit={props.wordIndex > i || !props.inProgress}
           inDictionary={true}
-          isIncompleteWord={props.isIncompleteWord}
         ></WordRow>
       );
     }
@@ -86,14 +84,35 @@ const LetterCategories: React.FC<Props> = (props) => {
     // Game still in progress, don't display anything
     if (props.inProgress) {
       return;
-    } else {
-      // Number of green rows / total rows
+    }
+
+    // All correct
+    if (props.correctGuessesCount === props.numGuesses) {
+      return (
+        <MessageNotification type="success">
+          <strong>{`You guessed a correct word for all ${props.correctGuessesCount} categories!`}</strong>
+        </MessageNotification>
+      );
+    }
+    // All incorrect
+    else if (props.correctGuessesCount === 0) {
+      return (
+        <MessageNotification type="error">
+          <strong>{`You didn't guess a correct word for any of the ${props.numGuesses} categories`}</strong>
+        </MessageNotification>
+      );
+    }
+    // Some (atleast one) words were right
+    else {
+      <MessageNotification type="default">
+        <strong>{`You guessed a correct word for ${props.correctGuessesCount} of the ${props.numGuesses} categories`}</strong>
+      </MessageNotification>;
     }
   }
 
   return (
     <div className="App">
-      <div>{/*displayOutcome()*/}</div>
+      <div>{displayOutcome()}</div>
       <div>
         {!props.inProgress && (
           <Button mode={"accept"} onClick={() => props.ResetGame()}>
@@ -104,7 +123,7 @@ const LetterCategories: React.FC<Props> = (props) => {
 
       <MessageNotification type="default">
         {/*TODO: Format text, ideally would position near respective WordRow */ JSON.stringify(props.categoryNames)}
-        </MessageNotification>
+      </MessageNotification>
 
       <div className="word_grid">{populateGrid(props.numGuesses, props.wordLength)}</div>
 
@@ -117,7 +136,7 @@ const LetterCategories: React.FC<Props> = (props) => {
               onSubmitLetter={props.onSubmitLetter}
               onBackspace={props.onBackspace}
               guesses={props.guesses}
-              targetWord={props.targetWord}
+              targetWord={""}
               inDictionary={true}
               letterStatuses={[]}
             ></Keyboard>
