@@ -29,7 +29,7 @@ export function hasNumberSelectionStarted(
     picked: boolean;
   }[]
 ): boolean {
-  return statuses.filter(x => x.type === "original" && x.number).length > 0;
+  return statuses.filter((x) => x.type === "original" && x.number).length > 0;
 }
 
 export function hasNumberSelectionFinished(
@@ -39,7 +39,7 @@ export function hasNumberSelectionFinished(
     picked: boolean;
   }[]
 ): boolean {
-  return statuses.filter(x => x.type === "original" && x.number).length === 6;
+  return statuses.filter((x) => x.type === "original" && x.number).length === 6;
 }
 
 export type Guess = { operand1: number | null; operand2: number | null; operator: typeof operators[0]["name"] };
@@ -214,7 +214,7 @@ const CountdownNumbersConfig: React.FC<Props> = (props) => {
       setCountdownStatuses(newCountdownStatuses);
 
       // Determine target number if last number is being picked
-      if (index === newCountdownStatuses.filter(x => x.type === "original").length - 1) {
+      if (index === newCountdownStatuses.filter((x) => x.type === "original").length - 1) {
         const newTargetNumber = getTargetNumber(100, 999);
         settargetNumber(newTargetNumber);
       }
@@ -222,24 +222,25 @@ const CountdownNumbersConfig: React.FC<Props> = (props) => {
   }
 
   function onSubmitCountdownExpression(expression: number[]) {
-    // If no numbers have been picked (statuses as it was to begin with)
-    if (countdownStatuses === defaultCountdownStatuses && inProgress) {
-      // There are 6 numbers in the input array
-      if (expression.length === countdownStatuses.length) {
-        // Make a copy of the current countdownStatuses
-        const newCountdownStatuses = countdownStatuses.slice();
-        // Add the numbers into the status object array (along with updating picked boolean)
-        for (let i = 0; i < expression.length; i++) {
-          // Update with the number
-          newCountdownStatuses[i].number = expression[i];
-        }
-        // Update countdownStatuses
-        setCountdownStatuses(newCountdownStatuses);
-
-        // Determine target number
-        const newTargetNumber = getTargetNumber(100, 999);
-        settargetNumber(newTargetNumber);
+    // If no numbers have been picked (statuses as it was to begin with), and there are 6 numbers in the input array
+    if (
+      countdownStatuses.filter((x) => x.type === "original").length === defaultCountdownStatuses.length &&
+      inProgress &&
+      expression.length === countdownStatuses.length
+    ) {
+      // Make a copy of the current countdownStatuses
+      const newCountdownStatuses = countdownStatuses.slice();
+      // Add the numbers into the status object array (along with updating picked boolean)
+      for (let i = 0; i < expression.length; i++) {
+        // Update with the number
+        newCountdownStatuses[i].number = expression[i];
       }
+      // Update countdownStatuses
+      setCountdownStatuses(newCountdownStatuses);
+
+      // Determine target number
+      const newTargetNumber = getTargetNumber(100, 999);
+      settargetNumber(newTargetNumber);
     }
   }
 
@@ -337,7 +338,7 @@ const CountdownNumbersConfig: React.FC<Props> = (props) => {
       // Flag as picked so it can't be added again
       newCountdownStatuses[id.index].picked = true;
     } else if (id.type === "intermediary") {
-      newCountdownStatuses[countdownStatuses.filter(x => x.type === "original").length + id.rowIndex].picked = true;
+      newCountdownStatuses[countdownStatuses.filter((x) => x.type === "original").length + id.rowIndex].picked = true;
     }
     setCountdownStatuses(newCountdownStatuses);
   }
