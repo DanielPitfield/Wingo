@@ -2,7 +2,7 @@ import React from "react";
 import NumberTile from "./NumberTile";
 
 interface Props {
-  onClick: (value: number | null) => void;
+  onClick: (value: number | null, id: {type: "original", index: number} | {type: "intermediary", rowIndex: number}) => void;
   isReadOnly: boolean;
   expression: {
     number: number | null;
@@ -21,8 +21,8 @@ export const CountdownRow: React.FC<Props> = (props) => {
           number={props.expression?.[i].number}
           disabled={props.expression?.[i].picked}
           isReadOnly={props.isReadOnly}
-          onClick={() => props.onClick(props.expression?.[i].number)}
-          onContextMenu={() => {}}
+          onClick={() => props.onClick(props.expression?.[i].number, {type: "original", index: i} )}
+          onRightClick={() => {}}
         ></NumberTile>
       );
     }

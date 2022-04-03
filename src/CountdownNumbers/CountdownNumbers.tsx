@@ -28,8 +28,9 @@ interface Props {
   hasTimerEnded: boolean;
   hasSubmitNumber: boolean;
   targetNumber: number | null;
-  onClick: (value: number | null) => void;
-  onContextMenu: (value: number | null) => void;
+  onClick: (value: number | null, id: {type: "original", index: number} | {type: "intermediary", rowIndex: number}) => void;
+  onRightClick: (value: number | null, index: number) => void;
+  clearGrid: () => void;
   setPage: (page: Page) => void;
   onEnter: () => void;
   onSubmitCountdownNumber: (number: number) => void;
@@ -116,13 +117,13 @@ const CountdownNumbers: React.FC<Props> = (props) => {
             isReadOnly={true}
             // Ignore left and right clicks on the target number
             onClick={() => {}}
-            onContextMenu={() => {}}
+            onRightClick={() => {}}
           ></NumberTile>
         </div>
         <CountdownRow
           key={"number_selection"}
           isReadOnly={true}
-          onClick={(value) => props.onClick(value)}
+          onClick={props.onClick}
           expression={props.countdownExpression}
           length={props.defaultNumOperands}
         ></CountdownRow>
@@ -173,7 +174,7 @@ const CountdownNumbers: React.FC<Props> = (props) => {
         /* 
         If the wordIndex is ahead of the currently iterated row
         (i.e the row has already been used)
-        Show the respectgive guess
+        Show the respective guess
         */
         guess = props.guesses[i];
       }
@@ -181,15 +182,16 @@ const CountdownNumbers: React.FC<Props> = (props) => {
       Grid.push(
         <NumberRow
           key={`countdown_numbers_input ${i}`}
-          isReadOnly={false}
+          isReadOnly={i < props.wordIndex}
           hasTimerEnded={props.hasTimerEnded}
           onClick={props.onClick}
-          onContextMenu={(value) => props.onContextMenu(value)}
+          onRightClick={props.onRightClick}
           expression={guess}
           length={expressionLength}
           targetNumber={props.targetNumber}
           hasSubmit={!props.inProgress}
           setOperator={props.setOperator}
+          rowIndex={i}
         ></NumberRow>
       );
     }
@@ -264,6 +266,10 @@ const CountdownNumbers: React.FC<Props> = (props) => {
       </div>
 
       <div className="countdown/numbers_grid">{populateGrid(props.expressionLength)}</div>
+
+      <Button mode="destructive" onClick={props.clearGrid}>
+        Clear
+      </Button>
 
       <div>
         {props.timerConfig.isTimed && (
