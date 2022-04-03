@@ -30,7 +30,13 @@ export function calculateTotal(guess: Guess): number | null {
     return null;
   }
 
-  return operator.function(guess.operand1, guess.operand2);
+  const result = operator.function(guess.operand1, guess.operand2);
+
+  if (result === Math.round(result)) {
+    return result;
+  }
+
+  return null;
 }
 
 export const NumberRow: React.FC<Props> = (props) => {

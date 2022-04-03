@@ -24,34 +24,22 @@ export function isNumberValid(currentExpression: string) {
 
 export function hasNumberSelectionStarted(
   statuses: {
+    type: "original" | "intermediary";
     number: number | null;
     picked: boolean;
   }[]
 ): boolean {
-  for (let i = 0; i < statuses.length; i++) {
-    const number = statuses[i].number;
-    // If any number has been picked, return true
-    if (number) {
-      return true;
-    }
-  }
-  return false;
+  return statuses.filter(x => x.type === "original" && x.number).length > 0;
 }
 
 export function hasNumberSelectionFinished(
   statuses: {
+    type: "original" | "intermediary";
     number: number | null;
     picked: boolean;
   }[]
 ): boolean {
-  for (let i = 0; i < statuses.length; i++) {
-    const number = statuses[i].number;
-    // If any number is not picked, return false
-    if (!number) {
-      return false;
-    }
-  }
-  return true;
+  return statuses.filter(x => x.type === "original" && x.number).length === 6;
 }
 
 export type Guess = { operand1: number | null; operand2: number | null; operator: typeof operators[0]["name"] };
@@ -154,7 +142,7 @@ const CountdownNumbersConfig: React.FC<Props> = (props) => {
     setGuesses([]);
     setCountdownStatuses(defaultCountdownStatuses);
     setCurrentGuess({ operand1: null, operand2: null, operator: "+" });
-    settargetNumber(null);
+    //settargetNumber(null);
     setinProgress(true);
     sethasTimerEnded(false);
     setExpressionLength(props.defaultExpressionLength);
@@ -226,7 +214,7 @@ const CountdownNumbersConfig: React.FC<Props> = (props) => {
       setCountdownStatuses(newCountdownStatuses);
 
       // Determine target number if last number is being picked
-      if (index === newCountdownStatuses.length - 1) {
+      if (index === newCountdownStatuses.filter(x => x.type === "original").length - 1) {
         const newTargetNumber = getTargetNumber(100, 999);
         settargetNumber(newTargetNumber);
       }
@@ -431,7 +419,7 @@ const CountdownNumbersConfig: React.FC<Props> = (props) => {
       defaultNumOperands={props.defaultNumOperands}
       defaultNumGuesses={props.defaultNumGuesses}
       currentGuess={currentGuess}
-      countdownExpression={countdownStatuses}
+      countdownStatuses={countdownStatuses}
       inProgress={inProgress}
       hasTimerEnded={hasTimerEnded}
       hasSubmitNumber={hasSubmitNumber}

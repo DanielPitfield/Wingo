@@ -20,7 +20,8 @@ interface Props {
   defaultNumGuesses: number;
   expressionLength: number;
   currentGuess: Guess;
-  countdownExpression: {
+  countdownStatuses: {
+    type: "original" | "intermediary";
     number: number | null;
     picked: boolean;
   }[];
@@ -51,7 +52,7 @@ const CountdownNumbers: React.FC<Props> = (props) => {
   function populateGrid(expressionLength: number) {
     function getSmallNumber(): number | null {
       // Already 6 picked numbers, don't add any more
-      if (hasNumberSelectionFinished(props.countdownExpression)) {
+      if (hasNumberSelectionFinished(props.countdownStatuses)) {
         return null;
       }
 
@@ -68,7 +69,7 @@ const CountdownNumbers: React.FC<Props> = (props) => {
     }
 
     function getBigNumber(): number | null {
-      if (hasNumberSelectionFinished(props.countdownExpression)) {
+      if (hasNumberSelectionFinished(props.countdownStatuses)) {
         return null;
       }
 
@@ -100,7 +101,7 @@ const CountdownNumbers: React.FC<Props> = (props) => {
     var Grid = [];
 
     // Check if 6 numbers have been selected
-    const isSelectionFinished = hasNumberSelectionFinished(props.countdownExpression);
+    const isSelectionFinished = hasNumberSelectionFinished(props.countdownStatuses);
 
     /*
     Target Number
@@ -124,7 +125,7 @@ const CountdownNumbers: React.FC<Props> = (props) => {
           key={"number_selection"}
           isReadOnly={true}
           onClick={props.onClick}
-          expression={props.countdownExpression}
+          expression={props.countdownStatuses}
           length={props.defaultNumOperands}
         ></CountdownRow>
         <div className="add-number-buttons-wrapper">
@@ -144,7 +145,7 @@ const CountdownNumbers: React.FC<Props> = (props) => {
           </Button>
           <Button
             mode={"default"}
-            disabled={hasNumberSelectionStarted(props.countdownExpression) || isSelectionFinished}
+            disabled={hasNumberSelectionStarted(props.countdownStatuses) || isSelectionFinished}
             onClick={quickNumberSelection}
           >
             Quick Pick
