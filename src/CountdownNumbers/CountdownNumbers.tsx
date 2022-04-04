@@ -29,7 +29,10 @@ interface Props {
   hasTimerEnded: boolean;
   hasSubmitNumber: boolean;
   targetNumber: number | null;
-  onClick: (value: number | null, id: {type: "original", index: number} | {type: "intermediary", rowIndex: number}) => void;
+  onClick: (
+    value: number | null,
+    id: { type: "original"; index: number } | { type: "intermediary"; rowIndex: number }
+  ) => void;
   onRightClick: (value: number | null, index: number) => void;
   clearGrid: () => void;
   setPage: (page: Page) => void;
@@ -200,19 +203,47 @@ const CountdownNumbers: React.FC<Props> = (props) => {
     return Grid;
   }
 
-  function determineScore() {
-    const difference = Math.abs(parseInt(selectedFinalGuess) - (props.targetNumber || 0));
+  function determineBestGuess(): number | null {
+    // No target number
+    if (!props.targetNumber) {
+      return null;
+    }
+
+    const intermediaryStatuses = props.countdownStatuses.filter((x) => x.type === "intermediary");
+
+    // No intermediary results
+    if (intermediaryStatuses.length <= 0) {
+      return null;
+    }
+
+    // Get all the intermediary numbers (from statuses)
+    let intermediaryNumbers = [];
+    for (let i = 0; i < intermediaryStatuses.length; i++) {
+      if (intermediaryStatuses[i].number !== null) {
+        intermediaryNumbers.push(intermediaryStatuses[i].number);
+      }
+    }
+
+    // Get the closest intermediary guess
+    var closest = intermediaryNumbers.reduce(function (prev, curr) {
+      const prevDifference = Math.abs(prev! - props.targetNumber!);
+      const currentDifference = Math.abs(curr! - props.targetNumber!);
+      return currentDifference < prevDifference ? curr : prev;
+    });
+
+    return closest;
   }
 
   function displayOutcome() {
-    let outcome: "success" | "failure" | "in-progress" = "in-progress";
-    const GOLD_PER_NUMBER = 30;
+    //let outcome: "success" | "failure" | "in-progress" = "in-progress";
+    //const GOLD_PER_POINT = 30;
 
-    // When timer runs out and if a guess has been made
-    if (!props.inProgress && props.hasTimerEnded) {
-      if (!selectedFinalGuess) {
-        // finalGuess is empty (no guess was made), no points
-        outcome = "failure";
+    // Game has ended (timer ran out) and there is a target number
+    if (!props.inProgress && props.hasTimerEnded && props.targetNumber) {
+      const best_guess = determineBestGuess();
+
+      if (best_guess === null) {
+        //outcome = "failure";
         return (
           <>
             <MessageNotification type="error">
@@ -222,34 +253,46 @@ const CountdownNumbers: React.FC<Props> = (props) => {
             </MessageNotification>
           </>
         );
-      }
-      if (props.mode === "countdown_numbers_casual") {
-        // Already evaluated that guess is valid, so just display result
-        outcome = "success";
-        // Reward gold based on how long the selected guess is
-        props.addGold(selectedFinalGuess.length * GOLD_PER_NUMBER);
-        return (
-          <>
-            <MessageNotification type="success">
-              <strong>{selectedFinalGuess}</strong>
-              <br />
-              <strong>{determineScore()} points</strong>
-            </MessageNotification>
-          </>
-        );
       } else {
-        // Realistic mode
-        outcome = "success";
-        props.addGold(selectedFinalGuess.length * GOLD_PER_NUMBER);
-        return (
-          <>
-            <MessageNotification type="success">
-              <strong>{selectedFinalGuess}</strong>
-              <br />
-              <strong>{determineScore()} points</strong>
-            </MessageNotification>
-          </>
-        );
+        // TODO: determineBestGuess could return the difference, depends on if the message should show the best guess
+        const difference = Math.abs(best_guess - props.targetNumber);
+        // Guess the target number exactly, difference is 0, score is 10
+        const score = 10 - difference;
+
+        if (score === 10) {
+          //outcome = "success";
+          return (
+            <>
+              <MessageNotification type="success">
+                <strong>You got the target number!</strong>
+                <br />
+                <strong>10 points</strong>
+              </MessageNotification>
+            </>
+          );
+        } else if (score >= 1 && score <= 9) {
+          //outcome = "success";
+          return (
+            <>
+              <MessageNotification type="success">
+                <strong>{`You were ${difference} away from the target number`}</strong>
+                <br />
+                <strong>{`${score} points`}</strong>
+              </MessageNotification>
+            </>
+          );
+        } else {
+          //outcome = "failure";
+          return (
+            <>
+              <MessageNotification type="error">
+                <strong>{`You were too far away from the target number (${difference})`}</strong>
+                <br />
+                <strong>0 points</strong>
+              </MessageNotification>
+            </>
+          );
+        }
       }
     }
   }
