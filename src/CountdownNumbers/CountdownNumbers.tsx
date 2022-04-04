@@ -17,7 +17,7 @@ interface Props {
   wordIndex: number;
   guesses: Guess[];
   defaultNumOperands: number;
-  defaultNumGuesses: number;
+  numGuesses: number;
   expressionLength: number;
   currentGuess: Guess;
   countdownStatuses: {
@@ -154,7 +154,7 @@ const CountdownNumbers: React.FC<Props> = (props) => {
       </div>
     );
 
-    for (let i = 0; i < props.defaultNumGuesses; i++) {
+    for (let i = 0; i < props.numGuesses; i++) {
       let guess: Guess;
 
       if (props.wordIndex === i) {

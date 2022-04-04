@@ -46,6 +46,7 @@ export type Guess = { operand1: number | null; operand2: number | null; operator
 
 const CountdownNumbersConfig: React.FC<Props> = (props) => {
   const [guesses, setGuesses] = useState<Guess[]>([]);
+  const [numGuesses, setNumGuesses] = useState(props.defaultNumGuesses);
 
   const defaultCountdownStatuses: (
     | {
@@ -329,6 +330,11 @@ const CountdownNumbersConfig: React.FC<Props> = (props) => {
       setCurrentGuess({ operand1: null, operator: "+", operand2: null });
       // Move to next row
       setWordIndex(wordIndex + 1);
+
+      // Add a new row to use
+      if (wordIndex + 1 >= numGuesses) {
+        setNumGuesses(numGuesses + 1);
+      }
     } else {
       setCurrentGuess(updatedGuess);
     }
@@ -400,6 +406,7 @@ const CountdownNumbersConfig: React.FC<Props> = (props) => {
     setGuesses([]);
     setCurrentGuess({ operand1: null, operator: "+", operand2: null });
     setCountdownStatuses(countdownStatuses.map((x) => ({ ...x, picked: false })));
+    setNumGuesses(props.defaultNumGuesses);
   }
 
   return (
@@ -418,7 +425,7 @@ const CountdownNumbersConfig: React.FC<Props> = (props) => {
       wordIndex={wordIndex}
       guesses={guesses}
       defaultNumOperands={props.defaultNumOperands}
-      defaultNumGuesses={props.defaultNumGuesses}
+      numGuesses={numGuesses}
       currentGuess={currentGuess}
       countdownStatuses={countdownStatuses}
       inProgress={inProgress}
