@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import "../App.scss";
 import { Page } from "../App";
 import CountdownNumbers from "./CountdownNumbers";
-import { operators } from "../Nubble/Nubble";
 import { calculateTotal } from "./NumberRow";
+import { operators } from "../Nubble/getValidValues";
 
 interface Props {
   page: Page;

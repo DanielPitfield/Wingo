@@ -7,7 +7,6 @@ import ProgressBar, { GreenToRedColorTransition } from "../ProgressBar";
 import { SaveData } from "../SaveData";
 import { NumberRow } from "./NumberRow";
 import NumberTile from "./NumberTile";
-import { operators } from "../Nubble/Nubble";
 import { Guess, hasNumberSelectionFinished, hasNumberSelectionStarted } from "./CountdownNumbersConfig";
 import { CountdownRow } from "./CountdownRow";
 

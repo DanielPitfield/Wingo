@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import "../index.scss";
-import { operators } from "../Nubble/Nubble";
+import { operators } from "../Nubble/getValidValues";
 
 interface Props {
   hasTimerEnded: boolean;

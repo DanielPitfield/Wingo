@@ -2,8 +2,8 @@ import React from "react";
 import EqualsTile from "./EqualsTile";
 import NumberTile from "./NumberTile";
 import OperatorTile from "./OperatorTile";
-import { operators } from "../Nubble/Nubble";
 import { Guess } from "./CountdownNumbersConfig";
+import { operators } from "../Nubble/getValidValues";
 
 interface Props {
   onClick: (value: number | null, id: {type: "original", index: number} | {type: "intermediary", rowIndex: number}) => void;
