@@ -1,3 +1,6 @@
+// TODO: Check all sets (actually unique values)
+// TODO: Remove logging
+
 import {
   expression_trees_3,
   expression_trees_4,
@@ -71,7 +74,7 @@ function combRep(arr: string[], l: number) {
 }
 
 function getOperatorPermutations(numOperands: number): string[][] {
-  // This does not include permutations having the same operator more than once
+  // Permutations with no repetition
   let operatorPermutations = permutator(operators_symbols);
 
   // Permutations with repetition
@@ -93,11 +96,19 @@ function getOperatorPermutations(numOperands: number): string[][] {
   }
 
   // Only need lengths < numOperands
-  const operatorPermutationsFiltered = operatorSubsetPermutations.filter((x) => x.length < numOperands);
+  const operatorPermutationsFiltered = operatorSubsetPermutations
+    .filter((x) => x.length < numOperands)
+    .reduce<string[][]>((uniquePermutations, x) => {
+      if (!uniquePermutations.some((y) => JSON.stringify(y) === JSON.stringify(x))) {
+        uniquePermutations.push(x);
+      }
+      return uniquePermutations;
+    }, []);
 
-  const operatorPermutationsUnique = new Set<string[]>(operatorPermutationsFiltered);
+  console.log("Operator Permutations:");
+  console.log(operatorPermutationsFiltered);
 
-  return Array.from(operatorPermutationsUnique);
+  return operatorPermutationsFiltered;
 }
 
 function getOperandPermutations(inputNumbers: number[]): number[][] {
@@ -137,13 +148,10 @@ function getCombinations(inputNumbers: number[]): {
     }
   }
 
-  // TODO: Optimisation (combinations)
-  // Can this optimisation be done in the above nested for loops
-  
   // Don't need combinations that dont have 1 more operand than operators
   const filtered_combinations = combinations.filter((x) => x.operands.length === x.operators.length + 1);
 
-  console.log("Combinations:")
+  console.log("Combinations:");
   console.log(filtered_combinations);
   return filtered_combinations;
 }
@@ -218,7 +226,7 @@ function getAllPolishExpressions(
     polish_expressions = polish_expressions.concat(getPolishExpressionsFromCombination(combinations[i]));
   }
 
-  console.log("Polish expressions:")
+  console.log("Polish expressions:");
   console.log(polish_expressions);
 
   return polish_expressions;
@@ -241,7 +249,7 @@ export function getValidValues(inputNumbers: number[], maxLimit: number): number
 
   const validValues = new Set<number>(calculatedValues);
 
-  console.log("Valid values:")
+  console.log("Valid values:");
   console.log(Array.from(validValues));
 
   return Array.from(validValues);
