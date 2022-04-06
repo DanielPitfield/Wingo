@@ -3,7 +3,10 @@ import {
   expression_trees_4,
   expression_trees_5,
   expression_trees_6,
+  generateExpressionTrees,
 } from "./ReversePolish/expression_trees";
+
+var rpn = require("rpn");
 
 // --- OPERATORS (+ - / *) ---
 export const operators: { name: "/" | "-" | "+" | "*"; function: (num1: number, num2: number) => number }[] = [
@@ -28,7 +31,7 @@ export const operators: { name: "/" | "-" | "+" | "*"; function: (num1: number, 
 export const operators_symbols = ["/", "-", "+", "*"];
 
 // Returns permutations of input array, https://stackoverflow.com/a/20871714
-function permutator<T>(inputArr: T[]): T[][] {
+export function permutator<T>(inputArr: T[]): T[][] {
   let result: any[] = [];
 
   const permute = (arr: [], m = []) => {
@@ -47,6 +50,12 @@ function permutator<T>(inputArr: T[]): T[][] {
 
   return result;
 }
+
+// TODO: Get 5 operand combinations
+// Number of required operands (exlcuding the fixed first 2) followed by requiered number of operators
+const expressions = [0, 1, 1, 1]
+const expression_trees_gen = generateExpressionTrees(expressions);
+console.log(expression_trees_gen);
 
 // https://stackoverflow.com/questions/32543936/combination-with-repetition
 function combRep(arr: string[], l: number) {
@@ -171,7 +180,7 @@ function getPolishExpressionsFromCombination(combination: {
     // The reverse polish expression for the current expression tree
     let expression: Array<string | number> = [];
 
-    for (let j = 0; i < expression_tree_parts.length; j++) {
+    for (let j = 0; j < expression_tree_parts.length; j++) {
       // Number/operand
       if (expression_tree_parts[j] === "0") {
         expression.push(combination.operands[operandCount]);
@@ -205,9 +214,6 @@ function getAllPolishExpressions(
     polish_expressions = polish_expressions.concat(getPolishExpressionsFromCombination(combinations[i]));
   }
 
-  // Remove empty/unformed polish expressions
-  polish_expressions = polish_expressions.filter((x) => x.length >= 1);
-
   console.log(polish_expressions);
   return polish_expressions;
 }
@@ -216,20 +222,19 @@ export function getValidValues(inputNumbers: number[], maxLimit: number): number
   const combinations = getCombinations(inputNumbers);
   const polish_expressions = getAllPolishExpressions(combinations);
 
-  var calculatedValues = new Set<number>();
-  var rpn = require("rpn");
+  const unique_polish_expressions_strings = Array.from(new Set<string>(polish_expressions.map(x => x.join(" "))));
 
-  for (let i = 0; i < polish_expressions.length; i++) {
-    const expression = polish_expressions[i];
-    const result = rpn(expression);
-    if (result) {
-      calculatedValues.add(result);
+  var calculatedValues = [];
+
+  for (const string of unique_polish_expressions_strings) {
+    const result = rpn(string);
+    if (result && result > 0 && result <= maxLimit && Number.isInteger(result)) {
+      calculatedValues.push(result);
     }
   }
 
-  // Remove results which aren't integers or are outside range of (0, maxLimit)
-  const validValues = Array.from(calculatedValues).filter((x) => x > 0 && x <= maxLimit && Math.round(x) === x);
+  const validValues = new Set<number>(calculatedValues);
 
   console.log(validValues);
-  return validValues;
+  return Array.from(validValues);
 }
