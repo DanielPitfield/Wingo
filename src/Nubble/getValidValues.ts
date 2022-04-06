@@ -74,13 +74,21 @@ function combRep(arr: string[], l: number) {
 }
 
 function getOperatorPermutations(numOperands: number): string[][] {
+  // Add two operator duds to circumvent missing values bug
+  let operatorDuds = operators_symbols.slice();
+  operatorDuds.push("+");
+  operatorDuds.push("-");
+
   // Permutations with no repetition
-  let operatorPermutations = permutator(operators_symbols);
+  let operatorPermutations = permutator(operatorDuds);
+
+  // Generate permutations up to the length of the biggest of these two values
+  const maxPermLength = Math.max(operatorDuds.length, numOperands);
 
   // Permutations with repetition
-  for (let i = 1; i < numOperands; i++) {
+  for (let i = 1; i <= maxPermLength; i++) {
     // Array of permutations of length i
-    let newPermutations = combRep(operators_symbols, i);
+    let newPermutations = combRep(operatorDuds, i);
     // Add on to operatorPermutations array
     operatorPermutations = operatorPermutations.concat(newPermutations);
   }
@@ -90,7 +98,7 @@ function getOperatorPermutations(numOperands: number): string[][] {
 
   // Add smaller length subsets (to new copy)
   for (let i = 0; i < operatorPermutations.length; i++) {
-    for (let j = 1; j < numOperands; j++) {
+    for (let j = 1; j < maxPermLength; j++) {
       operatorSubsetPermutations.push(operatorPermutations[i].slice(0, j));
     }
   }
