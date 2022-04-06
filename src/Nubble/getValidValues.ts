@@ -71,11 +71,11 @@ function combRep(arr: string[], l: number) {
 }
 
 function getOperatorPermutations(numOperands: number): string[][] {
-  // Permutations with no repetition
+  // This does not include permutations having the same operator more than once
   let operatorPermutations = permutator(operators_symbols);
 
   // Permutations with repetition
-  for (let i = 1; i <= numOperands + 1; i++) {
+  for (let i = 1; i < numOperands; i++) {
     // Array of permutations of length i
     let newPermutations = combRep(operators_symbols, i);
     // Add on to operatorPermutations array
@@ -92,10 +92,12 @@ function getOperatorPermutations(numOperands: number): string[][] {
     }
   }
 
-  // Remove any subset larger in length than the (number of values - 1)
-  const operatorSubsetPermutationsFiltered = operatorSubsetPermutations.filter((x) => x.length <= numOperands - 1);
+  // Only need lengths < numOperands
+  const operatorPermutationsFiltered = operatorSubsetPermutations.filter((x) => x.length < numOperands);
 
-  return operatorSubsetPermutationsFiltered;
+  const operatorPermutationsUnique = new Set<string[]>(operatorPermutationsFiltered);
+
+  return Array.from(operatorPermutationsUnique);
 }
 
 function getOperandPermutations(inputNumbers: number[]): number[][] {
@@ -112,7 +114,9 @@ function getOperandPermutations(inputNumbers: number[]): number[][] {
     }
   }
 
-  return operandSubsetPermutations;
+  const operandPermutationsUnique = new Set<number[]>(operandSubsetPermutations);
+
+  return Array.from(operandPermutationsUnique);
 }
 
 function getCombinations(inputNumbers: number[]): {
@@ -133,8 +137,15 @@ function getCombinations(inputNumbers: number[]): {
     }
   }
 
-  console.log(combinations);
-  return combinations;
+  // TODO: Optimisation (combinations)
+  // Can this optimisation be done in the above nested for loops
+  
+  // Don't need combinations that dont have 1 more operand than operators
+  const filtered_combinations = combinations.filter((x) => x.operands.length === x.operators.length + 1);
+
+  console.log("Combinations:")
+  console.log(filtered_combinations);
+  return filtered_combinations;
 }
 
 function getExpressionTrees(combination: { operands: number[]; operators: string[] }): string[] {
@@ -207,7 +218,9 @@ function getAllPolishExpressions(
     polish_expressions = polish_expressions.concat(getPolishExpressionsFromCombination(combinations[i]));
   }
 
+  console.log("Polish expressions:")
   console.log(polish_expressions);
+
   return polish_expressions;
 }
 
@@ -215,7 +228,7 @@ export function getValidValues(inputNumbers: number[], maxLimit: number): number
   const combinations = getCombinations(inputNumbers);
   const polish_expressions = getAllPolishExpressions(combinations);
 
-  const unique_polish_expressions_strings = Array.from(new Set<string>(polish_expressions.map(x => x.join(" "))));
+  const unique_polish_expressions_strings = Array.from(new Set<string>(polish_expressions.map((x) => x.join(" "))));
 
   var calculatedValues = [];
 
@@ -228,6 +241,8 @@ export function getValidValues(inputNumbers: number[], maxLimit: number): number
 
   const validValues = new Set<number>(calculatedValues);
 
-  console.log(validValues);
+  console.log("Valid values:")
+  console.log(Array.from(validValues));
+
   return Array.from(validValues);
 }
