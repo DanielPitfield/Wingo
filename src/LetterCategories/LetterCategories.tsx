@@ -61,7 +61,23 @@ const LetterCategories: React.FC<Props> = (props) => {
         word = props.guesses[i];
       }
 
-      Grid.push(
+      const row = props.categoryNames?.[i] ? (
+        <div className="word-row-category-wrapper">
+          <div className="word-row-category-name">{props.categoryNames?.[i]}</div>
+          <WordRow
+            key={i}
+            mode={"letters_categories"}
+            inProgress={props.inProgress}
+            isVertical={false}
+            word={word}
+            length={wordLength}
+            targetWord={""}
+            targetArray={props.categoryWordTargets ? props.categoryWordTargets[i] : []}
+            hasSubmit={props.wordIndex > i || !props.inProgress}
+            inDictionary={true}
+          />
+        </div>
+      ) : (
         <WordRow
           key={i}
           mode={"letters_categories"}
@@ -73,8 +89,10 @@ const LetterCategories: React.FC<Props> = (props) => {
           targetArray={props.categoryWordTargets ? props.categoryWordTargets[i] : []}
           hasSubmit={props.wordIndex > i || !props.inProgress}
           inDictionary={true}
-        ></WordRow>
+        />
       );
+
+      Grid.push(row);
     }
 
     return Grid;
@@ -105,9 +123,9 @@ const LetterCategories: React.FC<Props> = (props) => {
     // Some (atleast one) words were right
     else {
       return (
-      <MessageNotification type="default">
-        <strong>{`You guessed a correct word for ${props.correctGuessesCount} of the ${props.numGuesses} categories`}</strong>
-      </MessageNotification>
+        <MessageNotification type="default">
+          <strong>{`You guessed a correct word for ${props.correctGuessesCount} of the ${props.numGuesses} categories`}</strong>
+        </MessageNotification>
       );
     }
   }
@@ -122,10 +140,6 @@ const LetterCategories: React.FC<Props> = (props) => {
           </Button>
         )}
       </div>
-
-      <MessageNotification type="default">
-        {/*TODO: Format text, ideally would position near respective WordRow */ JSON.stringify(props.categoryNames)}
-      </MessageNotification>
 
       <div className="word_grid">{populateGrid(props.numGuesses, props.wordLength)}</div>
 

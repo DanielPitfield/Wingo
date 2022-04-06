@@ -129,6 +129,17 @@ input {
   border: 10px solid rgb(44, 44, 184);
 }
 
+.word-row-category-wrapper {
+  display: flex;
+  align-items: center;
+  .word-row-category-name {
+    padding: 0.3em;
+    min-width: 12em;
+    text-align: left;
+    font-size: 1.15em;
+  }
+}
+
 .word_row[data-invalid-word-submitted="true"][data-apply-animation="true"] {
   animation: shakeIncorrectInput 0.4s;
 }
