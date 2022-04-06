@@ -3,7 +3,6 @@ import {
   expression_trees_4,
   expression_trees_5,
   expression_trees_6,
-  generateExpressionTrees,
 } from "./ReversePolish/expression_trees";
 
 var rpn = require("rpn");
@@ -50,12 +49,6 @@ export function permutator<T>(inputArr: T[]): T[][] {
 
   return result;
 }
-
-// TODO: Get 5 operand combinations
-// Number of required operands (exlcuding the fixed first 2) followed by requiered number of operators
-const expressions = [0, 1, 1, 1]
-const expression_trees_gen = generateExpressionTrees(expressions);
-console.log(expression_trees_gen);
 
 // https://stackoverflow.com/questions/32543936/combination-with-repetition
 function combRep(arr: string[], l: number) {
