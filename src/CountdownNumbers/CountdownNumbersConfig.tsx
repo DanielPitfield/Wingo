@@ -3,6 +3,7 @@ import "../App.scss";
 import { Page } from "../App";
 import CountdownNumbers from "./CountdownNumbers";
 import { operators } from "../Nubble/Nubble";
+import { calculateTotal } from "./NumberRow";
 
 interface Props {
   page: Page;
@@ -23,34 +24,22 @@ export function isNumberValid(currentExpression: string) {
 
 export function hasNumberSelectionStarted(
   statuses: {
+    type: "original" | "intermediary";
     number: number | null;
     picked: boolean;
   }[]
 ): boolean {
-  for (let i = 0; i < statuses.length; i++) {
-    const number = statuses[i].number;
-    // If any number has been picked, return true
-    if (number) {
-      return true;
-    }
-  }
-  return false;
+  return statuses.filter((x) => x.type === "original" && x.number).length > 0;
 }
 
 export function hasNumberSelectionFinished(
   statuses: {
+    type: "original" | "intermediary";
     number: number | null;
     picked: boolean;
   }[]
 ): boolean {
-  for (let i = 0; i < statuses.length; i++) {
-    const number = statuses[i].number;
-    // If any number is not picked, return false
-    if (!number) {
-      return false;
-    }
-  }
-  return true;
+  return statuses.filter((x) => x.type === "original" && x.number).length === 6;
 }
 
 export type Guess = { operand1: number | null; operand2: number | null; operator: typeof operators[0]["name"] };
@@ -58,23 +47,41 @@ export type Guess = { operand1: number | null; operand2: number | null; operator
 const CountdownNumbersConfig: React.FC<Props> = (props) => {
   const [guesses, setGuesses] = useState<Guess[]>([]);
 
-  const defaultCountdownStatuses: {
-    number: number | null;
-    picked: boolean;
-  }[] = [
-    { number: null, picked: false },
-    { number: null, picked: false },
-    { number: null, picked: false },
-    { number: null, picked: false },
-    { number: null, picked: false },
-    { number: null, picked: false },
+  const defaultCountdownStatuses: (
+    | {
+        type: "original";
+        number: number | null;
+        picked: boolean;
+      }
+    | {
+        type: "intermediary";
+        wordIndex: number;
+        number: number | null;
+        picked: boolean;
+      }
+  )[] = [
+    { type: "original", number: null, picked: false },
+    { type: "original", number: null, picked: false },
+    { type: "original", number: null, picked: false },
+    { type: "original", number: null, picked: false },
+    { type: "original", number: null, picked: false },
+    { type: "original", number: null, picked: false },
   ];
 
   const [countdownStatuses, setCountdownStatuses] = useState<
-    {
-      number: number | null;
-      picked: boolean;
-    }[]
+    (
+      | {
+          type: "original";
+          number: number | null;
+          picked: boolean;
+        }
+      | {
+          type: "intermediary";
+          wordIndex: number;
+          number: number | null;
+          picked: boolean;
+        }
+    )[]
   >(defaultCountdownStatuses);
 
   const [currentGuess, setCurrentGuess] = useState<Guess>({ operand1: null, operand2: null, operator: "+" });
@@ -110,6 +117,21 @@ const CountdownNumbersConfig: React.FC<Props> = (props) => {
     };
   }, [setSeconds, seconds, props.timerConfig.isTimed, countdownStatuses]);
 
+  React.useEffect(() => {
+    const intermediaryNumbers: typeof countdownStatuses = guesses.map((guess, index) => {
+      const existingCountdownStatus = countdownStatuses.find((x) => x.type === "intermediary" && x.wordIndex === index);
+
+      return {
+        type: "intermediary",
+        wordIndex: index,
+        number: calculateTotal(guess),
+        picked: existingCountdownStatus?.picked || false,
+      };
+    });
+
+    setCountdownStatuses(countdownStatuses.filter((x) => x.type !== "intermediary").concat(intermediaryNumbers));
+  }, [guesses]);
+
   function getTargetNumber(min: number, max: number) {
     min = Math.ceil(min);
     max = Math.floor(max);
@@ -120,7 +142,7 @@ const CountdownNumbersConfig: React.FC<Props> = (props) => {
     setGuesses([]);
     setCountdownStatuses(defaultCountdownStatuses);
     setCurrentGuess({ operand1: null, operand2: null, operator: "+" });
-    settargetNumber(0);
+    //settargetNumber(null);
     setinProgress(true);
     sethasTimerEnded(false);
     setExpressionLength(props.defaultExpressionLength);
@@ -156,7 +178,7 @@ const CountdownNumbersConfig: React.FC<Props> = (props) => {
     // TODO: Realistic: ask for result of calculation, then add guess
     if (props.mode === "countdown_numbers_realistic") {
       // Don't need to do any evaluation of the guess and just add to guesses regardless
-      setGuesses(guesses.concat(currentGuess));
+      // setGuesses(guesses.concat(currentGuess));
       ContinueGame();
       return;
     }
@@ -192,7 +214,7 @@ const CountdownNumbersConfig: React.FC<Props> = (props) => {
       setCountdownStatuses(newCountdownStatuses);
 
       // Determine target number if last number is being picked
-      if (index === newCountdownStatuses.length - 1) {
+      if (index === newCountdownStatuses.filter((x) => x.type === "original").length - 1) {
         const newTargetNumber = getTargetNumber(100, 999);
         settargetNumber(newTargetNumber);
       }
@@ -200,24 +222,25 @@ const CountdownNumbersConfig: React.FC<Props> = (props) => {
   }
 
   function onSubmitCountdownExpression(expression: number[]) {
-    // If no numbers have been picked (statuses as it was to begin with)
-    if (countdownStatuses === defaultCountdownStatuses && inProgress) {
-      // There are 6 numbers in the input array
-      if (expression.length === countdownStatuses.length) {
-        // Make a copy of the current countdownStatuses
-        const newCountdownStatuses = countdownStatuses.slice();
-        // Add the numbers into the status object array (along with updating picked boolean)
-        for (let i = 0; i < expression.length; i++) {
-          // Update with the number
-          newCountdownStatuses[i].number = expression[i];
-        }
-        // Update countdownStatuses
-        setCountdownStatuses(newCountdownStatuses);
-
-        // Determine target number
-        const newTargetNumber = getTargetNumber(100, 999);
-        settargetNumber(newTargetNumber);
+    // If no numbers have been picked (statuses as it was to begin with), and there are 6 numbers in the input array
+    if (
+      countdownStatuses.filter((x) => x.type === "original").length === defaultCountdownStatuses.length &&
+      inProgress &&
+      expression.length === countdownStatuses.length
+    ) {
+      // Make a copy of the current countdownStatuses
+      const newCountdownStatuses = countdownStatuses.slice();
+      // Add the numbers into the status object array (along with updating picked boolean)
+      for (let i = 0; i < expression.length; i++) {
+        // Update with the number
+        newCountdownStatuses[i].number = expression[i];
       }
+      // Update countdownStatuses
+      setCountdownStatuses(newCountdownStatuses);
+
+      // Determine target number
+      const newTargetNumber = getTargetNumber(100, 999);
+      settargetNumber(newTargetNumber);
     }
   }
 
@@ -250,7 +273,10 @@ const CountdownNumbersConfig: React.FC<Props> = (props) => {
     */
   }
 
-  function addOperandToGuess(number: number | null) {
+  function addOperandToGuess(
+    number: number | null,
+    id: { type: "original"; index: number } | { type: "intermediary"; rowIndex: number }
+  ) {
     if (!number) {
       return;
     }
@@ -271,33 +297,53 @@ const CountdownNumbersConfig: React.FC<Props> = (props) => {
       return;
     }
 
+    let updatedGuess: Guess;
+
     const bothOperandsEmpty = currentGuess.operand1 === null && currentGuess.operand2 === null;
     const onlyFirstOperand = currentGuess.operand1 !== null && currentGuess.operand2 === null;
     const onlySecondOperand = currentGuess.operand1 === null && currentGuess.operand2 !== null;
-    const bothOperands = currentGuess.operand1 !== null && currentGuess.operand2 !== null;
+    // const bothOperands = currentGuess.operand1 !== null && currentGuess.operand2 !== null;
 
     if (bothOperandsEmpty || onlySecondOperand) {
       // Set operand1 to number
-      setCurrentGuess({ ...currentGuess, operand1: number });
+      updatedGuess = { ...currentGuess, operand1: number };
     } else if (onlyFirstOperand) {
       // Set operand2 to number
-      setCurrentGuess({ ...currentGuess, operand2: number });
-    } else if (bothOperands) {
+      updatedGuess = { ...currentGuess, operand2: number };
+    } else {
+      updatedGuess = currentGuess;
+    }
+    /* else if (bothOperands) {
       // Remove the second operand
       removeOperandFromGuess(currentGuess.operand2);
       // Replace with (add) new second operand
-      setCurrentGuess({ ...currentGuess, operand2: number });
+      updatedGuess({ ...currentGuess, operand2: number });
+    }
+    */
+
+    // If guess is now full
+    if (updatedGuess.operand1 !== null && updatedGuess.operand2 !== null) {
+      // Record the guessed expression
+      setGuesses(guesses.concat(updatedGuess));
+      // Clear current guess
+      setCurrentGuess({ operand1: null, operator: "+", operand2: null });
+      // Move to next row
+      setWordIndex(wordIndex + 1);
+    } else {
+      setCurrentGuess(updatedGuess);
     }
 
     const newCountdownStatuses = countdownStatuses.slice();
-    // Find first suitable index to accomodate adding this new number
-    const numberStatusIndex = countdownStatuses.findIndex((x) => x.number === number && !x.picked);
-    // Flag as picked so it can't be added again
-    newCountdownStatuses[numberStatusIndex].picked = true;
+    if (id.type === "original") {
+      // Flag as picked so it can't be added again
+      newCountdownStatuses[id.index].picked = true;
+    } else if (id.type === "intermediary") {
+      newCountdownStatuses[countdownStatuses.filter((x) => x.type === "original").length + id.rowIndex].picked = true;
+    }
     setCountdownStatuses(newCountdownStatuses);
   }
 
-  function removeOperandFromGuess(number: number | null) {
+  function removeOperandFromGuess(number: number | null, index: number) {
     // TODO: Prevent default (context menu appearing)
 
     // Tile that was right clicked had no value (empty)
@@ -305,40 +351,55 @@ const CountdownNumbersConfig: React.FC<Props> = (props) => {
       return;
     }
 
+    // If not an operand
+    if (index !== 0 && index !== 2) {
+      return;
+    }
+
     if (hasTimerEnded) {
       return;
     }
+
+    let updatedGuess: Guess;
 
     // If both operands are the same number
     if (currentGuess.operand1 === number && currentGuess.operand2 === number) {
       // TODO: Is there way of determining which (of the two operands with the same numbers) was right clicked?
       // Remove the second occurence of the number
-      setCurrentGuess({ ...currentGuess, operand2: null });
+      updatedGuess = { ...currentGuess, operand2: null };
     }
     // If the first operand was (right) clicked
     else if (currentGuess.operand1 === number) {
-      setCurrentGuess({ ...currentGuess, operand1: null });
-      // If the other operand was also empty, go back a row
-      /*
-      if (currentGuess.operand2 === null && wordIndex > 0) {
-        setWordIndex(wordIndex - 1); // Decrement index to go back a row
-      }
-      */
+      updatedGuess = { ...currentGuess, operand1: null };
     } else if (currentGuess.operand2 === number) {
-      setCurrentGuess({ ...currentGuess, operand2: null });
-      /*
-      if (currentGuess.operand1 === null && wordIndex > 0) {
-        setWordIndex(wordIndex - 1); // Decrement index to go back a row
-      }
-      */
+      updatedGuess = { ...currentGuess, operand2: null };
+    } else {
+      updatedGuess = currentGuess;
+    }
+
+    setCurrentGuess(updatedGuess);
+
+    // If guess is now empty
+    if (updatedGuess.operand1 === null && updatedGuess.operand2 === null && wordIndex > 0 && guesses.length > 0) {
+      // Remove the guessed expression from recorded guesses
+      setGuesses(guesses.slice(0, guesses.length - 1));
+      // Clear current guess
+      setCurrentGuess({ operand1: null, operator: "+", operand2: null });
+      // Move back to previous row
+      setWordIndex(wordIndex - 1);
     }
 
     const newCountdownStatuses = countdownStatuses.slice();
-    // Find first occurence of this number being picked
-    const numberStatusIndex = countdownStatuses.findIndex((x) => x.number === number && x.picked);
     // Flag as not picked so it can be added again
-    newCountdownStatuses[numberStatusIndex].picked = false;
+    newCountdownStatuses[index].picked = false;
     setCountdownStatuses(newCountdownStatuses);
+  }
+
+  function clearGrid() {
+    setWordIndex(0);
+    setGuesses([]);
+    setCurrentGuess({ operand1: null, operator: "+", operand2: null });
+    setCountdownStatuses(countdownStatuses.map((x) => ({ ...x, picked: false })));
   }
 
   return (
@@ -359,13 +420,13 @@ const CountdownNumbersConfig: React.FC<Props> = (props) => {
       defaultNumOperands={props.defaultNumOperands}
       defaultNumGuesses={props.defaultNumGuesses}
       currentGuess={currentGuess}
-      countdownExpression={countdownStatuses}
+      countdownStatuses={countdownStatuses}
       inProgress={inProgress}
       hasTimerEnded={hasTimerEnded}
       hasSubmitNumber={hasSubmitNumber}
       targetNumber={targetNumber}
       onClick={addOperandToGuess}
-      onContextMenu={removeOperandFromGuess}
+      onRightClick={removeOperandFromGuess}
       onEnter={onEnter}
       onSubmitCountdownNumber={onSubmitCountdownNumber}
       onSubmitCountdownExpression={onSubmitCountdownExpression}
@@ -373,6 +434,7 @@ const CountdownNumbersConfig: React.FC<Props> = (props) => {
       onBackspace={onBackspace}
       ResetGame={ResetGame}
       ContinueGame={ContinueGame}
+      clearGrid={clearGrid}
       setPage={props.setPage}
       setOperator={(operator) => setCurrentGuess({ ...currentGuess, operator })}
       addGold={props.addGold}

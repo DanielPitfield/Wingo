@@ -486,7 +486,7 @@ export const App: React.FC = () => {
   })();
 
   return (
-    <div className="app">
+    <div className="app" data-automation-id="app" data-automation-page-name={page}>
       {page !== "splash-screen" && (
         <>
           <div className="toolbar">
