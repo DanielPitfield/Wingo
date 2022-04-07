@@ -12,6 +12,7 @@ import { areas, Campaign } from "./Campaign";
 import { Area, AreaConfig } from "./Area";
 import { Level, LevelConfig } from "./Level";
 import LetterCategoriesConfig from "./LetterCategories/LetterCategoriesConfig";
+import NumbersArithmetic from "./NumbersArithmetic/NumbersArithmetic";
 
 const wordLength = 5;
 const numGuesses = 6;
@@ -42,6 +43,7 @@ export type Page =
   | "letters_categories"
   | "countdown/letters"
   | "countdown/numbers"
+  | "numbers/arithmetic"
   | "nubble"
   | "campaign"
   | "campaign/area"
@@ -61,6 +63,7 @@ export const pages: { page: Page; title: string }[] = [
   { page: "letters_categories", title: "Letters Categories" },
   { page: "countdown/letters", title: "Countdown Letters" },
   { page: "countdown/numbers", title: "Countdown Numbers" },
+  { page: "numbers/arithmetic", title: "Numbers Arithmetic" },
   { page: "nubble", title: "Nubble" },
   { page: "campaign", title: "Campaign" },
   { page: "campaign/area", title: "Campaign Areas" },
@@ -469,6 +472,9 @@ export const App: React.FC = () => {
             addGold={addGold}
           />
         );
+
+      case "numbers/arithmetic":
+        return <NumbersArithmetic revealIntervalSeconds={3} numTiles={4} difficulty={"easy"} setPage={setPage} />;
 
       case "nubble":
         return (

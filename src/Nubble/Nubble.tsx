@@ -16,6 +16,11 @@ interface Props {
   timeLengthMins: number;
 }
 
+export function randomIntFromInterval(min: number, max: number) {
+  // min and max included
+  return Math.floor(Math.random() * (max - min + 1) + min);
+}
+
 const Nubble: React.FC<Props> = (props) => {
   const [isDiceRolling, setisDiceRolling] = useState(false);
   const [diceValues, setdiceValues] = useState<number[]>(
@@ -36,11 +41,6 @@ const Nubble: React.FC<Props> = (props) => {
     // Once new values have been set, show the dice as having stopped rolling
     setisDiceRolling(false);
   }, [diceValues]);
-
-  function randomIntFromInterval(min: number, max: number) {
-    // min and max included
-    return Math.floor(Math.random() * (max - min + 1) + min);
-  }
 
   function randomDiceNumber() {
     return randomIntFromInterval(props.diceMin, props.diceMax);
