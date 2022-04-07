@@ -43,7 +43,8 @@ const NumbersArithmetic: React.FC<Props> = (props) => {
         } else {
           fail_count += 1;
         }
-      } while ((tile_number = 0 && fail_count < max_limit));
+      } while (tile_number === undefined && fail_count < max_limit);
+
       // Clean divisor could not be found
       if (tile_number === undefined) {
         // Get the operators (but without division)
@@ -61,12 +62,14 @@ const NumbersArithmetic: React.FC<Props> = (props) => {
       tile_number = randomIntFromInterval(1, 50);
     }
 
-    // Apply operation shown on current tile and update target number
-    const newTargetNumber = tile_operator.function(targetNumber, tile_number);
-    setTargetNumber(newTargetNumber);
+    if (tile_number !== undefined) {
+      // Apply operation shown on current tile and update target number
+      const newTargetNumber = tile_operator.function(targetNumber, tile_number);
+      setTargetNumber(newTargetNumber);
 
-    // String of the combination of operator and value
-    setTileValue(operator_symbol + tile_number.toString());
+      // String of the combination of operator and value
+      setTileValue(operator_symbol + tile_number.toString());
+    }
   }
 
   React.useEffect(() => {
