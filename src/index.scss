@@ -257,6 +257,21 @@ input {
   }
 }
 
+.numbers_arithmetic {
+  .target {
+    .letter_tile {
+      margin-top: 0.5em;
+      margin-bottom: 0.3em;
+      width: 2em;
+    }
+  }
+  .guess {
+    .letter_tile {
+      width: 3.5em;
+    }
+  }
+}
+
 // The letter tiles of Countdown Letters
 .countdown-letters-wrapper .word_row .letter_tile,
 .countdown_word_grid .word_row .letter_tile {
