@@ -19,10 +19,14 @@ interface Props {
 }
 
 export function calculateTotal(guess: Guess): number | null {
+  if (!guess) {
+    return null;
+  }
+
   const operator = operators.find((x) => x.name === guess.operator);
 
   if (!operator) {
-    throw new Error("Unable to find operator");
+    return null;
   }
 
   // Either operand is missing, show nothing
@@ -45,7 +49,7 @@ export const NumberRow: React.FC<Props> = (props) => {
     TileArray.push(
       <NumberTile
         key={"first-operand"}
-        number={props.expression.operand1}
+        number={props.expression ? props.expression.operand1 : null}
         disabled={false}
         isReadOnly={props.isReadOnly}
         // Do nothing on left click
@@ -63,14 +67,14 @@ export const NumberRow: React.FC<Props> = (props) => {
         hasTimerEnded={props.hasTimerEnded}
         targetNumber={props.targetNumber}
         setOperator={props.setOperator}
-        operator={props.expression.operator}
+        operator={props.expression ? props.expression.operator: "+"}
         key={"first-operator"}
       ></OperatorTile>
     );
     TileArray.push(
       <NumberTile
         key={"second-operand"}
-        number={props.expression.operand2}
+        number={props.expression ? props.expression.operand2 : null}
         disabled={false}
         isReadOnly={props.isReadOnly}
         onClick={() => {}}

@@ -143,7 +143,8 @@ const CountdownNumbersConfig: React.FC<Props> = (props) => {
     setGuesses([]);
     setCountdownStatuses(defaultCountdownStatuses);
     setCurrentGuess({ operand1: null, operand2: null, operator: "+" });
-    //settargetNumber(null);
+    settargetNumber(null);
+    setWordIndex(0);
     setinProgress(true);
     sethasTimerEnded(false);
     setExpressionLength(props.defaultExpressionLength);
@@ -154,15 +155,13 @@ const CountdownNumbersConfig: React.FC<Props> = (props) => {
     }
   }
 
-  function ContinueGame() {
-    setCurrentGuess({ operand1: null, operand2: null, operator: "+" });
-    setinProgress(true);
-    setExpressionLength(props.defaultExpressionLength);
-    sethasSubmitNumber(false);
-  }
-
   function onEnter() {
     if (!inProgress) {
+      return;
+    }
+
+    // TODO: Realistic: ask for result of calculation
+    if (props.mode !== "countdown_numbers_realistic") {
       return;
     }
 
@@ -175,25 +174,6 @@ const CountdownNumbersConfig: React.FC<Props> = (props) => {
     if (!hasSubmitNumber) {
       return;
     }
-
-    // TODO: Realistic: ask for result of calculation, then add guess
-    if (props.mode === "countdown_numbers_realistic") {
-      // Don't need to do any evaluation of the guess and just add to guesses regardless
-      // setGuesses(guesses.concat(currentGuess));
-      ContinueGame();
-      return;
-    }
-
-    // Stop progress for evalution for Casual game mode type
-    setinProgress(false);
-
-    //
-    //const isValidNumber = isNumberValid(currentExpression);
-
-    // Wait half a second to show validity of word, then continue
-    setTimeout(() => {
-      ContinueGame();
-    }, 500);
 
     // TODO: Add completed round to game history
   }
@@ -402,11 +382,13 @@ const CountdownNumbersConfig: React.FC<Props> = (props) => {
   }
 
   function clearGrid() {
-    setWordIndex(0);
-    setGuesses([]);
-    setCurrentGuess({ operand1: null, operator: "+", operand2: null });
-    setCountdownStatuses(countdownStatuses.map((x) => ({ ...x, picked: false })));
-    setNumGuesses(props.defaultNumGuesses);
+    if (inProgress) {
+      setWordIndex(0);
+      setGuesses([]);
+      setCurrentGuess({ operand1: null, operator: "+", operand2: null });
+      setCountdownStatuses(countdownStatuses.map((x) => ({ ...x, picked: false })));
+      setNumGuesses(props.defaultNumGuesses);
+    }
   }
 
   return (
@@ -440,7 +422,6 @@ const CountdownNumbersConfig: React.FC<Props> = (props) => {
       onSubmitNumber={onSubmitNumber}
       onBackspace={onBackspace}
       ResetGame={ResetGame}
-      ContinueGame={ContinueGame}
       clearGrid={clearGrid}
       setPage={props.setPage}
       setOperator={(operator) => setCurrentGuess({ ...currentGuess, operator })}

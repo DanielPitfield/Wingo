@@ -41,15 +41,11 @@ interface Props {
   onSubmitNumber: (number: number) => void;
   onBackspace: () => void;
   ResetGame: () => void;
-  ContinueGame: () => void;
   setOperator: (operator: Guess["operator"]) => void;
   addGold: (gold: number) => void;
 }
 
 const CountdownNumbers: React.FC<Props> = (props) => {
-  // Currently selected guess, to be used as the final guess when time runs out
-  const [selectedFinalGuess, setSelectedFinalGuess] = useState("");
-
   // Create grid of rows (for guessing numbers)
   function populateGrid(expressionLength: number) {
     function getSmallNumber(): number | null {
