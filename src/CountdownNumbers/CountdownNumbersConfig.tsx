@@ -391,6 +391,16 @@ const CountdownNumbersConfig: React.FC<Props> = (props) => {
     }
   }
 
+  function submitBestGuess() {
+    // If game is in progress and there is an intermediary number
+    if (inProgress && wordIndex >= 1) {
+      // End the game prematurely
+      setSeconds(0);
+      sethasTimerEnded(true);
+      setinProgress(false);
+    }
+  }
+
   return (
     <CountdownNumbers
       mode={props.mode}
@@ -423,6 +433,7 @@ const CountdownNumbersConfig: React.FC<Props> = (props) => {
       onBackspace={onBackspace}
       ResetGame={ResetGame}
       clearGrid={clearGrid}
+      submitBestGuess={submitBestGuess}
       setPage={props.setPage}
       setOperator={(operator) => setCurrentGuess({ ...currentGuess, operator })}
       addGold={props.addGold}

@@ -36,6 +36,10 @@ export function calculateTotal(guess: Guess): number | null {
 
   const result = operator.function(guess.operand1, guess.operand2);
 
+  if (!result) {
+    return null;
+  }
+
   if (result === Math.round(result)) {
     return result;
   }

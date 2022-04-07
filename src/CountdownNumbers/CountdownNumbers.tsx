@@ -34,6 +34,7 @@ interface Props {
   ) => void;
   onRightClick: (value: number | null, index: number) => void;
   clearGrid: () => void;
+  submitBestGuess: () => void;
   setPage: (page: Page) => void;
   onEnter: () => void;
   onSubmitCountdownNumber: (number: number) => void;
@@ -308,6 +309,10 @@ const CountdownNumbers: React.FC<Props> = (props) => {
 
       <Button mode="destructive" onClick={props.clearGrid}>
         Clear
+      </Button>
+
+      <Button mode="default" onClick={props.submitBestGuess}>
+        Use Best Guess
       </Button>
 
       <div>
