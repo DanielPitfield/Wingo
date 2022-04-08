@@ -61,7 +61,7 @@ const CountdownNumbers: React.FC<Props> = (props) => {
         smallNumbers.push(i);
       }
 
-      const random_index = Math.floor(Math.random() * (smallNumbers.length - 1));
+      const random_index = Math.round(Math.random() * (smallNumbers.length - 1));
       const random_small_number = smallNumbers[random_index];
 
       return random_small_number;
@@ -74,7 +74,7 @@ const CountdownNumbers: React.FC<Props> = (props) => {
 
       const bigNumbers = [25, 50, 75, 100];
 
-      const random_index = Math.floor(Math.random() * (bigNumbers.length - 1));
+      const random_index = Math.round(Math.random() * (bigNumbers.length - 1));
       const random_big_number = bigNumbers[random_index];
 
       return random_big_number;

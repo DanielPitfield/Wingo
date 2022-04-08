@@ -80,7 +80,7 @@ const CountdownLetters: React.FC<Props> = (props) => {
       }
 
       // Select a random value from this array
-      return weighted_array[Math.floor(Math.random() * (weighted_array.length - 1))];
+      return weighted_array[Math.round(Math.random() * (weighted_array.length - 1))];
     }
 
     function getVowel(): string {
@@ -100,7 +100,7 @@ const CountdownLetters: React.FC<Props> = (props) => {
 
       /*
       if (!useWeightings) {
-        const randomIndex = Math.floor(
+        const randomIndex = Math.round(
           Math.random() * (vowel_weightings.length - 1)
         );
         const randomLetter = vowel_weightings[randomIndex].letter;
@@ -146,7 +146,7 @@ const CountdownLetters: React.FC<Props> = (props) => {
 
       /*
       if (!useWeightings) {
-        const randomIndex = Math.floor(
+        const randomIndex = Math.round(
           Math.random() * (consonant_weightings.length - 1)
         );
         const randomLetter = consonant_weightings[randomIndex].letter;
