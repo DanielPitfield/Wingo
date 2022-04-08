@@ -128,99 +128,76 @@ const NumbersArithmetic: React.FC<Props> = (props) => {
      * @returns New running total and a tile.
      */
     function generateTile(targetNumber: number): { tile: string; newRunningTotal: number } {
-      // One of the four operators
-      let tile_operator = operators[Math.floor(Math.random() * (operators.length - 1))];
+      let foundTileNumber = false;
 
-      // String symbol of the operator
-      let operator_symbol = tile_operator.name;
+      while (!foundTileNumber) {
+        // One of the four operators
+        let tile_operator = operators[Math.round(Math.random() * (operators.length - 1))];
+        let operator_symbol = tile_operator.name;
+        let tile_number: number | undefined = undefined;
 
-      let tile_number: number | undefined = undefined;
+        switch (operator_symbol) {
+          case "/": {
+            // Number of attempts to find a clean divisor
+            const max_limit = 10;
+            let fail_count = 0;
 
-      switch (operator_symbol) {
-        case "/": {
-          // Number of attempts to find a clean divisor
-          const max_limit = 5;
+            // Loop max_limit times in the attempt of finding a clean divisor
+            do {
+              const random_divisor = randomIntFromInterval(2, getOperatorLimit(operator_symbol)!);
+              // Clean division (result would be integer)
+              if (targetNumber % random_divisor === 0 && targetNumber > 0) {
+                // Use that divisor as tile number
+                tile_number = random_divisor;
+              } else {
+                fail_count += 1;
+              }
+            } while (tile_number === undefined && fail_count < max_limit);
+            break;
+          }
 
-          let fail_count = 0;
-          do {
-            const random_divisor = randomIntFromInterval(2, getOperatorLimit(operator_symbol)!);
+          case "*": {
+            // Lower threshold of 2 (no point multiplying by 1)
+            tile_number = randomIntFromInterval(2, getOperatorLimit(operator_symbol)!);
+            break;
+          }
 
-            // Clean division (result would be integer)
-            if (targetNumber % random_divisor === 0 && targetNumber > 0) {
-              // Use that divisor as tile number
-              tile_number = random_divisor;
-            } else {
-              fail_count += 1;
+          case "+": {
+            tile_number = randomIntFromInterval(1, getOperatorLimit(operator_symbol)!);
+            break;
+          }
+
+          case "-": {
+            // The value 1 or 10% of the operator limit?
+            const MIN_VALUE_LIMIT = 1;
+            // The current targetNumber is too small to be suitable for subtraction
+            if (targetNumber <= MIN_VALUE_LIMIT) {
+              break;
             }
-          } while (tile_number === undefined && fail_count < max_limit);
-
-          // Clean divisor could not be found
-          if (tile_number === undefined) {
-            // Get the operators (but without division)
-            const operators_division_removed = operators.filter((operator) => operator.name !== "/");
-
-            // One of three operators
-            tile_operator =
-              operators_division_removed[Math.floor(Math.random() * (operators_division_removed.length - 1))];
-
-            // String symbol of the operator
-            operator_symbol = tile_operator.name;
-
-            tile_number = randomIntFromInterval(1, getOperatorLimit(operator_symbol)!);
+            // The target number is smaller than the maximum value which can be subtracted
+            else if (targetNumber < getOperatorLimit(operator_symbol)!) {
+              // Only subtract a random value which is smaller than targetNumber
+              tile_number = randomIntFromInterval(1, targetNumber - 1);
+            } else {
+              // Proceed as normal
+              tile_number = randomIntFromInterval(1, getOperatorLimit(operator_symbol)!);
+            }
           }
-          break;
         }
 
-        case "*": {
-          // Smaller range for multiplication
-          tile_number = randomIntFromInterval(2, getOperatorLimit(operator_symbol)!);
-          break;
+        // The target number was determined in this iteration
+        if (tile_number !== undefined) {
+          // Set flag to stop while loop
+          foundTileNumber = true;
+          // Apply operation shown on current tile and update target number
+          const newTargetNumber = tile_operator.function(targetNumber, tile_number);
+          // String of the combination of operator and value
+          return { tile: operator_symbol + tile_number.toString(), newRunningTotal: newTargetNumber };
         }
 
-        case "+": {
-          // Larger range for addition and subtraction
-          tile_number = randomIntFromInterval(1, getOperatorLimit(operator_symbol)!);
-          break;
-        }
-
-        case "-": {
-          const MIN_VALUE_LIMIT = 1;
-          // The current targetNumber is too small to be suitable for subtraction
-          if (targetNumber < MIN_VALUE_LIMIT) {
-            // Get the operators (but without subtraction)
-            const operators_subtraction_removed = operators.filter((operator) => operator.name !== "-");
-
-            // One of three operators
-            tile_operator =
-              operators_subtraction_removed[Math.floor(Math.random() * (operators_subtraction_removed.length - 1))];
-
-            // String symbol of the operator
-            operator_symbol = tile_operator.name;
-
-            // TODO: This might choose an invalid division
-            tile_number = randomIntFromInterval(1, getOperatorLimit(operator_symbol)!);
-          }
-          // The target number is smaller than the maximum value which can be subtracted
-          else if (targetNumber < getOperatorLimit(operator_symbol)!) {
-            // Only subtract a random value which is smaller than targtNumber
-            tile_number = randomIntFromInterval(1, targetNumber - 1);
-          }
-          else {
-            // Proceed as normal
-            tile_number = randomIntFromInterval(1, getOperatorLimit(operator_symbol)!)
-          }    
-        }
       }
-
-      if (tile_number !== undefined) {
-        // Apply operation shown on current tile and update target number
-        const newTargetNumber = tile_operator.function(targetNumber, tile_number);
-
-        // String of the combination of operator and value
-        return { tile: operator_symbol + tile_number.toString(), newRunningTotal: newTargetNumber };
-      }
-
-      throw new Error("Error generating tile");
+      // TODO: Return type can't be undefined?
+      return { tile: "69", newRunningTotal: 69 }
     }
   }, [tiles, props.numTiles]);
 
