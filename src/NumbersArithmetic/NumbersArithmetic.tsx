@@ -146,7 +146,7 @@ const NumbersArithmetic: React.FC<Props> = (props) => {
             const random_divisor = randomIntFromInterval(2, getOperatorLimit("/")!);
 
             // Clean division (result would be integer)
-            if (targetNumber % random_divisor === 0) {
+            if (targetNumber % random_divisor === 0 && targetNumber > 0) {
               // Use that divisor as tile number
               tile_number = random_divisor;
             } else {
