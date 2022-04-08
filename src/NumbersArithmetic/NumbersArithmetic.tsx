@@ -143,7 +143,7 @@ const NumbersArithmetic: React.FC<Props> = (props) => {
 
           let fail_count = 0;
           do {
-            const random_divisor = randomIntFromInterval(2, getOperatorLimit("/")!);
+            const random_divisor = randomIntFromInterval(2, getOperatorLimit(operator_symbol)!);
 
             // Clean division (result would be integer)
             if (targetNumber % random_divisor === 0 && targetNumber > 0) {
@@ -166,23 +166,49 @@ const NumbersArithmetic: React.FC<Props> = (props) => {
             // String symbol of the operator
             operator_symbol = tile_operator.name;
 
-            // TODO: Fix
-            tile_number = randomIntFromInterval(1, 50);
+            tile_number = randomIntFromInterval(1, getOperatorLimit(operator_symbol)!);
           }
           break;
         }
 
         case "*": {
           // Smaller range for multiplication
-          tile_number = randomIntFromInterval(2, getOperatorLimit("*")!);
+          tile_number = randomIntFromInterval(2, getOperatorLimit(operator_symbol)!);
           break;
         }
 
-        case "+":
-        case "-": {
+        case "+": {
           // Larger range for addition and subtraction
-          tile_number = randomIntFromInterval(1, getOperatorLimit("+")!);
+          tile_number = randomIntFromInterval(1, getOperatorLimit(operator_symbol)!);
           break;
+        }
+
+        case "-": {
+          const MIN_VALUE_LIMIT = 1;
+          // The current targetNumber is too small to be suitable for subtraction
+          if (targetNumber < MIN_VALUE_LIMIT) {
+            // Get the operators (but without subtraction)
+            const operators_subtraction_removed = operators.filter((operator) => operator.name !== "-");
+
+            // One of three operators
+            tile_operator =
+              operators_subtraction_removed[Math.floor(Math.random() * (operators_subtraction_removed.length - 1))];
+
+            // String symbol of the operator
+            operator_symbol = tile_operator.name;
+
+            // TODO: This might choose an invalid division
+            tile_number = randomIntFromInterval(1, getOperatorLimit(operator_symbol)!);
+          }
+          // The target number is smaller than the maximum value which can be subtracted
+          else if (targetNumber < getOperatorLimit(operator_symbol)!) {
+            // Only subtract a random value which is smaller than targtNumber
+            tile_number = randomIntFromInterval(1, targetNumber - 1);
+          }
+          else {
+            // Proceed as normal
+            tile_number = randomIntFromInterval(1, getOperatorLimit(operator_symbol)!)
+          }    
         }
       }
 
