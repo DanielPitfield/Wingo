@@ -63,7 +63,7 @@ export const pages: { page: Page; title: string }[] = [
   { page: "letters_categories", title: "Letters Categories" },
   { page: "countdown/letters", title: "Countdown Letters" },
   { page: "countdown/numbers", title: "Countdown Numbers" },
-  { page: "numbers/arithmetic", title: "Numbers Arithmetic" },
+  { page: "numbers/arithmetic", title: "Arithmetic" },
   { page: "nubble", title: "Nubble" },
   { page: "campaign", title: "Campaign" },
   { page: "campaign/area", title: "Campaign Areas" },
@@ -154,6 +154,12 @@ export const App: React.FC = () => {
     },
     {
       page: "countdown/numbers",
+      firstLetter: false,
+      timer: true,
+      keyboard: false,
+    },
+    {
+      page: "numbers/arithmetic",
       firstLetter: false,
       timer: true,
       keyboard: false,
@@ -474,7 +480,11 @@ export const App: React.FC = () => {
         );
 
       case "numbers/arithmetic":
-        return <NumbersArithmetic revealIntervalSeconds={3} numTiles={4} difficulty={"easy"} setPage={setPage} />;
+        return <NumbersArithmetic revealIntervalSeconds={3} numTiles={4} difficulty={"easy"} timerConfig={
+          gameOptionToggles.find((x) => x.page === "numbers/arithmetic")?.timer
+            ? { isTimed: true, seconds: 10 }
+            : { isTimed: false }
+        } setPage={setPage} />;
 
       case "nubble":
         return (

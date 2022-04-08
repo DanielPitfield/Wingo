@@ -6,11 +6,13 @@ import LetterTile from "../LetterTile";
 import { operators } from "../Nubble/getValidValues";
 import { randomIntFromInterval } from "../Nubble/Nubble";
 import { NumPad } from "../NumPad";
+import ProgressBar, { GreenToRedColorTransition } from "../ProgressBar";
 
 interface Props {
   revealIntervalSeconds: number;
   numTiles: number;
   difficulty: "easy" | "normal" | "hard";
+  timerConfig: { isTimed: false } | { isTimed: true; seconds: number };
   setPage: (page: Page) => void;
 }
 
@@ -24,6 +26,7 @@ const NumbersArithmetic: React.FC<Props> = (props) => {
     { type: "in-progress", revealedTiles: 0 }
   );
   const [inProgress, setInProgress] = useState(true);
+  const [seconds, setSeconds] = useState(props.timerConfig.isTimed ? props.timerConfig.seconds : 0);
   const [guess, setGuess] = useState("");
   const [tiles, setTiles] = useState<string[]>([]);
 
@@ -143,7 +146,7 @@ const NumbersArithmetic: React.FC<Props> = (props) => {
       return;
     }
 
-    // Timer Setup
+    // (Reveal Tile) Timer Setup
     const timer = setInterval(() => {
       const newRevealedSeconds = revealState.type === "in-progress" ? revealState.revealedTiles + 1 : 1;
 
@@ -161,6 +164,29 @@ const NumbersArithmetic: React.FC<Props> = (props) => {
 
     return () => clearInterval(timer);
   }, [props.numTiles, props.revealIntervalSeconds, revealState]);
+
+  // (Guess) Timer Setup
+  React.useEffect(() => {
+    if (!props.timerConfig.isTimed) {
+      return;
+    }
+
+    // Only start this timer once all the tiles have been revealed
+    if (revealState.type !== "finished") {
+      return;
+    }
+
+    const timerGuess = setInterval(() => {
+      if (seconds > 0) {
+        setSeconds(seconds - 1);
+      } else {
+        setInProgress(false);
+      }
+    }, 1000);
+    return () => {
+      clearInterval(timerGuess);
+    };
+  }, [setSeconds, seconds, props.timerConfig.isTimed, revealState]);
 
   /**
    *
@@ -227,6 +253,17 @@ const NumbersArithmetic: React.FC<Props> = (props) => {
       )}
       {revealState.type === "finished" && (
         <NumPad onEnter={() => setInProgress(false)} onBackspace={onBackspace} onSubmitNumber={onSubmitNumber} />
+      )}
+      {revealState.type === "finished" && (
+        <div>
+          {props.timerConfig.isTimed && (
+            <ProgressBar
+              progress={seconds}
+              total={props.timerConfig.seconds}
+              display={{ type: "transition", colorTransition: GreenToRedColorTransition }}
+            ></ProgressBar>
+          )}
+        </div>
       )}
     </div>
   );
