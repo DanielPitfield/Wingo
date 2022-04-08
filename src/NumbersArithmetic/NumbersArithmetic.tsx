@@ -30,6 +30,20 @@ const NumbersArithmetic: React.FC<Props> = (props) => {
   const [guess, setGuess] = useState("");
   const [tiles, setTiles] = useState<string[]>([]);
 
+  function getStartingNumberLimit(): number {
+    switch (props.difficulty) {
+      case "easy": {
+        return 100;
+      }
+      case "normal": {
+        return 250;
+      }
+      case "hard": {
+        return 1000;
+      }
+    }
+  }
+
   React.useEffect(() => {
     // If all tiles have been initialised
     if (tiles.length > 0) {
@@ -37,7 +51,7 @@ const NumbersArithmetic: React.FC<Props> = (props) => {
     }
 
     // Determine the starting number
-    const starting_number = randomIntFromInterval(1, 1000);
+    const starting_number = randomIntFromInterval(1, getStartingNumberLimit());
 
     // Start a tiles array, starting with the number
     const newTiles: string[] = [starting_number.toString()];
@@ -64,6 +78,50 @@ const NumbersArithmetic: React.FC<Props> = (props) => {
     setTargetNumber(runningTotal);
     console.log(`Target Number: ${runningTotal}; Tiles: ${newTiles.join(", ")}`);
 
+    function getOperatorLimit(operator: string) {
+      switch (props.difficulty) {
+        case "easy": {
+          switch (operator) {
+            case "/":
+            case "*": {
+              return 4;
+            }
+            case "+":
+            case "-": {
+              return 20;
+            }
+          }
+          break;
+        }
+        case "normal": {
+          switch (operator) {
+            case "/":
+            case "*": {
+              return 4;
+            }
+            case "+":
+            case "-": {
+              return 100;
+            }
+          }
+          break;
+        }
+        case "hard": {
+          switch (operator) {
+            case "/":
+            case "*": {
+              return 10;
+            }
+            case "+":
+            case "-": {
+              return 250;
+            }
+          }
+          break;
+        }
+      }
+    }
+
     /**
      * Generates a new valid tile from the existing running total (so that the generated tile does not result in a decimal).
      * @param targetNumber Existing running total.
@@ -85,7 +143,7 @@ const NumbersArithmetic: React.FC<Props> = (props) => {
 
           let fail_count = 0;
           do {
-            const random_divisor = randomIntFromInterval(2, 10);
+            const random_divisor = randomIntFromInterval(2, getOperatorLimit("/")!);
 
             // Clean division (result would be integer)
             if (targetNumber % random_divisor === 0) {
@@ -116,14 +174,14 @@ const NumbersArithmetic: React.FC<Props> = (props) => {
 
         case "*": {
           // Smaller range for multiplication
-          tile_number = randomIntFromInterval(2, 10);
+          tile_number = randomIntFromInterval(2, getOperatorLimit("*")!);
           break;
         }
 
         case "+":
         case "-": {
           // Larger range for addition and subtraction
-          tile_number = randomIntFromInterval(1, 50);
+          tile_number = randomIntFromInterval(1, getOperatorLimit("+")!);
           break;
         }
       }
