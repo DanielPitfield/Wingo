@@ -227,16 +227,16 @@ const NumbersArithmetic: React.FC<Props> = (props) => {
 
     // (Reveal Tile) Timer Setup
     const timer = setInterval(() => {
-      const newRevealedSeconds = revealState.type === "in-progress" ? revealState.revealedTiles + 1 : 1;
+      const numRevealedTiles = revealState.type === "in-progress" ? revealState.revealedTiles + 1 : 1;
 
       // If all tiles have been revealed
-      if (newRevealedSeconds > props.numTiles) {
+      if (numRevealedTiles > props.numTiles) {
         setRevealState({ type: "finished" });
         clearInterval(timer);
       } else {
         setRevealState({
           type: "in-progress",
-          revealedTiles: newRevealedSeconds,
+          revealedTiles: numRevealedTiles,
         });
       }
     }, props.revealIntervalSeconds * 1000);
