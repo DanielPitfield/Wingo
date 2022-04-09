@@ -29,6 +29,7 @@ const NumbersArithmetic: React.FC<Props> = (props) => {
   const [seconds, setSeconds] = useState(props.timerConfig.isTimed ? props.timerConfig.seconds : 0);
   const [guess, setGuess] = useState("");
   const [tiles, setTiles] = useState<string[]>([]);
+  const [targetTransitioned, setTargetTransitioned] = useState(false);
 
   function getStartingNumberLimit(): number {
     switch (props.difficulty) {
@@ -238,6 +239,7 @@ const NumbersArithmetic: React.FC<Props> = (props) => {
           type: "in-progress",
           revealedTiles: numRevealedTiles,
         });
+        setTargetTransitioned(true);
       }
     }, props.revealIntervalSeconds * 1000);
 
@@ -311,6 +313,10 @@ const NumbersArithmetic: React.FC<Props> = (props) => {
     setGuess(`${guess}${number}`);
   }
 
+  React.useEffect(() => {
+    setTargetTransitioned(false);
+  }, [targetTransitioned]);
+
   return (
     <div className="App numbers_arithmetic">
       <div className="outcome">{displayOutcome()}</div>
@@ -318,7 +324,7 @@ const NumbersArithmetic: React.FC<Props> = (props) => {
         <div className="target">
           <LetterTile
             letter={revealState.type === "finished" ? "?" : tiles[revealState.revealedTiles]}
-            status={revealState.type === "finished" ? "contains" : "not set"}
+            status={revealState.type === "finished" || targetTransitioned ? "contains" : "not set"}
           ></LetterTile>
         </div>
       )}

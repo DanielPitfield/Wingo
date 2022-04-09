@@ -148,6 +148,13 @@ input {
   animation: popLetterInput 0.2s;
 }
 
+// For the target tile on Number Arithmetic
+.target {
+  .letter_tile[data-new-letter-added="true"][data-apply-animation="true"] {
+    animation: flipRevealLetter 1.5s;
+  }
+}
+
 .letter_tile[data-has-been-submitted="true"][data-apply-animation="true"] {
   animation: flipRevealLetter 1.5s;
 }
