@@ -192,14 +192,32 @@ const NumbersArithmetic: React.FC<Props> = (props) => {
           // Apply operation shown on current tile and update target number
           const newTargetNumber = tile_operator.function(targetNumber, tile_number);
           // String of the combination of operator and value
-          return { tile: operator_symbol + tile_number.toString(), newRunningTotal: newTargetNumber };
+          return {
+            tile: getPrettyOperatorSymbol(operator_symbol) + tile_number.toString(),
+            newRunningTotal: newTargetNumber,
+          };
         }
-
       }
-      // TODO: Return type can't be undefined?
-      return { tile: "69", newRunningTotal: 69 }
+
+      throw new Error("Unexpected number");
     }
   }, [tiles, props.numTiles]);
+
+  function getPrettyOperatorSymbol(operatorSymbol: "+" | "-" | "/" | "*"): string {
+    switch (operatorSymbol) {
+      case "/":
+        return "÷";
+
+      case "*":
+        return "x";
+
+      case "+":
+        return "+";
+
+      case "-":
+        return "-";
+    }
+  }
 
   React.useEffect(() => {
     // If the game has finished
