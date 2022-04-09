@@ -209,7 +209,7 @@ const NumbersArithmetic: React.FC<Props> = (props) => {
         return "÷";
 
       case "*":
-        return "x";
+        return "×";
 
       case "+":
         return "+";
