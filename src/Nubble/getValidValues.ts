@@ -244,6 +244,7 @@ export function getValidValues(inputNumbers: number[], maxLimit: number): number
   const combinations = getCombinations(inputNumbers);
   const polish_expressions = getAllPolishExpressions(combinations);
 
+  // rpn package will split, so join before using it
   const unique_polish_expressions_strings = Array.from(new Set<string>(polish_expressions.map((x) => x.join(" "))));
 
   var calculatedValues = [];
@@ -261,4 +262,39 @@ export function getValidValues(inputNumbers: number[], maxLimit: number): number
   console.log(Array.from(validValues));
 
   return Array.from(validValues);
+}
+
+export function getCountdownAnswer(inputNumbers: number[], targetNumber: number): string {
+  const NUM_ANSWERS = 10;
+
+  const combinations = getCombinations(inputNumbers);
+  const polish_expressions = getAllPolishExpressions(combinations);
+
+  const unique_polish_expressions_strings = Array.from(new Set<string>(polish_expressions.map((x) => x.join(" "))));
+
+  const expressionAnswers = (() => {
+    const expressionAnswers = [];
+    // Start at exact answers
+    for (let difference = 0; difference <= 10; difference++) {
+      // Check all the polish expressions with the current difference
+      for (const string of unique_polish_expressions_strings) {
+        const result = rpn(string);
+        if (Math.abs(targetNumber - result) === difference) {
+          // Keep track of the expression
+          expressionAnswers.push(string);
+          if (expressionAnswers.length >= NUM_ANSWERS) {
+            return expressionAnswers;
+          }
+        }
+      }
+    }
+    return expressionAnswers;
+  })();
+
+  const shortestAnswer = expressionAnswers.reduce(
+    (currentWord, nextWord) => (currentWord.length > nextWord.length ? currentWord : nextWord),
+    ""
+  );
+
+  return shortestAnswer;
 }

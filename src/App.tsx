@@ -480,7 +480,7 @@ export const App: React.FC = () => {
         );
 
       case "numbers/arithmetic":
-        return <NumbersArithmetic revealIntervalSeconds={3} numTiles={4} difficulty={"easy"} timerConfig={
+        return <NumbersArithmetic revealIntervalSeconds={3} numTiles={4} numCheckpoints={3} difficulty={"easy"} timerConfig={
           gameOptionToggles.find((x) => x.page === "numbers/arithmetic")?.timer
             ? { isTimed: true, seconds: 10 }
             : { isTimed: false }

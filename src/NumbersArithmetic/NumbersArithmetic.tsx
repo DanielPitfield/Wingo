@@ -7,10 +7,12 @@ import { operators } from "../Nubble/getValidValues";
 import { randomIntFromInterval } from "../Nubble/Nubble";
 import { NumPad } from "../NumPad";
 import ProgressBar, { GreenToRedColorTransition } from "../ProgressBar";
+import { Button } from "../Button";
 
 interface Props {
   revealIntervalSeconds: number;
   numTiles: number;
+  numCheckpoints: number;
   difficulty: "easy" | "normal" | "hard";
   timerConfig: { isTimed: false } | { isTimed: true; seconds: number };
   setPage: (page: Page) => void;
@@ -21,14 +23,15 @@ const NumbersArithmetic: React.FC<Props> = (props) => {
   // Max number of characters permitted in a guess
   const MAX_LENGTH = 6;
 
-  const [targetNumber, setTargetNumber] = useState(0);
+  const [targetNumbers, setTargetNumbers] = useState<number[]>([]);
   const [revealState, setRevealState] = useState<{ type: "in-progress"; revealedTiles: number } | { type: "finished" }>(
     { type: "in-progress", revealedTiles: 0 }
   );
+  const [currentCheckpoint, setCurrentCheckpoint] = useState(0);
   const [inProgress, setInProgress] = useState(true);
   const [seconds, setSeconds] = useState(props.timerConfig.isTimed ? props.timerConfig.seconds : 0);
   const [guess, setGuess] = useState("");
-  const [tiles, setTiles] = useState<string[]>([]);
+  const [tiles, setTiles] = useState<string[][]>([]);
   const [targetTransitioned, setTargetTransitioned] = useState(false);
 
   function getStartingNumberLimit(): number {
@@ -51,33 +54,45 @@ const NumbersArithmetic: React.FC<Props> = (props) => {
       return;
     }
 
+    const newTiles: string[][] = [];
+    const newTargetNumbers: number[] = [];
+
     // Determine the starting number
     const starting_number = randomIntFromInterval(1, getStartingNumberLimit());
 
-    // Start a tiles array, starting with the number
-    const newTiles: string[] = [starting_number.toString()];
+    for (let i = 0; i < props.numCheckpoints; i++) {
+      // Use the randomly generated number or carry on from previous checkpoint target
+      const checkpoint_starting_number = i === 0 ? starting_number : newTargetNumbers[i - 1];
 
-    // Keep a running target number
-    let runningTotal = starting_number;
+      // Start a tiles array, starting with the number
+      const checkpointTiles: string[] = [checkpoint_starting_number.toString()];
 
-    // For each tile
-    for (let i = 0; i < props.numTiles; i++) {
-      // Generate a new tile from the existing target number
-      const { tile, newRunningTotal } = generateTile(runningTotal);
+      // Keep a running target number
+      let runningTotal = checkpoint_starting_number;
 
-      // Add the tile string
-      newTiles.push(tile);
+      // For each tile in the checkpoint
+      for (let i = 0; i < props.numTiles; i++) {
+        // Generate a new tile from the existing target number
+        const { tile, newRunningTotal } = generateTile(runningTotal);
 
-      // Update the running target number
-      runningTotal = newRunningTotal;
+        // Add the tile string
+        checkpointTiles.push(tile);
+
+        // Update the running target number
+        runningTotal = newRunningTotal;
+      }
+
+      // Push this checkpoint's tiles to larger array
+      newTiles.push(checkpointTiles);
+
+      // The running total now become the target number
+      newTargetNumbers.push(runningTotal);
+
+      console.log(`Target Number: ${runningTotal}; Tiles: ${checkpointTiles.join(", ")}`);
     }
 
-    // Set the tiles
     setTiles(newTiles);
-
-    // The running total now become the target number
-    setTargetNumber(runningTotal);
-    console.log(`Target Number: ${runningTotal}; Tiles: ${newTiles.join(", ")}`);
+    setTargetNumbers(newTargetNumbers);
 
     function getOperatorLimit(operator: string) {
       switch (props.difficulty) {
@@ -204,6 +219,13 @@ const NumbersArithmetic: React.FC<Props> = (props) => {
     }
   }, [tiles, props.numTiles]);
 
+  React.useEffect(() => {
+    setInProgress(true);
+    setRevealState({ type: "in-progress", revealedTiles: 0 });
+    setGuess("");
+    setSeconds(props.timerConfig.isTimed ? props.timerConfig.seconds : 0);
+  }, [currentCheckpoint]);
+
   function getPrettyOperatorSymbol(operatorSymbol: "+" | "-" | "/" | "*"): string {
     switch (operatorSymbol) {
       case "/":
@@ -280,15 +302,26 @@ const NumbersArithmetic: React.FC<Props> = (props) => {
     }
 
     return (
-      <MessageNotification type={guess === targetNumber.toString() ? "success" : "error"}>
-        <strong>{guess === targetNumber.toString() ? "Correct!" : "Incorrect"}</strong>
-        <br />
-        <span>
-          The answer was <strong>{targetNumber}</strong>
-        </span>
-        <br />
-        {tiles.join(" ")}
-      </MessageNotification>
+      <>
+        <MessageNotification type={guess === targetNumbers[currentCheckpoint].toString() ? "success" : "error"}>
+          <strong>{guess === targetNumbers[currentCheckpoint].toString() ? "Correct!" : "Incorrect"}</strong>
+          <br />
+          <span>
+            The answer was <strong>{targetNumbers[currentCheckpoint]}</strong>
+          </span>
+          <br />
+          {tiles[currentCheckpoint].join(" ")}
+        </MessageNotification>
+
+        {currentCheckpoint < (props.numCheckpoints - 1) && (
+          <>
+            <br></br>
+            <Button mode="accept" onClick={() => setCurrentCheckpoint(currentCheckpoint + 1)}>
+              Next Checkpoint
+            </Button>
+          </>
+        )}
+      </>
     );
   }
 
@@ -323,7 +356,7 @@ const NumbersArithmetic: React.FC<Props> = (props) => {
       {inProgress && (
         <div className="target">
           <LetterTile
-            letter={revealState.type === "finished" ? "?" : tiles[revealState.revealedTiles]}
+            letter={revealState.type === "finished" ? "?" : tiles[currentCheckpoint]?.[revealState.revealedTiles]}
             status={revealState.type === "finished" || targetTransitioned ? "contains" : "not set"}
           ></LetterTile>
         </div>
@@ -332,7 +365,9 @@ const NumbersArithmetic: React.FC<Props> = (props) => {
         <div className="guess">
           <LetterTile
             letter={guess}
-            status={inProgress ? "not set" : guess === targetNumber.toString() ? "correct" : "incorrect"}
+            status={
+              inProgress ? "not set" : guess === targetNumbers[currentCheckpoint].toString() ? "correct" : "incorrect"
+            }
           ></LetterTile>
         </div>
       )}

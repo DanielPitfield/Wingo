@@ -9,6 +9,7 @@ import { NumberRow } from "./NumberRow";
 import NumberTile from "./NumberTile";
 import { Guess, hasNumberSelectionFinished, hasNumberSelectionStarted } from "./CountdownNumbersConfig";
 import { CountdownRow } from "./CountdownRow";
+import { getCountdownAnswer } from "../Nubble/getValidValues";
 
 interface Props {
   mode: "countdown_numbers_casual" | "countdown_numbers_realistic";
@@ -234,61 +235,75 @@ const CountdownNumbers: React.FC<Props> = (props) => {
     //let outcome: "success" | "failure" | "in-progress" = "in-progress";
     //const GOLD_PER_POINT = 30;
 
-    // Game has ended (timer ran out) and there is a target number
-    if (!props.inProgress && props.hasTimerEnded && props.targetNumber) {
-      const best_guess = determineBestGuess();
+    if (props.inProgress || !props.hasTimerEnded || !props.targetNumber) {
+      return;
+    }
 
-      if (best_guess === null) {
-        //outcome = "failure";
+    // Evaluate player's attempt(s)
+    const best_guess = determineBestGuess();
+
+    if (best_guess === null) {
+      //outcome = "failure";
+      return (
+        <>
+          <MessageNotification type="error">
+            <strong>No guess was made</strong>
+            <br />
+            <strong>0 points</strong>
+          </MessageNotification>
+        </>
+      );
+    } else {
+      // TODO: determineBestGuess could return the difference, depends on if the message should show the best guess
+      const difference = Math.abs(best_guess - props.targetNumber);
+      // Guess the target number exactly, difference is 0, score is 10
+      const score = 10 - difference;
+
+      if (score === 10) {
+        //outcome = "success";
         return (
           <>
-            <MessageNotification type="error">
-              <strong>No guess was made</strong>
+            <MessageNotification type="success">
+              <strong>You got the target number!</strong>
               <br />
-              <strong>0 points</strong>
+              <strong>10 points</strong>
+            </MessageNotification>
+          </>
+        );
+      } else if (score >= 1 && score <= 9) {
+        //outcome = "success";
+
+        // Show how the targetNumber could have been achieved
+        const inputNumbers = props.countdownStatuses.filter((x) => x.type === "original").map((x) => x.number!);
+        const answer = getCountdownAnswer(inputNumbers, props.targetNumber);
+
+        return (
+          <>
+            <MessageNotification type="success">
+              <strong>{`You were ${difference} away from the target number`}</strong>
+              <br />
+              <strong>{`${score} points`}</strong>
+              <strong>{`Answer: ${answer}`}</strong>
             </MessageNotification>
           </>
         );
       } else {
-        // TODO: determineBestGuess could return the difference, depends on if the message should show the best guess
-        const difference = Math.abs(best_guess - props.targetNumber);
-        // Guess the target number exactly, difference is 0, score is 10
-        const score = 10 - difference;
+        //outcome = "failure";
 
-        if (score === 10) {
-          //outcome = "success";
-          return (
-            <>
-              <MessageNotification type="success">
-                <strong>You got the target number!</strong>
-                <br />
-                <strong>10 points</strong>
-              </MessageNotification>
-            </>
-          );
-        } else if (score >= 1 && score <= 9) {
-          //outcome = "success";
-          return (
-            <>
-              <MessageNotification type="success">
-                <strong>{`You were ${difference} away from the target number`}</strong>
-                <br />
-                <strong>{`${score} points`}</strong>
-              </MessageNotification>
-            </>
-          );
-        } else {
-          //outcome = "failure";
-          return (
-            <>
-              <MessageNotification type="error">
-                <strong>{`You were too far away from the target number (${difference})`}</strong>
-                <br />
-                <strong>0 points</strong>
-              </MessageNotification>
-            </>
-          );
-        }
+        // Show how the targetNumber could have been achieved
+        const inputNumbers = props.countdownStatuses.filter((x) => x.type === "original").map((x) => x.number!);
+        const answer = getCountdownAnswer(inputNumbers, props.targetNumber);
+
+        return (
+          <>
+            <MessageNotification type="error">
+              <strong>{`You were too far away from the target number (${difference})`}</strong>
+              <br />
+              <strong>0 points</strong>
+              <strong>{`Answer: ${answer}`}</strong>
+            </MessageNotification>
+          </>
+        );
       }
     }
   }
