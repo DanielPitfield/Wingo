@@ -48,6 +48,23 @@ interface Props {
 }
 
 const CountdownNumbers: React.FC<Props> = (props) => {
+  const [answer, setAnswer] = useState("");
+
+  React.useEffect(() => {
+    if (!props.targetNumber) {
+      return;
+    }
+
+    const inputNumbers = props.countdownStatuses.filter((x) => x.type === "original").map((x) => x.number!);
+
+    if (inputNumbers.length !== 6) {
+      return;
+    }
+
+    const answer = getCountdownAnswer(inputNumbers, props.targetNumber);
+    setAnswer(answer);
+  }, [props.targetNumber]);
+
   // Create grid of rows (for guessing numbers)
   function populateGrid(expressionLength: number) {
     function getSmallNumber(): number | null {
@@ -273,10 +290,6 @@ const CountdownNumbers: React.FC<Props> = (props) => {
       } else if (score >= 1 && score <= 9) {
         //outcome = "success";
 
-        // Show how the targetNumber could have been achieved
-        const inputNumbers = props.countdownStatuses.filter((x) => x.type === "original").map((x) => x.number!);
-        const answer = getCountdownAnswer(inputNumbers, props.targetNumber);
-
         return (
           <>
             <MessageNotification type="success">
@@ -289,10 +302,6 @@ const CountdownNumbers: React.FC<Props> = (props) => {
         );
       } else {
         //outcome = "failure";
-
-        // Show how the targetNumber could have been achieved
-        const inputNumbers = props.countdownStatuses.filter((x) => x.type === "original").map((x) => x.number!);
-        const answer = getCountdownAnswer(inputNumbers, props.targetNumber);
 
         return (
           <>

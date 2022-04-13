@@ -270,7 +270,7 @@ const NumbersArithmetic: React.FC<Props> = (props) => {
 
   // (Guess) Timer Setup
   React.useEffect(() => {
-    if (!props.timerConfig.isTimed) {
+    if (!props.timerConfig.isTimed || !inProgress) {
       return;
     }
 

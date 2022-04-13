@@ -265,7 +265,7 @@ export function getValidValues(inputNumbers: number[], maxLimit: number): number
 }
 
 export function getCountdownAnswer(inputNumbers: number[], targetNumber: number): string {
-  const NUM_ANSWERS = 10;
+  const NUM_ANSWERS = 1;
 
   const combinations = getCombinations(inputNumbers);
   const polish_expressions = getAllPolishExpressions(combinations);
