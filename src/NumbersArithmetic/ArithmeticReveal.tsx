@@ -19,7 +19,7 @@ interface Props {
 }
 
 /** */
-const NumbersArithmetic: React.FC<Props> = (props) => {
+const ArithmeticReveal: React.FC<Props> = (props) => {
   // Max number of characters permitted in a guess
   const MAX_LENGTH = 6;
 
@@ -389,4 +389,4 @@ const NumbersArithmetic: React.FC<Props> = (props) => {
   );
 };
 
-export default NumbersArithmetic;
+export default ArithmeticReveal;

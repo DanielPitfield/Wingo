@@ -12,7 +12,8 @@ import { areas, Campaign } from "./Campaign";
 import { Area, AreaConfig } from "./Area";
 import { Level, LevelConfig } from "./Level";
 import LetterCategoriesConfig from "./LetterCategories/LetterCategoriesConfig";
-import NumbersArithmetic from "./NumbersArithmetic/NumbersArithmetic";
+import ArithmeticReveal from "./NumbersArithmetic/ArithmeticReveal";
+import ArithmeticDrag from "./NumbersArithmetic/ArithmeticDrag";
 
 const wordLength = 5;
 const numGuesses = 6;
@@ -43,7 +44,8 @@ export type Page =
   | "letters_categories"
   | "countdown/letters"
   | "countdown/numbers"
-  | "numbers/arithmetic"
+  | "numbers/arithmetic_reveal"
+  | "numbers/arithmetic_drag"
   | "nubble"
   | "campaign"
   | "campaign/area"
@@ -63,7 +65,8 @@ export const pages: { page: Page; title: string }[] = [
   { page: "letters_categories", title: "Letters Categories" },
   { page: "countdown/letters", title: "Countdown Letters" },
   { page: "countdown/numbers", title: "Countdown Numbers" },
-  { page: "numbers/arithmetic", title: "Arithmetic" },
+  { page: "numbers/arithmetic_reveal", title: "Arithmetic" },
+  { page: "numbers/arithmetic_drag", title: "Arithmetic (drag and drop)" },
   { page: "nubble", title: "Nubble" },
   { page: "campaign", title: "Campaign" },
   { page: "campaign/area", title: "Campaign Areas" },
@@ -159,7 +162,7 @@ export const App: React.FC = () => {
       keyboard: false,
     },
     {
-      page: "numbers/arithmetic",
+      page: "numbers/arithmetic_reveal",
       firstLetter: false,
       timer: true,
       keyboard: false,
@@ -479,9 +482,16 @@ export const App: React.FC = () => {
           />
         );
 
-      case "numbers/arithmetic":
-        return <NumbersArithmetic revealIntervalSeconds={3} numTiles={4} numCheckpoints={3} difficulty={"easy"} timerConfig={
-          gameOptionToggles.find((x) => x.page === "numbers/arithmetic")?.timer
+      case "numbers/arithmetic_reveal":
+        return <ArithmeticReveal revealIntervalSeconds={3} numTiles={4} numCheckpoints={3} difficulty={"easy"} timerConfig={
+          gameOptionToggles.find((x) => x.page === "numbers/arithmetic_reveal")?.timer
+            ? { isTimed: true, seconds: 10 }
+            : { isTimed: false }
+        } setPage={setPage} />;
+
+        case "numbers/arithmetic_drag":
+        return <ArithmeticDrag mode="order" numTiles={10} numOperands={3} difficulty={"easy"} timerConfig={
+          gameOptionToggles.find((x) => x.page === "numbers/arithmetic_drag")?.timer
             ? { isTimed: true, seconds: 10 }
             : { isTimed: false }
         } setPage={setPage} />;

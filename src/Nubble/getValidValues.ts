@@ -31,6 +31,7 @@ export const operators: { name: "/" | "-" | "+" | "*"; function: (num1: number, 
 ];
 
 export const operators_symbols = ["/", "-", "+", "*"];
+export const pretty_operator_symbols = ["-","+","×","÷"];
 
 // Returns permutations of input array, https://stackoverflow.com/a/20871714
 export function permutator<T>(inputArr: T[]): T[][] {
