@@ -1,5 +1,6 @@
 import React from "react";
 import { Page } from "./App";
+import { Button } from "./Button";
 import { LevelConfig } from "./Level";
 import { SaveData } from "./SaveData";
 
@@ -16,25 +17,32 @@ export const Area: React.FC<{
 }> = (props) => {
   return (
     // LEVEL SELECTION
-    <div className="area">
+    <div className="area widgets" data-area-name={props.area.name}>
       {props.area.levels.map((level, i) => {
         const campaignProgress = SaveData.getCampaignProgress();
-        const areaInfo = campaignProgress.find((x) => x.name === props.area.name);
-        const level_unlocked = areaInfo?.current_level ? i + 1 <= areaInfo?.current_level : false;
-        return <button
-          className="level-button"
-          disabled={!level_unlocked}
-          key={`Area ${areaInfo?.name} Level ${i + 1}`}
-          onClick={() => {
-            if (level_unlocked) {
-              props.setSelectedCampaignLevel(level);
-              props.setPage("campaign/area/level");
-            }
-          }}
-        >
-          <strong className="level-number">{i + 1}</strong>
-          <span className="level-description">{level.hint}</span>
-        </button>;
+        const areaInfo = campaignProgress.areas.find((x) => x.name === props.area.name);
+        const level_unlocked = (areaInfo?.completedLevelCount || 0) >= i;
+
+        return (
+          <div className="level-button widget" key={`Area ${areaInfo?.name} Level ${i + 1}`}>
+            <strong className="level-number widget-title">{i + 1}</strong>
+            <p>{level.levelProps.mode}</p>
+            <span className="widget-button-wrapper">
+              <Button
+                mode={level_unlocked ? "accept" : "default"}
+                disabled={!level_unlocked}
+                onClick={() => {
+                  if (level_unlocked) {
+                    props.setSelectedCampaignLevel(level);
+                    props.setPage("campaign/area/level");
+                  }
+                }}
+              >
+                {level_unlocked ? "Go" : "?"}
+              </Button>
+            </span>
+          </div>
+        );
       })}
     </div>
   );

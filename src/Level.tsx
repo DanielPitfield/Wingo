@@ -4,7 +4,7 @@ import { MessageNotification } from "./MessageNotification";
 import WordleConfig, { WordleConfigProps } from "./WordleConfig";
 
 export interface LevelConfig {
-  hint?: string;
+  hint?: React.ReactNode;
   isUnlockLevel?: boolean;
   levelProps: WordleConfigProps;
 }
@@ -14,7 +14,7 @@ export const Level: React.FC<{
   page: Page;
   setPage: (page: Page) => void;
   addGold: (gold: number) => void;
-  onCompleteLevel: (level: LevelConfig) => void;
+  onCompleteLevel: (isUnlockLevel: boolean, level: LevelConfig) => void;
 }> = (props) => {
   return (
     <div className="level">
@@ -26,7 +26,7 @@ export const Level: React.FC<{
         addGold={props.addGold}
         finishingButtonText={"Back to area"}
         onComplete={() => {
-          props.onCompleteLevel(props.level);
+          props.onCompleteLevel(props.level.isUnlockLevel || false, props.level);
           if (props.level.isUnlockLevel) {
             // Go back to area selection to show discovered area name
             props.setPage("campaign");

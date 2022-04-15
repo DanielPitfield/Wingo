@@ -73,17 +73,6 @@ export const pages: { page: Page; title: string }[] = [
   { page: "campaign/area/level", title: "Campaign Level" },
 ];
 
-// Initial (first launch) Campaign Progress
-export const defaultAreaStatuses: {
-  name: string;
-  status: "locked" | "unlockable" | "unlocked";
-  current_level: number;
-}[] = areas.map((area, index) => ({
-  name: area.name,
-  status: index === 0 ? "unlockable" : "locked",
-  current_level: 0,
-}));
-
 export const App: React.FC = () => {
   const saveData = window.localStorage;
 
@@ -176,7 +165,12 @@ export const App: React.FC = () => {
     // TODO: Mask actual loading, rather than hard-coding seconds
     window.setTimeout(() => setLoadingState("loaded"), LOADING_TIMEOUT_MS);
 
-    const pageFromUrl = getPageFromUrl();
+    let pageFromUrl = getPageFromUrl();
+
+    // Redirect to the campaign page if loaded from a level/area
+    if (pageFromUrl === "campaign/area/level" || pageFromUrl === "campaign/area") {
+      pageFromUrl = "campaign";
+    }
 
     // Set home page after load
     window.setTimeout(() => setPage(pageFromUrl || "home"), LOADING_TIMEOUT_MS + FADE_OUT_DURATION_MS);
@@ -196,9 +190,13 @@ export const App: React.FC = () => {
     return pages.find((page) => page.page === urlPathWithoutLeadingTrailingSlashes)?.page;
   }
 
-  function onCompleteLevel(level: LevelConfig) {
+  function onCompleteLevel(isUnlockLevel: boolean, level: LevelConfig) {
     if (selectedCampaignArea) {
-      SaveData.setCampaignProgress(selectedCampaignArea, level);
+      if (isUnlockLevel) {
+        SaveData.addCompletedCampaignAreaUnloackLevel(selectedCampaignArea.name);
+      } else {
+        SaveData.addCompletedCampaignAreaLevel(selectedCampaignArea.name);
+      }
     }
   }
 
@@ -483,18 +481,36 @@ export const App: React.FC = () => {
         );
 
       case "numbers/arithmetic_reveal":
-        return <ArithmeticReveal revealIntervalSeconds={3} numTiles={4} numCheckpoints={3} difficulty={"easy"} timerConfig={
-          gameOptionToggles.find((x) => x.page === "numbers/arithmetic_reveal")?.timer
-            ? { isTimed: true, seconds: 10 }
-            : { isTimed: false }
-        } setPage={setPage} />;
+        return (
+          <ArithmeticReveal
+            revealIntervalSeconds={3}
+            numTiles={4}
+            numCheckpoints={3}
+            difficulty={"easy"}
+            timerConfig={
+              gameOptionToggles.find((x) => x.page === "numbers/arithmetic_reveal")?.timer
+                ? { isTimed: true, seconds: 10 }
+                : { isTimed: false }
+            }
+            setPage={setPage}
+          />
+        );
 
-        case "numbers/arithmetic_drag":
-        return <ArithmeticDrag mode="order" numTiles={10} numOperands={3} difficulty={"easy"} timerConfig={
-          gameOptionToggles.find((x) => x.page === "numbers/arithmetic_drag")?.timer
-            ? { isTimed: true, seconds: 10 }
-            : { isTimed: false }
-        } setPage={setPage} />;
+      case "numbers/arithmetic_drag":
+        return (
+          <ArithmeticDrag
+            mode="order"
+            numTiles={10}
+            numOperands={3}
+            difficulty={"easy"}
+            timerConfig={
+              gameOptionToggles.find((x) => x.page === "numbers/arithmetic_drag")?.timer
+                ? { isTimed: true, seconds: 10 }
+                : { isTimed: false }
+            }
+            setPage={setPage}
+          />
+        );
 
       case "nubble":
         return (

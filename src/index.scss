@@ -9,6 +9,18 @@
   justify-content: center;
 }
 
+#root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.app {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI Semilight", "Segoe UI", "Roboto", "Oxygen", "Ubuntu",
@@ -472,55 +484,59 @@ $data-statuses: (
           font-size: 1rem;
         }
       }
-      .sidebar-links {
-        padding: 0;
-        margin: 0;
+    }
+  }
+}
+
+.widgets {
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  .widget {
+    display: flex;
+    flex-direction: column;
+    list-style-type: none;
+    margin: 0.4em;
+    width: 12.8em;
+    height: 7.5em;
+    background-color: #eee;
+    border-bottom: 3px solid #ccc;
+    padding: 1em;
+    padding-top: 0.5em;
+    user-select: none;
+    &:hover {
+      background-color: #fafafa;
+    }
+    .widget-title,
+    .widget-subtitle {
+      display: flex;
+      flex-grow: 1;
+      font-weight: normal;
+      align-items: center;
+      color: #999;
+      padding: 0.4em 0.2em;
+      text-transform: uppercase;
+    }
+    .widget-title {
+      font-size: 1.2em;
+    }
+    .widget-button-wrapper {
+      position: relative;
+      .widget-button {
         display: flex;
-        flex-wrap: wrap;
-        .sidebar-link {
-          display: flex;
-          flex-direction: column;
-          list-style-type: none;
-          margin: 0.4em;
-          width: 12.8em;
-          height: 7.5em;
-          background-color: #eee;
-          border-bottom: 3px solid #ccc;
-          padding: 1em;
-          padding-top: 0.5em;
-          user-select: none;
-          &:hover {
-            background-color: #fafafa;
-          }
-          .game-mode-title {
-            display: flex;
-            flex-grow: 1;
-            font-weight: normal;
-            align-items: center;
-            color: #999;
-            font-size: 1.2em;
-            padding: 0.4em 0.2em;
-            text-transform: uppercase;
-          }
-          .game-mode-button-wrapper {
-            position: relative;
-            .game-mode-button {
-              display: flex;
-              flex-shrink: 0;
-              font-weight: bold;
-              border: 0;
-              padding: 0;
-              height: 11em;
-              width: 13em;
-              cursor: pointer;
-              user-select: none;
-              &:hover {
-                opacity: 0.8;
-                .game-mode-title {
-                  background-color: #444;
-                }
-              }
-            }
+        flex-shrink: 0;
+        font-weight: bold;
+        border: 0;
+        padding: 0;
+        height: 11em;
+        width: 13em;
+        cursor: pointer;
+        user-select: none;
+        &:hover {
+          opacity: 0.8;
+          .widget-title {
+            background-color: #444;
           }
         }
       }
@@ -787,25 +803,25 @@ $data-statuses: (
   }
 }
 /*
-.game-mode-button[data-game-mode="wingo/daily"] {
+.widget-button[data-game-mode="wingo/daily"] {
   background-image: url(/src/images/daily.jpg);
   background-repeat: no-repeat;
   background-size: cover;
 }
 
-.game-mode-button[data-game-mode="wingo/repeat"] {
+.widget-button[data-game-mode="wingo/repeat"] {
   background-image: url(/src/images/repeat.jpg);
   background-repeat: no-repeat;
   background-size: cover;
 }
 
-.game-mode-button[data-game-mode="wingo/increasing"] {
+.widget-button[data-game-mode="wingo/increasing"] {
   background-image: url(/src/images/increasing.jpg);
   background-repeat: no-repeat;
   background-size: cover;
 }
 
-.game-mode-button[data-game-mode="wingo/puzzle"] {
+.widget-button[data-game-mode="wingo/puzzle"] {
   background-image: url(/src/images/puzzle.jpg);
   background-repeat: no-repeat;
   background-size: cover;
@@ -1012,6 +1028,67 @@ $nubble-colors-names: (
 }
 
 .countdown_letters_guess_input {
+}
+
+.campaign {
+  background: #ddd;
+  padding: 1.2em;
+  padding-bottom: 2em;
+  margin: 0.6em;
+  margin-bottom: 0;
+  .widget {
+    min-height: 19em;
+    min-width: 25vw;
+  }
+}
+
+.area-button.widget {
+  border-bottom: 3px solid #888;
+  border-left: 3px solid #888;
+  cursor: pointer;
+  &:hover {
+    opacity: 0.9;
+  }
+  .widget-subtitle {
+    font-size: 1.1em;
+    flex-grow: 0;
+    color: #ccc;
+    margin: 0.5em;
+  }
+  .widget-title {
+    font-size: 3em;
+    color: #eee;
+    justify-content: flex-start;
+  }
+  .widget-button-wrapper {
+    margin-bottom: 3em;
+  }
+}
+
+.area,
+.area-button {
+  flex-grow: 1;
+  background-repeat: no-repeat;
+  background-size: 100%;
+  &[data-unlock-status="locked"] {
+    background: #333 !important;
+    opacity: 0.15;
+  }
+  &[data-area-name="Start"] {
+    background-image: url("images/lake.jpg");
+  }
+  &[data-area-name="Space"] {
+    background-image: url("images/space.webp");
+  }
+  &[data-area-name="Cars"] {
+    background-image: url("images/race-track.jpg");
+  }
+  &[data-area-name="Travel"] {
+    background-image: url("images/city.jpeg");
+  }
+  &[data-area-name="Fantasy"] {
+    background-image: url("images/fantasy.jpg");
+  }
 }
 
 .shimmer {

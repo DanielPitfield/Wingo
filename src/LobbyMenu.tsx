@@ -29,9 +29,9 @@ export const LobbyMenu: React.FC<Props> = (props) => {
 
   function renderGameModeTile(page: Page, displayName: string) {
     return (
-      <li className="sidebar-link">
-        <span className="game-mode-title">{displayName}</span>
-        <div className="game-mode-button-wrapper">
+      <li className="widget">
+        <span className="widget-title">{displayName}</span>
+        <div className="widget-button-wrapper">
           <Button mode="accept" data-game-mode={page} onClick={() => props.setPage(page)}>
             Play
           </Button>
@@ -89,7 +89,7 @@ export const LobbyMenu: React.FC<Props> = (props) => {
       <div className="games">
         <div className="sidebar">
           <div className="sidebar-title">WORDLE</div>
-          <ul className="sidebar-links">
+          <ul className="widgets">
             {renderGameModeTile("wingo/daily", "Daily")}
             {renderGameModeTile("wingo/repeat", "Standard/Normal")}
             {renderGameModeTile("wingo/category", "Categories")}
@@ -102,7 +102,7 @@ export const LobbyMenu: React.FC<Props> = (props) => {
 
         <div className="sidebar">
           <div className="sidebar-title">NUMBERS</div>
-          <ul className="sidebar-links">
+          <ul className="widgets">
             {renderGameModeTile("countdown/numbers", "Countdown Numbers")}
             {renderGameModeTile("numbers/arithmetic_reveal", "Arithmetic")}
             {renderGameModeTile("numbers/arithmetic_drag", "Arithmetic (drag and drop)")}
@@ -112,7 +112,7 @@ export const LobbyMenu: React.FC<Props> = (props) => {
 
         <div className="sidebar">
           <div className="sidebar-title">OTHER</div>
-          <ul className="sidebar-links">
+          <ul className="widgets">
             {renderGameModeTile("campaign", "Campaign")}
             {renderGameModeTile("countdown/letters", "Countdown Letters")}
             {renderGameModeTile("letters_categories", "Categories (5)")}

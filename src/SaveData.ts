@@ -1,13 +1,9 @@
-import { defaultAreaStatuses, Page } from "./App";
-import { AreaConfig } from "./Area";
+import { Page } from "./App";
 import { BaseChallenge } from "./Challenges/BaseChallenge";
-import { LevelConfig } from "./Level";
 
 export type CampaignSaveData = {
-  name: string;
-  status: "locked" | "unlockable" | "unlocked";
-  current_level: number;
-}[];
+  areas: { name: string; status: "locked" | "unlockable" | "unlocked"; completedLevelCount: number }[];
+};
 
 export type DailyWordSaveData = {
   dailyWord: string;
@@ -77,45 +73,48 @@ export function newGuid(): string {
 /** */
 export class SaveData {
   /**
-   * Sets the latest campaign progress.
-   * @param selectedArea AreaConfig of the selected campaign area
-   * @param level LevelConfig of most recently completed level
+   * Incements the completed level count for the specified area.
+   * @param areaName Name of the campaign area.
    */
-
-  public static setCampaignProgress(selectedArea: AreaConfig, level: LevelConfig) {
+  public static addCompletedCampaignAreaUnloackLevel(areaName: CampaignSaveData["areas"][0]["name"]) {
     // Get the current campaign progress (which is to be updated)
     const campaignProgress = SaveData.getCampaignProgress();
 
-    // Completed level was the unlock level for the area
-    if (level === selectedArea?.unlock_level) {
-      // Update area status
-      const newCampaignProgress = campaignProgress.map((area) => {
-        if (area.name === selectedArea?.name && area.status === "unlockable") {
-          area.status = "unlocked";
-          // The first 'real' level of the area is now the current level
-          area.current_level = 1;
-        }
-        return area;
-      });
-      // Update local storage
-      localStorage.setItem("campaign_progress", JSON.stringify(newCampaignProgress));
-    }
-    // Normal level
-    else {
-      // Index 0 is Level 1 (so add 1)
-      const current_level = selectedArea?.levels.findIndex((x) => x === level) + 1;
-      if (current_level) {
-        const newCampaignProgress = campaignProgress.map((area) => {
-          if (area.name === selectedArea?.name && area.status === "unlocked") {
-            // The current level becomes the next level
-            area.current_level = current_level + 1;
-          }
-          return area;
-        });
-        localStorage.setItem("campaign_progress", JSON.stringify(newCampaignProgress));
-        console.log(newCampaignProgress);
-      }
-    }
+    const newAreaData: CampaignSaveData["areas"][0] = {
+      name: areaName,
+      status: "unlocked",
+      completedLevelCount: 0,
+    };
+
+    const newCampaignProgress = {
+      ...campaignProgress,
+      areas: campaignProgress.areas.filter((x) => x.name !== areaName).concat([newAreaData]),
+    };
+
+    localStorage.setItem("campaign_progress", JSON.stringify(newCampaignProgress));
+  }
+
+  /**
+   * Incements the completed level count for the specified area.
+   * @param areaName Name of the campaign area.
+   * @param status Status of the area.
+   */
+  public static addCompletedCampaignAreaLevel(areaName: CampaignSaveData["areas"][0]["name"]) {
+    // Get the current campaign progress (which is to be updated)
+    const campaignProgress = SaveData.getCampaignProgress();
+
+    const newAreaData: CampaignSaveData["areas"][0] = {
+      name: areaName,
+      status: "unlocked",
+      completedLevelCount: (campaignProgress.areas.find((x) => x.name === areaName)?.completedLevelCount || 0) + 1,
+    };
+
+    const newCampaignProgress = {
+      ...campaignProgress,
+      areas: campaignProgress.areas.filter((x) => x.name !== areaName).concat([newAreaData]),
+    };
+
+    localStorage.setItem("campaign_progress", JSON.stringify(newCampaignProgress));
   }
 
   /**
@@ -129,7 +128,7 @@ export class SaveData {
       return JSON.parse(campaign_progress) as CampaignSaveData;
     }
 
-    return defaultAreaStatuses as CampaignSaveData;
+    return { areas: [] };
   }
 
   /**

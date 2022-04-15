@@ -15,7 +15,6 @@ import { wordHintMappings } from "./WordArrays/words_puzzles";
 import { SaveData } from "./SaveData";
 import { words_dogs } from "./WordArrays/Categories/dogs";
 import { words_countries } from "./WordArrays/Categories/countries";
-import { Alphabet } from "./Keyboard";
 import { words_chemical_elements } from "./WordArrays/Categories/chemical_elements";
 import { words_colours } from "./WordArrays/Categories/colours";
 import { words_fruits_and_vegetables } from "./WordArrays/Categories/fruits_and_vegetables";
@@ -34,6 +33,7 @@ export interface WordleConfigProps {
   puzzleRevealMs: number;
   puzzleLeaveNumBlanks: number;
   defaultnumGuesses: number;
+  checkInDictionary?: boolean;
   finishingButtonText?: string;
   onComplete?: () => void;
 }
@@ -706,7 +706,8 @@ const WordleConfig: React.FC<Props> = (props) => {
       return;
     }
 
-    if (wordArray.includes(currentWord.toLowerCase())) {
+    // If checking against the dictionary is disabled, or is enabled and the word is in the dictionary
+    if (props.checkInDictionary === false || wordArray.includes(currentWord.toLowerCase())) {
       // Accepted word
       setGuesses(guesses.concat(currentWord)); // Add word to guesses
 
