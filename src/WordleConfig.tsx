@@ -705,8 +705,13 @@ const WordleConfig: React.FC<Props> = (props) => {
       return;
     }
 
-    // If checking against the dictionary is disabled, or is enabled and the word is in the dictionary
-    if (props.checkInDictionary === false || wordArray.includes(currentWord.toLowerCase())) {
+    // If checking against the dictionary is disabled, or is enabled and the word is in the dictionary,
+    // or is the target word exactly (to protect against a bug where the target word may not be in the dictionary)
+    if (
+      props.checkInDictionary === false ||
+      wordArray.includes(currentWord.toLowerCase()) ||
+      currentWord.toLowerCase() === targetWord.toLowerCase()
+    ) {
       // Accepted word
       setGuesses(guesses.concat(currentWord)); // Add word to guesses
 
