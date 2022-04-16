@@ -32,7 +32,7 @@ export const Area: React.FC<{
         return (
           <div className="level-button widget" key={`Area ${areaInfo?.name} Level ${i + 1}`}>
             <strong className="level-number widget-subtitle">Level {i + 1}</strong>
-            <p>{levelInfo?.shortTitle || level.levelProps.mode}</p>
+            <p>{levelInfo?.title || levelInfo?.shortTitle || level.levelProps.mode}</p>
             <span className="widget-button-wrapper">
               <Button
                 mode={level_unlocked ? "accept" : "default"}
