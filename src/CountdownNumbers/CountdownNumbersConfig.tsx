@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import "../App.scss";
 import { Page } from "../App";
 import CountdownNumbers from "./CountdownNumbers";
 import { calculateTotal } from "./NumberRow";

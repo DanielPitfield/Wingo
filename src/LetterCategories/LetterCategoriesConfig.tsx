@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import "../App.scss";
 import { Page } from "../App";
 import LetterCategories from "./LetterCategories";
 import { SaveData } from "../SaveData";

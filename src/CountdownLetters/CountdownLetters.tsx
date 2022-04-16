@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import "../App.scss";
 import { Keyboard } from "../Keyboard";
 import { Page } from "../App";
 import { WordRow } from "../WordRow";
@@ -8,7 +7,6 @@ import { MessageNotification } from "../MessageNotification";
 import ProgressBar, { GreenToRedColorTransition } from "../ProgressBar";
 import { isWordValid } from "./CountdownLettersConfig";
 import { wordLengthMappingsGuessable } from "../WordleConfig";
-import { SaveData } from "../SaveData";
 
 interface Props {
   mode: "countdown_letters_casual" | "countdown_letters_realistic";

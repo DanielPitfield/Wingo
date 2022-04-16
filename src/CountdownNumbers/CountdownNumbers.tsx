@@ -1,10 +1,8 @@
 import React, { useState } from "react";
-import "../App.scss";
 import { Page } from "../App";
 import { Button } from "../Button";
 import { MessageNotification } from "../MessageNotification";
 import ProgressBar, { GreenToRedColorTransition } from "../ProgressBar";
-import { SaveData } from "../SaveData";
 import { NumberRow } from "./NumberRow";
 import NumberTile from "./NumberTile";
 import { Guess, hasNumberSelectionFinished, hasNumberSelectionStarted } from "./CountdownNumbersConfig";

@@ -1,12 +1,10 @@
 import React from "react";
-import "../App.scss";
 import { Keyboard } from "../Keyboard";
 import { Page } from "../App";
 import { WordRow } from "../WordRow";
 import { Button } from "../Button";
 import { MessageNotification } from "../MessageNotification";
 import ProgressBar, { GreenToRedColorTransition } from "../ProgressBar";
-import { categoryMappings } from "../WordleConfig";
 
 interface Props {
   timerConfig: { isTimed: false } | { isTimed: true; totalSeconds: number; elapsedSeconds: number };
