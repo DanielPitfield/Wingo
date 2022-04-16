@@ -1094,6 +1094,21 @@ $nubble-colors-names: (
   }
 }
 
+.level-button {
+  &[data-is-completed="true"] {
+    opacity: 0.6;
+  }
+  &[data-is-unlocked="false"] {
+    opacity: 0.6;
+  }
+  .level-mode {
+    color: #888;
+    margin-top: 0;
+    margin-bottom: 2em;
+    font-size: 0.95em;
+  }
+}
+
 .puzzle-config {
   flex-grow: 1;
   justify-content: flex-start;

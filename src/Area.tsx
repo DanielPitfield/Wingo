@@ -27,16 +27,22 @@ export const Area: React.FC<{
         const campaignProgress = SaveData.getCampaignProgress();
         const areaInfo = campaignProgress.areas.find((x) => x.name === props.area.name);
         const level_unlocked = (areaInfo?.completedLevelCount || 0) >= i;
+        const level_completed = (areaInfo?.completedLevelCount || 0) > i;
         const levelInfo = pages.find((x) => x.page === `wingo/${level.levelProps.mode}`);
 
         return (
-          <div className="level-button widget" key={`Area ${areaInfo?.name} Level ${i + 1}`}>
+          <div
+            className="level-button widget"
+            key={`Area ${areaInfo?.name} Level ${i + 1}`}
+            data-is-completed={level_completed}
+            data-is-unlocked={level_unlocked}
+          >
             <strong className="level-number widget-subtitle">Level {i + 1}</strong>
-            <p>{levelInfo?.title || levelInfo?.shortTitle || level.levelProps.mode}</p>
+            <p className="level-mode">{levelInfo?.title || levelInfo?.shortTitle || level.levelProps.mode}</p>
             <span className="widget-button-wrapper">
               <Button
-                mode={level_unlocked ? "accept" : "default"}
-                disabled={!level_unlocked}
+                mode={level_unlocked && !level_completed ? "accept" : "default"}
+                disabled={!level_unlocked || level_completed}
                 onClick={() => {
                   if (level_unlocked) {
                     props.setSelectedCampaignLevel(level);
@@ -44,7 +50,7 @@ export const Area: React.FC<{
                   }
                 }}
               >
-                {level_unlocked ? "Go" : "?"}
+                {level_completed ? "Completed!" : level_unlocked ? "Go" : "?"}
               </Button>
             </span>
           </div>
