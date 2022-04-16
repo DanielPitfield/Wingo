@@ -50,10 +50,14 @@ export const LobbyMenu: React.FC<Props> = (props) => {
   }
 
   function renderConfigModal(page: Page): React.ReactNode {
+    const pageInfo = pages.find((x) => x.page === page);
+
     return (
       <div className="modal">
         <div className="options_body">
-          <div className="options_title">Options</div>
+          <div className="options_title">
+            Options for <strong>{pageInfo?.title || page}</strong>
+          </div>
           <Button mode="default" className="options_close" onClick={() => setOptionsConfig({ isConfigShown: false })}>
             X
           </Button>
