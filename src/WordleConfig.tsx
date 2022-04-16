@@ -34,7 +34,7 @@ export interface WordleConfigProps {
   defaultnumGuesses: number;
   checkInDictionary?: boolean;
   finishingButtonText?: string;
-  onComplete?: () => void;
+  onComplete?: (wasCorrect: boolean) => void;
 }
 
 interface Props extends WordleConfigProps {
@@ -528,7 +528,7 @@ const WordleConfig: React.FC<Props> = (props) => {
   }, [props.page, targetWord]);
 
   function ResetGame() {
-    props.onComplete?.();
+    props.onComplete?.(currentWord.toLowerCase() === targetWord.toLowerCase());
     setGuesses([]);
     setCurrentWord("");
     setWordIndex(0);
@@ -554,7 +554,7 @@ const WordleConfig: React.FC<Props> = (props) => {
   }
 
   function ContinueGame() {
-    props.onComplete?.();
+    props.onComplete?.(currentWord.toLowerCase() === targetWord.toLowerCase());
     setGuesses([]);
     setCurrentWord("");
     setWordIndex(0);

@@ -26,7 +26,11 @@ export const Level: React.FC<{
         setPage={props.setPage}
         addGold={props.addGold}
         finishingButtonText={"Back to area"}
-        onComplete={() => {
+        onComplete={(wasCorrect) => {
+          if (!wasCorrect) {
+            return;
+          }
+
           props.onCompleteLevel(props.level.isUnlockLevel || false, props.level);
           if (props.level.isUnlockLevel) {
             // Go back to area selection to show discovered area name
