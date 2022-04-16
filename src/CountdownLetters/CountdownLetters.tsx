@@ -25,6 +25,7 @@ interface Props {
     letter: string;
     status: "" | "contains" | "correct" | "not set" | "not in word";
   }[];
+  backgroundImageSrc?: string;
   setPage: (page: Page) => void;
   addGold: (gold: number) => void;
   onEnter: () => void;
@@ -384,7 +385,7 @@ const CountdownLetters: React.FC<Props> = (props) => {
   }, [manualGuessSelectionMade, props.guesses]);
 
   return (
-    <div className="App">
+    <div className="App" style={{ backgroundImage: props.backgroundImageSrc && `url(${props.backgroundImageSrc})` }}>
       <div>{displayOutcome()}</div>
 
       <div>

@@ -9,6 +9,7 @@ interface Props {
   timerConfig: { isTimed: false } | { isTimed: true; seconds: number };
   keyboard: boolean;
   defaultWordLength: number;
+  backgroundImageSrc?: string;
   setPage: (page: Page) => void;
   addGold: (gold: number) => void;
 }
@@ -310,6 +311,7 @@ const CountdownLettersConfig: React.FC<Props> = (props) => {
       targetWord={targetWord || ""}
       letterStatuses={letterStatuses}
       onEnter={onEnter}
+      backgroundImageSrc={props.backgroundImageSrc}
       onSubmitCountdownLetter={onSubmitCountdownLetter}
       onSubmitCountdownWord={onSubmitCountdownWord}
       onSubmitLetter={onSubmitLetter}

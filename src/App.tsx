@@ -5,6 +5,8 @@ import WordleConfig from "./WordleConfig";
 import { Button } from "./Button";
 import NubbleConfig from "./Nubble/NubbleConfig";
 import GoldCoin from "./images/gold.png";
+import WingoBackgroundSrc from "./images/wingo-background.jpg";
+import CountdownBackgroundSrc from "./images/countdown-background.jpeg";
 import { SaveData } from "./SaveData";
 import CountdownLettersConfig from "./CountdownLetters/CountdownLettersConfig";
 import CountdownNumbersConfig from "./CountdownNumbers/CountdownNumbersConfig";
@@ -234,6 +236,7 @@ export const App: React.FC = () => {
       page: page,
       setPage: setPage,
       addGold: addGold,
+      backgroundImageSrc: WingoBackgroundSrc,
     };
 
     switch (page) {
@@ -446,6 +449,7 @@ export const App: React.FC = () => {
             keyboard={gameOptionToggles.find((x) => x.page === "countdown/letters")?.keyboard || false}
             defaultWordLength={wordLength_countdown_letters}
             page={page}
+            backgroundImageSrc={CountdownBackgroundSrc}
             setPage={setPage}
             addGold={addGold}
           />
@@ -479,6 +483,7 @@ export const App: React.FC = () => {
             defaultExpressionLength={countdown_numbers_ExpressionLength}
             defaultNumGuesses={countdown_numbers_NumGuesses}
             page={page}
+            backgroundImageSrc={CountdownBackgroundSrc}
             setPage={setPage}
             addGold={addGold}
           />

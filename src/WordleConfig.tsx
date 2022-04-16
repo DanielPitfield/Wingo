@@ -32,6 +32,7 @@ export interface WordleConfigProps {
   puzzleRevealMs: number;
   puzzleLeaveNumBlanks: number;
   defaultnumGuesses: number;
+  backgroundImageSrc?: string;
   checkInDictionary?: boolean;
   finishingButtonText?: string;
   onComplete?: (wasCorrect: boolean) => void;
@@ -823,6 +824,7 @@ const WordleConfig: React.FC<Props> = (props) => {
       revealedLetterIndexes={revealedLetterIndexes}
       letterStatuses={letterStatuses}
       finishingButtonText={props.finishingButtonText}
+      backgroundImageSrc={props.backgroundImageSrc}
       onEnter={onEnter}
       onSubmitLetter={onSubmitLetter}
       onSubmitTargetCategory={onSubmitTargetCategory}

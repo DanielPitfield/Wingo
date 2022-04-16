@@ -11,6 +11,7 @@ interface Props {
   defaultNumGuesses: number;
   defaultExpressionLength: number;
   timerConfig: { isTimed: false } | { isTimed: true; seconds: number };
+  backgroundImageSrc?: string;
   setPage: (page: Page) => void;
   addGold: (gold: number) => void;
 }
@@ -423,6 +424,7 @@ const CountdownNumbersConfig: React.FC<Props> = (props) => {
       hasTimerEnded={hasTimerEnded}
       hasSubmitNumber={hasSubmitNumber}
       targetNumber={targetNumber}
+      backgroundImageSrc={props.backgroundImageSrc}
       onClick={addOperandToGuess}
       onRightClick={removeOperandFromGuess}
       onEnter={onEnter}

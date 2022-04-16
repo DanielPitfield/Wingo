@@ -35,6 +35,7 @@ interface Props {
   }[];
   revealedLetterIndexes: number[];
   finishingButtonText?: string;
+  backgroundImageSrc?: string;
   setPage: (page: Page) => void;
   onEnter: () => void;
   onSubmitLetter: (letter: string) => void;
@@ -267,7 +268,7 @@ const Wordle: React.FC<Props> = (props) => {
   }, [props.mode, props.inProgress]);
 
   return (
-    <div className="App">
+    <div className="App" style={{ backgroundImage: props.backgroundImageSrc && `url(${props.backgroundImageSrc})` }}>
       <div>{displayOutcome()}</div>
       {props.mode === "daily" && (
         <MessageNotification type="default">

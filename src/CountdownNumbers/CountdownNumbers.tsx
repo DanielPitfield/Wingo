@@ -27,6 +27,7 @@ interface Props {
   hasTimerEnded: boolean;
   hasSubmitNumber: boolean;
   targetNumber: number | null;
+  backgroundImageSrc?: string;
   onClick: (
     value: number | null,
     id: { type: "original"; index: number } | { type: "intermediary"; rowIndex: number }
@@ -316,7 +317,7 @@ const CountdownNumbers: React.FC<Props> = (props) => {
   }
 
   return (
-    <div className="App">
+    <div className="App" style={{ backgroundImage: props.backgroundImageSrc && `url(${props.backgroundImageSrc})` }}>
       <div>{displayOutcome()}</div>
 
       <div>
