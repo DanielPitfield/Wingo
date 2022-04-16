@@ -1091,6 +1091,53 @@ $nubble-colors-names: (
   }
 }
 
+.puzzle-config {
+  flex-grow: 1;
+  justify-content: flex-start;
+  & > * {
+    flex-grow: 0;
+  }
+  .sequence {
+    display: flex;
+  }
+  .answer-options {
+    display: flex;
+  }
+  .sequence-tile {
+    padding: 0.5em;
+    margin: 0.4em;
+    width: 10em;
+    height: 10em;
+    background-color: white;
+    position: relative;
+    box-shadow: 0 0 2px #999;
+    opacity: 0.75;
+    &[data-is-clickable="true"] {
+      opacity: 0.9;
+      &:hover {
+        background-color: #f2f2f2;
+        opacity: 0.75;
+        cursor: pointer;
+      }
+    }
+    &[data-is-readonly="true"] {
+      &[data-is-incorrect-answer="true"] {
+        background-color: #f07676;
+      }
+      &[data-is-correct-answer="true"] {
+        background-color: #7af076;
+      }
+    }
+    .icon {
+      position: absolute;
+      background-repeat: no-repeat;
+      background-size: 100% 100%;
+      width: 35px;
+      height: 35px;
+    }
+  }
+}
+
 .shimmer {
   mask: linear-gradient(-65deg, #000 30%, #0006, #000 75%) right / 300% 100%;
   animation: shimmer 2s infinite;

@@ -115,6 +115,7 @@ export const LobbyMenu: React.FC<Props> = (props) => {
           <ul className="widgets">
             {renderGameModeTile("campaign", "Campaign")}
             {renderGameModeTile("countdown/letters", "Countdown Letters")}
+            {renderGameModeTile("puzzle", "Puzzle")}
             {renderGameModeTile("letters_categories", "Categories (5)")}
           </ul>
         </div>

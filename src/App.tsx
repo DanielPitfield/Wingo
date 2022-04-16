@@ -8,12 +8,13 @@ import GoldCoin from "./images/gold.png";
 import { SaveData } from "./SaveData";
 import CountdownLettersConfig from "./CountdownLetters/CountdownLettersConfig";
 import CountdownNumbersConfig from "./CountdownNumbers/CountdownNumbersConfig";
-import { areas, Campaign } from "./Campaign";
+import { Campaign } from "./Campaign";
 import { Area, AreaConfig } from "./Area";
 import { Level, LevelConfig } from "./Level";
 import LetterCategoriesConfig from "./LetterCategories/LetterCategoriesConfig";
 import ArithmeticReveal from "./NumbersArithmetic/ArithmeticReveal";
 import ArithmeticDrag from "./NumbersArithmetic/ArithmeticDrag";
+import { PuzzleConfig } from "./Puzzles/PuzzleConfig";
 
 const wordLength = 5;
 const numGuesses = 6;
@@ -47,6 +48,7 @@ export type Page =
   | "numbers/arithmetic_reveal"
   | "numbers/arithmetic_drag"
   | "nubble"
+  | "puzzle"
   | "campaign"
   | "campaign/area"
   | "campaign/area/level";
@@ -68,6 +70,7 @@ export const pages: { page: Page; title: string }[] = [
   { page: "numbers/arithmetic_reveal", title: "Arithmetic" },
   { page: "numbers/arithmetic_drag", title: "Arithmetic (drag and drop)" },
   { page: "nubble", title: "Nubble" },
+  { page: "puzzle", title: "Puzzle" },
   { page: "campaign", title: "Campaign" },
   { page: "campaign/area", title: "Campaign Areas" },
   { page: "campaign/area/level", title: "Campaign Level" },
@@ -524,6 +527,9 @@ export const App: React.FC = () => {
             timeLengthMins={5}
           ></NubbleConfig>
         );
+
+      case "puzzle":
+        return <PuzzleConfig />;
     }
   })();
 
