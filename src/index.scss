@@ -1086,6 +1086,12 @@ $nubble-colors-names: (
       opacity: 0.2;
     }
   }
+  .widget {
+    height: 10em;
+  }
+  .level-count {
+    color: #ddd;
+  }
 }
 
 .puzzle-config {

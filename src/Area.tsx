@@ -1,7 +1,8 @@
 import React from "react";
-import { Page } from "./App";
+import { Page, pages } from "./App";
 import { Button } from "./Button";
 import { LevelConfig } from "./Level";
+import { MessageNotification } from "./MessageNotification";
 import { SaveData } from "./SaveData";
 
 export interface AreaConfig {
@@ -26,11 +27,12 @@ export const Area: React.FC<{
         const campaignProgress = SaveData.getCampaignProgress();
         const areaInfo = campaignProgress.areas.find((x) => x.name === props.area.name);
         const level_unlocked = (areaInfo?.completedLevelCount || 0) >= i;
+        const levelInfo = pages.find((x) => x.page === `wingo/${level.levelProps.mode}`);
 
         return (
           <div className="level-button widget" key={`Area ${areaInfo?.name} Level ${i + 1}`}>
-            <strong className="level-number widget-title">{i + 1}</strong>
-            <p>{level.levelProps.mode}</p>
+            <strong className="level-number widget-subtitle">Level {i + 1}</strong>
+            <p>{levelInfo?.shortTitle || level.levelProps.mode}</p>
             <span className="widget-button-wrapper">
               <Button
                 mode={level_unlocked ? "accept" : "default"}
@@ -48,6 +50,13 @@ export const Area: React.FC<{
           </div>
         );
       })}
+      {props.area.levels.length === 0 && (
+        <span>
+          <MessageNotification type="default">
+            No levels defined for area <strong>{props.area.name}</strong>
+          </MessageNotification>
+        </span>
+      )}
     </div>
   );
 };

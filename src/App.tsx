@@ -54,26 +54,26 @@ export type Page =
   | "campaign/area/level";
 
 // This is needed for runtime; make sure it matches the Page type
-export const pages: { page: Page; title: string }[] = [
+export const pages: { page: Page; title: string; shortTitle?: string }[] = [
   { page: "splash-screen", title: "Wingo" },
   { page: "home", title: "" },
-  { page: "wingo/daily", title: "Daily Wingo" },
-  { page: "wingo/repeat", title: "Repeat Wingo" },
-  { page: "wingo/category", title: "Wingo Categories" },
-  { page: "wingo/increasing", title: "Wingo Increasing" },
-  { page: "wingo/limitless", title: "Wingo Limitless" },
-  { page: "wingo/puzzle", title: "Wingo Puzzle" },
-  { page: "wingo/interlinked", title: "Wingo Interlinked" },
-  { page: "letters_categories", title: "Letters Categories" },
-  { page: "countdown/letters", title: "Countdown Letters" },
-  { page: "countdown/numbers", title: "Countdown Numbers" },
-  { page: "numbers/arithmetic_reveal", title: "Arithmetic" },
-  { page: "numbers/arithmetic_drag", title: "Arithmetic (drag and drop)" },
-  { page: "nubble", title: "Nubble" },
-  { page: "puzzle", title: "Puzzle" },
-  { page: "campaign", title: "Campaign" },
-  { page: "campaign/area", title: "Campaign Areas" },
-  { page: "campaign/area/level", title: "Campaign Level" },
+  { page: "wingo/daily", title: "Daily Wingo", shortTitle: "Daily" },
+  { page: "wingo/repeat", title: "Standard/Normal Wingo", shortTitle: "Standard/Normal" },
+  { page: "wingo/category", title: "Wingo Categories", shortTitle: "Categories" },
+  { page: "wingo/increasing", title: "Wingo Increasing Length", shortTitle: "Increasing Length" },
+  { page: "wingo/limitless", title: "Wingo Limitless/Survival", shortTitle: "Limitless/Survival" },
+  { page: "wingo/puzzle", title: "Wingo Puzzle", shortTitle: "Puzzle" },
+  { page: "wingo/interlinked", title: "Wingo Interlinked", shortTitle: "Interlinked" },
+  { page: "letters_categories", title: "Letters Categories", shortTitle: "Categories (5)" },
+  { page: "countdown/letters", title: "Countdown Letters", shortTitle: "Countdown Letters" },
+  { page: "countdown/numbers", title: "Countdown Numbers", shortTitle: "Countdown Numbers" },
+  { page: "numbers/arithmetic_reveal", title: "Arithmetic", shortTitle: "Arithmetic" },
+  { page: "numbers/arithmetic_drag", title: "Arithmetic (drag and drop)", shortTitle: "Arithmetic (drag and drop)" },
+  { page: "nubble", title: "Nubble", shortTitle: "Nubble" },
+  { page: "puzzle", title: "Puzzle", shortTitle: "Puzzle" },
+  { page: "campaign", title: "Campaign", shortTitle: "Campaign" },
+  { page: "campaign/area", title: "Campaign Areas", shortTitle: "Areas" },
+  { page: "campaign/area/level", title: "Campaign Level", shortTitle: "Level" },
 ];
 
 export const App: React.FC = () => {

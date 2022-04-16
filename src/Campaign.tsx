@@ -386,6 +386,7 @@ export const Campaign: React.FC<{
             ? "unlockable"
             : "locked");
         const current_level = areaInfo?.completedLevelCount || 0;
+        const isCompleted = (areaInfo?.completedLevelCount || 0) >= area.levels.length;
 
         return (
           <div
@@ -398,13 +399,13 @@ export const Campaign: React.FC<{
             <strong className="area-name widget-title">{unlock_status === "unlocked" ? area.name : `???`}</strong>
             <span className="level-count widget-button-wrapper">
               <Button
-                mode={unlock_status === "locked" ? "default" : "accept"}
+                mode={unlock_status === "locked" || isCompleted ? "default" : "accept"}
                 disabled={unlock_status === "locked"}
                 onClick={() => onAreaClick(area, unlock_status)}
               >
-                {unlock_status === "locked" ? "Unlock" : "Explore"}
+                {unlock_status === "locked" ? "Unlock" : isCompleted ? "Completed!" : "Explore"}
               </Button>
-              {unlock_status === "unlocked" && current_level ? `${current_level - 1} / ${area.levels.length}` : "? / ?"}
+              {unlock_status === "unlocked" ? `${Math.max(0, current_level - 1)} / ${area.levels.length}` : "? / ?"}
             </span>
           </div>
         );
