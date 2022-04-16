@@ -15,9 +15,10 @@ export const Level: React.FC<{
   setPage: (page: Page) => void;
   addGold: (gold: number) => void;
   onCompleteLevel: (isUnlockLevel: boolean, level: LevelConfig) => void;
+  backgroundImageSrc?: string;
 }> = (props) => {
   return (
-    <div className="level">
+    <div className="level" style={{ backgroundImage: props.backgroundImageSrc && `url(${props.backgroundImageSrc})` }}>
       <MessageNotification type="default">{props.level.hint}</MessageNotification>
       <WordleConfig
         {...props.level.levelProps}

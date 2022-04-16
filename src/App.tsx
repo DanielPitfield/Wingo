@@ -309,6 +309,7 @@ export const App: React.FC = () => {
               setPage={setPage}
               addGold={addGold}
               onCompleteLevel={onCompleteLevel}
+              backgroundImageSrc={selectedCampaignArea?.backgroundImageSrc}
             />
           )
         );

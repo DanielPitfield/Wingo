@@ -4,6 +4,8 @@ import { AreaConfig } from "./Area";
 import { Button } from "./Button";
 import { LevelConfig } from "./Level";
 import { CampaignSaveData, SaveData } from "./SaveData";
+import SpaceBackgroundImageSrc from "./images/space.webp";
+import LakeBackgroundImageSrc from "./images/lake.jpg";
 
 // Define the game areas
 export const areas: AreaConfig[] = [
@@ -12,6 +14,7 @@ export const areas: AreaConfig[] = [
 
     // START node
     name: "Start",
+    backgroundImageSrc: LakeBackgroundImageSrc,
     // The properties of the level to unlock this area
     unlock_level: {
       hint: (
@@ -43,6 +46,7 @@ export const areas: AreaConfig[] = [
   // Area 1 - Space
   {
     name: "Space",
+    backgroundImageSrc: SpaceBackgroundImageSrc,
     unlock_level: {
       hint: <>Unlock this area</>,
       isUnlockLevel: true,
@@ -277,6 +281,7 @@ export const areas: AreaConfig[] = [
 
   {
     name: "Cars",
+    backgroundImageSrc: SpaceBackgroundImageSrc,
     unlock_level: {
       hint: <>Unlock this area</>,
       isUnlockLevel: true,
@@ -385,9 +390,9 @@ export const Campaign: React.FC<{
         return (
           <div
             className="widget area-button"
-            data-area-name={area.name}
             data-unlock-status={unlock_status}
             key={area.name}
+            style={{ backgroundImage: `url(${area.backgroundImageSrc})` }}
           >
             <strong className="area-name widget-subtitle">Area {index + 1}</strong>
             <strong className="area-name widget-title">{unlock_status === "unlocked" ? area.name : `???`}</strong>

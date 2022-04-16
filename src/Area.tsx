@@ -8,6 +8,7 @@ export interface AreaConfig {
   name: string;
   unlock_level: LevelConfig;
   levels: LevelConfig[];
+  backgroundImageSrc?: string;
 }
 
 export const Area: React.FC<{
@@ -17,7 +18,10 @@ export const Area: React.FC<{
 }> = (props) => {
   return (
     // LEVEL SELECTION
-    <div className="area widgets" data-area-name={props.area.name}>
+    <div
+      className="area widgets"
+      style={{ backgroundImage: props.area.backgroundImageSrc && `url(${props.area.backgroundImageSrc})` }}
+    >
       {props.area.levels.map((level, i) => {
         const campaignProgress = SaveData.getCampaignProgress();
         const areaInfo = campaignProgress.areas.find((x) => x.name === props.area.name);
