@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import "./App.scss";
 import { Page } from "./App";
 import Wordle from "./Wordle";
 import { words_three_guessable, words_three_targets } from "./WordArrays/Lengths/words_3";

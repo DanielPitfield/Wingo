@@ -1,5 +1,4 @@
-import React from "react";
-import "./App.scss";
+import React, { useEffect, useState } from "react";
 import { Keyboard } from "./Keyboard";
 import { Page } from "./App";
 import { WordRow } from "./WordRow";
@@ -46,6 +45,8 @@ interface Props {
 }
 
 const Wordle: React.FC<Props> = (props) => {
+  const [secondsUntilNextDailyWingo, setSecondsUntilNextDailyWingo] = useState(getSecondsUntilMidnight());
+
   // Create grid of rows (for guessing words)
   function populateGrid(rowNumber: number, wordLength: number) {
     var Grid = [];
@@ -228,9 +229,51 @@ const Wordle: React.FC<Props> = (props) => {
     }
   }
 
+  function getSecondsUntilMidnight(): number {
+    const now = new Date();
+
+    const midnight = new Date();
+    midnight.setHours(23);
+    midnight.setMinutes(59);
+    midnight.setSeconds(59);
+
+    const secondsUntilMidnight = Math.round((Number(midnight) - Number(now)) / 1000);
+
+    return secondsUntilMidnight;
+  }
+
+  function secondsToTimeString(seconds: number): string {
+    const date = new Date();
+    date.setHours(0);
+    date.setMinutes(0);
+    date.setSeconds(seconds);
+
+    return date.toISOString().split("T")[1].split(".")[0];
+  }
+
+  // Render the countdown to the next daily wingo
+  useEffect(() => {
+    if (props.mode !== "daily") {
+      return;
+    }
+
+    if (props.inProgress) {
+      return;
+    }
+
+    const intervalId = window.setInterval(() => setSecondsUntilNextDailyWingo(getSecondsUntilMidnight()), 1000);
+
+    return () => clearInterval(intervalId);
+  }, [props.mode, props.inProgress]);
+
   return (
     <div className="App">
       <div>{displayOutcome()}</div>
+      {props.mode === "daily" && (
+        <MessageNotification type="default">
+          Next Daily Wordle in: {secondsToTimeString(secondsUntilNextDailyWingo)}
+        </MessageNotification>
+      )}
       <div>
         {!props.inProgress && props.mode !== "daily" && (
           <Button
