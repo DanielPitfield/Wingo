@@ -124,7 +124,7 @@ export const PuzzleConfig: React.FC<Props> = (props) => {
         onClick={() =>
           result === "in-progress" && tileType !== "hint" && onAnswerOptionClick(tileType === "correct-answer-option")
         }
-        data-is-clickable={result === "in-progress" && tileType !== "hint"}
+        data-tile-type={tileType}
         data-is-readonly={result !== "in-progress"}
         data-is-correct-answer={tileType === "correct-answer-option"}
       >

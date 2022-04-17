@@ -1117,6 +1117,7 @@ $nubble-colors-names: (
   }
   .sequence {
     display: flex;
+    margin-bottom: 2em;
   }
   .answer-options {
     display: flex;
@@ -1130,9 +1131,11 @@ $nubble-colors-names: (
     position: relative;
     box-shadow: 0 0 2px #999;
     opacity: 0.75;
-    &[data-is-clickable="true"] {
+    &[data-tile-type$="answer-option"] {
+      border-left: 3px solid #777a;
+      border-bottom: 3px solid #777a;
       opacity: 0.9;
-      &:hover {
+      &[data-is-readonly="false"]:hover {
         background-color: #f2f2f2;
         opacity: 0.75;
         cursor: pointer;
