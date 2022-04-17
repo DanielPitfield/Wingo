@@ -472,29 +472,29 @@ $data-statuses: (
     flex-grow: 1;
     flex-direction: column;
     margin-bottom: 0.6em;
+    font-size: 0.74em;
     .sidebar {
       background: #ddd;
-      padding: 1.2em;
-      padding-bottom: 2em;
+      padding: 0.8em;
       margin: 0.6em;
       margin-bottom: 0;
       &.campaign-sidebar {
         padding: 0;
-        .sidebar-title {
-          margin: 0;
-          padding: 0.3em 0.4em;
-        }
-        .campaign {
+        .campaign.widgets {
           padding: 0;
           margin: 0;
+          .widget {
+            margin: 0;
+            min-height: 17em;
+          }
         }
       }
       .sidebar-title {
-        padding: 10px;
-        padding-bottom: 20px;
+        padding: 0.2em;
+        padding-bottom: 0.4em;
         margin: 0;
         color: #fff;
-        font-size: 3rem;
+        font-size: 1.5em;
         user-select: none;
         text-transform: uppercase;
         .logo {
@@ -515,8 +515,8 @@ $data-statuses: (
     flex-direction: column;
     list-style-type: none;
     margin: 0.4em;
-    width: 12.8em;
-    height: 7.5em;
+    width: 11em;
+    height: 7em;
     background-color: #eee;
     border-bottom: 3px solid #ccc;
     padding: 1em;
@@ -537,9 +537,39 @@ $data-statuses: (
     }
     .widget-title {
       font-size: 1.2em;
+      position: relative;
+      .tooltip {
+        display: none;
+        position: absolute;
+        z-index: 9999;
+        top: 0;
+        right: 0;
+        margin: 1em;
+        background-color: #eee;
+        box-shadow: 0 0 4px #888;
+        color: #777;
+        padding: 0.5em;
+        min-width: 9em;
+        max-width: 16em;
+        text-transform: none;
+        font-size: 0.9em;
+      }
+      .tooltip-icon {
+        position: absolute;
+        right: 0;
+        opacity: 0.6;
+        cursor: help;
+        &:hover {
+          opacity: 1;
+          & + .tooltip {
+            display: flex;
+          }
+        }
+      }
     }
     .widget-button-wrapper {
       position: relative;
+      font-size: 0.95em;
       .widget-button {
         display: flex;
         flex-shrink: 0;

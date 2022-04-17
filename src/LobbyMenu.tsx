@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Page, pages } from "./App";
-import { BsGearFill } from "react-icons/bs";
+import { BsGearFill, BsInfoCircleFill } from "react-icons/bs";
 import Star from "./images/star.png";
 import GoldCoin from "./images/gold.png";
 import { AllChallenges } from "./Challenges/AllChallenges";
@@ -35,12 +35,21 @@ export const LobbyMenu: React.FC<Props> = (props) => {
     isConfigShown: false,
   });
 
+  /**
+   *
+   * @param page
+   * @returns
+   */
   function renderGameModeTile(page: Page) {
     const pageInfo = pages.find((x) => x.page === page);
 
     return (
       <li className="widget">
-        <span className="widget-title">{pageInfo?.shortTitle || pageInfo?.title || "(Unnamed)"}</span>
+        <span className="widget-title">
+          {pageInfo?.shortTitle || pageInfo?.title || "(Unnamed)"}
+          {pageInfo?.description && <BsInfoCircleFill className="icon tooltip-icon" />}
+          <p className="tooltip">{pageInfo?.description}</p>
+        </span>
         <div className="widget-button-wrapper">
           <Button mode="accept" data-game-mode={page} onClick={() => props.setPage(page)}>
             Play
@@ -102,7 +111,6 @@ export const LobbyMenu: React.FC<Props> = (props) => {
     <div className="home">
       <div className="games">
         <div className="sidebar campaign-sidebar">
-          <div className="sidebar-title">Campaign</div>
           <Campaign
             onlyShowCurrentArea
             setSelectedArea={props.setSelectedArea}
@@ -114,7 +122,7 @@ export const LobbyMenu: React.FC<Props> = (props) => {
         </div>
 
         <div className="sidebar">
-          <div className="sidebar-title">Wordle</div>
+          <div className="sidebar-title">Letters</div>
           <ul className="widgets">
             {renderGameModeTile("wingo/daily")}
             {renderGameModeTile("wingo/repeat")}
@@ -123,24 +131,24 @@ export const LobbyMenu: React.FC<Props> = (props) => {
             {renderGameModeTile("wingo/limitless")}
             {renderGameModeTile("wingo/puzzle")}
             {renderGameModeTile("wingo/interlinked")}
+            {renderGameModeTile("countdown/letters")}
           </ul>
         </div>
 
         <div className="sidebar">
           <div className="sidebar-title">Numbers</div>
           <ul className="widgets">
-            {renderGameModeTile("countdown/numbers")}
             {renderGameModeTile("numbers/arithmetic_reveal")}
             {renderGameModeTile("numbers/arithmetic_drag")}
+            {renderGameModeTile("countdown/numbers")}
             {renderGameModeTile("nubble")}
           </ul>
         </div>
 
         <div className="sidebar">
-          <div className="sidebar-title">Other</div>
+          <div className="sidebar-title">Puzzle</div>
           <ul className="widgets">
-            {renderGameModeTile("countdown/letters")}
-            {renderGameModeTile("puzzle")}
+            {renderGameModeTile("puzzle/sequence")}
             {renderGameModeTile("letters_categories")}
           </ul>
         </div>

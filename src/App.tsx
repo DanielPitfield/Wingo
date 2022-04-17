@@ -49,29 +49,89 @@ export type Page =
   | "numbers/arithmetic_reveal"
   | "numbers/arithmetic_drag"
   | "nubble"
-  | "puzzle"
+  | "puzzle/sequence"
   | "campaign"
   | "campaign/area"
   | "campaign/area/level";
 
 // This is needed for runtime; make sure it matches the Page type
-export const pages: { page: Page; title: string; shortTitle?: string }[] = [
+export const pages: { page: Page; title: string; description?: string; shortTitle?: string }[] = [
   { page: "splash-screen", title: "Wingo" },
   { page: "home", title: "" },
-  { page: "wingo/daily", title: "Daily Wingo", shortTitle: "Daily" },
-  { page: "wingo/repeat", title: "Standard/Normal Wingo", shortTitle: "Standard/Normal" },
-  { page: "wingo/category", title: "Wingo Categories", shortTitle: "Categories" },
-  { page: "wingo/increasing", title: "Wingo Increasing Length", shortTitle: "Increasing Length" },
-  { page: "wingo/limitless", title: "Wingo Limitless/Survival", shortTitle: "Limitless/Survival" },
-  { page: "wingo/puzzle", title: "Wingo Puzzle", shortTitle: "Puzzle" },
-  { page: "wingo/interlinked", title: "Wingo Interlinked", shortTitle: "Interlinked" },
-  { page: "letters_categories", title: "Letters Categories", shortTitle: "Categories (5)" },
-  { page: "countdown/letters", title: "Countdown Letters", shortTitle: "Countdown Letters" },
-  { page: "countdown/numbers", title: "Countdown Numbers", shortTitle: "Countdown Numbers" },
-  { page: "numbers/arithmetic_reveal", title: "Arithmetic", shortTitle: "Arithmetic" },
-  { page: "numbers/arithmetic_drag", title: "Arithmetic (drag and drop)", shortTitle: "Arithmetic (drag and drop)" },
-  { page: "nubble", title: "Nubble", shortTitle: "Nubble" },
-  { page: "puzzle", title: "Puzzle", shortTitle: "Puzzle" },
+  { page: "wingo/daily", title: "Daily Wingo", description: "Guess today's word", shortTitle: "Daily" },
+  { page: "wingo/repeat", title: "Standard/Normal Wingo", description: "Guess a word", shortTitle: "Standard" },
+  {
+    page: "wingo/category",
+    title: "Wingo Categories",
+    description: "Guess a word related to a category",
+    shortTitle: "Categories",
+  },
+  {
+    page: "wingo/increasing",
+    title: "Wingo Increasing Length",
+    description: "Increase the word length to guess with every correct answer",
+    shortTitle: "Increasing",
+  },
+  {
+    page: "wingo/limitless",
+    title: "Wingo Limitless/Survival",
+    description: "Gain lives with correct, early answers; how long can you survive?",
+    shortTitle: "Limitless",
+  },
+  {
+    page: "wingo/puzzle",
+    title: "Wingo Puzzle",
+    description: "Use a cryptic clue to guess the word as fast as possible!",
+    shortTitle: "Puzzle",
+  },
+  {
+    page: "wingo/interlinked",
+    title: "Wingo Interlinked",
+    description: "Guess two or more words, interlinked by at least 1 letter",
+    shortTitle: "Interlinked",
+  },
+  {
+    page: "letters_categories",
+    title: "Letters Categories",
+    description: "Guess the word for each category",
+    shortTitle: "Categories (5)",
+  },
+  {
+    page: "countdown/letters",
+    title: "Countdown Letters",
+    description: "Find the highest scoring word from the list of random letters",
+    shortTitle: "Countdown",
+  },
+  {
+    page: "countdown/numbers",
+    title: "Countdown Numbers",
+    description: "Get the target number using a list of random numbers",
+    shortTitle: "Countdown",
+  },
+  {
+    page: "numbers/arithmetic_reveal",
+    title: "Quick Maths",
+    description: "Test your arithmetic with quickfire calculations",
+    shortTitle: "Quick Maths",
+  },
+  {
+    page: "numbers/arithmetic_drag",
+    title: "Arithmetic order",
+    description: "Put the arithmetic expressions in the correct order",
+    shortTitle: "Order",
+  },
+  {
+    page: "nubble",
+    title: "Nubble",
+    description: "Find the highest scoring number from a list of random numbers",
+    shortTitle: "Nubble",
+  },
+  {
+    page: "puzzle/sequence",
+    title: "Sequence Puzzle",
+    description: "Find what comes next in the sequence",
+    shortTitle: "Sequence",
+  },
   { page: "campaign", title: "Campaign", shortTitle: "Campaign" },
   { page: "campaign/area", title: "Campaign Areas", shortTitle: "Areas" },
   { page: "campaign/area/level", title: "Campaign Level", shortTitle: "Level" },
@@ -543,7 +603,7 @@ export const App: React.FC = () => {
           ></NubbleConfig>
         );
 
-      case "puzzle":
+      case "puzzle/sequence":
         return <PuzzleConfig theme={Themes.GenericWingo} setTheme={setTheme} />;
     }
   })();

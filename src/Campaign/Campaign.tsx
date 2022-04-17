@@ -79,7 +79,7 @@ export const Campaign: React.FC<{
                   : isCompleted
                   ? "Completed!"
                   : props.onlyShowCurrentArea
-                  ? "Continue"
+                  ? "Continue Campaign"
                   : "Explore"}
               </Button>
               {unlock_status === "unlocked" ? `${Math.max(0, current_level - 1)} / ${area.levels.length}` : "? / ?"}
