@@ -1,4 +1,5 @@
 import { CSSProperties, useEffect, useState } from "react";
+import { Button } from "../Button";
 import { MessageNotification } from "../MessageNotification";
 import { Puzzles } from "./Puzzles";
 
@@ -17,22 +18,15 @@ type SequencePuzzleThemeIcons = {
 };
 
 /** Config for a specific puzzle (exported for config from campaign) */
-export type PuzzleConfigProps =
-  | {
-      type: "sequence";
-      theme: SequencePuzzleTheme;
-      sequence: {
-        hint: SequencePuzzleStyling[];
-        correctAnswer: SequencePuzzleStyling;
-        incorrectAnswers: SequencePuzzleStyling[];
-      };
-    }
-  | {
-      type: "rotate";
-      theme: SequencePuzzleTheme;
-      hint: SequencePuzzleStyling[];
-      correctRotation: number;
-    };
+export type PuzzleConfigProps = {
+  type: "sequence";
+  theme: SequencePuzzleTheme;
+  sequence: {
+    hint: SequencePuzzleStyling[];
+    correctAnswer: SequencePuzzleStyling;
+    incorrectAnswers: SequencePuzzleStyling[];
+  };
+};
 
 /** Styling of the puzzle icons (defining the sequence) */
 type SequencePuzzleStyling = {
@@ -46,6 +40,7 @@ type SequencePuzzleStyling = {
 /** Properties of the component */
 interface Props {
   defaultPuzzle?: PuzzleConfigProps;
+  finishingButtonText?: string;
 }
 
 export const PuzzleConfig: React.FC<Props> = (props) => {
@@ -54,6 +49,9 @@ export const PuzzleConfig: React.FC<Props> = (props) => {
 
   // Current puzzle
   const [puzzle, setPuzzle] = useState<PuzzleConfigProps | undefined>(props.defaultPuzzle);
+
+  // Index at which to display the correct answer, among the incorrect answers
+  const [correctAnswerIndex, setCorrectAnswerIndex] = useState(0);
 
   // Hold a mapping to swap the icon images (so the theme is not the same for many of the puzzles)
   // The mapping is from the icon to the icon image
@@ -74,23 +72,40 @@ export const PuzzleConfig: React.FC<Props> = (props) => {
     }
   }, [props.defaultPuzzle]);
 
-  // Configures the icon mapping on load
+  // Configures the icon mapping and answer option sort order on load
   useEffect(() => {
-    if (!iconMapping) {
-      // Get a random array order of 1-5
-      const randomOrder = [1, 2, 3, 4, 5].sort((_) => (Math.random() > 0.5 ? 1 : -1));
-
-      // Hold a mapping to swap the icon images (so the theme is not the same for many of the puzzles)
-      // The mapping is from the icon to the icon image
-      setIconMapping({
-        icon1: `icon${randomOrder[0]}Src` as keyof SequencePuzzleThemeIcons,
-        icon2: `icon${randomOrder[1]}Src` as keyof SequencePuzzleThemeIcons,
-        icon3: `icon${randomOrder[2]}Src` as keyof SequencePuzzleThemeIcons,
-        icon4: `icon${randomOrder[3]}Src` as keyof SequencePuzzleThemeIcons,
-        icon5: `icon${randomOrder[4]}Src` as keyof SequencePuzzleThemeIcons,
-      });
+    if (result !== "in-progress") {
+      return;
     }
-  }, []);
+
+    if (!puzzle) {
+      return;
+    }
+
+    // Set the correct answer option index to be randomly among the incorrect answers
+    setCorrectAnswerIndex(Math.round(Math.random() * puzzle.sequence.incorrectAnswers.length));
+
+    // Get a random array order of 1-5
+    const randomOrder = [1, 2, 3, 4, 5].sort((_) => (Math.random() > 0.5 ? 1 : -1));
+
+    // Hold a mapping to swap the icon images (so the theme is not the same for many of the puzzles)
+    // The mapping is from the icon to the icon image
+    setIconMapping({
+      icon1: `icon${randomOrder[0]}Src` as keyof SequencePuzzleThemeIcons,
+      icon2: `icon${randomOrder[1]}Src` as keyof SequencePuzzleThemeIcons,
+      icon3: `icon${randomOrder[2]}Src` as keyof SequencePuzzleThemeIcons,
+      icon4: `icon${randomOrder[3]}Src` as keyof SequencePuzzleThemeIcons,
+      icon5: `icon${randomOrder[4]}Src` as keyof SequencePuzzleThemeIcons,
+    });
+  }, [result, puzzle]);
+
+  /**
+   * Resets the game.
+   */
+  function resetGame() {
+    setResult("in-progress");
+    setPuzzle({ ...Puzzles[Math.round(Math.random() * (Puzzles.length - 1))] });
+  }
 
   /**
    * Handler on click of an option.
@@ -180,11 +195,12 @@ export const PuzzleConfig: React.FC<Props> = (props) => {
       case "sequence": {
         const answerOptions = puzzle.sequence.incorrectAnswers
           // Render each incorrect answer
-          .map((styling, i) => renderSequenceTile(`incorrect-answer-option-${i}`, styling, "incorrect-answer-option"))
-          .concat([
-            // Render the correct answer
-            renderSequenceTile("correct-answer-option", puzzle.sequence.correctAnswer, "correct-answer-option"),
-          ]);
+          .map((styling, i) => renderSequenceTile(`incorrect-answer-option-${i}`, styling, "incorrect-answer-option"));
+
+        answerOptions.splice(correctAnswerIndex, 0, [
+          // Render the correct answer
+          renderSequenceTile("correct-answer-option", puzzle.sequence.correctAnswer, "correct-answer-option"),
+        ]);
 
         return (
           <>
@@ -194,10 +210,6 @@ export const PuzzleConfig: React.FC<Props> = (props) => {
             <div className="answer-options">{answerOptions}</div>
           </>
         );
-      }
-
-      case "rotate": {
-        break;
       }
     }
   }
@@ -219,9 +231,6 @@ export const PuzzleConfig: React.FC<Props> = (props) => {
               switch (puzzle.type) {
                 case "sequence":
                   return "What comes next in the sequence?";
-
-                case "rotate":
-                  return "Find the correct rotation";
               }
             })()}
           </MessageNotification>
@@ -238,6 +247,11 @@ export const PuzzleConfig: React.FC<Props> = (props) => {
   return (
     <div className="App puzzle-config" style={{ backgroundImage: puzzle && `url(${puzzle.theme.backgroundImageSrc})` }}>
       {renderNotification()}
+      {result !== "in-progress" && (
+        <Button mode="accept" onClick={() => resetGame()}>
+          {props.finishingButtonText || "Restart"}
+        </Button>
+      )}
       {renderPuzzle()}
     </div>
   );
