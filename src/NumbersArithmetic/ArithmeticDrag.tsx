@@ -1,11 +1,11 @@
 import React, { useState } from "react";
+import { arrayMove, OrderGroup } from "react-draggable-order";
 import { Page } from "../App";
-import { MessageNotification } from "../MessageNotification";
 import LetterTile from "../LetterTile";
-import { operators, operators_symbols, pretty_operator_symbols } from "../Nubble/getValidValues";
+import { operators, pretty_operator_symbols } from "../Nubble/getValidValues";
 import { randomIntFromInterval } from "../Nubble/Nubble";
 import ProgressBar, { GreenToRedColorTransition } from "../ProgressBar";
-import { start } from "repl";
+import { DraggableItem } from "./DraggableItem";
 
 interface Props {
   mode: "order" | "match";
@@ -247,14 +247,20 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
     };
   }, [setSeconds, seconds, props.timerConfig.isTimed, revealState]);
 
+  /**
+   *
+   * @returns
+   */
   function displayTiles() {
-    let Grid = [];
-
-    for (let i = 0; i < tiles.length; i++) {
-      Grid.push(<LetterTile letter={tiles[i].expression} status={"not set"}></LetterTile>);
-    }
-
-    return Grid;
+    return (
+      <OrderGroup mode={"between"}>
+        {tiles.map((tile, index) => (
+          <DraggableItem key={index} index={index} onMove={(toIndex) => setTiles(arrayMove(tiles, index, toIndex))}>
+            <LetterTile letter={tile.expression} status="not set" />
+          </DraggableItem>
+        ))}
+      </OrderGroup>
+    );
   }
 
   /**
