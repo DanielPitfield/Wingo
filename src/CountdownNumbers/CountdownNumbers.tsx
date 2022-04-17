@@ -8,6 +8,7 @@ import NumberTile from "./NumberTile";
 import { Guess, hasNumberSelectionFinished, hasNumberSelectionStarted } from "./CountdownNumbersConfig";
 import { CountdownRow } from "./CountdownRow";
 import { getCountdownAnswer } from "../Nubble/getValidValues";
+import { Theme } from "../Themes";
 
 interface Props {
   mode: "countdown_numbers_casual" | "countdown_numbers_realistic";
@@ -27,7 +28,7 @@ interface Props {
   hasTimerEnded: boolean;
   hasSubmitNumber: boolean;
   targetNumber: number | null;
-  backgroundImageSrc?: string;
+  theme: Theme;
   onClick: (
     value: number | null,
     id: { type: "original"; index: number } | { type: "intermediary"; rowIndex: number }
@@ -35,6 +36,7 @@ interface Props {
   onRightClick: (value: number | null, index: number) => void;
   clearGrid: () => void;
   submitBestGuess: () => void;
+  setTheme: (theme: Theme) => void;
   setPage: (page: Page) => void;
   onEnter: () => void;
   onSubmitCountdownNumber: (number: number) => void;
@@ -317,7 +319,7 @@ const CountdownNumbers: React.FC<Props> = (props) => {
   }
 
   return (
-    <div className="App" style={{ backgroundImage: props.backgroundImageSrc && `url(${props.backgroundImageSrc})` }}>
+    <div className="App" style={{ backgroundImage: `url(${props.theme.backgroundImageSrc})` }}>
       <div>{displayOutcome()}</div>
 
       <div>

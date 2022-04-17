@@ -18,6 +18,7 @@ import { words_chemical_elements } from "./WordArrays/Categories/chemical_elemen
 import { words_colours } from "./WordArrays/Categories/colours";
 import { words_fruits_and_vegetables } from "./WordArrays/Categories/fruits_and_vegetables";
 import { words_sports } from "./WordArrays/Categories/sports";
+import { Theme } from "./Themes";
 
 export interface WordleConfigProps {
   mode: "daily" | "repeat" | "category" | "increasing" | "limitless" | "puzzle" | "interlinked";
@@ -32,7 +33,6 @@ export interface WordleConfigProps {
   puzzleRevealMs: number;
   puzzleLeaveNumBlanks: number;
   defaultnumGuesses: number;
-  backgroundImageSrc?: string;
   checkInDictionary?: boolean;
   finishingButtonText?: string;
   onComplete?: (wasCorrect: boolean) => void;
@@ -40,8 +40,10 @@ export interface WordleConfigProps {
 
 interface Props extends WordleConfigProps {
   page: Page;
+  theme?: Theme;
   setPage: (page: Page) => void;
   addGold: (gold: number) => void;
+  setTheme: (theme: Theme) => void;
 }
 
 export const wordLengthMappingsGuessable = [
@@ -824,7 +826,7 @@ const WordleConfig: React.FC<Props> = (props) => {
       revealedLetterIndexes={revealedLetterIndexes}
       letterStatuses={letterStatuses}
       finishingButtonText={props.finishingButtonText}
-      backgroundImageSrc={props.backgroundImageSrc}
+      theme={props.theme}
       onEnter={onEnter}
       onSubmitLetter={onSubmitLetter}
       onSubmitTargetCategory={onSubmitTargetCategory}
@@ -832,6 +834,7 @@ const WordleConfig: React.FC<Props> = (props) => {
       ResetGame={ResetGame}
       ContinueGame={ContinueGame}
       setPage={props.setPage}
+      setTheme={props.setTheme}
     ></Wordle>
   );
 };

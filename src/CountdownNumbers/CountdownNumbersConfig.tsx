@@ -3,6 +3,7 @@ import { Page } from "../App";
 import CountdownNumbers from "./CountdownNumbers";
 import { calculateTotal } from "./NumberRow";
 import { operators } from "../Nubble/getValidValues";
+import { Theme } from "../Themes";
 
 interface Props {
   page: Page;
@@ -11,7 +12,8 @@ interface Props {
   defaultNumGuesses: number;
   defaultExpressionLength: number;
   timerConfig: { isTimed: false } | { isTimed: true; seconds: number };
-  backgroundImageSrc?: string;
+  theme: Theme;
+  setTheme: (theme: Theme) => void;
   setPage: (page: Page) => void;
   addGold: (gold: number) => void;
 }
@@ -424,7 +426,8 @@ const CountdownNumbersConfig: React.FC<Props> = (props) => {
       hasTimerEnded={hasTimerEnded}
       hasSubmitNumber={hasSubmitNumber}
       targetNumber={targetNumber}
-      backgroundImageSrc={props.backgroundImageSrc}
+      theme={props.theme}
+      setTheme={props.setTheme}
       onClick={addOperandToGuess}
       onRightClick={removeOperandFromGuess}
       onEnter={onEnter}

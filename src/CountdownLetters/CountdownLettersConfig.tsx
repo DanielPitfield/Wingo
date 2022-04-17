@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Page } from "../App";
 import CountdownLetters from "./CountdownLetters";
 import { wordLengthMappingsGuessable } from "../WordleConfig";
+import { Theme } from "../Themes";
 
 interface Props {
   page: Page;
@@ -9,7 +10,8 @@ interface Props {
   timerConfig: { isTimed: false } | { isTimed: true; seconds: number };
   keyboard: boolean;
   defaultWordLength: number;
-  backgroundImageSrc?: string;
+  theme: Theme;
+  setTheme: (theme: Theme) => void;
   setPage: (page: Page) => void;
   addGold: (gold: number) => void;
 }
@@ -310,8 +312,9 @@ const CountdownLettersConfig: React.FC<Props> = (props) => {
       hasSubmitLetter={hasSubmitLetter}
       targetWord={targetWord || ""}
       letterStatuses={letterStatuses}
+      theme={props.theme}
+      setTheme={props.setTheme}
       onEnter={onEnter}
-      backgroundImageSrc={props.backgroundImageSrc}
       onSubmitCountdownLetter={onSubmitCountdownLetter}
       onSubmitCountdownWord={onSubmitCountdownWord}
       onSubmitLetter={onSubmitLetter}

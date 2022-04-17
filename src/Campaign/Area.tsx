@@ -1,28 +1,28 @@
 import React from "react";
-import { Page, pages } from "./App";
-import { Button } from "./Button";
+import { Page, pages } from "../App";
+import { Button } from "../Button";
 import { LevelConfig } from "./Level";
-import { MessageNotification } from "./MessageNotification";
-import { SaveData } from "./SaveData";
+import { MessageNotification } from "../MessageNotification";
+import { SaveData } from "../SaveData";
+import { Theme } from "../Themes";
 
 export interface AreaConfig {
   name: string;
   unlock_level: LevelConfig;
   levels: LevelConfig[];
-  backgroundImageSrc?: string;
+  theme: Theme;
 }
 
+/** Portion of the campaign, with many levels */
 export const Area: React.FC<{
   area: AreaConfig;
+  setTheme: (theme: Theme) => void;
   setSelectedCampaignLevel: (level: LevelConfig) => void;
   setPage: (page: Page) => void;
 }> = (props) => {
   return (
     // LEVEL SELECTION
-    <div
-      className="area widgets"
-      style={{ backgroundImage: props.area.backgroundImageSrc && `url(${props.area.backgroundImageSrc})` }}
-    >
+    <div className="area widgets" style={{ backgroundImage: `url(${props.area.theme.backgroundImageSrc})` }}>
       {props.area.levels.map((level, i) => {
         const campaignProgress = SaveData.getCampaignProgress();
         const areaInfo = campaignProgress.areas.find((x) => x.name === props.area.name);

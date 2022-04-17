@@ -6,6 +6,7 @@ import { Button } from "./Button";
 import { MessageNotification } from "./MessageNotification";
 import ProgressBar, { GreenToRedColorTransition } from "./ProgressBar";
 import { categoryMappings, getNewLives } from "./WordleConfig";
+import { Theme } from "./Themes";
 
 interface Props {
   mode: "daily" | "repeat" | "category" | "increasing" | "limitless" | "puzzle" | "interlinked" | "letters_categories";
@@ -35,7 +36,7 @@ interface Props {
   }[];
   revealedLetterIndexes: number[];
   finishingButtonText?: string;
-  backgroundImageSrc?: string;
+  theme?: Theme;
   setPage: (page: Page) => void;
   onEnter: () => void;
   onSubmitLetter: (letter: string) => void;
@@ -43,6 +44,7 @@ interface Props {
   onBackspace: () => void;
   ResetGame: () => void;
   ContinueGame: () => void;
+  setTheme: (theme: Theme) => void;
 }
 
 const Wordle: React.FC<Props> = (props) => {
@@ -268,7 +270,7 @@ const Wordle: React.FC<Props> = (props) => {
   }, [props.mode, props.inProgress]);
 
   return (
-    <div className="App" style={{ backgroundImage: props.backgroundImageSrc && `url(${props.backgroundImageSrc})` }}>
+    <div className="App" style={{ backgroundImage: props.theme && `url(${props.theme.backgroundImageSrc})` }}>
       <div>{displayOutcome()}</div>
       {props.mode === "daily" && (
         <MessageNotification type="default">

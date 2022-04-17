@@ -2,25 +2,11 @@ import { CSSProperties, useEffect, useState } from "react";
 import { Button } from "../Button";
 import { MessageNotification } from "../MessageNotification";
 import { Puzzles } from "./Puzzles";
-
-/* General theme for the whole puzzle */
-type SequencePuzzleTheme = {
-  backgroundImageSrc: string;
-} & SequencePuzzleThemeIcons;
-
-/* Theme for the individual icons */
-type SequencePuzzleThemeIcons = {
-  icon1Src: string;
-  icon2Src: string;
-  icon3Src: string;
-  icon4Src: string;
-  icon5Src: string;
-};
+import { Theme, ThemeIcons, Themes } from "../Themes";
 
 /** Config for a specific puzzle (exported for config from campaign) */
 export type PuzzleConfigProps = {
   type: "sequence";
-  theme: SequencePuzzleTheme;
   sequence: {
     hint: SequencePuzzleStyling[];
     correctAnswer: SequencePuzzleStyling;
@@ -40,9 +26,12 @@ type SequencePuzzleStyling = {
 /** Properties of the component */
 interface Props {
   defaultPuzzle?: PuzzleConfigProps;
+  theme: Theme;
   finishingButtonText?: string;
+  setTheme: (theme: Theme) => void;
 }
 
+/** Puzzle config */
 export const PuzzleConfig: React.FC<Props> = (props) => {
   // Result of the guess
   const [result, setResult] = useState<"in-progress" | "correct" | "incorrect">("in-progress");
@@ -56,11 +45,11 @@ export const PuzzleConfig: React.FC<Props> = (props) => {
   // Hold a mapping to swap the icon images (so the theme is not the same for many of the puzzles)
   // The mapping is from the icon to the icon image
   const [iconMapping, setIconMapping] = useState<{
-    icon1: keyof SequencePuzzleThemeIcons;
-    icon2: keyof SequencePuzzleThemeIcons;
-    icon3: keyof SequencePuzzleThemeIcons;
-    icon4: keyof SequencePuzzleThemeIcons;
-    icon5: keyof SequencePuzzleThemeIcons;
+    icon1: keyof ThemeIcons;
+    icon2: keyof ThemeIcons;
+    icon3: keyof ThemeIcons;
+    icon4: keyof ThemeIcons;
+    icon5: keyof ThemeIcons;
   }>();
 
   // Picks a random puzzle if one was not passed in through the props
@@ -91,11 +80,11 @@ export const PuzzleConfig: React.FC<Props> = (props) => {
     // Hold a mapping to swap the icon images (so the theme is not the same for many of the puzzles)
     // The mapping is from the icon to the icon image
     setIconMapping({
-      icon1: `icon${randomOrder[0]}Src` as keyof SequencePuzzleThemeIcons,
-      icon2: `icon${randomOrder[1]}Src` as keyof SequencePuzzleThemeIcons,
-      icon3: `icon${randomOrder[2]}Src` as keyof SequencePuzzleThemeIcons,
-      icon4: `icon${randomOrder[3]}Src` as keyof SequencePuzzleThemeIcons,
-      icon5: `icon${randomOrder[4]}Src` as keyof SequencePuzzleThemeIcons,
+      icon1: `icon${randomOrder[0]}Src` as keyof ThemeIcons,
+      icon2: `icon${randomOrder[1]}Src` as keyof ThemeIcons,
+      icon3: `icon${randomOrder[2]}Src` as keyof ThemeIcons,
+      icon4: `icon${randomOrder[3]}Src` as keyof ThemeIcons,
+      icon5: `icon${randomOrder[4]}Src` as keyof ThemeIcons,
     });
   }, [result, puzzle]);
 
@@ -147,35 +136,35 @@ export const PuzzleConfig: React.FC<Props> = (props) => {
           <div
             className="icon"
             data-icon-number="1"
-            style={{ ...styling.icon1, backgroundImage: `url(${puzzle.theme[iconMapping.icon1]})` }}
+            style={{ ...styling.icon1, backgroundImage: `url(${props.theme[iconMapping.icon1]})` }}
           ></div>
         )}
         {styling.icon2 && (
           <div
             className="icon"
             data-icon-number="2"
-            style={{ ...styling.icon2, backgroundImage: `url(${puzzle.theme[iconMapping.icon2]})` }}
+            style={{ ...styling.icon2, backgroundImage: `url(${props.theme[iconMapping.icon2]})` }}
           ></div>
         )}
         {styling.icon3 && (
           <div
             className="icon"
             data-icon-number="3"
-            style={{ ...styling.icon3, backgroundImage: `url(${puzzle.theme[iconMapping.icon3]})` }}
+            style={{ ...styling.icon3, backgroundImage: `url(${props.theme[iconMapping.icon3]})` }}
           ></div>
         )}
         {styling.icon4 && (
           <div
             className="icon"
             data-icon-number="4"
-            style={{ ...styling.icon4, backgroundImage: `url(${puzzle.theme[iconMapping.icon4]})` }}
+            style={{ ...styling.icon4, backgroundImage: `url(${props.theme[iconMapping.icon4]})` }}
           ></div>
         )}
         {styling.icon5 && (
           <div
             className="icon"
             data-icon-number="5"
-            style={{ ...styling.icon5, backgroundImage: `url(${puzzle.theme[iconMapping.icon5]})` }}
+            style={{ ...styling.icon5, backgroundImage: `url(${props.theme[iconMapping.icon5]})` }}
           ></div>
         )}
       </div>
@@ -245,7 +234,7 @@ export const PuzzleConfig: React.FC<Props> = (props) => {
   }
 
   return (
-    <div className="App puzzle-config" style={{ backgroundImage: puzzle && `url(${puzzle.theme.backgroundImageSrc})` }}>
+    <div className="App puzzle-config" style={{ backgroundImage: puzzle && `url(${props.theme.backgroundImageSrc})` }}>
       {renderNotification()}
       {result !== "in-progress" && (
         <Button mode="accept" onClick={() => resetGame()}>

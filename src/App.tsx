@@ -10,13 +10,14 @@ import CountdownBackgroundSrc from "./images/countdown-background.jpeg";
 import { SaveData } from "./SaveData";
 import CountdownLettersConfig from "./CountdownLetters/CountdownLettersConfig";
 import CountdownNumbersConfig from "./CountdownNumbers/CountdownNumbersConfig";
-import { Campaign } from "./Campaign";
-import { Area, AreaConfig } from "./Area";
-import { Level, LevelConfig } from "./Level";
+import { Campaign } from "./Campaign/Campaign";
+import { Area, AreaConfig } from "./Campaign/Area";
+import { Level, LevelConfig } from "./Campaign/Level";
 import LetterCategoriesConfig from "./LetterCategories/LetterCategoriesConfig";
 import ArithmeticReveal from "./NumbersArithmetic/ArithmeticReveal";
 import ArithmeticDrag from "./NumbersArithmetic/ArithmeticDrag";
 import { PuzzleConfig } from "./Puzzles/PuzzleConfig";
+import { Theme, Themes } from "./Themes";
 
 const wordLength = 5;
 const numGuesses = 6;
@@ -85,6 +86,7 @@ export const App: React.FC = () => {
   const [page, setPage] = useState<Page>("splash-screen");
   const [selectedCampaignArea, setSelectedCampaignArea] = useState<AreaConfig | null>(null);
   const [selectedCampaignLevel, setSelectedCampaignLevel] = useState<LevelConfig | null>(null);
+  const [theme, setTheme] = useState<Theme>(Themes.GenericWingo);
   const [gold, setGold] = useState<number>(SaveData.readGold());
 
   const [gameOptionToggles, setgameOptionToggles] = useState<
@@ -228,15 +230,16 @@ export const App: React.FC = () => {
   }
 
   const pageComponent = (() => {
-    const commonProps = {
+    const commonWingoProps = {
       saveData: saveData,
       defaultnumGuesses: numGuesses,
       puzzleRevealMs: puzzleRevealMs,
       puzzleLeaveNumBlanks: puzzleLeaveNumBlanks,
       page: page,
+      theme: Themes.GenericWingo,
       setPage: setPage,
+      setTheme: setTheme,
       addGold: addGold,
-      backgroundImageSrc: WingoBackgroundSrc,
     };
 
     switch (page) {
@@ -290,6 +293,8 @@ export const App: React.FC = () => {
       case "campaign":
         return (
           <Campaign
+            theme={theme}
+            setTheme={setTheme}
             setPage={setPage}
             setSelectedArea={setSelectedCampaignArea}
             setSelectedCampaignLevel={setSelectedCampaignLevel}
@@ -299,7 +304,12 @@ export const App: React.FC = () => {
       case "campaign/area":
         return (
           selectedCampaignArea && (
-            <Area area={selectedCampaignArea} setSelectedCampaignLevel={setSelectedCampaignLevel} setPage={setPage} />
+            <Area
+              area={selectedCampaignArea}
+              setTheme={setTheme}
+              setSelectedCampaignLevel={setSelectedCampaignLevel}
+              setPage={setPage}
+            />
           )
         );
 
@@ -309,10 +319,11 @@ export const App: React.FC = () => {
             <Level
               level={selectedCampaignLevel}
               page={page}
+              theme={theme}
               setPage={setPage}
+              setTheme={setTheme}
               addGold={addGold}
               onCompleteLevel={onCompleteLevel}
-              backgroundImageSrc={selectedCampaignArea?.backgroundImageSrc}
             />
           )
         );
@@ -320,7 +331,7 @@ export const App: React.FC = () => {
       case "wingo/daily":
         return (
           <WordleConfig
-            {...commonProps}
+            {...commonWingoProps}
             mode="daily"
             firstLetterProvided={gameOptionToggles.find((x) => x.page === "wingo/daily")?.firstLetter || false}
             timerConfig={
@@ -337,7 +348,7 @@ export const App: React.FC = () => {
       case "wingo/repeat":
         return (
           <WordleConfig
-            {...commonProps}
+            {...commonWingoProps}
             mode="repeat"
             firstLetterProvided={gameOptionToggles.find((x) => x.page === "wingo/repeat")?.firstLetter || false}
             timerConfig={
@@ -354,7 +365,7 @@ export const App: React.FC = () => {
       case "wingo/category":
         return (
           <WordleConfig
-            {...commonProps}
+            {...commonWingoProps}
             mode="category"
             firstLetterProvided={gameOptionToggles.find((x) => x.page === "wingo/category")?.firstLetter || false}
             timerConfig={
@@ -371,7 +382,7 @@ export const App: React.FC = () => {
       case "wingo/increasing":
         return (
           <WordleConfig
-            {...commonProps}
+            {...commonWingoProps}
             mode="increasing"
             firstLetterProvided={gameOptionToggles.find((x) => x.page === "wingo/increasing")?.firstLetter || false}
             timerConfig={
@@ -388,7 +399,7 @@ export const App: React.FC = () => {
       case "wingo/limitless":
         return (
           <WordleConfig
-            {...commonProps}
+            {...commonWingoProps}
             mode="limitless"
             firstLetterProvided={gameOptionToggles.find((x) => x.page === "wingo/limitless")?.firstLetter || false}
             timerConfig={
@@ -405,7 +416,7 @@ export const App: React.FC = () => {
       case "wingo/puzzle":
         return (
           <WordleConfig
-            {...commonProps}
+            {...commonWingoProps}
             mode="puzzle"
             firstLetterProvided={gameOptionToggles.find((x) => x.page === "wingo/puzzle")?.firstLetter || false}
             timerConfig={
@@ -423,7 +434,7 @@ export const App: React.FC = () => {
       case "wingo/interlinked":
         return (
           <WordleConfig
-            {...commonProps}
+            {...commonWingoProps}
             mode="interlinked"
             firstLetterProvided={gameOptionToggles.find((x) => x.page === "wingo/interlinked")?.firstLetter || false}
             timerConfig={
@@ -449,7 +460,8 @@ export const App: React.FC = () => {
             keyboard={gameOptionToggles.find((x) => x.page === "countdown/letters")?.keyboard || false}
             defaultWordLength={wordLength_countdown_letters}
             page={page}
-            backgroundImageSrc={CountdownBackgroundSrc}
+            theme={Themes.GenericCountdown}
+            setTheme={setTheme}
             setPage={setPage}
             addGold={addGold}
           />
@@ -458,7 +470,7 @@ export const App: React.FC = () => {
       case "letters_categories":
         return (
           <LetterCategoriesConfig
-            {...commonProps}
+            {...commonWingoProps}
             timerConfig={
               gameOptionToggles.find((x) => x.page === "letters_categories")?.timer
                 ? { isTimed: true, seconds: 30 }
@@ -483,7 +495,8 @@ export const App: React.FC = () => {
             defaultExpressionLength={countdown_numbers_ExpressionLength}
             defaultNumGuesses={countdown_numbers_NumGuesses}
             page={page}
-            backgroundImageSrc={CountdownBackgroundSrc}
+            theme={Themes.GenericCountdown}
+            setTheme={setTheme}
             setPage={setPage}
             addGold={addGold}
           />
@@ -535,7 +548,7 @@ export const App: React.FC = () => {
         );
 
       case "puzzle":
-        return <PuzzleConfig />;
+        return <PuzzleConfig theme={Themes.GenericWingo} setTheme={setTheme} />;
     }
   })();
 

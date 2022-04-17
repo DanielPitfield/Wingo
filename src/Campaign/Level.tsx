@@ -1,7 +1,8 @@
 import React from "react";
-import { Page } from "./App";
-import { MessageNotification } from "./MessageNotification";
-import WordleConfig, { WordleConfigProps } from "./WordleConfig";
+import { Page } from "../App";
+import { MessageNotification } from "../MessageNotification";
+import { Theme } from "../Themes";
+import WordleConfig, { WordleConfigProps } from "../WordleConfig";
 
 export interface LevelConfig {
   hint?: React.ReactNode;
@@ -9,20 +10,23 @@ export interface LevelConfig {
   levelProps: WordleConfigProps;
 }
 
+/** A level within an area (e.g. one game) */
 export const Level: React.FC<{
   level: LevelConfig;
   page: Page;
+  theme: Theme;
+  setTheme: (theme: Theme) => void;
   setPage: (page: Page) => void;
   addGold: (gold: number) => void;
   onCompleteLevel: (isUnlockLevel: boolean, level: LevelConfig) => void;
-  backgroundImageSrc?: string;
 }> = (props) => {
   return (
-    <div className="level" style={{ backgroundImage: props.backgroundImageSrc && `url(${props.backgroundImageSrc})` }}>
+    <div className="level" style={{ backgroundImage: `url(${props.theme.backgroundImageSrc})` }}>
       <MessageNotification type="default">{props.level.hint}</MessageNotification>
       <WordleConfig
         {...props.level.levelProps}
         page={props.page}
+        setTheme={props.setTheme}
         setPage={props.setPage}
         addGold={props.addGold}
         finishingButtonText={"Back to area"}

@@ -7,6 +7,7 @@ import { MessageNotification } from "../MessageNotification";
 import ProgressBar, { GreenToRedColorTransition } from "../ProgressBar";
 import { isWordValid } from "./CountdownLettersConfig";
 import { wordLengthMappingsGuessable } from "../WordleConfig";
+import { Theme } from "../Themes";
 
 interface Props {
   mode: "countdown_letters_casual" | "countdown_letters_realistic";
@@ -25,7 +26,8 @@ interface Props {
     letter: string;
     status: "" | "contains" | "correct" | "not set" | "not in word";
   }[];
-  backgroundImageSrc?: string;
+  theme: Theme;
+  setTheme: (theme: Theme) => void;
   setPage: (page: Page) => void;
   addGold: (gold: number) => void;
   onEnter: () => void;
@@ -385,7 +387,7 @@ const CountdownLetters: React.FC<Props> = (props) => {
   }, [manualGuessSelectionMade, props.guesses]);
 
   return (
-    <div className="App" style={{ backgroundImage: props.backgroundImageSrc && `url(${props.backgroundImageSrc})` }}>
+    <div className="App" style={{ backgroundImage: `url(${props.theme.backgroundImageSrc})` }}>
       <div>{displayOutcome()}</div>
 
       <div>
