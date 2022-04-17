@@ -7,9 +7,17 @@ import { AllChallenges } from "./Challenges/AllChallenges";
 import { SaveData } from "./SaveData";
 import ProgressBar from "./ProgressBar";
 import { Button } from "./Button";
+import { Campaign } from "./Campaign/Campaign";
+import { Theme } from "./Themes";
+import { AreaConfig } from "./Campaign/Area";
+import { LevelConfig } from "./Campaign/Level";
 
 interface Props {
+  theme: Theme;
+  setTheme: (theme: Theme) => void;
   setPage: (page: Page) => void;
+  setSelectedArea: (areaConfig: AreaConfig) => void;
+  setSelectedCampaignLevel: (level: LevelConfig) => void;
   firstLetterToggle: (value: boolean, page: Page) => void;
   timerToggle: (value: boolean, page: Page) => void;
   keyboardToggle: (value: boolean, page: Page) => void;
@@ -93,8 +101,20 @@ export const LobbyMenu: React.FC<Props> = (props) => {
   return (
     <div className="home">
       <div className="games">
+        <div className="sidebar campaign-sidebar">
+          <div className="sidebar-title">Campaign</div>
+          <Campaign
+            onlyShowCurrentArea
+            setSelectedArea={props.setSelectedArea}
+            setSelectedCampaignLevel={props.setSelectedCampaignLevel}
+            theme={props.theme}
+            setTheme={props.setTheme}
+            setPage={props.setPage}
+          />
+        </div>
+
         <div className="sidebar">
-          <div className="sidebar-title">WORDLE</div>
+          <div className="sidebar-title">Wordle</div>
           <ul className="widgets">
             {renderGameModeTile("wingo/daily")}
             {renderGameModeTile("wingo/repeat")}
@@ -107,7 +127,7 @@ export const LobbyMenu: React.FC<Props> = (props) => {
         </div>
 
         <div className="sidebar">
-          <div className="sidebar-title">NUMBERS</div>
+          <div className="sidebar-title">Numbers</div>
           <ul className="widgets">
             {renderGameModeTile("countdown/numbers")}
             {renderGameModeTile("numbers/arithmetic_reveal")}
@@ -117,9 +137,8 @@ export const LobbyMenu: React.FC<Props> = (props) => {
         </div>
 
         <div className="sidebar">
-          <div className="sidebar-title">OTHER</div>
+          <div className="sidebar-title">Other</div>
           <ul className="widgets">
-            {renderGameModeTile("campaign")}
             {renderGameModeTile("countdown/letters")}
             {renderGameModeTile("puzzle")}
             {renderGameModeTile("letters_categories")}

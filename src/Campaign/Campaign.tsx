@@ -10,6 +10,7 @@ import { AllCampaignAreas } from "./AllCampaignAreas";
 /** The entire campaign, showing the list of areas */
 export const Campaign: React.FC<{
   theme: Theme;
+  onlyShowCurrentArea?: boolean;
   setTheme: (theme: Theme) => void;
   setSelectedArea: (areaConfig: AreaConfig) => void;
   setSelectedCampaignLevel: (level: LevelConfig) => void;
@@ -54,6 +55,10 @@ export const Campaign: React.FC<{
         const current_level = areaInfo?.completedLevelCount || 0;
         const isCompleted = (areaInfo?.completedLevelCount || 0) >= area.levels.length;
 
+        if (props.onlyShowCurrentArea && isCompleted) {
+          return null;
+        }
+
         return (
           <div
             className="widget area-button"
@@ -69,7 +74,13 @@ export const Campaign: React.FC<{
                 disabled={unlock_status === "locked"}
                 onClick={() => onAreaClick(area, unlock_status)}
               >
-                {unlock_status === "locked" ? "Unlock" : isCompleted ? "Completed!" : "Explore"}
+                {unlock_status === "locked"
+                  ? "Unlock"
+                  : isCompleted
+                  ? "Completed!"
+                  : props.onlyShowCurrentArea
+                  ? "Continue"
+                  : "Explore"}
               </Button>
               {unlock_status === "unlocked" ? `${Math.max(0, current_level - 1)} / ${area.levels.length}` : "? / ?"}
             </span>

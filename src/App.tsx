@@ -5,8 +5,6 @@ import WordleConfig from "./WordleConfig";
 import { Button } from "./Button";
 import NubbleConfig from "./Nubble/NubbleConfig";
 import GoldCoin from "./images/gold.png";
-import WingoBackgroundSrc from "./images/wingo-background.jpg";
-import CountdownBackgroundSrc from "./images/countdown-background.jpeg";
 import { SaveData } from "./SaveData";
 import CountdownLettersConfig from "./CountdownLetters/CountdownLettersConfig";
 import CountdownNumbersConfig from "./CountdownNumbers/CountdownNumbersConfig";
@@ -249,41 +247,39 @@ export const App: React.FC = () => {
       case "home":
         return (
           <LobbyMenu
+            setSelectedArea={setSelectedCampaignArea}
+            setSelectedCampaignLevel={setSelectedCampaignLevel}
+            setTheme={setTheme}
+            theme={theme}
             /**
              * Updates game type configurations
              * @param value Checkbox checked (true) or not checked (false)
              * @param Page The page for the game type which options have just changed
              */
-            firstLetterToggle={(value, Page) => {
+            firstLetterToggle={(value, page) =>
               setgameOptionToggles(
-                gameOptionToggles.map((x) => {
-                  if (x.page === Page) {
-                    x.firstLetter = value;
-                  }
-                  return x;
-                })
-              );
-            }}
-            timerToggle={(value, Page) => {
+                gameOptionToggles.map((gameOption) => ({
+                  ...gameOption,
+                  firstLetter: gameOption.page === page ? value : gameOption.firstLetter,
+                }))
+              )
+            }
+            timerToggle={(value, page) =>
               setgameOptionToggles(
-                gameOptionToggles.map((x) => {
-                  if (x.page === Page) {
-                    x.timer = value;
-                  }
-                  return x;
-                })
-              );
-            }}
-            keyboardToggle={(value, Page) => {
+                gameOptionToggles.map((gameOption) => ({
+                  ...gameOption,
+                  timer: gameOption.page === page ? value : gameOption.timer,
+                }))
+              )
+            }
+            keyboardToggle={(value, page) =>
               setgameOptionToggles(
-                gameOptionToggles.map((x) => {
-                  if (x.page === Page) {
-                    x.keyboard = value;
-                  }
-                  return x;
-                })
-              );
-            }}
+                gameOptionToggles.map((gameOption) => ({
+                  ...gameOption,
+                  keyboard: gameOption.page === page ? value : gameOption.keyboard,
+                }))
+              )
+            }
             setPage={setPage}
             addGold={addGold}
             gameOptionToggles={gameOptionToggles}

@@ -471,12 +471,24 @@ $data-statuses: (
     display: flex;
     flex-grow: 1;
     flex-direction: column;
+    margin-bottom: 0.6em;
     .sidebar {
       background: #ddd;
       padding: 1.2em;
       padding-bottom: 2em;
       margin: 0.6em;
       margin-bottom: 0;
+      &.campaign-sidebar {
+        padding: 0;
+        .sidebar-title {
+          margin: 0;
+          padding: 0.3em 0.4em;
+        }
+        .campaign {
+          padding: 0;
+          margin: 0;
+        }
+      }
       .sidebar-title {
         padding: 10px;
         padding-bottom: 20px;
@@ -484,6 +496,7 @@ $data-statuses: (
         color: #fff;
         font-size: 3rem;
         user-select: none;
+        text-transform: uppercase;
         .logo {
           font-size: 1rem;
         }
