@@ -30,7 +30,7 @@ export const operators: { name: "÷" | "-" | "+" | "×"; function: (num1: number
   },
 ];
 
-export const operators_symbols = ["÷", "-", "+", "×"];
+export const rpn_operators_symbols = ["/", "-", "+", "*"];
 
 // Returns permutations of input array, https://stackoverflow.com/a/20871714
 export function permutator<T>(inputArr: T[]): T[][] {
@@ -75,7 +75,7 @@ function combRep(arr: string[], l: number) {
 
 function getOperatorPermutations(numOperands: number): string[][] {
   // Add two operator duds to circumvent missing values bug
-  let operatorDuds = operators_symbols.slice();
+  let operatorDuds = rpn_operators_symbols.slice();
   operatorDuds.push("+");
   operatorDuds.push("-");
 
