@@ -319,7 +319,7 @@ const CountdownNumbers: React.FC<Props> = (props) => {
   }
 
   return (
-    <div className="App" style={{ backgroundImage: `url(${props.theme.backgroundImageSrc})` }}>
+    <div className="App" style={{ backgroundImage: `url(${props.theme.backgroundImageSrc})`, backgroundSize: "100%" }}>
       <div>{displayOutcome()}</div>
 
       <div>
@@ -330,7 +330,7 @@ const CountdownNumbers: React.FC<Props> = (props) => {
         )}
       </div>
 
-      <div className="countdown/numbers_grid">{populateGrid(props.expressionLength)}</div>
+      <div className="countdown-numbers-grid">{populateGrid(props.expressionLength)}</div>
 
       <Button mode="destructive" onClick={props.clearGrid}>
         Clear

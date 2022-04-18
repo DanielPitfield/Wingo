@@ -387,7 +387,7 @@ const CountdownLetters: React.FC<Props> = (props) => {
   }, [manualGuessSelectionMade, props.guesses]);
 
   return (
-    <div className="App" style={{ backgroundImage: `url(${props.theme.backgroundImageSrc})` }}>
+    <div className="App" style={{ backgroundImage: `url(${props.theme.backgroundImageSrc})`, backgroundSize: "100%" }}>
       <div>{displayOutcome()}</div>
 
       <div>

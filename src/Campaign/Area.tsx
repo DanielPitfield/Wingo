@@ -22,7 +22,10 @@ export const Area: React.FC<{
 }> = (props) => {
   // LEVEL SELECTION
   return (
-    <div className="area" style={{ backgroundImage: `url(${props.area.theme.backgroundImageSrc})` }}>
+    <div
+      className="area"
+      style={{ backgroundImage: `url(${props.area.theme.backgroundImageSrc})`, backgroundSize: "100%" }}
+    >
       <section className="area-header">
         <h2 className="area-header-title">{props.area.name}</h2>
       </section>

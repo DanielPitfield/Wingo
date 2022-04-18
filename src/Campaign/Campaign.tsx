@@ -76,6 +76,7 @@ export const Campaign: React.FC<{
             key={area.name}
             style={{
               backgroundImage: `url(${area.theme.backgroundImageSrc})`,
+              backgroundSize: "100%",
             }}
           >
             <strong className="area-name widget-subtitle">Area {index + 1}</strong>

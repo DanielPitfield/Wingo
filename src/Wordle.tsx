@@ -270,7 +270,10 @@ const Wordle: React.FC<Props> = (props) => {
   }, [props.mode, props.inProgress]);
 
   return (
-    <div className="App" style={{ backgroundImage: props.theme && `url(${props.theme.backgroundImageSrc})` }}>
+    <div
+      className="App"
+      style={{ backgroundImage: props.theme && `url(${props.theme.backgroundImageSrc})`, backgroundSize: "100%" }}
+    >
       <div>{displayOutcome()}</div>
       {props.mode === "daily" && !props.inProgress && (
         <MessageNotification type="default">
