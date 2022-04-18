@@ -1020,9 +1020,17 @@ $nubble-colors-names: (
     background-color: $color;
     // Border has darker tone of colour
     border: 4px solid darken($color, 10%);
-    &:hover {
+    &:disabled {
+      cursor: not-allowed;
+    }
+    &:not(:disabled):hover {
       // On hover, make background color same as border
       background-color: darken($color, 10%);
+    }
+    &[data-picked="true"] {
+      cursor: not-allowed;
+      color: #aaa;
+      background-color: #ddd;
     }
   }
   .nubble-button[data-shape="hexagon"][data-colour="#{$colourName}"] {
@@ -1038,9 +1046,12 @@ $nubble-colors-names: (
     .bottom {
       border-top-color: $color;
     }
+    &:disabled {
+      cursor: not-allowed;
+    }
     // Border has darker tone of colour
     //border: 4px solid darken($color, 10%);
-    &:hover {
+    &:not(:disabled):hover {
       .middle {
         // On hover, make background color same as border
         background-color: darken($color, 10%);
