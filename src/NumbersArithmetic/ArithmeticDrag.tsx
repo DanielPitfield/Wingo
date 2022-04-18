@@ -259,7 +259,7 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
       <OrderGroup mode={"between"}>
         {tiles.map((tile, index) => (
           <DraggableItem key={index} index={index} onMove={(toIndex) => setTiles(arrayMove(tiles, index, toIndex))}>
-            <LetterTile letter={tile.expression /*`R: ${tile.total}`*/} status={tile.status} />
+            <LetterTile letter={/*tile.expression*/ `R: ${tile.total}`} status={tile.status} />
           </DraggableItem>
         ))}
       </OrderGroup>
@@ -268,30 +268,14 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
 
   function checkTiles() {
     const totals = tiles.map((x) => x.total);
-    const smallest_value = Math.min(...totals);
-    const biggest_value = Math.max(...totals);
+    // Sort the tile totals into ascending order
+    const sorted_totals = totals.sort((x, y) => {return x - y});
 
     const newTiles = tiles.map((x, index) => {
-      // First tile has the smallest value?
-      if (index === 0 && tiles[index].total === smallest_value) {
+      // Tile is in correct position
+      if (tiles[index].total === sorted_totals[index]) {
         x.status = "correct";
       }
-      // Last tile has the biggest value?
-      else if (index === tiles.length - 1 && tiles[index].total === biggest_value) {
-        x.status = "correct";
-      }
-      // Middle tile?
-      else if (index > 0 && index < tiles.length - 1) {
-        // Does the tile have a total bigger than the tile before it and smaller than the tile after it?
-        const correct_position = x.total > tiles[index - 1].total && x.total < tiles[index + 1].total;
-        if (correct_position) {
-          x.status = "correct";
-        }
-        else {
-          x.status = "incorrect";
-        }
-      }
-      // Unexpected tile
       else {
         x.status = "incorrect";
       }
