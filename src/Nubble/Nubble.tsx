@@ -320,7 +320,9 @@ const Nubble: React.FC<Props> = (props) => {
           ? "Pick a nibble"
           : "Game over"}
       </DiceGrid>
-      <div className="nubble-grid">{populateGrid()}</div>
+      <div className="nubble-grid" data-shape={props.gridShape}>
+        {populateGrid()}
+      </div>
       <div className="nubble-score-wrapper">
         <div className="nubble-score">{totalPoints}</div>
         <div className="nubble-pin-scores">{displayPinScores()}</div>

@@ -608,7 +608,7 @@ export const App: React.FC = () => {
             diceMin={1}
             diceMax={6}
             gridSize={100}
-            gridShape={"hexagon"}
+            gridShape={"square"}
             numTeams={2}
             timeLengthMins={5}
             gameOverOnIncorrectPick={true}
