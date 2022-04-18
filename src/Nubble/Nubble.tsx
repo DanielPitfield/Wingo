@@ -124,8 +124,8 @@ const Nubble: React.FC<Props> = (props) => {
     const offset = middle - rowNumber;
 
     // How much to slant the parallelogram
-    const X_SLANT = 2.2;
-    const Y_SLANT = 1.9;
+    const X_SLANT = 2.45;
+    const Y_SLANT = 1.8;
 
     return (
       <div

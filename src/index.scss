@@ -909,7 +909,6 @@ $data-statuses: (
 .nubble-button {
   cursor: pointer;
   color: white;
-  font-weight: bold;
   text-align: center;
   align-items: center;
   justify-content: center;
@@ -920,6 +919,7 @@ $data-statuses: (
     margin: 1px;
   }
   &[data-shape="hexagon"] {
+    margin: 0.15em 0.02em;
     .top {
       display: block;
       width: 0;
@@ -951,11 +951,6 @@ $data-statuses: (
   cursor: default;
 }
 
-.nubble-button:disabled {
-  background-color: grey !important;
-  border: 4px solid grey !important;
-}
-
 .nubble-button[data-shape="square"][data-prime="true"],
 .nubble-button-display[data-prime="true"] {
   border: 4px solid #3d3d3d !important;
@@ -967,8 +962,8 @@ $light-blue: #00a59bbb;
 $light-blue-border: #00a59b;
 $yellow: #a5a803bb;
 $yellow-border: #a5a803;
-$dark-blue: #0002acbb;
-$dark-blue-border: #0002ac;
+$dark-blue: #006dacbb;
+$dark-blue-border: #006dac;
 $pink: #e757b7bb;
 $pink-border: #e757b7;
 $green: #05ab00bb;
@@ -1022,8 +1017,30 @@ $nubble-colors-names: (
     // Border has darker tone of colour
     //border: 4px solid darken($color, 10%);
     &:hover {
-      // On hover, make background color same as border
-      background-color: darken($color, 10%);
+      .middle {
+        // On hover, make background color same as border
+        background-color: darken($color, 10%);
+      }
+      .top {
+        border-bottom-color: darken($color, 10%);
+      }
+      .bottom {
+        border-top-color: darken($color, 10%);
+      }
+    }
+    &:disabled {
+      cursor: not-allowed;
+      color: #aaa;
+      .middle {
+        // On hover, make background color same as border
+        background-color: #ddd;
+      }
+      .top {
+        border-bottom-color: #ddd;
+      }
+      .bottom {
+        border-top-color: #ddd;
+      }
     }
   }
   .nubble-button-display[data-colour="#{$colourName}"] {
