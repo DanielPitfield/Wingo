@@ -5,6 +5,13 @@ export type CampaignSaveData = {
   areas: { name: string; status: "locked" | "unlockable" | "unlocked"; completedLevelIds: string[] }[];
 };
 
+export type SettingsData = {
+  sound: {
+    soundEnabled: boolean;
+    volume: number;
+  };
+};
+
 export type DailyWordSaveData = {
   dailyWord: string;
   guesses: string[];
@@ -72,6 +79,32 @@ export function newGuid(): string {
 
 /** */
 export class SaveData {
+  /**
+   *
+   * @param updatedSettings
+   */
+  public static setSettings(updatedSettings: Partial<SettingsData>) {
+    const currentSettings = SaveData.getSettings();
+
+    const settings = { ...currentSettings, ...updatedSettings };
+
+    localStorage.setItem("settings", JSON.stringify(settings));
+  }
+
+  /**
+   *
+   * @returns
+   */
+  public static getSettings(): SettingsData {
+    const settings = localStorage.getItem("settings");
+
+    if (settings) {
+      return JSON.parse(settings) as SettingsData;
+    }
+
+    return { sound: { volume: 1.0, soundEnabled: true } };
+  }
+
   /**
    * Incements the completed level count for the specified area.
    * @param areaName Name of the campaign area.

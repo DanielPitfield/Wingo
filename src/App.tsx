@@ -5,7 +5,7 @@ import WordleConfig from "./WordleConfig";
 import { Button } from "./Button";
 import NubbleConfig from "./Nubble/NubbleConfig";
 import GoldCoin from "./images/gold.png";
-import { SaveData } from "./SaveData";
+import { SaveData, SettingsData } from "./SaveData";
 import CountdownLettersConfig from "./CountdownLetters/CountdownLettersConfig";
 import CountdownNumbersConfig from "./CountdownNumbers/CountdownNumbersConfig";
 import { Campaign } from "./Campaign/Campaign";
@@ -16,6 +16,9 @@ import ArithmeticReveal from "./NumbersArithmetic/ArithmeticReveal";
 import ArithmeticDrag from "./NumbersArithmetic/ArithmeticDrag";
 import { PuzzleConfig } from "./Puzzles/PuzzleConfig";
 import { Theme, Themes } from "./Themes";
+import { useSound } from "use-sound";
+import { AllCampaignAreas } from "./Campaign/AllCampaignAreas";
+import { Settings } from "./Settings";
 
 const wordLength = 5;
 const numGuesses = 6;
@@ -52,7 +55,8 @@ export type Page =
   | "puzzle/sequence"
   | "campaign"
   | "campaign/area"
-  | "campaign/area/level";
+  | "campaign/area/level"
+  | "settings";
 
 // This is needed for runtime; make sure it matches the Page type
 export const pages: { page: Page; title: string; description?: string; shortTitle?: string }[] = [
@@ -135,6 +139,7 @@ export const pages: { page: Page; title: string; description?: string; shortTitl
   { page: "campaign", title: "Campaign", shortTitle: "Campaign" },
   { page: "campaign/area", title: "Campaign Areas", shortTitle: "Areas" },
   { page: "campaign/area/level", title: "Campaign Level", shortTitle: "Level" },
+  { page: "settings", title: "Settings", shortTitle: "Settings" },
 ];
 
 export const App: React.FC = () => {
@@ -144,8 +149,10 @@ export const App: React.FC = () => {
   const [page, setPage] = useState<Page>("splash-screen");
   const [selectedCampaignArea, setSelectedCampaignArea] = useState<AreaConfig | null>(null);
   const [selectedCampaignLevel, setSelectedCampaignLevel] = useState<LevelConfig | null>(null);
-  const [theme, setTheme] = useState<Theme>(Themes.Space);
+  const [theme, setTheme] = useState<Theme>(getHighestCampaignArea()?.theme || Themes.GenericWingo);
   const [gold, setGold] = useState<number>(SaveData.readGold());
+  const [settings, setSettings] = useState<SettingsData>(SaveData.getSettings());
+  const [playBackgroundSound, backgroundSoundOptions] = useSound(theme.backgroundAudioSrc, settings.sound);
 
   const [gameOptionToggles, setgameOptionToggles] = useState<
     {
@@ -291,8 +298,25 @@ export const App: React.FC = () => {
     window.onpopstate = () => setPage(getPageFromUrl() || "home");
   }, []);
 
+  useEffect(() => {
+    if (loadingState === "loaded") {
+      backgroundSoundOptions.stop();
+      playBackgroundSound();
+    }
+  }, [selectedCampaignArea, playBackgroundSound, loadingState]);
+
   function addGold(additionalGold: number) {
     setGold(gold + additionalGold);
+  }
+
+  function getHighestCampaignArea(): AreaConfig {
+    const highestCampaignArea = AllCampaignAreas.reverse().filter((campaignArea) => {
+      const areaInfo = SaveData.getCampaignProgress().areas.find((area) => area.name === campaignArea.name);
+
+      return areaInfo?.status === "unlocked";
+    })[0];
+
+    return highestCampaignArea;
   }
 
   const pageComponent = (() => {
@@ -302,7 +326,7 @@ export const App: React.FC = () => {
       puzzleRevealMs: puzzleRevealMs,
       puzzleLeaveNumBlanks: puzzleLeaveNumBlanks,
       page: page,
-      theme: Themes.Space,
+      theme: theme,
       setPage: setPage,
       setTheme: setTheme,
       addGold: addGold,
@@ -616,7 +640,10 @@ export const App: React.FC = () => {
         );
 
       case "puzzle/sequence":
-        return <PuzzleConfig theme={Themes.Space} setTheme={setTheme} />;
+        return <PuzzleConfig theme={theme} setTheme={setTheme} />;
+
+      case "settings":
+        return <Settings settings={settings} onSettingsChange={setSettings} />;
     }
   })();
 
