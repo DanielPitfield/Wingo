@@ -1,6 +1,3 @@
-// TODO: Check all sets (actually unique values)
-// TODO: Remove logging
-
 import {
   expression_trees_3,
   expression_trees_4,

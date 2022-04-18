@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { NumberPuzzle } from "../CountdownNumbers/CountdownSolver";
 import "../index.scss";
 import { MessageNotification } from "../MessageNotification";
 import { Theme } from "../Themes";
@@ -143,11 +144,18 @@ const Nubble: React.FC<Props> = (props) => {
       return;
     }
 
-    if (!validValues.includes(pinNumber)) {
+    // Find all the ways the selected pin can be made with the input numbers
+    const puzzle = new NumberPuzzle(pinNumber, diceValues);
+    const solutions = puzzle.solve().all;
+
+    // There are no solutions (ways of making the selected number)
+    if (solutions.length < 1) {
+      // End game if game setting is enabled
       if (props.gameOverOnIncorrectPick) {
         setStatus("game-over-incorrect-tile");
       }
 
+      // Return early
       return;
     }
 
