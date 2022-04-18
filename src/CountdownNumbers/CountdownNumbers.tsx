@@ -237,8 +237,8 @@ const CountdownNumbers: React.FC<Props> = (props) => {
         <div className="best-solution">
           <MessageNotification type="default">
             Best Solution:
+            <br />
             <strong>
-              <br />
               <br />
               {solutions?.best.toListOfSteps().map((step) => (
                 <>

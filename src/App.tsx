@@ -144,7 +144,7 @@ export const App: React.FC = () => {
   const [page, setPage] = useState<Page>("splash-screen");
   const [selectedCampaignArea, setSelectedCampaignArea] = useState<AreaConfig | null>(null);
   const [selectedCampaignLevel, setSelectedCampaignLevel] = useState<LevelConfig | null>(null);
-  const [theme, setTheme] = useState<Theme>(Themes.GenericWingo);
+  const [theme, setTheme] = useState<Theme>(Themes.Space);
   const [gold, setGold] = useState<number>(SaveData.readGold());
 
   const [gameOptionToggles, setgameOptionToggles] = useState<
@@ -302,7 +302,7 @@ export const App: React.FC = () => {
       puzzleRevealMs: puzzleRevealMs,
       puzzleLeaveNumBlanks: puzzleLeaveNumBlanks,
       page: page,
-      theme: Themes.GenericWingo,
+      theme: Themes.Space,
       setPage: setPage,
       setTheme: setTheme,
       addGold: addGold,
@@ -616,7 +616,7 @@ export const App: React.FC = () => {
         );
 
       case "puzzle/sequence":
-        return <PuzzleConfig theme={Themes.GenericWingo} setTheme={setTheme} />;
+        return <PuzzleConfig theme={Themes.Space} setTheme={setTheme} />;
     }
   })();
 

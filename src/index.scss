@@ -419,8 +419,8 @@ $data-statuses: (
   justify-content: center;
   font-size: 0.95em;
   & > .number_row {
-    & > .number_tile:last-of-type {
-      width: 5em;
+    & > .number_tile {
+      width: 3em;
     }
   }
 }
