@@ -221,6 +221,12 @@ export const App: React.FC = () => {
       timer: true,
       keyboard: false,
     },
+    {
+      page: "numbers/arithmetic_drag",
+      firstLetter: false,
+      timer: true,
+      keyboard: false,
+    },
   ]);
 
   useEffect(() => {
@@ -578,12 +584,12 @@ export const App: React.FC = () => {
         return (
           <ArithmeticDrag
             mode="order"
-            numTiles={10}
+            numTiles={6}
             numOperands={3}
             difficulty={"easy"}
             timerConfig={
               gameOptionToggles.find((x) => x.page === "numbers/arithmetic_drag")?.timer
-                ? { isTimed: true, seconds: 10 }
+                ? { isTimed: true, seconds: 100 }
                 : { isTimed: false }
             }
             setPage={setPage}

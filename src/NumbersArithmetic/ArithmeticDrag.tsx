@@ -3,6 +3,7 @@ import { arrayMove, OrderGroup } from "react-draggable-order";
 import { Page } from "../App";
 import { Button } from "../Button";
 import LetterTile from "../LetterTile";
+import { MessageNotification } from "../MessageNotification";
 import { operators, pretty_operator_symbols } from "../Nubble/getValidValues";
 import { randomIntFromInterval } from "../Nubble/Nubble";
 import ProgressBar, { GreenToRedColorTransition } from "../ProgressBar";
@@ -19,15 +20,10 @@ interface Props {
 
 /** */
 const ArithmeticDrag: React.FC<Props> = (props) => {
-  const [revealState, setRevealState] = useState<{ type: "in-progress"; movedTiles: number } | { type: "finished" }>({
-    type: "in-progress",
-    movedTiles: 0,
-  });
   const [inProgress, setInProgress] = useState(true);
   const [seconds, setSeconds] = useState(props.timerConfig.isTimed ? props.timerConfig.seconds : 0);
-  const [guess, setGuess] = useState("");
   const [tiles, setTiles] = useState<
-    { expression: string; total: number; status: "incorrect" | "contains" | "correct" | "not set" | "not in word" }[]
+    { expression: string; total: number; status: "incorrect" | "correct" | "not set"}[]
   >([]);
 
   function getStartingNumberLimit(): number {
@@ -233,11 +229,6 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
       return;
     }
 
-    // Only start this timer once all the tiles have been revealed
-    if (revealState.type !== "finished") {
-      return;
-    }
-
     const timerGuess = setInterval(() => {
       if (seconds > 0) {
         setSeconds(seconds - 1);
@@ -248,18 +239,26 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
     return () => {
       clearInterval(timerGuess);
     };
-  }, [setSeconds, seconds, props.timerConfig.isTimed, revealState]);
+  }, [setSeconds, seconds, props.timerConfig.isTimed]);
 
   /**
-   *
+   * LetterTile Debug: letter={`R: ${tile.total}`}
    * @returns
    */
   function displayTiles() {
     return (
       <OrderGroup mode={"between"}>
         {tiles.map((tile, index) => (
-          <DraggableItem key={index} index={index} onMove={(toIndex) => setTiles(arrayMove(tiles, index, toIndex))}>
-            <LetterTile letter={/*tile.expression*/ `R: ${tile.total}`} status={tile.status} />
+          <DraggableItem
+            key={index}
+            index={index}
+            onMove={(toIndex) =>
+              inProgress
+                ? setTiles(arrayMove(tiles, index, toIndex))
+                : /* TODO: Disable drag entirely if game is over */ console.log("Game over")
+            }
+          >
+            <LetterTile letter={tile.expression} status={tile.status} />
           </DraggableItem>
         ))}
       </OrderGroup>
@@ -269,20 +268,22 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
   function checkTiles() {
     const totals = tiles.map((x) => x.total);
     // Sort the tile totals into ascending order
-    const sorted_totals = totals.sort((x, y) => {return x - y});
+    const sorted_totals = totals.sort((x, y) => {
+      return x - y;
+    });
 
     const newTiles = tiles.map((x, index) => {
       // Tile is in correct position
       if (tiles[index].total === sorted_totals[index]) {
         x.status = "correct";
-      }
-      else {
+      } else {
         x.status = "incorrect";
       }
       return x;
     });
 
     setTiles(newTiles);
+    setInProgress(false);
   }
 
   /**
@@ -295,29 +296,55 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
       return;
     }
 
-    return <></>;
+    const numCorrectTiles = tiles.filter((x) => x.status === "correct").length;
+
+    return (
+      <>
+        <MessageNotification type={numCorrectTiles === tiles.length ? "success" : "error"}>
+          <strong>
+            {numCorrectTiles === tiles.length
+              ? "All tiles in the correct order!"
+              : `${numCorrectTiles} tiles correct`}
+          </strong>
+        </MessageNotification>
+
+        <br></br>
+
+        <Button mode="accept" onClick={() => ResetGame()}>
+          Restart
+        </Button>
+      </>
+    );
+  }
+
+  function ResetGame() {
+    setInProgress(true);
+    setTiles([]);
+
+    if (props.timerConfig.isTimed) {
+      // Reset the timer if it is enabled in the game options
+      setSeconds(props.timerConfig.seconds);
+    }
   }
 
   return (
     <div className="App numbers_arithmetic">
       <div className="outcome">{displayOutcome()}</div>
-      {inProgress && <div className="tile_row">{displayTiles()}</div>}
+      <div className="tile_row">{displayTiles()}</div>
       {inProgress && (
         <Button mode="accept" onClick={() => checkTiles()}>
           Submit Order
         </Button>
       )}
-      {revealState.type === "finished" && (
-        <div>
-          {props.timerConfig.isTimed && (
-            <ProgressBar
-              progress={seconds}
-              total={props.timerConfig.seconds}
-              display={{ type: "transition", colorTransition: GreenToRedColorTransition }}
-            ></ProgressBar>
-          )}
-        </div>
-      )}
+      <div>
+        {props.timerConfig.isTimed && (
+          <ProgressBar
+            progress={seconds}
+            total={props.timerConfig.seconds}
+            display={{ type: "transition", colorTransition: GreenToRedColorTransition }}
+          ></ProgressBar>
+        )}
+      </div>
     </div>
   );
 };
