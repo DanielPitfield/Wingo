@@ -2,7 +2,7 @@ import React from "react";
 import { Page } from "../App";
 import { AreaConfig } from "./Area";
 import { Button } from "../Button";
-import { LevelConfig } from "./Level";
+import { getId, LevelConfig } from "./Level";
 import { CampaignSaveData, SaveData } from "../SaveData";
 import { Theme } from "../Themes";
 import { AllCampaignAreas } from "./AllCampaignAreas";
@@ -41,21 +41,31 @@ export const Campaign: React.FC<{
   return (
     // AREA SELECTION
     <div className="campaign widgets">
-      {AllCampaignAreas.map((area, index) => {
+      {AllCampaignAreas.filter((x) => x.levels.length > 0).map((area, index) => {
         // Find out if area is locked, unlockable or unlocked
         const campaignProgress = SaveData.getCampaignProgress();
         const areaInfo = campaignProgress.areas.find((x) => x.name === area.name);
-        const previousAreaInfo =
-          index === 0 ? undefined : campaignProgress.areas.find((x) => x.name === AllCampaignAreas[index - 1].name);
+
+        // Determine whether this is the first area
+        const isFirstArea = index === 0;
+
+        // Find the previous area info (unless this is the first area)
+        const previousAreaInfo = isFirstArea
+          ? undefined
+          : campaignProgress.areas.find((x) => x.name === AllCampaignAreas[index - 1].name);
+
+        // Get the unlock status from the save data, or if not found, determine if all levels from the previous area are completed (unless this is the first area)
         const unlock_status =
           areaInfo?.status ||
-          (index === 0 || previousAreaInfo?.completedLevelCount === AllCampaignAreas[index - 1].levels.length
+          (isFirstArea ||
+          AllCampaignAreas[index - 1].levels.every((l) => previousAreaInfo?.completedLevelIds.includes(getId(l.level)))
             ? "unlockable"
             : "locked");
-        const current_level = areaInfo?.completedLevelCount || 0;
-        const isCompleted = (areaInfo?.completedLevelCount || 0) >= area.levels.length;
 
-        if (props.onlyShowCurrentArea && isCompleted) {
+        const current_level_count = areaInfo?.completedLevelIds.filter((x) => x !== "unlock").length || 0;
+        const isCompleted = area.levels.every((l) => areaInfo?.completedLevelIds.includes(getId(l.level)));
+
+        if (props.onlyShowCurrentArea && (unlock_status === "locked" || isCompleted)) {
           return null;
         }
 
@@ -64,7 +74,9 @@ export const Campaign: React.FC<{
             className="widget area-button"
             data-unlock-status={unlock_status}
             key={area.name}
-            style={{ backgroundImage: `url(${area.theme.backgroundImageSrc})` }}
+            style={{
+              backgroundImage: `url(${area.theme.backgroundImageSrc})`,
+            }}
           >
             <strong className="area-name widget-subtitle">Area {index + 1}</strong>
             <strong className="area-name widget-title">{unlock_status === "unlocked" ? area.name : `???`}</strong>
@@ -82,7 +94,9 @@ export const Campaign: React.FC<{
                   ? "Continue Campaign"
                   : "Explore"}
               </Button>
-              {unlock_status === "unlocked" ? `${Math.max(0, current_level - 1)} / ${area.levels.length}` : "? / ?"}
+              {unlock_status === "unlocked"
+                ? `${Math.max(0, current_level_count - 1)} / ${area.levels.length}`
+                : "? / ?"}
             </span>
           </div>
         );

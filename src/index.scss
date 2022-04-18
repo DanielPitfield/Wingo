@@ -486,6 +486,7 @@ $data-statuses: (
           .widget {
             margin: 0;
             min-height: 17em;
+            flex-grow: 1;
           }
         }
       }
@@ -1118,29 +1119,48 @@ $nubble-colors-names: (
 }
 
 .area,
-.area-button {
-  flex-grow: 1;
-  background-repeat: no-repeat;
-  background-size: 100%;
-  &[data-unlock-status="locked"] {
-    background: #333 !important;
-    opacity: 0.15;
-    &:hover {
-      opacity: 0.2;
+.campaign {
+  .widgets,
+  .area-button {
+    flex-grow: 1;
+    background-repeat: no-repeat;
+    background-size: 100%;
+    &[data-unlock-status="unlockable"] {
+      background: #aaa !important;
+    }
+    &[data-unlock-status="locked"] {
+      background: #333 !important;
+      opacity: 0.15;
+      &:hover {
+        opacity: 0.2;
+      }
+    }
+    .widget {
+      height: 10em;
+    }
+    .level-count {
+      color: #ddd;
     }
   }
-  .widget {
-    height: 10em;
-  }
-  .level-count {
-    color: #ddd;
+}
+
+.area,
+.level {
+  .area-header {
+    background-color: #fff7;
+    padding: 0.6em;
+    align-self: stretch;
+    margin-bottom: 0.3em;
+    .area-header-title {
+      font-weight: normal;
+      margin: 0;
+      color: white;
+      text-transform: uppercase;
+    }
   }
 }
 
 .level-button {
-  &[data-is-completed="true"] {
-    opacity: 0.6;
-  }
   &[data-is-unlocked="false"] {
     opacity: 0.6;
   }

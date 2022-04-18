@@ -1,7 +1,7 @@
 import React from "react";
 import { Page, pages } from "../App";
 import { Button } from "../Button";
-import { LevelConfig } from "./Level";
+import { getId, LevelConfig } from "./Level";
 import { MessageNotification } from "../MessageNotification";
 import { SaveData } from "../SaveData";
 import { Theme } from "../Themes";
@@ -20,49 +20,67 @@ export const Area: React.FC<{
   setSelectedCampaignLevel: (level: LevelConfig) => void;
   setPage: (page: Page) => void;
 }> = (props) => {
+  // LEVEL SELECTION
   return (
-    // LEVEL SELECTION
-    <div className="area widgets" style={{ backgroundImage: `url(${props.area.theme.backgroundImageSrc})` }}>
-      {props.area.levels.map((level, i) => {
-        const campaignProgress = SaveData.getCampaignProgress();
-        const areaInfo = campaignProgress.areas.find((x) => x.name === props.area.name);
-        const level_unlocked = (areaInfo?.completedLevelCount || 0) >= i;
-        const level_completed = (areaInfo?.completedLevelCount || 0) > i;
-        const levelInfo = pages.find((x) => x.page === `wingo/${level.levelProps.mode}`);
+    <div className="area" style={{ backgroundImage: `url(${props.area.theme.backgroundImageSrc})` }}>
+      <section className="area-header">
+        <h2 className="area-header-title">{props.area.name}</h2>
+      </section>
+      <div className="widgets">
+        {props.area.levels.map((l, index) => {
+          const campaignProgress = SaveData.getCampaignProgress();
+          const areaInfo = campaignProgress.areas.find((x) => x.name === props.area.name);
 
-        return (
-          <div
-            className="level-button widget"
-            key={`Area ${areaInfo?.name} Level ${i + 1}`}
-            data-is-completed={level_completed}
-            data-is-unlocked={level_unlocked}
-          >
-            <strong className="level-number widget-subtitle">Level {i + 1}</strong>
-            <p className="level-mode">{levelInfo?.title || levelInfo?.shortTitle || level.levelProps.mode}</p>
-            <span className="widget-button-wrapper">
-              <Button
-                mode={level_unlocked && !level_completed ? "accept" : "default"}
-                disabled={!level_unlocked || level_completed}
-                onClick={() => {
-                  if (level_unlocked) {
-                    props.setSelectedCampaignLevel(level);
-                    props.setPage("campaign/area/level");
-                  }
-                }}
-              >
-                {level_completed ? "Completed!" : level_unlocked ? "Go" : "?"}
-              </Button>
-            </span>
-          </div>
-        );
-      })}
-      {props.area.levels.length === 0 && (
-        <span>
-          <MessageNotification type="default">
-            No levels defined for area <strong>{props.area.name}</strong>
-          </MessageNotification>
-        </span>
-      )}
+          // Determine whether this is the first level
+          const isFirstLevel = index === 0;
+
+          // Find the previous level (unless this is the first level)
+          const previousLevel = isFirstLevel ? undefined : props.area.levels[index - 1];
+
+          // Determine whether the level has already been completed
+          const level_completed = areaInfo?.completedLevelIds.some((x) => x === getId(l.level)) || false;
+
+          // Determine whether the level has been unlocked (i.e. the previous level has been completed)
+          const level_unlocked =
+            !previousLevel || areaInfo?.completedLevelIds.some((x) => x === getId(previousLevel.level)) || false;
+
+          // Get the level page info
+          const levelInfo = pages.find((x) => x.page === `${l.level.gameCategory}/${l.level.levelProps.mode}`);
+
+          return (
+            <div
+              className="level-button widget"
+              key={`Area ${areaInfo?.name} Level ${index + 1}`}
+              data-is-completed={level_completed}
+              data-is-unlocked={level_unlocked}
+            >
+              <strong className="level-number widget-subtitle">Level {index + 1}</strong>
+              <p className="level-mode">{levelInfo?.title || levelInfo?.shortTitle || l.level.levelProps.mode}</p>
+              <span className="widget-button-wrapper">
+                <Button
+                  mode={level_unlocked && !level_completed ? "accept" : "default"}
+                  disabled={!level_unlocked}
+                  onClick={() => {
+                    if (level_unlocked) {
+                      props.setSelectedCampaignLevel(l);
+                      props.setPage("campaign/area/level");
+                    }
+                  }}
+                >
+                  {level_completed ? "Completed!" : level_unlocked ? "Go" : "?"}
+                </Button>
+              </span>
+            </div>
+          );
+        })}
+        {props.area.levels.length === 0 && (
+          <span>
+            <MessageNotification type="default">
+              No levels defined for area <strong>{props.area.name}</strong>
+            </MessageNotification>
+          </span>
+        )}
+      </div>
     </div>
   );
 };

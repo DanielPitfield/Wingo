@@ -2,11 +2,13 @@ import { CSSProperties, useEffect, useState } from "react";
 import { Button } from "../Button";
 import { MessageNotification } from "../MessageNotification";
 import { Puzzles } from "./Puzzles";
-import { Theme, ThemeIcons, Themes } from "../Themes";
+import { Theme, ThemeIcons } from "../Themes";
 
 /** Config for a specific puzzle (exported for config from campaign) */
 export type PuzzleConfigProps = {
-  type: "sequence";
+  mode: "sequence";
+  difficulty: "novice" | "easy" | "medium" | "hard" | "expert";
+  correctAnswerDescription: string;
   sequence: {
     hint: SequencePuzzleStyling[];
     correctAnswer: SequencePuzzleStyling;
@@ -29,6 +31,7 @@ interface Props {
   theme: Theme;
   finishingButtonText?: string;
   setTheme: (theme: Theme) => void;
+  onComplete?: (wasCorrect: boolean) => void;
 }
 
 /** Puzzle config */
@@ -57,7 +60,7 @@ export const PuzzleConfig: React.FC<Props> = (props) => {
     if (props.defaultPuzzle) {
       setPuzzle(props.defaultPuzzle);
     } else {
-      setPuzzle({ ...Puzzles[Math.round(Math.random() * (Puzzles.length - 1))] });
+      setPuzzle({ ...Object.values(Puzzles)[Math.round(Math.random() * (Object.values(Puzzles).length - 1))] });
     }
   }, [props.defaultPuzzle]);
 
@@ -92,8 +95,9 @@ export const PuzzleConfig: React.FC<Props> = (props) => {
    * Resets the game.
    */
   function resetGame() {
+    props.onComplete?.(result === "correct");
     setResult("in-progress");
-    setPuzzle({ ...Puzzles[Math.round(Math.random() * (Puzzles.length - 1))] });
+    setPuzzle({ ...Object.values(Puzzles)[Math.round(Math.random() * (Object.values(Puzzles).length - 1))] });
   }
 
   /**
@@ -180,7 +184,7 @@ export const PuzzleConfig: React.FC<Props> = (props) => {
       return null;
     }
 
-    switch (puzzle.type) {
+    switch (puzzle.mode) {
       case "sequence": {
         const answerOptions = puzzle.sequence.incorrectAnswers
           // Render each incorrect answer
@@ -217,7 +221,7 @@ export const PuzzleConfig: React.FC<Props> = (props) => {
         return (
           <MessageNotification type="default">
             {(() => {
-              switch (puzzle.type) {
+              switch (puzzle.mode) {
                 case "sequence":
                   return "What comes next in the sequence?";
               }

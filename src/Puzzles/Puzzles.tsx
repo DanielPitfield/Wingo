@@ -1,10 +1,11 @@
 import { PuzzleConfigProps } from "./PuzzleConfig";
 
 /** All puzzles */
-export const Puzzles: PuzzleConfigProps[] = [
-  // Single icon, moving vertically downwards
-  {
-    type: "sequence",
+export const Puzzles = {
+  Easy1IconVerticallyDown: {
+    mode: "sequence",
+    difficulty: "easy",
+    correctAnswerDescription: "Single icon, moving vertically downwards",
     sequence: {
       hint: [
         {
@@ -26,11 +27,12 @@ export const Puzzles: PuzzleConfigProps[] = [
         { icon1: { left: "50%", top: "10%" } },
       ],
     },
-  },
+  } as PuzzleConfigProps,
 
-  // Single icon, moving horizontally across
-  {
-    type: "sequence",
+  Easy1IconHorizontallyAcrross: {
+    mode: "sequence",
+    difficulty: "easy",
+    correctAnswerDescription: "Single icon, moving horizontally across",
     sequence: {
       hint: [
         {
@@ -52,11 +54,12 @@ export const Puzzles: PuzzleConfigProps[] = [
         { icon1: { left: "50%", top: "70%" } },
       ],
     },
-  },
+  } as PuzzleConfigProps,
 
-  // Two icons, one moving vertically downwards, the other moving horizontally across
-  {
-    type: "sequence",
+  Medium2IconsOnceVerticallyDownOtherHorizontallyAcross: {
+    mode: "sequence",
+    difficulty: "medium",
+    correctAnswerDescription: "Two icons, one moving vertically downwards, the other moving horizontally across",
     sequence: {
       hint: [
         {
@@ -82,6 +85,5 @@ export const Puzzles: PuzzleConfigProps[] = [
         { icon1: { left: "50%", top: "70%" }, icon2: { left: "30%", top: "10%" } },
       ],
     },
-  },
-  
-];
+  } as PuzzleConfigProps,
+};

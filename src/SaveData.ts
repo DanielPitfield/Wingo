@@ -2,7 +2,7 @@ import { Page } from "./App";
 import { BaseChallenge } from "./Challenges/BaseChallenge";
 
 export type CampaignSaveData = {
-  areas: { name: string; status: "locked" | "unlockable" | "unlocked"; completedLevelCount: number }[];
+  areas: { name: string; status: "locked" | "unlockable" | "unlocked"; completedLevelIds: string[] }[];
 };
 
 export type DailyWordSaveData = {
@@ -76,14 +76,14 @@ export class SaveData {
    * Incements the completed level count for the specified area.
    * @param areaName Name of the campaign area.
    */
-  public static addCompletedCampaignAreaUnloackLevel(areaName: CampaignSaveData["areas"][0]["name"]) {
+  public static addCompletedCampaignAreaUnlockLevel(areaName: CampaignSaveData["areas"][0]["name"]) {
     // Get the current campaign progress (which is to be updated)
     const campaignProgress = SaveData.getCampaignProgress();
 
     const newAreaData: CampaignSaveData["areas"][0] = {
       name: areaName,
       status: "unlocked",
-      completedLevelCount: 0,
+      completedLevelIds: ["unlock"],
     };
 
     const newCampaignProgress = {
@@ -97,16 +97,19 @@ export class SaveData {
   /**
    * Incements the completed level count for the specified area.
    * @param areaName Name of the campaign area.
-   * @param status Status of the area.
+   * @param levelId ID of the area.
    */
-  public static addCompletedCampaignAreaLevel(areaName: CampaignSaveData["areas"][0]["name"]) {
+  public static addCompletedCampaignAreaLevel(areaName: CampaignSaveData["areas"][0]["name"], levelId: string) {
     // Get the current campaign progress (which is to be updated)
     const campaignProgress = SaveData.getCampaignProgress();
+
+    // Find the existing area info (if any)
+    const existingArea = campaignProgress.areas.find((x) => x.name === areaName);
 
     const newAreaData: CampaignSaveData["areas"][0] = {
       name: areaName,
       status: "unlocked",
-      completedLevelCount: (campaignProgress.areas.find((x) => x.name === areaName)?.completedLevelCount || 0) + 1,
+      completedLevelIds: Array.from(new Set((existingArea?.completedLevelIds || ["unlock"]).concat(levelId))),
     };
 
     const newCampaignProgress = {

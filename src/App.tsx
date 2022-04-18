@@ -10,7 +10,7 @@ import CountdownLettersConfig from "./CountdownLetters/CountdownLettersConfig";
 import CountdownNumbersConfig from "./CountdownNumbers/CountdownNumbersConfig";
 import { Campaign } from "./Campaign/Campaign";
 import { Area, AreaConfig } from "./Campaign/Area";
-import { Level, LevelConfig } from "./Campaign/Level";
+import { getId, Level, LevelConfig } from "./Campaign/Level";
 import LetterCategoriesConfig from "./LetterCategories/LetterCategoriesConfig";
 import ArithmeticReveal from "./NumbersArithmetic/ArithmeticReveal";
 import ArithmeticDrag from "./NumbersArithmetic/ArithmeticDrag";
@@ -261,12 +261,14 @@ export const App: React.FC = () => {
     return pages.find((page) => page.page === urlPathWithoutLeadingTrailingSlashes)?.page;
   }
 
-  function onCompleteLevel(isUnlockLevel: boolean, level: LevelConfig) {
+  function onCompleteLevel(isUnlockLevel: boolean, levelConfig: LevelConfig) {
     if (selectedCampaignArea) {
       if (isUnlockLevel) {
-        SaveData.addCompletedCampaignAreaUnloackLevel(selectedCampaignArea.name);
+        SaveData.addCompletedCampaignAreaUnlockLevel(selectedCampaignArea.name);
       } else {
-        SaveData.addCompletedCampaignAreaLevel(selectedCampaignArea.name);
+        const levelId = getId(levelConfig.level);
+
+        SaveData.addCompletedCampaignAreaLevel(selectedCampaignArea.name, levelId);
       }
     }
   }
@@ -379,6 +381,7 @@ export const App: React.FC = () => {
         return (
           selectedCampaignLevel && (
             <Level
+              area={selectedCampaignArea!}
               level={selectedCampaignLevel}
               page={page}
               theme={theme}
