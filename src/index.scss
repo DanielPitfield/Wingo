@@ -434,11 +434,9 @@ $data-statuses: (
   margin-bottom: 6.5em;
 }
 
-
 /* Settings page ============================== */
 .settings {
   .settings-section {
-    
   }
 }
 
@@ -671,6 +669,7 @@ $data-statuses: (
   align-items: stretch;
   background-color: #4b4b4b;
   flex-grow: 0;
+  .settings-button,
   .back-button {
     padding: 0.52em 0.6em;
     margin: 0.3em;

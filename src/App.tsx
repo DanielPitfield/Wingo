@@ -675,6 +675,9 @@ export const App: React.FC = () => {
               </nav>
             )}
             <h1 className="title">{pages.find((x) => x.page === page)?.title}</h1>
+            <Button mode="default" className="settings-button" onClick={() => setPage("settings")}>
+              Settings
+            </Button>
             <div className="gold_counter">
               <img className="gold_coin_image" src={GoldCoin} alt="Gold" />
               {gold.toLocaleString("en-GB")}
