@@ -311,7 +311,8 @@ export const App: React.FC = () => {
   }
 
   function getHighestCampaignArea(): AreaConfig {
-    const highestCampaignArea = AllCampaignAreas.reverse().filter((campaignArea) => {
+    const reversedCopy = AllCampaignAreas.slice().reverse();
+    const highestCampaignArea = reversedCopy.filter((campaignArea) => {
       const areaInfo = SaveData.getCampaignProgress().areas.find((area) => area.name === campaignArea.name);
 
       return areaInfo?.status === "unlocked";
