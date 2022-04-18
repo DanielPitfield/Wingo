@@ -13,6 +13,7 @@ interface Props {
   mode: "order" | "match";
   numTiles: number;
   numOperands: 2 | 3;
+  numGuesses: number;
   difficulty: "easy" | "normal" | "hard";
   timerConfig: { isTimed: false } | { isTimed: true; seconds: number };
   setPage: (page: Page) => void;
@@ -21,6 +22,7 @@ interface Props {
 /** */
 const ArithmeticDrag: React.FC<Props> = (props) => {
   const [inProgress, setInProgress] = useState(true);
+  const [remainingGuesses, setRemainingGuesses] = useState(props.numGuesses);
   const [seconds, setSeconds] = useState(props.timerConfig.isTimed ? props.timerConfig.seconds : 0);
   const [tiles, setTiles] = useState<
     { expression: string; total: number; status: "incorrect" | "correct" | "not set"}[]
@@ -283,7 +285,19 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
     });
 
     setTiles(newTiles);
-    setInProgress(false);
+
+    // Are all the tiles in the correct position?
+    const allCorrect = newTiles.filter((x) => x.status === "correct").length === tiles.length;
+
+    // Or on last remaining guess
+    if (allCorrect || remainingGuesses <= 1) {
+      // Game over
+      setInProgress(false);
+    }
+    else {
+      // Otherwise, decrease number of guesses left
+      setRemainingGuesses(remainingGuesses - 1);
+    }
   }
 
   /**
@@ -320,6 +334,7 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
   function ResetGame() {
     setInProgress(true);
     setTiles([]);
+    setRemainingGuesses(props.numGuesses);
 
     if (props.timerConfig.isTimed) {
       // Reset the timer if it is enabled in the game options
@@ -330,6 +345,11 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
   return (
     <div className="App numbers_arithmetic">
       <div className="outcome">{displayOutcome()}</div>
+      {inProgress && (
+        <MessageNotification type="default">
+          {`Guesses left: ${remainingGuesses}`}
+        </MessageNotification>
+      )}
       <div className="tile_row">{displayTiles()}</div>
       {inProgress && (
         <Button mode="accept" onClick={() => checkTiles()}>

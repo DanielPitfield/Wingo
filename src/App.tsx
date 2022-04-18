@@ -584,6 +584,7 @@ export const App: React.FC = () => {
         return (
           <ArithmeticDrag
             mode="order"
+            numGuesses={3}
             numTiles={6}
             numOperands={3}
             difficulty={"easy"}
