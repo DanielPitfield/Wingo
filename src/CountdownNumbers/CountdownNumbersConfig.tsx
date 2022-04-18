@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { Page } from "../App";
 import CountdownNumbers from "./CountdownNumbers";
 import { calculateTotal } from "./NumberRow";
-import { operators } from "../Nubble/getValidValues";
 import { Theme } from "../Themes";
 
 interface Props {
@@ -17,6 +16,27 @@ interface Props {
   setPage: (page: Page) => void;
   addGold: (gold: number) => void;
 }
+
+export const operators: { name: "÷" | "-" | "+" | "×"; function: (num1: number, num2: number) => number }[] = [
+  {
+    name: "÷",
+    function: (num1: number, num2: number): number => num1 / num2,
+  },
+  {
+    name: "-",
+    function: (num1: number, num2: number): number => num1 - num2,
+  },
+  {
+    name: "+",
+    function: (num1: number, num2: number): number => num1 + num2,
+  },
+  {
+    name: "×",
+    function: (num1: number, num2: number): number => num1 * num2,
+  },
+];
+
+export const operators_symbols = ["÷" , "-" , "+" , "×"];
 
 export function isNumberValid(currentExpression: string) {
   if (!currentExpression) {

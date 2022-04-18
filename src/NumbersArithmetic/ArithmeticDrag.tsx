@@ -2,9 +2,9 @@ import React, { useState } from "react";
 import { arrayMove, OrderGroup } from "react-draggable-order";
 import { Page } from "../App";
 import { Button } from "../Button";
+import { operators, operators_symbols } from "../CountdownNumbers/CountdownNumbersConfig";
 import LetterTile from "../LetterTile";
 import { MessageNotification } from "../MessageNotification";
-import { operators, rpn_operators_symbols } from "../Nubble/getValidValues";
 import { randomIntFromInterval } from "../Nubble/Nubble";
 import ProgressBar, { GreenToRedColorTransition } from "../ProgressBar";
 import { DraggableItem } from "./DraggableItem";
@@ -106,7 +106,7 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
 
       for (let i = 0; i < expression.length; i++) {
         const character = expression.charAt(i);
-        if (rpn_operators_symbols.includes(character)) {
+        if (operators_symbols.includes(character)) {
           operatorCount = operatorCount + 1;
         }
       }

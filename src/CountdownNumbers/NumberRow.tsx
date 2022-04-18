@@ -1,8 +1,7 @@
 import React from "react";
 import NumberTile from "./NumberTile";
 import OperatorTile from "./OperatorTile";
-import { Guess } from "./CountdownNumbersConfig";
-import { operators } from "../Nubble/getValidValues";
+import { Guess, operators } from "./CountdownNumbersConfig";
 
 interface Props {
   onClick: (

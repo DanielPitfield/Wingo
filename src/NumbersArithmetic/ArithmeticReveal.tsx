@@ -2,11 +2,11 @@ import React, { useState } from "react";
 import { Page } from "../App";
 import { MessageNotification } from "../MessageNotification";
 import LetterTile from "../LetterTile";
-import { operators } from "../Nubble/getValidValues";
 import { randomIntFromInterval } from "../Nubble/Nubble";
 import { NumPad } from "../NumPad";
 import ProgressBar, { GreenToRedColorTransition } from "../ProgressBar";
 import { Button } from "../Button";
+import { operators } from "../CountdownNumbers/CountdownNumbersConfig";
 
 interface Props {
   revealIntervalSeconds: number;

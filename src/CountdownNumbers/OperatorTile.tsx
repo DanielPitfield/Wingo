@@ -1,6 +1,6 @@
 import React from "react";
 import "../index.scss";
-import { operators } from "../Nubble/getValidValues";
+import { operators } from "./CountdownNumbersConfig";
 
 interface Props {
   hasTimerEnded: boolean;

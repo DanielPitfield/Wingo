@@ -4,7 +4,6 @@ import "../index.scss";
 import { MessageNotification } from "../MessageNotification";
 import { Theme } from "../Themes";
 import DiceGrid from "./DiceGrid";
-import { getValidValues } from "./getValidValues";
 
 interface Props {
   theme: Theme;
@@ -39,13 +38,9 @@ const Nubble: React.FC<Props> = (props) => {
     points: props.determinePoints(i + 1),
   }));
   const [totalPoints, setTotalPoints] = useState(0);
-  const [validValues, setValidValues] = useState<number[]>();
 
   // Determine valid results on update of diceValues (at start and on roll of dice)
   React.useEffect(() => {
-    const newValidValues = getValidValues(diceValues, props.gridSize);
-    setValidValues(newValidValues);
-    // Once new values have been set, show the dice as having stopped rolling
     setStatus("dice-rolled-awaiting-pick");
   }, [diceValues]);
 
@@ -137,10 +132,6 @@ const Nubble: React.FC<Props> = (props) => {
     }
 
     if (pinNumber < 1) {
-      return;
-    }
-
-    if (!validValues) {
       return;
     }
 
