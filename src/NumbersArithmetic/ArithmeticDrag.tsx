@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { arrayMove, OrderGroup } from "react-draggable-order";
 import { Page } from "../App";
+import { Button } from "../Button";
 import LetterTile from "../LetterTile";
 import { operators, pretty_operator_symbols } from "../Nubble/getValidValues";
 import { randomIntFromInterval } from "../Nubble/Nubble";
@@ -25,7 +26,9 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
   const [inProgress, setInProgress] = useState(true);
   const [seconds, setSeconds] = useState(props.timerConfig.isTimed ? props.timerConfig.seconds : 0);
   const [guess, setGuess] = useState("");
-  const [tiles, setTiles] = useState<{ expression: string; total: number }[]>([]);
+  const [tiles, setTiles] = useState<
+    { expression: string; total: number; status: "incorrect" | "contains" | "correct" | "not set" | "not in word" }[]
+  >([]);
 
   function getStartingNumberLimit(): number {
     switch (props.difficulty) {
@@ -47,7 +50,7 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
       return;
     }
 
-    const newTiles: { expression: string; total: number }[] = [];
+    const newTiles: { expression: string; total: number; status: "not set" }[] = [];
 
     for (let i = 0; i < props.numTiles; i++) {
       const tile = generateTile();
@@ -117,7 +120,7 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
      * Generates a new valid tile
      * @returns Object of tile information (display string and evaluation result)
      */
-    function generateTile(): { expression: string; total: number } {
+    function generateTile(): { expression: string; total: number; status: "not set" } {
       // First number of the tile expression
       const starting_number = randomIntFromInterval(1, getStartingNumberLimit());
 
@@ -204,7 +207,7 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
       }
 
       // Once expression is desired length, return
-      return { expression: expression, total: total };
+      return { expression: expression, total: total, status: "not set" };
     }
   }, [tiles, props.numTiles]);
 
@@ -256,11 +259,46 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
       <OrderGroup mode={"between"}>
         {tiles.map((tile, index) => (
           <DraggableItem key={index} index={index} onMove={(toIndex) => setTiles(arrayMove(tiles, index, toIndex))}>
-            <LetterTile letter={tile.expression} status="not set" />
+            <LetterTile letter={tile.expression /*`R: ${tile.total}`*/} status={tile.status} />
           </DraggableItem>
         ))}
       </OrderGroup>
     );
+  }
+
+  function checkTiles() {
+    const totals = tiles.map((x) => x.total);
+    const smallest_value = Math.min(...totals);
+    const biggest_value = Math.max(...totals);
+
+    const newTiles = tiles.map((x, index) => {
+      // First tile has the smallest value?
+      if (index === 0 && tiles[index].total === smallest_value) {
+        x.status = "correct";
+      }
+      // Last tile has the biggest value?
+      else if (index === tiles.length - 1 && tiles[index].total === biggest_value) {
+        x.status = "correct";
+      }
+      // Middle tile?
+      else if (index > 0 && index < tiles.length - 1) {
+        // Does the tile have a total bigger than the tile before it and smaller than the tile after it?
+        const correct_position = x.total > tiles[index - 1].total && x.total < tiles[index + 1].total;
+        if (correct_position) {
+          x.status = "correct";
+        }
+        else {
+          x.status = "incorrect";
+        }
+      }
+      // Unexpected tile
+      else {
+        x.status = "incorrect";
+      }
+      return x;
+    });
+
+    setTiles(newTiles);
   }
 
   /**
@@ -280,6 +318,11 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
     <div className="App numbers_arithmetic">
       <div className="outcome">{displayOutcome()}</div>
       {inProgress && <div className="tile_row">{displayTiles()}</div>}
+      {inProgress && (
+        <Button mode="accept" onClick={() => checkTiles()}>
+          Submit Order
+        </Button>
+      )}
       {revealState.type === "finished" && (
         <div>
           {props.timerConfig.isTimed && (
