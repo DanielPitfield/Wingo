@@ -391,12 +391,12 @@ $data-statuses: (
 .number_tile,
 .operator_tile,
 .equals_tile {
-  width: 60px;
-  height: 60px;
+  width: 55px;
+  height: 55px;
   border: 2px solid #969595;
   margin: 2px;
   vertical-align: middle;
-  font-size: 2.5rem;
+  font-size: 2.1rem;
   color: white;
   background-color: rgb(44, 44, 184);
   text-transform: uppercase;
@@ -405,6 +405,10 @@ $data-statuses: (
 
 .number_tile[data-disabled="true"] {
   opacity: 0.5;
+}
+
+.countdown-numbers-grid {
+  font-size: 0.95em;
 }
 
 .number_row {
