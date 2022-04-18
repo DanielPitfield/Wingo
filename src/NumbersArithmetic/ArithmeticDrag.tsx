@@ -4,7 +4,7 @@ import { Page } from "../App";
 import { Button } from "../Button";
 import LetterTile from "../LetterTile";
 import { MessageNotification } from "../MessageNotification";
-import { operators, pretty_operator_symbols } from "../Nubble/getValidValues";
+import { operators, operators_symbols } from "../Nubble/getValidValues";
 import { randomIntFromInterval } from "../Nubble/Nubble";
 import ProgressBar, { GreenToRedColorTransition } from "../ProgressBar";
 import { DraggableItem } from "./DraggableItem";
@@ -25,7 +25,7 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
   const [remainingGuesses, setRemainingGuesses] = useState(props.numGuesses);
   const [seconds, setSeconds] = useState(props.timerConfig.isTimed ? props.timerConfig.seconds : 0);
   const [tiles, setTiles] = useState<
-    { expression: string; total: number; status: "incorrect" | "correct" | "not set"}[]
+    { expression: string; total: number; status: "incorrect" | "correct" | "not set" }[]
   >([]);
 
   function getStartingNumberLimit(): number {
@@ -61,8 +61,8 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
       switch (props.difficulty) {
         case "easy": {
           switch (operator) {
-            case "/":
-            case "*": {
+            case "÷":
+            case "×": {
               return 4;
             }
             case "+":
@@ -74,8 +74,8 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
         }
         case "normal": {
           switch (operator) {
-            case "/":
-            case "*": {
+            case "÷":
+            case "×": {
               return 4;
             }
             case "+":
@@ -87,8 +87,8 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
         }
         case "hard": {
           switch (operator) {
-            case "/":
-            case "*": {
+            case "÷":
+            case "×": {
               return 10;
             }
             case "+":
@@ -106,7 +106,7 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
 
       for (let i = 0; i < expression.length; i++) {
         const character = expression.charAt(i);
-        if (pretty_operator_symbols.includes(character)) {
+        if (operators_symbols.includes(character)) {
           operatorCount = operatorCount + 1;
         }
       }
@@ -136,7 +136,7 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
         let operand: number | undefined = undefined;
 
         switch (operator_symbol) {
-          case "/": {
+          case "÷": {
             // Number of attempts to find a clean divisor
             const max_limit = 10;
             let fail_count = 0;
@@ -155,7 +155,7 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
             break;
           }
 
-          case "*": {
+          case "×": {
             // Lower threshold of 2 (no point multiplying by 1)
             operand = randomIntFromInterval(2, getOperatorLimit(operator_symbol)!);
             break;
@@ -187,7 +187,7 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
         // An operator and operand were determined in this iteration
         if (operand !== undefined) {
           // Add both to expression string
-          expression = expression + getPrettyOperatorSymbol(operator_symbol) + operand.toString();
+          expression = expression + operator_symbol + operand.toString();
 
           // Insert closing bracket after operand following the first operator (when there are 3 operands)
           if (countOperators(expression) === 1 && props.numOperands === 3) {
@@ -208,22 +208,6 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
       return { expression: expression, total: total, status: "not set" };
     }
   }, [tiles, props.numTiles]);
-
-  function getPrettyOperatorSymbol(operatorSymbol: "+" | "-" | "/" | "*"): string {
-    switch (operatorSymbol) {
-      case "/":
-        return "÷";
-
-      case "*":
-        return "×";
-
-      case "+":
-        return "+";
-
-      case "-":
-        return "-";
-    }
-  }
 
   // (Guess) Timer Setup
   React.useEffect(() => {
@@ -293,8 +277,7 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
     if (allCorrect || remainingGuesses <= 1) {
       // Game over
       setInProgress(false);
-    }
-    else {
+    } else {
       // Otherwise, decrease number of guesses left
       setRemainingGuesses(remainingGuesses - 1);
     }
@@ -316,9 +299,7 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
       <>
         <MessageNotification type={numCorrectTiles === tiles.length ? "success" : "error"}>
           <strong>
-            {numCorrectTiles === tiles.length
-              ? "All tiles in the correct order!"
-              : `${numCorrectTiles} tiles correct`}
+            {numCorrectTiles === tiles.length ? "All tiles in the correct order!" : `${numCorrectTiles} tiles correct`}
           </strong>
         </MessageNotification>
 
@@ -345,11 +326,7 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
   return (
     <div className="App numbers_arithmetic">
       <div className="outcome">{displayOutcome()}</div>
-      {inProgress && (
-        <MessageNotification type="default">
-          {`Guesses left: ${remainingGuesses}`}
-        </MessageNotification>
-      )}
+      {inProgress && <MessageNotification type="default">{`Guesses left: ${remainingGuesses}`}</MessageNotification>}
       <div className="tile_row">{displayTiles()}</div>
       {inProgress && (
         <Button mode="accept" onClick={() => checkTiles()}>

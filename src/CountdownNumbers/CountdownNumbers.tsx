@@ -7,8 +7,8 @@ import { NumberRow } from "./NumberRow";
 import NumberTile from "./NumberTile";
 import { Guess, hasNumberSelectionFinished, hasNumberSelectionStarted } from "./CountdownNumbersConfig";
 import { CountdownRow } from "./CountdownRow";
-import { getCountdownAnswer } from "../Nubble/getValidValues";
 import { Theme } from "../Themes";
+import { NumberPuzzle, NumberPuzzleValue } from "./CountdownSolver";
 
 interface Props {
   mode: "countdown_numbers_casual" | "countdown_numbers_realistic";
@@ -43,13 +43,18 @@ interface Props {
   onSubmitCountdownExpression: (numberExpression: number[]) => void;
   onSubmitNumber: (number: number) => void;
   onBackspace: () => void;
-  ResetGame: () => void;
+  resetGame: () => void;
   setOperator: (operator: Guess["operator"]) => void;
   addGold: (gold: number) => void;
 }
 
+/**
+ *
+ * @param props
+ * @returns
+ */
 const CountdownNumbers: React.FC<Props> = (props) => {
-  const [answer, setAnswer] = useState("");
+  const [solutions, setSolutions] = useState<{ best: NumberPuzzleValue; all: NumberPuzzleValue[] } | null>(null);
 
   React.useEffect(() => {
     if (!props.targetNumber) {
@@ -62,12 +67,16 @@ const CountdownNumbers: React.FC<Props> = (props) => {
       return;
     }
 
-    const answer = getCountdownAnswer(inputNumbers, props.targetNumber);
-    setAnswer(answer);
+    const puzzle = new NumberPuzzle(props.targetNumber, inputNumbers);
+    setSolutions(puzzle.solve());
   }, [props.targetNumber]);
 
   // Create grid of rows (for guessing numbers)
   function populateGrid(expressionLength: number) {
+    /**
+     *
+     * @returns
+     */
     function getSmallNumber(): number | null {
       // Already 6 picked numbers, don't add any more
       if (hasNumberSelectionFinished(props.countdownStatuses)) {
@@ -86,6 +95,10 @@ const CountdownNumbers: React.FC<Props> = (props) => {
       return random_small_number;
     }
 
+    /**
+     *
+     * @returns
+     */
     function getBigNumber(): number | null {
       if (hasNumberSelectionFinished(props.countdownStatuses)) {
         return null;
@@ -99,6 +112,9 @@ const CountdownNumbers: React.FC<Props> = (props) => {
       return random_big_number;
     }
 
+    /**
+     *
+     */
     function quickNumberSelection() {
       let newCountdownExpression = [];
       const numCountdownNumbers = 6;
@@ -116,6 +132,7 @@ const CountdownNumbers: React.FC<Props> = (props) => {
       // Set the entire expression at once
       props.onSubmitCountdownExpression(newCountdownExpression);
     }
+
     var Grid = [];
 
     // Check if 6 numbers have been selected
@@ -172,52 +189,76 @@ const CountdownNumbers: React.FC<Props> = (props) => {
       </div>
     );
 
-    for (let i = 0; i < props.numGuesses; i++) {
-      let guess: Guess;
+    if (props.inProgress) {
+      for (let i = 0; i < props.numGuesses; i++) {
+        let guess: Guess;
 
-      if (props.wordIndex === i) {
-        /* 
+        if (props.wordIndex === i) {
+          /* 
         If the wordIndex and the row number are the same
         (i.e the row is currently being used)
         Show the currentGuess
         */
-        guess = props.currentGuess;
-      } else if (props.wordIndex <= i) {
-        /*
+          guess = props.currentGuess;
+        } else if (props.wordIndex <= i) {
+          /*
         If the wordIndex is behind the currently iterated row
         (i.e the row has not been used yet)
         Show an empty guess
         */
-        guess = { operand1: null, operand2: null, operator: "+" };
-      } else {
-        /* 
+          guess = { operand1: null, operand2: null, operator: "+" };
+        } else {
+          /* 
         If the wordIndex is ahead of the currently iterated row
         (i.e the row has already been used)
         Show the respective guess
         */
-        guess = props.guesses[i];
-      }
+          guess = props.guesses[i];
+        }
 
+        Grid.push(
+          <NumberRow
+            key={`countdown_numbers_input ${i}`}
+            isReadOnly={i < props.wordIndex}
+            hasTimerEnded={props.hasTimerEnded}
+            onClick={props.onClick}
+            onRightClick={props.onRightClick}
+            expression={guess}
+            length={expressionLength}
+            targetNumber={props.targetNumber}
+            hasSubmit={!props.inProgress}
+            setOperator={props.setOperator}
+            rowIndex={i}
+          ></NumberRow>
+        );
+      }
+    } else {
       Grid.push(
-        <NumberRow
-          key={`countdown_numbers_input ${i}`}
-          isReadOnly={i < props.wordIndex}
-          hasTimerEnded={props.hasTimerEnded}
-          onClick={props.onClick}
-          onRightClick={props.onRightClick}
-          expression={guess}
-          length={expressionLength}
-          targetNumber={props.targetNumber}
-          hasSubmit={!props.inProgress}
-          setOperator={props.setOperator}
-          rowIndex={i}
-        ></NumberRow>
+        <div className="best-solution">
+          <MessageNotification type="default">
+            Best Solution:
+            <strong>
+              <br />
+              <br />
+              {solutions?.best.toListOfSteps().map((step) => (
+                <>
+                  {step}
+                  <br />
+                </>
+              ))}
+            </strong>
+          </MessageNotification>
+        </div>
       );
     }
 
     return Grid;
   }
 
+  /**
+   *
+   * @returns
+   */
   function determineBestGuess(): number | null {
     // No target number
     if (!props.targetNumber) {
@@ -232,7 +273,7 @@ const CountdownNumbers: React.FC<Props> = (props) => {
     }
 
     // Get all the intermediary numbers (from statuses)
-    let intermediaryNumbers = [];
+    const intermediaryNumbers = [];
     for (let i = 0; i < intermediaryStatuses.length; i++) {
       if (intermediaryStatuses[i].number !== null) {
         intermediaryNumbers.push(intermediaryStatuses[i].number);
@@ -240,9 +281,10 @@ const CountdownNumbers: React.FC<Props> = (props) => {
     }
 
     // Get the closest intermediary guess
-    var closest = intermediaryNumbers.reduce(function (prev, curr) {
+    const closest = intermediaryNumbers.reduce(function (prev, curr) {
       const prevDifference = Math.abs(prev! - props.targetNumber!);
       const currentDifference = Math.abs(curr! - props.targetNumber!);
+
       return currentDifference < prevDifference ? curr : prev;
     });
 
@@ -250,9 +292,6 @@ const CountdownNumbers: React.FC<Props> = (props) => {
   }
 
   function displayOutcome() {
-    //let outcome: "success" | "failure" | "in-progress" = "in-progress";
-    //const GOLD_PER_POINT = 30;
-
     if (props.inProgress || !props.hasTimerEnded || !props.targetNumber) {
       return;
     }
@@ -261,58 +300,44 @@ const CountdownNumbers: React.FC<Props> = (props) => {
     const best_guess = determineBestGuess();
 
     if (best_guess === null) {
-      //outcome = "failure";
       return (
         <>
           <MessageNotification type="error">
-            <strong>No guess was made</strong>
+            No guess was made
             <br />
-            <strong>0 points</strong>
+            <strong>0</strong> points
           </MessageNotification>
         </>
       );
     } else {
-      // TODO: determineBestGuess could return the difference, depends on if the message should show the best guess
       const difference = Math.abs(best_guess - props.targetNumber);
+
       // Guess the target number exactly, difference is 0, score is 10
       const score = 10 - difference;
 
       if (score === 10) {
-        //outcome = "success";
         return (
-          <>
-            <MessageNotification type="success">
-              <strong>You got the target number!</strong>
-              <br />
-              <strong>10 points</strong>
-            </MessageNotification>
-          </>
+          <MessageNotification type="success">
+            You got the target number!
+            <br />
+            <strong>{score}</strong> points
+          </MessageNotification>
         );
       } else if (score >= 1 && score <= 9) {
-        //outcome = "success";
-
         return (
-          <>
-            <MessageNotification type="success">
-              <strong>{`You were ${difference} away from the target number`}</strong>
-              <br />
-              <strong>{`${score} points`}</strong>
-              <strong>{`Answer: ${answer}`}</strong>
-            </MessageNotification>
-          </>
+          <MessageNotification type="success">
+            You were <strong>{difference}</strong> away from the target number
+            <br />
+            <strong>{score}</strong> points
+          </MessageNotification>
         );
       } else {
-        //outcome = "failure";
-
         return (
-          <>
-            <MessageNotification type="error">
-              <strong>{`You were too far away from the target number (${difference})`}</strong>
-              <br />
-              <strong>0 points</strong>
-              <strong>{`Answer: ${answer}`}</strong>
-            </MessageNotification>
-          </>
+          <MessageNotification type="error">
+            You were {difference} away from the target number
+            <br />
+            <strong>0</strong> points
+          </MessageNotification>
         );
       }
     }
@@ -320,11 +345,11 @@ const CountdownNumbers: React.FC<Props> = (props) => {
 
   return (
     <div className="App" style={{ backgroundImage: `url(${props.theme.backgroundImageSrc})`, backgroundSize: "100%" }}>
-      <div>{displayOutcome()}</div>
+      {displayOutcome()}
 
       <div>
         {props.hasTimerEnded && !props.inProgress && (
-          <Button mode={"accept"} onClick={() => props.ResetGame()}>
+          <Button mode={"accept"} onClick={() => props.resetGame()}>
             Restart
           </Button>
         )}
@@ -332,13 +357,17 @@ const CountdownNumbers: React.FC<Props> = (props) => {
 
       <div className="countdown-numbers-grid">{populateGrid(props.expressionLength)}</div>
 
-      <Button mode="destructive" onClick={props.clearGrid}>
-        Clear
-      </Button>
+      {props.inProgress && (
+        <Button mode="destructive" onClick={props.clearGrid}>
+          Clear
+        </Button>
+      )}
 
-      <Button mode="default" onClick={props.submitBestGuess}>
-        Use Best Guess
-      </Button>
+      {props.inProgress && (
+        <Button mode="default" onClick={props.submitBestGuess}>
+          Use Best Guess
+        </Button>
+      )}
 
       <div>
         {props.timerConfig.isTimed && (

@@ -2,8 +2,8 @@ import React from "react";
 import "../index.scss";
 
 interface Props {
-  onClick: () => void;
-  onRightClick: () => void;
+  onClick?: () => void;
+  onRightClick?: () => void;
   isReadOnly: boolean;
   number: number | null;
   disabled: boolean;

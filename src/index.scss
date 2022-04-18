@@ -395,9 +395,11 @@ $data-statuses: (
   height: 55px;
   border: 2px solid #969595;
   margin: 2px;
-  vertical-align: middle;
-  font-size: 2.1rem;
-  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.7rem;
+  color: #eee;
   background-color: rgb(44, 44, 184);
   text-transform: uppercase;
   user-select: none;
@@ -408,14 +410,25 @@ $data-statuses: (
 }
 
 .countdown-numbers-grid {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   font-size: 0.95em;
+  & > .number_row {
+    & > .number_tile:last-of-type {
+      width: 5em;
+    }
+  }
 }
 
 .number_row {
   display: flex;
   align-items: center;
-  justify-content: center;
-  vertical-align: middle;
+}
+.best-solution {
+  margin-top: 2em;
+  margin-bottom: 6.5em;
 }
 
 /* Splash Screen page ========================= */

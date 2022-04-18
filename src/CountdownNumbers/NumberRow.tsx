@@ -1,12 +1,14 @@
 import React from "react";
-import EqualsTile from "./EqualsTile";
 import NumberTile from "./NumberTile";
 import OperatorTile from "./OperatorTile";
 import { Guess } from "./CountdownNumbersConfig";
 import { operators } from "../Nubble/getValidValues";
 
 interface Props {
-  onClick: (value: number | null, id: {type: "original", index: number} | {type: "intermediary", rowIndex: number}) => void;
+  onClick: (
+    value: number | null,
+    id: { type: "original"; index: number } | { type: "intermediary"; rowIndex: number }
+  ) => void;
   onRightClick: (value: number | null, index: number) => void;
   isReadOnly: boolean;
   hasTimerEnded: boolean;
@@ -18,6 +20,11 @@ interface Props {
   setOperator: (operator: typeof operators[0]["name"]) => void;
 }
 
+/**
+ *
+ * @param guess
+ * @returns
+ */
 export function calculateTotal(guess: Guess): number | null {
   if (!guess) {
     return null;
@@ -48,66 +55,43 @@ export function calculateTotal(guess: Guess): number | null {
 }
 
 export const NumberRow: React.FC<Props> = (props) => {
-  function CreateRow() {
-    var TileArray = [];
-    TileArray.push(
+  return (
+    <div className="number_row">
       <NumberTile
-        key={"first-operand"}
+        key="first-operand"
         number={props.expression ? props.expression.operand1 : null}
         disabled={false}
         isReadOnly={props.isReadOnly}
-        // Do nothing on left click
-        onClick={() => {}}
-        // Remove operand from current guess on right click
-        onRightClick={() => {
-          // if (!props.isReadOnly) {
-          //   props.onRightClick(props.expression.operand1, 0);
-          // }
-        }}
-      ></NumberTile>
-    );
-    TileArray.push(
+      />
+
       <OperatorTile
+        key="first-operator"
         hasTimerEnded={props.hasTimerEnded}
         targetNumber={props.targetNumber}
         setOperator={props.setOperator}
-        operator={props.expression ? props.expression.operator: "+"}
-        key={"first-operator"}
-      ></OperatorTile>
-    );
-    TileArray.push(
+        operator={props.expression ? props.expression.operator : "+"}
+      />
+
       <NumberTile
-        key={"second-operand"}
+        key="second-operand"
         number={props.expression ? props.expression.operand2 : null}
         disabled={false}
         isReadOnly={props.isReadOnly}
-        onClick={() => {}}
-        onRightClick={() => {
-          // if (!props.isReadOnly) {
-          //   props.onRightClick(props.expression.operand2, 2);
-          // }
-        }}
-      ></NumberTile>
-    );
-    TileArray.push(<EqualsTile key={"equals"}></EqualsTile>);
-    TileArray.push(
+      />
+
+      <div key="equals" className="equals_tile">
+        =
+      </div>
+
       <NumberTile
-        key={"row_result"}
+        key="row_result"
         number={calculateTotal(props.expression) || null}
         disabled={false}
         isReadOnly={props.isReadOnly}
-        onClick={() => props.onClick(calculateTotal(props.expression) || null, {type: "intermediary", rowIndex: props.rowIndex })}
-        // TODO: Right click on result too
-        onRightClick={() => {}}
-      ></NumberTile>
-    );
-
-    return TileArray;
-  }
-
-  return (
-    <div className="number_row">
-      <>{CreateRow()}</>
+        onClick={() =>
+          props.onClick(calculateTotal(props.expression) || null, { type: "intermediary", rowIndex: props.rowIndex })
+        }
+      />
     </div>
   );
 };

@@ -435,7 +435,7 @@ const CountdownNumbersConfig: React.FC<Props> = (props) => {
       onSubmitCountdownExpression={onSubmitCountdownExpression}
       onSubmitNumber={onSubmitNumber}
       onBackspace={onBackspace}
-      ResetGame={ResetGame}
+      resetGame={ResetGame}
       clearGrid={clearGrid}
       submitBestGuess={submitBestGuess}
       setPage={props.setPage}

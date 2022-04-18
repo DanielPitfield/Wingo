@@ -12,10 +12,15 @@ interface Props {
 }
 
 export const CountdownRow: React.FC<Props> = (props) => {
+  /**
+   * 
+   * @returns 
+   */
   function CreateRow() {
-    var TileArray = [];
+    const tileArray = [];
+
     for (let i = 0; i < props.length; i++) {
-      TileArray.push(
+      tileArray.push(
         <NumberTile
           key={i}
           number={props.expression?.[i].number}
@@ -27,7 +32,7 @@ export const CountdownRow: React.FC<Props> = (props) => {
       );
     }
 
-    return TileArray;
+    return tileArray;
   }
 
   return (

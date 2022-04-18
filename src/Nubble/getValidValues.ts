@@ -10,10 +10,10 @@ import {
 
 var rpn = require("rpn");
 
-// --- OPERATORS (+ - / *) ---
-export const operators: { name: "/" | "-" | "+" | "*"; function: (num1: number, num2: number) => number }[] = [
+// --- OPERATORS (+ - ÷ ×) ---
+export const operators: { name: "÷" | "-" | "+" | "×"; function: (num1: number, num2: number) => number }[] = [
   {
-    name: "/",
+    name: "÷",
     function: (num1: number, num2: number): number => num1 / num2,
   },
   {
@@ -25,13 +25,12 @@ export const operators: { name: "/" | "-" | "+" | "*"; function: (num1: number, 
     function: (num1: number, num2: number): number => num1 + num2,
   },
   {
-    name: "*",
+    name: "×",
     function: (num1: number, num2: number): number => num1 * num2,
   },
 ];
 
-export const operators_symbols = ["/", "-", "+", "*"];
-export const pretty_operator_symbols = ["-","+","×","÷"];
+export const operators_symbols = ["÷", "-", "+", "×"];
 
 // Returns permutations of input array, https://stackoverflow.com/a/20871714
 export function permutator<T>(inputArr: T[]): T[][] {

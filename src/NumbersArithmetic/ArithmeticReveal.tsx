@@ -97,8 +97,8 @@ const ArithmeticReveal: React.FC<Props> = (props) => {
       switch (props.difficulty) {
         case "easy": {
           switch (operator) {
-            case "/":
-            case "*": {
+            case "÷":
+            case "×": {
               return 4;
             }
             case "+":
@@ -110,8 +110,8 @@ const ArithmeticReveal: React.FC<Props> = (props) => {
         }
         case "normal": {
           switch (operator) {
-            case "/":
-            case "*": {
+            case "÷":
+            case "×": {
               return 4;
             }
             case "+":
@@ -123,8 +123,8 @@ const ArithmeticReveal: React.FC<Props> = (props) => {
         }
         case "hard": {
           switch (operator) {
-            case "/":
-            case "*": {
+            case "÷":
+            case "×": {
               return 10;
             }
             case "+":
@@ -152,7 +152,7 @@ const ArithmeticReveal: React.FC<Props> = (props) => {
         let tile_number: number | undefined = undefined;
 
         switch (operator_symbol) {
-          case "/": {
+          case "÷": {
             // Number of attempts to find a clean divisor
             const max_limit = 10;
             let fail_count = 0;
@@ -171,7 +171,7 @@ const ArithmeticReveal: React.FC<Props> = (props) => {
             break;
           }
 
-          case "*": {
+          case "×": {
             // Lower threshold of 2 (no point multiplying by 1)
             tile_number = randomIntFromInterval(2, getOperatorLimit(operator_symbol)!);
             break;
@@ -208,7 +208,7 @@ const ArithmeticReveal: React.FC<Props> = (props) => {
           const newTargetNumber = tile_operator.function(targetNumber, tile_number);
           // String of the combination of operator and value
           return {
-            tile: getPrettyOperatorSymbol(operator_symbol) + tile_number.toString(),
+            tile: operator_symbol + tile_number.toString(),
             newRunningTotal: newTargetNumber,
           };
         }
@@ -224,22 +224,6 @@ const ArithmeticReveal: React.FC<Props> = (props) => {
     setGuess("");
     setSeconds(props.timerConfig.isTimed ? props.timerConfig.seconds : 0);
   }, [currentCheckpoint]);
-
-  function getPrettyOperatorSymbol(operatorSymbol: "+" | "-" | "/" | "*"): string {
-    switch (operatorSymbol) {
-      case "/":
-        return "÷";
-
-      case "*":
-        return "×";
-
-      case "+":
-        return "+";
-
-      case "-":
-        return "-";
-    }
-  }
 
   React.useEffect(() => {
     // If the game has finished
@@ -312,7 +296,7 @@ const ArithmeticReveal: React.FC<Props> = (props) => {
           {tiles[currentCheckpoint].join(" ")}
         </MessageNotification>
 
-        {currentCheckpoint < (props.numCheckpoints - 1) && (
+        {currentCheckpoint < props.numCheckpoints - 1 && (
           <>
             <br></br>
             <Button mode="accept" onClick={() => setCurrentCheckpoint(currentCheckpoint + 1)}>
