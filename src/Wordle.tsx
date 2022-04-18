@@ -272,7 +272,7 @@ const Wordle: React.FC<Props> = (props) => {
   return (
     <div className="App" style={{ backgroundImage: props.theme && `url(${props.theme.backgroundImageSrc})` }}>
       <div>{displayOutcome()}</div>
-      {props.mode === "daily" && (
+      {props.mode === "daily" && !props.inProgress && (
         <MessageNotification type="default">
           Next Daily Wordle in: {secondsToTimeString(secondsUntilNextDailyWingo)}
         </MessageNotification>
