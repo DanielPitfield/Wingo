@@ -300,9 +300,10 @@ export const App: React.FC = () => {
 
   useEffect(() => {
     if (loadingState === "loaded") {
-      backgroundSoundOptions.stop();
       playBackgroundSound();
     }
+
+    return () => backgroundSoundOptions.stop();
   }, [selectedCampaignArea, playBackgroundSound, loadingState]);
 
   function addGold(additionalGold: number) {
