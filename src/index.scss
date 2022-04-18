@@ -35,6 +35,9 @@ body {
 
 .logo {
   display: flex;
+  .letter_tile {
+    animation: flipRevealLetter 1.5s;
+  }
 }
 
 .btn {
@@ -439,6 +442,8 @@ $data-statuses: (
   flex-grow: 1;
   font-size: calc(10px + 2vmin);
   min-height: 100vh;
+  background-color: #ddd;
+  background-size: 100%;
 }
 
 .main-menu-wrapper {
