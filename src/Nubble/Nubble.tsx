@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import "../index.scss";
+import { Theme } from "../Themes";
 import DiceGrid from "./DiceGrid";
 import { getValidValues } from "./getValidValues";
 
 interface Props {
+  theme: Theme;
   numDice: number;
   diceMin: number;
   diceMax: number;
@@ -227,11 +229,13 @@ const Nubble: React.FC<Props> = (props) => {
   }
 
   return (
-    <div className="App">
+    <div className="App" style={{ backgroundImage: `url(${props.theme.backgroundImageSrc})` }}>
       <DiceGrid numDice={props.numDice} diceValues={diceValues} rollDice={rollDice} disabled={isDiceRolling}></DiceGrid>
       <div className="nubble-grid">{populateGrid()}</div>
-      <div className="nubble-score">{totalPoints}</div>
-      <div className="nubble-pin-scores">{displayPinScores()}</div>
+      <div className="nubble-score-wrapper">
+        <div className="nubble-score">{totalPoints}</div>
+        <div className="nubble-pin-scores">{displayPinScores()}</div>
+      </div>
     </div>
   );
 };

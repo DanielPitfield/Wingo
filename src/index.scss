@@ -891,19 +891,44 @@ $data-statuses: (
   align-items: center;
   justify-content: center;
   padding: 10px;
+  background-color: #fff8;
 }
 
-.nubble-button-display {
-  color: white;
-  font-weight: bold;
-  text-align: center;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  padding: 1em;
-  min-width: 4em;
-  min-height: 4em;
-  margin: 1px;
+.dice_wrapper {
+  background-color: #fff8;
+  padding: 0.4em;
+  min-width: 55em;
+  z-index: 99999;
+}
+
+.nubble-score-wrapper {
+  display: flex;
+  flex-direction: column;
+  background-color: #fff8;
+  padding: 0.4em;
+  min-width: 55em;
+  .nubble-score {
+    align-self: center;
+    margin-top: 0.3em;
+    margin-bottom: 0.3em;
+    padding: 0.5em 2em;
+    border: 2px solid black;
+    background-color: #fff8;
+  }
+  .nubble-pin-scores {
+    .nubble-button-display {
+      color: white;
+      font-weight: bold;
+      text-align: center;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      padding: 1em;
+      min-height: 4em;
+      margin: 1px;
+      width: 5em;
+    }
+  }
 }
 
 .nubble-button {
@@ -1051,14 +1076,9 @@ $nubble-colors-names: (
 }
 
 .nubble-grid {
-  margin-top: 1em;
   padding: 0em 10em;
-}
-
-.nubble-score {
-  margin-top: 1em;
-  padding: 0.5em 2em;
-  border: 2px solid black;
+  margin-top: -4em;
+  margin-bottom: -4em;
 }
 
 .add-letter-buttons-wrapper {

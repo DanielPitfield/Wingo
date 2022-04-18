@@ -1,5 +1,6 @@
 import React from "react";
 import "../index.scss";
+import { Theme } from "../Themes";
 import { square_100_adj, square_25_adj, square_64_adj } from "./adjacentMappings";
 import Nubble from "./Nubble";
 import {
@@ -12,6 +13,7 @@ import {
 } from "./pointColourMappings";
 
 interface Props {
+  theme: Theme;
   numDice: number;
   diceMin: number;
   diceMax: number;
@@ -285,20 +287,19 @@ const NubbleConfig: React.FC<Props> = (props) => {
     throw new Error(`Unexpected number for grid size: ${props.gridSize} NUmber:  ${number}`);
   }
   return (
-    <div className="App">
-      <Nubble
-        numDice={props.numDice}
-        diceMin={props.diceMin}
-        diceMax={props.diceMax}
-        gridSize={props.gridSize}
-        gridShape={props.gridShape}
-        determinePoints={determinePoints}
-        determinePointColourMappings={determinePointColourMappings}
-        determineAdjacentMappings={determineAdjacentMappings}
-        numTeams={props.numTeams}
-        timeLengthMins={props.timeLengthMins}
-      ></Nubble>
-    </div>
+    <Nubble
+      theme={props.theme}
+      numDice={props.numDice}
+      diceMin={props.diceMin}
+      diceMax={props.diceMax}
+      gridSize={props.gridSize}
+      gridShape={props.gridShape}
+      determinePoints={determinePoints}
+      determinePointColourMappings={determinePointColourMappings}
+      determineAdjacentMappings={determineAdjacentMappings}
+      numTeams={props.numTeams}
+      timeLengthMins={props.timeLengthMins}
+    ></Nubble>
   );
 };
 

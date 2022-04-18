@@ -603,6 +603,7 @@ export const App: React.FC = () => {
       case "nubble":
         return (
           <NubbleConfig
+            theme={theme}
             numDice={4}
             diceMin={1}
             diceMax={6}
