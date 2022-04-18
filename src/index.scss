@@ -922,7 +922,6 @@ $data-statuses: (
       text-align: center;
       align-items: center;
       justify-content: center;
-      cursor: pointer;
       padding: 1em;
       min-height: 4em;
       margin: 1px;
@@ -1053,7 +1052,7 @@ $nubble-colors-names: (
         border-top-color: darken($color, 10%);
       }
     }
-    &:disabled {
+    &[data-picked="true"] {
       cursor: not-allowed;
       color: #aaa;
       .middle {

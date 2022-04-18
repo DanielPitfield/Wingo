@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "../index.scss";
+import { MessageNotification } from "../MessageNotification";
 import { Theme } from "../Themes";
 import DiceGrid from "./DiceGrid";
 import { getValidValues } from "./getValidValues";
@@ -16,6 +17,7 @@ interface Props {
   determineAdjacentMappings: () => { pin: number; adjacent_pins: number[] }[];
   numTeams: number;
   timeLengthMins: number;
+  gameOverOnIncorrectPick?: boolean;
 }
 
 export function randomIntFromInterval(min: number, max: number) {
@@ -24,7 +26,9 @@ export function randomIntFromInterval(min: number, max: number) {
 }
 
 const Nubble: React.FC<Props> = (props) => {
-  const [isDiceRolling, setisDiceRolling] = useState(false);
+  const [status, setStatus] = useState<
+    "dice-rolling" | "dice-rolled-awaiting-pick" | "picked-awaiting-dice-roll" | "game-over-incorrect-tile"
+  >("picked-awaiting-dice-roll");
   const [diceValues, setdiceValues] = useState<number[]>(
     Array.from({ length: props.numDice }).map((x) => randomDiceNumber())
   );
@@ -41,79 +45,137 @@ const Nubble: React.FC<Props> = (props) => {
     const newValidValues = getValidValues(diceValues, props.gridSize);
     setValidValues(newValidValues);
     // Once new values have been set, show the dice as having stopped rolling
-    setisDiceRolling(false);
+    setStatus("dice-rolled-awaiting-pick");
   }, [diceValues]);
 
+  /**
+   *
+   * @returns
+   */
   function randomDiceNumber() {
     return randomIntFromInterval(props.diceMin, props.diceMax);
   }
 
+  /**
+   *
+   * @returns
+   */
   function rollDice() {
-    // If dice isn't already rolling
-    if (!isDiceRolling) {
-      // Dice is now being rolled
-      setisDiceRolling(true);
-      // Determine random dice values for all the dice
-      setdiceValues(Array.from({ length: props.numDice }).map((x) => randomDiceNumber()));
+    // If dice is not available to be rolled
+    if (status !== "picked-awaiting-dice-roll") {
+      return;
     }
+
+    // Dice is now being rolled
+    setStatus("dice-rolling");
+
+    // Determine random dice values for all the dice
+    setdiceValues(Array.from({ length: props.numDice }).map((x) => randomDiceNumber()));
   }
 
-  function isPrime(value: number) {
-    // returns boolean
-    if (value <= 1) return false; // negatives
-    if (value % 2 === 0 && value > 2) return false; // even numbers
-    const s = Math.sqrt(value); // store the square to loop faster
+  /**
+   *
+   * @param value
+   * @returns
+   */
+  function isPrime(value: number): boolean {
+    if (value <= 1) {
+      return false;
+    }
+
+    // even numbers
+    if (value % 2 === 0 && value > 2) {
+      return false;
+    }
+
+    // store the square to loop faster
+    const s = Math.sqrt(value);
     for (let i = 3; i <= s; i += 2) {
       // start from 3, stop at the square, increment in twos
-      if (value % i === 0) return false; // modulo shows a divisor was found
+      // modulo shows a divisor was found
+      if (value % i === 0) {
+        return false;
+      }
     }
+
     return true;
   }
 
+  /**
+   *
+   * @param pinNumber
+   * @returns
+   */
   function isAdjacentTriangle(pinNumber: number) {
     // Array deatiling pin adjacency for this gridSize
     const adjacentMappings = props.determineAdjacentMappings();
     console.log(adjacentMappings);
+
     // Adjacent pins of the clicked pin
     const adjacent_pins = adjacentMappings.find((x) => x.pin === pinNumber)?.adjacent_pins;
+
     // All the adjacent pins which have also previously been picked
     const picked_adjacent_pins = pickedPins.filter((x) => adjacent_pins?.includes(x));
+
     // Determine if there is a nubble triangle (3 adjacent picked pins)
     if (picked_adjacent_pins.length >= 3) {
       return true;
     }
+
     return false;
   }
 
+  /**
+   *
+   * @param pinNumber
+   * @returns
+   */
   function onClick(pinNumber: number) {
-    if (!validValues || !validValues.includes(pinNumber) || pinNumber < 1 || isDiceRolling) {
-      // No valid values, number is invalid or dice is rolling
+    if (status === "dice-rolling") {
       return;
-    } else {
-      // Keep track that the pin has now been correctly picked
-      let newPickedPins = pickedPins.slice();
-      newPickedPins.push(pinNumber);
-      setPickedPins(newPickedPins);
+    }
 
-      // Find out how many base points the pin is worth
-      let pinScore = gridPoints.find((x) => x.number === pinNumber)?.points;
+    if (pinNumber < 1) {
+      return;
+    }
 
-      if (isPrime(pinNumber)) {
-        // Double points if the picked pin is a prime number
-        pinScore = pinScore! * 2;
+    if (!validValues) {
+      return;
+    }
+
+    if (!validValues.includes(pinNumber)) {
+      if (props.gameOverOnIncorrectPick) {
+        setStatus("game-over-incorrect-tile");
       }
 
-      // Bonus points awarded for nubble triangle
-      const adjacentBonus = 200;
+      return;
+    }
 
-      if (isAdjacentTriangle(pinNumber)) {
-        pinScore = pinScore! + adjacentBonus;
-      }
+    setStatus("picked-awaiting-dice-roll");
 
-      // Add points to total points
-      if (pinScore) {
-        setTotalPoints(totalPoints + pinScore);
-      }
+    // Keep track that the pin has now been correctly picked
+    const newPickedPins = pickedPins.slice();
+    newPickedPins.push(pinNumber);
+    setPickedPins(newPickedPins);
+
+    // Find out how many base points the pin is worth
+    let pinScore = gridPoints.find((x) => x.number === pinNumber)?.points;
+
+    if (isPrime(pinNumber)) {
+      // Double points if the picked pin is a prime number
+      pinScore = pinScore! * 2;
+    }
+
+    // Bonus points awarded for nubble triangle
+    const adjacentBonus = 200;
+
+    if (isAdjacentTriangle(pinNumber)) {
+      pinScore = pinScore! + adjacentBonus;
+    }
+
+    // Add points to total points
+    if (pinScore) {
+      setTotalPoints(totalPoints + pinScore);
     }
   }
 
@@ -155,7 +217,7 @@ const Nubble: React.FC<Props> = (props) => {
               data-picked={isPicked}
               data-colour={colour}
               onClick={() => onClick(value)}
-              disabled={isPicked}
+              disabled={isPicked || status !== "dice-rolled-awaiting-pick"}
             >
               {props.gridShape === "hexagon" && <span className="top"></span>}
               {props.gridShape === "hexagon" && <span className="middle">{value}</span>}
@@ -168,6 +230,10 @@ const Nubble: React.FC<Props> = (props) => {
     );
   }
 
+  /**
+   *
+   * @returns
+   */
   function populateGrid() {
     var Grid = [];
 
@@ -178,15 +244,19 @@ const Nubble: React.FC<Props> = (props) => {
     return Grid;
   }
 
+  /**
+   *
+   * @returns
+   */
   function displayPinScores() {
-    var all_pin_scores = [];
+    const all_pin_scores = [];
     const pointColourMappings = props.determinePointColourMappings();
+
     // Create nubble pin of each colour with text of how many points it awards
     for (let i = 0; i < pointColourMappings.length; i++) {
       all_pin_scores.push(
         <button
           key={i}
-          // TODO: Change class name so doesnt change colour on hover
           className="nubble-button-display"
           data-prime={false}
           data-picked={false}
@@ -212,7 +282,6 @@ const Nubble: React.FC<Props> = (props) => {
     trimmed_pin_scores.push(
       <button
         key={"prime-read-only"}
-        // TODO: Change class name so doesnt change colour on hover
         className="nubble-button-display"
         data-prime={true}
         data-picked={false}
@@ -230,7 +299,27 @@ const Nubble: React.FC<Props> = (props) => {
 
   return (
     <div className="App" style={{ backgroundImage: `url(${props.theme.backgroundImageSrc})` }}>
-      <DiceGrid numDice={props.numDice} diceValues={diceValues} rollDice={rollDice} disabled={isDiceRolling}></DiceGrid>
+      {status === "game-over-incorrect-tile" && (
+        <MessageNotification type="error">
+          Incorrect tile picked
+          <br />
+          Your score was <strong>{totalPoints}</strong>
+        </MessageNotification>
+      )}
+      <DiceGrid
+        numDice={props.numDice}
+        diceValues={diceValues}
+        rollDice={rollDice}
+        disabled={status !== "picked-awaiting-dice-roll"}
+      >
+        {status === "dice-rolling"
+          ? "Rolling..."
+          : status === "picked-awaiting-dice-roll"
+          ? "Roll Dice"
+          : status === "dice-rolled-awaiting-pick"
+          ? "Pick a nibble"
+          : "Game over"}
+      </DiceGrid>
       <div className="nubble-grid">{populateGrid()}</div>
       <div className="nubble-score-wrapper">
         <div className="nubble-score">{totalPoints}</div>

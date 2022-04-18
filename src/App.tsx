@@ -611,6 +611,7 @@ export const App: React.FC = () => {
             gridShape={"hexagon"}
             numTeams={2}
             timeLengthMins={5}
+            gameOverOnIncorrectPick={true}
           ></NubbleConfig>
         );
 

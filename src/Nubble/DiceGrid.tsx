@@ -23,7 +23,7 @@ const DiceGrid: React.FC<Props> = (props) => {
     <div className="dice_wrapper">
       <div className="dice_row">{populateGrid()}</div>
       <Button mode={"default"} onClick={props.rollDice} disabled={props.disabled}>
-        {!props.disabled ? "Roll Dice" : "Rolling..."}
+        {props.children}
       </Button>
     </div>
   );

@@ -21,6 +21,7 @@ interface Props {
   gridShape: "square" | "hexagon";
   numTeams: number;
   timeLengthMins: number;
+  gameOverOnIncorrectPick?: boolean;
 }
 
 const NubbleConfig: React.FC<Props> = (props) => {
@@ -299,6 +300,7 @@ const NubbleConfig: React.FC<Props> = (props) => {
       determineAdjacentMappings={determineAdjacentMappings}
       numTeams={props.numTeams}
       timeLengthMins={props.timeLengthMins}
+      gameOverOnIncorrectPick={props.gameOverOnIncorrectPick}
     ></Nubble>
   );
 };
