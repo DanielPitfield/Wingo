@@ -2,7 +2,7 @@ import { Themes } from "../../Themes";
 import { AreaConfig } from "../Area";
 
 export const area: AreaConfig = {
-  name: "Start",
+  name: "Tutorial",
   theme: Themes.GenericWingo,
   unlock_level: {
     hint: (
@@ -15,19 +15,42 @@ export const area: AreaConfig = {
       </>
     ),
     isUnlockLevel: true,
-    levelProps: {
-      mode: "repeat",
-      targetWord: "start",
-      enforceFullLengthGuesses: true,
-      defaultWordLength: 5,
-      defaultnumGuesses: 6,
-      keyboard: true,
-      firstLetterProvided: true,
-      checkInDictionary: false,
-      puzzleLeaveNumBlanks: 0,
-      puzzleRevealMs: 0,
-      timerConfig: { isTimed: false },
+    level: {
+      gameCategory: "wingo",
+      levelProps: {
+        mode: "repeat",
+        targetWord: "start",
+        enforceFullLengthGuesses: true,
+        defaultWordLength: 5,
+        defaultnumGuesses: 6,
+        keyboard: true,
+        firstLetterProvided: true,
+        checkInDictionary: false,
+        puzzleLeaveNumBlanks: 0,
+        puzzleRevealMs: 0,
+        timerConfig: { isTimed: false },
+      },
     },
   },
-  levels: [],
+  levels: [
+    {
+      hint: <>To acquire new knowledge</>,
+      level: {
+        gameCategory: "wingo",
+        levelProps: {
+          mode: "repeat",
+          targetWord: "learn",
+          enforceFullLengthGuesses: true,
+          defaultWordLength: 5,
+          defaultnumGuesses: 6,
+          keyboard: true,
+          firstLetterProvided: true,
+          checkInDictionary: false,
+          puzzleLeaveNumBlanks: 0,
+          puzzleRevealMs: 0,
+          timerConfig: { isTimed: false },
+        },
+      },
+    },
+  ],
 };
