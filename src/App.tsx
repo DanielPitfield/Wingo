@@ -612,7 +612,7 @@ export const App: React.FC = () => {
       case "numbers/arithmetic_drag":
         return (
           <ArithmeticDrag
-            mode="order"
+            mode="match"
             numGuesses={3}
             numTiles={6}
             numOperands={3}

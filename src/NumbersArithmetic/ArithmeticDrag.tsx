@@ -23,7 +23,7 @@ interface Props {
 export function shuffleArray(array: any[]) {
   let currentIndex = array.length;
   let randomIndex;
-  
+
   // Make a copy of array to differentiate from input parameter
   let newArray = array.slice();
 
@@ -45,7 +45,7 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
   const [inProgress, setInProgress] = useState(true);
   const [remainingGuesses, setRemainingGuesses] = useState(props.numGuesses);
   const [seconds, setSeconds] = useState(props.timerConfig.isTimed ? props.timerConfig.seconds : 0);
-  const [tiles, setTiles] = useState<
+  const [expressionTiles, setExpressionTiles] = useState<
     { expression: string; total: number; status: "incorrect" | "correct" | "not set" }[]
   >([]);
   // For the match game mode type
@@ -67,31 +67,31 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
 
   React.useEffect(() => {
     // If all tiles have been initialised
-    if (tiles.length > 0) {
+    if (expressionTiles.length > 0) {
       return;
     }
 
     // Expression tiles
-    const newTiles: { expression: string; total: number; status: "not set" }[] = [];
+    const newExpressionTiles: { expression: string; total: number; status: "not set" }[] = [];
 
     for (let i = 0; i < props.numTiles; i++) {
       const tile = generateTile();
-      newTiles.push(tile);
+      newExpressionTiles.push(tile);
     }
 
-    setTiles(newTiles);
+    setExpressionTiles(newExpressionTiles);
 
     // Result tiles
     if (props.mode === "match") {
-      let newResults: { total: number; status: "not set" }[] = [];
+      let newResultTiles: { total: number; status: "not set" }[] = [];
 
-      // Array of the tile totals
-      const totals = newTiles.map((x) => x.total);
+      // Array of just the expression tile totals
+      const tile_totals = newExpressionTiles.map((x) => x.total);
       // Shuffle them (so they don't appear in same order as expression tiles)
-      const shuffled_totals = shuffleArray(totals);
+      const shuffled_totals = shuffleArray(tile_totals);
       // All tiles begin with 'not set' status
-      newResults = shuffled_totals.map((total) => ({ total: total, status: "not set" }));
-      setResultTiles(newResults);
+      newResultTiles = shuffled_totals.map((total) => ({ total: total, status: "not set" }));
+      setResultTiles(newResultTiles);
     }
 
     function getOperatorLimit(operator: string) {
@@ -244,7 +244,7 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
       // Once expression is desired length, return
       return { expression: expression, total: total, status: "not set" };
     }
-  }, [tiles, resultTiles, props.numTiles]);
+  }, [expressionTiles, resultTiles, props.numTiles]);
 
   // (Guess) Timer Setup
   React.useEffect(() => {
@@ -274,13 +274,13 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
     Grid.push(
       <div className="draggable_expressions">
         <OrderGroup mode={"between"}>
-          {tiles.map((tile, index) => (
+          {expressionTiles.map((tile, index) => (
             <DraggableItem
               key={index}
               index={index}
               onMove={(toIndex) =>
                 inProgress
-                  ? setTiles(arrayMove(tiles, index, toIndex))
+                  ? setExpressionTiles(arrayMove(expressionTiles, index, toIndex))
                   : /* TODO: Disable drag entirely if game is over */ console.log("Game over")
               }
             >
@@ -317,26 +317,58 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
   }
 
   function checkTiles() {
-    const totals = tiles.map((x) => x.total);
-    // Sort the tile totals into ascending order
-    const sorted_totals = totals.sort((x, y) => {
-      return x - y;
-    });
+    const tile_totals = expressionTiles.map((x) => x.total);
 
-    const newTiles = tiles.map((x, index) => {
-      // Tile is in correct position
-      if (tiles[index].total === sorted_totals[index]) {
-        x.status = "correct";
-      } else {
-        x.status = "incorrect";
-      }
-      return x;
-    });
+    let newExpressionTiles = expressionTiles.slice();
+    let newResultTiles = resultTiles.slice();
 
-    setTiles(newTiles);
+    // Smallest to largest
+    if (props.mode === "order") {
+      // Sort the tile totals into ascending order
+      const sorted_totals = tile_totals.sort((x, y) => {
+        return x - y;
+      });
+
+      newExpressionTiles = expressionTiles.map((x, index) => {
+        // Tile is in correct position
+        if (expressionTiles[index].total === sorted_totals[index]) {
+          // Change status to correct
+          x.status = "correct";
+        } else {
+          x.status = "incorrect";
+        }
+        return x;
+      });
+    }
+    // Match expression with result 
+    else if (props.mode === "match") {
+      newExpressionTiles = expressionTiles.map((x, index) => {
+        // Expression matched with correct result
+        if (expressionTiles[index].total === resultTiles[index].total) {
+          // Change status to correct
+          x.status = "correct";
+        } else {
+          x.status = "incorrect";
+        }
+        return x;
+      });
+      // Also update status of result tiles
+      newResultTiles = resultTiles.map((x, index) => {
+        if (expressionTiles[index].total === resultTiles[index].total) {
+          x.status = "correct";
+        } else {
+          x.status = "incorrect";
+        }
+        return x;
+      });
+    }
+
+    // Set so that the change in statuses are rendered
+    setExpressionTiles(newExpressionTiles);
+    setResultTiles(newResultTiles);
 
     // Are all the tiles in the correct position?
-    const allCorrect = newTiles.filter((x) => x.status === "correct").length === tiles.length;
+    const allCorrect = newExpressionTiles.filter((x) => x.status === "correct").length === expressionTiles.length;
 
     // Or on last remaining guess
     if (allCorrect || remainingGuesses <= 1) {
@@ -358,13 +390,13 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
       return;
     }
 
-    const numCorrectTiles = tiles.filter((x) => x.status === "correct").length;
+    const numCorrectTiles = expressionTiles.filter((x) => x.status === "correct").length;
 
     return (
       <>
-        <MessageNotification type={numCorrectTiles === tiles.length ? "success" : "error"}>
+        <MessageNotification type={numCorrectTiles === expressionTiles.length ? "success" : "error"}>
           <strong>
-            {numCorrectTiles === tiles.length ? "All tiles in the correct order!" : `${numCorrectTiles} tiles correct`}
+            {numCorrectTiles === expressionTiles.length ? "All tiles in the correct order!" : `${numCorrectTiles} tiles correct`}
           </strong>
         </MessageNotification>
 
@@ -379,7 +411,7 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
 
   function ResetGame() {
     setInProgress(true);
-    setTiles([]);
+    setExpressionTiles([]);
     setRemainingGuesses(props.numGuesses);
 
     if (props.timerConfig.isTimed) {

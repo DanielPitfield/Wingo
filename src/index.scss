@@ -1254,6 +1254,10 @@ $nubble-colors-names: (
   }
 }
 
+.tile_row {
+  display: flex;
+}
+
 .puzzle-config {
   flex-grow: 1;
   justify-content: flex-start;
