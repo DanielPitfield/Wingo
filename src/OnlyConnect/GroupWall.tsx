@@ -168,11 +168,11 @@ const GroupWall: React.FC<Props> = (props) => {
     return (
       <div className="only-connect-row">
         {Array.from({ length: props.groupSize }).map((_, i) => {
-          const index = rowNumber * props.groupSize + i;
+          const index = (rowNumber * props.groupSize) + i;
           const gridItem = gridWords[index];
           return (
-            <button key={index} className="only-connect-button" onClick={() => handleSelection(gridItem)}>
-              {gridItem.word}
+            <button key={index} className="only-connect-button" data-selected={selectedWords.includes(gridItem)} onClick={() => handleSelection(gridItem)}>
+              {gridItem ? gridItem.word : ""}
             </button>
           );
         })}
