@@ -54,6 +54,10 @@ const GroupWall: React.FC<Props> = (props) => {
 
   // Check selection
   React.useEffect(() => {
+    if (!inProgress) {
+      return;
+    }
+
     // Not full selection
     if (selectedWords.length !== props.groupSize) {
       return;
@@ -93,7 +97,15 @@ const GroupWall: React.FC<Props> = (props) => {
 
   }, [selectedWords]);
 
-  function handleSelection(gridItem : { word: string, categoryName: string} ) {
+  function handleSelection(gridItem : { word: string, categoryName: string, inCompleteGroup: boolean } ) {
+    if (!inProgress) {
+      return;
+    }
+
+    if (!gridItem) {
+      return;
+    }
+
     let newSelectedWords = selectedWords.slice();
 
     // Word is already selected
