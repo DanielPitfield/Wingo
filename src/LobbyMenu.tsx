@@ -149,6 +149,7 @@ export const LobbyMenu: React.FC<Props> = (props) => {
           <div className="sidebar-title">Puzzle</div>
           <ul className="widgets">
             {renderGameModeTile("puzzle/sequence")}
+            {renderGameModeTile("only_connect/wall")}
             {renderGameModeTile("letters_categories")}
           </ul>
         </div>

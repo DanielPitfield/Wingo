@@ -19,6 +19,7 @@ import { Theme, Themes } from "./Themes";
 import { useSound } from "use-sound";
 import { AllCampaignAreas } from "./Campaign/AllCampaignAreas";
 import { Settings } from "./Settings";
+import GroupWall from "./OnlyConnect/GroupWall";
 
 const wordLength = 5;
 const numGuesses = 6;
@@ -52,6 +53,7 @@ export type Page =
   | "numbers/arithmetic_reveal"
   | "numbers/arithmetic_drag"
   | "nubble"
+  | "only_connect/wall"
   | "puzzle/sequence"
   | "campaign"
   | "campaign/area"
@@ -129,6 +131,12 @@ export const pages: { page: Page; title: string; description?: string; shortTitl
     title: "Nubble",
     description: "Find the highest scoring number from a list of random numbers",
     shortTitle: "Nubble",
+  },
+  {
+    page: "only_connect/wall",
+    title: "Only Connect",
+    description: "Find the groups of tiles within the grid/wall",
+    shortTitle: "Only Connect",
   },
   {
     page: "puzzle/sequence",
@@ -230,6 +238,12 @@ export const App: React.FC = () => {
     },
     {
       page: "numbers/arithmetic_drag",
+      firstLetter: false,
+      timer: true,
+      keyboard: false,
+    },
+    {
+      page: "only_connect/wall",
       firstLetter: false,
       timer: true,
       keyboard: false,
@@ -639,6 +653,21 @@ export const App: React.FC = () => {
             timeLengthMins={5}
             gameOverOnIncorrectPick={true}
           ></NubbleConfig>
+        );
+
+      case "only_connect/wall":
+        return (
+          <GroupWall
+            groupSize={4}
+            numGroups={4}
+            numGuesses={10}
+            timerConfig={
+              gameOptionToggles.find((x) => x.page === "only_connect/wall")?.timer
+                ? { isTimed: true, seconds: 100 }
+                : { isTimed: false }
+            }
+            setPage={setPage}
+          ></GroupWall>
         );
 
       case "puzzle/sequence":
