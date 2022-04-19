@@ -188,7 +188,7 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
               } else {
                 fail_count += 1;
               }
-            } while (operand === undefined && fail_count < max_limit);
+            } while (operand === undefined && fail_count < max_limit); // Stop once an operand has been determined or after max_limit number of attempts to find an operator
             break;
           }
 

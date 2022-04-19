@@ -85,9 +85,8 @@ const LetterCategoriesConfig: React.FC<Props> = (props) => {
           }
         }
       } while (
-        category_names.length < 5 &&
-        category_names.length + failed_search_count !== categoryMappings.length &&
-        failed_search_count <= 20
+        // Stop once there are 5 categories or 20 attempts were made at finding categories
+        category_names.length < 5 && failed_search_count <= 20
       );
 
       // Keep reference of which categories have been used

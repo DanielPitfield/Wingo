@@ -167,7 +167,7 @@ const ArithmeticReveal: React.FC<Props> = (props) => {
               } else {
                 fail_count += 1;
               }
-            } while (tile_number === undefined && fail_count < max_limit);
+            } while (tile_number === undefined && fail_count < max_limit); // Stop once a tile number has been determined or after max_limit number of attempts to find a tile number
             break;
           }
 
