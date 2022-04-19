@@ -19,6 +19,27 @@ interface Props {
   setPage: (page: Page) => void;
 }
 
+// https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array
+export function shuffleArray(array: any[]) {
+  let currentIndex = array.length;
+  let randomIndex;
+  
+  // Make a copy of array to differentiate from input parameter
+  let newArray = array.slice();
+
+  // While there remain elements to shuffle.
+  while (currentIndex != 0) {
+    // Pick a remaining element.
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex--;
+
+    // And swap it with the current element.
+    [newArray[currentIndex], newArray[randomIndex]] = [newArray[randomIndex], newArray[currentIndex]];
+  }
+
+  return newArray;
+}
+
 /** */
 const ArithmeticDrag: React.FC<Props> = (props) => {
   const [inProgress, setInProgress] = useState(true);
@@ -27,6 +48,8 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
   const [tiles, setTiles] = useState<
     { expression: string; total: number; status: "incorrect" | "correct" | "not set" }[]
   >([]);
+  // For the match game mode type
+  const [resultTiles, setResultTiles] = useState<{ total: number; status: "incorrect" | "correct" | "not set" }[]>([]);
 
   function getStartingNumberLimit(): number {
     switch (props.difficulty) {
@@ -48,6 +71,7 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
       return;
     }
 
+    // Expression tiles
     const newTiles: { expression: string; total: number; status: "not set" }[] = [];
 
     for (let i = 0; i < props.numTiles; i++) {
@@ -56,6 +80,19 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
     }
 
     setTiles(newTiles);
+
+    // Result tiles
+    if (props.mode === "match") {
+      let newResults: { total: number; status: "not set" }[] = [];
+
+      // Array of the tile totals
+      const totals = newTiles.map((x) => x.total);
+      // Shuffle them (so they don't appear in same order as expression tiles)
+      const shuffled_totals = shuffleArray(totals);
+      // All tiles begin with 'not set' status
+      newResults = shuffled_totals.map((total) => ({ total: total, status: "not set" }));
+      setResultTiles(newResults);
+    }
 
     function getOperatorLimit(operator: string) {
       switch (props.difficulty) {
@@ -207,7 +244,7 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
       // Once expression is desired length, return
       return { expression: expression, total: total, status: "not set" };
     }
-  }, [tiles, props.numTiles]);
+  }, [tiles, resultTiles, props.numTiles]);
 
   // (Guess) Timer Setup
   React.useEffect(() => {
@@ -232,23 +269,51 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
    * @returns
    */
   function displayTiles() {
-    return (
-      <OrderGroup mode={"between"}>
-        {tiles.map((tile, index) => (
-          <DraggableItem
-            key={index}
-            index={index}
-            onMove={(toIndex) =>
-              inProgress
-                ? setTiles(arrayMove(tiles, index, toIndex))
-                : /* TODO: Disable drag entirely if game is over */ console.log("Game over")
-            }
-          >
-            <LetterTile letter={tile.expression} status={tile.status} />
-          </DraggableItem>
-        ))}
-      </OrderGroup>
+    var Grid = [];
+
+    Grid.push(
+      <div className="draggable_expressions">
+        <OrderGroup mode={"between"}>
+          {tiles.map((tile, index) => (
+            <DraggableItem
+              key={index}
+              index={index}
+              onMove={(toIndex) =>
+                inProgress
+                  ? setTiles(arrayMove(tiles, index, toIndex))
+                  : /* TODO: Disable drag entirely if game is over */ console.log("Game over")
+              }
+            >
+              <LetterTile letter={tile.expression} status={tile.status} />
+            </DraggableItem>
+          ))}
+        </OrderGroup>
+      </div>
     );
+
+    if (props.mode === "match" && resultTiles.length > 0) {
+      Grid.push(
+        <div className="draggable_results">
+          <OrderGroup mode={"between"}>
+            {resultTiles.map((tile, index) => (
+              <DraggableItem
+                key={index}
+                index={index}
+                onMove={(toIndex) =>
+                  inProgress
+                    ? setResultTiles(arrayMove(resultTiles, index, toIndex))
+                    : /* TODO: Disable drag entirely if game is over */ console.log("Game over")
+                }
+              >
+                <LetterTile letter={tile.total.toString()} status={tile.status} />
+              </DraggableItem>
+            ))}
+          </OrderGroup>
+        </div>
+      );
+    }
+
+    return Grid;
   }
 
   function checkTiles() {
