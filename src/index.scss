@@ -1260,14 +1260,49 @@ $nubble-colors-names: (
 
 // Only Connect Wall button
 .only-connect-button {
-  min-width: 10em;
+  min-width: 12em;
   padding: 2em 1em;
+  outline: none;
+  margin: 0.2em;
+  font-family: inherit;
+
+  $only-connect-group-1-color: rgb(220, 141, 55);
+  $only-connect-group-2-color: rgb(76, 161, 80);
+  $only-connect-group-3-color: rgb(44, 44, 184);
+  $only-connect-group-4-color: rgb(204, 33, 50);
 
   &[data-selected="true"] {
-    border: 2px solid red;
+    border: 2px solid #eee;
+
+    // Use the border color of the next group being selected
+    &[data-num-completed-groups="0"] {
+      border-color: $only-connect-group-1-color;
+    }
+    &[data-num-completed-groups="1"] {
+      border-color: $only-connect-group-2-color;
+    }
+    &[data-num-completed-groups="2"] {
+      border-color: $only-connect-group-3-color;
+    }
+    &[data-num-completed-groups="3"] {
+      border-color: $only-connect-group-4-color;
+    }
+  }
+
+  // Style each group
+  &[data-row-number="1"] {
+    background-color: $only-connect-group-1-color;
+  }
+  &[data-row-number="2"] {
+    background-color: $only-connect-group-2-color;
+  }
+  &[data-row-number="3"] {
+    background-color: $only-connect-group-3-color;
+  }
+  &[data-row-number="4"] {
+    background-color: $only-connect-group-4-color;
   }
 }
-
 
 .puzzle-config {
   flex-grow: 1;

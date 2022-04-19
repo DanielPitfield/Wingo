@@ -17,7 +17,9 @@ interface Props {
 /** */
 const GroupWall: React.FC<Props> = (props) => {
   const [inProgress, setInProgress] = useState(true);
-  const [gridWords, setGridWords] = useState<{ word: string; categoryName: string; inCompleteGroup: boolean }[]>([]);
+  const [gridWords, setGridWords] = useState<
+    { word: string; categoryName: string; inCompleteGroup: boolean; rowNumber: number | null }[]
+  >([]);
   const [selectedWords, setSelectedWords] = useState<{ word: string; categoryName: string }[]>([]);
   const [numCompletedGroups, setNumCompletedGroups] = useState(0);
   const [remainingGuesses, setRemainingGuesses] = useState(props.numGuesses);
@@ -67,37 +69,88 @@ const GroupWall: React.FC<Props> = (props) => {
     const category = selectedWords[0].categoryName;
 
     // Count how many words in the selection are from this category
-    const numCorrectWords = selectedWords.filter(word => word.categoryName === category).length;
+    const numCorrectWords = selectedWords.filter((word) => word.categoryName === category).length;
 
-    // All of the words are from the same category
-    if (numCorrectWords === selectedWords.length) {
-      const newGridWords = gridWords.map((x, index) => {
+    // If not all of the selected words are from the same category
+    if (numCorrectWords !== selectedWords.length) {
+      // Reset the selected words
+      setSelectedWords([]);
+
+      return;
+    }
+
+    // Count the number of groups BEFORE checking each grid word
+    const completedGroupCountPre = gridWords.filter((x) => x.inCompleteGroup).length / props.groupSize;
+
+    const newGridWords = gridWords
+      .map((x, index) => {
+        // If the word is not in the selected words
+        if (!selectedWords.some((y) => y.word === x.word)) {
+          // Ignore it
+          return x;
+        }
+
         // Every word of the category found (with the selection)
         if (gridWords[index].categoryName === category) {
           // Update the boolean flag to say it is part of a complete group
           x.inCompleteGroup = true;
+
+          // Add the row number of the completed group
+          x.rowNumber = numCompletedGroups + 1;
         }
+
         return x;
+      })
+      /* 
+        Re-orders gridWords (shove row into correct position on grid)
+        Say the selection is the first complete group,
+        the words of that group all need to be shown on the first row of the grid together.
+
+        The 999's ensure that if a grid word has no row number (i.e. no part of a group),
+        that it appears after any grouped words.
+        */
+      .sort((a, b) => {
+        return (a?.rowNumber || 999) - (b?.rowNumber || 999);
       });
 
-      setGridWords(newGridWords);
+    // Count the number of groups AFTER checking each grid word
+    const completedGroupCountPost = newGridWords.filter((x) => x.inCompleteGroup).length / props.groupSize;
 
-      // Determine the row number of where this row should be shown on the grid
-      const rowNumber = numCompletedGroups + 1;
-      // Increment count of how many groups have been correctly selected
-      setNumCompletedGroups(rowNumber);
+    // If there is a new completed group (i.e. the group count has incremented by 1)
+    if (completedGroupCountPost > completedGroupCountPre) {
+      // If there is only 1 group left
+      if (completedGroupCountPost === props.groupSize - 1) {
+        // Auto-complete the last group
+        setGridWords(
+          newGridWords.map((gridWord) => ({
+            ...gridWord,
 
-      /* TODO: Re-order gridWords (shove row into correct position on grid)
-      Say the selection is the first complete group,
-      the words of that group all need to be shown on the first row of the grid together,
-      ideally with the tiles all having a background colour unique to that group
-      */
+            // Set all to true
+            inCompleteGroup: true,
 
+            // Set the row number to the final row number, if not already set
+            rowNumber: gridWord.rowNumber === null ? numCompletedGroups + 2 : gridWord.rowNumber,
+          }))
+        );
+
+        // Increment count of how many groups have been correctly selected
+        setNumCompletedGroups(numCompletedGroups + 2);
+
+        setInProgress(false);
+      } else {
+        // Update the calculated grid words
+        setGridWords(newGridWords);
+
+        // Increment count of how many groups have been correctly selected
+        setNumCompletedGroups(numCompletedGroups + 1);
+      }
     }
 
+    // Reset the selected words
+    setSelectedWords([]);
   }, [selectedWords]);
 
-  function handleSelection(gridItem : { word: string, categoryName: string, inCompleteGroup: boolean } ) {
+  function handleSelection(gridItem: { word: string; categoryName: string; inCompleteGroup: boolean }) {
     if (!inProgress) {
       return;
     }
@@ -126,12 +179,17 @@ const GroupWall: React.FC<Props> = (props) => {
   }
 
   // (props.groupSize) words from (props.numGroups) categories, shuffled
-  function getGridWords(): { word: string; categoryName: string; inCompleteGroup: boolean }[] {
+  function getGridWords(): {
+    word: string;
+    categoryName: string;
+    inCompleteGroup: boolean;
+    rowNumber: number | null;
+  }[] {
     // Names of the groups/categories that must be found in the wall
     let category_names: string[] = [];
 
     // Array to hold all the words for the grid (along with their categories)
-    let grid_words: { word: string; categoryName: string; inCompleteGroup: boolean }[] = [];
+    let grid_words: { word: string; categoryName: string; inCompleteGroup: boolean; rowNumber: number | null }[] = [];
 
     // Use the specified number of groups but never exceed the number of category word lists
     const numCategories = Math.min(props.numGroups, categoryMappings.length);
@@ -162,7 +220,12 @@ const GroupWall: React.FC<Props> = (props) => {
         }
 
         // Attach category name to word (in an object)
-        const categorySubset = wordSubset.map((word) => ({ word: word, categoryName: randomCategory.name, inCompleteGroup: false }));
+        const categorySubset = wordSubset.map((word) => ({
+          word: word,
+          categoryName: randomCategory.name,
+          inCompleteGroup: false,
+          rowNumber: null,
+        }));
 
         // Add group of words
         grid_words = grid_words.concat(categorySubset);
@@ -180,10 +243,18 @@ const GroupWall: React.FC<Props> = (props) => {
     return (
       <div className="only-connect-row">
         {Array.from({ length: props.groupSize }).map((_, i) => {
-          const index = (rowNumber * props.groupSize) + i;
+          const index = rowNumber * props.groupSize + i;
           const gridItem = gridWords[index];
+
           return (
-            <button key={index} className="only-connect-button" data-selected={selectedWords.includes(gridItem)} onClick={() => handleSelection(gridItem)}>
+            <button
+              key={index}
+              className="only-connect-button"
+              data-num-completed-groups={numCompletedGroups}
+              data-row-number={gridItem?.rowNumber}
+              data-selected={selectedWords.includes(gridItem)}
+              onClick={() => handleSelection(gridItem)}
+            >
               {gridItem ? gridItem.word : ""}
             </button>
           );
