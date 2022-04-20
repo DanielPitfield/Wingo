@@ -296,8 +296,12 @@ const GroupWall: React.FC<Props> = (props) => {
 
     return (
       <>
-        <MessageNotification type="default">
-          <strong></strong>
+        <MessageNotification type={numCompletedGroups === props.numGroups ? "success" : "error"}>
+          <strong>
+            {numCompletedGroups === props.numGroups
+              ? "All groups found!"
+              : `${numCompletedGroups} groups found`}
+          </strong>
         </MessageNotification>
 
         <br></br>
@@ -325,7 +329,7 @@ const GroupWall: React.FC<Props> = (props) => {
   return (
     <div className="App only_connect_wall">
       <div className="outcome">{displayOutcome()}</div>
-      {Boolean(inProgress && (numCompletedGroups === props.numGroups - 2)) && (
+      {Boolean(inProgress && numCompletedGroups === props.numGroups - 2) && (
         <MessageNotification type="default">{`Guesses left: ${remainingGuesses}`}</MessageNotification>
       )}
       <div className="only_connect_wall">{displayGrid()}</div>
