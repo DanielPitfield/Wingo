@@ -149,14 +149,6 @@ const GroupWall: React.FC<Props> = (props) => {
 
     // Reset the selected words
     setSelectedWords([]);
-
-    /*
-    const CORRECT_SELECTION_DELAY_MS = 250;
-    setTimeout(() => {
-      // Reset the selected words
-      setSelectedWords([]);
-    }, CORRECT_SELECTION_DELAY_MS);
-    */
   }, [selectedWords]);
 
   function handleSelection(gridItem: { word: string; categoryName: string; inCompleteGroup: boolean }) {
@@ -309,6 +301,9 @@ const GroupWall: React.FC<Props> = (props) => {
 
   function ResetGame() {
     setInProgress(true);
+    setGridWords(getGridWords());    
+    setSelectedWords([]);
+    setNumCompletedGroups(0);
     setRemainingGuesses(props.numGuesses);
 
     if (props.timerConfig.isTimed) {
