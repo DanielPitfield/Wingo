@@ -73,6 +73,16 @@ const GroupWall: React.FC<Props> = (props) => {
 
     // If not all of the selected words are from the same category
     if (numCorrectWords !== selectedWords.length) {
+      // There are only 2 groups left
+      if (numCompletedGroups === props.numGroups - 2) {
+        // Decrease number of guesses
+        setRemainingGuesses(remainingGuesses - 1);
+        // If just used last guess
+        if (remainingGuesses <= 1) {
+          setInProgress(false);
+        }
+      }
+
       const INCORRECT_SELECTION_DELAY_MS = 500;
       // Half a second to show incorrect (but complete/full) selection
       setTimeout(() => {
@@ -301,7 +311,7 @@ const GroupWall: React.FC<Props> = (props) => {
 
   function ResetGame() {
     setInProgress(true);
-    setGridWords(getGridWords());    
+    setGridWords(getGridWords());
     setSelectedWords([]);
     setNumCompletedGroups(0);
     setRemainingGuesses(props.numGuesses);
@@ -315,7 +325,9 @@ const GroupWall: React.FC<Props> = (props) => {
   return (
     <div className="App only_connect_wall">
       <div className="outcome">{displayOutcome()}</div>
-      {inProgress && <MessageNotification type="default">{`Guesses left: ${remainingGuesses}`}</MessageNotification>}
+      {Boolean(inProgress && (numCompletedGroups === props.numGroups - 2)) && (
+        <MessageNotification type="default">{`Guesses left: ${remainingGuesses}`}</MessageNotification>
+      )}
       <div className="only_connect_wall">{displayGrid()}</div>
       <div>
         {props.timerConfig.isTimed && (

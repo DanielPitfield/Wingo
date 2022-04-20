@@ -690,7 +690,7 @@ export const App: React.FC = () => {
           <GroupWall
             groupSize={4}
             numGroups={4}
-            numGuesses={10}
+            numGuesses={3}
             timerConfig={
               gameOptionToggles.find((x) => x.page === "only_connect/wall")?.timer
                 ? { isTimed: true, seconds: 100 }
