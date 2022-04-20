@@ -73,9 +73,12 @@ const GroupWall: React.FC<Props> = (props) => {
 
     // If not all of the selected words are from the same category
     if (numCorrectWords !== selectedWords.length) {
-      // Reset the selected words
-      setSelectedWords([]);
-
+      const INCORRECT_SELECTION_DELAY_MS = 500;
+      // Half a second to show incorrect (but complete/full) selection
+      setTimeout(() => {
+        // Reset the selected words
+        setSelectedWords([]);
+      }, INCORRECT_SELECTION_DELAY_MS);
       return;
     }
 
@@ -102,11 +105,9 @@ const GroupWall: React.FC<Props> = (props) => {
         return x;
       })
       /* 
-        Re-orders gridWords (shove row into correct position on grid)
-        Say the selection is the first complete group,
-        the words of that group all need to be shown on the first row of the grid together.
+        Re-orders gridWords (shove newly found group into correct position/row on grid)
 
-        The 999's ensure that if a grid word has no row number (i.e. no part of a group),
+        The 999's ensure that if a grid word has no row number (i.e. not part of a group),
         that it appears after any grouped words.
         */
       .sort((a, b) => {
@@ -148,6 +149,14 @@ const GroupWall: React.FC<Props> = (props) => {
 
     // Reset the selected words
     setSelectedWords([]);
+
+    /*
+    const CORRECT_SELECTION_DELAY_MS = 250;
+    setTimeout(() => {
+      // Reset the selected words
+      setSelectedWords([]);
+    }, CORRECT_SELECTION_DELAY_MS);
+    */
   }, [selectedWords]);
 
   function handleSelection(gridItem: { word: string; categoryName: string; inCompleteGroup: boolean }) {
@@ -255,7 +264,7 @@ const GroupWall: React.FC<Props> = (props) => {
               data-selected={selectedWords.includes(gridItem)}
               onClick={() => handleSelection(gridItem)}
             >
-              {gridItem ? gridItem.word : ""}
+              {gridItem ? gridItem.word.charAt(0).toUpperCase() + gridItem.word.slice(1) : ""}
             </button>
           );
         })}

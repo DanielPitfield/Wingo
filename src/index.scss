@@ -1260,47 +1260,61 @@ $nubble-colors-names: (
 
 // Only Connect Wall button
 .only-connect-button {
-  min-width: 12em;
+  min-width: 10em;
+  min-height: 4em;
   padding: 2em 1em;
+  border: none;
+  border-radius: 6px;
+  background-color: #a5cff0;
   outline: none;
   margin: 0.2em;
   font-family: inherit;
+  font-size: 1.5em;
+  // box-shadow: 4px 4px rgb(92, 91, 91);
 
-  $only-connect-group-1-color: rgb(220, 141, 55);
-  $only-connect-group-2-color: rgb(76, 161, 80);
-  $only-connect-group-3-color: rgb(44, 44, 184);
-  $only-connect-group-4-color: rgb(204, 33, 50);
+  $only-connect-group-1-color: #004372;
+  $only-connect-group-2-color: #006d5d;
+  $only-connect-group-3-color: #5d2846;
+  $only-connect-group-4-color: #00657f;
 
   &[data-selected="true"] {
-    border: 2px solid #eee;
+    color: white;
 
     // Use the border color of the next group being selected
     &[data-num-completed-groups="0"] {
-      border-color: $only-connect-group-1-color;
+      background-color: $only-connect-group-1-color;
+      color: white;
     }
     &[data-num-completed-groups="1"] {
-      border-color: $only-connect-group-2-color;
+      background-color: $only-connect-group-2-color;
+      color: white;
     }
     &[data-num-completed-groups="2"] {
-      border-color: $only-connect-group-3-color;
+      background-color: $only-connect-group-3-color;
+      color: white;
     }
     &[data-num-completed-groups="3"] {
-      border-color: $only-connect-group-4-color;
+      background-color: $only-connect-group-4-color;
+      color: white;
     }
   }
 
   // Style each group
   &[data-row-number="1"] {
     background-color: $only-connect-group-1-color;
+    color: white;
   }
   &[data-row-number="2"] {
     background-color: $only-connect-group-2-color;
+    color: white;
   }
   &[data-row-number="3"] {
     background-color: $only-connect-group-3-color;
+    color: white;
   }
   &[data-row-number="4"] {
     background-color: $only-connect-group-4-color;
+    color: white;
   }
 }
 
