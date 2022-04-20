@@ -250,6 +250,26 @@ const GroupWall: React.FC<Props> = (props) => {
     return grid_words;
   }
 
+  function getPrettyWord(text: string): string {
+    // Put spaces back in (instead of dashes)
+    let newText = text.replaceAll("-", " ");
+
+    // Get each individual word in the provided text
+    const words = newText.split(" ");
+
+    // Capitalise the first letter of every word
+    if (words.length >= 1) {
+      for (var i = 0; i < words.length; i++) {
+        words[i] = words[i].charAt(0).toUpperCase() + words[i].slice(1);
+      }
+
+      // Join all the elements of the array back into a string
+      newText = words.join(" ");
+    }
+
+    return newText;
+  }
+
   function populateRow(rowNumber: number) {
     return (
       <div className="only-connect-row">
@@ -266,7 +286,7 @@ const GroupWall: React.FC<Props> = (props) => {
               data-selected={selectedWords.includes(gridItem)}
               onClick={() => handleSelection(gridItem)}
             >
-              {gridItem ? gridItem.word.charAt(0).toUpperCase() + gridItem.word.slice(1) : ""}
+              {gridItem ? getPrettyWord(gridItem.word) : ""}
             </button>
           );
         })}
@@ -298,9 +318,7 @@ const GroupWall: React.FC<Props> = (props) => {
       <>
         <MessageNotification type={numCompletedGroups === props.numGroups ? "success" : "error"}>
           <strong>
-            {numCompletedGroups === props.numGroups
-              ? "All groups found!"
-              : `${numCompletedGroups} groups found`}
+            {numCompletedGroups === props.numGroups ? "All groups found!" : `${numCompletedGroups} groups found`}
           </strong>
         </MessageNotification>
 
