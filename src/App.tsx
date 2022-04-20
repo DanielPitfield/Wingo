@@ -51,7 +51,8 @@ export type Page =
   | "countdown/letters"
   | "countdown/numbers"
   | "numbers/arithmetic_reveal"
-  | "numbers/arithmetic_drag"
+  | "numbers/arithmetic_drag/order"
+  | "numbers/arithmetic_drag/match"
   | "nubble"
   | "only_connect/wall"
   | "puzzle/sequence"
@@ -121,10 +122,16 @@ export const pages: { page: Page; title: string; description?: string; shortTitl
     shortTitle: "Quick Maths",
   },
   {
-    page: "numbers/arithmetic_drag",
+    page: "numbers/arithmetic_drag/order",
     title: "Arithmetic order",
-    description: "Put the arithmetic expressions in the correct order",
+    description: "Put the arithmetic expressions in order from smallest to largest",
     shortTitle: "Order",
+  },
+  {
+    page: "numbers/arithmetic_drag/match",
+    title: "Arithmetic match",
+    description: "Match the arithmetic expressions with the results they evaluate to",
+    shortTitle: "Match",
   },
   {
     page: "nubble",
@@ -135,7 +142,7 @@ export const pages: { page: Page; title: string; description?: string; shortTitl
   {
     page: "only_connect/wall",
     title: "Only Connect",
-    description: "Find the groups of tiles within the grid/wall",
+    description: "Find groups of words from a scrambled word grid",
     shortTitle: "Only Connect",
   },
   {
@@ -237,7 +244,13 @@ export const App: React.FC = () => {
       keyboard: false,
     },
     {
-      page: "numbers/arithmetic_drag",
+      page: "numbers/arithmetic_drag/order",
+      firstLetter: false,
+      timer: true,
+      keyboard: false,
+    },
+    {
+      page: "numbers/arithmetic_drag/match",
       firstLetter: false,
       timer: true,
       keyboard: false,
@@ -623,7 +636,24 @@ export const App: React.FC = () => {
           />
         );
 
-      case "numbers/arithmetic_drag":
+      case "numbers/arithmetic_drag/order":
+        return (
+          <ArithmeticDrag
+            mode="order"
+            numGuesses={3}
+            numTiles={6}
+            numOperands={3}
+            difficulty={"easy"}
+            timerConfig={
+              gameOptionToggles.find((x) => x.page === "numbers/arithmetic_drag/order")?.timer
+                ? { isTimed: true, seconds: 60 }
+                : { isTimed: false }
+            }
+            setPage={setPage}
+          />
+        );
+
+        case "numbers/arithmetic_drag/match":
         return (
           <ArithmeticDrag
             mode="match"
@@ -632,8 +662,8 @@ export const App: React.FC = () => {
             numOperands={3}
             difficulty={"easy"}
             timerConfig={
-              gameOptionToggles.find((x) => x.page === "numbers/arithmetic_drag")?.timer
-                ? { isTimed: true, seconds: 100 }
+              gameOptionToggles.find((x) => x.page === "numbers/arithmetic_drag/match")?.timer
+                ? { isTimed: true, seconds: 60 }
                 : { isTimed: false }
             }
             setPage={setPage}

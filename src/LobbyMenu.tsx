@@ -139,7 +139,8 @@ export const LobbyMenu: React.FC<Props> = (props) => {
           <div className="sidebar-title">Numbers</div>
           <ul className="widgets">
             {renderGameModeTile("numbers/arithmetic_reveal")}
-            {renderGameModeTile("numbers/arithmetic_drag")}
+            {renderGameModeTile("numbers/arithmetic_drag/order")}
+            {renderGameModeTile("numbers/arithmetic_drag/match")}
             {renderGameModeTile("countdown/numbers")}
             {renderGameModeTile("nubble")}
           </ul>
