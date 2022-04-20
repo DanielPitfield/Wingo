@@ -130,7 +130,7 @@ const GroupWall: React.FC<Props> = (props) => {
     // If there is a new completed group (i.e. the group count has incremented by 1)
     if (completedGroupCountPost > completedGroupCountPre) {
       // If there is only 1 group left
-      if (completedGroupCountPost === props.groupSize - 1) {
+      if (completedGroupCountPost === props.numGroups - 1) {
         // Auto-complete the last group
         setGridWords(
           newGridWords.map((gridWord) => ({
