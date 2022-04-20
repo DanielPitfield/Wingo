@@ -175,9 +175,6 @@ const WordleConfig: React.FC<Props> = (props) => {
   const [targetHint, settargetHint] = useState("");
   const [targetCategory, settargetCategory] = useState("");
   const [hasSelectedTargetCategory, sethasSelectedTargetCategory] = useState(false);
-  const [categoryRequiredStartingLetter, setCategoryRequiredStartingLetter] = useState("");
-  const [categoryIndexes, setCategoryIndexes] = useState<number[]>([]);
-  const [categoryWordTargets, setCategoryWordTargets] = useState<string[][]>([[]]);
   const [hasSubmitLetter, sethasSubmitLetter] = useState(false);
   const [revealedLetterIndexes, setRevealedLetterIndexes] = useState<number[]>([]);
 
@@ -818,9 +815,6 @@ const WordleConfig: React.FC<Props> = (props) => {
       interlinkedWord={interlinkedWord || ""}
       targetHint={targetHint || ""}
       targetCategory={targetCategory || ""}
-      categoryRequiredStartingLetter={categoryRequiredStartingLetter || ""}
-      categoryIndexes={categoryIndexes || []}
-      categoryWordTargets={categoryWordTargets || [[]]}
       puzzleRevealMs={props.puzzleRevealMs}
       puzzleLeaveNumBlanks={props.puzzleLeaveNumBlanks}
       revealedLetterIndexes={revealedLetterIndexes}
