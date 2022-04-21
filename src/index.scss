@@ -315,6 +315,10 @@ $data-statuses: (
 );
 
 // Keyboard buttons
+.btn.default.keyboard_Space {
+  min-width: 15em;
+}
+
 .btn.default[data-status="correct"] {
   color: white;
   background-color: map.get($data-statuses, "correct");
