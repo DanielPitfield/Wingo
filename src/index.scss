@@ -1258,64 +1258,70 @@ $nubble-colors-names: (
   display: flex;
 }
 
-// Only Connect Wall button
-.only-connect-button {
-  min-width: 10em;
-  min-height: 4em;
-  padding: 2em 1em;
-  border: none;
-  border-radius: 6px;
-  background-color: #a5cff0;
-  outline: none;
-  margin: 0.2em;
-  font-family: inherit;
-  font-size: 1.5em;
-  // box-shadow: 4px 4px rgb(92, 91, 91);
+.only-connect-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  // Only Connect Wall button
+  .only-connect-button {
+    width: 10em;
+    min-height: 5.5em;
+    padding: 1em;
+    border: none;
+    border-radius: 6px;
+    background-color: #a5cff0;
+    outline: none;
+    margin: 0.2em;
+    font-family: inherit;
+    font-size: 1.5em;
+    transition: all ease 0.35s;
+    // box-shadow: 4px 4px rgb(92, 91, 91);
 
-  // TODO: Colours for more groups
-  $only-connect-group-1-color: #004372;
-  $only-connect-group-2-color: #006d5d;
-  $only-connect-group-3-color: #5d2846;
-  $only-connect-group-4-color: #00657f;
+    // TODO: Colours for more groups
+    $only-connect-group-1-color: #004372;
+    $only-connect-group-2-color: #006d5d;
+    $only-connect-group-3-color: #5d2846;
+    $only-connect-group-4-color: #00657f;
 
-  &[data-selected="true"] {
-    color: white;
+    &[data-selected="true"] {
+      color: white;
 
-    // Use the border color of the next group being selected
-    &[data-num-completed-groups="0"] {
+      // Use the border color of the next group being selected
+      &[data-num-completed-groups="0"] {
+        background-color: $only-connect-group-1-color;
+        color: white;
+      }
+      &[data-num-completed-groups="1"] {
+        background-color: $only-connect-group-2-color;
+        color: white;
+      }
+      &[data-num-completed-groups="2"] {
+        background-color: $only-connect-group-3-color;
+        color: white;
+      }
+      &[data-num-completed-groups="3"] {
+        background-color: $only-connect-group-4-color;
+        color: white;
+      }
+    }
+
+    // Style each group
+    &[data-row-number="1"] {
       background-color: $only-connect-group-1-color;
       color: white;
     }
-    &[data-num-completed-groups="1"] {
+    &[data-row-number="2"] {
       background-color: $only-connect-group-2-color;
       color: white;
     }
-    &[data-num-completed-groups="2"] {
+    &[data-row-number="3"] {
       background-color: $only-connect-group-3-color;
       color: white;
     }
-    &[data-num-completed-groups="3"] {
+    &[data-row-number="4"] {
       background-color: $only-connect-group-4-color;
       color: white;
     }
-  }
-
-  // Style each group
-  &[data-row-number="1"] {
-    background-color: $only-connect-group-1-color;
-    color: white;
-  }
-  &[data-row-number="2"] {
-    background-color: $only-connect-group-2-color;
-    color: white;
-  }
-  &[data-row-number="3"] {
-    background-color: $only-connect-group-3-color;
-    color: white;
-  }
-  &[data-row-number="4"] {
-    background-color: $only-connect-group-4-color;
-    color: white;
   }
 }
 
