@@ -7,8 +7,9 @@ export type CampaignSaveData = {
 
 export type SettingsData = {
   sound: {
-    soundEnabled: boolean;
-    volume: number;
+    masterVolume: number;
+    backgroundVolume: number;
+    effectsVolume: number;
   };
 };
 
@@ -102,7 +103,7 @@ export class SaveData {
       return JSON.parse(settings) as SettingsData;
     }
 
-    return { sound: { volume: 1.0, soundEnabled: true } };
+    return { sound: { masterVolume: 0.5, effectsVolume: 0.75, backgroundVolume: 0.1 } };
   }
 
   /**

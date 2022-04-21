@@ -16,10 +16,10 @@ import ArithmeticReveal from "./NumbersArithmetic/ArithmeticReveal";
 import ArithmeticDrag from "./NumbersArithmetic/ArithmeticDrag";
 import { PuzzleConfig } from "./Puzzles/PuzzleConfig";
 import { Theme, Themes } from "./Themes";
-import { useSound } from "use-sound";
 import { AllCampaignAreas } from "./Campaign/AllCampaignAreas";
 import { Settings } from "./Settings";
 import GroupWall from "./OnlyConnect/GroupWall";
+import { useBackgroundMusic } from "./Sounds";
 
 const wordLength = 5;
 const numGuesses = 6;
@@ -167,7 +167,7 @@ export const App: React.FC = () => {
   const [theme, setTheme] = useState<Theme>(getHighestCampaignArea()?.theme || Themes.GenericWingo);
   const [gold, setGold] = useState<number>(SaveData.readGold());
   const [settings, setSettings] = useState<SettingsData>(SaveData.getSettings());
-  const [playBackgroundSound, backgroundSoundOptions] = useSound(theme.backgroundAudioSrc, settings.sound);
+  const [playBackgroundMusic, stopBackgroundMusic] = useBackgroundMusic(settings, theme);
 
   const [gameOptionToggles, setgameOptionToggles] = useState<
     {
@@ -327,11 +327,11 @@ export const App: React.FC = () => {
 
   useEffect(() => {
     if (loadingState === "loaded") {
-      playBackgroundSound();
+      playBackgroundMusic();
     }
 
-    return () => backgroundSoundOptions.stop();
-  }, [selectedCampaignArea, playBackgroundSound, loadingState]);
+    return () => stopBackgroundMusic();
+  }, [selectedCampaignArea, playBackgroundMusic, stopBackgroundMusic, loadingState]);
 
   function addGold(additionalGold: number) {
     setGold(gold + additionalGold);
@@ -653,7 +653,7 @@ export const App: React.FC = () => {
           />
         );
 
-        case "numbers/arithmetic_drag/match":
+      case "numbers/arithmetic_drag/match":
         return (
           <ArithmeticDrag
             mode="match"

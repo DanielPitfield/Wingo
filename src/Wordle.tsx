@@ -7,6 +7,8 @@ import { MessageNotification } from "./MessageNotification";
 import ProgressBar, { GreenToRedColorTransition } from "./ProgressBar";
 import { categoryMappings, getNewLives } from "./WordleConfig";
 import { Theme } from "./Themes";
+import { SaveData } from "./SaveData";
+import { useFailureChime, useLightPingChime, useSuccessChime } from "./Sounds";
 
 interface Props {
   mode: "daily" | "repeat" | "category" | "increasing" | "limitless" | "puzzle" | "interlinked" | "letters_categories";
@@ -46,6 +48,10 @@ interface Props {
 
 const Wordle: React.FC<Props> = (props) => {
   const [secondsUntilNextDailyWingo, setSecondsUntilNextDailyWingo] = useState(getSecondsUntilMidnight());
+  const settings = SaveData.getSettings();
+  const [playSuccessChimeSoundEffect] = useSuccessChime(settings);
+  const [playFailureChimeSoundEffect] = useFailureChime(settings);
+  const [playLightPingSoundEffect] = useLightPingChime(settings);
 
   // Create grid of rows (for guessing words)
   function populateGrid(rowNumber: number, wordLength: number) {
@@ -140,6 +146,22 @@ const Wordle: React.FC<Props> = (props) => {
 
     return Grid;
   }
+
+  useEffect(() => {
+    if (props.inProgress) {
+      return;
+    }
+
+    // Determine whethe the game ended in failure or success
+    const wasFailure =
+      !props.inDictionary || (props.mode === "limitless" && getNewLives(props.numGuesses, props.wordIndex) <= 0);
+
+    if (wasFailure) {
+      playFailureChimeSoundEffect();
+    } else {
+      playSuccessChimeSoundEffect();
+    }
+  }, [props.inProgress]);
 
   function displayOutcome() {
     // Game still in progress, don't display anything
@@ -333,7 +355,10 @@ const Wordle: React.FC<Props> = (props) => {
             <Keyboard
               mode={props.mode}
               onEnter={props.onEnter}
-              onSubmitLetter={props.onSubmitLetter}
+              onSubmitLetter={(letter) => {
+                props.onSubmitLetter(letter);
+                playLightPingSoundEffect();
+              }}
               onBackspace={props.onBackspace}
               guesses={props.guesses}
               targetWord={props.targetWord}

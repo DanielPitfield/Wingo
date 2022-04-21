@@ -1,0 +1,62 @@
+import useSound from "use-sound";
+import { SettingsData } from "./SaveData";
+import { Theme } from "./Themes";
+import CorrectChimeSrc from "./images/effects/chimes/correct.mp3";
+import SuccessChimeSrc from "./images/effects/chimes/success.mp3";
+import FailureChimeSrc from "./images/effects/chimes/failure.mp3";
+import LightPingSrc from "./images/effects/light-ping.mp3";
+import PingSrc from "./images/effects/ping.mp3";
+
+export const useBackgroundMusic = (settings: SettingsData, theme: Theme) => {
+  const [play, { stop }] = useSound(theme.backgroundAudioSrc, {
+    volume: settings.sound.backgroundVolume * settings.sound.masterVolume,
+    soundEnabled: settings.sound.backgroundVolume * settings.sound.masterVolume > 0,
+  });
+
+  return [play, stop];
+};
+
+export const useLightPingChime = (settings: SettingsData) => {
+  const [play, { stop }] = useSound(LightPingSrc, {
+    volume: settings.sound.effectsVolume * settings.sound.masterVolume,
+    soundEnabled: settings.sound.effectsVolume * settings.sound.masterVolume > 0,
+  });
+
+  return [play, stop];
+};
+
+export const usePingChime = (settings: SettingsData) => {
+  const [play, { stop }] = useSound(PingSrc, {
+    volume: settings.sound.effectsVolume * settings.sound.masterVolume,
+    soundEnabled: settings.sound.effectsVolume * settings.sound.masterVolume > 0,
+  });
+
+  return [play, stop];
+};
+
+export const useSuccessChime = (settings: SettingsData) => {
+  const [play, { stop }] = useSound(SuccessChimeSrc, {
+    volume: settings.sound.effectsVolume * settings.sound.masterVolume,
+    soundEnabled: settings.sound.effectsVolume * settings.sound.masterVolume > 0,
+  });
+
+  return [play, stop];
+};
+
+export const useCorrectChime = (settings: SettingsData) => {
+  const [play, { stop }] = useSound(CorrectChimeSrc, {
+    volume: settings.sound.effectsVolume * settings.sound.masterVolume,
+    soundEnabled: settings.sound.effectsVolume * settings.sound.masterVolume > 0,
+  });
+
+  return [play, stop];
+};
+
+export const useFailureChime = (settings: SettingsData) => {
+  const [play, { stop }] = useSound(FailureChimeSrc, {
+    volume: settings.sound.effectsVolume * settings.sound.masterVolume,
+    soundEnabled: settings.sound.effectsVolume * settings.sound.masterVolume > 0,
+  });
+
+  return [play, stop];
+};
