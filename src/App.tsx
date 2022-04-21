@@ -264,7 +264,7 @@ export const App: React.FC = () => {
   ]);
 
   useEffect(() => {
-    const LOADING_TIMEOUT_MS = 1500;
+    const LOADING_TIMEOUT_MS = 2000;
     const FADE_OUT_DURATION_MS = 500;
 
     // TODO: Mask actual loading, rather than hard-coding seconds
