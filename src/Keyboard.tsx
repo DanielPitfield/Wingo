@@ -114,30 +114,24 @@ export const Keyboard: React.FC<Props> = (props) => {
     for (let i = 0; i < RowLetters.length; i++) {
       // Individual letter from RowString
       const letter = RowLetters[i];
-      // If space, show the word space instead
-      const displayText = letter === " " ? "Space" : letter;
       // Find status using keyboardStatuses (correct, not in word, wrong position)
       const letterStatus = keyboardStatuses.find((x) => x.letter.toUpperCase() === letter.toUpperCase())?.status;
 
       KeyboardButtons.push(
         <Button
           key={i}
-          className={`keyboard_${displayText}`}
+          className={letter === "-" ? "keyboard_space" : `keyboard_${letter}`}
           mode="default"
           // Data attribute used to colour button
           status={letterStatus ? letterStatus : "not set"}
           onClick={(e) => {
             // The display text of the clicked button
             const buttonText = (e.target as HTMLButtonElement).innerText;
-            // All the ways the space bar may be shown on the keyboard
-            const Blankspace_keys = ["Space", "SPACE", " ", ""];
-            // If button was space, submit a dash
-            const letterToSubmit =  Blankspace_keys.includes(buttonText) ? "-" : buttonText;
             // Letter of button is used within a callback function
-            props.onSubmitLetter(letterToSubmit);
+            props.onSubmitLetter(buttonText);
           }}
         >
-          {displayText}
+          {letter}
         </Button>
       );
     }
@@ -159,7 +153,7 @@ export const Keyboard: React.FC<Props> = (props) => {
           &lt;
         </Button>
       </div>
-      <div className="keyboard_space">{modesWithSpaces.includes(props.mode) && (<>{populateKeyboard(" ")}</>)}</div>
+      <div className="keyboard_space">{modesWithSpaces.includes(props.mode) && (<>{populateKeyboard("-")}</>)}</div>
       <div className="keyboard_enter">
         <Button mode="accept" onClick={props.onEnter}>
           Enter
