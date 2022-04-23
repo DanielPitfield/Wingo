@@ -271,12 +271,12 @@ const ArithmeticReveal: React.FC<Props> = (props) => {
         setSeconds(seconds - 1);
       } else {
         setInProgress(false);
+        clearInterval(timerGuess);
       }
     }, 1000);
-    return () => {
-      clearInterval(timerGuess);
-    };
-  }, [setSeconds, seconds, props.timerConfig.isTimed, revealState]);
+
+    return () => clearInterval(timerGuess);
+  }, [setSeconds, seconds, props.timerConfig.isTimed, revealState, inProgress]);
 
   /**
    *
