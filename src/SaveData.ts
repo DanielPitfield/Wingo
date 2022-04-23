@@ -11,6 +11,9 @@ export type SettingsData = {
     backgroundVolume: number;
     effectsVolume: number;
   };
+  video: {
+    animation: boolean;
+  };
 };
 
 export type DailyWordSaveData = {
@@ -81,8 +84,8 @@ export function newGuid(): string {
 /** */
 export class SaveData {
   /**
-   *
-   * @param updatedSettings
+   * Sets saved settings.
+   * @param updatedSettings Settings to update.
    */
   public static setSettings(updatedSettings: Partial<SettingsData>) {
     const currentSettings = SaveData.getSettings();
@@ -93,8 +96,8 @@ export class SaveData {
   }
 
   /**
-   *
-   * @returns
+   * Gets saved settings.
+   * @returns Saved settings, or a default settings object if no saved settings found.
    */
   public static getSettings(): SettingsData {
     const settings = localStorage.getItem("settings");
@@ -103,7 +106,10 @@ export class SaveData {
       return JSON.parse(settings) as SettingsData;
     }
 
-    return { sound: { masterVolume: 0.5, effectsVolume: 0.75, backgroundVolume: 0.1 } };
+    return {
+      sound: { masterVolume: 0.5, effectsVolume: 0.75, backgroundVolume: 0.1 },
+      video: { animation: true },
+    };
   }
 
   /**

@@ -1,3 +1,5 @@
+import { useState } from "react";
+import { Button } from "./Button";
 import { SettingsData } from "./SaveData";
 
 interface Props {
@@ -5,71 +7,129 @@ interface Props {
   onSettingsChange: (settings: SettingsData) => void;
 }
 
+// All the possible setting areas
+type SettingArea = "Sound" | "Video" | "Gameplay";
+
+// Individual setting
+type Setting =
+  | { type: "decimal"; name: string; value: number; onChange: (value: number) => SettingsData }
+  | { type: "boolean"; name: string; value: boolean; onChange: (value: boolean) => SettingsData };
+
 export const Settings: React.FC<Props> = (props) => {
+  const [selectedSettingAreaName, setSelectedSettingAreaName] = useState<SettingArea>("Sound");
   const { settings } = props;
 
+  // All the setting areas and their settings
   const SETTINGS: {
-    name: string;
-    settings: { name: string; value: number; onChange: (value: number) => SettingsData }[];
+    name: SettingArea;
+    settings: Setting[];
   }[] = [
     {
       name: "Sound",
       settings: [
         {
           name: "Master",
+          type: "decimal",
           value: props.settings.sound.masterVolume,
           onChange: (masterVolume) => ({ ...settings, sound: { ...settings.sound, masterVolume } }),
         },
         {
           name: "Background",
+          type: "decimal",
           value: props.settings.sound.backgroundVolume,
           onChange: (backgroundVolume) => ({
             ...settings,
-            sound: { ...settings.sound, masterVolume: backgroundVolume },
+            sound: { ...settings.sound, backgroundVolume },
           }),
         },
         {
           name: "Effects",
+          type: "decimal",
           value: props.settings.sound.effectsVolume,
-          onChange: (effectsVolume) => ({ ...settings, sound: { ...settings.sound, masterVolume: effectsVolume } }),
+          onChange: (effectsVolume) => ({ ...settings, sound: { ...settings.sound, effectsVolume } }),
         },
       ],
+    },
+    {
+      name: "Video",
+      settings: [
+        {
+          name: "Animation",
+          type: "boolean",
+          value: props.settings.video.animation,
+          onChange: (animation) => ({ ...settings, video: { ...settings.sound, animation } }),
+        },
+      ],
+    },
+    {
+      name: "Gameplay",
+      settings: [],
     },
   ];
 
   /**
-   * Renders a setting control for a 0.0 to 1.0 value.
-   * @param decimal Current value.
-   * @param onChange On change of the value.
+   * Renders a setting control.
+   * @param setting Setting to render.
    * @returns Element to render.
    */
-  function decimalSettingControl(decimal: number, onChange: (decimal: number) => void) {
-    const MAX = 100;
-    const MIN = 0;
+  function renderSettingControl(setting: Setting) {
+    switch (setting.type) {
+      // Slider 0.0 to 1.0 control
+      case "decimal": {
+        const MAX = 100;
+        const MIN = 0;
 
-    return (
-      <input
-        type="number"
-        min={MIN}
-        max={MAX}
-        onChange={(e) => onChange(Math.min(MAX, e.target.valueAsNumber / MAX))}
-        value={Math.min(MAX, decimal * 100)}
-      />
-    );
+        return (
+          <input
+            type="range"
+            min={MIN}
+            max={MAX}
+            onChange={(e) => props.onSettingsChange(setting.onChange(Math.min(MAX, e.target.valueAsNumber / MAX)))}
+            value={Math.min(MAX, setting.value * 100)}
+          />
+        );
+      }
+
+      // Checkbox Yes/No control
+      case "boolean": {
+        return (
+          <input
+            type="checkbox"
+            onChange={(e) => props.onSettingsChange(setting.onChange(e.target.checked))}
+            checked={setting.value}
+          />
+        );
+      }
+    }
   }
+
+  const selectedSettingArea = SETTINGS.find((x) => x.name === selectedSettingAreaName)!;
 
   return (
     <div className="settings">
-      {SETTINGS.map((settingSection) => (
-        <section key={settingSection.name} className="settings-section">
-          <h3 className="settings-section-title">{settingSection.name}</h3>
-          {settingSection.settings.map((setting) => (
+      <div className="setting-section-links">
+        {SETTINGS.map((settingSection) => (
+          <Button
+            mode="default"
+            key={settingSection.name}
+            className="setting-section-link"
+            onClick={() => setSelectedSettingAreaName(settingSection.name)}
+          >
+            {settingSection.name}
+          </Button>
+        ))}
+      </div>
+      <section className="settings-section">
+        <h3 className="settings-section-title">{selectedSettingArea.name}</h3>
+        <div className="selected-setting">
+          {selectedSettingArea.settings.map((setting) => (
             <label key={setting.name} className="setting">
-              {setting.name}:{decimalSettingControl(setting.value, setting.onChange)}
+              <span className="setting-name">{setting.name}</span>
+              <div className="setting-control">{renderSettingControl(setting)}</div>
             </label>
           ))}
-        </section>
-      ))}
+        </div>
+      </section>
     </div>
   );
 };
