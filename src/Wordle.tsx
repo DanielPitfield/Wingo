@@ -130,7 +130,7 @@ const Wordle: React.FC<Props> = (props) => {
       if (props.mode === "interlinked") {
         Grid.push(
           <WordRow
-            key={i}
+            key={`interlinked ${i}`}
             mode={props.mode}
             isVertical={true}
             word={word}

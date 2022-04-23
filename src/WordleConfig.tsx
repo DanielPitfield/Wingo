@@ -238,7 +238,7 @@ const WordleConfig: React.FC<Props> = (props) => {
 
         newTargetWord = targetWordArray[daily_word_index];
 
-        // TODO: Load Daily Attempts could be done in the useEffect with dependency targetWord
+        // Load previous attempts at daily (if applicable)
         const daily_word_storage = SaveData.getDailyWordGuesses();
         // The actual daily word and the daily word set in local storage are the same
         if (newTargetWord === daily_word_storage?.dailyWord) {
@@ -252,27 +252,25 @@ const WordleConfig: React.FC<Props> = (props) => {
         break;
 
       case "puzzle":
-        // Get a random puzzle and hint (from words_puzzles.ts)
+        // Get a random puzzle (from words_puzzles.ts)
         const puzzle = wordHintMappings[Math.round(Math.random() * wordHintMappings.length - 1)];
-        newTargetWord = puzzle.word;
-
-        // TODO: Set Hint could be done in the useEffect with dependency targetWord
         settargetHint(puzzle.hint);
 
+        newTargetWord = puzzle.word;
         break;
 
       case "category":
         // A target category has been manually selected from dropdown
         if (hasSelectedTargetCategory) {
           // Continue using that category
-          const wordArray = categoryMappings.find((x) => x.name === targetCategory)?.array;
+          targetWordArray = categoryMappings.find((x) => x.name === targetCategory)?.array;
 
-          if (!wordArray) {
+          if (!targetWordArray) {
             return;
           }
 
           // Need to set word here as targetCategory doesn't change (the useEffect() wont be triggered)
-          newTargetWord = wordArray[Math.round(Math.random() * (wordArray.length - 1))];
+          newTargetWord = targetWord[Math.round(Math.random() * (targetWordArray.length - 1))];
         } else {
           // Otherwise, randomly choose a category (can be changed afterwards)
           const random_category = categoryMappings[Math.round(Math.random() * (categoryMappings.length - 1))];
@@ -312,7 +310,7 @@ const WordleConfig: React.FC<Props> = (props) => {
       case "limitless":
         // There is already a targetWord which is of the needed wordLength
         if (targetWord && targetWord.length === wordLength) {
-          // Return early?
+          return;
         }
 
         targetWordArray = wordLengthMappingsTargets.find((x) => x.value === wordLength)?.array!;
@@ -335,37 +333,13 @@ const WordleConfig: React.FC<Props> = (props) => {
         }
 
         newTargetWord = targetWordArray[Math.round(Math.random() * (targetWordArray.length - 1))];
-
-        const target_word_letters = newTargetWord.split(""); // Get letters of first target word
-
-        // Choose a random letter from these letters to be the shared letter between two interlinked words
-        const shared_letter_index_word1 = Math.round(Math.random() * target_word_letters.length - 1); // Position of shared letter in first word
-        console.log("Index (1): " + shared_letter_index_word1);
-
-        const sharedLetter = target_word_letters[shared_letter_index_word1];
-        console.log("Shared Letter: " + sharedLetter);
-
-        // Look for another word which contains the shared letter
-        let interlinked_target_word = "";
-        do {
-          const randomWord = targetWordArray[Math.round(Math.random() * targetWordArray.length - 1)];
-          if (randomWord.includes(sharedLetter) && randomWord !== newTargetWord) {
-            interlinked_target_word = randomWord;
-          }
-        } while (interlinked_target_word === "");
-        console.log("Target Word (2): " + interlinked_target_word);
-
-        // Position of shared letter in second word
-        const shared_letter_index_word2 = interlinked_target_word.indexOf(sharedLetter);
-        console.log("Index (2): " + shared_letter_index_word2);
-
-        setinterlinkedWord(interlinked_target_word);
         break;
     }
 
     // A new target word was able to be determined
     if (newTargetWord !== undefined) {
-      console.log("Mode: " + props.mode + '\n' + "Word: " + newTargetWord);
+      // Log the current gamemode and the target word
+      console.log("Mode: " + props.mode + "\n" + "Word: " + newTargetWord);
       settargetWord(newTargetWord);
     }
   }
@@ -397,6 +371,10 @@ const WordleConfig: React.FC<Props> = (props) => {
   }, [targetWord, currentWord, guesses, wordIndex, inProgress, inDictionary]);
 
   React.useEffect(() => {
+    if (!targetWord) {
+      return;
+    }
+    
     // Show first letter of the target word (if enabled)
     if (props.firstLetterProvided) {
       if (props.targetWord) {
@@ -411,6 +389,40 @@ const WordleConfig: React.FC<Props> = (props) => {
       if (targetWord) {
         setwordLength(targetWord.length);
       }
+    }
+
+    // Update interlinked word (second word)
+    if (props.mode === "interlinked") {
+      // Get letters of first target word
+      const target_word_letters = targetWord.split("");
+
+      // Position of shared letter in first word
+      const shared_letter_index_word1 = Math.round(Math.random() * (target_word_letters.length - 1));
+      console.log("Index (1): " + shared_letter_index_word1);
+
+      // Choose a random letter from these letters to be the shared letter between two interlinked words
+      const sharedLetter = target_word_letters[shared_letter_index_word1];
+      console.log("Shared Letter: " + sharedLetter);
+
+      // TODO: The interlinked word doesn't have to be same length as first word (but is for now)
+      const targetWordArray = wordLengthMappingsTargets.find((x) => x.value === wordLength)?.array!;
+
+      // Look for another word which contains the shared letter
+      let interlinked_target_word = "";
+      do {
+        const randomIndex = Math.round(Math.random() * (targetWordArray.length - 1));
+        const randomWord = targetWordArray[randomIndex];
+        if (randomWord.includes(sharedLetter) && randomWord !== targetWord) {
+          interlinked_target_word = randomWord;
+        }
+      } while (interlinked_target_word === "");
+      console.log("Target Word (2): " + interlinked_target_word);
+
+      // Position of shared letter in second word
+      const shared_letter_index_word2 = interlinked_target_word.indexOf(sharedLetter);
+      console.log("Index (2): " + shared_letter_index_word2);
+
+      setinterlinkedWord(interlinked_target_word);
     }
   }, [targetWord]);
 
@@ -515,7 +527,6 @@ const WordleConfig: React.FC<Props> = (props) => {
     }
 
     generateTargetWord();
-
   }, [/* Short circuit boolean evaluation */ props.mode === "category" || wordLength, inProgress, props.mode]);
 
   // Save the game
