@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { Button } from "./Button";
 import { SettingsData } from "./SaveData";
+import { StudioLogo } from "./StudioLogo";
+import { VERSION } from "./version";
 
 interface Props {
   settings: SettingsData;
@@ -8,7 +10,7 @@ interface Props {
 }
 
 // All the possible setting areas
-type SettingArea = "Sound" | "Video" | "Gameplay";
+type SettingArea = "Sound" | "Video" | "Gameplay" | "About";
 
 // Individual setting
 type Setting =
@@ -20,12 +22,21 @@ export const Settings: React.FC<Props> = (props) => {
   const { settings } = props;
 
   // All the setting areas and their settings
-  const SETTINGS: {
-    name: SettingArea;
-    settings: Setting[];
-  }[] = [
+  const SETTINGS: (
+    | {
+        type: "settings";
+        name: SettingArea;
+        settings: Setting[];
+      }
+    | {
+        type: "custom";
+        name: SettingArea;
+        component: React.ReactNode;
+      }
+  )[] = [
     {
       name: "Sound",
+      type: "settings",
       settings: [
         {
           name: "Master",
@@ -52,6 +63,7 @@ export const Settings: React.FC<Props> = (props) => {
     },
     {
       name: "Video",
+      type: "settings",
       settings: [
         {
           name: "Animation",
@@ -63,7 +75,20 @@ export const Settings: React.FC<Props> = (props) => {
     },
     {
       name: "Gameplay",
+      type: "settings",
       settings: [],
+    },
+    {
+      name: "About",
+      type: "custom",
+      component: (
+        <>
+          <div>
+            <strong>Version:</strong> {VERSION}
+          </div>
+          <StudioLogo />
+        </>
+      ),
     },
   ];
 
@@ -108,27 +133,32 @@ export const Settings: React.FC<Props> = (props) => {
   return (
     <div className="settings">
       <div className="setting-section-links">
-        {SETTINGS.map((settingSection) => (
-          <Button
-            mode="default"
-            key={settingSection.name}
-            settings={props.settings}
-            className="setting-section-link"
-            onClick={() => setSelectedSettingAreaName(settingSection.name)}
-          >
-            {settingSection.name}
-          </Button>
+        {SETTINGS.map((settingSection, i) => (
+          <>
+            {i === SETTINGS.length - 1 && <div className="setting-section-link-spacer"></div>}
+            <Button
+              mode="default"
+              key={settingSection.name}
+              settings={props.settings}
+              className="setting-section-link"
+              onClick={() => setSelectedSettingAreaName(settingSection.name)}
+            >
+              {settingSection.name}
+            </Button>
+          </>
         ))}
       </div>
       <section className="settings-section">
         <h3 className="settings-section-title">{selectedSettingArea.name}</h3>
         <div className="selected-setting">
-          {selectedSettingArea.settings.map((setting) => (
-            <label key={setting.name} className="setting">
-              <span className="setting-name">{setting.name}</span>
-              <div className="setting-control">{renderSettingControl(setting)}</div>
-            </label>
-          ))}
+          {selectedSettingArea.type === "custom"
+            ? selectedSettingArea.component
+            : selectedSettingArea.settings.map((setting) => (
+                <label key={setting.name} className="setting">
+                  <span className="setting-name">{setting.name}</span>
+                  <div className="setting-control">{renderSettingControl(setting)}</div>
+                </label>
+              ))}
         </div>
       </section>
     </div>

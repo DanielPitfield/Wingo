@@ -20,6 +20,7 @@ import { AllCampaignAreas } from "./Campaign/AllCampaignAreas";
 import { Settings } from "./Settings";
 import GroupWall from "./OnlyConnect/GroupWall";
 import { useBackgroundMusic, useClickChime } from "./Sounds";
+import { VERSION } from "./version";
 
 const wordLength = 5;
 const numGuesses = 6;
@@ -767,6 +768,7 @@ export const App: React.FC = () => {
         </>
       )}
       {pageComponent}
+      <div className="version">{VERSION}</div>
     </div>
   );
 };

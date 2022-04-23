@@ -448,9 +448,13 @@ $data-statuses: (
     border-right: 2px solid #c0c0c0;
     min-width: 10em;
     background-color: #ccc;
+    padding-bottom: 0.5em;
     .setting-section-link {
       margin: 0.5em;
       margin-bottom: 0;
+    }
+    .setting-section-link-spacer {
+      flex-grow: 1;
     }
   }
   .settings-section {
@@ -500,6 +504,9 @@ $data-statuses: (
   min-height: 100vh;
   background-color: #ddd;
   background-size: 100%;
+  .studio-logo {
+    align-self: center;
+  }
 }
 
 .main-menu-wrapper {
@@ -532,12 +539,18 @@ $data-statuses: (
   font-size: 3rem;
 }
 
-.studio-name {
+.studio-logo {
+  display: flex;
   border: 2px solid;
   border-color: #cccccc;
   color: #b3b3b3;
   background-color: #e6e6e6;
   padding: 0.5em 3em;
+  margin: 0.5em 0;
+  flex-grow: 0;
+  flex-shrink: 0;
+  user-select: none;
+  align-self: flex-start;
 }
 
 /* Home page ========================= */
@@ -713,8 +726,17 @@ $data-statuses: (
   color: #333;
 }
 
+.version {
+  position: fixed;
+  user-select: none;
+  bottom: 0;
+  right: 0;
+  opacity: 0.3;
+  margin: 0.3em;
+  pointer-events: none;
+}
+
 .toolbar {
-  height: 3em;
   display: flex;
   align-items: stretch;
   background-color: #333;

@@ -3,6 +3,7 @@ import { Logo } from "./Logo";
 import BackgroundSrc from "./images/background.png";
 import { useIntroMusic } from "./Sounds";
 import { SettingsData } from "./SaveData";
+import { StudioLogo } from "./StudioLogo";
 
 export const SplashScreen: React.FC<{ loadingState: "loading" | "loaded"; settings: SettingsData }> = (props) => {
   const [playIntroSrc] = useIntroMusic(props.settings);
@@ -17,7 +18,7 @@ export const SplashScreen: React.FC<{ loadingState: "loading" | "loaded"; settin
             <Logo></Logo>
           </div>
         </div>
-        <div className="studio-name">Pitsy Studios</div>
+        <StudioLogo />
       </div>
     </div>
   );
