@@ -222,21 +222,21 @@ const WordleConfig: React.FC<Props> = (props) => {
   const [seconds, setSeconds] = useState(props.timerConfig.isTimed ? props.timerConfig.seconds : 0);
 
   function generateTargetWord() {
-    let targetWordArray;
+    // Most modes choose a target word based on length (will be reassigned if not one of these modes)
+    let targetWordArray = wordLengthMappingsTargets.find((x) => x.value === wordLength)?.array!;
 
     let newTargetWord;
 
     switch (props.mode) {
       case "daily":
-        // Find array of 5 (wordLength) letter words
-        targetWordArray = wordLengthMappingsTargets.find((x) => x.value === wordLength)?.array!;
-
         const timestamp = +new Date(); // Unix timestamp (in milliseconds)
         const ms_per_day = 24 * 60 * 60 * 1000;
         const days_since_epoch = Math.floor(timestamp / ms_per_day);
         const daily_word_index = Math.round(days_since_epoch % targetWordArray.length); // Number in the range (0, wordArray.length)
 
         newTargetWord = targetWordArray[daily_word_index];
+        console.log("Mode: Daily" + "\n" + "Word: " + newTargetWord);
+        settargetWord(newTargetWord);        
 
         // Load previous attempts at daily (if applicable)
         const daily_word_storage = SaveData.getDailyWordGuesses();
@@ -249,7 +249,7 @@ const WordleConfig: React.FC<Props> = (props) => {
           setCurrentWord(daily_word_storage.currentWord);
           setinDictionary(daily_word_storage.inDictionary);
         }
-        break;
+        return;
 
       case "puzzle":
         // Get a random puzzle (from words_puzzles.ts)
@@ -257,36 +257,22 @@ const WordleConfig: React.FC<Props> = (props) => {
         settargetHint(puzzle.hint);
 
         newTargetWord = puzzle.word;
-        break;
+        console.log("Mode: Puzzle" + "\n" + "Word: " + newTargetWord);
+        settargetWord(newTargetWord);
+        return;
 
       case "category":
         // A target category has been manually selected from dropdown
         if (hasSelectedTargetCategory) {
           // Continue using that category
-          targetWordArray = categoryMappings.find((x) => x.name === targetCategory)?.array;
-
-          if (!targetWordArray) {
-            return;
-          }
-
-          // Need to set word here as targetCategory doesn't change (the useEffect() wont be triggered)
-          newTargetWord = targetWord[Math.round(Math.random() * (targetWordArray.length - 1))];
+          targetWordArray = categoryMappings.find((x) => x.name === targetCategory)?.array!;
         } else {
           // Otherwise, randomly choose a category (can be changed afterwards)
           const random_category = categoryMappings[Math.round(Math.random() * (categoryMappings.length - 1))];
           settargetCategory(random_category.name);
-          // A random word from this category is set in a useEffect()
-        }
-        break;
-
-      case "repeat":
-        targetWordArray = wordLengthMappingsTargets.find((x) => x.value === wordLength)?.array!;
-
-        if (!targetWordArray) {
+          // A random word from this category is set in a useEffect(), so return
           return;
         }
-
-        newTargetWord = targetWordArray[Math.round(Math.random() * (targetWordArray.length - 1))];
         break;
 
       case "increasing":
@@ -324,20 +310,12 @@ const WordleConfig: React.FC<Props> = (props) => {
 
         newTargetWord = targetWordArray[Math.round(Math.random() * (targetWordArray.length - 1))];
         break;
-
-      case "interlinked":
-        targetWordArray = wordLengthMappingsTargets.find((x) => x.value === wordLength)?.array!;
-
-        if (!targetWordArray) {
-          return;
-        }
-
-        newTargetWord = targetWordArray[Math.round(Math.random() * (targetWordArray.length - 1))];
-        break;
     }
 
-    // A new target word was able to be determined
-    if (newTargetWord !== undefined) {
+    // A new target word can be determined
+    if (targetWordArray) {
+      newTargetWord = targetWordArray[Math.round(Math.random() * (targetWordArray.length - 1))];
+
       // Log the current gamemode and the target word
       console.log("Mode: " + props.mode + "\n" + "Word: " + newTargetWord);
       settargetWord(newTargetWord);
@@ -374,7 +352,7 @@ const WordleConfig: React.FC<Props> = (props) => {
     if (!targetWord) {
       return;
     }
-    
+
     // Show first letter of the target word (if enabled)
     if (props.firstLetterProvided) {
       if (props.targetWord) {
