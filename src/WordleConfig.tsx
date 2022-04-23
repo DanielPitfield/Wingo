@@ -268,6 +268,9 @@ const WordleConfig: React.FC<Props> = (props) => {
   // Update targetWord every time the targetCategory changes
   React.useEffect(() => {
     if (props.mode === "category") {
+      // Category may be changed mid-game (so clear anything from before)    
+      ResetGame();
+
       const wordArray = categoryMappings.find((x) => x.name === targetCategory)?.array;
 
       if (!wordArray) {
@@ -752,12 +755,8 @@ const WordleConfig: React.FC<Props> = (props) => {
 
   function onSubmitTargetCategory(category: string) {
     if (categoryMappings.find((x) => x.name === category)) {
-      // Only allow changing of the category, if no attempts have been made
-      const gameStart = wordIndex === 0 && currentWord.length === 0;
-      if (gameStart) {
-        settargetCategory(category);
-        sethasSelectedTargetCategory(true);
-      }
+      settargetCategory(category);
+      sethasSelectedTargetCategory(true);
     }
   }
 
