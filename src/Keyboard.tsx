@@ -2,8 +2,11 @@ import React from "react";
 import "./index.scss";
 import { Button } from "./Button";
 import { getWordSummary } from "./WordleConfig";
+import { SettingsData } from "./SaveData";
+import { useClickChime } from "./Sounds";
 
 interface Props {
+  settings: SettingsData;
   onSubmitLetter: (letter: string) => void;
   onEnter: () => void;
   onBackspace: () => void;
@@ -21,6 +24,8 @@ export const alphabet_string = "abcdefghijklmnopqrstuvwxyz";
 export const Alphabet = alphabet_string.split("");
 
 export const Keyboard: React.FC<Props> = (props) => {
+  const [playClickSoundEffect] = useClickChime(props.settings);
+
   const modesWithSpaces = ["category", "letters_categories"];
   const modesWithoutKeyboardStatuses = [
     "letters_categories",
@@ -30,26 +35,32 @@ export const Keyboard: React.FC<Props> = (props) => {
 
   React.useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      var input_key = event.key.toString().toLowerCase();
+      const input_key = event.key.toString().toLowerCase();
 
       if (input_key === "enter") {
         props.onEnter();
       } else if (input_key === "backspace") {
         props.onBackspace();
+        playClickSoundEffect();
       } else if (Alphabet.includes(input_key)) {
         // Any letter on the keyboard
         props.onSubmitLetter(input_key);
+        playClickSoundEffect();
       } else if (modesWithSpaces.includes(props.mode)) {
         // Space or dash pressed, submit dash
         if (input_key === " " || input_key === "-") {
           props.onSubmitLetter("-");
+          playClickSoundEffect();
         }
         if (input_key === "'") {
           props.onSubmitLetter(input_key);
+          playClickSoundEffect();
         }
       }
     };
+
     window.addEventListener("keydown", handleKeyDown);
+
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
@@ -124,6 +135,7 @@ export const Keyboard: React.FC<Props> = (props) => {
           mode="default"
           // Data attribute used to colour button
           status={letterStatus ? letterStatus : "not set"}
+          settings={props.settings}
           onClick={(e) => {
             // Letter of button is used within a callback function
             props.onSubmitLetter(letter);
@@ -147,13 +159,13 @@ export const Keyboard: React.FC<Props> = (props) => {
       </div>
       <div className="keyboard_row_bottom">
         <>{populateKeyboard("ZXCVBNM")}</>
-        <Button mode="destructive" onClick={props.onBackspace}>
+        <Button mode="destructive" settings={props.settings} onClick={props.onBackspace}>
           &lt;
         </Button>
       </div>
-      <div className="keyboard_space">{modesWithSpaces.includes(props.mode) && (<>{populateKeyboard("-")}</>)}</div>
+      <div className="keyboard_space">{modesWithSpaces.includes(props.mode) && <>{populateKeyboard("-")}</>}</div>
       <div className="keyboard_enter">
-        <Button mode="accept" onClick={props.onEnter}>
+        <Button mode="accept" settings={props.settings} onClick={props.onEnter}>
           Enter
         </Button>
       </div>

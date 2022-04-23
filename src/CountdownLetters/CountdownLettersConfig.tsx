@@ -3,6 +3,7 @@ import { Page } from "../App";
 import CountdownLetters from "./CountdownLetters";
 import { wordLengthMappingsGuessable } from "../WordleConfig";
 import { Theme } from "../Themes";
+import { SettingsData } from "../SaveData";
 
 interface Props {
   page: Page;
@@ -11,6 +12,7 @@ interface Props {
   keyboard: boolean;
   defaultWordLength: number;
   theme: Theme;
+  settings: SettingsData;
   setTheme: (theme: Theme) => void;
   setPage: (page: Page) => void;
   addGold: (gold: number) => void;
@@ -313,6 +315,7 @@ const CountdownLettersConfig: React.FC<Props> = (props) => {
       targetWord={targetWord || ""}
       letterStatuses={letterStatuses}
       theme={props.theme}
+      settings={props.settings}
       setTheme={props.setTheme}
       onEnter={onEnter}
       onSubmitCountdownLetter={onSubmitCountdownLetter}

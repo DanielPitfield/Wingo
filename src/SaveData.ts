@@ -83,6 +83,18 @@ export function newGuid(): string {
 
 /** */
 export class SaveData {
+  /** Settings with everything disabled */
+  public static DISABLED_SETTINGS: SettingsData = {
+    sound: { masterVolume: 0, effectsVolume: 0, backgroundVolume: 0 },
+    video: { animation: false },
+  };
+
+  /** Default settings */
+  public static DEFAULT_SETTINGS: SettingsData = {
+    sound: { masterVolume: 0.5, effectsVolume: 0.75, backgroundVolume: 0.1 },
+    video: { animation: true },
+  };
+
   /**
    * Sets saved settings.
    * @param updatedSettings Settings to update.
@@ -106,10 +118,7 @@ export class SaveData {
       return JSON.parse(settings) as SettingsData;
     }
 
-    return {
-      sound: { masterVolume: 0.5, effectsVolume: 0.75, backgroundVolume: 0.1 },
-      video: { animation: true },
-    };
+    return SaveData.DEFAULT_SETTINGS;
   }
 
   /**

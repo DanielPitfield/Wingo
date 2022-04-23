@@ -1,17 +1,29 @@
 import React, { MouseEventHandler } from "react";
 import "./index.scss";
+import { SaveData, SettingsData } from "./SaveData";
+import { useClickChime } from "./Sounds";
 
 export const Button: React.FC<{
   mode: "destructive" | "accept" | "default";
+  settings?: SettingsData;
   className?: string;
   status?: string;
   onClick?: MouseEventHandler<HTMLButtonElement>;
-  disabled?: boolean
+  disabled?: boolean;
+  useSoundEffect?: boolean;
 }> = (props) => {
+  const [playClickSoundEffect] = useClickChime(props.settings || SaveData.DISABLED_SETTINGS);
+
   return (
     <button
       className={`btn ${props.mode} ${props.className || ""}`}
-      onClick={props.onClick}
+      onClick={(e) => {
+        props.onClick?.(e);
+
+        if (props.useSoundEffect !== false) {
+          playClickSoundEffect();
+        }
+      }}
       disabled={props.disabled}
       data-status={props.status}
     >

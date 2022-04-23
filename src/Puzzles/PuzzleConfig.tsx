@@ -3,6 +3,7 @@ import { Button } from "../Button";
 import { MessageNotification } from "../MessageNotification";
 import { Puzzles } from "./Puzzles";
 import { Theme, ThemeIcons } from "../Themes";
+import { SettingsData } from "../SaveData";
 
 /** Config for a specific puzzle (exported for config from campaign) */
 export type PuzzleConfigProps = {
@@ -29,6 +30,7 @@ type SequencePuzzleStyling = {
 interface Props {
   defaultPuzzle?: PuzzleConfigProps;
   theme: Theme;
+  settings: SettingsData;
   finishingButtonText?: string;
   setTheme: (theme: Theme) => void;
   onComplete?: (wasCorrect: boolean) => void;
@@ -241,7 +243,7 @@ export const PuzzleConfig: React.FC<Props> = (props) => {
     <div className="App puzzle-config" style={{ backgroundImage: puzzle && `url(${props.theme.backgroundImageSrc})` }}>
       {renderNotification()}
       {result !== "in-progress" && (
-        <Button mode="accept" onClick={() => resetGame()}>
+        <Button mode="accept" settings={props.settings} onClick={() => resetGame()}>
           {props.finishingButtonText || "Restart"}
         </Button>
       )}

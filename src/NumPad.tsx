@@ -1,8 +1,10 @@
 import React from "react";
 import "./index.scss";
 import { Button } from "./Button";
+import { SettingsData } from "./SaveData";
 
 interface Props {
+  settings: SettingsData;
   onSubmitNumber: (number: number) => void;
   onEnter: () => void;
   onBackspace: () => void;
@@ -40,7 +42,7 @@ export const NumPad: React.FC<Props> = (props) => {
 
   function populateNumpad(numbers: number[]) {
     return numbers.map((number) => (
-      <Button key={number} mode="default" onClick={() => props.onSubmitNumber(number)}>
+      <Button key={number} mode="default" settings={props.settings} onClick={() => props.onSubmitNumber(number)}>
         {number}
       </Button>
     ));
@@ -59,12 +61,12 @@ export const NumPad: React.FC<Props> = (props) => {
       </div>
       <div className="keyboard_row_bottom">
         <>{populateNumpad([0])}</>
-        <Button mode="destructive" onClick={props.onBackspace}>
+        <Button mode="destructive" settings={props.settings} onClick={props.onBackspace}>
           &lt;
         </Button>
       </div>
       <div className="keyboard_enter">
-        <Button mode="accept" onClick={props.onEnter}>
+        <Button mode="accept" settings={props.settings} onClick={props.onEnter}>
           Enter
         </Button>
       </div>

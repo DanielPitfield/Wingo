@@ -462,6 +462,8 @@ $data-statuses: (
       margin: 0;
       padding: 0.7em 0.9em;
       border-bottom: 1px solid #ddd;
+      text-transform: uppercase;
+      color: #333;
     }
     .selected-setting {
       display: flex;

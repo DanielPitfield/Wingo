@@ -3,6 +3,7 @@ import { Page } from "../App";
 import CountdownNumbers from "./CountdownNumbers";
 import { calculateTotal } from "./NumberRow";
 import { Theme } from "../Themes";
+import { SettingsData } from "../SaveData";
 
 interface Props {
   page: Page;
@@ -12,6 +13,7 @@ interface Props {
   defaultExpressionLength: number;
   timerConfig: { isTimed: false } | { isTimed: true; seconds: number };
   theme: Theme;
+  settings: SettingsData;
   setTheme: (theme: Theme) => void;
   setPage: (page: Page) => void;
   addGold: (gold: number) => void;
@@ -36,7 +38,7 @@ export const operators: { name: "÷" | "-" | "+" | "×"; function: (num1: number
   },
 ];
 
-export const operators_symbols = ["÷" , "-" , "+" , "×"];
+export const operators_symbols = ["÷", "-", "+", "×"];
 
 export function isNumberValid(currentExpression: string) {
   if (!currentExpression) {
@@ -447,6 +449,7 @@ const CountdownNumbersConfig: React.FC<Props> = (props) => {
       hasSubmitNumber={hasSubmitNumber}
       targetNumber={targetNumber}
       theme={props.theme}
+      settings={props.settings}
       setTheme={props.setTheme}
       onClick={addOperandToGuess}
       onRightClick={removeOperandFromGuess}

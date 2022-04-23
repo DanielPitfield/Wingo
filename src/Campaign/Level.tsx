@@ -2,6 +2,7 @@ import React from "react";
 import { Page } from "../App";
 import { MessageNotification } from "../MessageNotification";
 import { PuzzleConfig, PuzzleConfigProps } from "../Puzzles/PuzzleConfig";
+import { SettingsData } from "../SaveData";
 import { Theme } from "../Themes";
 import WordleConfig, { WordleConfigProps } from "../WordleConfig";
 import { AreaConfig } from "./Area";
@@ -41,6 +42,7 @@ export const Level: React.FC<{
   level: LevelConfig;
   page: Page;
   theme: Theme;
+  settings: SettingsData;
   setTheme: (theme: Theme) => void;
   setPage: (page: Page) => void;
   addGold: (gold: number) => void;
@@ -57,6 +59,7 @@ export const Level: React.FC<{
             setPage={props.setPage}
             addGold={props.addGold}
             finishingButtonText="Back to area"
+            settings={props.settings}
             onComplete={(wasCorrect) => {
               if (wasCorrect) {
                 props.onCompleteLevel(props.level.isUnlockLevel || false, props.level);
@@ -75,6 +78,7 @@ export const Level: React.FC<{
             setTheme={props.setTheme}
             defaultPuzzle={props.level.level.levelProps}
             finishingButtonText="Back to Area"
+            settings={props.settings}
             onComplete={(wasCorrect) => {
               if (wasCorrect) {
                 props.onCompleteLevel(props.level.isUnlockLevel || false, props.level);

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Page } from "../App";
 import LetterCategories from "./LetterCategories";
-import { SaveData } from "../SaveData";
+import { SettingsData } from "../SaveData";
 import { Alphabet } from "../Keyboard";
 import { categoryMappings } from "../WordleConfig";
 import { Theme } from "../Themes";
@@ -14,6 +14,7 @@ interface Props {
   defaultnumGuesses: number;
   finishingButtonText?: string;
   theme: Theme;
+  settings: SettingsData;
   onComplete?: () => void;
   page: Page;
   setPage: (page: Page) => void;
@@ -254,6 +255,7 @@ const LetterCategoriesConfig: React.FC<Props> = (props) => {
       categoryWordTargets={categoryWordTargets || [[]]}
       finishingButtonText={props.finishingButtonText}
       theme={props.theme}
+      settings={props.settings}
       onEnter={onEnter}
       onSubmitLetter={onSubmitLetter}
       onBackspace={onBackspace}

@@ -9,6 +9,7 @@ import { Guess, hasNumberSelectionFinished, hasNumberSelectionStarted } from "./
 import { CountdownRow } from "./CountdownRow";
 import { Theme } from "../Themes";
 import { NumberPuzzle, NumberPuzzleValue } from "./CountdownSolver";
+import { SettingsData } from "../SaveData";
 
 interface Props {
   mode: "countdown_numbers_casual" | "countdown_numbers_realistic";
@@ -29,6 +30,7 @@ interface Props {
   hasSubmitNumber: boolean;
   targetNumber: number | null;
   theme: Theme;
+  settings: SettingsData;
   onClick: (
     value: number | null,
     id: { type: "original"; index: number } | { type: "intermediary"; rowIndex: number }
@@ -166,6 +168,7 @@ const CountdownNumbers: React.FC<Props> = (props) => {
         <div className="add-number-buttons-wrapper">
           <Button
             mode={"default"}
+            settings={props.settings}
             disabled={isSelectionFinished}
             onClick={() => props.onSubmitCountdownNumber(getSmallNumber()!)}
           >
@@ -173,6 +176,7 @@ const CountdownNumbers: React.FC<Props> = (props) => {
           </Button>
           <Button
             mode={"default"}
+            settings={props.settings}
             disabled={isSelectionFinished}
             onClick={() => props.onSubmitCountdownNumber(getBigNumber()!)}
           >
@@ -180,6 +184,7 @@ const CountdownNumbers: React.FC<Props> = (props) => {
           </Button>
           <Button
             mode={"default"}
+            settings={props.settings}
             disabled={hasNumberSelectionStarted(props.countdownStatuses) || isSelectionFinished}
             onClick={quickNumberSelection}
           >
@@ -349,7 +354,7 @@ const CountdownNumbers: React.FC<Props> = (props) => {
 
       <div>
         {props.hasTimerEnded && !props.inProgress && (
-          <Button mode={"accept"} onClick={() => props.resetGame()}>
+          <Button mode={"accept"} onClick={() => props.resetGame()} settings={props.settings}>
             Restart
           </Button>
         )}
@@ -358,13 +363,13 @@ const CountdownNumbers: React.FC<Props> = (props) => {
       <div className="countdown-numbers-grid">{populateGrid(props.expressionLength)}</div>
 
       {props.inProgress && (
-        <Button mode="destructive" onClick={props.clearGrid}>
+        <Button mode="destructive" onClick={props.clearGrid} settings={props.settings}>
           Clear
         </Button>
       )}
 
       {props.inProgress && (
-        <Button mode="default" onClick={props.submitBestGuess}>
+        <Button mode="default" onClick={props.submitBestGuess} settings={props.settings}>
           Use Best Guess
         </Button>
       )}

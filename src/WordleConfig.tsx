@@ -11,7 +11,7 @@ import { words_nine_guessable, words_nine_targets } from "./WordArrays/Lengths/w
 import { words_ten_guessable, words_ten_targets } from "./WordArrays/Lengths/words_10";
 import { words_eleven_guessable, words_eleven_targets } from "./WordArrays/Lengths/words_11";
 import { wordHintMappings } from "./WordArrays/words_puzzles";
-import { SaveData } from "./SaveData";
+import { SaveData, SettingsData } from "./SaveData";
 import { words_dogs } from "./WordArrays/Categories/dogs";
 import { words_countries } from "./WordArrays/Categories/countries";
 import { words_chemical_elements } from "./WordArrays/Categories/chemical_elements";
@@ -41,6 +41,7 @@ export interface WordleConfigProps {
 interface Props extends WordleConfigProps {
   page: Page;
   theme?: Theme;
+  settings: SettingsData;
   setPage: (page: Page) => void;
   addGold: (gold: number) => void;
   setTheme: (theme: Theme) => void;
@@ -268,7 +269,7 @@ const WordleConfig: React.FC<Props> = (props) => {
   // Update targetWord every time the targetCategory changes
   React.useEffect(() => {
     if (props.mode === "category") {
-      // Category may be changed mid-game (so clear anything from before)    
+      // Category may be changed mid-game (so clear anything from before)
       ResetGame();
 
       const wordArray = categoryMappings.find((x) => x.name === targetCategory)?.array;
@@ -803,6 +804,7 @@ const WordleConfig: React.FC<Props> = (props) => {
       letterStatuses={letterStatuses}
       finishingButtonText={props.finishingButtonText}
       theme={props.theme}
+      settings={props.settings}
       onEnter={onEnter}
       onSubmitLetter={onSubmitLetter}
       onSubmitTargetCategory={onSubmitTargetCategory}

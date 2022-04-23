@@ -2,11 +2,10 @@ import React, { useEffect } from "react";
 import { Logo } from "./Logo";
 import BackgroundSrc from "./images/background.png";
 import { useIntroMusic } from "./Sounds";
-import { SaveData } from "./SaveData";
+import { SettingsData } from "./SaveData";
 
-export const SplashScreen: React.FC<{ loadingState: "loading" | "loaded" }> = (props) => {
-  const settings = SaveData.getSettings();
-  const [playIntroSrc] = useIntroMusic(settings);
+export const SplashScreen: React.FC<{ loadingState: "loading" | "loaded"; settings: SettingsData }> = (props) => {
+  const [playIntroSrc] = useIntroMusic(props.settings);
 
   useEffect(() => playIntroSrc(), [playIntroSrc]);
 

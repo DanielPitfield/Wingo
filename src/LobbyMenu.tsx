@@ -4,7 +4,7 @@ import { BsGearFill, BsInfoCircleFill } from "react-icons/bs";
 import Star from "./images/star.png";
 import GoldCoin from "./images/gold.png";
 import { AllChallenges } from "./Challenges/AllChallenges";
-import { SaveData } from "./SaveData";
+import { SaveData, SettingsData } from "./SaveData";
 import ProgressBar from "./ProgressBar";
 import { Button } from "./Button";
 import { Campaign } from "./Campaign/Campaign";
@@ -15,6 +15,7 @@ import { useNotificationChime } from "./Sounds";
 
 interface Props {
   theme: Theme;
+  settings: SettingsData;
   setTheme: (theme: Theme) => void;
   setPage: (page: Page) => void;
   setSelectedArea: (areaConfig: AreaConfig) => void;
@@ -35,8 +36,7 @@ export const LobbyMenu: React.FC<Props> = (props) => {
   const [optionsConfig, setOptionsConfig] = useState<{ isConfigShown: false } | { isConfigShown: true; Page: Page }>({
     isConfigShown: false,
   });
-  const settings = SaveData.getSettings();
-  const [playNotificationChime] = useNotificationChime(settings);
+  const [playNotificationChime] = useNotificationChime(props.settings);
 
   /**
    *
@@ -54,12 +54,13 @@ export const LobbyMenu: React.FC<Props> = (props) => {
           <p className="tooltip">{pageInfo?.description}</p>
         </span>
         <div className="widget-button-wrapper">
-          <Button mode="accept" data-game-mode={page} onClick={() => props.setPage(page)}>
+          <Button mode="accept" data-game-mode={page} settings={props.settings} onClick={() => props.setPage(page)}>
             Play
           </Button>
           <Button
             mode="default"
             className="game_options"
+            settings={props.settings}
             onClick={() => setOptionsConfig({ isConfigShown: true, Page: page })}
           >
             <BsGearFill />
@@ -78,7 +79,12 @@ export const LobbyMenu: React.FC<Props> = (props) => {
           <div className="options_title">
             Options for <strong>{pageInfo?.title || page}</strong>
           </div>
-          <Button mode="default" className="options_close" onClick={() => setOptionsConfig({ isConfigShown: false })}>
+          <Button
+            mode="default"
+            className="options_close"
+            settings={props.settings}
+            onClick={() => setOptionsConfig({ isConfigShown: false })}
+          >
             X
           </Button>
           <label>
@@ -119,6 +125,7 @@ export const LobbyMenu: React.FC<Props> = (props) => {
             setSelectedArea={props.setSelectedArea}
             setSelectedCampaignLevel={props.setSelectedCampaignLevel}
             theme={props.theme}
+            settings={props.settings}
             setTheme={props.setTheme}
             setPage={props.setPage}
           />
@@ -230,6 +237,7 @@ export const LobbyMenu: React.FC<Props> = (props) => {
                 <Button
                   mode="default"
                   className="challenge-redeem-reward"
+                  settings={props.settings}
                   onClick={() => {
                     challenge.isRedeemed = true;
                     props.addGold(challenge.reward().goldCoins);

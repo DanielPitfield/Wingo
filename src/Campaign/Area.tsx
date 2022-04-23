@@ -3,7 +3,7 @@ import { Page, pages } from "../App";
 import { Button } from "../Button";
 import { getId, LevelConfig } from "./Level";
 import { MessageNotification } from "../MessageNotification";
-import { SaveData } from "../SaveData";
+import { SaveData, SettingsData } from "../SaveData";
 import { Theme } from "../Themes";
 
 export interface AreaConfig {
@@ -16,6 +16,7 @@ export interface AreaConfig {
 /** Portion of the campaign, with many levels */
 export const Area: React.FC<{
   area: AreaConfig;
+  settings: SettingsData;
   setTheme: (theme: Theme) => void;
   setSelectedCampaignLevel: (level: LevelConfig) => void;
   setPage: (page: Page) => void;
@@ -63,6 +64,7 @@ export const Area: React.FC<{
                 <Button
                   mode={level_unlocked && !level_completed ? "accept" : "default"}
                   disabled={!level_unlocked}
+                  settings={props.settings}
                   onClick={() => {
                     if (level_unlocked) {
                       props.setSelectedCampaignLevel(l);

@@ -7,6 +7,7 @@ import LetterTile from "../LetterTile";
 import { MessageNotification } from "../MessageNotification";
 import { randomIntFromInterval } from "../Nubble/Nubble";
 import ProgressBar, { GreenToRedColorTransition } from "../ProgressBar";
+import { SettingsData } from "../SaveData";
 import { Theme } from "../Themes";
 import { DraggableItem } from "./DraggableItem";
 
@@ -18,6 +19,7 @@ interface Props {
   difficulty: "easy" | "normal" | "hard";
   timerConfig: { isTimed: false } | { isTimed: true; seconds: number };
   theme: Theme;
+  settings: SettingsData;
   setPage: (page: Page) => void;
 }
 
@@ -406,7 +408,7 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
 
         <br></br>
 
-        <Button mode="accept" onClick={() => ResetGame()}>
+        <Button mode="accept" settings={props.settings} onClick={() => ResetGame()}>
           Restart
         </Button>
       </>
@@ -433,7 +435,7 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
       {inProgress && <MessageNotification type="default">{`Guesses left: ${remainingGuesses}`}</MessageNotification>}
       <div className="tile_row">{displayTiles()}</div>
       {inProgress && (
-        <Button mode="accept" onClick={() => checkTiles()}>
+        <Button mode="accept" settings={props.settings} onClick={() => checkTiles()}>
           Submit Order
         </Button>
       )}

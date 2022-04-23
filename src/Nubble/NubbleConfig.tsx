@@ -1,5 +1,6 @@
 import React from "react";
 import "../index.scss";
+import { SettingsData } from "../SaveData";
 import { Theme } from "../Themes";
 import { square_100_adj, square_25_adj, square_64_adj } from "./adjacentMappings";
 import Nubble from "./Nubble";
@@ -21,6 +22,7 @@ interface Props {
   gridShape: "square" | "hexagon";
   numTeams: number;
   timeLengthMins: number;
+  settings: SettingsData;
   gameOverOnIncorrectPick?: boolean;
 }
 
@@ -301,6 +303,7 @@ const NubbleConfig: React.FC<Props> = (props) => {
       numTeams={props.numTeams}
       timeLengthMins={props.timeLengthMins}
       gameOverOnIncorrectPick={props.gameOverOnIncorrectPick}
+      settings={props.settings}
     ></Nubble>
   );
 };

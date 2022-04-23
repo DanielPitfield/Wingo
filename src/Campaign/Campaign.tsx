@@ -3,13 +3,14 @@ import { Page } from "../App";
 import { AreaConfig } from "./Area";
 import { Button } from "../Button";
 import { getId, LevelConfig } from "./Level";
-import { CampaignSaveData, SaveData } from "../SaveData";
+import { CampaignSaveData, SaveData, SettingsData } from "../SaveData";
 import { Theme } from "../Themes";
 import { AllCampaignAreas } from "./AllCampaignAreas";
 
 /** The entire campaign, showing the list of areas */
 export const Campaign: React.FC<{
   theme: Theme;
+  settings: SettingsData;
   onlyShowCurrentArea?: boolean;
   setTheme: (theme: Theme) => void;
   setSelectedArea: (areaConfig: AreaConfig) => void;
@@ -85,6 +86,7 @@ export const Campaign: React.FC<{
               <Button
                 mode={unlock_status === "locked" || isCompleted ? "default" : "accept"}
                 disabled={unlock_status === "locked"}
+                settings={props.settings}
                 onClick={() => onAreaClick(area, unlock_status)}
               >
                 {unlock_status === "locked"

@@ -4,8 +4,8 @@ import { Button } from "../Button";
 import { MessageNotification } from "../MessageNotification";
 import { shuffleArray } from "../NumbersArithmetic/ArithmeticDrag";
 import ProgressBar, { GreenToRedColorTransition } from "../ProgressBar";
-import { SaveData } from "../SaveData";
-import { useCorrectChime, useFailureChime, useLightPingChime } from "../Sounds";
+import { SettingsData } from "../SaveData";
+import { useClickChime, useCorrectChime, useFailureChime, useLightPingChime } from "../Sounds";
 import { Theme } from "../Themes";
 import { categoryMappings } from "../WordleConfig";
 
@@ -15,6 +15,7 @@ interface Props {
   numGuesses: number;
   timerConfig: { isTimed: false } | { isTimed: true; seconds: number };
   theme: Theme;
+  settings: SettingsData;
   setPage: (page: Page) => void;
 }
 
@@ -28,10 +29,10 @@ const GroupWall: React.FC<Props> = (props) => {
   const [numCompletedGroups, setNumCompletedGroups] = useState(0);
   const [remainingGuesses, setRemainingGuesses] = useState(props.numGuesses);
   const [seconds, setSeconds] = useState(props.timerConfig.isTimed ? props.timerConfig.seconds : 0);
-  const settings = SaveData.getSettings();
-  const [playCorrectChimeSoundEffect] = useCorrectChime(settings);
-  const [playFailureChimeSoundEffect] = useFailureChime(settings);
-  const [playLightPingSoundEffect] = useLightPingChime(settings);
+  const [playCorrectChimeSoundEffect] = useCorrectChime(props.settings);
+  const [playFailureChimeSoundEffect] = useFailureChime(props.settings);
+  const [playLightPingSoundEffect] = useLightPingChime(props.settings);
+  const [playClickSoundEffect] = useClickChime(props.settings);
 
   // (Guess) Timer Setup
   React.useEffect(() => {
@@ -297,7 +298,10 @@ const GroupWall: React.FC<Props> = (props) => {
               data-num-completed-groups={numCompletedGroups}
               data-row-number={gridItem?.rowNumber}
               data-selected={selectedWords.includes(gridItem)}
-              onClick={() => handleSelection(gridItem)}
+              onClick={() => {
+                handleSelection(gridItem);
+                playClickSoundEffect();
+              }}
             >
               {gridItem ? getPrettyWord(gridItem.word) : ""}
             </button>
@@ -337,7 +341,7 @@ const GroupWall: React.FC<Props> = (props) => {
 
         <br></br>
 
-        <Button mode="accept" onClick={() => ResetGame()}>
+        <Button mode="accept" settings={props.settings} onClick={() => ResetGame()}>
           Restart
         </Button>
       </>

@@ -19,7 +19,7 @@ import { Theme, Themes } from "./Themes";
 import { AllCampaignAreas } from "./Campaign/AllCampaignAreas";
 import { Settings } from "./Settings";
 import GroupWall from "./OnlyConnect/GroupWall";
-import { useBackgroundMusic } from "./Sounds";
+import { useBackgroundMusic, useClickChime } from "./Sounds";
 
 const wordLength = 5;
 const numGuesses = 6;
@@ -363,11 +363,12 @@ export const App: React.FC = () => {
       setPage: setPage,
       setTheme: setTheme,
       addGold: addGold,
+      settings: settings,
     };
 
     switch (page) {
       case "splash-screen":
-        return <SplashScreen loadingState={loadingState} />;
+        return <SplashScreen loadingState={loadingState} settings={settings} />;
 
       case "home":
         return (
@@ -408,6 +409,7 @@ export const App: React.FC = () => {
             setPage={setPage}
             addGold={addGold}
             gameOptionToggles={gameOptionToggles}
+            settings={settings}
           />
         );
 
@@ -419,6 +421,7 @@ export const App: React.FC = () => {
             setPage={setPage}
             setSelectedArea={setSelectedCampaignArea}
             setSelectedCampaignLevel={setSelectedCampaignLevel}
+            settings={settings}
           />
         );
 
@@ -430,6 +433,7 @@ export const App: React.FC = () => {
               setTheme={setTheme}
               setSelectedCampaignLevel={setSelectedCampaignLevel}
               setPage={setPage}
+              settings={settings}
             />
           )
         );
@@ -446,6 +450,7 @@ export const App: React.FC = () => {
               setTheme={setTheme}
               addGold={addGold}
               onCompleteLevel={onCompleteLevel}
+              settings={settings}
             />
           )
         );
@@ -583,6 +588,7 @@ export const App: React.FC = () => {
             defaultWordLength={wordLength_countdown_letters}
             page={page}
             theme={Themes.GenericCountdown}
+            settings={settings}
             setTheme={setTheme}
             setPage={setPage}
             addGold={addGold}
@@ -619,6 +625,7 @@ export const App: React.FC = () => {
             defaultNumGuesses={countdown_numbers_NumGuesses}
             page={page}
             theme={Themes.GenericCountdown}
+            settings={settings}
             setTheme={setTheme}
             setPage={setPage}
             addGold={addGold}
@@ -638,6 +645,7 @@ export const App: React.FC = () => {
                 : { isTimed: false }
             }
             theme={theme}
+            settings={settings}
             setPage={setPage}
           />
         );
@@ -656,6 +664,7 @@ export const App: React.FC = () => {
                 : { isTimed: false }
             }
             theme={theme}
+            settings={settings}
             setPage={setPage}
           />
         );
@@ -674,6 +683,7 @@ export const App: React.FC = () => {
                 : { isTimed: false }
             }
             theme={theme}
+            settings={settings}
             setPage={setPage}
           />
         );
@@ -690,6 +700,7 @@ export const App: React.FC = () => {
             numTeams={2}
             timeLengthMins={5}
             gameOverOnIncorrectPick={false}
+            settings={settings}
           />
         );
 
@@ -705,12 +716,13 @@ export const App: React.FC = () => {
                 : { isTimed: false }
             }
             theme={theme}
+            settings={settings}
             setPage={setPage}
           />
         );
 
       case "puzzle/sequence":
-        return <PuzzleConfig theme={theme} setTheme={setTheme} />;
+        return <PuzzleConfig theme={theme} setTheme={setTheme} settings={settings} />;
 
       case "settings":
         return <Settings settings={settings} onSettingsChange={setSettings} />;
@@ -727,6 +739,7 @@ export const App: React.FC = () => {
                 <Button
                   mode="default"
                   className="back-button"
+                  settings={settings}
                   onClick={() => {
                     if (page === "campaign/area/level") {
                       setPage("campaign/area");
@@ -743,7 +756,7 @@ export const App: React.FC = () => {
               </nav>
             )}
             <h1 className="title">{pages.find((x) => x.page === page)?.title}</h1>
-            <Button mode="default" className="settings-button" onClick={() => setPage("settings")}>
+            <Button mode="default" className="settings-button" settings={settings} onClick={() => setPage("settings")}>
               Settings
             </Button>
             <div className="gold_counter">

@@ -112,6 +112,7 @@ export const Settings: React.FC<Props> = (props) => {
           <Button
             mode="default"
             key={settingSection.name}
+            settings={props.settings}
             className="setting-section-link"
             onClick={() => setSelectedSettingAreaName(settingSection.name)}
           >

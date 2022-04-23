@@ -8,6 +8,7 @@ import ProgressBar, { GreenToRedColorTransition } from "../ProgressBar";
 import { isWordValid } from "./CountdownLettersConfig";
 import { wordLengthMappingsGuessable } from "../WordleConfig";
 import { Theme } from "../Themes";
+import { SettingsData } from "../SaveData";
 
 interface Props {
   mode: "countdown_letters_casual" | "countdown_letters_realistic";
@@ -27,6 +28,7 @@ interface Props {
     status: "" | "contains" | "correct" | "not set" | "not in word";
   }[];
   theme: Theme;
+  settings: SettingsData;
   setTheme: (theme: Theme) => void;
   setPage: (page: Page) => void;
   addGold: (gold: number) => void;
@@ -201,6 +203,7 @@ const CountdownLetters: React.FC<Props> = (props) => {
           <Button
             mode={"default"}
             disabled={isSelectionFinished}
+            settings={props.settings}
             onClick={() => props.onSubmitCountdownLetter(getVowel())}
           >
             Vowel
@@ -208,6 +211,7 @@ const CountdownLetters: React.FC<Props> = (props) => {
           <Button
             mode={"default"}
             disabled={isSelectionFinished}
+            settings={props.settings}
             onClick={() => props.onSubmitCountdownLetter(getConsonant())}
           >
             Consonant
@@ -215,6 +219,7 @@ const CountdownLetters: React.FC<Props> = (props) => {
           <Button
             mode={"default"}
             disabled={props.countdownWord.length !== 0 || isSelectionFinished}
+            settings={props.settings}
             onClick={quickLetterSelection}
           >
             Quick Pick
@@ -392,7 +397,7 @@ const CountdownLetters: React.FC<Props> = (props) => {
 
       <div>
         {props.hasTimerEnded && !props.inProgress && (
-          <Button mode={"accept"} onClick={() => props.ResetGame()}>
+          <Button mode={"accept"} settings={props.settings} onClick={() => props.ResetGame()}>
             Restart
           </Button>
         )}
@@ -411,6 +416,7 @@ const CountdownLetters: React.FC<Props> = (props) => {
             targetWord={props.targetWord}
             inDictionary={props.inDictionary}
             letterStatuses={props.letterStatuses}
+            settings={props.settings}
           ></Keyboard>
         )}
       </div>

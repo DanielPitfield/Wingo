@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { NumberPuzzle } from "../CountdownNumbers/CountdownSolver";
 import "../index.scss";
 import { MessageNotification } from "../MessageNotification";
+import { SettingsData } from "../SaveData";
 import { Theme } from "../Themes";
 import DiceGrid from "./DiceGrid";
 
@@ -17,6 +18,7 @@ interface Props {
   determineAdjacentMappings: () => { pin: number; adjacent_pins: number[] }[];
   numTeams: number;
   timeLengthMins: number;
+  settings: SettingsData;
   gameOverOnIncorrectPick?: boolean;
 }
 
@@ -309,6 +311,7 @@ const Nubble: React.FC<Props> = (props) => {
         numDice={props.numDice}
         diceValues={diceValues}
         rollDice={rollDice}
+        settings={props.settings}
         disabled={status !== "picked-awaiting-dice-roll"}
       >
         {status === "dice-rolling"

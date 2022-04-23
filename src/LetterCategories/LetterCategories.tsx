@@ -6,6 +6,7 @@ import { Button } from "../Button";
 import { MessageNotification } from "../MessageNotification";
 import ProgressBar, { GreenToRedColorTransition } from "../ProgressBar";
 import { Theme } from "../Themes";
+import { SettingsData } from "../SaveData";
 
 interface Props {
   timerConfig: { isTimed: false } | { isTimed: true; totalSeconds: number; elapsedSeconds: number };
@@ -19,6 +20,7 @@ interface Props {
   hasSubmitLetter: boolean;
   correctGuessesCount: number;
   theme: Theme;
+  settings: SettingsData;
   categoryRequiredStartingLetter?: string;
   categoryWordTargets?: string[][];
   categoryNames?: string[];
@@ -135,7 +137,7 @@ const LetterCategories: React.FC<Props> = (props) => {
       <div>{displayOutcome()}</div>
       <div>
         {!props.inProgress && (
-          <Button mode={"accept"} onClick={() => props.ResetGame()}>
+          <Button mode={"accept"} settings={props.settings} onClick={() => props.ResetGame()}>
             {"Restart"}
           </Button>
         )}
@@ -155,6 +157,7 @@ const LetterCategories: React.FC<Props> = (props) => {
               targetWord={""}
               inDictionary={true}
               letterStatuses={[]}
+              settings={props.settings}
             ></Keyboard>
           )
         }

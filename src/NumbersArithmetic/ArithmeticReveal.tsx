@@ -8,6 +8,7 @@ import ProgressBar, { GreenToRedColorTransition } from "../ProgressBar";
 import { Button } from "../Button";
 import { operators } from "../CountdownNumbers/CountdownNumbersConfig";
 import { Theme } from "../Themes";
+import { SettingsData } from "../SaveData";
 
 interface Props {
   revealIntervalSeconds: number;
@@ -16,6 +17,7 @@ interface Props {
   difficulty: "easy" | "normal" | "hard";
   timerConfig: { isTimed: false } | { isTimed: true; seconds: number };
   theme: Theme;
+  settings: SettingsData;
   setPage: (page: Page) => void;
 }
 
@@ -301,7 +303,7 @@ const ArithmeticReveal: React.FC<Props> = (props) => {
         {currentCheckpoint < props.numCheckpoints - 1 && (
           <>
             <br></br>
-            <Button mode="accept" onClick={() => setCurrentCheckpoint(currentCheckpoint + 1)}>
+            <Button mode="accept" onClick={() => setCurrentCheckpoint(currentCheckpoint + 1)} settings={props.settings}>
               Next Checkpoint
             </Button>
           </>
@@ -360,7 +362,12 @@ const ArithmeticReveal: React.FC<Props> = (props) => {
         </div>
       )}
       {revealState.type === "finished" && (
-        <NumPad onEnter={() => setInProgress(false)} onBackspace={onBackspace} onSubmitNumber={onSubmitNumber} />
+        <NumPad
+          onEnter={() => setInProgress(false)}
+          onBackspace={onBackspace}
+          onSubmitNumber={onSubmitNumber}
+          settings={props.settings}
+        />
       )}
       {revealState.type === "finished" && (
         <div>

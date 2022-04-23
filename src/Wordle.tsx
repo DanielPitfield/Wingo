@@ -7,7 +7,7 @@ import { MessageNotification } from "./MessageNotification";
 import ProgressBar, { GreenToRedColorTransition } from "./ProgressBar";
 import { categoryMappings, getNewLives } from "./WordleConfig";
 import { Theme } from "./Themes";
-import { SaveData } from "./SaveData";
+import { SaveData, SettingsData } from "./SaveData";
 import { useCorrectChime, useFailureChime, useLightPingChime } from "./Sounds";
 
 interface Props {
@@ -34,6 +34,7 @@ interface Props {
     status: "" | "contains" | "correct" | "not set" | "not in word";
   }[];
   revealedLetterIndexes: number[];
+  settings: SettingsData;
   finishingButtonText?: string;
   theme?: Theme;
   setPage: (page: Page) => void;
@@ -48,10 +49,9 @@ interface Props {
 
 const Wordle: React.FC<Props> = (props) => {
   const [secondsUntilNextDailyWingo, setSecondsUntilNextDailyWingo] = useState(getSecondsUntilMidnight());
-  const settings = SaveData.getSettings();
-  const [playCorrectChimeSoundEffect] = useCorrectChime(settings);
-  const [playFailureChimeSoundEffect] = useFailureChime(settings);
-  const [playLightPingSoundEffect] = useLightPingChime(settings);
+  const [playCorrectChimeSoundEffect] = useCorrectChime(props.settings);
+  const [playFailureChimeSoundEffect] = useFailureChime(props.settings);
+  const [playLightPingSoundEffect] = useLightPingChime(props.settings);
 
   // Create grid of rows (for guessing words)
   function populateGrid(rowNumber: number, wordLength: number) {
@@ -303,6 +303,7 @@ const Wordle: React.FC<Props> = (props) => {
         {!props.inProgress && props.mode !== "daily" && (
           <Button
             mode={"accept"}
+            settings={props.settings}
             onClick={() =>
               (props.mode === "increasing" || props.mode === "limitless") &&
               props.targetWord.toUpperCase() === props.currentWord.toUpperCase()
@@ -364,6 +365,7 @@ const Wordle: React.FC<Props> = (props) => {
               targetWord={props.targetWord}
               inDictionary={props.inDictionary}
               letterStatuses={props.letterStatuses}
+              settings={props.settings}
             ></Keyboard>
           )
         }

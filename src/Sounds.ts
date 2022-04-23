@@ -6,7 +6,7 @@ import SuccessChimeSrc from "./images/effects/chimes/success.mp3";
 import FailureChimeSrc from "./images/effects/chimes/failure.mp3";
 import NotificationChimeSrc from "./images/effects/chimes/notification.mp3";
 import LightPingSrc from "./images/effects/light-ping.mp3";
-import PingSrc from "./images/effects/ping.mp3";
+import ClickSrc from "./images/effects/click.mp3";
 import IntroSrc from "./images/effects/intro.mp3";
 
 export const useBackgroundMusic = (settings: SettingsData, theme: Theme) => {
@@ -27,8 +27,8 @@ export const useLightPingChime = (settings: SettingsData) => {
   return [play, stop];
 };
 
-export const usePingChime = (settings: SettingsData) => {
-  const [play, { stop }] = useSound(PingSrc, {
+export const useClickChime = (settings: SettingsData) => {
+  const [play, { stop }] = useSound(ClickSrc, {
     volume: settings.sound.effectsVolume * settings.sound.masterVolume,
     soundEnabled: settings.sound.effectsVolume * settings.sound.masterVolume > 0,
   });
