@@ -221,6 +221,155 @@ const WordleConfig: React.FC<Props> = (props) => {
 
   const [seconds, setSeconds] = useState(props.timerConfig.isTimed ? props.timerConfig.seconds : 0);
 
+  function generateTargetWord() {
+    let targetWordArray;
+
+    let newTargetWord;
+
+    switch (props.mode) {
+      case "daily":
+        // Find array of 5 (wordLength) letter words
+        targetWordArray = wordLengthMappingsTargets.find((x) => x.value === wordLength)?.array!;
+
+        const timestamp = +new Date(); // Unix timestamp (in milliseconds)
+        const ms_per_day = 24 * 60 * 60 * 1000;
+        const days_since_epoch = Math.floor(timestamp / ms_per_day);
+        const daily_word_index = Math.round(days_since_epoch % targetWordArray.length); // Number in the range (0, wordArray.length)
+
+        newTargetWord = targetWordArray[daily_word_index];
+
+        // TODO: Load Daily Attempts could be done in the useEffect with dependency targetWord
+        const daily_word_storage = SaveData.getDailyWordGuesses();
+        // The actual daily word and the daily word set in local storage are the same
+        if (newTargetWord === daily_word_storage?.dailyWord) {
+          // Display the sava data on the word grid
+          setGuesses(daily_word_storage.guesses);
+          setWordIndex(daily_word_storage.wordIndex);
+          setinProgress(daily_word_storage.inProgress);
+          setCurrentWord(daily_word_storage.currentWord);
+          setinDictionary(daily_word_storage.inDictionary);
+        }
+        break;
+
+      case "puzzle":
+        // Get a random puzzle and hint (from words_puzzles.ts)
+        const puzzle = wordHintMappings[Math.round(Math.random() * wordHintMappings.length - 1)];
+        newTargetWord = puzzle.word;
+
+        // TODO: Set Hint could be done in the useEffect with dependency targetWord
+        settargetHint(puzzle.hint);
+
+        break;
+
+      case "category":
+        // A target category has been manually selected from dropdown
+        if (hasSelectedTargetCategory) {
+          // Continue using that category
+          const wordArray = categoryMappings.find((x) => x.name === targetCategory)?.array;
+
+          if (!wordArray) {
+            return;
+          }
+
+          // Need to set word here as targetCategory doesn't change (the useEffect() wont be triggered)
+          newTargetWord = wordArray[Math.round(Math.random() * (wordArray.length - 1))];
+        } else {
+          // Otherwise, randomly choose a category (can be changed afterwards)
+          const random_category = categoryMappings[Math.round(Math.random() * (categoryMappings.length - 1))];
+          settargetCategory(random_category.name);
+          // A random word from this category is set in a useEffect()
+        }
+        break;
+
+      case "repeat":
+        targetWordArray = wordLengthMappingsTargets.find((x) => x.value === wordLength)?.array!;
+
+        if (!targetWordArray) {
+          return;
+        }
+
+        newTargetWord = targetWordArray[Math.round(Math.random() * (targetWordArray.length - 1))];
+        break;
+
+      case "increasing":
+        // There is already a targetWord which is of the needed wordLength
+        if (targetWord && targetWord.length === wordLength) {
+          return;
+        }
+
+        targetWordArray = wordLengthMappingsTargets.find((x) => x.value === wordLength)?.array!;
+
+        // Perhaps there is no array for this long a wordLength
+        if (!targetWordArray) {
+          // Just reset (reached the end)
+          ResetGame();
+          return;
+        }
+
+        newTargetWord = targetWordArray[Math.round(Math.random() * (targetWordArray.length - 1))];
+        break;
+
+      case "limitless":
+        // There is already a targetWord which is of the needed wordLength
+        if (targetWord && targetWord.length === wordLength) {
+          // Return early?
+        }
+
+        targetWordArray = wordLengthMappingsTargets.find((x) => x.value === wordLength)?.array!;
+
+        if (!targetWordArray) {
+          // Don't reset otherwise the number of lives would be lost, just go back to 4 letter words
+          setwordLength(4);
+          targetWordArray = wordLengthMappingsTargets.find((x) => x.value === 4)?.array!;
+          newTargetWord = targetWordArray[Math.round(Math.random() * (targetWordArray.length - 1))];
+        }
+
+        newTargetWord = targetWordArray[Math.round(Math.random() * (targetWordArray.length - 1))];
+        break;
+
+      case "interlinked":
+        targetWordArray = wordLengthMappingsTargets.find((x) => x.value === wordLength)?.array!;
+
+        if (!targetWordArray) {
+          return;
+        }
+
+        newTargetWord = targetWordArray[Math.round(Math.random() * (targetWordArray.length - 1))];
+
+        const target_word_letters = newTargetWord.split(""); // Get letters of first target word
+
+        // Choose a random letter from these letters to be the shared letter between two interlinked words
+        const shared_letter_index_word1 = Math.round(Math.random() * target_word_letters.length - 1); // Position of shared letter in first word
+        console.log("Index (1): " + shared_letter_index_word1);
+
+        const sharedLetter = target_word_letters[shared_letter_index_word1];
+        console.log("Shared Letter: " + sharedLetter);
+
+        // Look for another word which contains the shared letter
+        let interlinked_target_word = "";
+        do {
+          const randomWord = targetWordArray[Math.round(Math.random() * targetWordArray.length - 1)];
+          if (randomWord.includes(sharedLetter) && randomWord !== newTargetWord) {
+            interlinked_target_word = randomWord;
+          }
+        } while (interlinked_target_word === "");
+        console.log("Target Word (2): " + interlinked_target_word);
+
+        // Position of shared letter in second word
+        const shared_letter_index_word2 = interlinked_target_word.indexOf(sharedLetter);
+        console.log("Index (2): " + shared_letter_index_word2);
+
+        setinterlinkedWord(interlinked_target_word);
+        break;
+    }
+
+    // A new target word was able to be determined
+    if (newTargetWord !== undefined) {
+      console.log("Mode: " + props.mode + '\n' + "Word: " + newTargetWord);
+      settargetWord(newTargetWord);
+    }
+  }
+
   // Timer Setup
   React.useEffect(() => {
     if (!props.timerConfig.isTimed) {
@@ -268,7 +417,7 @@ const WordleConfig: React.FC<Props> = (props) => {
   // Update targetWord every time the targetCategory changes
   React.useEffect(() => {
     if (props.mode === "category") {
-      // Category may be changed mid-game (so clear anything from before)    
+      // Category may be changed mid-game (so clear anything from before)
       ResetGame();
 
       const wordArray = categoryMappings.find((x) => x.name === targetCategory)?.array;
@@ -360,139 +509,13 @@ const WordleConfig: React.FC<Props> = (props) => {
 
   // targetWord generation
   React.useEffect(() => {
-    if (inProgress) {
-      // Don't need to determine a target word, if it is explicitly specified
-      if (props.targetWord) {
-        return;
-      }
-      /* --- DAILY ---  */
-      if (props.mode === "daily") {
-        // Find array of 5 (wordLength) letter words
-        const targetWordArray = wordLengthMappingsTargets.find((x) => x.value === wordLength)?.array!;
-
-        const timestamp = +new Date(); // Unix timestamp (in milliseconds)
-        const ms_per_day = 24 * 60 * 60 * 1000;
-        const days_since_epoch = Math.floor(timestamp / ms_per_day);
-        const daily_word_index = Math.round(days_since_epoch % targetWordArray.length); // Number in the range (0, wordArray.length)
-        const new_daily_word = targetWordArray[daily_word_index];
-
-        const daily_word_storage = SaveData.getDailyWordGuesses();
-        // The actual daily word and the daily word set in local storage are the same
-        if (new_daily_word === daily_word_storage?.dailyWord) {
-          // Display the sava data on the word grid
-          setGuesses(daily_word_storage.guesses);
-          setWordIndex(daily_word_storage.wordIndex);
-          setinProgress(daily_word_storage.inProgress);
-          setCurrentWord(daily_word_storage.currentWord);
-          setinDictionary(daily_word_storage.inDictionary);
-        }
-
-        console.log("Daily word: " + new_daily_word);
-        settargetWord(new_daily_word);
-
-        /* --- PUZZLEWORD ---  */
-      } else if (props.mode === "puzzle") {
-        // Get a random puzzle and hint (from words_puzzles.ts)
-        const puzzle = wordHintMappings[Math.round(Math.random() * wordHintMappings.length - 1)];
-        console.log("Puzzle word: " + puzzle.word);
-        settargetWord(puzzle.word);
-        settargetHint(puzzle.hint);
-      } else if (props.mode === "category") {
-        /* --- Category ---  */
-        // A target category has been manually selected from dropdown
-        if (hasSelectedTargetCategory) {
-          // Continue using that category
-          const wordArray = categoryMappings.find((x) => x.name === targetCategory)?.array;
-
-          if (!wordArray) {
-            return;
-          }
-
-          // Need to set word here as targetCategory doesn't change (the useEffect() wont be triggered)
-
-          const random_word = wordArray[Math.round(Math.random() * (wordArray.length - 1))];
-          console.log(random_word);
-          settargetWord(random_word);
-        } else {
-          // Otherwise, randomly choose a category (can be changed afterwards)
-          const random_category = categoryMappings[Math.round(Math.random() * (categoryMappings.length - 1))];
-          settargetCategory(random_category.name);
-          // A random word from this category is set in a useEffect()
-        }
-      } else {
-        /* --- REPEAT, INCREASING, LIMITLESS AND INTERLINKED ---  */
-        const targetWordArray = wordLengthMappingsTargets.find((x) => x.value === wordLength)?.array!;
-
-        // If the wordArray can't be found (requesting too long a word)
-        if (!targetWordArray) {
-          if (props.mode === "increasing") {
-            // Increasing mode can just reset (reached the end)
-            ResetGame();
-          } else if (props.mode === "limitless") {
-            /* 
-            Limitless mode can't be reset otherwise the number of lives would be lost
-            Keep lives by just going back to 4 letter words
-            */
-
-            setwordLength(4);
-            const targetWordArray = wordLengthMappingsTargets.find((x) => x.value === 4)?.array!;
-            const new_target_word = targetWordArray[Math.round(Math.random() * (targetWordArray.length - 1))];
-
-            console.log("Not daily word (reset 4): " + new_target_word);
-            settargetWord(new_target_word);
-          }
-
-          return;
-        }
-
-        /*
-        If a gamemode where the wordLength can increase
-        AND there is already a targetWord which is of the current wordLength
-        Return early, a new targetWord does not need to be determined
-        */
-        if (
-          (props.mode === "limitless" || props.mode === "increasing") &&
-          targetWord &&
-          targetWord.length === wordLength
-        ) {
-          return;
-        }
-
-        const new_target_word = targetWordArray[Math.round(Math.random() * (targetWordArray.length - 1))];
-
-        console.log("Not daily word: " + new_target_word);
-        settargetWord(new_target_word);
-
-        /* --- INTERLINKED (2nd word) --- */
-        if (props.mode === "interlinked") {
-          console.log("Target Word (1): " + new_target_word);
-          const target_word_letters = new_target_word.split(""); // Get letters of first target word
-
-          // Choose a random letter from these letters to be the shared letter between two interlinked words
-          const shared_letter_index_word1 = Math.round(Math.random() * target_word_letters.length - 1); // Position of shared letter in first word
-          console.log("Index (1): " + shared_letter_index_word1);
-
-          const sharedLetter = target_word_letters[shared_letter_index_word1];
-          console.log("Shared Letter: " + sharedLetter);
-
-          // Look for another word which contains the shared letter
-          let interlinked_target_word = "";
-          do {
-            const randomWord = targetWordArray[Math.round(Math.random() * targetWordArray.length - 1)];
-            if (randomWord.includes(sharedLetter) && randomWord !== new_target_word) {
-              interlinked_target_word = randomWord;
-            }
-          } while (interlinked_target_word === "");
-          console.log("Target Word (2): " + interlinked_target_word);
-
-          // Position of shared letter in second word
-          const shared_letter_index_word2 = interlinked_target_word.indexOf(sharedLetter);
-          console.log("Index (2): " + shared_letter_index_word2);
-
-          setinterlinkedWord(interlinked_target_word);
-        }
-      }
+    // Don't need to determine a target word, if it is explicitly specified
+    if (!inProgress || props.targetWord) {
+      return;
     }
+
+    generateTargetWord();
+
   }, [/* Short circuit boolean evaluation */ props.mode === "category" || wordLength, inProgress, props.mode]);
 
   // Save the game
