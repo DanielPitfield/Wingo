@@ -235,7 +235,7 @@ const WordleConfig: React.FC<Props> = (props) => {
         const daily_word_index = Math.round(days_since_epoch % targetWordArray.length); // Number in the range (0, wordArray.length)
 
         newTargetWord = targetWordArray[daily_word_index];
-        console.log("Mode: Daily" + "\n" + "Word: " + newTargetWord);
+        console.log("Mode: daily" + "\n" + "Word: " + newTargetWord);
         settargetWord(newTargetWord);        
 
         // Load previous attempts at daily (if applicable)
@@ -257,7 +257,7 @@ const WordleConfig: React.FC<Props> = (props) => {
         settargetHint(puzzle.hint);
 
         newTargetWord = puzzle.word;
-        console.log("Mode: Puzzle" + "\n" + "Word: " + newTargetWord);
+        console.log("Mode: puzzle" + "\n" + "Word: " + newTargetWord);
         settargetWord(newTargetWord);
         return;
 
@@ -410,9 +410,9 @@ const WordleConfig: React.FC<Props> = (props) => {
         return;
       }
 
-      const random_word = wordArray[Math.round(Math.random() * (wordArray.length - 1))];
-      console.log(random_word);
-      settargetWord(random_word);
+      const newTargetWord = wordArray[Math.round(Math.random() * (wordArray.length - 1))];
+      console.log("Mode: " + props.mode + "\n" + "Word: " + newTargetWord);
+      settargetWord(newTargetWord);
     }
   }, [targetCategory]);
 
