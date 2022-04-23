@@ -717,22 +717,25 @@ $data-statuses: (
   height: 3em;
   display: flex;
   align-items: stretch;
-  background-color: #4b4b4b;
+  background-color: #aaa;
   flex-grow: 0;
+  border-bottom: 1px solid #ccc;
+  color: #eee;
   .settings-button,
   .back-button {
     padding: 0.52em 0.6em;
     margin: 0.3em;
   }
   .title {
+    display: flex;
     flex-grow: 1;
     font-size: 1.2rem;
     font-weight: normal;
     margin: 0;
     padding: 0.5em;
     padding-left: 7.5em;
-    color: #ccc;
-    text-align: center;
+    justify-content: center;
+    align-items: center;
     text-transform: none;
   }
   .gold_counter {
