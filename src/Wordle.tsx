@@ -8,7 +8,7 @@ import ProgressBar, { GreenToRedColorTransition } from "./ProgressBar";
 import { categoryMappings, getNewLives } from "./WordleConfig";
 import { Theme } from "./Themes";
 import { SaveData } from "./SaveData";
-import { useFailureChime, useLightPingChime, useSuccessChime } from "./Sounds";
+import { useCorrectChime, useFailureChime, useLightPingChime } from "./Sounds";
 
 interface Props {
   mode: "daily" | "repeat" | "category" | "increasing" | "limitless" | "puzzle" | "interlinked" | "letters_categories";
@@ -49,7 +49,7 @@ interface Props {
 const Wordle: React.FC<Props> = (props) => {
   const [secondsUntilNextDailyWingo, setSecondsUntilNextDailyWingo] = useState(getSecondsUntilMidnight());
   const settings = SaveData.getSettings();
-  const [playSuccessChimeSoundEffect] = useSuccessChime(settings);
+  const [playCorrectChimeSoundEffect] = useCorrectChime(settings);
   const [playFailureChimeSoundEffect] = useFailureChime(settings);
   const [playLightPingSoundEffect] = useLightPingChime(settings);
 
@@ -159,7 +159,7 @@ const Wordle: React.FC<Props> = (props) => {
     if (wasFailure) {
       playFailureChimeSoundEffect();
     } else {
-      playSuccessChimeSoundEffect();
+      playCorrectChimeSoundEffect();
     }
   }, [props.inProgress]);
 

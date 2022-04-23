@@ -6,6 +6,7 @@ import SuccessChimeSrc from "./images/effects/chimes/success.mp3";
 import FailureChimeSrc from "./images/effects/chimes/failure.mp3";
 import LightPingSrc from "./images/effects/light-ping.mp3";
 import PingSrc from "./images/effects/ping.mp3";
+import IntroSrc from "./images/effects/intro.mp3";
 
 export const useBackgroundMusic = (settings: SettingsData, theme: Theme) => {
   const [play, { stop }] = useSound(theme.backgroundAudioSrc, {
@@ -54,6 +55,15 @@ export const useCorrectChime = (settings: SettingsData) => {
 
 export const useFailureChime = (settings: SettingsData) => {
   const [play, { stop }] = useSound(FailureChimeSrc, {
+    volume: settings.sound.effectsVolume * settings.sound.masterVolume,
+    soundEnabled: settings.sound.effectsVolume * settings.sound.masterVolume > 0,
+  });
+
+  return [play, stop];
+};
+
+export const useIntroMusic = (settings: SettingsData) => {
+  const [play, { stop }] = useSound(IntroSrc, {
     volume: settings.sound.effectsVolume * settings.sound.masterVolume,
     soundEnabled: settings.sound.effectsVolume * settings.sound.masterVolume > 0,
   });

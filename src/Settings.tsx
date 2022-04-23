@@ -6,6 +6,37 @@ interface Props {
 }
 
 export const Settings: React.FC<Props> = (props) => {
+  const { settings } = props;
+
+  const SETTINGS: {
+    name: string;
+    settings: { name: string; value: number; onChange: (value: number) => SettingsData }[];
+  }[] = [
+    {
+      name: "Sound",
+      settings: [
+        {
+          name: "Master",
+          value: props.settings.sound.masterVolume,
+          onChange: (masterVolume) => ({ ...settings, sound: { ...settings.sound, masterVolume } }),
+        },
+        {
+          name: "Background",
+          value: props.settings.sound.backgroundVolume,
+          onChange: (backgroundVolume) => ({
+            ...settings,
+            sound: { ...settings.sound, masterVolume: backgroundVolume },
+          }),
+        },
+        {
+          name: "Effects",
+          value: props.settings.sound.effectsVolume,
+          onChange: (effectsVolume) => ({ ...settings, sound: { ...settings.sound, masterVolume: effectsVolume } }),
+        },
+      ],
+    },
+  ];
+
   /**
    * Renders a setting control for a 0.0 to 1.0 value.
    * @param decimal Current value.
@@ -29,27 +60,16 @@ export const Settings: React.FC<Props> = (props) => {
 
   return (
     <div className="settings">
-      <section className="settings-section">
-        <h3 className="settings-section-title">Sound</h3>
-        <label className="setting">
-          Master Volume:
-          {decimalSettingControl(props.settings.sound.masterVolume, (masterVolume) =>
-            props.onSettingsChange({ sound: { ...props.settings.sound, masterVolume } })
-          )}
-        </label>
-        <label className="setting">
-          Background Volume:
-          {decimalSettingControl(props.settings.sound.backgroundVolume, (backgroundVolume) =>
-            props.onSettingsChange({ sound: { ...props.settings.sound, masterVolume: backgroundVolume } })
-          )}
-        </label>
-        <label className="setting">
-          Effects Volume:
-          {decimalSettingControl(props.settings.sound.effectsVolume, (effectsVolume) =>
-            props.onSettingsChange({ sound: { ...props.settings.sound, masterVolume: effectsVolume } })
-          )}
-        </label>
-      </section>
+      {SETTINGS.map((settingSection) => (
+        <section key={settingSection.name} className="settings-section">
+          <h3 className="settings-section-title">{settingSection.name}</h3>
+          {settingSection.settings.map((setting) => (
+            <label key={setting.name} className="setting">
+              {setting.name}:{decimalSettingControl(setting.value, setting.onChange)}
+            </label>
+          ))}
+        </section>
+      ))}
     </div>
   );
 };
