@@ -7,6 +7,7 @@ import LetterTile from "../LetterTile";
 import { MessageNotification } from "../MessageNotification";
 import { randomIntFromInterval } from "../Nubble/Nubble";
 import ProgressBar, { GreenToRedColorTransition } from "../ProgressBar";
+import { Theme } from "../Themes";
 import { DraggableItem } from "./DraggableItem";
 
 interface Props {
@@ -16,6 +17,7 @@ interface Props {
   numGuesses: number;
   difficulty: "easy" | "normal" | "hard";
   timerConfig: { isTimed: false } | { isTimed: true; seconds: number };
+  theme: Theme;
   setPage: (page: Page) => void;
 }
 
@@ -340,7 +342,7 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
         return x;
       });
     }
-    // Match expression with result 
+    // Match expression with result
     else if (props.mode === "match") {
       newExpressionTiles = expressionTiles.map((x, index) => {
         // Expression matched with correct result
@@ -396,7 +398,9 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
       <>
         <MessageNotification type={numCorrectTiles === expressionTiles.length ? "success" : "error"}>
           <strong>
-            {numCorrectTiles === expressionTiles.length ? "All tiles in the correct order!" : `${numCorrectTiles} tiles correct`}
+            {numCorrectTiles === expressionTiles.length
+              ? "All tiles in the correct order!"
+              : `${numCorrectTiles} tiles correct`}
           </strong>
         </MessageNotification>
 
@@ -421,7 +425,10 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
   }
 
   return (
-    <div className="App numbers_arithmetic">
+    <div
+      className="App numbers_arithmetic"
+      style={{ backgroundImage: `url(${props.theme.backgroundImageSrc})`, backgroundSize: "100%" }}
+    >
       <div className="outcome">{displayOutcome()}</div>
       {inProgress && <MessageNotification type="default">{`Guesses left: ${remainingGuesses}`}</MessageNotification>}
       <div className="tile_row">{displayTiles()}</div>

@@ -7,6 +7,7 @@ import { NumPad } from "../NumPad";
 import ProgressBar, { GreenToRedColorTransition } from "../ProgressBar";
 import { Button } from "../Button";
 import { operators } from "../CountdownNumbers/CountdownNumbersConfig";
+import { Theme } from "../Themes";
 
 interface Props {
   revealIntervalSeconds: number;
@@ -14,6 +15,7 @@ interface Props {
   numCheckpoints: number;
   difficulty: "easy" | "normal" | "hard";
   timerConfig: { isTimed: false } | { isTimed: true; seconds: number };
+  theme: Theme;
   setPage: (page: Page) => void;
 }
 
@@ -334,7 +336,10 @@ const ArithmeticReveal: React.FC<Props> = (props) => {
   }, [targetTransitioned]);
 
   return (
-    <div className="App numbers_arithmetic">
+    <div
+      className="App numbers_arithmetic"
+      style={{ backgroundImage: `url(${props.theme.backgroundImageSrc})`, backgroundSize: "100%" }}
+    >
       <div className="outcome">{displayOutcome()}</div>
       {inProgress && (
         <div className="target">

@@ -4,6 +4,7 @@ import { Button } from "../Button";
 import { MessageNotification } from "../MessageNotification";
 import { shuffleArray } from "../NumbersArithmetic/ArithmeticDrag";
 import ProgressBar, { GreenToRedColorTransition } from "../ProgressBar";
+import { Theme } from "../Themes";
 import { categoryMappings } from "../WordleConfig";
 
 interface Props {
@@ -11,6 +12,7 @@ interface Props {
   groupSize: number;
   numGuesses: number;
   timerConfig: { isTimed: false } | { isTimed: true; seconds: number };
+  theme: Theme;
   setPage: (page: Page) => void;
 }
 
@@ -345,7 +347,10 @@ const GroupWall: React.FC<Props> = (props) => {
   }
 
   return (
-    <div className="App only_connect_wall">
+    <div
+      className="App only_connect_wall"
+      style={{ backgroundImage: `url(${props.theme.backgroundImageSrc})`, backgroundSize: "100%" }}
+    >
       <div className="outcome">{displayOutcome()}</div>
       {Boolean(inProgress && numCompletedGroups === props.numGroups - 2) && (
         <MessageNotification type="default">{`Guesses left: ${remainingGuesses}`}</MessageNotification>

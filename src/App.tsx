@@ -598,6 +598,7 @@ export const App: React.FC = () => {
                 ? { isTimed: true, seconds: 30 }
                 : { isTimed: false }
             }
+            theme={theme}
             keyboard={gameOptionToggles.find((x) => x.page === "letters_categories")?.keyboard || false}
             defaultWordLength={10}
             enforceFullLengthGuesses={false}
@@ -636,6 +637,7 @@ export const App: React.FC = () => {
                 ? { isTimed: true, seconds: 10 }
                 : { isTimed: false }
             }
+            theme={theme}
             setPage={setPage}
           />
         );
@@ -653,6 +655,7 @@ export const App: React.FC = () => {
                 ? { isTimed: true, seconds: 60 }
                 : { isTimed: false }
             }
+            theme={theme}
             setPage={setPage}
           />
         );
@@ -670,6 +673,7 @@ export const App: React.FC = () => {
                 ? { isTimed: true, seconds: 60 }
                 : { isTimed: false }
             }
+            theme={theme}
             setPage={setPage}
           />
         );
@@ -682,11 +686,11 @@ export const App: React.FC = () => {
             diceMin={1}
             diceMax={6}
             gridSize={100}
-            gridShape={"square"}
+            gridShape={"hexagon"}
             numTeams={2}
             timeLengthMins={5}
-            gameOverOnIncorrectPick={true}
-          ></NubbleConfig>
+            gameOverOnIncorrectPick={false}
+          />
         );
 
       case "only_connect/wall":
@@ -700,8 +704,9 @@ export const App: React.FC = () => {
                 ? { isTimed: true, seconds: 100 }
                 : { isTimed: false }
             }
+            theme={theme}
             setPage={setPage}
-          ></GroupWall>
+          />
         );
 
       case "puzzle/sequence":

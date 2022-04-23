@@ -5,6 +5,7 @@ import { WordRow } from "../WordRow";
 import { Button } from "../Button";
 import { MessageNotification } from "../MessageNotification";
 import ProgressBar, { GreenToRedColorTransition } from "../ProgressBar";
+import { Theme } from "../Themes";
 
 interface Props {
   timerConfig: { isTimed: false } | { isTimed: true; totalSeconds: number; elapsedSeconds: number };
@@ -17,6 +18,7 @@ interface Props {
   inProgress: boolean;
   hasSubmitLetter: boolean;
   correctGuessesCount: number;
+  theme: Theme;
   categoryRequiredStartingLetter?: string;
   categoryWordTargets?: string[][];
   categoryNames?: string[];
@@ -129,7 +131,7 @@ const LetterCategories: React.FC<Props> = (props) => {
   }
 
   return (
-    <div className="App">
+    <div className="App" style={{ backgroundImage: `url(${props.theme.backgroundImageSrc})`, backgroundSize: "100%" }}>
       <div>{displayOutcome()}</div>
       <div>
         {!props.inProgress && (

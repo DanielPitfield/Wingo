@@ -4,6 +4,7 @@ import LetterCategories from "./LetterCategories";
 import { SaveData } from "../SaveData";
 import { Alphabet } from "../Keyboard";
 import { categoryMappings } from "../WordleConfig";
+import { Theme } from "../Themes";
 
 interface Props {
   enforceFullLengthGuesses: boolean;
@@ -12,6 +13,7 @@ interface Props {
   defaultWordLength: number;
   defaultnumGuesses: number;
   finishingButtonText?: string;
+  theme: Theme;
   onComplete?: () => void;
   page: Page;
   setPage: (page: Page) => void;
@@ -86,7 +88,8 @@ const LetterCategoriesConfig: React.FC<Props> = (props) => {
         }
       } while (
         // Stop once there are 5 categories or 20 attempts were made at finding categories
-        category_names.length < 5 && failed_search_count <= 20
+        category_names.length < 5 &&
+        failed_search_count <= 20
       );
 
       // Keep reference of which categories have been used
@@ -250,12 +253,13 @@ const LetterCategoriesConfig: React.FC<Props> = (props) => {
       categoryNames={categoryNames || []}
       categoryWordTargets={categoryWordTargets || [[]]}
       finishingButtonText={props.finishingButtonText}
+      theme={props.theme}
       onEnter={onEnter}
       onSubmitLetter={onSubmitLetter}
       onBackspace={onBackspace}
       ResetGame={ResetGame}
       setPage={props.setPage}
-    ></LetterCategories>
+    />
   );
 };
 
