@@ -761,16 +761,14 @@ $data-statuses: (
 .progress_bar {
   position: relative;
   width: 15em;
-  border: 2px solid #333a;
-  border-radius: 15px;
+  border: 1px solid #3337;
   margin-top: 1.3em;
-  height: 1.5em;
-  background-color: white;
+  height: 1.6em;
+  background-color: #fffe;
   color: #444;
   .progress_bar_progress {
     background-color: #ddd;
-    border-radius: 15px;
-    height: 1.5em;
+    height: 1.6em;
     transition: all 1s linear;
   }
   .progress_bar_content {
