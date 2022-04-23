@@ -80,7 +80,8 @@ const Wordle: React.FC<Props> = (props) => {
           revealedLetterIndexes={props.revealedLetterIndexes}
           hasSubmit={true}
           inDictionary={props.inDictionary}
-        ></WordRow>
+          settings={props.settings}
+        />
       );
     }
 
@@ -123,7 +124,8 @@ const Wordle: React.FC<Props> = (props) => {
           inDictionary={props.inDictionary}
           isIncompleteWord={props.isIncompleteWord}
           applyAnimation={props.inProgress ? i >= props.wordIndex - 1 : i >= props.wordIndex}
-        ></WordRow>
+          settings={props.settings}
+        />
       );
 
       // Push another WordRow for interlinked gamemode
@@ -139,7 +141,8 @@ const Wordle: React.FC<Props> = (props) => {
             hasSubmit={props.wordIndex > i || !props.inProgress}
             inDictionary={props.inDictionary}
             isIncompleteWord={props.isIncompleteWord}
-          ></WordRow>
+            settings={props.settings}
+          />
         );
       }
     }

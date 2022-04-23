@@ -77,6 +77,7 @@ const LetterCategories: React.FC<Props> = (props) => {
             targetArray={props.categoryWordTargets ? props.categoryWordTargets[i] : []}
             hasSubmit={props.wordIndex > i || !props.inProgress}
             inDictionary={true}
+            settings={props.settings}
           />
         </div>
       ) : (
@@ -91,6 +92,7 @@ const LetterCategories: React.FC<Props> = (props) => {
           targetArray={props.categoryWordTargets ? props.categoryWordTargets[i] : []}
           hasSubmit={props.wordIndex > i || !props.inProgress}
           inDictionary={true}
+          settings={props.settings}
         />
       );
 

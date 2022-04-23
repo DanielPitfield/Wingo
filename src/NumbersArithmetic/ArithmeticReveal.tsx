@@ -348,6 +348,7 @@ const ArithmeticReveal: React.FC<Props> = (props) => {
           <LetterTile
             letter={revealState.type === "finished" ? "?" : tiles[currentCheckpoint]?.[revealState.revealedTiles]}
             status={revealState.type === "finished" || targetTransitioned ? "contains" : "not set"}
+            settings={props.settings}
           ></LetterTile>
         </div>
       )}
@@ -358,6 +359,7 @@ const ArithmeticReveal: React.FC<Props> = (props) => {
             status={
               inProgress ? "not set" : guess === targetNumbers[currentCheckpoint].toString() ? "correct" : "incorrect"
             }
+            settings={props.settings}
           ></LetterTile>
         </div>
       )}

@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import "./index.scss";
+import { SettingsData } from "./SaveData";
 
 interface Props {
   letter: string;
   status: "incorrect" | "contains" | "correct" | "not set" | "not in word";
+  settings: SettingsData;
   indexInWord?: number;
   animationDelayMultiplier?: number;
   applyAnimation?: boolean;
@@ -30,6 +32,10 @@ const LetterTile: React.FC<Props> = (props) => {
     }
 
     if (!props.applyAnimation) {
+      return undefined;
+    }
+
+    if (!props.settings.graphics.animation) {
       return undefined;
     }
 
@@ -62,6 +68,7 @@ const LetterTile: React.FC<Props> = (props) => {
     // [data-has-been-submitted="true"] - Reveal animation is applied to LetterTile
     <div
       className="letter_tile"
+      data-animation-setting={props.settings.graphics.animation}
       data-apply-animation={props.applyAnimation !== false}
       data-new-letter-added={Boolean(props.status === "not set" && props.letter)}
       data-has-been-submitted={props.applyAnimation}

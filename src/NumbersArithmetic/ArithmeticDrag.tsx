@@ -288,7 +288,7 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
                   : /* TODO: Disable drag entirely if game is over */ console.log("Game over")
               }
             >
-              <LetterTile letter={tile.expression} status={tile.status} />
+              <LetterTile letter={tile.expression} status={tile.status} settings={props.settings} />
             </DraggableItem>
           ))}
         </OrderGroup>
@@ -309,7 +309,7 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
                     : /* TODO: Disable drag entirely if game is over */ console.log("Game over")
                 }
               >
-                <LetterTile letter={tile.total.toString()} status={tile.status} />
+                <LetterTile letter={tile.total.toString()} status={tile.status} settings={props.settings} />
               </DraggableItem>
             ))}
           </OrderGroup>

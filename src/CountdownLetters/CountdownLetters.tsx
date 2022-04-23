@@ -198,6 +198,7 @@ const CountdownLetters: React.FC<Props> = (props) => {
           targetWord={""}
           hasSubmit={false}
           inDictionary={props.inDictionary}
+          settings={props.settings}
         ></WordRow>
         <div className="add-letter-buttons-wrapper">
           <Button
@@ -239,6 +240,7 @@ const CountdownLetters: React.FC<Props> = (props) => {
         targetWord={props.targetWord}
         hasSubmit={!props.inProgress}
         inDictionary={props.inDictionary}
+        settings={props.settings}
       ></WordRow>
     );
 

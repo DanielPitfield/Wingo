@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Button } from "./Button";
 import { SettingsData } from "./SaveData";
 import { StudioLogo } from "./StudioLogo";
+import { Themes } from "./Themes";
 import { VERSION } from "./version";
 
 interface Props {
@@ -14,6 +15,13 @@ type SettingArea = "Sound" | "Video" | "Gameplay" | "About";
 
 // Individual setting
 type Setting =
+  | {
+      type: "option";
+      name: string;
+      value: string | null;
+      values: string[];
+      onChange: (value: string | null) => SettingsData;
+    }
   | { type: "decimal"; name: string; value: number; onChange: (value: number) => SettingsData }
   | { type: "boolean"; name: string; value: boolean; onChange: (value: boolean) => SettingsData };
 
@@ -66,10 +74,20 @@ export const Settings: React.FC<Props> = (props) => {
       type: "settings",
       settings: [
         {
+          name: "Preferred Theme",
+          type: "option",
+          value: props.settings.graphics.preferredTheme,
+          values: Object.keys(Themes).sort((a, b) => a.localeCompare(b)),
+          onChange: (preferredTheme) => ({
+            ...settings,
+            graphics: { ...settings.graphics, preferredTheme: preferredTheme as keyof typeof Themes | null },
+          }),
+        },
+        {
           name: "Animation",
           type: "boolean",
-          value: props.settings.video.animation,
-          onChange: (animation) => ({ ...settings, video: { ...settings.sound, animation } }),
+          value: props.settings.graphics.animation,
+          onChange: (animation) => ({ ...settings, graphics: { ...settings.graphics, animation } }),
         },
       ],
     },
@@ -97,8 +115,29 @@ export const Settings: React.FC<Props> = (props) => {
    * @param setting Setting to render.
    * @returns Element to render.
    */
-  function renderSettingControl(setting: Setting) {
+  function renderSettingControl(setting: Setting): React.ReactNode {
     switch (setting.type) {
+      // Option control
+      case "option": {
+        return (
+          <select
+            onChange={(e) =>
+              props.onSettingsChange(
+                setting.onChange(
+                  e.target.selectedOptions[0]?.value === "null" ? null : e.target.selectedOptions[0]?.value ?? null
+                )
+              )
+            }
+            value={setting.value || "null"}
+          >
+            <option value="null">No preference (default)</option>
+            {setting.values.map((option) => (
+              <option key={option}>{option}</option>
+            ))}
+          </select>
+        );
+      }
+
       // Slider 0.0 to 1.0 control
       case "decimal": {
         const MAX = 100;

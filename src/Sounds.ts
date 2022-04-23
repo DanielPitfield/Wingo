@@ -9,11 +9,13 @@ import LightPingSrc from "./images/effects/light-ping.mp3";
 import ClickSrc from "./images/effects/click.mp3";
 import IntroSrc from "./images/effects/intro.mp3";
 
-export const useBackgroundMusic = (settings: SettingsData, theme: Theme) => {
-  const [play, { stop }] = useSound(theme.backgroundAudio.src, {
-    volume: settings.sound.backgroundVolume * settings.sound.masterVolume * Math.min(1, theme.backgroundAudio.volume),
+export const useBackgroundMusic = (settings: SettingsData, theme?: Theme) => {
+  const [play, { stop }] = useSound(theme?.backgroundAudio.src!, {
+    volume:
+      settings.sound.backgroundVolume * settings.sound.masterVolume * Math.min(1, theme?.backgroundAudio.volume || 0),
     soundEnabled:
-      settings.sound.backgroundVolume * settings.sound.masterVolume * Math.min(1, theme.backgroundAudio.volume) > 0,
+      settings.sound.backgroundVolume * settings.sound.masterVolume * Math.min(1, theme?.backgroundAudio.volume || 0) >
+      0,
   });
 
   return [play, stop];
@@ -75,8 +77,8 @@ export const useFailureChime = (settings: SettingsData) => {
 
 export const useIntroMusic = (settings: SettingsData) => {
   const [play, { stop }] = useSound(IntroSrc, {
-    volume: settings.sound.backgroundVolume * settings.sound.masterVolume,
-    soundEnabled: settings.sound.backgroundVolume * settings.sound.masterVolume > 0,
+    volume: settings.sound.backgroundVolume * settings.sound.masterVolume * 0.5,
+    soundEnabled: settings.sound.backgroundVolume * settings.sound.masterVolume * 0.5 > 0,
   });
 
   return [play, stop];

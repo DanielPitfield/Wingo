@@ -217,6 +217,7 @@ export const LobbyMenu: React.FC<Props> = (props) => {
               className={["challenge", isAcheived && !isRedeemed ? "shimmer" : ""].join(" ")}
               key={challenge.id()}
               data-status={status}
+              data-animation-setting={props.settings.graphics.animation}
               title={statusDescription()}
             >
               <img className="challenge-icon" src={Star} width={32} height={32} alt="" />

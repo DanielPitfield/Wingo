@@ -1,5 +1,6 @@
 import { Page } from "./App";
 import { BaseChallenge } from "./Challenges/BaseChallenge";
+import { Themes } from "./Themes";
 
 export type CampaignSaveData = {
   areas: { name: string; status: "locked" | "unlockable" | "unlocked"; completedLevelIds: string[] }[];
@@ -11,7 +12,8 @@ export type SettingsData = {
     backgroundVolume: number;
     effectsVolume: number;
   };
-  video: {
+  graphics: {
+    preferredTheme: keyof typeof Themes | null;
     animation: boolean;
   };
 };
@@ -86,13 +88,13 @@ export class SaveData {
   /** Settings with everything disabled */
   public static DISABLED_SETTINGS: SettingsData = {
     sound: { masterVolume: 0, effectsVolume: 0, backgroundVolume: 0 },
-    video: { animation: false },
+    graphics: { preferredTheme: null, animation: false },
   };
 
   /** Default settings */
   public static DEFAULT_SETTINGS: SettingsData = {
-    sound: { masterVolume: 0.5, effectsVolume: 0.7, backgroundVolume: 0.2 },
-    video: { animation: true },
+    sound: { masterVolume: 0.5, effectsVolume: 0.5, backgroundVolume: 0.35 },
+    graphics: { preferredTheme: null, animation: true },
   };
 
   /**

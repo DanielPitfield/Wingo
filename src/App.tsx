@@ -165,9 +165,12 @@ export const App: React.FC = () => {
   const [page, setPage] = useState<Page>("splash-screen");
   const [selectedCampaignArea, setSelectedCampaignArea] = useState<AreaConfig | null>(null);
   const [selectedCampaignLevel, setSelectedCampaignLevel] = useState<LevelConfig | null>(null);
-  const [theme, setTheme] = useState<Theme>(getHighestCampaignArea()?.theme || Themes.GenericWingo);
-  const [gold, setGold] = useState<number>(SaveData.readGold());
   const [settings, setSettings] = useState<SettingsData>(SaveData.getSettings());
+  const [theme, setTheme] = useState<Theme>(
+    getHighestCampaignArea()?.theme ||
+      (settings.graphics.preferredTheme ? Themes[settings.graphics.preferredTheme] : Themes.GenericWingo)
+  );
+  const [gold, setGold] = useState<number>(SaveData.readGold());
   const [playBackgroundMusic, stopBackgroundMusic] = useBackgroundMusic(settings, theme);
 
   const [gameOptionToggles, setgameOptionToggles] = useState<
@@ -288,7 +291,12 @@ export const App: React.FC = () => {
 
   useEffect(() => {
     SaveData.setSettings(settings);
+    setThemeIfNoPreferredSet(getHighestCampaignArea()?.theme || Themes.GenericWingo);
   }, [settings]);
+
+  function setThemeIfNoPreferredSet(theme: Theme) {
+    setTheme(settings.graphics.preferredTheme ? Themes[settings.graphics.preferredTheme] : theme);
+  }
 
   /**
    *
@@ -362,7 +370,7 @@ export const App: React.FC = () => {
       page: page,
       theme: theme,
       setPage: setPage,
-      setTheme: setTheme,
+      setTheme: setThemeIfNoPreferredSet,
       addGold: addGold,
       settings: settings,
     };
@@ -376,7 +384,7 @@ export const App: React.FC = () => {
           <LobbyMenu
             setSelectedArea={setSelectedCampaignArea}
             setSelectedCampaignLevel={setSelectedCampaignLevel}
-            setTheme={setTheme}
+            setTheme={setThemeIfNoPreferredSet}
             theme={theme}
             /**
              * Updates game type configurations
@@ -418,7 +426,7 @@ export const App: React.FC = () => {
         return (
           <Campaign
             theme={theme}
-            setTheme={setTheme}
+            setTheme={setThemeIfNoPreferredSet}
             setPage={setPage}
             setSelectedArea={setSelectedCampaignArea}
             setSelectedCampaignLevel={setSelectedCampaignLevel}
@@ -431,7 +439,7 @@ export const App: React.FC = () => {
           selectedCampaignArea && (
             <Area
               area={selectedCampaignArea}
-              setTheme={setTheme}
+              setTheme={setThemeIfNoPreferredSet}
               setSelectedCampaignLevel={setSelectedCampaignLevel}
               setPage={setPage}
               settings={settings}
@@ -448,7 +456,7 @@ export const App: React.FC = () => {
               page={page}
               theme={theme}
               setPage={setPage}
-              setTheme={setTheme}
+              setTheme={setThemeIfNoPreferredSet}
               addGold={addGold}
               onCompleteLevel={onCompleteLevel}
               settings={settings}
@@ -588,9 +596,11 @@ export const App: React.FC = () => {
             keyboard={gameOptionToggles.find((x) => x.page === "countdown/letters")?.keyboard || false}
             defaultWordLength={wordLength_countdown_letters}
             page={page}
-            theme={Themes.GenericCountdown}
+            theme={
+              settings.graphics.preferredTheme ? Themes[settings.graphics.preferredTheme] : Themes.GenericCountdown
+            }
             settings={settings}
-            setTheme={setTheme}
+            setTheme={setThemeIfNoPreferredSet}
             setPage={setPage}
             addGold={addGold}
           />
@@ -625,9 +635,11 @@ export const App: React.FC = () => {
             defaultExpressionLength={countdown_numbers_ExpressionLength}
             defaultNumGuesses={countdown_numbers_NumGuesses}
             page={page}
-            theme={Themes.GenericCountdown}
+            theme={
+              settings.graphics.preferredTheme ? Themes[settings.graphics.preferredTheme] : Themes.GenericCountdown
+            }
             settings={settings}
-            setTheme={setTheme}
+            setTheme={setThemeIfNoPreferredSet}
             setPage={setPage}
             addGold={addGold}
           />
@@ -723,7 +735,7 @@ export const App: React.FC = () => {
         );
 
       case "puzzle/sequence":
-        return <PuzzleConfig theme={theme} setTheme={setTheme} settings={settings} />;
+        return <PuzzleConfig theme={theme} setTheme={setThemeIfNoPreferredSet} settings={settings} />;
 
       case "settings":
         return <Settings settings={settings} onSettingsChange={setSettings} />;

@@ -15,7 +15,7 @@ export const SplashScreen: React.FC<{ loadingState: "loading" | "loaded"; settin
       <div className="main-menu-wrapper" data-loading-state={props.loadingState}>
         <div className="game-name">
           <div className="game-name-label">
-            <Logo></Logo>
+            <Logo settings={props.settings}></Logo>
           </div>
         </div>
         <StudioLogo />

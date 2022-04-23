@@ -1,5 +1,6 @@
 import React from "react";
 import LetterTile from "./LetterTile";
+import { SettingsData } from "./SaveData";
 import { getWordSummary } from "./WordleConfig";
 
 interface Props {
@@ -9,6 +10,7 @@ interface Props {
   word: string;
   isVertical: boolean;
   targetWord: string;
+  settings: SettingsData;
   targetArray?: string[];
   revealedLetterIndexes?: number[];
   hasSubmit: boolean;
@@ -35,8 +37,7 @@ export const WordRow: React.FC<Props> = (props) => {
         x.status = "correct";
         return x;
       });
-    }
-    else {
+    } else {
       wordSummary.map((x) => {
         x.status = "incorrect";
         return x;
@@ -82,6 +83,7 @@ export const WordRow: React.FC<Props> = (props) => {
           applyAnimation={(props.applyAnimation === undefined || props.applyAnimation) && isAnimationEnabled(i)}
           // If the word is correct, show a faster animation
           animationDelayMultiplier={allCorrect ? 0.3 : undefined}
+          settings={props.settings}
           status={!props.hasSubmit || !props.word ? "not set" : wordSummary[i]?.status}
         ></LetterTile>
       );
@@ -96,6 +98,7 @@ export const WordRow: React.FC<Props> = (props) => {
     // [data-correct-word-submitted="true"] - Jump animation is applied to WordRow
     <div
       className={props.isVertical ? "word_row_vertical" : "word_row"}
+      data-animation-setting={props.settings.graphics.animation}
       data-apply-animation={props.applyAnimation}
       data-invalid-word-submitted={Boolean(
         (props.word && props.hasSubmit && !props.inDictionary) || (props.isIncompleteWord && props.word)

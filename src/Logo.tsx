@@ -1,14 +1,15 @@
 import React from "react";
 import LetterTile from "./LetterTile";
+import { SettingsData } from "./SaveData";
 
-export const Logo: React.FC = (props) => {
+export const Logo: React.FC<{ settings: SettingsData }> = (props) => {
   return (
     <div className="logo" data-automation-id="logo">
-      <LetterTile letter={"W"} status={"not set"} applyAnimation={false}></LetterTile>
-      <LetterTile letter={"I"} status={"contains"} applyAnimation={false}></LetterTile>
-      <LetterTile letter={"N"} status={"correct"} applyAnimation={false}></LetterTile>
-      <LetterTile letter={"G"} status={"incorrect"} applyAnimation={false}></LetterTile>
-      <LetterTile letter={"O"} status={"contains"} applyAnimation={false}></LetterTile>
+      <LetterTile letter={"W"} status={"not set"} settings={props.settings} applyAnimation={false}></LetterTile>
+      <LetterTile letter={"I"} status={"contains"} settings={props.settings} applyAnimation={false}></LetterTile>
+      <LetterTile letter={"N"} status={"correct"} settings={props.settings} applyAnimation={false}></LetterTile>
+      <LetterTile letter={"G"} status={"incorrect"} settings={props.settings} applyAnimation={false}></LetterTile>
+      <LetterTile letter={"O"} status={"contains"} settings={props.settings} applyAnimation={false}></LetterTile>
     </div>
   );
 };

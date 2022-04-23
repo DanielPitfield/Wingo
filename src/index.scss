@@ -35,7 +35,7 @@ body {
 
 .logo {
   display: flex;
-  .letter_tile {
+  .letter_tile[data-animation-setting="true"] {
     animation: flipRevealLetter 1.5s;
   }
 }
@@ -108,6 +108,7 @@ input {
   font-size: 1rem;
   color: inherit;
   padding: 0.35em;
+  border-radius: 0;
   &[type="checkbox"] {
     font-size: 1.2rem;
     height: 1.2em;
@@ -160,26 +161,26 @@ input {
   }
 }
 
-.word_row[data-invalid-word-submitted="true"][data-apply-animation="true"] {
+.word_row[data-invalid-word-submitted="true"][data-apply-animation="true"][data-animation-setting="true"] {
   animation: shakeIncorrectInput 0.4s;
 }
 
-.letter_tile[data-new-letter-added="true"][data-apply-animation="true"] {
+.letter_tile[data-new-letter-added="true"][data-apply-animation="true"][data-animation-setting="true"] {
   animation: popLetterInput 0.2s;
 }
 
 // For the target tile on Number Arithmetic
 .target {
-  .letter_tile[data-new-letter-added="true"][data-apply-animation="true"] {
+  .letter_tile[data-new-letter-added="true"][data-apply-animation="true"][data-animation-setting="true"] {
     animation: flipRevealLetter 1.5s;
   }
 }
 
-.letter_tile[data-has-been-submitted="true"][data-apply-animation="true"] {
+.letter_tile[data-has-been-submitted="true"][data-apply-animation="true"][data-animation-setting="true"] {
   animation: flipRevealLetter 1.5s;
 }
 
-.word_row[data-correct-word-submitted="true"][data-apply-animation="true"] .letter_tile {
+.word_row[data-correct-word-submitted="true"][data-apply-animation="true"] .letter_tile[data-animation-setting="true"] {
   animation: jumpCorrectInput 1.2s;
 }
 
@@ -485,7 +486,8 @@ $data-statuses: (
           padding-bottom: 0.3em;
         }
         .setting-control {
-          input[type="range"] {
+          input[type="range"],
+          select {
             min-width: 15em;
           }
         }
@@ -1487,7 +1489,7 @@ $nubble-colors-names: (
   }
 }
 
-.shimmer {
+.shimmer[data-animation-setting="true"] {
   mask: linear-gradient(-65deg, #000 30%, #0006, #000 75%) right / 300% 100%;
   animation: shimmer 2s infinite;
 }
