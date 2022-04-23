@@ -27,7 +27,7 @@
 
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI Semilight", "Segoe UI", "Roboto", "Oxygen", "Ubuntu",
+  font-family: "Ubuntu", -apple-system, BlinkMacSystemFont, "Segoe UI Semilight", "Segoe UI", "Roboto", "Oxygen",
     "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -156,6 +156,7 @@ input {
     min-width: 12em;
     text-align: left;
     font-size: 1.15em;
+    color: #333;
   }
 }
 
@@ -611,7 +612,7 @@ $data-statuses: (
       align-items: center;
       color: #999;
       padding: 0.4em 0.2em;
-      text-transform: uppercase;
+      //text-transform: uppercase;
     }
     .widget-title {
       font-size: 1.2em;
@@ -779,6 +780,8 @@ $data-statuses: (
     left: 0.3em;
     right: 0.3em;
     bottom: 0;
+    display: flex;
+    align-items: center;
   }
 }
 
@@ -1254,9 +1257,6 @@ $nubble-colors-names: (
     flex-grow: 1;
     background-repeat: no-repeat;
     background-size: 100%;
-    &[data-unlock-status="unlockable"] {
-      background: #aaa !important;
-    }
     &[data-unlock-status="locked"] {
       background: #333 !important;
       opacity: 0.15;
@@ -1285,7 +1285,6 @@ $nubble-colors-names: (
       font-weight: normal;
       margin: 0;
       color: #bbb;
-      text-transform: uppercase;
     }
   }
 }
@@ -1314,6 +1313,7 @@ $nubble-colors-names: (
   display: flex;
   align-items: center;
   justify-content: center;
+  font-family: "Ubuntu", sans-serif;
   // Only Connect Wall button
   .only-connect-button {
     width: 12em;
