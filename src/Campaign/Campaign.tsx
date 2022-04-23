@@ -6,6 +6,7 @@ import { getId, LevelConfig } from "./Level";
 import { CampaignSaveData, SaveData, SettingsData } from "../SaveData";
 import { Theme } from "../Themes";
 import { AllCampaignAreas } from "./AllCampaignAreas";
+import BackgroundImageSrc from "../images/background.png";
 
 /** The entire campaign, showing the list of areas */
 export const Campaign: React.FC<{
@@ -76,7 +77,9 @@ export const Campaign: React.FC<{
             data-unlock-status={unlock_status}
             key={area.name}
             style={{
-              backgroundImage: `url(${area.theme.backgroundImageSrc})`,
+              backgroundImage: `url(${
+                unlock_status === "unlockable" ? BackgroundImageSrc : area.theme.backgroundImageSrc
+              })`,
               backgroundSize: "100%",
             }}
           >
