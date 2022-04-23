@@ -1311,18 +1311,19 @@ $nubble-colors-names: (
   justify-content: center;
   // Only Connect Wall button
   .only-connect-button {
-    width: 10em;
-    min-height: 5.5em;
+    width: 12em;
+    min-height: 7em;
     padding: 1em;
     border: none;
     border-radius: 6px;
     background-color: #a5cff0;
+    color: #222;
     outline: none;
     margin: 0.2em;
     font-family: inherit;
-    font-size: 1.5em;
+    font-size: 1.25em;
     transition: all ease 0.2s;
-    // box-shadow: 4px 4px rgb(92, 91, 91);
+    box-shadow: -3px 3px #2228;
 
     // TODO: Colours for more groups
     $only-connect-group-1-color: #004372;

@@ -4,6 +4,8 @@ import { Button } from "../Button";
 import { MessageNotification } from "../MessageNotification";
 import { shuffleArray } from "../NumbersArithmetic/ArithmeticDrag";
 import ProgressBar, { GreenToRedColorTransition } from "../ProgressBar";
+import { SaveData } from "../SaveData";
+import { useCorrectChime, useFailureChime, useLightPingChime } from "../Sounds";
 import { Theme } from "../Themes";
 import { categoryMappings } from "../WordleConfig";
 
@@ -26,6 +28,10 @@ const GroupWall: React.FC<Props> = (props) => {
   const [numCompletedGroups, setNumCompletedGroups] = useState(0);
   const [remainingGuesses, setRemainingGuesses] = useState(props.numGuesses);
   const [seconds, setSeconds] = useState(props.timerConfig.isTimed ? props.timerConfig.seconds : 0);
+  const settings = SaveData.getSettings();
+  const [playCorrectChimeSoundEffect] = useCorrectChime(settings);
+  const [playFailureChimeSoundEffect] = useFailureChime(settings);
+  const [playLightPingSoundEffect] = useLightPingChime(settings);
 
   // (Guess) Timer Setup
   React.useEffect(() => {
@@ -37,7 +43,9 @@ const GroupWall: React.FC<Props> = (props) => {
       if (seconds > 0) {
         setSeconds(seconds - 1);
       } else {
+        playFailureChimeSoundEffect();
         setInProgress(false);
+        clearInterval(timerGuess);
       }
     }, 1000);
     return () => {
@@ -90,6 +98,8 @@ const GroupWall: React.FC<Props> = (props) => {
       setTimeout(() => {
         // Reset the selected words
         setSelectedWords([]);
+
+        playLightPingSoundEffect();
       }, INCORRECT_SELECTION_DELAY_MS);
       return;
     }
@@ -150,6 +160,7 @@ const GroupWall: React.FC<Props> = (props) => {
         setNumCompletedGroups(numCompletedGroups + 2);
 
         setInProgress(false);
+        playCorrectChimeSoundEffect();
       } else {
         // Update the calculated grid words
         setGridWords(newGridWords);
