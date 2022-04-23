@@ -11,6 +11,7 @@ import { Campaign } from "./Campaign/Campaign";
 import { Theme } from "./Themes";
 import { AreaConfig } from "./Campaign/Area";
 import { LevelConfig } from "./Campaign/Level";
+import { useNotificationChime } from "./Sounds";
 
 interface Props {
   theme: Theme;
@@ -34,6 +35,8 @@ export const LobbyMenu: React.FC<Props> = (props) => {
   const [optionsConfig, setOptionsConfig] = useState<{ isConfigShown: false } | { isConfigShown: true; Page: Page }>({
     isConfigShown: false,
   });
+  const settings = SaveData.getSettings();
+  const [playNotificationChime] = useNotificationChime(settings);
 
   /**
    *
@@ -230,6 +233,7 @@ export const LobbyMenu: React.FC<Props> = (props) => {
                   onClick={() => {
                     challenge.isRedeemed = true;
                     props.addGold(challenge.reward().goldCoins);
+                    playNotificationChime();
                   }}
                 >
                   Redeem
