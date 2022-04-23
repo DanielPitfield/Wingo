@@ -285,6 +285,10 @@ export const App: React.FC = () => {
     SaveData.setGold(gold);
   }, [gold]);
 
+  useEffect(() => {
+    SaveData.setSettings(settings);
+  }, [settings]);
+
   /**
    *
    * @returns
