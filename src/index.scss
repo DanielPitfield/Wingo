@@ -1276,14 +1276,15 @@ $nubble-colors-names: (
 .area,
 .level {
   .area-header {
-    background-color: #fff7;
+    background-color: #3337;
     padding: 0.6em;
     align-self: stretch;
     margin-bottom: 0.3em;
+    border-bottom: 1px solid #444c;
     .area-header-title {
       font-weight: normal;
       margin: 0;
-      color: white;
+      color: #bbb;
       text-transform: uppercase;
     }
   }
