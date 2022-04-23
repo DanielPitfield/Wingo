@@ -247,8 +247,17 @@ const WordleConfig: React.FC<Props> = (props) => {
     }
   }, [targetWord, currentWord, guesses, wordIndex, inProgress, inDictionary]);
 
-  // Update word length every time the target word changes during category mode
   React.useEffect(() => {
+    // Show first letter of the target word (if enabled)
+    if (props.firstLetterProvided) {
+      if (props.targetWord) {
+        setCurrentWord(props.targetWord.charAt(0));
+      } else {
+        setCurrentWord(targetWord.charAt(0));
+      }
+    }
+
+    // Update word length every time the target word changes during category mode
     if (props.mode === "category") {
       if (targetWord) {
         setwordLength(targetWord.length);
@@ -268,11 +277,6 @@ const WordleConfig: React.FC<Props> = (props) => {
       const random_word = wordArray[Math.round(Math.random() * (wordArray.length - 1))];
       console.log(random_word);
       settargetWord(random_word);
-
-      // Reveal the first letter from game start
-      if (props.firstLetterProvided) {
-        setCurrentWord(random_word.charAt(0));
-      }
     }
   }, [targetCategory]);
 
@@ -296,6 +300,7 @@ const WordleConfig: React.FC<Props> = (props) => {
     setletterStatuses(letterStatusesCopy);
   }, [guesses, wordIndex]);
 
+  // Reveals letters of read only puzzle row periodically
   React.useEffect(() => {
     let intervalId: number;
 
@@ -355,9 +360,6 @@ const WordleConfig: React.FC<Props> = (props) => {
     if (inProgress) {
       // Don't need to determine a target word, if it is explicitly specified
       if (props.targetWord) {
-        if (props.firstLetterProvided) {
-          setCurrentWord(props.targetWord.charAt(0));
-        }
         return;
       }
       /* --- DAILY ---  */
@@ -385,10 +387,6 @@ const WordleConfig: React.FC<Props> = (props) => {
         console.log("Daily word: " + new_daily_word);
         settargetWord(new_daily_word);
 
-        // Reveal the first letter from game start
-        if (props.firstLetterProvided) {
-          setCurrentWord(new_daily_word.charAt(0));
-        }
         /* --- PUZZLEWORD ---  */
       } else if (props.mode === "puzzle") {
         // Get a random puzzle and hint (from words_puzzles.ts)
@@ -412,11 +410,6 @@ const WordleConfig: React.FC<Props> = (props) => {
           const random_word = wordArray[Math.round(Math.random() * (wordArray.length - 1))];
           console.log(random_word);
           settargetWord(random_word);
-
-          // Reveal the first letter from game start
-          if (props.firstLetterProvided) {
-            setCurrentWord(random_word.charAt(0));
-          }
         } else {
           // Otherwise, randomly choose a category (can be changed afterwards)
           const random_category = categoryMappings[Math.round(Math.random() * (categoryMappings.length - 1))];
@@ -444,11 +437,6 @@ const WordleConfig: React.FC<Props> = (props) => {
 
             console.log("Not daily word (reset 4): " + new_target_word);
             settargetWord(new_target_word);
-
-            // Reveal the first letter from game start
-            if (props.firstLetterProvided) {
-              setCurrentWord(new_target_word.charAt(0));
-            }
           }
 
           return;
@@ -471,11 +459,6 @@ const WordleConfig: React.FC<Props> = (props) => {
 
         console.log("Not daily word: " + new_target_word);
         settargetWord(new_target_word);
-
-        // Reveal the first letter from game start
-        if (props.firstLetterProvided) {
-          setCurrentWord(new_target_word.charAt(0));
-        }
 
         /* --- INTERLINKED (2nd word) --- */
         if (props.mode === "interlinked") {
