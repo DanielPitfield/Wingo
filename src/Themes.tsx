@@ -65,7 +65,10 @@ import GenericCountdownIcon5Src from "./images/themes/GenericCountdown/icon-5.pn
 /* General theme */
 export type Theme = {
   backgroundImageSrc: string;
-  backgroundAudioSrc: string;
+  backgroundAudio: {
+    src: string;
+    volume: number;
+  };
 } & ThemeIcons;
 
 /* Theme for the individual icons */
@@ -82,7 +85,7 @@ export const Themes = {
   // Space
   Space: {
     backgroundImageSrc: SpaceBackgroundImageSrc,
-    backgroundAudioSrc: SpaceBackgroundAudioSrc,
+    backgroundAudio: { src: SpaceBackgroundAudioSrc, volume: 1.0 },
     icon1Src: SpaceIcon1Src,
     icon2Src: SpaceIcon2Src,
     icon3Src: SpaceIcon3Src,
@@ -93,7 +96,7 @@ export const Themes = {
   // Cars/racing
   Cars: {
     backgroundImageSrc: RacingBackgroundImageSrc,
-    backgroundAudioSrc: RacingBackgroundAudioSrc,
+    backgroundAudio: { src: RacingBackgroundAudioSrc, volume: 0.3 },
     icon1Src: RacingIcon1Src,
     icon2Src: RacingIcon2Src,
     icon3Src: RacingIcon3Src,
@@ -104,7 +107,7 @@ export const Themes = {
   // Travel
   Travel: {
     backgroundImageSrc: TravelBackgroundImageSrc,
-    backgroundAudioSrc: TravelBackgroundAudioSrc,
+    backgroundAudio: { src: TravelBackgroundAudioSrc, volume: 0.3 },
     icon1Src: TravelIcon1Src,
     icon2Src: TravelIcon2Src,
     icon3Src: TravelIcon3Src,
@@ -115,7 +118,7 @@ export const Themes = {
   // Travel
   Nature: {
     backgroundImageSrc: NatureBackgroundImageSrc,
-    backgroundAudioSrc: NatureBackgroundAudioSrc,
+    backgroundAudio: { src: NatureBackgroundAudioSrc, volume: 0.3 },
     icon1Src: NatureIcon1Src,
     icon2Src: NatureIcon2Src,
     icon3Src: NatureIcon3Src,
@@ -126,7 +129,7 @@ export const Themes = {
   // Geology
   Geology: {
     backgroundImageSrc: GeologyBackgroundImageSrc,
-    backgroundAudioSrc: GeologyBackgroundAudioSrc,
+    backgroundAudio: { src: GeologyBackgroundAudioSrc, volume: 0.3 },
     icon1Src: GeologyIcon1Src,
     icon2Src: GeologyIcon2Src,
     icon3Src: GeologyIcon3Src,
@@ -137,7 +140,7 @@ export const Themes = {
   // Fantasy
   Fantasy: {
     backgroundImageSrc: FantasyBackgroundImageSrc,
-    backgroundAudioSrc: FantasyBackgroundAudioSrc,
+    backgroundAudio: { src: FantasyBackgroundAudioSrc, volume: 0.3 },
     icon1Src: FantasyIcon1Src,
     icon2Src: FantasyIcon2Src,
     icon3Src: FantasyIcon3Src,
@@ -148,7 +151,7 @@ export const Themes = {
   // Generic wingo
   GenericWingo: {
     backgroundImageSrc: GenericWingoBackgroundImageSrc,
-    backgroundAudioSrc: GenericWingoBackgroundAudioSrc,
+    backgroundAudio: { src: GenericWingoBackgroundAudioSrc, volume: 0.3 },
     icon1Src: GenericWingoIcon1Src,
     icon2Src: GenericWingoIcon2Src,
     icon3Src: GenericWingoIcon3Src,
@@ -159,7 +162,7 @@ export const Themes = {
   // Countdown studio
   GenericCountdown: {
     backgroundImageSrc: GenericCountdownBackgroundImageSrc,
-    backgroundAudioSrc: GenericCountdownBackgroundAudioSrc,
+    backgroundAudio: { src: GenericCountdownBackgroundAudioSrc, volume: 0.3 },
     icon1Src: GenericCountdownIcon1Src,
     icon2Src: GenericCountdownIcon2Src,
     icon3Src: GenericCountdownIcon3Src,

@@ -10,9 +10,10 @@ import ClickSrc from "./images/effects/click.mp3";
 import IntroSrc from "./images/effects/intro.mp3";
 
 export const useBackgroundMusic = (settings: SettingsData, theme: Theme) => {
-  const [play, { stop }] = useSound(theme.backgroundAudioSrc, {
-    volume: settings.sound.backgroundVolume * settings.sound.masterVolume,
-    soundEnabled: settings.sound.backgroundVolume * settings.sound.masterVolume > 0,
+  const [play, { stop }] = useSound(theme.backgroundAudio.src, {
+    volume: settings.sound.backgroundVolume * settings.sound.masterVolume * Math.min(1, theme.backgroundAudio.volume),
+    soundEnabled:
+      settings.sound.backgroundVolume * settings.sound.masterVolume * Math.min(1, theme.backgroundAudio.volume) > 0,
   });
 
   return [play, stop];

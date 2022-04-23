@@ -91,7 +91,7 @@ export class SaveData {
 
   /** Default settings */
   public static DEFAULT_SETTINGS: SettingsData = {
-    sound: { masterVolume: 0.5, effectsVolume: 0.75, backgroundVolume: 0.1 },
+    sound: { masterVolume: 0.5, effectsVolume: 0.7, backgroundVolume: 0.2 },
     video: { animation: true },
   };
 
