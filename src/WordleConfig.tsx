@@ -281,16 +281,13 @@ const WordleConfig: React.FC<Props> = (props) => {
           return;
         }
 
-        targetWordArray = wordLengthMappingsTargets.find((x) => x.value === wordLength)?.array!;
-
-        // Perhaps there is no array for this long a wordLength
+        // There is no array for the current wordLength
         if (!targetWordArray) {
           // Just reset (reached the end)
           ResetGame();
           return;
         }
 
-        newTargetWord = targetWordArray[Math.round(Math.random() * (targetWordArray.length - 1))];
         break;
 
       case "limitless":
@@ -299,16 +296,13 @@ const WordleConfig: React.FC<Props> = (props) => {
           return;
         }
 
-        targetWordArray = wordLengthMappingsTargets.find((x) => x.value === wordLength)?.array!;
-
+        // There is no array for the current wordLength
         if (!targetWordArray) {
           // Don't reset otherwise the number of lives would be lost, just go back to 4 letter words
           setwordLength(4);
           targetWordArray = wordLengthMappingsTargets.find((x) => x.value === 4)?.array!;
-          newTargetWord = targetWordArray[Math.round(Math.random() * (targetWordArray.length - 1))];
         }
 
-        newTargetWord = targetWordArray[Math.round(Math.random() * (targetWordArray.length - 1))];
         break;
     }
 
