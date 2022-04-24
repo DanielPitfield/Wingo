@@ -23,6 +23,7 @@ import { useBackgroundMusic } from "./Sounds";
 import { VERSION } from "./version";
 import { ErrorBoundary } from "react-error-boundary";
 import { ErrorFallback } from "./ErrorFallback";
+import SameLetterWords from "./VerbalReasoning/SameLetterWords";
 
 const wordLength = 5;
 const numGuesses = 6;
@@ -58,6 +59,7 @@ export type Page =
   | "numbers/arithmetic_drag/match"
   | "nubble"
   | "only_connect/wall"
+  | "verbal_reasoning/match"
   | "puzzle/sequence"
   | "campaign"
   | "campaign/area"
@@ -147,6 +149,12 @@ export const pages: { page: Page; title: string; description?: string; shortTitl
     title: "Only Connect",
     description: "Find groups of words from a scrambled word grid",
     shortTitle: "Only Connect",
+  },
+  {
+    page: "verbal_reasoning/match",
+    title: "Same Letter Words",
+    description: "Find the words which are made from the same letters",
+    shortTitle: "Same Letter Words",
   },
   {
     page: "puzzle/sequence",
@@ -263,6 +271,12 @@ export const App: React.FC = () => {
     },
     {
       page: "only_connect/wall",
+      firstLetter: false,
+      timer: true,
+      keyboard: false,
+    },
+    {
+      page: "verbal_reasoning/match",
       firstLetter: false,
       timer: true,
       keyboard: false,
@@ -721,6 +735,24 @@ export const App: React.FC = () => {
             groupSize={4}
             numGroups={4}
             numGuesses={3}
+            timerConfig={
+              gameOptionToggles.find((x) => x.page === "only_connect/wall")?.timer
+                ? { isTimed: true, seconds: 100 }
+                : { isTimed: false }
+            }
+            theme={theme}
+            settings={settings}
+            setPage={setPage}
+          />
+        );
+
+        case "verbal_reasoning/match":
+        return (
+          <SameLetterWords
+            numMatchingWords={4}
+            numTotalWords={16}
+            wordLength={5}
+            numGuesses={20}
             timerConfig={
               gameOptionToggles.find((x) => x.page === "only_connect/wall")?.timer
                 ? { isTimed: true, seconds: 100 }

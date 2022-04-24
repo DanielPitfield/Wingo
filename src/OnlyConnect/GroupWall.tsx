@@ -19,6 +19,26 @@ interface Props {
   setPage: (page: Page) => void;
 }
 
+export function getPrettyWord(text: string): string {
+  // Put spaces back in (instead of dashes)
+  let newText = text.replaceAll("-", " ");
+
+  // Get each individual word in the provided text
+  const words = newText.split(" ");
+
+  // Capitalise the first letter of every word
+  if (words.length >= 1) {
+    for (var i = 0; i < words.length; i++) {
+      words[i] = words[i].charAt(0).toUpperCase() + words[i].slice(1);
+    }
+
+    // Join all the elements of the array back into a string
+    newText = words.join(" ");
+  }
+
+  return newText;
+}
+
 /** */
 const GroupWall: React.FC<Props> = (props) => {
   const [inProgress, setInProgress] = useState(true);
@@ -262,26 +282,6 @@ const GroupWall: React.FC<Props> = (props) => {
 
     grid_words = shuffleArray(grid_words);
     return grid_words;
-  }
-
-  function getPrettyWord(text: string): string {
-    // Put spaces back in (instead of dashes)
-    let newText = text.replaceAll("-", " ");
-
-    // Get each individual word in the provided text
-    const words = newText.split(" ");
-
-    // Capitalise the first letter of every word
-    if (words.length >= 1) {
-      for (var i = 0; i < words.length; i++) {
-        words[i] = words[i].charAt(0).toUpperCase() + words[i].slice(1);
-      }
-
-      // Join all the elements of the array back into a string
-      newText = words.join(" ");
-    }
-
-    return newText;
   }
 
   function populateRow(rowNumber: number) {
