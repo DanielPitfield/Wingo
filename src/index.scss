@@ -446,6 +446,9 @@ $data-statuses: (
       width: 2.2em;
     }
   }
+  .add-number-buttons-wrapper {
+    margin-bottom: 0.5em;
+  }
 }
 
 .number_row {
@@ -453,8 +456,11 @@ $data-statuses: (
   align-items: center;
 }
 .best-solution {
-  margin-top: 2em;
-  margin-bottom: 6.5em;
+  margin-top: 0.4em;
+  margin-bottom: 10.5em;
+  .message-notification {
+    min-width: 20em;
+  }
 }
 
 /* Settings page ============================== */

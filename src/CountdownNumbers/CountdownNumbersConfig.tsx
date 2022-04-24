@@ -464,7 +464,7 @@ const CountdownNumbersConfig: React.FC<Props> = (props) => {
       setPage={props.setPage}
       setOperator={(operator) => setCurrentGuess({ ...currentGuess, operator })}
       addGold={props.addGold}
-    ></CountdownNumbers>
+    />
   );
 };
 

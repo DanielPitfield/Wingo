@@ -229,24 +229,6 @@ const CountdownNumbers: React.FC<Props> = (props) => {
           />
         );
       }
-    } else {
-      Grid.push(
-        <div className="best-solution">
-          <MessageNotification type="default">
-            Best Solution:
-            <br />
-            <strong>
-              <br />
-              {solutions?.best.toListOfSteps().map((step) => (
-                <>
-                  {step}
-                  <br />
-                </>
-              ))}
-            </strong>
-          </MessageNotification>
-        </div>
-      );
     }
 
     return Grid;
@@ -342,30 +324,44 @@ const CountdownNumbers: React.FC<Props> = (props) => {
 
   return (
     <div className="App" style={{ backgroundImage: `url(${props.theme.backgroundImageSrc})`, backgroundSize: "100%" }}>
-      {displayOutcome()}
-
-      <div>
-        {props.hasTimerEnded && !props.inProgress && (
-          <Button mode={"accept"} onClick={() => props.resetGame()} settings={props.settings}>
-            Restart
-          </Button>
-        )}
-      </div>
-
       <div className="countdown-numbers-grid">{populateGrid(props.expressionLength)}</div>
 
       {props.inProgress && (
-        <Button mode="destructive" onClick={props.clearGrid} settings={props.settings}>
-          Clear
-        </Button>
+        <>
+          <Button mode="destructive" onClick={props.clearGrid} settings={props.settings}>
+            Clear
+          </Button>
+          <Button mode="default" onClick={props.submitBestGuess} settings={props.settings}>
+            Use Best Guess
+          </Button>
+        </>
       )}
 
-      {props.inProgress && (
-        <Button mode="default" onClick={props.submitBestGuess} settings={props.settings}>
-          Use Best Guess
-        </Button>
-      )}
+      {!props.inProgress && (
+        <>
+          {displayOutcome()}
 
+          <div className="best-solution">
+            <MessageNotification type="default">
+              Best Solution:
+              <br />
+              <strong>
+                <br />
+                {solutions?.best.toListOfSteps().map((step) => (
+                  <>
+                    {step}
+                    <br />
+                  </>
+                ))}
+              </strong>
+            </MessageNotification>
+          </div>
+
+          <Button mode={"accept"} onClick={() => props.resetGame()} settings={props.settings}>
+            Restart
+          </Button>
+        </>
+      )}
       <div>
         {props.timerConfig.isTimed && (
           <ProgressBar
