@@ -911,7 +911,7 @@ $data-statuses: (
   bottom: 0;
   background-color: #000a;
   z-index: 999;
-  .options_body {
+  .modal-wrapper {
     position: relative;
     display: flex;
     flex-direction: column;
@@ -921,27 +921,54 @@ $data-statuses: (
     flex-grow: 1;
     min-height: 10em;
     max-width: 25em;
-    label {
+    .modal-header {
       display: flex;
       align-items: center;
-      padding: 0.2em;
-      color: #333;
-      margin: 0.1em;
-      input[type="checkbox"] {
-        margin-right: 0.3em;
+      justify-content: center;
+      background-color: #333;
+      padding: 0.4em;
+      color: #eee;
+      &[data-mode="default"] {
+        background-color: #333;
+      }
+      &[data-mode="success"] {
+        background-color: #739673;
+      }
+      &[data-mode="error"] {
+        background-color: #912222;
+      }
+      .modal-title {
+        font-size: 1.2em;
+        color: #eee;
+        flex-grow: 1;
+        padding: 0.2em;
+        margin: 0;
+        font-weight: normal;
+      }
+      .modal-close-button {
       }
     }
-    .options_title {
-      font-size: 1.2em;
-      padding: 0.6em;
-      background-color: #333;
-      color: #eee;
-    }
-    .options_close {
-      position: absolute;
-      top: 0;
-      right: 0;
-      font-size: 0.6em;
+    .modal-body {
+      padding: 1em;
+      & > p {
+        margin-top: 0;
+      }
+      label {
+        display: flex;
+        align-items: center;
+        padding: 0.1em;
+        color: #333;
+        margin: 0.1em;
+        input[type="checkbox"] {
+          margin-right: 0.3em;
+        }
+      }
+      pre {
+        overflow-x: auto;
+        padding: 0.5em;
+        background-color: #f5f5f5;
+        border: 1px solid #e5e5e5;
+      }
     }
   }
 }

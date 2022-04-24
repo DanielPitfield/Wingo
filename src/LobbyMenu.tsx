@@ -12,6 +12,7 @@ import { Theme } from "./Themes";
 import { AreaConfig } from "./Campaign/Area";
 import { LevelConfig } from "./Campaign/Level";
 import { useNotificationChime } from "./Sounds";
+import { Modal } from "./Modal";
 
 interface Props {
   theme: Theme;
@@ -74,45 +75,40 @@ export const LobbyMenu: React.FC<Props> = (props) => {
     const pageInfo = pages.find((x) => x.page === page);
 
     return (
-      <div className="modal">
-        <div className="options_body">
-          <div className="options_title">
+      <Modal
+        mode="default"
+        title={
+          <>
             Options for <strong>{pageInfo?.title || page}</strong>
-          </div>
-          <Button
-            mode="default"
-            className="options_close"
-            settings={props.settings}
-            onClick={() => setOptionsConfig({ isConfigShown: false })}
-          >
-            X
-          </Button>
-          <label>
-            <input
-              checked={props.gameOptionToggles.find((x) => x.page === page)?.firstLetter || false}
-              type="checkbox"
-              onChange={(e) => props.firstLetterToggle(e.target.checked, page)}
-            ></input>
-            First Letter Provided
-          </label>
-          <label>
-            <input
-              checked={props.gameOptionToggles.find((x) => x.page === page)?.timer || false}
-              type="checkbox"
-              onChange={(e) => props.timerToggle(e.target.checked, page)}
-            ></input>
-            Timer
-          </label>
-          <label>
-            <input
-              checked={props.gameOptionToggles.find((x) => x.page === page)?.keyboard || false}
-              type="checkbox"
-              onChange={(e) => props.keyboardToggle(e.target.checked, page)}
-            ></input>
-            Keyboard
-          </label>
-        </div>
-      </div>
+          </>
+        }
+        onClose={() => setOptionsConfig({ isConfigShown: false })}
+      >
+        <label>
+          <input
+            checked={props.gameOptionToggles.find((x) => x.page === page)?.firstLetter || false}
+            type="checkbox"
+            onChange={(e) => props.firstLetterToggle(e.target.checked, page)}
+          ></input>
+          First Letter Provided
+        </label>
+        <label>
+          <input
+            checked={props.gameOptionToggles.find((x) => x.page === page)?.timer || false}
+            type="checkbox"
+            onChange={(e) => props.timerToggle(e.target.checked, page)}
+          ></input>
+          Timer
+        </label>
+        <label>
+          <input
+            checked={props.gameOptionToggles.find((x) => x.page === page)?.keyboard || false}
+            type="checkbox"
+            onChange={(e) => props.keyboardToggle(e.target.checked, page)}
+          ></input>
+          Keyboard
+        </label>
+      </Modal>
     );
   }
 

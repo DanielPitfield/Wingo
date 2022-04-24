@@ -19,8 +19,10 @@ import { Theme, Themes } from "./Themes";
 import { AllCampaignAreas } from "./Campaign/AllCampaignAreas";
 import { Settings } from "./Settings";
 import GroupWall from "./OnlyConnect/GroupWall";
-import { useBackgroundMusic, useClickChime } from "./Sounds";
+import { useBackgroundMusic } from "./Sounds";
 import { VERSION } from "./version";
+import { ErrorBoundary } from "react-error-boundary";
+import { ErrorFallback } from "./ErrorFallback";
 
 const wordLength = 5;
 const numGuesses = 6;
@@ -779,7 +781,9 @@ export const App: React.FC = () => {
           </div>
         </>
       )}
-      {pageComponent}
+      <ErrorBoundary FallbackComponent={ErrorFallback} onReset={() => window.location.reload()}>
+        {pageComponent}
+      </ErrorBoundary>
       <div className="version">{VERSION}</div>
     </div>
   );
