@@ -173,6 +173,7 @@ const CountdownNumbersConfig: React.FC<Props> = (props) => {
     sethasTimerEnded(false);
     setExpressionLength(props.defaultExpressionLength);
     sethasSubmitNumber(false);
+    setNumGuesses(props.defaultNumGuesses);
     if (props.timerConfig.isTimed) {
       // Reset the timer if it is enabled in the game options
       setSeconds(props.timerConfig.seconds);
@@ -452,7 +453,6 @@ const CountdownNumbersConfig: React.FC<Props> = (props) => {
       settings={props.settings}
       setTheme={props.setTheme}
       onClick={addOperandToGuess}
-      onRightClick={removeOperandFromGuess}
       onEnter={onEnter}
       onSubmitCountdownNumber={onSubmitCountdownNumber}
       onSubmitCountdownExpression={onSubmitCountdownExpression}

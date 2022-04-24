@@ -8,14 +8,19 @@ interface Props {
     value: number | null,
     id: { type: "original"; index: number } | { type: "intermediary"; rowIndex: number }
   ) => void;
-  onRightClick: (value: number | null, index: number) => void;
-  isReadOnly: boolean;
   hasTimerEnded: boolean;
   expression: Guess;
   rowIndex: number;
   length: number;
   targetNumber: number | null;
   hasSubmit: boolean;
+  disabled: boolean;
+  indetermediaryGuessStatuses: {
+    type: "intermediary";
+    wordIndex: number;
+    number: number | null;
+    picked: boolean;
+  }[];
   setOperator: (operator: typeof operators[0]["name"]) => void;
 }
 
@@ -59,8 +64,7 @@ export const NumberRow: React.FC<Props> = (props) => {
       <NumberTile
         key="first-operand"
         number={props.expression ? props.expression.operand1 : null}
-        disabled={false}
-        isReadOnly={props.isReadOnly}
+        disabled={props.disabled || calculateTotal(props.expression) !== null || props.expression.operand1 === null}
       />
 
       <OperatorTile
@@ -68,25 +72,28 @@ export const NumberRow: React.FC<Props> = (props) => {
         hasTimerEnded={props.hasTimerEnded}
         targetNumber={props.targetNumber}
         setOperator={props.setOperator}
+        disabled={props.disabled || calculateTotal(props.expression) !== null}
         operator={props.expression ? props.expression.operator : "+"}
       />
 
       <NumberTile
         key="second-operand"
         number={props.expression ? props.expression.operand2 : null}
-        disabled={false}
-        isReadOnly={props.isReadOnly}
+        disabled={props.disabled || calculateTotal(props.expression) !== null || props.expression.operand2 === null}
       />
 
-      <div key="equals" className="equals_tile">
+      <div key="equals" className="equals_tile" data-disabled={true} data-is-readonly={false}>
         =
       </div>
 
       <NumberTile
         key="row_result"
         number={calculateTotal(props.expression) || null}
-        disabled={false}
-        isReadOnly={props.isReadOnly}
+        disabled={
+          props.disabled ||
+          props.indetermediaryGuessStatuses.find((x) => x.wordIndex === props.rowIndex)?.picked === true ||
+          calculateTotal(props.expression) === null
+        }
         onClick={() =>
           props.onClick(calculateTotal(props.expression) || null, { type: "intermediary", rowIndex: props.rowIndex })
         }

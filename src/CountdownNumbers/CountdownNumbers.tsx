@@ -35,7 +35,6 @@ interface Props {
     value: number | null,
     id: { type: "original"; index: number } | { type: "intermediary"; rowIndex: number }
   ) => void;
-  onRightClick: (value: number | null, index: number) => void;
   clearGrid: () => void;
   submitBestGuess: () => void;
   setTheme: (theme: Theme) => void;
@@ -149,22 +148,15 @@ const CountdownNumbers: React.FC<Props> = (props) => {
     Grid.push(
       <div className="countdown-numbers-wrapper">
         <div className="target-number">
-          <NumberTile
-            number={isSelectionFinished ? props.targetNumber : null}
-            disabled={false}
-            isReadOnly={true}
-            // Ignore left and right clicks on the target number
-            onClick={() => {}}
-            onRightClick={() => {}}
-          ></NumberTile>
+          <NumberTile number={isSelectionFinished ? props.targetNumber : null} disabled={true} isReadOnly={true} />
         </div>
         <CountdownRow
           key={"number_selection"}
-          isReadOnly={true}
+          disabled={!isSelectionFinished}
           onClick={props.onClick}
           expression={props.countdownStatuses}
           length={props.defaultNumOperands}
-        ></CountdownRow>
+        />
         <div className="add-number-buttons-wrapper">
           <Button
             mode={"default"}
@@ -224,17 +216,17 @@ const CountdownNumbers: React.FC<Props> = (props) => {
         Grid.push(
           <NumberRow
             key={`countdown_numbers_input ${i}`}
-            isReadOnly={i < props.wordIndex}
             hasTimerEnded={props.hasTimerEnded}
             onClick={props.onClick}
-            onRightClick={props.onRightClick}
             expression={guess}
             length={expressionLength}
             targetNumber={props.targetNumber}
             hasSubmit={!props.inProgress}
             setOperator={props.setOperator}
+            disabled={!isSelectionFinished || i > props.wordIndex}
             rowIndex={i}
-          ></NumberRow>
+            indetermediaryGuessStatuses={props.countdownStatuses.filter((x) => x.type === "intermediary") as any}
+          />
         );
       }
     } else {
