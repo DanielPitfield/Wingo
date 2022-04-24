@@ -143,7 +143,7 @@ const SameLetterWords: React.FC<Props> = (props) => {
       newSelectedWords = newSelectedWords.filter((x) => x !== word);
     }
     // Room for word to be added to selection
-    else if (selectedWords.length < props.numMatchingWords) {
+    else if (selectedWords.length < validWords.length) {
       newSelectedWords.push(word);
     }
     // Selection is already full
@@ -188,7 +188,7 @@ const SameLetterWords: React.FC<Props> = (props) => {
     const matching_words = grid_words.slice();
     // Set the correct/matching words
     setValidWords(matching_words);
-    console.log(grid_words);
+    console.log(matching_words);
 
     // Non-matching words
     let fail_count = 0;
@@ -260,7 +260,7 @@ const SameLetterWords: React.FC<Props> = (props) => {
     }
 
     let message_notification;
-    const success_condition = selectedWords.every((word) => validWords.includes(word));
+    const success_condition = selectedWords.length > 0 && selectedWords.every((word) => validWords.includes(word));
 
     if (success_condition) {
       message_notification = (
