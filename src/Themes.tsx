@@ -54,13 +54,21 @@ import GenericWingoIcon3Src from "./images/themes/GenericWingo/icon-3.png";
 import GenericWingoIcon4Src from "./images/themes/GenericWingo/icon-4.png";
 import GenericWingoIcon5Src from "./images/themes/GenericWingo/icon-5.png";
 
-import GenericCountdownBackgroundImageSrc from "./images/themes/GenericCountdown/background.png";
-import GenericCountdownBackgroundAudioSrc from "./images/themes/GenericCountdown/background.mp3";
-import GenericCountdownIcon1Src from "./images/themes/GenericCountdown/icon-1.png";
-import GenericCountdownIcon2Src from "./images/themes/GenericCountdown/icon-2.png";
-import GenericCountdownIcon3Src from "./images/themes/GenericCountdown/icon-3.png";
-import GenericCountdownIcon4Src from "./images/themes/GenericCountdown/icon-4.png";
-import GenericCountdownIcon5Src from "./images/themes/GenericCountdown/icon-5.png";
+import GenericLetterCountdownBackgroundImageSrc from "./images/themes/GenericLetterCountdown/background.png";
+import GenericLetterCountdownBackgroundAudioSrc from "./images/themes/GenericLetterCountdown/background.mp3";
+import GenericLetterCountdownIcon1Src from "./images/themes/GenericLetterCountdown/icon-1.png";
+import GenericLetterCountdownIcon2Src from "./images/themes/GenericLetterCountdown/icon-2.png";
+import GenericLetterCountdownIcon3Src from "./images/themes/GenericLetterCountdown/icon-3.png";
+import GenericLetterCountdownIcon4Src from "./images/themes/GenericLetterCountdown/icon-4.png";
+import GenericLetterCountdownIcon5Src from "./images/themes/GenericLetterCountdown/icon-5.png";
+
+import GenericNumberCountdownBackgroundImageSrc from "./images/themes/GenericNumberCountdown/background.png";
+import GenericNumberCountdownBackgroundAudioSrc from "./images/themes/GenericNumberCountdown/background.mp3";
+import GenericNumberCountdownIcon1Src from "./images/themes/GenericNumberCountdown/icon-1.png";
+import GenericNumberCountdownIcon2Src from "./images/themes/GenericNumberCountdown/icon-2.png";
+import GenericNumberCountdownIcon3Src from "./images/themes/GenericNumberCountdown/icon-3.png";
+import GenericNumberCountdownIcon4Src from "./images/themes/GenericNumberCountdown/icon-4.png";
+import GenericNumberCountdownIcon5Src from "./images/themes/GenericNumberCountdown/icon-5.png";
 
 /* General theme */
 export type Theme = {
@@ -160,13 +168,24 @@ export const Themes = {
   },
 
   // Countdown studio
-  GenericCountdown: {
-    backgroundImageSrc: GenericCountdownBackgroundImageSrc,
-    backgroundAudio: { src: GenericCountdownBackgroundAudioSrc, volume: 1.0 },
-    icon1Src: GenericCountdownIcon1Src,
-    icon2Src: GenericCountdownIcon2Src,
-    icon3Src: GenericCountdownIcon3Src,
-    icon4Src: GenericCountdownIcon4Src,
-    icon5Src: GenericCountdownIcon5Src,
+  GenericLetterCountdown: {
+    backgroundImageSrc: GenericLetterCountdownBackgroundImageSrc,
+    backgroundAudio: { src: GenericLetterCountdownBackgroundAudioSrc, volume: 1.0 },
+    icon1Src: GenericLetterCountdownIcon1Src,
+    icon2Src: GenericLetterCountdownIcon2Src,
+    icon3Src: GenericLetterCountdownIcon3Src,
+    icon4Src: GenericLetterCountdownIcon4Src,
+    icon5Src: GenericLetterCountdownIcon5Src,
+  },
+
+  // Countdown studio
+  GenericNumberCountdown: {
+    backgroundImageSrc: GenericNumberCountdownBackgroundImageSrc,
+    backgroundAudio: { src: GenericNumberCountdownBackgroundAudioSrc, volume: 1.0 },
+    icon1Src: GenericNumberCountdownIcon1Src,
+    icon2Src: GenericNumberCountdownIcon2Src,
+    icon3Src: GenericNumberCountdownIcon3Src,
+    icon4Src: GenericNumberCountdownIcon4Src,
+    icon5Src: GenericNumberCountdownIcon5Src,
   },
 };

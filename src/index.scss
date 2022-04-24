@@ -97,9 +97,11 @@ body {
 
 // Add Vowel, Consonant and Quick Pick
 .add-letter-buttons-wrapper .btn.default {
-  border: none;
-  border-radius: 0px;
-  background-color: rgb(44, 44, 184);
+  background-color: #2c2cb8;
+  border-color: lighten(#2c2cb8, 10%);
+  &:hover {
+    background-color: darken(#2c2cb8, 10%);
+  }
   color: white;
 }
 
@@ -305,14 +307,15 @@ input {
 .countdown_word_grid .word_row .letter_tile {
   border: none;
   border-radius: 0px;
-  background-color: rgb(44, 44, 184);
+  background-color: #2c2cb8;
+  color: white;
   text-shadow: none;
 }
 
 $data-statuses: (
-  "correct": rgb(76, 161, 80),
-  "contains": rgb(220, 141, 55),
-  "incorrect": rgb(204, 33, 50),
+  "correct": #4ca150,
+  "contains": #dc8d37,
+  "incorrect": #cc2132,
   "not in word": #cbcbcb,
 );
 

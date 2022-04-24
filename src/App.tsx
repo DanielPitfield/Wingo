@@ -599,7 +599,9 @@ export const App: React.FC = () => {
             defaultWordLength={wordLength_countdown_letters}
             page={page}
             theme={
-              settings.graphics.preferredTheme ? Themes[settings.graphics.preferredTheme] : Themes.GenericCountdown
+              settings.graphics.preferredTheme
+                ? Themes[settings.graphics.preferredTheme]
+                : Themes.GenericLetterCountdown
             }
             settings={settings}
             setTheme={setThemeIfNoPreferredSet}
@@ -638,7 +640,9 @@ export const App: React.FC = () => {
             defaultNumGuesses={countdown_numbers_NumGuesses}
             page={page}
             theme={
-              settings.graphics.preferredTheme ? Themes[settings.graphics.preferredTheme] : Themes.GenericCountdown
+              settings.graphics.preferredTheme
+                ? Themes[settings.graphics.preferredTheme]
+                : Themes.GenericNumberCountdown
             }
             settings={settings}
             setTheme={setThemeIfNoPreferredSet}
