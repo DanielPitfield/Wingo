@@ -72,6 +72,7 @@ import GenericNumberCountdownIcon5Src from "./images/themes/GenericNumberCountdo
 
 /* General theme */
 export type Theme = {
+  isSelectable: boolean;
   backgroundImageSrc: string;
   backgroundAudio: {
     src: string;
@@ -92,6 +93,7 @@ export type ThemeIcons = {
 export const Themes = {
   // Space
   Space: {
+    isSelectable: true,
     backgroundImageSrc: SpaceBackgroundImageSrc,
     backgroundAudio: { src: SpaceBackgroundAudioSrc, volume: 1.0 },
     icon1Src: SpaceIcon1Src,
@@ -103,6 +105,7 @@ export const Themes = {
 
   // Cars/racing
   Cars: {
+    isSelectable: true,
     backgroundImageSrc: RacingBackgroundImageSrc,
     backgroundAudio: { src: RacingBackgroundAudioSrc, volume: 0.5 },
     icon1Src: RacingIcon1Src,
@@ -114,6 +117,7 @@ export const Themes = {
 
   // Travel
   Travel: {
+    isSelectable: true,
     backgroundImageSrc: TravelBackgroundImageSrc,
     backgroundAudio: { src: TravelBackgroundAudioSrc, volume: 0.45 },
     icon1Src: TravelIcon1Src,
@@ -125,6 +129,7 @@ export const Themes = {
 
   // Travel
   Nature: {
+    isSelectable: true,
     backgroundImageSrc: NatureBackgroundImageSrc,
     backgroundAudio: { src: NatureBackgroundAudioSrc, volume: 0.5 },
     icon1Src: NatureIcon1Src,
@@ -136,6 +141,7 @@ export const Themes = {
 
   // Geology
   Geology: {
+    isSelectable: true,
     backgroundImageSrc: GeologyBackgroundImageSrc,
     backgroundAudio: { src: GeologyBackgroundAudioSrc, volume: 0.4 },
     icon1Src: GeologyIcon1Src,
@@ -147,6 +153,7 @@ export const Themes = {
 
   // Fantasy
   Fantasy: {
+    isSelectable: true,
     backgroundImageSrc: FantasyBackgroundImageSrc,
     backgroundAudio: { src: FantasyBackgroundAudioSrc, volume: 0.8 },
     icon1Src: FantasyIcon1Src,
@@ -158,6 +165,7 @@ export const Themes = {
 
   // Generic wingo
   GenericWingo: {
+    isSelectable: false,
     backgroundImageSrc: GenericWingoBackgroundImageSrc,
     backgroundAudio: { src: GenericWingoBackgroundAudioSrc, volume: 0.18 },
     icon1Src: GenericWingoIcon1Src,
@@ -169,6 +177,7 @@ export const Themes = {
 
   // Countdown studio
   GenericLetterCountdown: {
+    isSelectable: false,
     backgroundImageSrc: GenericLetterCountdownBackgroundImageSrc,
     backgroundAudio: { src: GenericLetterCountdownBackgroundAudioSrc, volume: 1.0 },
     icon1Src: GenericLetterCountdownIcon1Src,
@@ -180,6 +189,7 @@ export const Themes = {
 
   // Countdown studio
   GenericNumberCountdown: {
+    isSelectable: false,
     backgroundImageSrc: GenericNumberCountdownBackgroundImageSrc,
     backgroundAudio: { src: GenericNumberCountdownBackgroundAudioSrc, volume: 1.0 },
     icon1Src: GenericNumberCountdownIcon1Src,
