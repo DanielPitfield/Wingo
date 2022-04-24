@@ -2,8 +2,11 @@ import React from "react";
 import NumberTile from "./NumberTile";
 
 interface Props {
-  onClick: (value: number | null, id: {type: "original", index: number} | {type: "intermediary", rowIndex: number}) => void;
-  isReadOnly: boolean;
+  onClick: (
+    value: number | null,
+    id: { type: "original"; index: number } | { type: "intermediary"; rowIndex: number }
+  ) => void;
+  disabled: boolean;
   expression: {
     number: number | null;
     picked: boolean;
@@ -13,8 +16,8 @@ interface Props {
 
 export const CountdownRow: React.FC<Props> = (props) => {
   /**
-   * 
-   * @returns 
+   *
+   * @returns
    */
   function CreateRow() {
     const tileArray = [];
@@ -24,11 +27,9 @@ export const CountdownRow: React.FC<Props> = (props) => {
         <NumberTile
           key={i}
           number={props.expression?.[i].number}
-          disabled={props.expression?.[i].picked}
-          isReadOnly={props.isReadOnly}
-          onClick={() => props.onClick(props.expression?.[i].number, {type: "original", index: i} )}
-          onRightClick={() => {}}
-        ></NumberTile>
+          disabled={props.disabled || props.expression?.[i].picked}
+          onClick={() => props.onClick(props.expression?.[i].number, { type: "original", index: i })}
+        />
       );
     }
 

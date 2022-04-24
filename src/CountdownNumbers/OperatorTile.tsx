@@ -5,6 +5,7 @@ import { operators } from "./CountdownNumbersConfig";
 interface Props {
   hasTimerEnded: boolean;
   targetNumber: number | null;
+  disabled: boolean;
   operator: typeof operators[0]["name"];
   setOperator: (operator: typeof operators[0]["name"]) => void;
 }
@@ -24,7 +25,7 @@ const OperatorTile: React.FC<Props> = (props) => {
   }
 
   return (
-    <div className="operator_tile" onClick={cycleOperator}>
+    <div className="operator_tile" onClick={cycleOperator} data-disabled={props.disabled} data-is-readonly={false}>
       {props.operator}
     </div>
   );

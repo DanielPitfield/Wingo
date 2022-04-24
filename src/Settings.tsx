@@ -77,7 +77,9 @@ export const Settings: React.FC<Props> = (props) => {
           name: "Preferred Theme",
           type: "option",
           value: props.settings.graphics.preferredTheme,
-          values: Object.keys(Themes).sort((a, b) => a.localeCompare(b)),
+          values: Object.keys(Themes)
+            .filter((key) => Themes[key as keyof typeof Themes]?.isSelectable)
+            .sort((a, b) => a.localeCompare(b)),
           onChange: (preferredTheme) => ({
             ...settings,
             graphics: { ...settings.graphics, preferredTheme: preferredTheme as keyof typeof Themes | null },
