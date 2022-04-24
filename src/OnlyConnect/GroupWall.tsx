@@ -286,7 +286,7 @@ const GroupWall: React.FC<Props> = (props) => {
 
   function populateRow(rowNumber: number) {
     return (
-      <div className="only-connect-row">
+      <div className="only-connect-row" key={rowNumber}>
         {Array.from({ length: props.groupSize }).map((_, i) => {
           const index = rowNumber * props.groupSize + i;
           const gridItem = gridWords[index];
