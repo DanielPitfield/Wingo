@@ -435,8 +435,12 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
       {inProgress && <MessageNotification type="default">{`Guesses left: ${remainingGuesses}`}</MessageNotification>}
       <div className="tile_row">{displayTiles()}</div>
       {inProgress && (
-        <Button mode="accept" settings={props.settings} onClick={() => checkTiles()}>
-          Submit Order
+        <Button
+          mode={remainingGuesses <= 1 ? "accept" : "default"}
+          settings={props.settings}
+          onClick={() => checkTiles()}
+        >
+          Submit guess
         </Button>
       )}
       <div>
