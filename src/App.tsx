@@ -598,11 +598,7 @@ export const App: React.FC = () => {
             keyboard={gameOptionToggles.find((x) => x.page === "countdown/letters")?.keyboard || false}
             defaultWordLength={wordLength_countdown_letters}
             page={page}
-            theme={
-              settings.graphics.preferredTheme
-                ? Themes[settings.graphics.preferredTheme]
-                : Themes.GenericLetterCountdown
-            }
+            theme={Themes.GenericLetterCountdown}
             settings={settings}
             setTheme={setThemeIfNoPreferredSet}
             setPage={setPage}
@@ -639,11 +635,7 @@ export const App: React.FC = () => {
             defaultExpressionLength={countdown_numbers_ExpressionLength}
             defaultNumGuesses={countdown_numbers_NumGuesses}
             page={page}
-            theme={
-              settings.graphics.preferredTheme
-                ? Themes[settings.graphics.preferredTheme]
-                : Themes.GenericNumberCountdown
-            }
+            theme={Themes.GenericNumberCountdown}
             settings={settings}
             setTheme={setThemeIfNoPreferredSet}
             setPage={setPage}
