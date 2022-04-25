@@ -1,15 +1,6 @@
-import { operators } from "../../CountdownNumbers/CountdownNumbersConfig";
-import { randomIntFromInterval } from "../../Nubble/Nubble";
 import { AlegbraConfigProps, QuestionTemplate } from "./Algebra";
 
-// 10 small numbers to choose from
-let smallNumbers: number[] = Array.from({ length: 10 }).map((_) => randomIntFromInterval(2, 10));
-
-// TODO: Sets won't ever change (determined once on launch)
-// TODO: Examples and finding of operator are hardcoded
-// TODO: The correctAnswer must be an integer
-
-/** All number sets */
+/** All templates */
 export const AlgebraTemplates = {
   EasySmall: {
     difficulty: "easy",
@@ -28,12 +19,12 @@ export const AlgebraTemplates = {
       {
         expression: "(b - e) x (f + a)",
         answerType: "number",
-        correctAnswer: 15,
+        correctAnswer: "15",
       } as QuestionTemplate,
       {
         expression: "(d + e) * (d + e)",
         answerType: "number",
-        correctAnswer: 144,
+        correctAnswer: "144",
       } as QuestionTemplate,
       {
         expression: "(c * 2a) - (b x e)",

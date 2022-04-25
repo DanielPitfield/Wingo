@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Page } from "../../App";
 import { Button } from "../../Button";
-import { Alphabet } from "../../Keyboard";
+import { Alphabet, Keyboard } from "../../Keyboard";
 import LetterTile from "../../LetterTile";
 import { MessageNotification } from "../../MessageNotification";
 import { NumPad } from "../../NumPad";
@@ -20,7 +20,7 @@ export type AlegbraConfigProps = {
 export type QuestionTemplate = {
   expression: string;
   answerType: "letter" | "number";
-  correctAnswer: string | number;
+  correctAnswer: string;
 };
 
 interface Props {
@@ -40,6 +40,7 @@ const NumberSets: React.FC<Props> = (props) => {
   const [inProgress, setInProgress] = useState(true);
   const [guess, setGuess] = useState("");
   const [algebraTemplate, setAlgebraTemplate] = useState<AlegbraConfigProps | undefined>(props.defaultTemplate);
+  const [questionNumber, setQuestionNumber] = useState(0);
   const [remainingGuesses, setRemainingGuesses] = useState(props.numGuesses);
   const [seconds, setSeconds] = useState(props.timerConfig.isTimed ? props.timerConfig.seconds : 0);
   const [playCorrectChimeSoundEffect] = useCorrectChime(props.settings);
@@ -67,12 +68,14 @@ const NumberSets: React.FC<Props> = (props) => {
     };
   }, [setSeconds, seconds, props.timerConfig.isTimed]);
 
-  // Picks a random set if one was not passed in through the props
+  // Picks a random template if one was not passed in through the props
   React.useEffect(() => {
     if (props.defaultTemplate) {
       setAlgebraTemplate(props.defaultTemplate);
     } else {
-      setAlgebraTemplate({ ...Object.values(AlgebraTemplates)[Math.round(Math.random() * (Object.values(AlgebraTemplates).length - 1))] });
+      setAlgebraTemplate({
+        ...Object.values(AlgebraTemplates)[Math.round(Math.random() * (Object.values(AlgebraTemplates).length - 1))],
+      });
     }
   }, [props.defaultTemplate]);
 
@@ -107,35 +110,24 @@ const NumberSets: React.FC<Props> = (props) => {
     );
   }
 
-  function displayQuestions() {
-    if (!algebraTemplate || !algebraTemplate.questions) {
+  function displayQuestion() {
+    if (!algebraTemplate) {
       return;
     }
 
-    const numQuestions = algebraTemplate.inputs.length;
+    const question = algebraTemplate.questions[questionNumber];
 
-    if (numQuestions === undefined || numQuestions <= 0) {
+    if (!question || !question.expression || !question.answerType || !question.correctAnswer) {
       return;
     }
 
     return (
       <div className="alegbra_questions_wrapper">
-        {Array.from({ length: numQuestions }).map((_, i) => {
-          const question = algebraTemplate.questions[i];
-
-          if (!question || !question.expression || !question.answerType || !question.correctAnswer) {
-            return;
-          }
-
-          return (
-            <div key={`alegbra_question ${i}`} className="alegbra_question">
-              {`${question.expression} (Answer type: ${question.answerType})`}
-            </div>
-          );
-        })}
+        <div key={`${question.expression}`} className="alegbra_question">
+          {`${question.expression} (Answer type: ${question.answerType})`}
+        </div>
       </div>
     );
-
   }
 
   function displayOutcome(): React.ReactNode {
@@ -148,12 +140,25 @@ const NumberSets: React.FC<Props> = (props) => {
       return;
     }
 
-    //const answer = numberSet?.question.correctAnswer.toString();
+    const answer = algebraTemplate.questions[questionNumber].correctAnswer.toString();
+    const success_condition = guess.toString() === answer;
+
+    // Correct answer and more questions for this template
+    if (success_condition && questionNumber < algebraTemplate.questions.length) {
+      // Show next question
+      setQuestionNumber(questionNumber + 1);
+    }
 
     return (
       <>
-        <MessageNotification type="success">
-
+        <MessageNotification type={success_condition ? "success" : "error"}>
+          <strong>{success_condition ? "Correct!" : "Incorrect"}</strong>
+          <br />
+          {!success_condition && (
+            <span>
+              The answer was <strong>{answer}</strong>
+            </span>
+          )}
         </MessageNotification>
       </>
     );
@@ -162,7 +167,9 @@ const NumberSets: React.FC<Props> = (props) => {
   function ResetGame() {
     setInProgress(true);
     setGuess("");
-    setAlgebraTemplate({ ...Object.values(AlgebraTemplates)[Math.round(Math.random() * (Object.values(AlgebraTemplates).length - 1))] });
+    setAlgebraTemplate({
+      ...Object.values(AlgebraTemplates)[Math.round(Math.random() * (Object.values(AlgebraTemplates).length - 1))],
+    });
     setRemainingGuesses(props.numGuesses);
 
     if (props.timerConfig.isTimed) {
@@ -200,7 +207,7 @@ const NumberSets: React.FC<Props> = (props) => {
       )}
       {inProgress && <MessageNotification type="default">{`Guesses left: ${remainingGuesses}`}</MessageNotification>}
       {displayInputs()}
-      {displayQuestions()}
+      {displayQuestion()}
       <div className="guess">
         <LetterTile
           letter={guess}
@@ -211,12 +218,22 @@ const NumberSets: React.FC<Props> = (props) => {
           settings={props.settings}
         ></LetterTile>
       </div>
-      <NumPad
-        onEnter={() => setInProgress(false)}
-        onBackspace={onBackspace}
-        onSubmitNumber={onSubmitNumber}
-        settings={props.settings}
-      />
+      {algebraTemplate?.questions[questionNumber].answerType === "number" && (
+        <NumPad
+          onEnter={() => setInProgress(false)}
+          onBackspace={onBackspace}
+          onSubmitNumber={onSubmitNumber}
+          settings={props.settings}
+        />
+      )}
+      {algebraTemplate?.questions[questionNumber].answerType === "letter" /* &&  (
+        <Keyboard        
+          onEnter={() => setInProgress(false)}
+          onBackspace={onBackspace}
+          settings={props.settings}
+        />
+
+      )*/}
       <div>
         {props.timerConfig.isTimed && (
           <ProgressBar
