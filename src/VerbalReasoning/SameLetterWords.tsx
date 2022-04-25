@@ -8,7 +8,7 @@ import ProgressBar, { GreenToRedColorTransition } from "../ProgressBar";
 import { SettingsData } from "../SaveData";
 import { useClickChime, useCorrectChime, useFailureChime, useLightPingChime } from "../Sounds";
 import { Theme } from "../Themes";
-import { categoryMappings, wordLengthMappingsTargets } from "../WordleConfig";
+import { wordLengthMappingsTargets } from "../WordleConfig";
 
 interface Props {
   numMatchingWords: number;
@@ -304,12 +304,12 @@ const SameLetterWords: React.FC<Props> = (props) => {
 
   return (
     <div
-      className="App only_connect_wall"
+      className="App same_letter_words"
       style={{ backgroundImage: `url(${props.theme.backgroundImageSrc})`, backgroundSize: "100%" }}
     >
       <div className="outcome">{displayOutcome()}</div>
       {inProgress && <MessageNotification type="default">{`Guesses left: ${remainingGuesses}`}</MessageNotification>}
-      <div className="only_connect_wall">{displayGrid()}</div>
+      <div className="grid">{displayGrid()}</div>
       <div>
         {props.timerConfig.isTimed && (
           <ProgressBar

@@ -24,6 +24,7 @@ import { VERSION } from "./version";
 import { ErrorBoundary } from "react-error-boundary";
 import { ErrorFallback } from "./ErrorFallback";
 import SameLetterWords from "./VerbalReasoning/SameLetterWords";
+import NumberSets from "./VerbalReasoning/NumberSets/NumberSets";
 
 const wordLength = 5;
 const numGuesses = 6;
@@ -60,6 +61,7 @@ export type Page =
   | "nubble"
   | "only_connect/wall"
   | "verbal_reasoning/match"
+  | "verbal_reasoning/number_sets"
   | "puzzle/sequence"
   | "campaign"
   | "campaign/area"
@@ -155,6 +157,12 @@ export const pages: { page: Page; title: string; description?: string; shortTitl
     title: "Same Letter Words",
     description: "Find the words which are made from the same letters",
     shortTitle: "Same Letter Words",
+  },
+  {
+    page: "verbal_reasoning/number_sets",
+    title: "Number Sets",
+    description: "Find the answer to a unique number set",
+    shortTitle: "Number Sets",
   },
   {
     page: "puzzle/sequence",
@@ -277,6 +285,12 @@ export const App: React.FC = () => {
     },
     {
       page: "verbal_reasoning/match",
+      firstLetter: false,
+      timer: true,
+      keyboard: false,
+    },
+    {
+      page: "verbal_reasoning/number_sets",
       firstLetter: false,
       timer: true,
       keyboard: false,
@@ -754,7 +768,22 @@ export const App: React.FC = () => {
             wordLength={5}
             numGuesses={20}
             timerConfig={
-              gameOptionToggles.find((x) => x.page === "only_connect/wall")?.timer
+              gameOptionToggles.find((x) => x.page === "verbal_reasoning/match")?.timer
+                ? { isTimed: true, seconds: 100 }
+                : { isTimed: false }
+            }
+            theme={theme}
+            settings={settings}
+            setPage={setPage}
+          />
+        );
+
+        case "verbal_reasoning/number_sets":
+        return (
+          <NumberSets
+            numGuesses={20}
+            timerConfig={
+              gameOptionToggles.find((x) => x.page === "verbal_reasoning/number_sets")?.timer
                 ? { isTimed: true, seconds: 100 }
                 : { isTimed: false }
             }
