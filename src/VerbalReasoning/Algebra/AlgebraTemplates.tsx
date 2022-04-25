@@ -1,4 +1,4 @@
-import { AlegbraConfigProps, QuestionTemplate } from "./Algebra";
+import { AlgebraConfigProps, QuestionTemplate } from "./Algebra";
 
 /** All templates */
 export const AlgebraTemplates = {
@@ -32,5 +32,5 @@ export const AlgebraTemplates = {
         correctAnswer: "f",
       } as QuestionTemplate,
     ],
-  } as AlegbraConfigProps,
+  } as AlgebraConfigProps,
 };

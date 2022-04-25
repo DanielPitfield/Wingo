@@ -102,7 +102,9 @@ const NumberSets: React.FC<Props> = (props) => {
 
           return (
             <div key={`example ${i}`} className="number_set_example">
-              {`${example.numbersLeft} ( ${example.correctAnswer} ) ${example.numbersRight}`}
+              <span>
+                {example.numbersLeft} ( <strong>{example.correctAnswer}</strong> ) {example.numbersRight}
+              </span>
             </div>
           );
         })}
@@ -121,7 +123,13 @@ const NumberSets: React.FC<Props> = (props) => {
       return;
     }
 
-    return <div className="number_set_question">{`${question.numbersLeft} (  ) ${question.numbersRight}`}</div>;
+    return (
+      <div className="number_set_question">
+        <span>
+          {question.numbersLeft} ( <strong>?</strong> ) {question.numbersRight}
+        </span>
+      </div>
+    );
   }
 
   function displayOutcome(): React.ReactNode {

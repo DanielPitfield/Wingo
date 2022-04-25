@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Page } from "../../App";
 import { Button } from "../../Button";
-import { Alphabet, Keyboard } from "../../Keyboard";
+import { Alphabet } from "../../Keyboard";
 import LetterTile from "../../LetterTile";
 import { MessageNotification } from "../../MessageNotification";
 import { NumPad } from "../../NumPad";
@@ -11,7 +11,7 @@ import { useClickChime, useCorrectChime, useFailureChime, useLightPingChime } fr
 import { Theme } from "../../Themes";
 import { AlgebraTemplates } from "./AlgebraTemplates";
 
-export type AlegbraConfigProps = {
+export type AlgebraConfigProps = {
   difficulty: "novice" | "easy" | "medium" | "hard" | "expert";
   inputs: number[];
   questions: QuestionTemplate[];
@@ -24,7 +24,7 @@ export type QuestionTemplate = {
 };
 
 interface Props {
-  defaultTemplate?: AlegbraConfigProps;
+  defaultTemplate?: AlgebraConfigProps;
   numGuesses: number;
   timerConfig: { isTimed: false } | { isTimed: true; seconds: number };
   theme: Theme;
@@ -39,7 +39,7 @@ const NumberSets: React.FC<Props> = (props) => {
 
   const [inProgress, setInProgress] = useState(true);
   const [guess, setGuess] = useState("");
-  const [algebraTemplate, setAlgebraTemplate] = useState<AlegbraConfigProps | undefined>(props.defaultTemplate);
+  const [algebraTemplate, setAlgebraTemplate] = useState<AlgebraConfigProps | undefined>(props.defaultTemplate);
   const [questionNumber, setQuestionNumber] = useState(0);
   const [remainingGuesses, setRemainingGuesses] = useState(props.numGuesses);
   const [seconds, setSeconds] = useState(props.timerConfig.isTimed ? props.timerConfig.seconds : 0);
@@ -91,7 +91,7 @@ const NumberSets: React.FC<Props> = (props) => {
     }
 
     return (
-      <div className="alegbra_inputs_wrapper">
+      <div className="algebra_inputs_wrapper">
         {Array.from({ length: numInputs }).map((_, i) => {
           const letter = Alphabet[i];
           const number = algebraTemplate.inputs[i];
@@ -101,8 +101,8 @@ const NumberSets: React.FC<Props> = (props) => {
           }
 
           return (
-            <div key={`alegbra_input ${letter}${number}`} className="alegbra_input">
-              {`${letter} = ${number}`}
+            <div key={`algebra_input ${letter}${number}`} className="algebra_input">
+              <strong>{letter}</strong> = {number}
             </div>
           );
         })}
@@ -122,9 +122,12 @@ const NumberSets: React.FC<Props> = (props) => {
     }
 
     return (
-      <div className="alegbra_questions_wrapper">
-        <div key={`${question.expression}`} className="alegbra_question">
-          {`${question.expression} (Answer type: ${question.answerType})`}
+      <div className="algebra_questions_wrapper">
+        <div className="algebra_question">
+          <strong>{question.expression}</strong>
+        </div>
+        <div className="algebra_question_type">
+          Answer type: <strong>{question.answerType}</strong>
         </div>
       </div>
     );
@@ -196,7 +199,7 @@ const NumberSets: React.FC<Props> = (props) => {
 
   return (
     <div
-      className="App number_sets"
+      className="App algebra"
       style={{ backgroundImage: `url(${props.theme.backgroundImageSrc})`, backgroundSize: "100%" }}
     >
       <div className="outcome">{displayOutcome()}</div>
@@ -226,14 +229,16 @@ const NumberSets: React.FC<Props> = (props) => {
           settings={props.settings}
         />
       )}
-      {algebraTemplate?.questions[questionNumber].answerType === "letter" /* &&  (
+      {
+        algebraTemplate?.questions[questionNumber].answerType === "letter" /* &&  (
         <Keyboard        
           onEnter={() => setInProgress(false)}
           onBackspace={onBackspace}
           settings={props.settings}
         />
 
-      )*/}
+      )*/
+      }
       <div>
         {props.timerConfig.isTimed && (
           <ProgressBar
