@@ -5,6 +5,10 @@ import { NumberSetConfigProps, NumberSetTemplate } from "./NumberSets";
 // 10 small numbers to choose from
 let smallNumbers: number[] = Array.from({ length: 10 }).map((_) => randomIntFromInterval(2, 10));
 
+// TODO: Sets won't ever change (determined once on launch)
+// TODO: Examples and finding of operator are hardcoded
+// TODO: The correctAnswer must be an integer
+
 /** All number sets */
 export const Sets = {
   Multiply: {

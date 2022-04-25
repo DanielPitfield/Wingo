@@ -1,7 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Page } from "../../App";
 import { Button } from "../../Button";
+import LetterTile from "../../LetterTile";
 import { MessageNotification } from "../../MessageNotification";
+import { NumPad } from "../../NumPad";
 import ProgressBar, { GreenToRedColorTransition } from "../../ProgressBar";
 import { SettingsData } from "../../SaveData";
 import { useClickChime, useCorrectChime, useFailureChime, useLightPingChime } from "../../Sounds";
@@ -34,7 +36,11 @@ interface Props {
 
 /** */
 const NumberSets: React.FC<Props> = (props) => {
+  // Max number of characters permitted in a guess
+  const MAX_LENGTH = 6;
+
   const [inProgress, setInProgress] = useState(true);
+  const [guess, setGuess] = useState("");
   const [numberSet, setNumberSet] = useState<NumberSetConfigProps | undefined>(props.defaultSet);
   const [remainingGuesses, setRemainingGuesses] = useState(props.numGuesses);
   const [seconds, setSeconds] = useState(props.timerConfig.isTimed ? props.timerConfig.seconds : 0);
@@ -113,11 +119,7 @@ const NumberSets: React.FC<Props> = (props) => {
       return;
     }
 
-    return (
-      <div className="number_set_question">
-        {`${question.numbersLeft} (  ) ${question.numbersRight}`}
-      </div>
-    );
+    return <div className="number_set_question">{`${question.numbersLeft} (  ) ${question.numbersRight}`}</div>;
   }
 
   function displayOutcome(): React.ReactNode {
@@ -126,38 +128,31 @@ const NumberSets: React.FC<Props> = (props) => {
       return;
     }
 
-    let message_notification;
-    const success_condition = true;
-
-    if (success_condition) {
-      message_notification = (
-        <MessageNotification type="success">
-          <strong>All words with the same letters found!</strong>
-        </MessageNotification>
-      );
-    } else {
-      message_notification = (
-        <MessageNotification type="error">
-          <strong>You didn't find the words with the same letters</strong>
-        </MessageNotification>
-      );
+    if (!numberSet) {
+      return;
     }
+
+    const answer = numberSet?.question.correctAnswer.toString();
 
     return (
       <>
-        {message_notification}
-
-        <br></br>
-
-        <Button mode="accept" settings={props.settings} onClick={() => ResetGame()}>
-          Restart
-        </Button>
+        <MessageNotification type={guess === answer ? "success" : "error"}>
+          <strong>{guess === answer ? "Correct!" : "Incorrect"}</strong>
+          <br />
+          {guess !== answer && (
+            <span>
+              The answer was <strong>{answer}</strong>
+            </span>
+          )}
+        </MessageNotification>
       </>
     );
   }
 
   function ResetGame() {
     setInProgress(true);
+    setGuess("");
+    setNumberSet({ ...Object.values(Sets)[Math.round(Math.random() * (Object.values(Sets).length - 1))] });
     setRemainingGuesses(props.numGuesses);
 
     if (props.timerConfig.isTimed) {
@@ -166,15 +161,51 @@ const NumberSets: React.FC<Props> = (props) => {
     }
   }
 
+  function onBackspace() {
+    if (guess.length === 0) {
+      return;
+    }
+
+    setGuess(guess.substring(0, guess.length - 1));
+  }
+
+  function onSubmitNumber(number: number) {
+    if (guess.length >= MAX_LENGTH) {
+      return;
+    }
+
+    setGuess(`${guess}${number}`);
+  }
+
   return (
     <div
       className="App number_sets"
       style={{ backgroundImage: `url(${props.theme.backgroundImageSrc})`, backgroundSize: "100%" }}
     >
       <div className="outcome">{displayOutcome()}</div>
+      {!inProgress && (
+        <Button mode="accept" onClick={() => ResetGame()} settings={props.settings}>
+          Restart
+        </Button>
+      )}
       {inProgress && <MessageNotification type="default">{`Guesses left: ${remainingGuesses}`}</MessageNotification>}
-      {inProgress && displayExamples()}
-      {inProgress && displayQuestion()}
+      {displayExamples()}
+      {displayQuestion()}
+      <div className="guess">
+        <LetterTile
+          letter={guess}
+          status={
+            inProgress ? "not set" : guess === numberSet?.question.correctAnswer.toString() ? "correct" : "incorrect"
+          }
+          settings={props.settings}
+        ></LetterTile>
+      </div>
+      <NumPad
+        onEnter={() => setInProgress(false)}
+        onBackspace={onBackspace}
+        onSubmitNumber={onSubmitNumber}
+        settings={props.settings}
+      />
       <div>
         {props.timerConfig.isTimed && (
           <ProgressBar
