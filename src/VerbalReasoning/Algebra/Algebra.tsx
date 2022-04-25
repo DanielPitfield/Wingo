@@ -41,6 +41,7 @@ const NumberSets: React.FC<Props> = (props) => {
   const [guess, setGuess] = useState("");
   const [algebraTemplate, setAlgebraTemplate] = useState<AlgebraConfigProps | undefined>(props.defaultTemplate);
   const [questionNumber, setQuestionNumber] = useState(0);
+  const [numCorrectAnswers, setNumCorrectAnswers] = useState(0);
   const [remainingGuesses, setRemainingGuesses] = useState(props.numGuesses);
   const [seconds, setSeconds] = useState(props.timerConfig.isTimed ? props.timerConfig.seconds : 0);
   const [playCorrectChimeSoundEffect] = useCorrectChime(props.settings);
@@ -77,6 +78,27 @@ const NumberSets: React.FC<Props> = (props) => {
     setAlgebraTemplate(template);
     console.log(template);
   }, [props.defaultTemplate]);
+
+  // Each time a guess is submitted
+  React.useEffect(() => {
+    if (inProgress) {
+      return;
+    }
+
+    if (!guess || guess.length < 1) {
+      return;
+    }
+
+    // The correct answer for the current question
+    const answer = algebraTemplate?.questions[questionNumber].correctAnswer.toString();
+    // Guess matches the answer
+    const success_condition = guess.toString().toUpperCase() === answer?.toUpperCase();
+
+    if (success_condition) {
+      setNumCorrectAnswers(numCorrectAnswers + 1);
+    }
+
+  }, [inProgress, guess]);
 
   function displayInputs() {
     if (!algebraTemplate || !algebraTemplate.inputs) {
@@ -142,11 +164,41 @@ const NumberSets: React.FC<Props> = (props) => {
       return;
     }
 
+    // The correct answer for the current question
     const answer = algebraTemplate.questions[questionNumber].correctAnswer.toString();
+    // Guess matches the answer
     const success_condition = guess.toString().toUpperCase() === answer.toUpperCase();
+
+    // The number of questgions in this set of questions
+    const numQuestions = algebraTemplate.questions.length;
+    // Question was the last in the set of questions
+    const set_finished = questionNumber === (numQuestions - 1);
+
+    function getQuestionSetOutcome() {
+      // All questions in the set answered correctly
+      if (numCorrectAnswers === numQuestions) {
+        return "success";
+      }
+      // No answers correct
+      else if (numCorrectAnswers === 0) {
+        return "error";
+      }
+      // Some answers correct
+      else {
+        return "default";
+      }
+    }
 
     return (
       <>
+        {set_finished && (
+          <MessageNotification type={getQuestionSetOutcome()}>
+            <strong>{`${numCorrectAnswers} / ${numQuestions} correct`}</strong>
+          </MessageNotification>
+        )}
+
+        <br></br>
+
         <MessageNotification type={success_condition ? "success" : "error"}>
           <strong>{success_condition ? "Correct!" : "Incorrect"}</strong>
           <br />
@@ -160,6 +212,7 @@ const NumberSets: React.FC<Props> = (props) => {
     );
   }
 
+  // Restart with new set of questions
   function ResetGame() {
     setInProgress(true);
     setGuess("");
@@ -167,12 +220,20 @@ const NumberSets: React.FC<Props> = (props) => {
       ...Object.values(AlgebraTemplates)[Math.round(Math.random() * (Object.values(AlgebraTemplates).length - 1))],
     });
     setRemainingGuesses(props.numGuesses);
-    setQuestionNumber(questionNumber + 1);
+    setQuestionNumber(0);
+    setNumCorrectAnswers(0);
 
     if (props.timerConfig.isTimed) {
       // Reset the timer if it is enabled in the game options
       setSeconds(props.timerConfig.seconds);
     }
+  }
+
+  // Next question
+  function ContinueGame() {
+    setInProgress(true);
+    setGuess("");
+    setQuestionNumber(questionNumber + 1);
   }
 
   function onBackspace() {
@@ -209,8 +270,13 @@ const NumberSets: React.FC<Props> = (props) => {
       style={{ backgroundImage: `url(${props.theme.backgroundImageSrc})`, backgroundSize: "100%" }}
     >
       <div className="outcome">{displayOutcome()}</div>
-      {!inProgress && (
+      {!inProgress && questionNumber === (algebraTemplate?.questions.length! - 1) && (
         <Button mode="accept" onClick={() => ResetGame()} settings={props.settings}>
+          Restart
+        </Button>
+      )}
+      {!inProgress && questionNumber !== (algebraTemplate?.questions.length! - 1) && (
+        <Button mode="accept" onClick={() => ContinueGame()} settings={props.settings}>
           Next
         </Button>
       )}
@@ -221,7 +287,12 @@ const NumberSets: React.FC<Props> = (props) => {
         <LetterTile
           letter={guess}
           status={
-            inProgress ? "not set" : guess.toUpperCase() === algebraTemplate?.questions[questionNumber].correctAnswer.toString().toUpperCase() ? "correct" : "incorrect"
+            inProgress
+              ? "not set"
+              : guess.toUpperCase() ===
+                algebraTemplate?.questions[questionNumber].correctAnswer.toString().toUpperCase()
+              ? "correct"
+              : "incorrect"
           }
           settings={props.settings}
         ></LetterTile>
