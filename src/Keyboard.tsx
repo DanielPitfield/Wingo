@@ -18,13 +18,16 @@ interface Props {
     letter: string;
     status: "" | "contains" | "correct" | "not set" | "not in word";
   }[];
+  customAlphabet?: string[];
+  showBackspace?: boolean;
 }
 
-export const alphabet_string = "abcdefghijklmnopqrstuvwxyz";
-export const Alphabet = alphabet_string.split("");
+export const DEFAULT_ALPHABET_STRING = "abcdefghijklmnopqrstuvwxyz";
+export const DEFAULT_ALPHABET = DEFAULT_ALPHABET_STRING.split("");
 
 export const Keyboard: React.FC<Props> = (props) => {
   const [playClickSoundEffect] = useClickChime(props.settings);
+  const alphabet = props.customAlphabet || DEFAULT_ALPHABET;
 
   const modesWithSpaces = ["category", "letters_categories"];
   const modesWithoutKeyboardStatuses = [
@@ -42,7 +45,7 @@ export const Keyboard: React.FC<Props> = (props) => {
       } else if (input_key === "backspace") {
         props.onBackspace();
         playClickSoundEffect();
-      } else if (Alphabet.includes(input_key)) {
+      } else if (alphabet.includes(input_key)) {
         // Any letter on the keyboard
         props.onSubmitLetter(input_key);
         playClickSoundEffect();
@@ -68,7 +71,7 @@ export const Keyboard: React.FC<Props> = (props) => {
 
   function getKeyboardStatuses() {
     // Letter and status array
-    let keyboardStatuses = Alphabet.map((x) => ({
+    let keyboardStatuses = alphabet.map((x) => ({
       letter: x,
       status: "not set",
     }));
@@ -152,16 +155,26 @@ export const Keyboard: React.FC<Props> = (props) => {
   return (
     <div className="keyboard_wrapper">
       <div className="keyboard_row_top">
-        <>{populateKeyboard("QWERTYUIOP")}</>
+        <>
+          {props.customAlphabet
+            ? populateKeyboard(props.customAlphabet.slice(0, Math.round(props.customAlphabet.length / 2)).join(""))
+            : populateKeyboard("QWERTYUIOP")}
+        </>
       </div>
       <div className="keyboard_row_middle">
-        <>{populateKeyboard(!modesWithSpaces.includes(props.mode) ? "ASDFGHJKL" : "ASDFGHJKL'")}</>
+        <>
+          {props.customAlphabet
+            ? populateKeyboard(props.customAlphabet.slice(Math.round(props.customAlphabet.length / 2)).join(""))
+            : populateKeyboard(!modesWithSpaces.includes(props.mode) ? "ASDFGHJKL" : "ASDFGHJKL'")}
+        </>
       </div>
       <div className="keyboard_row_bottom">
-        <>{populateKeyboard("ZXCVBNM")}</>
-        <Button mode="destructive" settings={props.settings} onClick={props.onBackspace}>
-          &lt;
-        </Button>
+        <>{props.customAlphabet ? null : populateKeyboard("ZXCVBNM")}</>
+        {props.showBackspace !== false && (
+          <Button mode="destructive" settings={props.settings} onClick={props.onBackspace}>
+            &lt;
+          </Button>
+        )}
       </div>
       <div className="keyboard_space">{modesWithSpaces.includes(props.mode) && <>{populateKeyboard("-")}</>}</div>
       <div className="keyboard_enter">

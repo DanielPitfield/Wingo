@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Page } from "../../App";
 import { Button } from "../../Button";
-import { Alphabet } from "../../Keyboard";
+import { DEFAULT_ALPHABET, Keyboard } from "../../Keyboard";
 import LetterTile from "../../LetterTile";
 import { MessageNotification } from "../../MessageNotification";
 import { NumPad } from "../../NumPad";
@@ -70,13 +70,12 @@ const NumberSets: React.FC<Props> = (props) => {
 
   // Picks a random template if one was not passed in through the props
   React.useEffect(() => {
-    if (props.defaultTemplate) {
-      setAlgebraTemplate(props.defaultTemplate);
-    } else {
-      setAlgebraTemplate({
-        ...Object.values(AlgebraTemplates)[Math.round(Math.random() * (Object.values(AlgebraTemplates).length - 1))],
-      });
-    }
+    const template = props.defaultTemplate || {
+      ...Object.values(AlgebraTemplates)[Math.round(Math.random() * (Object.values(AlgebraTemplates).length - 1))],
+    };
+
+    setAlgebraTemplate(template);
+    console.log(template);
   }, [props.defaultTemplate]);
 
   function displayInputs() {
@@ -93,7 +92,7 @@ const NumberSets: React.FC<Props> = (props) => {
     return (
       <div className="algebra_inputs_wrapper">
         {Array.from({ length: numInputs }).map((_, i) => {
-          const letter = Alphabet[i];
+          const letter = DEFAULT_ALPHABET[i];
           const number = algebraTemplate.inputs[i];
 
           if (!letter || !number) {
@@ -144,13 +143,7 @@ const NumberSets: React.FC<Props> = (props) => {
     }
 
     const answer = algebraTemplate.questions[questionNumber].correctAnswer.toString();
-    const success_condition = guess.toString() === answer;
-
-    // Correct answer and more questions for this template
-    if (success_condition && questionNumber < algebraTemplate.questions.length) {
-      // Show next question
-      setQuestionNumber(questionNumber + 1);
-    }
+    const success_condition = guess.toString().toUpperCase() === answer.toUpperCase();
 
     return (
       <>
@@ -174,6 +167,7 @@ const NumberSets: React.FC<Props> = (props) => {
       ...Object.values(AlgebraTemplates)[Math.round(Math.random() * (Object.values(AlgebraTemplates).length - 1))],
     });
     setRemainingGuesses(props.numGuesses);
+    setQuestionNumber(questionNumber + 1);
 
     if (props.timerConfig.isTimed) {
       // Reset the timer if it is enabled in the game options
@@ -189,7 +183,19 @@ const NumberSets: React.FC<Props> = (props) => {
     setGuess(guess.substring(0, guess.length - 1));
   }
 
+  function onSubmitLetter(letter: string) {
+    if (!inProgress) {
+      return;
+    }
+
+    setGuess(letter);
+  }
+
   function onSubmitNumber(number: number) {
+    if (!inProgress) {
+      return;
+    }
+
     if (guess.length >= MAX_LENGTH) {
       return;
     }
@@ -205,7 +211,7 @@ const NumberSets: React.FC<Props> = (props) => {
       <div className="outcome">{displayOutcome()}</div>
       {!inProgress && (
         <Button mode="accept" onClick={() => ResetGame()} settings={props.settings}>
-          Restart
+          Next
         </Button>
       )}
       {inProgress && <MessageNotification type="default">{`Guesses left: ${remainingGuesses}`}</MessageNotification>}
@@ -229,16 +235,21 @@ const NumberSets: React.FC<Props> = (props) => {
           settings={props.settings}
         />
       )}
-      {
-        algebraTemplate?.questions[questionNumber].answerType === "letter" /* &&  (
-        <Keyboard        
+      {algebraTemplate?.questions[questionNumber].answerType === "letter" && (
+        <Keyboard
           onEnter={() => setInProgress(false)}
           onBackspace={onBackspace}
           settings={props.settings}
+          onSubmitLetter={onSubmitLetter}
+          customAlphabet={"ABCDEFGHIJKLMNOPQRSTUVWXYZ".slice(0, algebraTemplate?.inputs.length).split("")}
+          showBackspace={false}
+          targetWord=""
+          mode=""
+          guesses={[]}
+          letterStatuses={[]}
+          inDictionary
         />
-
-      )*/
-      }
+      )}
       <div>
         {props.timerConfig.isTimed && (
           <ProgressBar

@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Page } from "../App";
 import LetterCategories from "./LetterCategories";
 import { SettingsData } from "../SaveData";
-import { Alphabet } from "../Keyboard";
+import { DEFAULT_ALPHABET } from "../Keyboard";
 import { categoryMappings } from "../WordleConfig";
 import { Theme } from "../Themes";
 
@@ -58,7 +58,7 @@ const LetterCategoriesConfig: React.FC<Props> = (props) => {
   React.useEffect(() => {
     if (inProgress) {
       // Get a random letter from the Alphabet
-      const start_letter = Alphabet[Math.round(Math.random() * (Alphabet.length - 1))];
+      const start_letter = DEFAULT_ALPHABET[Math.round(Math.random() * (DEFAULT_ALPHABET.length - 1))];
       // Set this letter as the letter that all words must begin with
       setCategoryRequiredStartingLetter(start_letter);
 
