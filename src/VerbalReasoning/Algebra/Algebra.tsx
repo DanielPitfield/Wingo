@@ -221,8 +221,7 @@ const NumberSets: React.FC<Props> = (props) => {
         <LetterTile
           letter={guess}
           status={
-            "not set"
-            //inProgress ? "not set" : guess === numberSet?.question.correctAnswer.toString() ? "correct" : "incorrect"
+            inProgress ? "not set" : guess.toUpperCase() === algebraTemplate?.questions[questionNumber].correctAnswer.toString().toUpperCase() ? "correct" : "incorrect"
           }
           settings={props.settings}
         ></LetterTile>
