@@ -25,6 +25,7 @@ import { ErrorBoundary } from "react-error-boundary";
 import { ErrorFallback } from "./ErrorFallback";
 import SameLetterWords from "./VerbalReasoning/SameLetterWords";
 import NumberSets from "./VerbalReasoning/NumberSets/NumberSets";
+import Algebra from "./VerbalReasoning/Algebra/Algebra";
 
 const wordLength = 5;
 const numGuesses = 6;
@@ -62,6 +63,7 @@ export type Page =
   | "only_connect/wall"
   | "verbal_reasoning/match"
   | "verbal_reasoning/number_sets"
+  | "verbal_reasoning/algebra"
   | "puzzle/sequence"
   | "campaign"
   | "campaign/area"
@@ -163,6 +165,12 @@ export const pages: { page: Page; title: string; description?: string; shortTitl
     title: "Number Sets",
     description: "Find the answer to a unique number set",
     shortTitle: "Number Sets",
+  },
+  {
+    page: "verbal_reasoning/algebra",
+    title: "Algebra",
+    description: "Find the answer to a unique number set",
+    shortTitle: "Algebra",
   },
   {
     page: "puzzle/sequence",
@@ -291,6 +299,12 @@ export const App: React.FC = () => {
     },
     {
       page: "verbal_reasoning/number_sets",
+      firstLetter: false,
+      timer: true,
+      keyboard: false,
+    },
+    {
+      page: "verbal_reasoning/algebra",
       firstLetter: false,
       timer: true,
       keyboard: false,
@@ -760,7 +774,7 @@ export const App: React.FC = () => {
           />
         );
 
-        case "verbal_reasoning/match":
+      case "verbal_reasoning/match":
         return (
           <SameLetterWords
             numMatchingWords={4}
@@ -778,12 +792,27 @@ export const App: React.FC = () => {
           />
         );
 
-        case "verbal_reasoning/number_sets":
+      case "verbal_reasoning/number_sets":
         return (
           <NumberSets
             numGuesses={20}
             timerConfig={
               gameOptionToggles.find((x) => x.page === "verbal_reasoning/number_sets")?.timer
+                ? { isTimed: true, seconds: 100 }
+                : { isTimed: false }
+            }
+            theme={theme}
+            settings={settings}
+            setPage={setPage}
+          />
+        );
+
+      case "verbal_reasoning/algebra":
+        return (
+          <Algebra
+            numGuesses={20}
+            timerConfig={
+              gameOptionToggles.find((x) => x.page === "verbal_reasoning/algebra")?.timer
                 ? { isTimed: true, seconds: 100 }
                 : { isTimed: false }
             }
