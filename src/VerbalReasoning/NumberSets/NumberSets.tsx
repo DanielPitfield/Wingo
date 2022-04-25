@@ -3,12 +3,13 @@ import { Page } from "../../App";
 import { Button } from "../../Button";
 import LetterTile from "../../LetterTile";
 import { MessageNotification } from "../../MessageNotification";
+import { randomIntFromInterval } from "../../Nubble/Nubble";
 import { NumPad } from "../../NumPad";
 import ProgressBar, { GreenToRedColorTransition } from "../../ProgressBar";
 import { SettingsData } from "../../SaveData";
 import { useClickChime, useCorrectChime, useFailureChime, useLightPingChime } from "../../Sounds";
 import { Theme } from "../../Themes";
-import { Sets } from "./Sets";
+import { generateSets as generateSet } from "./Sets";
 
 /** Config for a specific number set (exported for config from campaign) */
 export type NumberSetConfigProps = {
@@ -69,12 +70,18 @@ const NumberSets: React.FC<Props> = (props) => {
     };
   }, [setSeconds, seconds, props.timerConfig.isTimed]);
 
+  React.useEffect(() => {
+    const numberSet = generateSet();
+    setNumberSet({ ...Object.values(numberSet)[Math.round(Math.random() * (Object.values(numberSet).length - 1))] });
+  }, []);
+
   // Picks a random set if one was not passed in through the props
   React.useEffect(() => {
     if (props.defaultSet) {
       setNumberSet(props.defaultSet);
     } else {
-      setNumberSet({ ...Object.values(Sets)[Math.round(Math.random() * (Object.values(Sets).length - 1))] });
+      const numberSet = generateSet();
+      setNumberSet({ ...Object.values(numberSet)[Math.round(Math.random() * (Object.values(numberSet).length - 1))] });
     }
   }, [props.defaultSet]);
 
@@ -152,8 +159,10 @@ const NumberSets: React.FC<Props> = (props) => {
   function ResetGame() {
     setInProgress(true);
     setGuess("");
-    setNumberSet({ ...Object.values(Sets)[Math.round(Math.random() * (Object.values(Sets).length - 1))] });
     setRemainingGuesses(props.numGuesses);
+
+    const numberSet = generateSet();
+    setNumberSet({ ...Object.values(numberSet)[Math.round(Math.random() * (Object.values(numberSet).length - 1))] });
 
     if (props.timerConfig.isTimed) {
       // Reset the timer if it is enabled in the game options
