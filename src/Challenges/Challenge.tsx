@@ -60,9 +60,9 @@ export const Challenge: React.FC<{
 
 export const ChallengeReward: React.FC<{ goldCoins: number }> = (props) => {
   return (
-    <p className="challenge-reward">
+    <span className="challenge-reward">
       <img className="challenge-reward-icon" height={18} width={18} src={GoldCoin} alt="" />
       {props.goldCoins}
-    </p>
+    </span>
   );
 };
