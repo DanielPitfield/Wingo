@@ -203,53 +203,67 @@ export const LobbyMenu: React.FC<Props> = (props) => {
             }
           };
 
+          // Completed and redeemded
           if (status === "redeemed") {
             return null;
           }
 
+          // A similar challenge with a lower target has not been acheived yet
           if (status === "superseded") {
             return null;
           }
 
-          return (
-            <div
-              className={["challenge", isAcheived && !isRedeemed ? "shimmer" : ""].join(" ")}
-              key={challenge.id()}
-              data-status={status}
-              data-animation-setting={props.settings.graphics.animation}
-              title={statusDescription()}
-            >
-              <img className="challenge-icon" src={Star} width={32} height={32} alt="" />
-              <h3 className="challenge-title">{challenge.userFacingTitle}</h3>
-              <p className="challenge-description">{challenge.description()}</p>
-              <p className="challenge-reward">
-                <img className="challenge-reward-icon" height={18} width={18} src={GoldCoin} alt="" />
-                {challenge.reward().goldCoins}
-              </p>
-              <ProgressBar
-                progress={Math.min(challenge.target(), currentProgress)}
-                total={challenge.target()}
-                display={{ type: "solid", color: "#ffd613" }}
+          return {
+            status,
+            element: (
+              <div
+                className={["challenge", isAcheived && !isRedeemed ? "shimmer" : ""].join(" ")}
+                key={challenge.id()}
+                data-status={status}
+                data-animation-setting={props.settings.graphics.animation}
+                title={statusDescription()}
               >
-                {Math.min(challenge.target(), currentProgress)} / {challenge.target()} {challenge.unit}
-              </ProgressBar>
-              {isAcheived && !isRedeemed && (
-                <Button
-                  mode="default"
-                  className="challenge-redeem-reward"
-                  settings={props.settings}
-                  onClick={() => {
-                    challenge.isRedeemed = true;
-                    props.addGold(challenge.reward().goldCoins);
-                    playNotificationChime();
-                  }}
+                <img className="challenge-icon" src={Star} width={32} height={32} alt="" />
+                <h3 className="challenge-title">{challenge.userFacingTitle}</h3>
+                <p className="challenge-description">{challenge.description()}</p>
+                <p className="challenge-reward">
+                  <img className="challenge-reward-icon" height={18} width={18} src={GoldCoin} alt="" />
+                  {challenge.reward().goldCoins}
+                </p>
+                <ProgressBar
+                  progress={Math.min(challenge.target(), currentProgress)}
+                  total={challenge.target()}
+                  display={{ type: "solid", color: "#ffd613" }}
                 >
-                  Redeem
-                </Button>
-              )}
-            </div>
-          );
-        }).filter((x) => x)}
+                  {Math.min(challenge.target(), currentProgress)} / {challenge.target()} {challenge.unit}
+                </ProgressBar>
+                {isAcheived && !isRedeemed && (
+                  <Button
+                    mode="default"
+                    className="challenge-redeem-reward"
+                    settings={props.settings}
+                    onClick={() => {
+                      challenge.isRedeemed = true;
+                      props.addGold(challenge.reward().goldCoins);
+                      playNotificationChime();
+                    }}
+                  >
+                    Redeem
+                  </Button>
+                )}
+              </div>
+            ),
+          };
+        })
+          // Filter out challenges that are already "redeemed", or "superseded" (a similar challenge with a lower target has not been acheived yet)
+          .filter((challenge) => challenge)
+
+          // Sort by the status alphabetically (i.e. "achieved" will be rendered before "in-progress"),
+          // meaning redeemable challenges appear at the top
+          .sort((a, b) => a!.status.localeCompare(b!.status))
+
+          // Render the JSX element
+          .map((challenge) => challenge!.element)}
       </section>
     </div>
   );
