@@ -2,6 +2,7 @@ import React from "react";
 import "./index.scss";
 import { Button } from "./Button";
 import { SettingsData } from "./SaveData";
+import { useClickChime } from "./Sounds";
 
 interface Props {
   settings: SettingsData;
@@ -13,6 +14,8 @@ interface Props {
 export const Numbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
 
 export const NumPad: React.FC<Props> = (props) => {
+  const [playClickSoundEffect] = useClickChime(props.settings);
+
   React.useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       const input_key = event.key.toString().toLowerCase();
@@ -24,6 +27,7 @@ export const NumPad: React.FC<Props> = (props) => {
 
       if (input_key === "backspace") {
         props.onBackspace();
+        playClickSoundEffect();
         return;
       }
 
@@ -31,6 +35,7 @@ export const NumPad: React.FC<Props> = (props) => {
 
       if (Numbers.includes(keyAsInt)) {
         props.onSubmitNumber(keyAsInt);
+        playClickSoundEffect();
         return;
       }
     };
