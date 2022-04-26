@@ -119,11 +119,7 @@ const SameLetterWords: React.FC<Props> = (props) => {
 
         playLightPingSoundEffect();
       }, INCORRECT_SELECTION_DELAY_MS);
-      return;
     }
-
-    // Reset the selected words
-    setSelectedWords([]);
   }, [selectedWords]);
 
   function handleSelection(word: string) {
@@ -291,6 +287,7 @@ const SameLetterWords: React.FC<Props> = (props) => {
 
   function ResetGame() {
     setInProgress(true);
+    debugger;
     setSelectedWords([]);
     setValidWords([]);
     setGridWords(getGridWords());
