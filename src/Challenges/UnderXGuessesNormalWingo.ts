@@ -42,7 +42,12 @@ export class UnderXGuessesNormalWingo extends BaseChallenge {
     return history.games.filter(
       (game) =>
         game.page === "wingo/repeat" &&
-        game.completedRounds.some((x) => x.guesses.length <= this.config.numberOfGuesses && x.outcome === "success")
+        game.completedRounds.some(
+          (x) =>
+            (x.gameCategory === "wingo" && x.levelProps.guesses
+              ? x.levelProps.guesses.length <= this.config.numberOfGuesses
+              : false) && x.outcome === "success"
+        )
     ).length;
   }
 

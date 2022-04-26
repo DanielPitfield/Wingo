@@ -44,13 +44,18 @@ export class XLetterLimitlessWingo extends BaseChallenge {
         (game) =>
           game.page === "wingo/limitless" &&
           game.completedRounds.some(
-            (round) => round.currentWord.length >= this.config.numberOfLetters && round.outcome === "success"
+            (round) =>
+              (round.gameCategory === "wingo"
+                ? round.levelProps.targetWord?.length ?? 0 >= this.config.numberOfLetters
+                : false) && round.outcome === "success"
           )
       )
       .map((game) =>
         Math.max.apply(
           undefined,
-          game.completedRounds.flatMap((round) => round.wordLength)
+          game.completedRounds.flatMap((round) =>
+            round.gameCategory === "wingo" ? round.levelProps.targetWord?.length ?? 0 : 0
+          )
         )
       );
 

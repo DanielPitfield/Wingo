@@ -8,18 +8,21 @@ import ProgressBar, { GreenToRedColorTransition } from "../ProgressBar";
 import { isWordValid } from "./CountdownLettersConfig";
 import { wordLengthMappingsGuessable } from "../WordleConfig";
 import { Theme } from "../Themes";
-import { SettingsData } from "../SaveData";
+import { SaveData, SettingsData } from "../SaveData";
 
-interface Props {
+export interface CountdownLettersConfigProps {
   mode: "countdown_letters_casual" | "countdown_letters_realistic";
   timerConfig: { isTimed: false } | { isTimed: true; totalSeconds: number; elapsedSeconds: number };
   keyboard: boolean;
   wordLength: number;
   guesses: string[];
-  currentWord: string;
-  countdownWord: string;
-  inProgress: boolean;
   hasTimerEnded: boolean;
+  countdownWord: string;
+}
+
+interface Props extends CountdownLettersConfigProps {
+  currentWord: string;
+  inProgress: boolean;
   inDictionary: boolean;
   hasSubmitLetter: boolean;
   targetWord: string;
@@ -48,25 +51,38 @@ const CountdownLetters: React.FC<Props> = (props) => {
   // Stores whether a manual selection has been made (to stop us overwriting that manual decision)
   const [manualGuessSelectionMade, setManualGuessSelectionMade] = useState(false);
 
+  const [gameId, setGameId] = useState<string | null>(null);
+
+  // Check if 9 letters have been selected
+  const isSelectionFinished = props.countdownWord.length === 9;
+
   // TODO: Save CountdownLetters game
-  /*
+
   React.useEffect(() => {
-    if (!targetWord) {
+    if (!isSelectionFinished) {
       return;
     }
 
-    const gameId = SaveData.addGameToHistory(props.page, {
+    if (!props.targetWord) {
+      return;
+    }
+
+    const gameId = SaveData.addGameToHistory("countdown/letters", {
       timestamp: new Date().toISOString(),
-      firstLetterProvided: props.firstLetterProvided,
-      wordLength,
-      numGuesses,
-      puzzleLeaveNumBlanks: props.puzzleLeaveNumBlanks,
-      puzzleRevealMs: props.puzzleRevealMs,
+      gameCategory: "countdown_letters",
+      levelProps: {
+        countdownWord: props.countdownWord,
+        guesses: props.guesses,
+        hasTimerEnded: props.hasSubmitLetter,
+        keyboard: props.keyboard,
+        mode: props.mode,
+        timerConfig: props.timerConfig,
+        wordLength: props.wordLength,
+      },
     });
 
     setGameId(gameId);
-  }, [props.page, countdownWord]);
-  */
+  }, [props.mode, props.targetWord, isSelectionFinished]);
 
   // Create grid of rows (for guessing words)
   function populateGrid(wordLength: number) {
@@ -182,9 +198,6 @@ const CountdownLetters: React.FC<Props> = (props) => {
     }
 
     var Grid = [];
-
-    // Check if 9 letters have been selected
-    const isSelectionFinished = props.countdownWord.length === 9;
 
     // Read only letter selection WordRow
     Grid.push(
@@ -359,21 +372,23 @@ const CountdownLetters: React.FC<Props> = (props) => {
     }
 
     // TODO: Save CountdownLetters round
-    /*
+
     if (outcome !== "in-progress" && gameId) {
       SaveData.addCompletedRoundToGameHistory(gameId, {
         timestamp: new Date().toISOString(),
+        gameCategory: "wingo",
         outcome,
-        currentWord,
-        guesses,
-        wordLength,
-        numGuesses,
-        firstLetterProvided: props.firstLetterProvided,
-        puzzleLeaveNumBlanks: props.puzzleLeaveNumBlanks,
-        puzzleRevealMs: props.puzzleRevealMs,
+        levelProps: {
+          countdownWord: props.countdownWord,
+          guesses: props.guesses,
+          hasTimerEnded: props.hasSubmitLetter,
+          keyboard: props.keyboard,
+          mode: props.mode,
+          timerConfig: props.timerConfig,
+          wordLength: props.wordLength,
+        },
       });
     }
-    */
   }
 
   // Set the selected final guess to the longest word (as long as `manualGuessSelectionMade` is false)

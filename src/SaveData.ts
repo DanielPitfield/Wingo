@@ -1,4 +1,5 @@
 import { Page } from "./App";
+import { LevelConfig } from "./Campaign/Level";
 import { BaseChallenge } from "./Challenges/BaseChallenge";
 import { Themes } from "./Themes";
 
@@ -43,28 +44,16 @@ export type HistorySaveData = {
     /** Configuration at the start of the game */
     configAtStartOfGame: {
       timestamp: string;
-      wordLength: number;
-      numGuesses: number;
-      firstLetterProvided: boolean;
-      puzzleRevealMs: number;
-      puzzleLeaveNumBlanks: number;
-    };
+    } & LevelConfig["level"];
 
     /** Configuration of the rounds in the game (including the last) */
-    completedRounds: {
+    completedRounds: ({
       /** Unique identifer of the game */
       id: string;
 
       timestamp: string;
-      wordLength: number;
-      numGuesses: number;
-      firstLetterProvided: boolean;
-      puzzleRevealMs: number;
-      puzzleLeaveNumBlanks: number;
-      currentWord: string;
-      guesses: string[];
       outcome: "success" | "failure";
-    }[];
+    } & LevelConfig["level"])[];
   }[];
 };
 
@@ -226,8 +215,9 @@ export class SaveData {
       games: history.games.map((game) => {
         // Find the game
         if (game.id === gameId) {
-          // Add the round
-          game.completedRounds.push({ id: newGuid(), ...round });
+          const roundWithId = round as HistorySaveData["games"][0]["completedRounds"][0]; // Add the round
+          roundWithId.id = newGuid();
+          game.completedRounds.push(roundWithId);
         }
 
         return game;

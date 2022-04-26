@@ -33,6 +33,7 @@ export interface WordleConfigProps {
   puzzleRevealMs: number;
   puzzleLeaveNumBlanks: number;
   defaultnumGuesses: number;
+  guesses?: string[];
   checkInDictionary?: boolean;
   finishingButtonText?: string;
   onComplete?: (wasCorrect: boolean) => void;
@@ -162,7 +163,7 @@ export function getLetterStatus(
 }
 
 const WordleConfig: React.FC<Props> = (props) => {
-  const [guesses, setGuesses] = useState<string[]>([]);
+  const [guesses, setGuesses] = useState<string[]>(props.guesses ?? []);
   const [numGuesses, setNumGuesses] = useState(props.defaultnumGuesses);
   const [gameId, setGameId] = useState<string | null>(null);
   const [currentWord, setCurrentWord] = useState("");
@@ -237,7 +238,7 @@ const WordleConfig: React.FC<Props> = (props) => {
 
         newTargetWord = targetWordArray[daily_word_index];
         console.log("Mode: daily" + "\n" + "Word: " + newTargetWord);
-        settargetWord(newTargetWord);        
+        settargetWord(newTargetWord);
 
         // Load previous attempts at daily (if applicable)
         const daily_word_storage = SaveData.getDailyWordGuesses();
@@ -510,11 +511,21 @@ const WordleConfig: React.FC<Props> = (props) => {
 
     const gameId = SaveData.addGameToHistory(props.page, {
       timestamp: new Date().toISOString(),
-      firstLetterProvided: props.firstLetterProvided,
-      wordLength,
-      numGuesses,
-      puzzleLeaveNumBlanks: props.puzzleLeaveNumBlanks,
-      puzzleRevealMs: props.puzzleRevealMs,
+      gameCategory: "wingo",
+      levelProps: {
+        mode: props.mode,
+        firstLetterProvided: props.firstLetterProvided,
+        puzzleLeaveNumBlanks: props.puzzleLeaveNumBlanks,
+        puzzleRevealMs: props.puzzleRevealMs,
+        targetWord,
+        defaultWordLength: props.defaultWordLength,
+        defaultnumGuesses: props.defaultnumGuesses,
+        enforceFullLengthGuesses: props.enforceFullLengthGuesses,
+        keyboard: props.keyboard,
+        timerConfig: props.timerConfig,
+        checkInDictionary: props.checkInDictionary,
+        wordArray: props.wordArray,
+      },
     });
 
     setGameId(gameId);
@@ -737,14 +748,23 @@ const WordleConfig: React.FC<Props> = (props) => {
     if (outcome !== "in-progress" && gameId) {
       SaveData.addCompletedRoundToGameHistory(gameId, {
         timestamp: new Date().toISOString(),
+        gameCategory: "wingo",
         outcome,
-        currentWord,
-        guesses,
-        wordLength,
-        numGuesses,
-        firstLetterProvided: props.firstLetterProvided,
-        puzzleLeaveNumBlanks: props.puzzleLeaveNumBlanks,
-        puzzleRevealMs: props.puzzleRevealMs,
+        levelProps: {
+          mode: props.mode,
+          firstLetterProvided: props.firstLetterProvided,
+          puzzleLeaveNumBlanks: props.puzzleLeaveNumBlanks,
+          puzzleRevealMs: props.puzzleRevealMs,
+          targetWord,
+          defaultWordLength: props.defaultWordLength,
+          defaultnumGuesses: props.defaultnumGuesses,
+          enforceFullLengthGuesses: props.enforceFullLengthGuesses,
+          keyboard: props.keyboard,
+          timerConfig: props.timerConfig,
+          checkInDictionary: props.checkInDictionary,
+          wordArray: props.wordArray,
+          guesses,
+        },
       });
     }
 

@@ -1,5 +1,6 @@
 import React from "react";
 import { Page } from "../App";
+import { CountdownLettersConfigProps } from "../CountdownLetters/CountdownLetters";
 import { MessageNotification } from "../MessageNotification";
 import { PuzzleConfig, PuzzleConfigProps } from "../Puzzles/PuzzleConfig";
 import { SettingsData } from "../SaveData";
@@ -14,6 +15,10 @@ export interface LevelConfig {
     | {
         gameCategory: "wingo";
         levelProps: WordleConfigProps;
+      }
+    | {
+        gameCategory: "countdown_letters";
+        levelProps: CountdownLettersConfigProps;
       }
     | {
         gameCategory: "puzzle";
@@ -33,6 +38,9 @@ export function getId(level: LevelConfig["level"]): string {
 
     case "puzzle":
       return `${level.gameCategory}-${level.levelProps.mode}-${level.levelProps.correctAnswerDescription}`;
+
+    case "countdown_letters":
+      return `${level.gameCategory}-${level.levelProps.mode}-${level.levelProps.countdownWord}`;
   }
 }
 
