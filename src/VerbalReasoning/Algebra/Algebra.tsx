@@ -95,7 +95,6 @@ const NumberSets: React.FC<Props> = (props) => {
     if (successCondition) {
       setNumCorrectAnswers(numCorrectAnswers + 1);
     }
-
   }, [inProgress, guess]);
 
   function displayInputs() {
@@ -170,7 +169,7 @@ const NumberSets: React.FC<Props> = (props) => {
     // The number of questgions in this set of questions
     const numQuestions = algebraTemplate.questions.length;
     // Question was the last in the set of questions
-    const setFinished = questionNumber === (numQuestions - 1);
+    const lastQuestion = questionNumber === numQuestions - 1;
 
     function getQuestionSetOutcome() {
       // All questions in the set answered correctly
@@ -189,23 +188,38 @@ const NumberSets: React.FC<Props> = (props) => {
 
     return (
       <>
-        {setFinished && (
-          <MessageNotification type={getQuestionSetOutcome()}>
-            <strong>{`${numCorrectAnswers} / ${numQuestions} correct`}</strong>
-          </MessageNotification>
+        {/* Show number of correct answers and restart button after last question */}
+        {lastQuestion && (
+          <>
+            <MessageNotification type={getQuestionSetOutcome()}>
+              <strong>{`${numCorrectAnswers} / ${numQuestions} correct`}</strong>
+            </MessageNotification>
+
+            <br></br>
+
+            <Button mode="accept" onClick={() => ResetGame()} settings={props.settings}>
+              Restart
+            </Button>
+
+            <br></br>
+          </>
         )}
+
+        {/* Show outcome of current question (and how many questions are left) */}
+        <MessageNotification type={successCondition ? "success" : "error"}>
+          <strong>{successCondition ? "Correct!" : "Incorrect!"}</strong>
+          <br></br>
+          <span>{`${questionNumber + 1} / ${numQuestions} questions completed`}</span>
+        </MessageNotification>
 
         <br></br>
 
-        <MessageNotification type={successCondition ? "success" : "error"}>
-          <strong>{successCondition ? "Correct!" : "Incorrect"}</strong>
-          <br />
-          {!successCondition && (
-            <span>
-              The answer was <strong>{answer}</strong>
-            </span>
-          )}
-        </MessageNotification>
+        {/* Show next button if there are more questions */}
+        {!lastQuestion && (
+          <Button mode="accept" onClick={() => ContinueGame()} settings={props.settings}>
+            Next
+          </Button>
+        )}
       </>
     );
   }
@@ -275,16 +289,6 @@ const NumberSets: React.FC<Props> = (props) => {
       style={{ backgroundImage: `url(${props.theme.backgroundImageSrc})`, backgroundSize: "100%" }}
     >
       <div className="outcome">{displayOutcome()}</div>
-      {!inProgress && questionNumber === (algebraTemplate?.questions.length! - 1) && (
-        <Button mode="accept" onClick={() => ResetGame()} settings={props.settings}>
-          Restart
-        </Button>
-      )}
-      {!inProgress && questionNumber !== (algebraTemplate?.questions.length! - 1) && (
-        <Button mode="accept" onClick={() => ContinueGame()} settings={props.settings}>
-          Next
-        </Button>
-      )}
       {displayInputs()}
       {displayQuestion()}
       <div className="guess">

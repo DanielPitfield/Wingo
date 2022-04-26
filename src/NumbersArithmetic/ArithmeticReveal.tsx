@@ -288,12 +288,12 @@ const ArithmeticReveal: React.FC<Props> = (props) => {
       return;
     }
 
-    let message_notification;
-
     // Guess is the correct end of checkpoint value
     const successCondition = guess === targetNumbers[currentCheckpoint].toString();
     // Last checkpoint
     const lastCheckpoint = currentCheckpoint === props.numCheckpoints - 1;
+    
+    let message_notification;
 
     // Current checkpoint guess correct and more checkpoints to go
     if (successCondition && !lastCheckpoint) {
@@ -312,8 +312,9 @@ const ArithmeticReveal: React.FC<Props> = (props) => {
           </Button>
         </>
       );
-      // Last checkpoint guess correct
-    } else if (successCondition && lastCheckpoint) {
+    } 
+    // Last checkpoint guess correct
+    else if (successCondition && lastCheckpoint) {
       message_notification = (
         <>
           <MessageNotification type="success">
@@ -329,8 +330,10 @@ const ArithmeticReveal: React.FC<Props> = (props) => {
           </Button>
         </>
       );
-      // Incorrect guess
-    } else if (!successCondition) {
+      
+    } 
+    // Incorrect guess
+    else if (!successCondition) {
       message_notification = (
         <>
           <MessageNotification type="error">
