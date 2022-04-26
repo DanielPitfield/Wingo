@@ -1,4 +1,5 @@
 import { HistorySaveData, SaveData } from "../SaveData";
+import { AllChallenges } from "./AllChallenges";
 
 export type ChallengeReward = { goldCoins: number; xp: number };
 
@@ -70,5 +71,46 @@ export abstract class BaseChallenge {
    */
   public isAcheived(history: HistorySaveData): boolean {
     return this.getProgressPercentage(history) >= 100;
+  }
+
+  /**
+   * Gets the status of the challenge (i.e. is it "in-progress", "redeemed" etc.)
+   * @param history Current save data history.
+   * @returns Status and a friendly description of the status.
+   */
+  public getStatus(history: HistorySaveData): {
+    status: "superseded" | "in-progress" | "acheived" | "redeemed";
+    statusDescription: string;
+  } {
+    const isAcheived = this.isAcheived(history);
+    const isRedeemed = this.isRedeemed;
+
+    const status = isRedeemed
+      ? "redeemed"
+      : isAcheived
+      ? "acheived"
+      : AllChallenges.some(
+          (x) => x.internalClassName === this.internalClassName && x.target() < this.target() && !x.isAcheived(history)
+        )
+      ? "superseded"
+      : "in-progress";
+
+    const statusDescription = (() => {
+      switch (status) {
+        case "redeemed":
+          return "You have completed this challenge!";
+
+        case "acheived":
+          return "You have acheived this challenge! Click Redeem to get the reward";
+
+        case "superseded":
+          return "A similar challenge with a lower target has not been acheived yet";
+
+        case "in-progress":
+          return "Challenge in progress";
+      }
+    })();
+
+    return { status, statusDescription };
   }
 }

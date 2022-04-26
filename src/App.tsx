@@ -26,6 +26,7 @@ import { ErrorFallback } from "./ErrorFallback";
 import SameLetterWords from "./VerbalReasoning/SameLetterWords";
 import NumberSets from "./VerbalReasoning/NumberSets/NumberSets";
 import Algebra from "./VerbalReasoning/Algebra/Algebra";
+import { ChallengesInfo } from "./Challenges/ChallengesInfo";
 
 const wordLength = 5;
 const numGuesses = 6;
@@ -68,6 +69,7 @@ export type Page =
   | "campaign"
   | "campaign/area"
   | "campaign/area/level"
+  | "challenges"
   | "settings";
 
 // This is needed for runtime; make sure it matches the Page type
@@ -181,6 +183,7 @@ export const pages: { page: Page; title: string; description?: string; shortTitl
   { page: "campaign", title: "Campaign", shortTitle: "Campaign" },
   { page: "campaign/area", title: "Campaign Areas", shortTitle: "Areas" },
   { page: "campaign/area/level", title: "Campaign Level", shortTitle: "Level" },
+  { page: "challenges", title: "Challenges", shortTitle: "Challenges" },
   { page: "settings", title: "Settings", shortTitle: "Settings" },
 ];
 
@@ -822,6 +825,9 @@ export const App: React.FC = () => {
 
       case "puzzle/sequence":
         return <PuzzleConfig theme={theme} setTheme={setThemeIfNoPreferredSet} settings={settings} />;
+
+      case "challenges":
+        return <ChallengesInfo settings={settings} addGold={addGold} />;
 
       case "settings":
         return <Settings settings={settings} onSettingsChange={setSettings} />;

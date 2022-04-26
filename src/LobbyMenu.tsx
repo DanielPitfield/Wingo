@@ -1,17 +1,14 @@
 import React, { useState } from "react";
 import { Page, pages } from "./App";
 import { BsGearFill, BsInfoCircleFill } from "react-icons/bs";
-import Star from "./images/star.png";
-import GoldCoin from "./images/gold.png";
 import { AllChallenges } from "./Challenges/AllChallenges";
 import { SaveData, SettingsData } from "./SaveData";
-import ProgressBar from "./ProgressBar";
+import { Challenge } from "./Challenges/Challenge";
 import { Button } from "./Button";
 import { Campaign } from "./Campaign/Campaign";
 import { Theme } from "./Themes";
 import { AreaConfig } from "./Campaign/Area";
 import { LevelConfig } from "./Campaign/Level";
-import { useNotificationChime } from "./Sounds";
 import { Modal } from "./Modal";
 
 interface Props {
@@ -37,7 +34,7 @@ export const LobbyMenu: React.FC<Props> = (props) => {
   const [optionsConfig, setOptionsConfig] = useState<{ isConfigShown: false } | { isConfigShown: true; Page: Page }>({
     isConfigShown: false,
   });
-  const [playNotificationChime] = useNotificationChime(props.settings);
+  const history = SaveData.getHistory();
 
   /**
    *
@@ -169,101 +166,30 @@ export const LobbyMenu: React.FC<Props> = (props) => {
       <section className="challenges">
         <h2 className="challenges-title">Challenges</h2>
         {AllChallenges.map((challenge) => {
-          const history = SaveData.getHistory();
-          const isAcheived = challenge.isAcheived(history);
-          const isRedeemed = challenge.isRedeemed;
-          const currentProgress = challenge.currentProgress(history);
-
-          const status: "superseded" | "in-progress" | "acheived" | "redeemed" = isRedeemed
-            ? "redeemed"
-            : isAcheived
-            ? "acheived"
-            : AllChallenges.some(
-                (x) =>
-                  x.internalClassName === challenge.internalClassName &&
-                  x.target() < challenge.target() &&
-                  !x.isAcheived(history)
-              )
-            ? "superseded"
-            : "in-progress";
-
-          const statusDescription = () => {
-            switch (status) {
-              case "redeemed":
-                return "You have completed this challenge!";
-
-              case "acheived":
-                return "You have acheived this challenge! Click Redeem to get the reward";
-
-              case "superseded":
-                return "A similar challenge with a lower target has not been acheived yet";
-
-              case "in-progress":
-                return "Challenge in progress";
-            }
-          };
-
-          // Completed and redeemded
-          if (status === "redeemed") {
-            return null;
-          }
-
-          // A similar challenge with a lower target has not been acheived yet
-          if (status === "superseded") {
-            return null;
-          }
+          const { status } = challenge.getStatus(history);
 
           return {
             status,
             element: (
-              <div
-                className={["challenge", isAcheived && !isRedeemed ? "shimmer" : ""].join(" ")}
-                key={challenge.id()}
-                data-status={status}
-                data-animation-setting={props.settings.graphics.animation}
-                title={statusDescription()}
-              >
-                <img className="challenge-icon" src={Star} width={32} height={32} alt="" />
-                <h3 className="challenge-title">{challenge.userFacingTitle}</h3>
-                <p className="challenge-description">{challenge.description()}</p>
-                <p className="challenge-reward">
-                  <img className="challenge-reward-icon" height={18} width={18} src={GoldCoin} alt="" />
-                  {challenge.reward().goldCoins}
-                </p>
-                <ProgressBar
-                  progress={Math.min(challenge.target(), currentProgress)}
-                  total={challenge.target()}
-                  display={{ type: "solid", color: "#ffd613" }}
-                >
-                  {Math.min(challenge.target(), currentProgress)} / {challenge.target()} {challenge.unit}
-                </ProgressBar>
-                {isAcheived && !isRedeemed && (
-                  <Button
-                    mode="default"
-                    className="challenge-redeem-reward"
-                    settings={props.settings}
-                    onClick={() => {
-                      challenge.isRedeemed = true;
-                      props.addGold(challenge.reward().goldCoins);
-                      playNotificationChime();
-                    }}
-                  >
-                    Redeem
-                  </Button>
-                )}
-              </div>
+              <Challenge
+                mode="default"
+                challenge={challenge}
+                settings={props.settings}
+                onClick={() => props.setPage("challenges")}
+                addGold={props.addGold}
+              />
             ),
           };
         })
           // Filter out challenges that are already "redeemed", or "superseded" (a similar challenge with a lower target has not been acheived yet)
-          .filter((challenge) => challenge)
+          .filter((challenge) => challenge.status !== "redeemed" && challenge.status !== "superseded")
 
           // Sort by the status alphabetically (i.e. "achieved" will be rendered before "in-progress"),
           // meaning redeemable challenges appear at the top
-          .sort((a, b) => a!.status.localeCompare(b!.status))
+          .sort((a, b) => a.status.localeCompare(b.status))
 
           // Render the JSX element
-          .map((challenge) => challenge!.element)}
+          .map((challenge) => challenge.element)}
       </section>
     </div>
   );

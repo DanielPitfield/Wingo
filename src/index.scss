@@ -846,79 +846,150 @@ $data-statuses: (
     font-weight: normal;
     color: #bb9a2e;
   }
-  .challenge {
-    position: relative;
-    opacity: 0.95;
-    padding: 0.8em;
-    margin: 0.9em;
-    opacity: 0.9;
-    cursor: pointer;
-    user-select: none;
-    color: #eee;
-    background: linear-gradient(122deg, #d1b600 0%, #d5bb01 18%, #e3c800 46%);
-    border-bottom: 3px solid #c0aa00;
-    &[data-status="redeemed"] {
-      opacity: 0.3;
-    }
-    &[data-status="acheived"] {
-      opacity: 1;
-      border: 3px solid #b49f01;
-      border-bottom-color: #7c6e00;
-      &:hover {
-        border-bottom-color: #7c6e00;
-      }
-    }
-    &[data-status="superseded"] {
-      opacity: 0.7;
-    }
+}
+
+.challenge {
+  position: relative;
+  opacity: 0.95;
+  padding: 0.8em;
+  margin: 0.9em;
+  opacity: 0.9;
+  cursor: pointer;
+  user-select: none;
+  color: #eee;
+  background: linear-gradient(122deg, #d1b600 0%, #d5bb01 18%, #e3c800 46%);
+  border-bottom: 3px solid #c0aa00;
+  &[data-status="redeemed"] {
+    opacity: 0.3;
+  }
+  &[data-status="acheived"] {
+    opacity: 1;
+    border: 3px solid #b49f01;
+    border-bottom-color: #7c6e00;
     &:hover {
-      background: linear-gradient(122deg, lighten(#e3c800, 2%) 0%, lighten(#d5bb01, 2%) 18%, lighten(#e3c800, 2%) 46%);
-      border-bottom-color: #dbc200;
+      border-bottom-color: #7c6e00;
     }
-    &:last-child {
-      border-bottom: none;
-    }
-    .challenge-icon {
-      margin: 0.2em;
-      position: absolute;
-      right: 0;
-      top: 0;
-      opacity: 0.7;
-    }
-    .challenge-title {
-      margin: 0.2em 0;
-      color: #fcf486;
-      text-shadow: #111 1px 0px 3px;
-    }
-    .challenge-reward {
+  }
+  &[data-status="superseded"] {
+    opacity: 0.5;
+  }
+  &:hover {
+    background: linear-gradient(122deg, lighten(#e3c800, 2%) 0%, lighten(#d5bb01, 2%) 18%, lighten(#e3c800, 2%) 46%);
+    border-bottom-color: #dbc200;
+  }
+  &:last-child {
+    border-bottom: none;
+  }
+  .challenge-icon {
+    margin: 0.2em;
+    position: absolute;
+    right: 0;
+    top: 0;
+    opacity: 0.7;
+  }
+  .challenge-title {
+    margin: 0.2em 0;
+    color: #fcf486;
+    text-shadow: #111 1px 0px 3px;
+  }
+  .challenge-reward {
+    margin-top: 0.5em;
+    padding-right: 0.6em;
+  }
+  .challenge-description {
+    margin: 0;
+    margin-top: 0.2em;
+    text-shadow: #111 1px 0px 3px;
+  }
+  .challenge-redeem-reward {
+    font-size: 0.9em;
+    padding: 0.8em;
+    margin-top: 0.8em;
+  }
+  .progress_bar {
+    margin-top: 0.7em;
+    border-color: #af9208;
+  }
+}
+
+.challenge-reward {
+  display: inline-block;
+  margin: 0;
+  padding: 0.2em;
+  text-shadow: #111 1px 0px 2px;
+  background-color: #eec922;
+  border: 1px solid #e4db61;
+  color: #fffdda;
+  padding-right: 0.6em;
+  .challenge-reward-icon {
+    margin-right: 0.3em;
+    float: left;
+  }
+}
+
+// Challenges page ===========================================
+.challenges-info {
+  background-color: #fdf6e2;
+  padding: 0.7em;
+  .challenges-info-title {
+    margin: 0.7em 0;
+  }
+  .total-acheived,
+  .total-gold-coins {
+    font-size: 0.95em;
+    opacity: 0.85;
+    color: #3a3a3a;
+    padding: 0.3em;
+    margin: 0.2em 0;
+  }
+  .challenges-info-categories {
+    display: flex;
+    flex-direction: column;
+    padding: 0.3em;
+    margin-top: 1em;
+    .challenges-info-category {
       display: flex;
-      display: inline-block;
-      margin: 0;
-      margin-top: 0.5em;
-      padding: 0.2em;
-      text-shadow: #111 1px 0px 2px;
-      background-color: #eec922;
-      border: 1px solid #e4db61;
-      color: #fffdda;
-      padding-right: 0.6em;
-      .challenge-reward-icon {
-        margin-right: 0.3em;
-        float: left;
+      align-items: center;
+      margin-bottom: 0.8em;
+      background-color: #ffe291;
+      align-items: stretch;
+      border: 1px solid #ffd746;
+      .challenges-info-category-heading {
+        display: flex;
+        flex-direction: column;
+        padding: 0.6em;
+        min-width: 11em;
+        color: #bb8a00;
+        .challenges-info-category-title {
+          display: flex;
+          align-items: center;
+          padding: 0.3em;
+          margin: 0;
+          flex-grow: 1;
+          font-size: 1.7em;
+          color: #fffcf5;
+          text-shadow: #111 1px 0px 3px;
+        }
+        .total-acheived,
+        .total-gold-coins {
+          font-size: 0.95em;
+          opacity: 0.85;
+          color: #3a3a3a;
+          padding: 0.3em;
+          margin: 0.2em 0;
+        }
       }
-    }
-    .challenge-description {
-      margin: 0;
-      margin-top: 0.2em;
-      text-shadow: #111 1px 0px 3px;
-    }
-    .challenge-redeem-reward {
-      font-size: 0.9em;
-      padding: 0.8em;
-      margin-top: 0.8em;
-    }
-    .progress_bar {
-      margin-top: 0.7em;
-      border-color: #af9208;
+      .challenges-info-category-challenges {
+        display: flex;
+        overflow-x: auto;
+        padding: 0.6em;
+        padding-bottom: 0.3em;
+        background-color: #fff0c8;
+        flex-grow: 1;
+        .challenge {
+          margin: 0.2em;
+        }
+      }
     }
   }
 }
