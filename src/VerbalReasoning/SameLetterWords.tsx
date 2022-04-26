@@ -287,7 +287,6 @@ const SameLetterWords: React.FC<Props> = (props) => {
 
   function ResetGame() {
     setInProgress(true);
-    debugger;
     setSelectedWords([]);
     setValidWords([]);
     setGridWords(getGridWords());
