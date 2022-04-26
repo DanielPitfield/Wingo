@@ -44,9 +44,20 @@ const NumberSets: React.FC<Props> = (props) => {
   const [seconds, setSeconds] = useState(props.timerConfig.isTimed ? props.timerConfig.seconds : 0);
   const [playCorrectChimeSoundEffect] = useCorrectChime(props.settings);
   const [playFailureChimeSoundEffect] = useFailureChime(props.settings);
-  const [playLightPingSoundEffect] = useLightPingChime(props.settings);
-  const [playClickSoundEffect] = useClickChime(props.settings);
 
+  React.useEffect(() => {
+    if (inProgress) {
+      return;
+    }
+
+    const successCondition = guess === numberSet?.question.correctAnswer.toString();
+
+    if (successCondition) {
+      playCorrectChimeSoundEffect();
+    } else {
+      playFailureChimeSoundEffect();
+    }
+  }, [guess, inProgress]);
   // (Guess) Timer Setup
   React.useEffect(() => {
     if (!props.timerConfig.isTimed || !inProgress) {
