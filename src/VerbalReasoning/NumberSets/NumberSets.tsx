@@ -27,7 +27,6 @@ export type NumberSetTemplate = {
 
 interface Props {
   defaultSet?: NumberSetConfigProps;
-  numGuesses: number;
   timerConfig: { isTimed: false } | { isTimed: true; seconds: number };
   theme: Theme;
   settings: SettingsData;
@@ -42,7 +41,6 @@ const NumberSets: React.FC<Props> = (props) => {
   const [inProgress, setInProgress] = useState(true);
   const [guess, setGuess] = useState("");
   const [numberSet, setNumberSet] = useState<NumberSetConfigProps | undefined>(props.defaultSet);
-  const [remainingGuesses, setRemainingGuesses] = useState(props.numGuesses);
   const [seconds, setSeconds] = useState(props.timerConfig.isTimed ? props.timerConfig.seconds : 0);
   const [playCorrectChimeSoundEffect] = useCorrectChime(props.settings);
   const [playFailureChimeSoundEffect] = useFailureChime(props.settings);
@@ -155,6 +153,14 @@ const NumberSets: React.FC<Props> = (props) => {
             </span>
           )}
         </MessageNotification>
+
+        <br></br>
+
+        {!inProgress && (
+          <Button mode="accept" onClick={() => ResetGame()} settings={props.settings}>
+            Restart
+          </Button>
+        )}
       </>
     );
   }
@@ -162,7 +168,6 @@ const NumberSets: React.FC<Props> = (props) => {
   function ResetGame() {
     setInProgress(true);
     setGuess("");
-    setRemainingGuesses(props.numGuesses);
 
     const numberSet = generateSet();
     setNumberSet(numberSet);
@@ -190,7 +195,7 @@ const NumberSets: React.FC<Props> = (props) => {
     if (!inProgress) {
       return;
     }
-    
+
     if (guess.length >= MAX_LENGTH) {
       return;
     }
@@ -204,12 +209,6 @@ const NumberSets: React.FC<Props> = (props) => {
       style={{ backgroundImage: `url(${props.theme.backgroundImageSrc})`, backgroundSize: "100%" }}
     >
       <div className="outcome">{displayOutcome()}</div>
-      {!inProgress && (
-        <Button mode="accept" onClick={() => ResetGame()} settings={props.settings}>
-          Restart
-        </Button>
-      )}
-      {inProgress && <MessageNotification type="default">{`Guesses left: ${remainingGuesses}`}</MessageNotification>}
       {displayExamples()}
       {displayQuestion()}
       <div className="guess">

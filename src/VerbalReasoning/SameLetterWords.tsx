@@ -260,9 +260,9 @@ const SameLetterWords: React.FC<Props> = (props) => {
     }
 
     let message_notification;
-    const success_condition = selectedWords.length > 0 && selectedWords.every((word) => validWords.includes(word));
+    const successCondition = selectedWords.length > 0 && selectedWords.every((word) => validWords.includes(word));
 
-    if (success_condition) {
+    if (successCondition) {
       message_notification = (
         <MessageNotification type="success">
           <strong>All {validWords.length} words with the same letters found!</strong>

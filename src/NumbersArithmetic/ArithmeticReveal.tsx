@@ -288,31 +288,87 @@ const ArithmeticReveal: React.FC<Props> = (props) => {
       return;
     }
 
-    return (
-      <>
-        <MessageNotification type={guess === targetNumbers[currentCheckpoint].toString() ? "success" : "error"}>
-          <strong>{guess === targetNumbers[currentCheckpoint].toString() ? "Correct!" : "Incorrect"}</strong>
-          <br />
-          <span>
-            The answer was <strong>{targetNumbers[currentCheckpoint]}</strong>
-          </span>
-          <br />
-          {tiles[currentCheckpoint].join(" ")}
-        </MessageNotification>
+    let message_notification;
 
-        {currentCheckpoint < props.numCheckpoints - 1 && (
-          <>
+    // Guess is the correct end of checkpoint value
+    const successCondition = guess === targetNumbers[currentCheckpoint].toString();
+    // Last checkpoint
+    const lastCheckpoint = currentCheckpoint === props.numCheckpoints - 1;
+
+    // Current checkpoint guess correct and more checkpoints to go
+    if (successCondition && !lastCheckpoint) {
+      message_notification = (
+        <>
+          <MessageNotification type="success">
+            <strong>Correct!</strong>
             <br></br>
-            <Button mode="accept" onClick={() => setCurrentCheckpoint(currentCheckpoint + 1)} settings={props.settings}>
-              Next Checkpoint
-            </Button>
-          </>
-        )}
-      </>
-    );
+            <span>{`${currentCheckpoint + 1} / ${props.numCheckpoints} checkpoints completed`}</span>
+          </MessageNotification>
+
+          <br></br>
+
+          <Button mode="accept" onClick={() => setCurrentCheckpoint(currentCheckpoint + 1)} settings={props.settings}>
+            Next Checkpoint
+          </Button>
+        </>
+      );
+      // Last checkpoint guess correct
+    } else if (successCondition && lastCheckpoint) {
+      message_notification = (
+        <>
+          <MessageNotification type="success">
+            <strong>Correct!</strong>
+            <br></br>
+            <span>{`Completed all ${props.numCheckpoints} checkpoints!`}</span>
+          </MessageNotification>
+
+          <br></br>
+
+          <Button mode="accept" onClick={() => ResetGame()} settings={props.settings}>
+            Restart
+          </Button>
+        </>
+      );
+      // Incorrect guess
+    } else if (!successCondition) {
+      message_notification = (
+        <>
+          <MessageNotification type="error">
+            <strong>Incorrect!</strong>
+            <br />
+            <span>
+              The answer was <strong>{targetNumbers[currentCheckpoint]}</strong>
+            </span>
+            <br />
+            {tiles[currentCheckpoint].join(" , ")}
+          </MessageNotification>
+
+          <br></br>
+
+          <Button mode="accept" onClick={() => ResetGame()} settings={props.settings}>
+            Restart
+          </Button>
+        </>
+      );
+    }
+
+    return <>{message_notification}</>;
   }
 
-  /** */
+  function ResetGame() {
+    setInProgress(true);
+    setGuess("");
+    setCurrentCheckpoint(0);
+    setRevealState({ type: "in-progress", revealedTiles: 0 });
+    setTargetNumbers([]);
+    setTiles([]);
+
+    if (props.timerConfig.isTimed) {
+      // Reset the timer if it is enabled in the game options
+      setSeconds(props.timerConfig.seconds);
+    }
+  }
+
   function onBackspace() {
     if (guess.length === 0) {
       return;
@@ -321,10 +377,6 @@ const ArithmeticReveal: React.FC<Props> = (props) => {
     setGuess(guess.substring(0, guess.length - 1));
   }
 
-  /**
-   *
-   * @param number
-   */
   function onSubmitNumber(number: number) {
     if (guess.length >= MAX_LENGTH) {
       return;

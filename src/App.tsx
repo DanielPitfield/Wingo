@@ -795,7 +795,6 @@ export const App: React.FC = () => {
       case "verbal_reasoning/number_sets":
         return (
           <NumberSets
-            numGuesses={20}
             timerConfig={
               gameOptionToggles.find((x) => x.page === "verbal_reasoning/number_sets")?.timer
                 ? { isTimed: true, seconds: 100 }
@@ -810,7 +809,6 @@ export const App: React.FC = () => {
       case "verbal_reasoning/algebra":
         return (
           <Algebra
-            numGuesses={20}
             timerConfig={
               gameOptionToggles.find((x) => x.page === "verbal_reasoning/algebra")?.timer
                 ? { isTimed: true, seconds: 100 }
