@@ -172,6 +172,7 @@ export const LobbyMenu: React.FC<Props> = (props) => {
             status,
             element: (
               <Challenge
+                key={challenge.id()}
                 mode="default"
                 challenge={challenge}
                 settings={props.settings}
