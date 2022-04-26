@@ -93,7 +93,10 @@ const NumberSets: React.FC<Props> = (props) => {
     const successCondition = guess.toString().toUpperCase() === answer?.toUpperCase();
 
     if (successCondition) {
+      playCorrectChimeSoundEffect();
       setNumCorrectAnswers(numCorrectAnswers + 1);
+    } else {
+      playFailureChimeSoundEffect();
     }
   }, [inProgress, guess]);
 
