@@ -864,7 +864,7 @@ export const App: React.FC = () => {
             <Button mode="default" className="settings-button" settings={settings} onClick={() => setPage("settings")}>
               Settings
             </Button>
-            <div className="gold_counter">
+            <div className="gold_counter" onClick={() => setPage("challenges")}>
               <img className="gold_coin_image" src={GoldCoin} alt="Gold" />
               {gold.toLocaleString("en-GB")}
             </div>
