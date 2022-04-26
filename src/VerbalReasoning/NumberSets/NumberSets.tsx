@@ -175,6 +175,10 @@ const NumberSets: React.FC<Props> = (props) => {
   }
 
   function onBackspace() {
+    if (!inProgress) {
+      return;
+    }
+
     if (guess.length === 0) {
       return;
     }
@@ -183,6 +187,10 @@ const NumberSets: React.FC<Props> = (props) => {
   }
 
   function onSubmitNumber(number: number) {
+    if (!inProgress) {
+      return;
+    }
+    
     if (guess.length >= MAX_LENGTH) {
       return;
     }
