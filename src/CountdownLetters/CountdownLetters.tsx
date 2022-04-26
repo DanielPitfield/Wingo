@@ -10,7 +10,7 @@ import { wordLengthMappingsGuessable } from "../WordleConfig";
 import { Theme } from "../Themes";
 import { SaveData, SettingsData } from "../SaveData";
 
-export interface CountdownLettersConfigProps {
+interface Props {
   mode: "countdown_letters_casual" | "countdown_letters_realistic";
   timerConfig: { isTimed: false } | { isTimed: true; totalSeconds: number; elapsedSeconds: number };
   keyboard: boolean;
@@ -18,9 +18,6 @@ export interface CountdownLettersConfigProps {
   guesses: string[];
   hasTimerEnded: boolean;
   countdownWord: string;
-}
-
-interface Props extends CountdownLettersConfigProps {
   currentWord: string;
   inProgress: boolean;
   inDictionary: boolean;
@@ -73,11 +70,12 @@ const CountdownLetters: React.FC<Props> = (props) => {
       levelProps: {
         countdownWord: props.countdownWord,
         guesses: props.guesses,
-        hasTimerEnded: props.hasSubmitLetter,
         keyboard: props.keyboard,
         mode: props.mode,
-        timerConfig: props.timerConfig,
-        wordLength: props.wordLength,
+        timerConfig: props.timerConfig.isTimed
+          ? { isTimed: true, seconds: props.timerConfig.totalSeconds }
+          : { isTimed: false },
+        defaultWordLength: props.wordLength,
       },
     });
 
@@ -381,11 +379,12 @@ const CountdownLetters: React.FC<Props> = (props) => {
         levelProps: {
           countdownWord: props.countdownWord,
           guesses: props.guesses,
-          hasTimerEnded: props.hasSubmitLetter,
           keyboard: props.keyboard,
           mode: props.mode,
-          timerConfig: props.timerConfig,
-          wordLength: props.wordLength,
+          timerConfig: props.timerConfig.isTimed
+            ? { isTimed: true, seconds: props.timerConfig.totalSeconds }
+            : { isTimed: false },
+          defaultWordLength: props.wordLength,
         },
       });
     }

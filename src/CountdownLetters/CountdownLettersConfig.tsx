@@ -5,11 +5,17 @@ import { wordLengthMappingsGuessable } from "../WordleConfig";
 import { Theme } from "../Themes";
 import { SettingsData } from "../SaveData";
 
-interface Props {
-  page: Page;
+export interface CountdownLettersConfigProps {
   mode: "countdown_letters_casual" | "countdown_letters_realistic";
   timerConfig: { isTimed: false } | { isTimed: true; seconds: number };
   keyboard: boolean;
+  defaultWordLength: number;
+  guesses?: string[];
+  countdownWord?: string;
+}
+
+interface Props extends CountdownLettersConfigProps {
+  page: Page;
   defaultWordLength: number;
   theme: Theme;
   settings: SettingsData;
@@ -238,10 +244,10 @@ const CountdownLettersConfig: React.FC<Props> = (props) => {
     // Stop progress for evalution for Casual game mode type
     setinProgress(false);
 
-    const wordArray = wordLengthMappingsGuessable.find((x) => x.value === currentWord.length)?.array!;
+    const wordArray = wordLengthMappingsGuessable.find((x) => x.value === currentWord.length)?.array;
 
     // Accepted word (known word in dictionary)
-    const wordInDictionary = wordArray.includes(currentWord.toLowerCase());
+    const wordInDictionary = wordArray?.includes(currentWord.toLowerCase());
     // Word can be made with available letters
     const isValidWord = isWordValid(countdownWord, currentWord);
 

@@ -1,6 +1,6 @@
 import React from "react";
 import { Page } from "../App";
-import { CountdownLettersConfigProps } from "../CountdownLetters/CountdownLetters";
+import { CountdownLettersConfigProps } from "../CountdownLetters/CountdownLettersConfig";
 import { MessageNotification } from "../MessageNotification";
 import { PuzzleConfig, PuzzleConfigProps } from "../Puzzles/PuzzleConfig";
 import { SettingsData } from "../SaveData";
