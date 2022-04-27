@@ -32,7 +32,7 @@ interface Props {
 }
 
 /** */
-const NumberSets: React.FC<Props> = (props) => {
+const Algebra: React.FC<Props> = (props) => {
   // Max number of characters permitted in a guess
   const MAX_LENGTH = 6;
 
@@ -344,4 +344,4 @@ const NumberSets: React.FC<Props> = (props) => {
   );
 };
 
-export default NumberSets;
+export default Algebra;
