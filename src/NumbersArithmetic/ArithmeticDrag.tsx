@@ -248,7 +248,7 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
       // Once expression is desired length, return
       return { expression: expression, total: total, status: "not set" };
     }
-  }, [expressionTiles, resultTiles, props.numTiles]);
+  }, [/* TODO: Dependency and set method (expressionTiles and setExpressionTiles loop) */ expressionTiles, resultTiles, props.numTiles]);
 
   // (Guess) Timer Setup
   React.useEffect(() => {

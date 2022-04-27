@@ -2,23 +2,24 @@ import { stringify } from "querystring";
 import React, { useState } from "react";
 import { shuffleArray } from "../NumbersArithmetic/ArithmeticDrag";
 import { wordLengthMappingsTargets } from "../WordleConfig";
-import { Page } from "./../App";
-import { Button } from "./../Button";
-import { DEFAULT_ALPHABET, Keyboard } from "./../Keyboard";
-import LetterTile from "./../LetterTile";
-import { MessageNotification } from "./../MessageNotification";
-import { NumPad } from "./../NumPad";
-import ProgressBar, { GreenToRedColorTransition } from "./../ProgressBar";
-import { SettingsData } from "./../SaveData";
-import { useClickChime, useCorrectChime, useFailureChime, useLightPingChime } from "./../Sounds";
-import { Theme } from "./../Themes";
+import { Page } from "../App";
+import { Button } from "../Button";
+import { DEFAULT_ALPHABET, Keyboard } from "../Keyboard";
+import LetterTile from "../LetterTile";
+import { MessageNotification } from "../MessageNotification";
+import { NumPad } from "../NumPad";
+import ProgressBar, { GreenToRedColorTransition } from "../ProgressBar";
+import { SettingsData } from "../SaveData";
+import { useClickChime, useCorrectChime, useFailureChime, useLightPingChime } from "../Sounds";
+import { Theme } from "../Themes";
+import { arrayMove, OrderGroup } from "react-draggable-order";
+import { DraggableItem } from "../NumbersArithmetic/DraggableItem";
 
 interface Props {
   numWords: number;
   wordLength: number;
   numAdditionalLetters: number;
-  numCodes: number;
-  numQuestions: number;
+  numGuesses: number;
   timerConfig: { isTimed: false } | { isTimed: true; seconds: number };
   theme: Theme;
   settings: SettingsData;
@@ -26,13 +27,16 @@ interface Props {
 }
 
 /** */
-const WordCodes: React.FC<Props> = (props) => {
-  // Max number of characters permitted in a guess
-  const MAX_LENGTH = 6;
-
+const WordCodesMatch: React.FC<Props> = (props) => {
   const [inProgress, setInProgress] = useState(true);
-  const [guess, setGuess] = useState("");
-  const [wordCodes, setWordCodes] = useState<{ word: string; code: string | null }[]>([]);
+  const [remainingGuesses, setRemainingGuesses] = useState(props.numGuesses);
+  const [wordCodes, setWordCodes] = useState<{ word: string; code: string }[]>([]);
+  const [wordTiles, setWordTiles] = useState<
+    { word: string; code: string; status: "incorrect" | "correct" | "not set" }[]
+  >([]);
+  const [codeTiles, setCodeTiles] = useState<
+    { code: string; status: "incorrect" | "correct" | "not set" }[]
+  >([]);
   const [questionNumber, setQuestionNumber] = useState(0);
   const [numCorrectAnswers, setNumCorrectAnswers] = useState(0);
   const [seconds, setSeconds] = useState(props.timerConfig.isTimed ? props.timerConfig.seconds : 0);
@@ -72,25 +76,21 @@ const WordCodes: React.FC<Props> = (props) => {
     setWordCodes(newWordCodes);
   }, []);
 
-  // Each time a guess is submitted
+  // Create word tiles and code tiles (each time wordCodes changes)
   React.useEffect(() => {
-    if (inProgress) {
-      return;
-    }
+    // Word Tiles
+    let newWordTiles: { word: string; code: string; status: "not set" }[] = [];
+    newWordTiles = wordCodes.map((wordCode) => ({ ...wordCode, status: "not set" }));
+    newWordTiles = shuffleArray(newWordTiles);
+    setWordTiles(newWordTiles);
 
-    if (!guess || guess.length < 1) {
-      return;
-    }
+    // Code tiles
+    let newCodeTiles: { code: string; status: "not set" }[] = [];
+    newCodeTiles = wordCodes.map((wordCode) => ({ code: wordCode.code, status: "not set" }));
+    newCodeTiles = shuffleArray(newCodeTiles);
+    setCodeTiles(newCodeTiles);
 
-    const successCondition = true;
-
-    if (successCondition) {
-      playCorrectChimeSoundEffect();
-      setNumCorrectAnswers(numCorrectAnswers + 1);
-    } else {
-      playFailureChimeSoundEffect();
-    }
-  }, [inProgress, guess]);
+  }, [wordCodes]);
 
   // Determines whether a word can be made only using the specified valid letters
   function isWordValid(validLetters: string[], word: string) {
@@ -129,7 +129,7 @@ const WordCodes: React.FC<Props> = (props) => {
       return { letter: letter, code: i };
     });
 
-    // Get only the words made from these valid letters
+    // Get only the words that can be made from these valid letters
     const original_matches = targetWordArray.filter((word) => isWordValid(validLetters, word));
 
     // Choose/determine a subset of these words
@@ -168,6 +168,52 @@ const WordCodes: React.FC<Props> = (props) => {
     return newWordCodes;
   }
 
+  function displayTiles() {
+    var Grid = [];
+
+    Grid.push(
+      <div className="draggable_words">
+        <OrderGroup mode={"between"}>
+          {wordTiles.map((tile, index) => (
+            <DraggableItem
+              key={index}
+              index={index}
+              onMove={(toIndex) =>
+                inProgress
+                  ? setWordTiles(arrayMove(wordTiles, index, toIndex))
+                  : /* TODO: Disable drag entirely if game is over */ console.log("Game over")
+              }
+            >
+              <LetterTile letter={tile.word} status={tile.status} settings={props.settings} />
+            </DraggableItem>
+          ))}
+        </OrderGroup>
+      </div>
+    );
+
+      Grid.push(
+        <div className="draggable_codes">
+          <OrderGroup mode={"between"}>
+            {codeTiles.map((tile, index) => (
+              <DraggableItem
+                key={index}
+                index={index}
+                onMove={(toIndex) =>
+                  inProgress
+                    ? setCodeTiles(arrayMove(codeTiles, index, toIndex))
+                    : /* TODO: Disable drag entirely if game is over */ console.log("Game over")
+                }
+              >
+                <LetterTile letter={tile.code} status={tile.status} settings={props.settings} />
+              </DraggableItem>
+            ))}
+          </OrderGroup>
+        </div>
+      );
+
+    return Grid;
+  }
+
   function displayOutcome(): React.ReactNode {
     // Game still in progress, don't display anything
     if (inProgress) {
@@ -180,7 +226,6 @@ const WordCodes: React.FC<Props> = (props) => {
   // Restart with new set of questions
   function ResetGame() {
     setInProgress(true);
-    setGuess("");
     setQuestionNumber(0);
     setNumCorrectAnswers(0);
 
@@ -190,58 +235,24 @@ const WordCodes: React.FC<Props> = (props) => {
     }
   }
 
-  // Next question
-  function ContinueGame() {
-    setInProgress(true);
-    setGuess("");
-    setQuestionNumber(questionNumber + 1);
-  }
-
-  function onBackspace() {
-    if (!inProgress) {
-      return;
-    }
-
-    if (guess.length === 0) {
-      return;
-    }
-
-    setGuess(guess.substring(0, guess.length - 1));
-  }
-
-  function onSubmitLetter(letter: string) {
-    if (!inProgress) {
-      return;
-    }
-
-    if (guess.length >= MAX_LENGTH) {
-      return;
-    }
-
-    setGuess(letter);
-  }
-
-  function onSubmitNumber(number: number) {
-    if (!inProgress) {
-      return;
-    }
-
-    if (guess.length >= MAX_LENGTH) {
-      return;
-    }
-
-    setGuess(`${guess}${number}`);
-  }
-
   return (
     <div
-      className="App algebra"
+      className="App word_codes_match"
       style={{ backgroundImage: `url(${props.theme.backgroundImageSrc})`, backgroundSize: "100%" }}
     >
       <div className="outcome">{displayOutcome()}</div>
-      <div className="guess">
-        <LetterTile letter={guess} status="not set" settings={props.settings}></LetterTile>
-      </div>
+      {inProgress && <MessageNotification type="default">{`Guesses left: ${remainingGuesses}`}</MessageNotification>}
+      <div className="tile_row">{displayTiles()}</div>
+      {inProgress && (
+        <Button
+          mode={remainingGuesses <= 1 ? "accept" : "default"}
+          settings={props.settings}
+          //onClick={() => /* checkTiles() */}
+        >
+          Submit guess
+        </Button>
+      )}
+
 
       <div>
         {props.timerConfig.isTimed && (
@@ -256,4 +267,4 @@ const WordCodes: React.FC<Props> = (props) => {
   );
 };
 
-export default WordCodes;
+export default WordCodesMatch;

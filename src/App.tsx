@@ -27,7 +27,7 @@ import SameLetterWords from "./VerbalReasoning/SameLetterWords";
 import NumberSets from "./VerbalReasoning/NumberSets/NumberSets";
 import Algebra from "./VerbalReasoning/Algebra/Algebra";
 import { ChallengesInfo } from "./Challenges/ChallengesInfo";
-import WordCodes from "./VerbalReasoning/WordCodes";
+import WordCodesMatch from "./VerbalReasoning/WordCodesMatch";
 
 const wordLength = 5;
 const numGuesses = 6;
@@ -66,7 +66,7 @@ export type Page =
   | "verbal_reasoning/match"
   | "verbal_reasoning/number_sets"
   | "verbal_reasoning/algebra"
-  | "verbal_reasoning/word_codes"
+  | "verbal_reasoning/word_codes/match"
   | "puzzle/sequence"
   | "campaign"
   | "campaign/area"
@@ -177,7 +177,7 @@ export const pages: { page: Page; title: string; description?: string; shortTitl
     shortTitle: "Algebra",
   },
   {
-    page: "verbal_reasoning/word_codes",
+    page: "verbal_reasoning/word_codes/match",
     title: "Word Codes",
     description: "Decipher codes to find words (and vice versa)",
     shortTitle: "Word Codes",
@@ -321,7 +321,7 @@ export const App: React.FC = () => {
       keyboard: false,
     },
     {
-      page: "verbal_reasoning/word_codes",
+      page: "verbal_reasoning/word_codes/match",
       firstLetter: false,
       timer: true,
       keyboard: false,
@@ -837,16 +837,15 @@ export const App: React.FC = () => {
           />
         );
 
-      case "verbal_reasoning/word_codes":
+      case "verbal_reasoning/word_codes/match":
         return (
-          <WordCodes
+          <WordCodesMatch
             numWords={4}
             wordLength={5}
-            numCodes={4}
             numAdditionalLetters={2}
-            numQuestions={3}
+            numGuesses={3}
             timerConfig={
-              gameOptionToggles.find((x) => x.page === "verbal_reasoning/word_codes")?.timer
+              gameOptionToggles.find((x) => x.page === "verbal_reasoning/word_codes/match")?.timer
                 ? { isTimed: true, seconds: 100 }
                 : { isTimed: false }
             }
