@@ -27,6 +27,7 @@ import SameLetterWords from "./VerbalReasoning/SameLetterWords";
 import NumberSets from "./VerbalReasoning/NumberSets/NumberSets";
 import Algebra from "./VerbalReasoning/Algebra/Algebra";
 import { ChallengesInfo } from "./Challenges/ChallengesInfo";
+import WordCodes from "./VerbalReasoning/WordCodes";
 
 const wordLength = 5;
 const numGuesses = 6;
@@ -65,6 +66,7 @@ export type Page =
   | "verbal_reasoning/match"
   | "verbal_reasoning/number_sets"
   | "verbal_reasoning/algebra"
+  | "verbal_reasoning/word_codes"
   | "puzzle/sequence"
   | "campaign"
   | "campaign/area"
@@ -173,6 +175,12 @@ export const pages: { page: Page; title: string; description?: string; shortTitl
     title: "Algebra",
     description: "Find the answer to a unique number set",
     shortTitle: "Algebra",
+  },
+  {
+    page: "verbal_reasoning/word_codes",
+    title: "Word Codes",
+    description: "Decipher codes to find words (and vice versa)",
+    shortTitle: "Word Codes",
   },
   {
     page: "puzzle/sequence",
@@ -308,6 +316,12 @@ export const App: React.FC = () => {
     },
     {
       page: "verbal_reasoning/algebra",
+      firstLetter: false,
+      timer: true,
+      keyboard: false,
+    },
+    {
+      page: "verbal_reasoning/word_codes",
       firstLetter: false,
       timer: true,
       keyboard: false,
@@ -814,6 +828,25 @@ export const App: React.FC = () => {
           <Algebra
             timerConfig={
               gameOptionToggles.find((x) => x.page === "verbal_reasoning/algebra")?.timer
+                ? { isTimed: true, seconds: 100 }
+                : { isTimed: false }
+            }
+            theme={theme}
+            settings={settings}
+            setPage={setPage}
+          />
+        );
+
+      case "verbal_reasoning/word_codes":
+        return (
+          <WordCodes
+            numWords={4}
+            wordLength={5}
+            numCodes={4}
+            numAdditionalLetters={2}
+            numQuestions={3}
+            timerConfig={
+              gameOptionToggles.find((x) => x.page === "verbal_reasoning/word_codes")?.timer
                 ? { isTimed: true, seconds: 100 }
                 : { isTimed: false }
             }
