@@ -34,11 +34,7 @@ const WordCodesMatch: React.FC<Props> = (props) => {
   const [wordTiles, setWordTiles] = useState<
     { word: string; code: string; status: "incorrect" | "correct" | "not set" }[]
   >([]);
-  const [codeTiles, setCodeTiles] = useState<
-    { code: string; status: "incorrect" | "correct" | "not set" }[]
-  >([]);
-  const [questionNumber, setQuestionNumber] = useState(0);
-  const [numCorrectAnswers, setNumCorrectAnswers] = useState(0);
+  const [codeTiles, setCodeTiles] = useState<{ code: string; status: "incorrect" | "correct" | "not set" }[]>([]);
   const [seconds, setSeconds] = useState(props.timerConfig.isTimed ? props.timerConfig.seconds : 0);
   const [playCorrectChimeSoundEffect] = useCorrectChime(props.settings);
   const [playFailureChimeSoundEffect] = useFailureChime(props.settings);
@@ -73,8 +69,9 @@ const WordCodesMatch: React.FC<Props> = (props) => {
     }
 
     const newWordCodes = getWordCodes();
+    console.log(newWordCodes);
     setWordCodes(newWordCodes);
-  }, []);
+  }, [ResetGame]);
 
   // Create word tiles and code tiles (each time wordCodes changes)
   React.useEffect(() => {
@@ -89,7 +86,6 @@ const WordCodesMatch: React.FC<Props> = (props) => {
     newCodeTiles = wordCodes.map((wordCode) => ({ code: wordCode.code, status: "not set" }));
     newCodeTiles = shuffleArray(newCodeTiles);
     setCodeTiles(newCodeTiles);
-
   }, [wordCodes]);
 
   // Determines whether a word can be made only using the specified valid letters
@@ -191,27 +187,68 @@ const WordCodesMatch: React.FC<Props> = (props) => {
       </div>
     );
 
-      Grid.push(
-        <div className="draggable_codes">
-          <OrderGroup mode={"between"}>
-            {codeTiles.map((tile, index) => (
-              <DraggableItem
-                key={index}
-                index={index}
-                onMove={(toIndex) =>
-                  inProgress
-                    ? setCodeTiles(arrayMove(codeTiles, index, toIndex))
-                    : /* TODO: Disable drag entirely if game is over */ console.log("Game over")
-                }
-              >
-                <LetterTile letter={tile.code} status={tile.status} settings={props.settings} />
-              </DraggableItem>
-            ))}
-          </OrderGroup>
-        </div>
-      );
+    Grid.push(
+      <div className="draggable_codes">
+        <OrderGroup mode={"between"}>
+          {codeTiles.map((tile, index) => (
+            <DraggableItem
+              key={index}
+              index={index}
+              onMove={(toIndex) =>
+                inProgress
+                  ? setCodeTiles(arrayMove(codeTiles, index, toIndex))
+                  : /* TODO: Disable drag entirely if game is over */ console.log("Game over")
+              }
+            >
+              <LetterTile letter={tile.code} status={tile.status} settings={props.settings} />
+            </DraggableItem>
+          ))}
+        </OrderGroup>
+      </div>
+    );
 
     return Grid;
+  }
+
+  function checkTiles() {
+    let newWordTiles = wordTiles.slice();
+    let newCodeTiles = codeTiles.slice();
+
+    newWordTiles = wordTiles.map((x, index) => {
+      // Word matches with code
+      if (wordTiles[index].code === codeTiles[index].code) {
+        // Change status to correct
+        x.status = "correct";
+      } else {
+        x.status = "incorrect";
+      }
+      return x;
+    });
+    // Also update status of result tiles
+    newCodeTiles = codeTiles.map((x, index) => {
+      if (wordTiles[index].code === codeTiles[index].code) {
+        x.status = "correct";
+      } else {
+        x.status = "incorrect";
+      }
+      return x;
+    });
+
+    // Set so that the change in statuses are rendered
+    setWordTiles(newWordTiles);
+    setCodeTiles(newCodeTiles);
+
+    // Are all the tiles in the correct position?
+    const allCorrect = newWordTiles.filter((x) => x.status === "correct").length === wordTiles.length;
+
+    // Or on last remaining guess
+    if (allCorrect || remainingGuesses <= 1) {
+      // Game over
+      setInProgress(false);
+    } else {
+      // Otherwise, decrease number of guesses left
+      setRemainingGuesses(remainingGuesses - 1);
+    }
   }
 
   function displayOutcome(): React.ReactNode {
@@ -220,14 +257,31 @@ const WordCodesMatch: React.FC<Props> = (props) => {
       return;
     }
 
-    return <br></br>;
+    const numCorrectTiles = wordTiles.filter((x) => x.status === "correct").length;
+    const successCondition = numCorrectTiles === wordTiles.length;
+
+    return (
+      <>
+        <MessageNotification type={successCondition ? "success" : "error"}>
+          <strong>{successCondition ? "All tiles in the correct order!" : `${numCorrectTiles} tiles correct`}</strong>
+        </MessageNotification>
+
+        <br></br>
+
+        <Button mode="accept" settings={props.settings} onClick={() => ResetGame()}>
+          Restart
+        </Button>
+      </>
+    );
   }
 
   // Restart with new set of questions
   function ResetGame() {
     setInProgress(true);
-    setQuestionNumber(0);
-    setNumCorrectAnswers(0);
+    setWordTiles([]);
+    setCodeTiles([]);
+    setWordCodes([]);
+    setRemainingGuesses(props.numGuesses);
 
     if (props.timerConfig.isTimed) {
       // Reset the timer if it is enabled in the game options
@@ -247,13 +301,11 @@ const WordCodesMatch: React.FC<Props> = (props) => {
         <Button
           mode={remainingGuesses <= 1 ? "accept" : "default"}
           settings={props.settings}
-          //onClick={() => /* checkTiles() */}
+          onClick={() => checkTiles()}
         >
           Submit guess
         </Button>
       )}
-
-
       <div>
         {props.timerConfig.isTimed && (
           <ProgressBar
