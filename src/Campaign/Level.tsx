@@ -11,6 +11,10 @@ import { AreaConfig } from "./Area";
 export interface LevelConfig {
   hint?: React.ReactNode;
   isUnlockLevel?: boolean;
+  levelButtonCoords?: {
+    x: number;
+    y: number;
+  };
   level:
     | {
         gameCategory: "wingo";

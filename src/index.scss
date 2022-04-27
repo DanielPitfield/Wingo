@@ -1437,15 +1437,78 @@ $nubble-colors-names: (
   }
 }
 
-.level-button {
+.area {
+  position: relative;
+  background-size: 100%;
+  background-repeat: no-repeat;
+  .button-node {
+    cursor: pointer;
+    padding: 0.3em;
+    outline: none;
+    border: none;
+    width: 2.5em;
+    height: 2.5em;
+    border-radius: 2.5em;
+    outline-offset: 0.1em;
+    color: white;
+    text-shadow: #111 1px 0px 3px;
+    font-family: inherit;
+    font-size: inherit;
+    border: 0.2em solid #d3aa22;
+    background: linear-gradient(137deg, #a246ed 0%, #a246ed 53%, #b25cf8 100%);
+    box-shadow: 0 0.3em 0.5em #777;
+    &[data-is-unlocked="false"] {
+      border-color: #d3aa22aa;
+      background: linear-gradient(137deg, #a246edaa 0%, #a246edaa 53%, #b25cf8aa 100%);
+    }
+    &:hover {
+      background: linear-gradient(137deg, #6a10b4 0%, #8b28db 53%, #8b28db 100%);
+      outline: 0.3em solid #6a10b4;
+    }
+  }
+}
+
+.popper-overlay {
+  z-index: 999;
+}
+
+.level-button.widget {
+  background: linear-gradient(137deg, #a246ed 0%, #a246ed 53%, #b25cf8 100%);
+  padding: 0;
+  min-width: 18em;
+  height: auto !important;
+  border-radius: 0.4em;
   &[data-is-unlocked="false"] {
-    opacity: 0.6;
+    opacity: 0.85;
+    .level-number,
+    .level-mode {
+      opacity: 0.5;
+    }
+  }
+  .widget-subtitle {
+    display: flex;
+    color: #fffc;
+    margin: 0;
+    padding: 0.8em;
+    flex-grow: 0;
+    font-size: 0.9em;
+    background: linear-gradient(137deg, #6a10b4 0%, #8b28db 53%, #8b28db 100%);
+    .level-number {
+      flex-grow: 1;
+    }
+    .level-status {
+    }
   }
   .level-mode {
-    color: #888;
-    margin-top: 0;
-    margin-bottom: 2em;
-    font-size: 0.95em;
+    color: #fff;
+    text-transform: uppercase;
+    margin: 0;
+    padding: 0.5em;
+    font-size: 1.3em;
+  }
+  .widget-button-wrapper {
+    padding: 0.5em;
+    padding-top: 0;
   }
 }
 
