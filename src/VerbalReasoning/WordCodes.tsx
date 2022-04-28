@@ -16,7 +16,9 @@ import { arrayMove, OrderGroup } from "react-draggable-order";
 import { DraggableItem } from "../NumbersArithmetic/DraggableItem";
 
 interface Props {
-  modeConfig: { isMatch: false; numCodes: number; numQuestions: number } | { isMatch: true };
+  modeConfig:
+    | { isMatch: false; numCodes: number; numWordToCodeQuestions: number; numCodeToWordQuestions: number }
+    | { isMatch: true };
   numWords: number;
   wordLength: number;
   numAdditionalLetters: number;
@@ -41,9 +43,16 @@ const WordCodes: React.FC<Props> = (props) => {
   >([]);
   const [codeTiles, setCodeTiles] = useState<{ code: string; status: "incorrect" | "correct" | "not set" }[]>([]);
 
-  // Information for questions gamemode
-  const [words, setWords] = useState<string[]>([]);
-  const [codes, setCodes] = useState<string[]>([]);
+  // Display information for questions gamemode
+  const [displayWords, setDisplayWords] = useState<string[]>([]);
+  const [displayCodes, setDisplayCodes] = useState<string[]>([]);
+
+  // Questions
+  const [questionWordCodes, setQuestionWordCodes] = useState<{ word: string; code: string }[]>([]);
+  const [questionProgress, setQuestionProgress] = useState<{
+    numCompletedWordToCodeQuestions: number;
+    numCompletedCodeToWordQuestions: number;
+  }>({ numCompletedWordToCodeQuestions: 0, numCompletedCodeToWordQuestions: 0 });
 
   const [seconds, setSeconds] = useState(props.timerConfig.isTimed ? props.timerConfig.seconds : 0);
   const [playCorrectChimeSoundEffect] = useCorrectChime(props.settings);
@@ -78,12 +87,11 @@ const WordCodes: React.FC<Props> = (props) => {
       return;
     }
 
-    const newWordCodes = getWordCodes();
-    console.log(newWordCodes);
-    setWordCodes(newWordCodes);
+    // Sets display/information word codes (and question word codes if that gamemode)
+    determineWordCodes();
   }, [ResetGame]);
 
-  // Create word tiles and code tiles for match gamemode (Each time wordCodes changes)
+  // Update tiles or display information (each time wordCodes changes)
   React.useEffect(() => {
     // Match gamemode
     if (props.modeConfig.isMatch) {
@@ -101,29 +109,29 @@ const WordCodes: React.FC<Props> = (props) => {
     }
     // Question gamemode
     else {
-      let words = wordCodes.map((wordCode, index) => {
+      let newDisplayWords = wordCodes.map((wordCode, index) => {
         return wordCode.word.toUpperCase();
       });
-      words = shuffleArray(words);
+      newDisplayWords = shuffleArray(newDisplayWords);
 
-      setWords(words);
+      setDisplayWords(newDisplayWords);
 
-      let codes = wordCodes.map((wordCode, index) => {
+      let newDisplayCodes = wordCodes.map((wordCode, index) => {
         return wordCode.code;
       });
-      codes = shuffleArray(codes);
+      newDisplayCodes = shuffleArray(newDisplayCodes);
 
       // The codes for some words are not to be shown
       if (props.modeConfig.numCodes < props.numWords) {
         const numMissingCodes = Math.max(0, props.numWords - props.modeConfig.numCodes);
         // Enough codes to be able to not show some
-        if (codes.length > numMissingCodes) {
+        if (newDisplayCodes.length > numMissingCodes) {
           // Remove some codes
-          codes = codes.slice(0, codes.length - numMissingCodes);
+          newDisplayCodes = newDisplayCodes.slice(0, newDisplayCodes.length - numMissingCodes);
         }
       }
 
-      setCodes(codes);
+      setDisplayCodes(newDisplayCodes);
     }
   }, [wordCodes]);
 
@@ -142,7 +150,7 @@ const WordCodes: React.FC<Props> = (props) => {
     return true;
   }
 
-  function getWordCodes(): { word: string; code: string }[] {
+  function determineWordCodes() {
     // The word array containing all the words of the specified length
     let targetWordArray = wordLengthMappingsTargets.find((x) => x.value === props.wordLength)?.array!;
 
@@ -180,7 +188,7 @@ const WordCodes: React.FC<Props> = (props) => {
 
     let fail_count = 0;
 
-    while (words.length < props.numWords && fail_count < 100) {
+    while (words_subset.length < props.numWords && fail_count < 100) {
       const randomWord = original_matches[Math.round(Math.random() * (original_matches.length - 1))];
 
       if (!words_subset.includes(randomWord)) {
@@ -212,7 +220,35 @@ const WordCodes: React.FC<Props> = (props) => {
       return { word: word, code: getCode(word) };
     });
 
-    return newWordCodes;
+    setWordCodes(newWordCodes);
+
+    // Question gamemode
+    if (!props.modeConfig.isMatch) {
+      // Choose/determine a subset of valid words
+      let questions_words_subset: string[] = [];
+      // Number of word codes that need to be generated (for questions)
+      const numQuestions = props.modeConfig.numCodeToWordQuestions + props.modeConfig.numWordToCodeQuestions;
+
+      let fail_count = 0;
+
+      while (questions_words_subset.length < numQuestions && fail_count < 100) {
+        const randomWord = original_matches[Math.round(Math.random() * (original_matches.length - 1))];
+
+        // Not a word used already (either for the information provided or already used for questions)
+        if (!questions_words_subset.includes(randomWord) && !words_subset.includes(randomWord)) {
+          questions_words_subset.push(randomWord);
+        } else {
+          fail_count += 1;
+        }
+      }
+
+      // Determine the code for each of the chosen words
+      const newQuestionWordCodes = questions_words_subset.map((word, index) => {
+        return { word: word, code: getCode(word) };
+      });
+
+      setQuestionWordCodes(newQuestionWordCodes);
+    }
   }
 
   // Textual information for questions gamemode
@@ -221,21 +257,77 @@ const WordCodes: React.FC<Props> = (props) => {
       return;
     }
 
-    if (!words) {
+    if (!displayWords) {
       return;
     }
 
-    if (!codes) {
+    if (!displayCodes) {
       return;
     }
 
     return (
       <>
-        <div className="wordCode_words">{words.join("  ")}</div>
+        <div className="wordCode_words">{displayWords.join("  ")}</div>
         <br></br>
-        <div className="wordCode_codes">{codes.join("  ")}</div>
+        <div className="wordCode_codes">{displayCodes.join("  ")}</div>
       </>
     );
+  }
+
+  function displayQuestion() {
+    // TODO: This function needs to set some state, perhaps setQuestion()
+    // The question is changing because of the random nature of how it is created
+
+    if (props.modeConfig.isMatch) {
+      return;
+    }
+
+    if (!questionProgress) {
+      return;
+    }
+
+    // Number of questions answered so far
+    const nunmQuestionsCompleted =
+      questionProgress.numCompletedWordToCodeQuestions + questionProgress.numCompletedCodeToWordQuestions;
+    // All the specified amount of word to code questions completed?
+    const completedWordToCode =
+      questionProgress.numCompletedWordToCodeQuestions === props.modeConfig.numWordToCodeQuestions;
+    // All the specified amount of code to word questions completed?
+    const completedCodetoWord =
+      questionProgress.numCompletedCodeToWordQuestions === props.modeConfig.numCodeToWordQuestions;
+    // Either type of question can be next?
+    const chooseRandomQuestionType = !completedWordToCode && !completedCodetoWord;
+
+    let question;
+
+    if (chooseRandomQuestionType) {
+      // No word code for the next question
+      if (!questionWordCodes[nunmQuestionsCompleted]) {
+        return;
+      }
+
+      // 50: 50 chance
+      let x = Math.floor(Math.random() * 2) === 0;
+
+      // Word to Code
+      if (x) {
+        question = (
+          <div className="wordCodes_question">
+            Find the code for the word <strong>{questionWordCodes[nunmQuestionsCompleted].word}</strong>
+          </div>
+        );
+      }
+      // Code to Word
+      else {
+        question = (
+          <div className="wordCodes_question">
+            Find the word that has the number code <strong>{questionWordCodes[nunmQuestionsCompleted].code}</strong>
+          </div>
+        );
+      }
+    }
+
+    return question;
   }
 
   // Draggable tiles for match gamemode
@@ -380,6 +472,7 @@ const WordCodes: React.FC<Props> = (props) => {
       <div className="outcome">{displayOutcome()}</div>
       {inProgress && <MessageNotification type="default">{`Guesses left: ${remainingGuesses}`}</MessageNotification>}
       {!props.modeConfig.isMatch && <div className="wordCode_information">{displayInformation()}</div>}
+      {!props.modeConfig.isMatch && displayQuestion()}
       {props.modeConfig.isMatch && <div className="tile_row">{displayTiles()}</div>}
       {Boolean(props.modeConfig.isMatch && inProgress) && (
         <Button

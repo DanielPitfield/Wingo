@@ -840,7 +840,7 @@ export const App: React.FC = () => {
       case "verbal_reasoning/word_codes/match":
         return (
           <WordCodes
-          modeConfig={{ isMatch: false, numCodes: 3, numQuestions: 3}}
+          modeConfig={{ isMatch: false, numCodes: 3, numWordToCodeQuestions: 2, numCodeToWordQuestions: 1 }}
             numWords={4}
             wordLength={5}
             numAdditionalLetters={2}
