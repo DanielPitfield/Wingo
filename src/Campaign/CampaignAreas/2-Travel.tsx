@@ -13,7 +13,6 @@ export const area: AreaConfig = {
         mode: "repeat",
         targetWord: "travel",
         enforceFullLengthGuesses: true,
-        defaultWordLength: 6,
         defaultnumGuesses: 6,
         keyboard: true,
         firstLetterProvided: true,
@@ -27,7 +26,7 @@ export const area: AreaConfig = {
 
   levels: [
     {
-      hint: <>Gravitationally bound collection of stars</>,
+      hint: <>Home of stunning landscapes, Niagara Falls and Ice Hockey</>,
       levelButtonCoords: {
         x: 14,
         y: 27,
@@ -36,9 +35,8 @@ export const area: AreaConfig = {
         gameCategory: "wingo",
         levelProps: {
           mode: "repeat",
-          targetWord: "galaxy",
+          targetWord: "canada",
           enforceFullLengthGuesses: true,
-          defaultWordLength: 6,
           defaultnumGuesses: 6,
           keyboard: true,
           firstLetterProvided: true,
@@ -49,7 +47,7 @@ export const area: AreaConfig = {
       },
     },
     {
-      hint: <>Planet of the sea</>,
+      hint: <>Canadian dish of french fries, gravy and cheese curds</>,
       levelButtonCoords: {
         x: 18,
         y: 30,
@@ -58,12 +56,11 @@ export const area: AreaConfig = {
         gameCategory: "wingo",
         levelProps: {
           mode: "repeat",
-          targetWord: "neptune",
+          targetWord: "poutine",
           enforceFullLengthGuesses: true,
-          defaultWordLength: 7,
           defaultnumGuesses: 6,
           keyboard: true,
-          firstLetterProvided: false,
+          firstLetterProvided: true,
           puzzleLeaveNumBlanks: 0,
           puzzleRevealMs: 0,
           timerConfig: { isTimed: false },
@@ -71,7 +68,7 @@ export const area: AreaConfig = {
       },
     },
     {
-      hint: <>Outburst of energy from a star</>,
+      hint: <>Largest animal of the deer family</>,
       levelButtonCoords: {
         x: 22,
         y: 28,
@@ -80,9 +77,8 @@ export const area: AreaConfig = {
         gameCategory: "wingo",
         levelProps: {
           mode: "repeat",
-          targetWord: "flare",
+          targetWord: "moose",
           enforceFullLengthGuesses: true,
-          defaultWordLength: 5,
           defaultnumGuesses: 6,
           keyboard: true,
           firstLetterProvided: false,
@@ -93,7 +89,7 @@ export const area: AreaConfig = {
       },
     },
     {
-      hint: <>Planet with icy rings</>,
+      hint: <>Sweet sugary sap from certain trees</>,
       levelButtonCoords: {
         x: 26,
         y: 24,
@@ -102,10 +98,9 @@ export const area: AreaConfig = {
         gameCategory: "wingo",
         levelProps: {
           mode: "repeat",
-          targetWord: "saturn",
+          targetWord: "maple-syrup",
           enforceFullLengthGuesses: true,
-          defaultWordLength: 6,
-          defaultnumGuesses: 6,
+          defaultnumGuesses: 5,
           keyboard: true,
           firstLetterProvided: false,
           puzzleLeaveNumBlanks: 0,
@@ -115,7 +110,7 @@ export const area: AreaConfig = {
       },
     },
     {
-      hint: <>Radient emission</>,
+      hint: <>Canada is home to 60% of these furry animals</>,
       levelButtonCoords: {
         x: 30,
         y: 26,
@@ -124,9 +119,8 @@ export const area: AreaConfig = {
         gameCategory: "wingo",
         levelProps: {
           mode: "repeat",
-          targetWord: "aurora",
+          targetWord: "polar-bear",
           enforceFullLengthGuesses: true,
-          defaultWordLength: 6,
           defaultnumGuesses: 6,
           keyboard: true,
           firstLetterProvided: false,
@@ -137,7 +131,7 @@ export const area: AreaConfig = {
       },
     },
     {
-      hint: <>Planet that spins on its side</>,
+      hint: <>Land of the free</>,
       levelButtonCoords: {
         x: 28,
         y: 36,
@@ -146,9 +140,8 @@ export const area: AreaConfig = {
         gameCategory: "wingo",
         levelProps: {
           mode: "repeat",
-          targetWord: "uranus",
+          targetWord: "usa",
           enforceFullLengthGuesses: true,
-          defaultWordLength: 6,
           defaultnumGuesses: 6,
           keyboard: true,
           firstLetterProvided: false,
@@ -159,7 +152,7 @@ export const area: AreaConfig = {
       },
     },
     {
-      hint: <>Super heated gas</>,
+      hint: <>Founding legal basis</>,
       levelButtonCoords: {
         x: 24,
         y: 38,
@@ -168,9 +161,8 @@ export const area: AreaConfig = {
         gameCategory: "wingo",
         levelProps: {
           mode: "repeat",
-          targetWord: "plasma",
+          targetWord: "constitution",
           enforceFullLengthGuesses: true,
-          defaultWordLength: 6,
           defaultnumGuesses: 7,
           keyboard: true,
           firstLetterProvided: true,
@@ -181,7 +173,7 @@ export const area: AreaConfig = {
       },
     },
     {
-      hint: <>Super heated gas</>,
+      hint: <>Famous american food treat, originating from Germany</>,
       levelButtonCoords: {
         x: 19,
         y: 39,
@@ -190,12 +182,11 @@ export const area: AreaConfig = {
         gameCategory: "wingo",
         levelProps: {
           mode: "repeat",
-          targetWord: "plasma",
+          targetWord: "cheeseburger",
           enforceFullLengthGuesses: true,
-          defaultWordLength: 6,
           defaultnumGuesses: 7,
           keyboard: true,
-          firstLetterProvided: true,
+          firstLetterProvided: false,
           puzzleLeaveNumBlanks: 3,
           puzzleRevealMs: 1500,
           timerConfig: { isTimed: false },
@@ -203,7 +194,7 @@ export const area: AreaConfig = {
       },
     },
     {
-      hint: <>Super heated gas</>,
+      hint: <>Famous american sport</>,
       levelButtonCoords: {
         x: 17,
         y: 47,
@@ -212,12 +203,11 @@ export const area: AreaConfig = {
         gameCategory: "wingo",
         levelProps: {
           mode: "repeat",
-          targetWord: "plasma",
+          targetWord: "baseball",
           enforceFullLengthGuesses: true,
-          defaultWordLength: 6,
-          defaultnumGuesses: 7,
+          defaultnumGuesses: 5,
           keyboard: true,
-          firstLetterProvided: true,
+          firstLetterProvided: false,
           puzzleLeaveNumBlanks: 3,
           puzzleRevealMs: 1500,
           timerConfig: { isTimed: false },
@@ -225,7 +215,7 @@ export const area: AreaConfig = {
       },
     },
     {
-      hint: <>Super heated gas</>,
+      hint: <>Home to Tacos, Margarita and Tequilla</>,
       levelButtonCoords: {
         x: 17,
         y: 55,
@@ -234,10 +224,9 @@ export const area: AreaConfig = {
         gameCategory: "wingo",
         levelProps: {
           mode: "repeat",
-          targetWord: "plasma",
+          targetWord: "mexico",
           enforceFullLengthGuesses: true,
-          defaultWordLength: 6,
-          defaultnumGuesses: 7,
+          defaultnumGuesses: 5,
           keyboard: true,
           firstLetterProvided: true,
           puzzleLeaveNumBlanks: 3,
@@ -247,7 +236,7 @@ export const area: AreaConfig = {
       },
     },
     {
-      hint: <>Super heated gas</>,
+      hint: <>Mexican quartet</>,
       levelButtonCoords: {
         x: 20,
         y: 62,
@@ -256,9 +245,8 @@ export const area: AreaConfig = {
         gameCategory: "wingo",
         levelProps: {
           mode: "repeat",
-          targetWord: "plasma",
+          targetWord: "mariachi",
           enforceFullLengthGuesses: true,
-          defaultWordLength: 6,
           defaultnumGuesses: 7,
           keyboard: true,
           firstLetterProvided: true,
@@ -269,7 +257,7 @@ export const area: AreaConfig = {
       },
     },
     {
-      hint: <>Super heated gas</>,
+      hint: <>Home to Cachaça and Iguaçu Falls</>,
       levelButtonCoords: {
         x: 23,
         y: 68,
@@ -278,10 +266,9 @@ export const area: AreaConfig = {
         gameCategory: "wingo",
         levelProps: {
           mode: "repeat",
-          targetWord: "plasma",
+          targetWord: "brazil",
           enforceFullLengthGuesses: true,
-          defaultWordLength: 6,
-          defaultnumGuesses: 7,
+          defaultnumGuesses: 5,
           keyboard: true,
           firstLetterProvided: true,
           puzzleLeaveNumBlanks: 3,
@@ -291,7 +278,7 @@ export const area: AreaConfig = {
       },
     },
     {
-      hint: <>Super heated gas</>,
+      hint: <>Brazillian festivity</>,
       levelButtonCoords: {
         x: 29,
         y: 68,
@@ -300,12 +287,11 @@ export const area: AreaConfig = {
         gameCategory: "wingo",
         levelProps: {
           mode: "repeat",
-          targetWord: "plasma",
+          targetWord: "carnival",
           enforceFullLengthGuesses: true,
-          defaultWordLength: 6,
-          defaultnumGuesses: 7,
+          defaultnumGuesses: 6,
           keyboard: true,
-          firstLetterProvided: true,
+          firstLetterProvided: false,
           puzzleLeaveNumBlanks: 3,
           puzzleRevealMs: 1500,
           timerConfig: { isTimed: false },
@@ -313,7 +299,7 @@ export const area: AreaConfig = {
       },
     },
     {
-      hint: <>Super heated gas</>,
+      hint: <>Brazillian dance</>,
       levelButtonCoords: {
         x: 34,
         y: 74,
@@ -322,12 +308,11 @@ export const area: AreaConfig = {
         gameCategory: "wingo",
         levelProps: {
           mode: "repeat",
-          targetWord: "plasma",
+          targetWord: "samba",
           enforceFullLengthGuesses: true,
-          defaultWordLength: 6,
-          defaultnumGuesses: 7,
+          defaultnumGuesses: 4,
           keyboard: true,
-          firstLetterProvided: true,
+          firstLetterProvided: false,
           puzzleLeaveNumBlanks: 3,
           puzzleRevealMs: 1500,
           timerConfig: { isTimed: false },
@@ -335,7 +320,7 @@ export const area: AreaConfig = {
       },
     },
     {
-      hint: <>Super heated gas</>,
+      hint: <>Brazillian sport</>,
       levelButtonCoords: {
         x: 31,
         y: 77,
@@ -344,12 +329,11 @@ export const area: AreaConfig = {
         gameCategory: "wingo",
         levelProps: {
           mode: "repeat",
-          targetWord: "plasma",
+          targetWord: "football",
           enforceFullLengthGuesses: true,
-          defaultWordLength: 6,
-          defaultnumGuesses: 7,
+          defaultnumGuesses: 6,
           keyboard: true,
-          firstLetterProvided: true,
+          firstLetterProvided: false,
           puzzleLeaveNumBlanks: 3,
           puzzleRevealMs: 1500,
           timerConfig: { isTimed: false },
@@ -357,7 +341,7 @@ export const area: AreaConfig = {
       },
     },
     {
-      hint: <>Super heated gas</>,
+      hint: <>Home to Easter Island and the Atacama desert</>,
       levelButtonCoords: {
         x: 26,
         y: 84,
@@ -366,9 +350,8 @@ export const area: AreaConfig = {
         gameCategory: "wingo",
         levelProps: {
           mode: "repeat",
-          targetWord: "plasma",
+          targetWord: "chile",
           enforceFullLengthGuesses: true,
-          defaultWordLength: 6,
           defaultnumGuesses: 7,
           keyboard: true,
           firstLetterProvided: true,
@@ -379,7 +362,7 @@ export const area: AreaConfig = {
       },
     },
     {
-      hint: <>Super heated gas</>,
+      hint: <>Home to Tango</>,
       levelButtonCoords: {
         x: 25,
         y: 94,
@@ -388,9 +371,8 @@ export const area: AreaConfig = {
         gameCategory: "wingo",
         levelProps: {
           mode: "repeat",
-          targetWord: "plasma",
+          targetWord: "argentina",
           enforceFullLengthGuesses: true,
-          defaultWordLength: 6,
           defaultnumGuesses: 7,
           keyboard: true,
           firstLetterProvided: true,
