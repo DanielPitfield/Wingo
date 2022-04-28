@@ -48,7 +48,7 @@ export const Area: React.FC<{
             setPage={props.setPage}
             settings={props.settings}
             setSelectedCampaignLevel={props.setSelectedCampaignLevel}
-            onClickLevel={setSelectedLevel}
+            onHoverLevel={setSelectedLevel}
           />
         ))}
         {props.area.levels.length === 0 && (
@@ -69,7 +69,7 @@ export const LevelNode: React.FC<{
   index: number;
   area: AreaConfig;
   settings: SettingsData;
-  onClickLevel: (level: LevelConfig | null) => void;
+  onHoverLevel: (level: LevelConfig | null) => void;
   setTheme: (theme: Theme) => void;
   setSelectedCampaignLevel: (level: LevelConfig) => void;
   setPage: (page: Page) => void;
@@ -110,9 +110,14 @@ export const LevelNode: React.FC<{
         className="level-button button-node"
         ref={setReferenceElement as any}
         key={`Area ${areaInfo?.name} Level ${props.index + 1}`}
-        onClick={() => props.onClickLevel(props.isSelected ? null : props.level)}
-        onMouseOver={() => props.onClickLevel(props.isSelected ? null : props.level)}
-        onMouseLeave={() => props.onClickLevel(null)}
+        onClick={() => {
+          if (level_unlocked) {
+            props.setSelectedCampaignLevel(props.level);
+            props.setPage("campaign/area/level");
+          }
+        }}
+        onMouseOver={() => props.onHoverLevel(props.isSelected ? null : props.level)}
+        onMouseLeave={() => props.onHoverLevel(null)}
         data-is-completed={level_completed}
         data-is-unlocked={level_unlocked}
         data-animation-setting={props.settings.graphics.animation}
@@ -144,21 +149,6 @@ export const LevelNode: React.FC<{
             <p className="level-mode">
               {levelInfo?.title || levelInfo?.shortTitle || props.level.level.levelProps.mode}
             </p>
-            <span className="widget-button-wrapper">
-              <Button
-                mode={level_unlocked && !level_completed ? "accept" : "default"}
-                disabled={!level_unlocked}
-                settings={props.settings}
-                onClick={() => {
-                  if (level_unlocked) {
-                    props.setSelectedCampaignLevel(props.level);
-                    props.setPage("campaign/area/level");
-                  }
-                }}
-              >
-                {level_completed ? "Completed!" : level_unlocked ? "Go" : "?"}
-              </Button>
-            </span>
             <div ref={setArrowElement as any} style={styles.arrow} />
           </div>
         </div>
