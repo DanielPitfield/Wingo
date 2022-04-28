@@ -689,7 +689,7 @@ const WordleConfig: React.FC<Props> = (props) => {
 
       // Only full length guesses - Find the array by length of word
       if (props.enforceFullLengthGuesses) {
-        wordArray = wordLengthMappingsGuessable.find((x) => x.value === wordLength)?.array!;
+        wordArray = wordLengthMappingsGuessable.find((x) => x.value === wordLength)?.array || [];
       }
       // Full AND partial length guesses - All arrays containing words up to the wordLength (inclusive)
       else {
@@ -705,7 +705,7 @@ const WordleConfig: React.FC<Props> = (props) => {
       }
     }
 
-    if (!wordArray || wordArray.length === 0) {
+    if (wordArray.length === 0 && currentWord.toLowerCase() !== targetWord.toLowerCase()) {
       return;
     }
 
