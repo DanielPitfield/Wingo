@@ -1454,16 +1454,20 @@ $nubble-colors-names: (
     text-shadow: #111 1px 0px 3px;
     font-family: inherit;
     font-size: inherit;
-    border: 0.2em solid #6e2b6d;
-    background: linear-gradient(137deg, #a246ed 0%, #a246ed 53%, #b25cf8 100%);
-    box-shadow: 0 0.3em 0.5em #777;
+    border: 0.2em solid #5f2c8a;
+    background: linear-gradient(137deg, #793bac 0%, #793bac 53%, #b25cf8 100%);
+    box-shadow: 0 0.3em 0.2em #311331;
     &[data-is-unlocked="false"] {
-      border-color: #6e2b6daa;
-      background: linear-gradient(137deg, #a246edaa 0%, #a246edaa 53%, #b25cf8aa 100%);
+      border-color: #a246ed66;
+      background: linear-gradient(137deg, #a246ed88 0%, #a246ed88 53%, #b25cf888 100%);
+    }
+    &[data-is-unlocked="true"][data-is-completed="false"] {
+      box-shadow: none;
+      border-color: #3b1b3b;
+      outline: 0.3em solid #3b1b3b;
     }
     &:hover {
       background: linear-gradient(137deg, #6a10b4 0%, #8b28db 53%, #8b28db 100%);
-      outline: 0.3em solid #6a10b4;
     }
   }
 }
