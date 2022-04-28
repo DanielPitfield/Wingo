@@ -1454,11 +1454,11 @@ $nubble-colors-names: (
     text-shadow: #111 1px 0px 3px;
     font-family: inherit;
     font-size: inherit;
-    border: 0.2em solid #d3aa22;
+    border: 0.2em solid #6e2b6d;
     background: linear-gradient(137deg, #a246ed 0%, #a246ed 53%, #b25cf8 100%);
     box-shadow: 0 0.3em 0.5em #777;
     &[data-is-unlocked="false"] {
-      border-color: #d3aa22aa;
+      border-color: #6e2b6daa;
       background: linear-gradient(137deg, #a246edaa 0%, #a246edaa 53%, #b25cf8aa 100%);
     }
     &:hover {
