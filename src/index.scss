@@ -1449,7 +1449,7 @@ $nubble-colors-names: (
     height: 2.5em;
     border-radius: 2.5em;
     color: #ddd;
-    text-shadow: #111 1px 0px 3px;
+    text-shadow: #444 1px 0px 3px;
     font-family: inherit;
     font-size: inherit;
     border: 0.2em solid #9c9c9c;
@@ -1463,7 +1463,7 @@ $nubble-colors-names: (
     }
     &[data-is-unlocked="true"] {
       border-color: #a246ed66;
-      color: #f5dbf4;
+      color: #f5dbf4cc;
       cursor: pointer;
       opacity: 1;
       background: linear-gradient(137deg, #8830cf 0%, #8735ca 53%, #8a3cca 100%);
@@ -1480,7 +1480,7 @@ $nubble-colors-names: (
     }
     &[data-is-completed="true"] {
       border: 0.2em solid #2c8a4d;
-      color: #edffeb;
+      color: #edffebcc;
       cursor: pointer;
       opacity: 1;
       background: linear-gradient(137deg, #3bac60 0%, #3bac3c 53%, #5cf87e 100%);
