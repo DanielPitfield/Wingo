@@ -5,8 +5,8 @@ export const area: AreaConfig = {
   name: "Cars",
   theme: Themes.Cars,
   unlock_level: {
+    type: "unlock-level",
     hint: <>Unlock this area</>,
-    isUnlockLevel: true,
     level: {
       gameCategory: "wingo",
       levelProps: {

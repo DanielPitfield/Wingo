@@ -5,6 +5,7 @@ export const area: AreaConfig = {
   name: "Tutorial",
   theme: Themes.GenericWingo,
   unlock_level: {
+    type: "unlock-level",
     hint: (
       <>
         Every area must first be unlocked by guessing the name of the area
@@ -14,7 +15,6 @@ export const area: AreaConfig = {
         Try entering the word <strong>START</strong>
       </>
     ),
-    isUnlockLevel: true,
     level: {
       gameCategory: "wingo",
       levelProps: {
@@ -34,7 +34,12 @@ export const area: AreaConfig = {
   },
   levels: [
     {
+      type: "level",
       hint: <>To acquire new knowledge</>,
+      levelButtonCoords: {
+        x: 10,
+        y: 10,
+      },
       level: {
         gameCategory: "wingo",
         levelProps: {

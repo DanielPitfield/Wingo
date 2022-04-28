@@ -5,8 +5,8 @@ export const area: AreaConfig = {
   name: "Nature",
   theme: Themes.Nature,
   unlock_level: {
+    type: "unlock-level",
     hint: <>Unlock this area</>,
-    isUnlockLevel: true,
     level: {
       gameCategory: "wingo",
       levelProps: {

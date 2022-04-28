@@ -8,13 +8,8 @@ import { Theme } from "../Themes";
 import WordleConfig, { WordleConfigProps } from "../WordleConfig";
 import { AreaConfig } from "./Area";
 
-export interface LevelConfig {
+export type LevelConfig = {
   hint?: React.ReactNode;
-  isUnlockLevel?: boolean;
-  levelButtonCoords?: {
-    x: number;
-    y: number;
-  };
   level:
     | {
         gameCategory: "wingo";
@@ -28,7 +23,18 @@ export interface LevelConfig {
         gameCategory: "puzzle";
         levelProps: PuzzleConfigProps;
       };
-}
+} & (
+  | {
+      type: "unlock-level";
+    }
+  | {
+      type: "level";
+      levelButtonCoords: {
+        x: number;
+        y: number;
+      };
+    }
+);
 
 /**
  * Gets a unique identifier for the specified level.
@@ -74,7 +80,7 @@ export const Level: React.FC<{
             settings={props.settings}
             onComplete={(wasCorrect) => {
               if (wasCorrect) {
-                props.onCompleteLevel(props.level.isUnlockLevel || false, props.level);
+                props.onCompleteLevel(props.level.type === "unlock-level", props.level);
               }
 
               // Go to level selection (likely to choose next level)
@@ -93,7 +99,7 @@ export const Level: React.FC<{
             settings={props.settings}
             onComplete={(wasCorrect) => {
               if (wasCorrect) {
-                props.onCompleteLevel(props.level.isUnlockLevel || false, props.level);
+                props.onCompleteLevel(props.level.type === "unlock-level", props.level);
               }
 
               // Go to level selection (likely to choose next level)

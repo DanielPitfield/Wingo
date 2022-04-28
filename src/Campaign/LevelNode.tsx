@@ -41,13 +41,18 @@ export const LevelNode: React.FC<{
   const level_completed = areaInfo?.completedLevelIds.some((x) => x === getId(props.level.level)) || false;
 
   // Determine whether the level has been unlocked (i.e. the previous level has been completed)
-  const level_unlocked =
-    !previousLevel || areaInfo?.completedLevelIds.some((x) => x === getId(previousLevel.level)) || false;
+  const level_unlocked = !previousLevel
+    ? areaInfo?.completedLevelIds.includes("unlock")
+    : areaInfo?.completedLevelIds.some((x) => x === getId(previousLevel.level)) || false;
 
   // Get the level page info
   const levelInfo = pages.find(
     (x) => x.page === `${props.level.level.gameCategory}/${props.level.level.levelProps.mode}`
   );
+
+  if (props.level.type !== "level") {
+    return null;
+  }
 
   return (
     <>
@@ -67,15 +72,11 @@ export const LevelNode: React.FC<{
         data-is-completed={level_completed}
         data-is-unlocked={level_unlocked}
         data-animation-setting={props.settings.graphics.animation}
-        style={
-          props.level.levelButtonCoords
-            ? {
-                position: "absolute",
-                top: `${props.level.levelButtonCoords.y}%`,
-                left: `${props.level.levelButtonCoords.x}%`,
-              }
-            : undefined
-        }
+        style={{
+          position: "absolute",
+          top: `${props.level.levelButtonCoords.y}%`,
+          left: `${props.level.levelButtonCoords.x}%`,
+        }}
       >
         {props.index + 1}
       </button>

@@ -5,8 +5,8 @@ export const area: AreaConfig = {
   name: "Travel",
   theme: Themes.Travel,
   unlock_level: {
+    type: "unlock-level",
     hint: <>Unlock this area</>,
-    isUnlockLevel: true,
     level: {
       gameCategory: "wingo",
       levelProps: {
@@ -26,6 +26,7 @@ export const area: AreaConfig = {
 
   levels: [
     {
+      type: "level",
       hint: <>Home of stunning landscapes, Niagara Falls and Ice Hockey</>,
       levelButtonCoords: {
         x: 14,
@@ -47,6 +48,7 @@ export const area: AreaConfig = {
       },
     },
     {
+      type: "level",
       hint: <>Canadian dish of french fries, gravy and cheese curds</>,
       levelButtonCoords: {
         x: 18,
@@ -68,6 +70,7 @@ export const area: AreaConfig = {
       },
     },
     {
+      type: "level",
       hint: <>Largest animal of the deer family</>,
       levelButtonCoords: {
         x: 22,
@@ -89,6 +92,7 @@ export const area: AreaConfig = {
       },
     },
     {
+      type: "level",
       hint: <>Sweet sugary sap from certain trees</>,
       levelButtonCoords: {
         x: 26,
@@ -110,6 +114,7 @@ export const area: AreaConfig = {
       },
     },
     {
+      type: "level",
       hint: <>Canada is home to 60% of these furry animals</>,
       levelButtonCoords: {
         x: 30,
@@ -131,6 +136,7 @@ export const area: AreaConfig = {
       },
     },
     {
+      type: "level",
       hint: <>Land of the free</>,
       levelButtonCoords: {
         x: 28,
@@ -152,6 +158,7 @@ export const area: AreaConfig = {
       },
     },
     {
+      type: "level",
       hint: <>Founding legal basis</>,
       levelButtonCoords: {
         x: 24,
@@ -173,6 +180,7 @@ export const area: AreaConfig = {
       },
     },
     {
+      type: "level",
       hint: <>Famous american food treat, originating from Germany</>,
       levelButtonCoords: {
         x: 19,
@@ -194,6 +202,7 @@ export const area: AreaConfig = {
       },
     },
     {
+      type: "level",
       hint: <>Famous american sport</>,
       levelButtonCoords: {
         x: 17,
@@ -215,6 +224,7 @@ export const area: AreaConfig = {
       },
     },
     {
+      type: "level",
       hint: <>Home to Tacos, Margarita and Tequilla</>,
       levelButtonCoords: {
         x: 17,
@@ -236,6 +246,7 @@ export const area: AreaConfig = {
       },
     },
     {
+      type: "level",
       hint: <>Mexican quartet</>,
       levelButtonCoords: {
         x: 20,
@@ -257,6 +268,7 @@ export const area: AreaConfig = {
       },
     },
     {
+      type: "level",
       hint: <>Home to Cachaça and Iguaçu Falls</>,
       levelButtonCoords: {
         x: 23,
@@ -278,6 +290,7 @@ export const area: AreaConfig = {
       },
     },
     {
+      type: "level",
       hint: <>Brazillian festivity</>,
       levelButtonCoords: {
         x: 29,
@@ -299,6 +312,7 @@ export const area: AreaConfig = {
       },
     },
     {
+      type: "level",
       hint: <>Brazillian dance</>,
       levelButtonCoords: {
         x: 34,
@@ -320,6 +334,7 @@ export const area: AreaConfig = {
       },
     },
     {
+      type: "level",
       hint: <>Brazillian sport</>,
       levelButtonCoords: {
         x: 31,
@@ -341,6 +356,7 @@ export const area: AreaConfig = {
       },
     },
     {
+      type: "level",
       hint: <>Home to Easter Island and the Atacama desert</>,
       levelButtonCoords: {
         x: 26,
@@ -362,6 +378,7 @@ export const area: AreaConfig = {
       },
     },
     {
+      type: "level",
       hint: <>Home to Tango</>,
       levelButtonCoords: {
         x: 25,
@@ -383,6 +400,7 @@ export const area: AreaConfig = {
       },
     },
     {
+      type: "level",
       hint: <></>,
       levelButtonCoords: {
         x: 49,
@@ -404,6 +422,7 @@ export const area: AreaConfig = {
       },
     },
     {
+      type: "level",
       hint: <></>,
       levelButtonCoords: {
         x: 52,
@@ -425,6 +444,7 @@ export const area: AreaConfig = {
       },
     },
     {
+      type: "level",
       hint: <></>,
       levelButtonCoords: {
         x: 47,
@@ -446,6 +466,7 @@ export const area: AreaConfig = {
       },
     },
     {
+      type: "level",
       hint: <></>,
       levelButtonCoords: {
         x: 50,
@@ -467,6 +488,7 @@ export const area: AreaConfig = {
       },
     },
     {
+      type: "level",
       hint: <></>,
       levelButtonCoords: {
         x: 54,
@@ -488,6 +510,7 @@ export const area: AreaConfig = {
       },
     },
     {
+      type: "level",
       hint: <></>,
       levelButtonCoords: {
         x: 53,
@@ -509,6 +532,7 @@ export const area: AreaConfig = {
       },
     },
     {
+      type: "level",
       hint: <></>,
       levelButtonCoords: {
         x: 48,
@@ -530,6 +554,7 @@ export const area: AreaConfig = {
       },
     },
     {
+      type: "level",
       hint: <></>,
       levelButtonCoords: {
         x: 44,
@@ -551,6 +576,7 @@ export const area: AreaConfig = {
       },
     },
     {
+      type: "level",
       hint: <></>,
       levelButtonCoords: {
         x: 42,
@@ -572,6 +598,7 @@ export const area: AreaConfig = {
       },
     },
     {
+      type: "level",
       hint: <></>,
       levelButtonCoords: {
         x: 40,
@@ -593,6 +620,7 @@ export const area: AreaConfig = {
       },
     },
     {
+      type: "level",
       hint: <></>,
       levelButtonCoords: {
         x: 44,
@@ -614,6 +642,7 @@ export const area: AreaConfig = {
       },
     },
     {
+      type: "level",
       hint: <></>,
       levelButtonCoords: {
         x: 48,
@@ -635,6 +664,7 @@ export const area: AreaConfig = {
       },
     },
     {
+      type: "level",
       hint: <></>,
       levelButtonCoords: {
         x: 54,
@@ -656,6 +686,7 @@ export const area: AreaConfig = {
       },
     },
     {
+      type: "level",
       hint: <></>,
       levelButtonCoords: {
         x: 57,
@@ -677,6 +708,7 @@ export const area: AreaConfig = {
       },
     },
     {
+      type: "level",
       hint: <></>,
       levelButtonCoords: {
         x: 60,
@@ -698,6 +730,7 @@ export const area: AreaConfig = {
       },
     },
     {
+      type: "level",
       hint: <></>,
       levelButtonCoords: {
         x: 62.5,
@@ -719,6 +752,7 @@ export const area: AreaConfig = {
       },
     },
     {
+      type: "level",
       hint: <></>,
       levelButtonCoords: {
         x: 64,
@@ -740,6 +774,7 @@ export const area: AreaConfig = {
       },
     },
     {
+      type: "level",
       hint: <></>,
       levelButtonCoords: {
         x: 66,
