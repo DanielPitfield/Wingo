@@ -369,6 +369,7 @@ const Wordle: React.FC<Props> = (props) => {
               inDictionary={props.inDictionary}
               letterStatuses={props.letterStatuses}
               settings={props.settings}
+              allowSpaces={props.targetWord.includes("-") || props.targetWord.includes(" ") || undefined}
             ></Keyboard>
           )
         }

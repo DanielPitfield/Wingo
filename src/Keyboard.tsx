@@ -18,6 +18,7 @@ interface Props {
     letter: string;
     status: "" | "contains" | "correct" | "not set" | "not in word";
   }[];
+  allowSpaces?: boolean;
   customAlphabet?: string[];
   showBackspace?: boolean;
 }
@@ -49,7 +50,7 @@ export const Keyboard: React.FC<Props> = (props) => {
         // Any letter on the keyboard
         props.onSubmitLetter(input_key);
         playClickSoundEffect();
-      } else if (modesWithSpaces.includes(props.mode)) {
+      } else if (modesWithSpaces.includes(props.mode) || props.allowSpaces) {
         // Space or dash pressed, submit dash
         if (input_key === " " || input_key === "-") {
           props.onSubmitLetter("-");
@@ -76,7 +77,7 @@ export const Keyboard: React.FC<Props> = (props) => {
       status: "not set",
     }));
 
-    if (modesWithSpaces.includes(props.mode)) {
+    if (modesWithSpaces.includes(props.mode) || props.allowSpaces) {
       // There may be multiples spaces in a word, best not to create a status (always be shown as "not set")
 
       // Unlikely a word has multiple apostrophes, so showing a keyboard status is useful
@@ -165,7 +166,9 @@ export const Keyboard: React.FC<Props> = (props) => {
         <>
           {props.customAlphabet
             ? populateKeyboard(props.customAlphabet.slice(Math.round(props.customAlphabet.length / 2)).join(""))
-            : populateKeyboard(!modesWithSpaces.includes(props.mode) ? "ASDFGHJKL" : "ASDFGHJKL'")}
+            : populateKeyboard(
+                !modesWithSpaces.includes(props.mode) && !props.allowSpaces ? "ASDFGHJKL" : "ASDFGHJKL'"
+              )}
         </>
       </div>
       <div className="keyboard_row_bottom">
@@ -176,7 +179,9 @@ export const Keyboard: React.FC<Props> = (props) => {
           </Button>
         )}
       </div>
-      <div className="keyboard_space">{modesWithSpaces.includes(props.mode) && <>{populateKeyboard("-")}</>}</div>
+      <div className="keyboard_space">
+        {(modesWithSpaces.includes(props.mode) || props.allowSpaces) && <>{populateKeyboard("-")}</>}
+      </div>
       <div className="keyboard_enter">
         <Button mode="accept" settings={props.settings} onClick={props.onEnter}>
           Enter
