@@ -22,14 +22,13 @@ import { Theme } from "./Themes";
 
 export interface WordleConfigProps {
   mode: "daily" | "repeat" | "category" | "increasing" | "limitless" | "puzzle" | "interlinked";
-  // TODO: If targetWord is a specified prop, defaultWordLength MUST also be this word's length
   targetWord?: string;
   wordArray?: string[];
   enforceFullLengthGuesses: boolean;
   firstLetterProvided: boolean;
   timerConfig: { isTimed: false } | { isTimed: true; seconds: number };
   keyboard: boolean;
-  defaultWordLength: number;
+  defaultWordLength?: number;
   puzzleRevealMs: number;
   puzzleLeaveNumBlanks: number;
   defaultnumGuesses: number;
@@ -171,7 +170,7 @@ const WordleConfig: React.FC<Props> = (props) => {
   const [inProgress, setinProgress] = useState(true);
   const [inDictionary, setinDictionary] = useState(true);
   const [isIncompleteWord, setisIncompleteWord] = useState(false);
-  const [wordLength, setwordLength] = useState(props.defaultWordLength);
+  const [wordLength, setwordLength] = useState(props.defaultWordLength || props.targetWord?.length!);
   const [targetWord, settargetWord] = useState(props.targetWord ? props.targetWord : "");
   const [interlinkedWord, setinterlinkedWord] = useState<string>();
   const [targetHint, settargetHint] = useState("");
@@ -479,7 +478,7 @@ const WordleConfig: React.FC<Props> = (props) => {
           } while (revealedLetterIndexes.includes(newIndex));
 
           // Reveal a random letter
-          if (newIndex >= 0 && newIndex <= props.defaultWordLength - 1) {
+          if (newIndex >= 0 && newIndex <= (props.defaultWordLength || props.targetWord?.length!) - 1) {
             // Check index is in the range (0, wordLength-1)
             newrevealedLetterIndexes.push(newIndex);
           }
@@ -549,7 +548,7 @@ const WordleConfig: React.FC<Props> = (props) => {
       // Ending of any game mode
       setNumGuesses(props.defaultnumGuesses);
       if (props.mode !== "category") {
-        setwordLength(props.defaultWordLength);
+        setwordLength(props.defaultWordLength || targetWord.length);
       }
     } else {
       // Game mode is limitless and there are still rows
