@@ -295,36 +295,29 @@ const WordCodes: React.FC<Props> = (props) => {
     // All the specified amount of code to word questions completed?
     const completedCodetoWord =
       questionProgress.numCompletedCodeToWordQuestions === props.modeConfig.numCodeToWordQuestions;
-    // Either type of question can be next?
-    const chooseRandomQuestionType = !completedWordToCode && !completedCodetoWord;
 
     let question;
 
-    if (chooseRandomQuestionType) {
-      // No word code for the next question
-      if (!questionWordCodes[nunmQuestionsCompleted]) {
-        return;
-      }
+    // No word code for the next question
+    if (!questionWordCodes[nunmQuestionsCompleted]) {
+      return;
+    }
 
-      // 50: 50 chance
-      let x = Math.floor(Math.random() * 2) === 0;
-
-      // Word to Code
-      if (x) {
-        question = (
-          <div className="wordCodes_question">
-            Find the code for the word <strong>{questionWordCodes[nunmQuestionsCompleted].word}</strong>
-          </div>
-        );
-      }
-      // Code to Word
-      else {
-        question = (
-          <div className="wordCodes_question">
-            Find the word that has the number code <strong>{questionWordCodes[nunmQuestionsCompleted].code}</strong>
-          </div>
-        );
-      }
+    // Word to Code questions first
+    if (!completedWordToCode) {
+      question = (
+        <div className="wordCodes_question">
+          Find the code for the word <strong>{questionWordCodes[nunmQuestionsCompleted].word}</strong>
+        </div>
+      );
+    }
+    // Code to Word
+    else if (!completedCodetoWord) {
+      question = (
+        <div className="wordCodes_question">
+          Find the word that has the number code <strong>{questionWordCodes[nunmQuestionsCompleted].code}</strong>
+        </div>
+      );
     }
 
     return question;
