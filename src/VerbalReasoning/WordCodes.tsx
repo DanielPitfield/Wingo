@@ -16,6 +16,7 @@ import { arrayMove, OrderGroup } from "react-draggable-order";
 import { DraggableItem } from "../NumbersArithmetic/DraggableItem";
 
 interface Props {
+  modeConfig: { isMatch: false; numCodes: number; numQuestions: number } | { isMatch: true };
   numWords: number;
   wordLength: number;
   numAdditionalLetters: number;
@@ -27,14 +28,23 @@ interface Props {
 }
 
 /** */
-const WordCodesMatch: React.FC<Props> = (props) => {
+const WordCodes: React.FC<Props> = (props) => {
   const [inProgress, setInProgress] = useState(true);
   const [remainingGuesses, setRemainingGuesses] = useState(props.numGuesses);
+
+  // Generated words along with their respective codes
   const [wordCodes, setWordCodes] = useState<{ word: string; code: string }[]>([]);
+
+  // Tiles for match gamemode
   const [wordTiles, setWordTiles] = useState<
     { word: string; code: string; status: "incorrect" | "correct" | "not set" }[]
   >([]);
   const [codeTiles, setCodeTiles] = useState<{ code: string; status: "incorrect" | "correct" | "not set" }[]>([]);
+
+  // Information for questions gamemode
+  const [words, setWords] = useState<string[]>([]);
+  const [codes, setCodes] = useState<string[]>([]);
+
   const [seconds, setSeconds] = useState(props.timerConfig.isTimed ? props.timerConfig.seconds : 0);
   const [playCorrectChimeSoundEffect] = useCorrectChime(props.settings);
   const [playFailureChimeSoundEffect] = useFailureChime(props.settings);
@@ -73,19 +83,48 @@ const WordCodesMatch: React.FC<Props> = (props) => {
     setWordCodes(newWordCodes);
   }, [ResetGame]);
 
-  // Create word tiles and code tiles (each time wordCodes changes)
+  // Create word tiles and code tiles for match gamemode (Each time wordCodes changes)
   React.useEffect(() => {
-    // Word Tiles
-    let newWordTiles: { word: string; code: string; status: "not set" }[] = [];
-    newWordTiles = wordCodes.map((wordCode) => ({ ...wordCode, status: "not set" }));
-    newWordTiles = shuffleArray(newWordTiles);
-    setWordTiles(newWordTiles);
+    // Match gamemode
+    if (props.modeConfig.isMatch) {
+      // Word Tiles
+      let newWordTiles: { word: string; code: string; status: "not set" }[] = [];
+      newWordTiles = wordCodes.map((wordCode) => ({ ...wordCode, status: "not set" }));
+      newWordTiles = shuffleArray(newWordTiles);
+      setWordTiles(newWordTiles);
 
-    // Code tiles
-    let newCodeTiles: { code: string; status: "not set" }[] = [];
-    newCodeTiles = wordCodes.map((wordCode) => ({ code: wordCode.code, status: "not set" }));
-    newCodeTiles = shuffleArray(newCodeTiles);
-    setCodeTiles(newCodeTiles);
+      // Code tiles
+      let newCodeTiles: { code: string; status: "not set" }[] = [];
+      newCodeTiles = wordCodes.map((wordCode) => ({ code: wordCode.code, status: "not set" }));
+      newCodeTiles = shuffleArray(newCodeTiles);
+      setCodeTiles(newCodeTiles);
+    }
+    // Question gamemode
+    else {
+      let words = wordCodes.map((wordCode, index) => {
+        return wordCode.word.toUpperCase();
+      });
+      words = shuffleArray(words);
+
+      setWords(words);
+
+      let codes = wordCodes.map((wordCode, index) => {
+        return wordCode.code;
+      });
+      codes = shuffleArray(codes);
+
+      // The codes for some words are not to be shown
+      if (props.modeConfig.numCodes < props.numWords) {
+        const numMissingCodes = Math.max(0, props.numWords - props.modeConfig.numCodes);
+        // Enough codes to be able to not show some
+        if (codes.length > numMissingCodes) {
+          // Remove some codes
+          codes = codes.slice(0, codes.length - numMissingCodes);
+        }
+      }
+
+      setCodes(codes);
+    }
   }, [wordCodes]);
 
   // Determines whether a word can be made only using the specified valid letters
@@ -105,14 +144,22 @@ const WordCodesMatch: React.FC<Props> = (props) => {
 
   function getWordCodes(): { word: string; code: string }[] {
     // The word array containing all the words of the specified length
-    const targetWordArray = wordLengthMappingsTargets.find((x) => x.value === props.wordLength)?.array!;
+    let targetWordArray = wordLengthMappingsTargets.find((x) => x.value === props.wordLength)?.array!;
+
+    // Single digit codes are given to each letter (so wordLength must be max of 9)
+    if (!targetWordArray || props.wordLength >= 10) {
+      targetWordArray = wordLengthMappingsTargets.find((x) => x.value === 4)?.array!;
+    }
+
     // Choose a random word from this array
     const originalWord = targetWordArray[Math.round(Math.random() * (targetWordArray.length - 1))];
     // The letters of this original word
     let validLetters = originalWord.split("");
+    // How many valid letters at this point?
+    const originalWordLength = validLetters.length;
 
     // Add some additional letters the words can be made from (more letters should make the game harder)
-    while (validLetters.length < props.wordLength + props.numAdditionalLetters) {
+    while (validLetters.length < originalWordLength + props.numAdditionalLetters) {
       const randomLetter = DEFAULT_ALPHABET[Math.round(Math.random() * (DEFAULT_ALPHABET.length - 1))];
 
       if (!validLetters.includes(randomLetter)) {
@@ -129,13 +176,17 @@ const WordCodesMatch: React.FC<Props> = (props) => {
     const original_matches = targetWordArray.filter((word) => isWordValid(validLetters, word));
 
     // Choose/determine a subset of these words
-    let words: string[] = [];
+    let words_subset: string[] = [];
 
-    while (words.length < props.numWords) {
+    let fail_count = 0;
+
+    while (words.length < props.numWords && fail_count < 100) {
       const randomWord = original_matches[Math.round(Math.random() * (original_matches.length - 1))];
 
-      if (!words.includes(randomWord)) {
-        words.push(randomWord);
+      if (!words_subset.includes(randomWord)) {
+        words_subset.push(randomWord);
+      } else {
+        fail_count += 1;
       }
     }
 
@@ -156,15 +207,43 @@ const WordCodesMatch: React.FC<Props> = (props) => {
       return code_string;
     }
 
-    // Determine the code for each of these words
-    const newWordCodes = words.map((word, index) => {
+    // Determine the code for each of the chosen words
+    const newWordCodes = words_subset.map((word, index) => {
       return { word: word, code: getCode(word) };
     });
 
     return newWordCodes;
   }
 
+  // Textual information for questions gamemode
+  function displayInformation() {
+    if (props.modeConfig.isMatch) {
+      return;
+    }
+
+    if (!words) {
+      return;
+    }
+
+    if (!codes) {
+      return;
+    }
+
+    return (
+      <>
+        <div className="wordCode_words">{words.join("  ")}</div>
+        <br></br>
+        <div className="wordCode_codes">{codes.join("  ")}</div>
+      </>
+    );
+  }
+
+  // Draggable tiles for match gamemode
   function displayTiles() {
+    if (!props.modeConfig.isMatch) {
+      return;
+    }
+
     var Grid = [];
 
     Grid.push(
@@ -211,6 +290,10 @@ const WordCodesMatch: React.FC<Props> = (props) => {
   }
 
   function checkTiles() {
+    if (!props.modeConfig.isMatch) {
+      return;
+    }
+
     let newWordTiles = wordTiles.slice();
     let newCodeTiles = codeTiles.slice();
 
@@ -291,13 +374,14 @@ const WordCodesMatch: React.FC<Props> = (props) => {
 
   return (
     <div
-      className="App word_codes_match"
+      className="App word_codes"
       style={{ backgroundImage: `url(${props.theme.backgroundImageSrc})`, backgroundSize: "100%" }}
     >
       <div className="outcome">{displayOutcome()}</div>
       {inProgress && <MessageNotification type="default">{`Guesses left: ${remainingGuesses}`}</MessageNotification>}
-      <div className="tile_row">{displayTiles()}</div>
-      {inProgress && (
+      {!props.modeConfig.isMatch && <div className="wordCode_information">{displayInformation()}</div>}
+      {props.modeConfig.isMatch && <div className="tile_row">{displayTiles()}</div>}
+      {Boolean(props.modeConfig.isMatch && inProgress) && (
         <Button
           mode={remainingGuesses <= 1 ? "accept" : "default"}
           settings={props.settings}
@@ -319,4 +403,4 @@ const WordCodesMatch: React.FC<Props> = (props) => {
   );
 };
 
-export default WordCodesMatch;
+export default WordCodes;

@@ -27,7 +27,7 @@ import SameLetterWords from "./VerbalReasoning/SameLetterWords";
 import NumberSets from "./VerbalReasoning/NumberSets/NumberSets";
 import Algebra from "./VerbalReasoning/Algebra/Algebra";
 import { ChallengesInfo } from "./Challenges/ChallengesInfo";
-import WordCodesMatch from "./VerbalReasoning/WordCodesMatch";
+import WordCodes from "./VerbalReasoning/WordCodes";
 
 const wordLength = 5;
 const numGuesses = 6;
@@ -839,7 +839,8 @@ export const App: React.FC = () => {
 
       case "verbal_reasoning/word_codes/match":
         return (
-          <WordCodesMatch
+          <WordCodes
+          modeConfig={{ isMatch: false, numCodes: 3, numQuestions: 3}}
             numWords={4}
             wordLength={5}
             numAdditionalLetters={2}
