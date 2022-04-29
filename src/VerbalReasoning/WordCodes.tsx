@@ -14,6 +14,7 @@ import { useClickChime, useCorrectChime, useFailureChime, useLightPingChime } fr
 import { Theme } from "../Themes";
 import { arrayMove, OrderGroup } from "react-draggable-order";
 import { DraggableItem } from "../NumbersArithmetic/DraggableItem";
+import { getQuestionSetOutcome } from "./Algebra/Algebra";
 
 interface Props {
   modeConfig:
@@ -56,6 +57,7 @@ const WordCodes: React.FC<Props> = (props) => {
     []
   );
   const [questionNumber, setQuestionNumber] = useState(0);
+  const [numCorrectAnswers, setNumCorrectAnswers] = useState(0);
 
   const [seconds, setSeconds] = useState(props.timerConfig.isTimed ? props.timerConfig.seconds : 0);
   const [playCorrectChimeSoundEffect] = useCorrectChime(props.settings);
@@ -82,6 +84,22 @@ const WordCodes: React.FC<Props> = (props) => {
       clearInterval(timerGuess);
     };
   }, [setSeconds, seconds, props.timerConfig.isTimed]);
+
+  // Each time a guess is submitted
+  React.useEffect(() => {
+    if (inProgress) {
+      return;
+    }
+
+    const successCondition = isGuessCorrect();
+
+    if (successCondition) {
+      playCorrectChimeSoundEffect();
+      setNumCorrectAnswers(numCorrectAnswers + 1);
+    } else {
+      playFailureChimeSoundEffect();
+    }
+  }, [inProgress, guess]);
 
   // Determine word codes
   React.useEffect(() => {
@@ -321,6 +339,43 @@ const WordCodes: React.FC<Props> = (props) => {
     return question;
   }
 
+  function isGuessCorrect() {
+    if (inProgress) {
+      return false;
+    }
+
+    if (props.modeConfig.isMatch) {
+      return false;
+    }
+
+    if (!guess || guess.length < 1) {
+      return false;
+    }
+
+    // Questions (and answers) couldn't be found
+    if (!questionWordCodes) {
+      return false;
+    }
+
+    const currentQuestion = questionWordCodes[questionNumber];
+
+    if (!currentQuestion) {
+      return false;
+    }
+    // Word to Code (guess is correct code?)
+    else if (currentQuestion.isWordToCode && guess.toUpperCase() === currentQuestion.code.toUpperCase()) {
+      return true;
+    }
+    // Code to Word (guess is correct word?)
+    else if (!currentQuestion.isWordToCode && guess.toUpperCase() === currentQuestion.word.toUpperCase()) {
+      return true;
+    }
+    // Incorrect answer
+    else {
+      return false;
+    }
+  }
+
   // Draggable tiles for match gamemode
   function displayTiles() {
     if (!props.modeConfig.isMatch) {
@@ -423,36 +478,107 @@ const WordCodes: React.FC<Props> = (props) => {
       return;
     }
 
-    const numCorrectTiles = wordTiles.filter((x) => x.status === "correct").length;
-    const successCondition = numCorrectTiles === wordTiles.length;
+    let message_notification;
 
-    return (
-      <>
-        <MessageNotification type={successCondition ? "success" : "error"}>
-          <strong>{successCondition ? "All tiles in the correct order!" : `${numCorrectTiles} tiles correct`}</strong>
-        </MessageNotification>
+    // Match gamemode
+    if (props.modeConfig.isMatch) {
+      const numCorrectTiles = wordTiles.filter((x) => x.status === "correct").length;
+      const successCondition = numCorrectTiles === wordTiles.length;
 
-        <br></br>
+      // Show how many tiles are in correct position
+      message_notification = (
+        <>
+          <MessageNotification type={successCondition ? "success" : "error"}>
+            <strong>{successCondition ? "All tiles in the correct order!" : `${numCorrectTiles} tiles correct`}</strong>
+          </MessageNotification>
 
-        <Button mode="accept" settings={props.settings} onClick={() => ResetGame()}>
-          Restart
-        </Button>
-      </>
-    );
+          <br></br>
+
+          <Button mode="accept" settings={props.settings} onClick={() => ResetGame()}>
+            Restart
+          </Button>
+        </>
+      );
+    }
+    // Questions gamemode
+    else {
+      if (!questionWordCodes) {
+        return;
+      }
+
+      const successCondition = isGuessCorrect();
+
+      // The number of questions in this set of questions
+      const numQuestions = props.modeConfig.numWordToCodeQuestions + props.modeConfig.numCodeToWordQuestions;
+      // Question was the last in the set of questions
+      const lastQuestion = questionNumber === numQuestions - 1;
+
+      message_notification = (
+        <>
+          {/* Show number of correct answers and restart button after last question */}
+          {lastQuestion && (
+            <>
+              <MessageNotification type={getQuestionSetOutcome(numCorrectAnswers, numQuestions)}>
+                <strong>{`${numCorrectAnswers} / ${numQuestions} correct`}</strong>
+              </MessageNotification>
+
+              <br></br>
+
+              <Button mode="accept" onClick={() => ResetGame()} settings={props.settings}>
+                Restart
+              </Button>
+
+              <br></br>
+            </>
+          )}
+
+          {/* Show outcome of current question (and how many questions are left) */}
+          <MessageNotification type={successCondition ? "success" : "error"}>
+            <strong>{successCondition ? "Correct!" : "Incorrect!"}</strong>
+            <br></br>
+            <span>{`${questionNumber + 1} / ${numQuestions} questions completed`}</span>
+          </MessageNotification>
+
+          <br></br>
+
+          {/* Show next button if there are more questions */}
+          {!lastQuestion && (
+            <Button mode="accept" onClick={() => ContinueGame()} settings={props.settings}>
+              Next
+            </Button>
+          )}
+        </>
+      );
+    }
+
+    return message_notification;
   }
 
-  // Restart with new set of questions
+  // Restart with new word codes and set of questions
   function ResetGame() {
+    setGuess("");
     setInProgress(true);
     setWordTiles([]);
     setCodeTiles([]);
     setWordCodes([]);
     setRemainingGuesses(props.numGuesses);
+    setDisplayCodes([]);
+    setDisplayWords([]);
+    setNumCorrectAnswers(0);
+    setQuestionNumber(0);
+    setQuestionWordCodes([]);
 
     if (props.timerConfig.isTimed) {
       // Reset the timer if it is enabled in the game options
       setSeconds(props.timerConfig.seconds);
     }
+  }
+
+  // Next question
+  function ContinueGame() {
+    setInProgress(true);
+    setGuess("");
+    setQuestionNumber(questionNumber + 1);
   }
 
   function onBackspace() {
@@ -476,7 +602,7 @@ const WordCodes: React.FC<Props> = (props) => {
       return;
     }
 
-    setGuess(letter);
+    setGuess(guess + letter);
   }
 
   function onSubmitNumber(number: number) {
@@ -491,31 +617,6 @@ const WordCodes: React.FC<Props> = (props) => {
     setGuess(`${guess}${number}`);
   }
 
-  function getOutcome(): "incorrect" | "contains" | "correct" | "not set" | "not in word" {
-    // Questions (and answers) couldn't be found
-    if (!questionWordCodes) {
-      return "not set";
-    }
-
-    const currentQuestion = questionWordCodes[questionNumber];
-
-    if (!currentQuestion) {
-      return "not set";
-    }
-    // Word to Code (guess is correct code?)
-    else if (currentQuestion.isWordToCode && guess.toUpperCase() === currentQuestion.code.toUpperCase()) {
-      return "correct";
-    }
-    // Code to Word (guess is correct word?)
-    else if (!currentQuestion.isWordToCode && guess.toUpperCase() === currentQuestion.word.toUpperCase()) {
-      return "correct";
-    }
-    // Incorrect answer
-    else {
-      return "incorrect";
-    }
-  }
-
   return (
     <div
       className="App word_codes"
@@ -523,7 +624,9 @@ const WordCodes: React.FC<Props> = (props) => {
     >
       <div className="outcome">{displayOutcome()}</div>
 
-      {inProgress && <MessageNotification type="default">{`Guesses left: ${remainingGuesses}`}</MessageNotification>}
+      {Boolean(props.modeConfig.isMatch && inProgress) && (
+        <MessageNotification type="default">{`Guesses left: ${remainingGuesses}`}</MessageNotification>
+      )}
 
       {props.modeConfig.isMatch && <div className="tile_row">{displayTiles()}</div>}
       {Boolean(props.modeConfig.isMatch && inProgress) && (
@@ -540,7 +643,11 @@ const WordCodes: React.FC<Props> = (props) => {
       {!props.modeConfig.isMatch && displayQuestion()}
       {!props.modeConfig.isMatch && (
         <div className="guess">
-          <LetterTile letter={guess} status={inProgress ? "not set" : getOutcome()} settings={props.settings}></LetterTile>
+          <LetterTile
+            letter={guess}
+            status={inProgress ? "not set" : isGuessCorrect() ? "correct" : "incorrect"}
+            settings={props.settings}
+          ></LetterTile>
         </div>
       )}
       {Boolean(!props.modeConfig.isMatch && questionWordCodes[questionNumber]?.isWordToCode) && (

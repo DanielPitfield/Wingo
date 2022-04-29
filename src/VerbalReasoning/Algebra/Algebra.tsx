@@ -31,6 +31,21 @@ interface Props {
   setPage: (page: Page) => void;
 }
 
+export function getQuestionSetOutcome(numCorrectAnswers: number, numQuestions: number) {
+  // All questions in the set answered correctly
+  if (numCorrectAnswers === numQuestions) {
+    return "success";
+  }
+  // No answers correct
+  else if (numCorrectAnswers === 0) {
+    return "error";
+  }
+  // Some answers correct
+  else {
+    return "default";
+  }
+}
+
 /** */
 const Algebra: React.FC<Props> = (props) => {
   // Max number of characters permitted in a guess
@@ -174,27 +189,12 @@ const Algebra: React.FC<Props> = (props) => {
     // Question was the last in the set of questions
     const lastQuestion = questionNumber === numQuestions - 1;
 
-    function getQuestionSetOutcome() {
-      // All questions in the set answered correctly
-      if (numCorrectAnswers === numQuestions) {
-        return "success";
-      }
-      // No answers correct
-      else if (numCorrectAnswers === 0) {
-        return "error";
-      }
-      // Some answers correct
-      else {
-        return "default";
-      }
-    }
-
     return (
       <>
         {/* Show number of correct answers and restart button after last question */}
         {lastQuestion && (
           <>
-            <MessageNotification type={getQuestionSetOutcome()}>
+            <MessageNotification type={getQuestionSetOutcome(numCorrectAnswers, numQuestions)}>
               <strong>{`${numCorrectAnswers} / ${numQuestions} correct`}</strong>
             </MessageNotification>
 
