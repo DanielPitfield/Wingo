@@ -48,11 +48,10 @@ const WordCodes: React.FC<Props> = (props) => {
   const [displayCodes, setDisplayCodes] = useState<string[]>([]);
 
   // Questions
-  const [questionWordCodes, setQuestionWordCodes] = useState<{ word: string; code: string }[]>([]);
-  const [questionProgress, setQuestionProgress] = useState<{
-    numCompletedWordToCodeQuestions: number;
-    numCompletedCodeToWordQuestions: number;
-  }>({ numCompletedWordToCodeQuestions: 0, numCompletedCodeToWordQuestions: 0 });
+  const [questionWordCodes, setQuestionWordCodes] = useState<{ word: string; code: string; isWordToCode: boolean }[]>(
+    []
+  );
+  const [questionNumber, setQuestionNumber] = useState(0);
 
   const [seconds, setSeconds] = useState(props.timerConfig.isTimed ? props.timerConfig.seconds : 0);
   const [playCorrectChimeSoundEffect] = useCorrectChime(props.settings);
@@ -226,6 +225,14 @@ const WordCodes: React.FC<Props> = (props) => {
     if (!props.modeConfig.isMatch) {
       // Choose/determine a subset of valid words
       let questions_words_subset: string[] = [];
+
+      // Add one of the displayed words as a question
+      const numWordToCodeQuestions = props.modeConfig.numWordToCodeQuestions;
+      if (numWordToCodeQuestions > 0) {
+        const randomWord = words_subset[Math.round(Math.random() * (words_subset.length - 1))];
+        questions_words_subset.push(randomWord);
+      }
+
       // Number of word codes that need to be generated (for questions)
       const numQuestions = props.modeConfig.numCodeToWordQuestions + props.modeConfig.numWordToCodeQuestions;
 
@@ -244,7 +251,8 @@ const WordCodes: React.FC<Props> = (props) => {
 
       // Determine the code for each of the chosen words
       const newQuestionWordCodes = questions_words_subset.map((word, index) => {
-        return { word: word, code: getCode(word) };
+        const isWordToCode = index < numWordToCodeQuestions;
+        return { word: word, code: getCode(word), isWordToCode: isWordToCode };
       });
 
       setQuestionWordCodes(newQuestionWordCodes);
@@ -275,47 +283,31 @@ const WordCodes: React.FC<Props> = (props) => {
   }
 
   function displayQuestion() {
-    // TODO: This function needs to set some state, perhaps setQuestion()
-    // The question is changing because of the random nature of how it is created
-
     if (props.modeConfig.isMatch) {
       return;
     }
 
-    if (!questionProgress) {
+    // Word code for the current question
+    const currentQuestion = questionWordCodes[questionNumber];
+
+    if (!currentQuestion) {
       return;
     }
 
-    // Number of questions answered so far
-    const nunmQuestionsCompleted =
-      questionProgress.numCompletedWordToCodeQuestions + questionProgress.numCompletedCodeToWordQuestions;
-    // All the specified amount of word to code questions completed?
-    const completedWordToCode =
-      questionProgress.numCompletedWordToCodeQuestions === props.modeConfig.numWordToCodeQuestions;
-    // All the specified amount of code to word questions completed?
-    const completedCodetoWord =
-      questionProgress.numCompletedCodeToWordQuestions === props.modeConfig.numCodeToWordQuestions;
-
-    let question;
-
-    // No word code for the next question
-    if (!questionWordCodes[nunmQuestionsCompleted]) {
-      return;
-    }
-
+    let question;    
     // Word to Code questions first
-    if (!completedWordToCode) {
+    if (currentQuestion.isWordToCode) {
       question = (
         <div className="wordCodes_question">
-          Find the code for the word <strong>{questionWordCodes[nunmQuestionsCompleted].word}</strong>
+          Find the code for the word <strong>{currentQuestion.word}</strong>
         </div>
       );
     }
     // Code to Word
-    else if (!completedCodetoWord) {
+    else if (!currentQuestion.isWordToCode) {
       question = (
         <div className="wordCodes_question">
-          Find the word that has the number code <strong>{questionWordCodes[nunmQuestionsCompleted].code}</strong>
+          Find the word that has the number code <strong>{currentQuestion.code}</strong>
         </div>
       );
     }
