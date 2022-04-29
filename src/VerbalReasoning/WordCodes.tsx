@@ -31,7 +31,11 @@ interface Props {
 
 /** */
 const WordCodes: React.FC<Props> = (props) => {
+  // Max number of characters permitted in a guess
+  const MAX_LENGTH = props.wordLength;
+
   const [inProgress, setInProgress] = useState(true);
+  const [guess, setGuess] = useState("");
   const [remainingGuesses, setRemainingGuesses] = useState(props.numGuesses);
 
   // Generated words along with their respective codes
@@ -255,6 +259,8 @@ const WordCodes: React.FC<Props> = (props) => {
         return { word: word, code: getCode(word), isWordToCode: isWordToCode };
       });
 
+      console.log(newQuestionWordCodes);
+
       setQuestionWordCodes(newQuestionWordCodes);
     }
   }
@@ -294,7 +300,7 @@ const WordCodes: React.FC<Props> = (props) => {
       return;
     }
 
-    let question;    
+    let question;
     // Word to Code questions first
     if (currentQuestion.isWordToCode) {
       question = (
@@ -449,15 +455,76 @@ const WordCodes: React.FC<Props> = (props) => {
     }
   }
 
+  function onBackspace() {
+    if (!inProgress) {
+      return;
+    }
+
+    if (guess.length === 0) {
+      return;
+    }
+
+    setGuess(guess.substring(0, guess.length - 1));
+  }
+
+  function onSubmitLetter(letter: string) {
+    if (!inProgress) {
+      return;
+    }
+
+    if (guess.length >= MAX_LENGTH) {
+      return;
+    }
+
+    setGuess(letter);
+  }
+
+  function onSubmitNumber(number: number) {
+    if (!inProgress) {
+      return;
+    }
+
+    if (guess.length >= MAX_LENGTH) {
+      return;
+    }
+
+    setGuess(`${guess}${number}`);
+  }
+
+  function getOutcome(): "incorrect" | "contains" | "correct" | "not set" | "not in word" {
+    // Questions (and answers) couldn't be found
+    if (!questionWordCodes) {
+      return "not set";
+    }
+
+    const currentQuestion = questionWordCodes[questionNumber];
+
+    if (!currentQuestion) {
+      return "not set";
+    }
+    // Word to Code (guess is correct code?)
+    else if (currentQuestion.isWordToCode && guess.toUpperCase() === currentQuestion.code.toUpperCase()) {
+      return "correct";
+    }
+    // Code to Word (guess is correct word?)
+    else if (!currentQuestion.isWordToCode && guess.toUpperCase() === currentQuestion.word.toUpperCase()) {
+      return "correct";
+    }
+    // Incorrect answer
+    else {
+      return "incorrect";
+    }
+  }
+
   return (
     <div
       className="App word_codes"
       style={{ backgroundImage: `url(${props.theme.backgroundImageSrc})`, backgroundSize: "100%" }}
     >
       <div className="outcome">{displayOutcome()}</div>
+
       {inProgress && <MessageNotification type="default">{`Guesses left: ${remainingGuesses}`}</MessageNotification>}
-      {!props.modeConfig.isMatch && <div className="wordCode_information">{displayInformation()}</div>}
-      {!props.modeConfig.isMatch && displayQuestion()}
+
       {props.modeConfig.isMatch && <div className="tile_row">{displayTiles()}</div>}
       {Boolean(props.modeConfig.isMatch && inProgress) && (
         <Button
@@ -467,6 +534,36 @@ const WordCodes: React.FC<Props> = (props) => {
         >
           Submit guess
         </Button>
+      )}
+
+      {!props.modeConfig.isMatch && <div className="wordCode_information">{displayInformation()}</div>}
+      {!props.modeConfig.isMatch && displayQuestion()}
+      {!props.modeConfig.isMatch && (
+        <div className="guess">
+          <LetterTile letter={guess} status={inProgress ? "not set" : getOutcome()} settings={props.settings}></LetterTile>
+        </div>
+      )}
+      {Boolean(!props.modeConfig.isMatch && questionWordCodes[questionNumber]?.isWordToCode) && (
+        <NumPad
+          onEnter={() => setInProgress(false)}
+          onBackspace={onBackspace}
+          onSubmitNumber={onSubmitNumber}
+          settings={props.settings}
+        />
+      )}
+      {Boolean(!props.modeConfig.isMatch && !questionWordCodes[questionNumber]?.isWordToCode) && (
+        <Keyboard
+          onEnter={() => setInProgress(false)}
+          onBackspace={onBackspace}
+          settings={props.settings}
+          onSubmitLetter={onSubmitLetter}
+          showBackspace={false}
+          targetWord=""
+          mode=""
+          guesses={[]}
+          letterStatuses={[]}
+          inDictionary
+        />
       )}
       <div>
         {props.timerConfig.isTimed && (
