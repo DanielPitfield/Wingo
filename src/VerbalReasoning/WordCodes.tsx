@@ -664,7 +664,6 @@ const WordCodes: React.FC<Props> = (props) => {
           onBackspace={onBackspace}
           settings={props.settings}
           onSubmitLetter={onSubmitLetter}
-          showBackspace={false}
           targetWord=""
           mode=""
           guesses={[]}
