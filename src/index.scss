@@ -1120,14 +1120,20 @@ $data-statuses: (
 }
 
 .dice_square {
-  width: 40px;
-  border: 2px solid black;
-  margin: 10px 5px;
-  text-align: center;
+  width: 2em;
+  height: 2em;
+  border: 1px solid #aaa;
+  margin: 0.1em;
+  display: flex;
   align-items: center;
   justify-content: center;
-  padding: 10px;
+  padding: 0.3em;
+  color: #6a6a6a;
   background-color: #fff8;
+  user-select: none;
+  &[data-animation-setting="true"][data-apply-animation="true"] {
+    animation: flipRevealLetter 1.5s;
+  }
 }
 
 .dice_wrapper {
@@ -1148,7 +1154,8 @@ $data-statuses: (
     margin-top: 0.3em;
     margin-bottom: 0.3em;
     padding: 0.5em 2em;
-    border: 2px solid black;
+    border: 2px solid #888;
+    color: #444;
     background-color: #fff8;
   }
   .nubble-pin-scores {

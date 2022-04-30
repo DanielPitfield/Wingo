@@ -6,24 +6,19 @@ import Dice from "./Dice";
 
 interface Props {
   diceValues: number[];
-  numDice: number;
   rollDice: () => void;
   settings: SettingsData;
   disabled: boolean;
 }
 
 const DiceGrid: React.FC<Props> = (props) => {
-  function populateGrid() {
-    var Grid = [];
-    for (let i = 0; i < props.numDice; i++) {
-      Grid.push(<Dice key={i} value={props.diceValues[i]}></Dice>);
-    }
-    return Grid;
-  }
-
   return (
     <div className="dice_wrapper">
-      <div className="dice_row">{populateGrid()}</div>
+      <div className="dice_row">
+        {props.diceValues.map((diceValue, i) => (
+          <Dice key={i} value={diceValue} settings={props.settings} />
+        ))}
+      </div>
       <Button mode={"default"} onClick={props.rollDice} settings={props.settings} disabled={props.disabled}>
         {props.children}
       </Button>

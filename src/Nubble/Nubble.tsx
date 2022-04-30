@@ -308,7 +308,6 @@ const Nubble: React.FC<Props> = (props) => {
         </MessageNotification>
       )}
       <DiceGrid
-        numDice={props.numDice}
         diceValues={diceValues}
         rollDice={rollDice}
         settings={props.settings}
