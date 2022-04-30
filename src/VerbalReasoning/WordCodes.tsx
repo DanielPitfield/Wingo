@@ -509,7 +509,12 @@ const WordCodes: React.FC<Props> = (props) => {
 
           <br></br>
 
-          <Button mode="accept" settings={props.settings} onClick={() => ResetGame()}>
+          <Button
+            mode="accept"
+            settings={props.settings}
+            onClick={() => ResetGame()}
+            additionalProps={{ autoFocus: true }}
+          >
             Restart
           </Button>
         </>
@@ -539,7 +544,12 @@ const WordCodes: React.FC<Props> = (props) => {
 
               <br></br>
 
-              <Button mode="accept" onClick={() => ResetGame()} settings={props.settings}>
+              <Button
+                mode="accept"
+                onClick={() => ResetGame()}
+                settings={props.settings}
+                additionalProps={{ autoFocus: true }}
+              >
                 Restart
               </Button>
 
@@ -558,7 +568,12 @@ const WordCodes: React.FC<Props> = (props) => {
 
           {/* Show next button if there are more questions */}
           {!lastQuestion && (
-            <Button mode="accept" onClick={() => ContinueGame()} settings={props.settings}>
+            <Button
+              mode="accept"
+              onClick={() => ContinueGame()}
+              settings={props.settings}
+              additionalProps={{ autoFocus: true }}
+            >
               Next
             </Button>
           )}
@@ -671,6 +686,7 @@ const WordCodes: React.FC<Props> = (props) => {
           onBackspace={onBackspace}
           onSubmitNumber={onSubmitNumber}
           settings={props.settings}
+          disabled={!inProgress}
         />
       )}
       {Boolean(!props.modeConfig.isMatch && !questionWordCodes[questionNumber]?.isWordToCode) && (
@@ -684,6 +700,7 @@ const WordCodes: React.FC<Props> = (props) => {
           guesses={[]}
           letterStatuses={[]}
           inDictionary
+          disabled={!inProgress}
         />
       )}
       <div>

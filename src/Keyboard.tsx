@@ -21,6 +21,7 @@ interface Props {
   allowSpaces?: boolean;
   customAlphabet?: string[];
   showBackspace?: boolean;
+  disabled?: boolean;
 }
 
 export const DEFAULT_ALPHABET_STRING = "abcdefghijklmnopqrstuvwxyz";
@@ -38,8 +39,19 @@ export const Keyboard: React.FC<Props> = (props) => {
   ];
 
   React.useEffect(() => {
+    if (props.disabled) {
+      return;
+    }
+
     const handleKeyDown = (event: KeyboardEvent) => {
       const input_key = event.key.toString().toLowerCase();
+
+      if (input_key === "f12") {
+        return;
+      }
+
+      event.preventDefault();
+      event.stopPropagation();
 
       if (input_key === "enter") {
         props.onEnter();
@@ -61,9 +73,6 @@ export const Keyboard: React.FC<Props> = (props) => {
           playClickSoundEffect();
         }
       }
-
-      event.preventDefault();
-      event.stopPropagation();
     };
 
     window.addEventListener("keydown", handleKeyDown);
@@ -147,6 +156,7 @@ export const Keyboard: React.FC<Props> = (props) => {
             // Letter of button is used within a callback function
             props.onSubmitLetter(letter);
           }}
+          disabled={props.disabled}
         >
           {letter}
         </Button>
@@ -177,7 +187,7 @@ export const Keyboard: React.FC<Props> = (props) => {
       <div className="keyboard_row_bottom">
         <>{props.customAlphabet ? null : populateKeyboard("ZXCVBNM")}</>
         {props.showBackspace !== false && (
-          <Button mode="destructive" settings={props.settings} onClick={props.onBackspace}>
+          <Button mode="destructive" settings={props.settings} onClick={props.onBackspace} disabled={props.disabled}>
             &lt;
           </Button>
         )}
@@ -186,7 +196,7 @@ export const Keyboard: React.FC<Props> = (props) => {
         {(modesWithSpaces.includes(props.mode) || props.allowSpaces) && <>{populateKeyboard("-")}</>}
       </div>
       <div className="keyboard_enter">
-        <Button mode="accept" settings={props.settings} onClick={props.onEnter}>
+        <Button mode="accept" settings={props.settings} onClick={props.onEnter} disabled={props.disabled}>
           Enter
         </Button>
       </div>

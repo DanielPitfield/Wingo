@@ -200,7 +200,12 @@ const Algebra: React.FC<Props> = (props) => {
 
             <br></br>
 
-            <Button mode="accept" onClick={() => ResetGame()} settings={props.settings}>
+            <Button
+              mode="accept"
+              onClick={() => ResetGame()}
+              settings={props.settings}
+              additionalProps={{ autoFocus: true }}
+            >
               Restart
             </Button>
 
@@ -334,6 +339,7 @@ const Algebra: React.FC<Props> = (props) => {
           guesses={[]}
           letterStatuses={[]}
           inDictionary
+          disabled={!inProgress}
         />
       )}
       <div>

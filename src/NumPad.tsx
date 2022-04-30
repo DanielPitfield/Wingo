@@ -9,6 +9,7 @@ interface Props {
   onSubmitNumber: (number: number) => void;
   onEnter: () => void;
   onBackspace: () => void;
+  disabled?: boolean;
 }
 
 export const Numbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
@@ -17,8 +18,19 @@ export const NumPad: React.FC<Props> = (props) => {
   const [playClickSoundEffect] = useClickChime(props.settings);
 
   React.useEffect(() => {
+    if (props.disabled) {
+      return;
+    }
+
     const handleKeyDown = (event: KeyboardEvent) => {
       const input_key = event.key.toString().toLowerCase();
+
+      if (input_key === "f12") {
+        return;
+      }
+
+      event.preventDefault();
+      event.stopPropagation();
 
       if (input_key === "enter") {
         props.onEnter();
@@ -47,7 +59,13 @@ export const NumPad: React.FC<Props> = (props) => {
 
   function populateNumpad(numbers: number[]) {
     return numbers.map((number) => (
-      <Button key={number} mode="default" settings={props.settings} onClick={() => props.onSubmitNumber(number)}>
+      <Button
+        key={number}
+        mode="default"
+        settings={props.settings}
+        onClick={() => props.onSubmitNumber(number)}
+        disabled={props.disabled}
+      >
         {number}
       </Button>
     ));
@@ -66,12 +84,12 @@ export const NumPad: React.FC<Props> = (props) => {
       </div>
       <div className="keyboard_row_bottom">
         <>{populateNumpad([0])}</>
-        <Button mode="destructive" settings={props.settings} onClick={props.onBackspace}>
+        <Button mode="destructive" settings={props.settings} onClick={props.onBackspace} disabled={props.disabled}>
           &lt;
         </Button>
       </div>
       <div className="keyboard_enter">
-        <Button mode="accept" settings={props.settings} onClick={props.onEnter}>
+        <Button mode="accept" settings={props.settings} onClick={props.onEnter} disabled={props.disabled}>
           Enter
         </Button>
       </div>
