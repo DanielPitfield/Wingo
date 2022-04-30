@@ -357,7 +357,12 @@ const CountdownNumbers: React.FC<Props> = (props) => {
             </MessageNotification>
           </div>
 
-          <Button mode={"accept"} onClick={() => props.resetGame()} settings={props.settings}>
+          <Button
+            mode={"accept"}
+            onClick={() => props.resetGame()}
+            settings={props.settings}
+            additionalProps={{ autoFocus: true }}
+          >
             Restart
           </Button>
         </>

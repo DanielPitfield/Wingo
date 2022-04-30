@@ -413,7 +413,12 @@ const CountdownLetters: React.FC<Props> = (props) => {
 
       <div>
         {props.hasTimerEnded && !props.inProgress && (
-          <Button mode={"accept"} settings={props.settings} onClick={() => props.ResetGame()}>
+          <Button
+            mode={"accept"}
+            settings={props.settings}
+            onClick={() => props.ResetGame()}
+            additionalProps={{ autoFocus: true }}
+          >
             Restart
           </Button>
         )}
@@ -433,6 +438,7 @@ const CountdownLetters: React.FC<Props> = (props) => {
             inDictionary={props.inDictionary}
             letterStatuses={props.letterStatuses}
             settings={props.settings}
+            disabled={!props.inProgress}
           ></Keyboard>
         )}
       </div>

@@ -292,7 +292,7 @@ const ArithmeticReveal: React.FC<Props> = (props) => {
     const successCondition = guess === targetNumbers[currentCheckpoint].toString();
     // Last checkpoint
     const lastCheckpoint = currentCheckpoint === props.numCheckpoints - 1;
-    
+
     let message_notification;
 
     // Current checkpoint guess correct and more checkpoints to go
@@ -307,12 +307,17 @@ const ArithmeticReveal: React.FC<Props> = (props) => {
 
           <br></br>
 
-          <Button mode="accept" onClick={() => setCurrentCheckpoint(currentCheckpoint + 1)} settings={props.settings}>
+          <Button
+            mode="accept"
+            onClick={() => setCurrentCheckpoint(currentCheckpoint + 1)}
+            settings={props.settings}
+            additionalProps={{ autoFocus: true }}
+          >
             Next Checkpoint
           </Button>
         </>
       );
-    } 
+    }
     // Last checkpoint guess correct
     else if (successCondition && lastCheckpoint) {
       message_notification = (
@@ -325,13 +330,17 @@ const ArithmeticReveal: React.FC<Props> = (props) => {
 
           <br></br>
 
-          <Button mode="accept" onClick={() => ResetGame()} settings={props.settings}>
+          <Button
+            mode="accept"
+            onClick={() => ResetGame()}
+            settings={props.settings}
+            additionalProps={{ autoFocus: true }}
+          >
             Restart
           </Button>
         </>
       );
-      
-    } 
+    }
     // Incorrect guess
     else if (!successCondition) {
       message_notification = (
@@ -348,7 +357,12 @@ const ArithmeticReveal: React.FC<Props> = (props) => {
 
           <br></br>
 
-          <Button mode="accept" onClick={() => ResetGame()} settings={props.settings}>
+          <Button
+            mode="accept"
+            onClick={() => ResetGame()}
+            settings={props.settings}
+            additionalProps={{ autoFocus: true }}
+          >
             Restart
           </Button>
         </>
@@ -424,6 +438,7 @@ const ArithmeticReveal: React.FC<Props> = (props) => {
           onBackspace={onBackspace}
           onSubmitNumber={onSubmitNumber}
           settings={props.settings}
+          disabled={!inProgress}
         />
       )}
       {revealState.type === "finished" && (

@@ -168,7 +168,12 @@ const NumberSets: React.FC<Props> = (props) => {
         <br></br>
 
         {!inProgress && (
-          <Button mode="accept" onClick={() => ResetGame()} settings={props.settings}>
+          <Button
+            mode="accept"
+            onClick={() => ResetGame()}
+            settings={props.settings}
+            additionalProps={{ autoFocus: true }}
+          >
             Restart
           </Button>
         )}
@@ -236,6 +241,7 @@ const NumberSets: React.FC<Props> = (props) => {
         onBackspace={onBackspace}
         onSubmitNumber={onSubmitNumber}
         settings={props.settings}
+        disabled={!inProgress}
       />
       <div>
         {props.timerConfig.isTimed && (

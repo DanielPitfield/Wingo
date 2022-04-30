@@ -139,8 +139,13 @@ const LetterCategories: React.FC<Props> = (props) => {
       <div>{displayOutcome()}</div>
       <div>
         {!props.inProgress && (
-          <Button mode={"accept"} settings={props.settings} onClick={() => props.ResetGame()}>
-            {"Restart"}
+          <Button
+            mode="accept"
+            settings={props.settings}
+            onClick={() => props.ResetGame()}
+            additionalProps={{ autoFocus: true }}
+          >
+            Restart
           </Button>
         )}
       </div>
@@ -160,6 +165,7 @@ const LetterCategories: React.FC<Props> = (props) => {
               inDictionary={true}
               letterStatuses={[]}
               settings={props.settings}
+              disabled={!props.inProgress}
             ></Keyboard>
           )
         }

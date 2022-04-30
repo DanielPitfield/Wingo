@@ -313,6 +313,7 @@ const Wordle: React.FC<Props> = (props) => {
                 ? props.ContinueGame()
                 : props.ResetGame()
             }
+            additionalProps={{ autoFocus: true }}
           >
             {props.finishingButtonText || (isOutcomeContinue() ? "Continue" : "Restart")}
           </Button>
@@ -369,6 +370,7 @@ const Wordle: React.FC<Props> = (props) => {
               inDictionary={props.inDictionary}
               letterStatuses={props.letterStatuses}
               settings={props.settings}
+              disabled={!props.inProgress}
               allowSpaces={props.targetWord.includes("-") || props.targetWord.includes(" ") || undefined}
             ></Keyboard>
           )
