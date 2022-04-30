@@ -1,4 +1,3 @@
-import { stringify } from "querystring";
 import React, { useState } from "react";
 import { shuffleArray } from "../NumbersArithmetic/ArithmeticDrag";
 import { wordLengthMappingsTargets } from "../WordleConfig";
@@ -297,11 +296,27 @@ const WordCodes: React.FC<Props> = (props) => {
       return;
     }
 
+    // Word code for the current question
+    const currentQuestion = questionWordCodes[questionNumber];
+
+    if (!currentQuestion) {
+      return;
+    }
+
+    const targetCodePlaceholder = Array.from({ length: props.wordLength })
+      .map((x) => "?")
+      .join("");
+
+    const displayCodesWithPlaceholder = displayCodes.slice();
+
+    if (!displayCodesWithPlaceholder.includes(targetCodePlaceholder) && displayCodes.length > 0) {
+      displayCodes.splice(displayWords.indexOf(currentQuestion.word.toUpperCase()), 0, targetCodePlaceholder);
+    }
+
     return (
       <>
-        <div className="wordCode_words">{displayWords.join("  ")}</div>
-        <br></br>
-        <div className="wordCode_codes">{displayCodes.join("  ")}</div>
+        <div className="word_codes_words">{displayWords.join("  ")}</div>
+        <div className="word_codes_codes">{displayCodesWithPlaceholder.join("  ")}</div>
       </>
     );
   }
@@ -322,15 +337,15 @@ const WordCodes: React.FC<Props> = (props) => {
     // Word to Code questions first
     if (currentQuestion.isWordToCode) {
       question = (
-        <div className="wordCodes_question">
-          Find the code for the word <strong>{currentQuestion.word}</strong>
+        <div className="word_codes_question">
+          Find the code for the word <strong>{currentQuestion.word.toUpperCase()}</strong>
         </div>
       );
     }
     // Code to Word
     else if (!currentQuestion.isWordToCode) {
       question = (
-        <div className="wordCodes_question">
+        <div className="word_codes_question">
           Find the word that has the number code <strong>{currentQuestion.code}</strong>
         </div>
       );
@@ -639,7 +654,7 @@ const WordCodes: React.FC<Props> = (props) => {
         </Button>
       )}
 
-      {!props.modeConfig.isMatch && <div className="wordCode_information">{displayInformation()}</div>}
+      {!props.modeConfig.isMatch && <div className="word_codes_information">{displayInformation()}</div>}
       {!props.modeConfig.isMatch && displayQuestion()}
       {!props.modeConfig.isMatch && (
         <div className="guess">

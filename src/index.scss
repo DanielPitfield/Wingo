@@ -1786,6 +1786,36 @@ $nubble-colors-names: (
   }
 }
 
+.word_codes {
+  .word_codes_information,
+  .word_codes_question {
+    display: flex;
+    flex-direction: column;
+    padding: 0.8em;
+    min-width: 25em;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #bbb;
+    background-color: #fff;
+  }
+  .word_codes_words {
+    font-weight: bold;
+    margin-bottom: 0.4em;
+  }
+  .word_codes_information {
+    border-bottom: none;
+    font-family: monospace;
+    font-size: 1.24em;
+    background-color: #e0e0e0;
+  }
+  .word_codes_question {
+    strong {
+      font-family: monospace;
+      font-size: 1.24em;
+    }
+  }
+}
+
 .shimmer[data-animation-setting="true"] {
   mask: linear-gradient(-65deg, #000 30%, #0006, #000 75%) right / 300% 100%;
   animation: shimmer 2s infinite;
