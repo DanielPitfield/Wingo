@@ -46,7 +46,7 @@ export const Keyboard: React.FC<Props> = (props) => {
       } else if (input_key === "backspace") {
         props.onBackspace();
         playClickSoundEffect();
-      } else if (alphabet.includes(input_key)) {
+      } else if (alphabet.map((x) => x.toLowerCase()).includes(input_key)) {
         // Any letter on the keyboard
         props.onSubmitLetter(input_key);
         playClickSoundEffect();
