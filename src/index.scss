@@ -70,6 +70,9 @@ body {
         background-color: #a1a1a1;
       }
     }
+    &:focus {
+      background-color: #d7c3c3;
+    }
   }
   &.accept {
     background-color: #abe0ab;
@@ -81,6 +84,9 @@ body {
         background-color: #8acf8a;
       }
     }
+    &:focus {
+      background-color: #6fd476;
+    }
   }
   &.destructive {
     background-color: #f5bfbf;
@@ -91,6 +97,9 @@ body {
       &:active {
         background-color: #e97272;
       }
+    }
+    &:focus {
+      background-color: #f49494;
     }
   }
 }

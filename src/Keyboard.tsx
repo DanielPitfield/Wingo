@@ -61,6 +61,9 @@ export const Keyboard: React.FC<Props> = (props) => {
           playClickSoundEffect();
         }
       }
+
+      event.preventDefault();
+      event.stopPropagation();
     };
 
     window.addEventListener("keydown", handleKeyDown);

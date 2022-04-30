@@ -219,7 +219,12 @@ const Algebra: React.FC<Props> = (props) => {
 
         {/* Show next button if there are more questions */}
         {!lastQuestion && (
-          <Button mode="accept" onClick={() => ContinueGame()} settings={props.settings}>
+          <Button
+            mode="accept"
+            onClick={() => ContinueGame()}
+            settings={props.settings}
+            additionalProps={{ autoFocus: true }}
+          >
             Next
           </Button>
         )}
@@ -316,7 +321,7 @@ const Algebra: React.FC<Props> = (props) => {
           settings={props.settings}
         />
       )}
-      {algebraTemplate?.questions[questionNumber].answerType === "letter" && (
+      {algebraTemplate?.questions[questionNumber].answerType === "letter" && inProgress && (
         <Keyboard
           onEnter={() => setInProgress(false)}
           onBackspace={onBackspace}

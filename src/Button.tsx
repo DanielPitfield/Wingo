@@ -11,11 +11,13 @@ export const Button: React.FC<{
   onClick?: MouseEventHandler<HTMLButtonElement>;
   disabled?: boolean;
   useSoundEffect?: boolean;
+  additionalProps?: React.DetailedHTMLProps<React.ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement>;
 }> = (props) => {
   const [playClickSoundEffect] = useClickChime(props.settings || SaveData.DISABLED_SETTINGS);
 
   return (
     <button
+      {...props.additionalProps}
       className={`btn ${props.mode} ${props.className || ""}`}
       onClick={(e) => {
         props.onClick?.(e);
