@@ -9,6 +9,7 @@ interface Props {
   indexInWord?: number;
   animationDelayMultiplier?: number;
   applyAnimation?: boolean;
+  additionalProps?: React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement>;
 }
 
 const LetterTile: React.FC<Props> = (props) => {
@@ -74,6 +75,7 @@ const LetterTile: React.FC<Props> = (props) => {
       data-has-been-submitted={props.applyAnimation}
       data-status={delayedStatus}
       style={delayForThisLetterSeconds ? { animationDelay: `${delayForThisLetterSeconds()}s` } : undefined}
+      {...props.additionalProps}
     >
       {props.letter}
     </div>

@@ -19,6 +19,7 @@ import { words_colours } from "./WordArrays/Categories/colours";
 import { words_fruits_and_vegetables } from "./WordArrays/Categories/fruits_and_vegetables";
 import { words_sports } from "./WordArrays/Categories/sports";
 import { Theme } from "./Themes";
+import { WordGrid } from "./WordGrid";
 
 export interface WordleConfigProps {
   mode: "daily" | "repeat" | "category" | "increasing" | "limitless" | "puzzle" | "interlinked";
@@ -362,40 +363,6 @@ const WordleConfig: React.FC<Props> = (props) => {
       if (targetWord) {
         setwordLength(targetWord.length);
       }
-    }
-
-    // Update interlinked word (second word)
-    if (props.mode === "interlinked") {
-      // Get letters of first target word
-      const target_word_letters = targetWord.split("");
-
-      // Position of shared letter in first word
-      const shared_letter_index_word1 = Math.round(Math.random() * (target_word_letters.length - 1));
-      console.log("Index (1): " + shared_letter_index_word1);
-
-      // Choose a random letter from these letters to be the shared letter between two interlinked words
-      const sharedLetter = target_word_letters[shared_letter_index_word1];
-      console.log("Shared Letter: " + sharedLetter);
-
-      // TODO: The interlinked word doesn't have to be same length as first word (but is for now)
-      const targetWordArray = wordLengthMappingsTargets.find((x) => x.value === wordLength)?.array!;
-
-      // Look for another word which contains the shared letter
-      let interlinked_target_word = "";
-      do {
-        const randomIndex = Math.round(Math.random() * (targetWordArray.length - 1));
-        const randomWord = targetWordArray[randomIndex];
-        if (randomWord.includes(sharedLetter) && randomWord !== targetWord) {
-          interlinked_target_word = randomWord;
-        }
-      } while (interlinked_target_word === "");
-      console.log("Target Word (2): " + interlinked_target_word);
-
-      // Position of shared letter in second word
-      const shared_letter_index_word2 = interlinked_target_word.indexOf(sharedLetter);
-      console.log("Index (2): " + shared_letter_index_word2);
-
-      setinterlinkedWord(interlinked_target_word);
     }
   }, [targetWord]);
 
@@ -797,6 +764,16 @@ const WordleConfig: React.FC<Props> = (props) => {
     }
   }
 
+  if (props.mode === "interlinked") {
+    return (
+      <WordGrid
+        targetWordArray={categoryMappings[Math.round(Math.random() * (categoryMappings.length - 1))].array}
+        numWords={6}
+        settings={props.settings}
+      />
+    );
+  }
+
   return (
     <Wordle
       mode={props.mode}
@@ -820,7 +797,6 @@ const WordleConfig: React.FC<Props> = (props) => {
       isIncompleteWord={isIncompleteWord}
       hasSubmitLetter={hasSubmitLetter}
       targetWord={targetWord || ""}
-      interlinkedWord={interlinkedWord || ""}
       targetHint={targetHint || ""}
       targetCategory={targetCategory || ""}
       puzzleRevealMs={props.puzzleRevealMs}

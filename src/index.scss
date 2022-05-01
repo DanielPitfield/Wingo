@@ -1836,6 +1836,12 @@ $nubble-colors-names: (
   }
 }
 
+.word_grid {
+  .word-grid-row {
+    display: flex;
+  }
+}
+
 .shimmer[data-animation-setting="true"] {
   mask: linear-gradient(-65deg, #000 30%, #0006, #000 75%) right / 300% 100%;
   animation: shimmer 2s infinite;

@@ -11,7 +11,7 @@ import { SaveData, SettingsData } from "./SaveData";
 import { useCorrectChime, useFailureChime, useLightPingChime } from "./Sounds";
 
 interface Props {
-  mode: "daily" | "repeat" | "category" | "increasing" | "limitless" | "puzzle" | "interlinked" | "letters_categories";
+  mode: "daily" | "repeat" | "category" | "increasing" | "limitless" | "puzzle" | "letters_categories";
   timerConfig: { isTimed: false } | { isTimed: true; totalSeconds: number; elapsedSeconds: number };
   keyboard: boolean;
   wordLength: number;
@@ -24,7 +24,6 @@ interface Props {
   isIncompleteWord: boolean;
   hasSubmitLetter: boolean;
   targetWord: string;
-  interlinkedWord?: string;
   targetHint?: string;
   targetCategory?: string;
   puzzleRevealMs?: number;
@@ -127,24 +126,6 @@ const Wordle: React.FC<Props> = (props) => {
           settings={props.settings}
         />
       );
-
-      // Push another WordRow for interlinked gamemode
-      if (props.mode === "interlinked") {
-        Grid.push(
-          <WordRow
-            key={`interlinked ${i}`}
-            mode={props.mode}
-            isVertical={true}
-            word={word}
-            length={wordLength - 1} /* Length is 1 smaller than horizontal counterpart */
-            targetWord={props.targetWord}
-            hasSubmit={props.wordIndex > i || !props.inProgress}
-            inDictionary={props.inDictionary}
-            isIncompleteWord={props.isIncompleteWord}
-            settings={props.settings}
-          />
-        );
-      }
     }
 
     return Grid;
