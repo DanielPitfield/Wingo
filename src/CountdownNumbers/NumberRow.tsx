@@ -47,15 +47,22 @@ export function calculateTotal(guess: Guess): number | null {
 
   const result = operator.function(guess.operand1, guess.operand2);
 
+  // If the result is not generated correctly
   if (!result) {
     return null;
   }
 
-  if (result === Math.round(result)) {
-    return result;
+  // If the result is fractional
+  if (result !== Math.round(result)) {
+    return null;
   }
 
-  return null;
+  // If the result is negative
+  if (result < 0) {
+    return null;
+  }
+
+  return result;
 }
 
 export const NumberRow: React.FC<Props> = (props) => {

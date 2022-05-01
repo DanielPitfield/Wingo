@@ -244,19 +244,12 @@ const CountdownNumbers: React.FC<Props> = (props) => {
       return null;
     }
 
-    const intermediaryStatuses = props.countdownStatuses.filter((x) => x.type === "intermediary");
+    // Get all the intermediary numbers (from statuses)
+    const intermediaryNumbers = props.countdownStatuses.filter((x) => x.type === "intermediary").map(x => x.number);
 
     // No intermediary results
-    if (intermediaryStatuses.length <= 0) {
+    if (intermediaryNumbers.length <= 0) {
       return null;
-    }
-
-    // Get all the intermediary numbers (from statuses)
-    const intermediaryNumbers = [];
-    for (let i = 0; i < intermediaryStatuses.length; i++) {
-      if (intermediaryStatuses[i].number !== null) {
-        intermediaryNumbers.push(intermediaryStatuses[i].number);
-      }
     }
 
     // Get the closest intermediary guess
@@ -265,7 +258,7 @@ const CountdownNumbers: React.FC<Props> = (props) => {
       const currentDifference = Math.abs(curr! - props.targetNumber!);
 
       return currentDifference < prevDifference ? curr : prev;
-    });
+    }, null);
 
     return closest;
   }
