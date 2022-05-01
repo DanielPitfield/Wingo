@@ -769,6 +769,7 @@ const WordleConfig: React.FC<Props> = (props) => {
       <WordGrid
         targetWordArray={categoryMappings[Math.round(Math.random() * (categoryMappings.length - 1))].array}
         numWords={6}
+        theme={props.theme}
         settings={props.settings}
       />
     );

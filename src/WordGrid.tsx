@@ -3,6 +3,7 @@ import { SettingsData } from "./SaveData";
 import crossWordGenerator from "cwg";
 import { useState } from "react";
 import { shuffleArray } from "./NumbersArithmetic/ArithmeticDrag";
+import { Theme } from "./Themes";
 
 type Orientation = "vertical" | "horizontal";
 
@@ -16,6 +17,7 @@ interface Props {
   targetWordArray: string[];
   numWords: number;
   settings: SettingsData;
+  theme?: Theme;
 }
 
 export const WordGrid: React.FC<Props> = (props) => {
@@ -149,5 +151,16 @@ export const WordGrid: React.FC<Props> = (props) => {
     return grid;
   }
 
-  return <div className="App word_grid">{populateGrid()}</div>;
+  return (
+    <div
+      className="App word_grid"
+      style={{
+        backgroundImage: props.theme && `url(${props.theme.backgroundImageSrc})`,
+        backgroundSize: "100%",
+        backgroundRepeat: "no-repeat",
+      }}
+    >
+      {populateGrid()}
+    </div>
+  );
 };
