@@ -69,7 +69,8 @@ export function hasNumberSelectionFinished(
 export type Guess = { operand1: number | null; operand2: number | null; operator: typeof operators[0]["name"] };
 
 const CountdownNumbersConfig: React.FC<Props> = (props) => {
-  const [guesses, setGuesses] = useState<Guess[]>([]);
+  const [closestGuessSoFar, setClosestGuessSoFar] = useState<number | null>(null);
+  const [currentGuesses, setCurrentGuesses] = useState<Guess[]>([]);
   const [numGuesses, setNumGuesses] = useState(props.defaultNumGuesses);
 
   const defaultCountdownStatuses: (
@@ -143,7 +144,7 @@ const CountdownNumbersConfig: React.FC<Props> = (props) => {
   }, [setSeconds, seconds, props.timerConfig.isTimed, countdownStatuses]);
 
   React.useEffect(() => {
-    const intermediaryNumbers: typeof countdownStatuses = guesses.map((guess, index) => {
+    const intermediaryNumbers: typeof countdownStatuses = currentGuesses.map((guess, index) => {
       const existingCountdownStatus = countdownStatuses.find((x) => x.type === "intermediary" && x.wordIndex === index);
 
       return {
@@ -155,7 +156,15 @@ const CountdownNumbersConfig: React.FC<Props> = (props) => {
     });
 
     setCountdownStatuses(countdownStatuses.filter((x) => x.type !== "intermediary").concat(intermediaryNumbers));
-  }, [guesses]);
+  }, [currentGuesses]);
+
+  React.useEffect(() => {
+    if (!hasTimerEnded) {
+      return;
+    }
+
+    clearGrid();
+  }, [hasTimerEnded]);
 
   function getTargetNumber(min: number, max: number) {
     min = Math.ceil(min);
@@ -164,7 +173,8 @@ const CountdownNumbersConfig: React.FC<Props> = (props) => {
   }
 
   function ResetGame() {
-    setGuesses([]);
+    setCurrentGuesses([]);
+    setClosestGuessSoFar(null);
     setCountdownStatuses(defaultCountdownStatuses);
     setCurrentGuess({ operand1: null, operand2: null, operator: "+" });
     settargetNumber(null);
@@ -330,7 +340,7 @@ const CountdownNumbersConfig: React.FC<Props> = (props) => {
     // If guess is now full
     if (updatedGuess.operand1 !== null && updatedGuess.operand2 !== null) {
       // Record the guessed expression
-      setGuesses(guesses.concat(updatedGuess));
+      setCurrentGuesses(currentGuesses.concat(updatedGuess));
       // Clear current guess
       setCurrentGuess({ operand1: null, operator: "+", operand2: null });
       // Move to next row
@@ -391,9 +401,14 @@ const CountdownNumbersConfig: React.FC<Props> = (props) => {
     setCurrentGuess(updatedGuess);
 
     // If guess is now empty
-    if (updatedGuess.operand1 === null && updatedGuess.operand2 === null && wordIndex > 0 && guesses.length > 0) {
+    if (
+      updatedGuess.operand1 === null &&
+      updatedGuess.operand2 === null &&
+      wordIndex > 0 &&
+      currentGuesses.length > 0
+    ) {
       // Remove the guessed expression from recorded guesses
-      setGuesses(guesses.slice(0, guesses.length - 1));
+      setCurrentGuesses(currentGuesses.slice(0, currentGuesses.length - 1));
       // Clear current guess
       setCurrentGuess({ operand1: null, operator: "+", operand2: null });
       // Move back to previous row
@@ -407,9 +422,23 @@ const CountdownNumbersConfig: React.FC<Props> = (props) => {
   }
 
   function clearGrid() {
+    // Get the closest intermediary guess
+    const newClosest = countdownStatuses
+      .filter((x) => x.type === "intermediary")
+      .map((x) => x.number)
+      .concat(closestGuessSoFar === null ? [] : [closestGuessSoFar])
+      .reduce(function (prev, curr) {
+        const prevDifference = Math.abs(prev! - targetNumber!);
+        const currentDifference = Math.abs(curr! - targetNumber!);
+
+        return currentDifference < prevDifference ? curr : prev;
+      }, null);
+
+    setClosestGuessSoFar(newClosest);
+
     if (inProgress) {
       setWordIndex(0);
-      setGuesses([]);
+      setCurrentGuesses([]);
       setCurrentGuess({ operand1: null, operator: "+", operand2: null });
       setCountdownStatuses(countdownStatuses.map((x) => ({ ...x, picked: false })));
       setNumGuesses(props.defaultNumGuesses);
@@ -440,7 +469,8 @@ const CountdownNumbersConfig: React.FC<Props> = (props) => {
       }
       expressionLength={expressionLength}
       wordIndex={wordIndex}
-      guesses={guesses}
+      guesses={currentGuesses}
+      closestGuessSoFar={closestGuessSoFar}
       defaultNumOperands={props.defaultNumOperands}
       numGuesses={numGuesses}
       currentGuess={currentGuess}

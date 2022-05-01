@@ -16,6 +16,7 @@ interface Props {
   timerConfig: { isTimed: false } | { isTimed: true; totalSeconds: number; elapsedSeconds: number };
   wordIndex: number;
   guesses: Guess[];
+  closestGuessSoFar: number | null;
   defaultNumOperands: number;
   numGuesses: number;
   expressionLength: number;
@@ -244,23 +245,7 @@ const CountdownNumbers: React.FC<Props> = (props) => {
       return null;
     }
 
-    // Get all the intermediary numbers (from statuses)
-    const intermediaryNumbers = props.countdownStatuses.filter((x) => x.type === "intermediary").map(x => x.number);
-
-    // No intermediary results
-    if (intermediaryNumbers.length <= 0) {
-      return null;
-    }
-
-    // Get the closest intermediary guess
-    const closest = intermediaryNumbers.reduce(function (prev, curr) {
-      const prevDifference = Math.abs(prev! - props.targetNumber!);
-      const currentDifference = Math.abs(curr! - props.targetNumber!);
-
-      return currentDifference < prevDifference ? curr : prev;
-    }, null);
-
-    return closest;
+    return props.closestGuessSoFar;
   }
 
   function displayOutcome() {
