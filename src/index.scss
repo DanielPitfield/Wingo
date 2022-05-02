@@ -216,6 +216,12 @@ input {
   transition: transform 0.8s;
   transform-style: preserve-3d;
   */
+  &[data-is-clickable="true"] {
+    cursor: pointer;
+    &:hover {
+      background-color: #fff;
+    }
+  }
 }
 
 // For when a letter is entered during Wordle
@@ -357,28 +363,36 @@ $data-statuses: (
 .countdown_word_grid .word_row .letter_tile[data-status="correct"] {
   color: white;
   background-color: map.get($data-statuses, "correct");
-  /* transform: rotateX(180deg); */
+  &[data-is-clickable="true"]:hover {
+    background-color: lighten(map.get($data-statuses, "correct"), 10%);
+  }
 }
 
 .letter_tile[data-status="contains"],
 .countdown_word_grid .word_row .letter_tile[data-status="contains"] {
   color: white;
   background-color: map.get($data-statuses, "contains");
-  /* transform: rotateX(180deg); */
+  &[data-is-clickable="true"]:hover {
+    background-color: lighten(map.get($data-statuses, "contains"), 10%);
+  }
 }
 
 .letter_tile[data-status="incorrect"],
 .countdown_word_grid .word_row .letter_tile[data-status="incorrect"] {
   color: white;
   background-color: map.get($data-statuses, "incorrect");
-  /* transform: rotateX(180deg); */
+  &[data-is-clickable="true"]:hover {
+    background-color: lighten(map.get($data-statuses, "incorrect"), 10%);
+  }
 }
 
 .letter_tile[data-status="not in word"],
 .countdown_word_grid .word_row .letter_tile[data-status="not in word"] {
   color: white;
   background-color: map.get($data-statuses, "not in word");
-  /* transform: rotateX(180deg); */
+  &[data-is-clickable="true"]:hover {
+    background-color: lighten(map.get($data-statuses, "not in word"), 10%);
+  }
 }
 
 .word_row {
@@ -1846,8 +1860,20 @@ $nubble-colors-names: (
     min-height: 65vh;
     .word-grid-row {
       display: flex;
-      .letter_tile {
-        font-size: 1.7em !important;
+      .letter-tile-wrapper {
+        &[data-is-focussed="true"] {
+          .letter_tile[data-status="not set"] {
+            background-color: #fff;
+          }
+        }
+        &[data-is-focussed="false"] {
+          .letter_tile {
+            opacity: 0.85;
+          }
+        }
+        .letter_tile {
+          font-size: 1.7em !important;
+        }
       }
     }
   }

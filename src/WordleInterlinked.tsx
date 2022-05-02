@@ -214,18 +214,20 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
           })();
 
           return (
-            <LetterTile
-              key={x}
-              letter={letter}
-              settings={props.settings}
-              status={matchingGridEntry?.wordIndex === currentWordIndex ? "contains" : "not set"}
-              onClick={
-                matchingGridEntry?.wordIndex !== undefined
-                  ? () => setCurrentWordIndex(matchingGridEntry.wordIndex!)
-                  : undefined
-              }
-              additionalProps={letter ? undefined : { style: { visibility: "hidden" } }}
-            ></LetterTile>
+            <div className="letter-tile-wrapper" data-is-focussed={matchingGridEntry?.wordIndex === currentWordIndex}>
+              <LetterTile
+                key={x}
+                letter={letter}
+                settings={props.settings}
+                status="not set"
+                onClick={
+                  matchingGridEntry?.wordIndex !== undefined
+                    ? () => setCurrentWordIndex(matchingGridEntry.wordIndex!)
+                    : undefined
+                }
+                additionalProps={letter ? undefined : { style: { visibility: "hidden" } }}
+              />
+            </div>
           );
         })}
       </div>
