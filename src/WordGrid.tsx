@@ -26,7 +26,7 @@ export const WordGrid: React.FC<Props> = (props) => {
   const [gridConfig, setGridConfig] = useState<GridConfig>(generateGridConfig());
   const [currentGrid, setCurrentGrid] = useState<{ x: number; y: number; letter: string }[]>(
     getCorrectLetterGrid().map((position) => {
-      position.letter = "?";
+      position.letter = position.letter === "" ? "" : "?";
       return position;
     })
   );
@@ -158,8 +158,7 @@ export const WordGrid: React.FC<Props> = (props) => {
         yPos: currentInputCoordinates.yPos,
         oreintation: currentInputCoordinates.oreintation,
       });
-    }
-    else if (currentInputCoordinates.oreintation === "vertical") {
+    } else if (currentInputCoordinates.oreintation === "vertical") {
       setCurrentInputCoordinates({
         xPos: currentInputCoordinates.xPos,
         yPos: currentInputCoordinates.yPos + 1,
@@ -168,13 +167,9 @@ export const WordGrid: React.FC<Props> = (props) => {
     }
   }
 
-  function onBackspace() {
+  function onBackspace() {}
 
-  }
-
-  function onEnter() {
-
-  }
+  function onEnter() {}
 
   /**
    *
