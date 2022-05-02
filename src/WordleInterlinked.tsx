@@ -23,18 +23,9 @@ interface Props {
 
 export const WordleInterlinked: React.FC<Props> = (props) => {
   const [inProgress, setInProgress] = useState(true);
-  const [gridConfig, setGridConfig] = useState<GridConfig>(generateGridConfig());
-  const [currentGrid, setCurrentGrid] = useState<{ x: number; y: number; letter: string }[]>(
-    getCorrectLetterGrid().map((position) => {
-      position.letter = position.letter === "" ? "" : "?";
-      return position;
-    })
-  );
-  const [currentInputCoordinates, setCurrentInputCoordinates] = useState<{
-    xPos: number;
-    yPos: number;
-    oreintation: Orientation;
-  }>({ xPos: 0, yPos: 0, oreintation: "vertical" });
+  const [gridConfig] = useState<GridConfig>(generateGridConfig());
+  const [currentWords, setCurrentWords] = useState<string[]>(Array.from({ length: props.numWords }).map((x) => ""));
+  const [currentWordIndex, setCurrentWordIndex] = useState<number>(0);
 
   /**
    *
@@ -70,38 +61,46 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
    * The correct and fully populated crossword/grid
    * @returns
    */
-  function getCorrectLetterGrid(): { x: number; y: number; letter: string }[] {
+  function getCorrectLetterGrid(): { x: number; y: number; letter: string; wordIndex?: number }[] {
     const grid = [];
 
-    const gridWordCoordinates: { x: number; y: number; letter: string }[] = gridConfig.words.flatMap((configWord) => {
-      const coords = [];
+    const gridWordCoordinates: { x: number; y: number; letter: string; wordIndex?: number }[] =
+      gridConfig.words.flatMap((configWord) => {
+        const coords = [];
 
-      // Add the first starting coordinate in the array
-      coords.push({ x: configWord.startingXPos, y: configWord.startingYPos, letter: configWord.word.charAt(0) });
+        // Add the first starting coordinate in the array
+        coords.push({
+          x: configWord.startingXPos,
+          y: configWord.startingYPos,
+          letter: configWord.word.charAt(0),
+          wordIndex: gridConfig.words.findIndex((x) => x.word === configWord.word),
+        });
 
-      // For the remaining length of the word
-      for (let i = 1; i <= configWord.word.length; i++) {
-        // Increment x co-ordinate
-        if (configWord.orientation === "horizontal") {
-          coords.push({
-            x: configWord.startingXPos + i,
-            y: configWord.startingYPos,
-            letter: configWord.word.charAt(i),
-          });
+        // For the remaining length of the word
+        for (let i = 1; i <= configWord.word.length; i++) {
+          // Increment x co-ordinate
+          if (configWord.orientation === "horizontal") {
+            coords.push({
+              x: configWord.startingXPos + i,
+              y: configWord.startingYPos,
+              letter: configWord.word.charAt(i),
+              wordIndex: gridConfig.words.findIndex((x) => x.word === configWord.word),
+            });
+          }
+
+          // Increment y co-ordinate
+          if (configWord.orientation === "vertical") {
+            coords.push({
+              x: configWord.startingXPos,
+              y: configWord.startingYPos + i,
+              letter: configWord.word.charAt(i),
+              wordIndex: gridConfig.words.findIndex((x) => x.word === configWord.word),
+            });
+          }
         }
 
-        // Increment y co-ordinate
-        if (configWord.orientation === "vertical") {
-          coords.push({
-            x: configWord.startingXPos,
-            y: configWord.startingYPos + i,
-            letter: configWord.word.charAt(i),
-          });
-        }
-      }
-
-      return coords;
-    });
+        return coords;
+      });
 
     // For each x coordinate
     for (let x = 0; x < gridConfig.width; x++) {
@@ -114,6 +113,7 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
               x,
               y,
               letter: "",
+              wordIndex: undefined,
             }
           );
         }
@@ -123,51 +123,47 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
     return grid;
   }
 
-  function findClickedWord(xPos: number, yPos: number) {
-    // The word which the LetterTile clicked is the first letter of
-    const clickedWord = gridConfig.words.find((word) => word.startingXPos === xPos && word.startingYPos === yPos);
-
-    // Not the first LetterTile of a word
-    if (!clickedWord) {
-      return;
-    }
-
-    // Keyboard input can now start at this location
-    setCurrentInputCoordinates({
-      xPos: clickedWord.startingXPos,
-      yPos: clickedWord.startingYPos,
-      oreintation: clickedWord.orientation,
-    });
-  }
-
   function onSubmitLetter(letter: string) {
-    // Add letter to grid
-    const newWordGrid = currentGrid.map((position) => {
-      if (position.x === currentInputCoordinates.xPos && position.y === currentInputCoordinates.yPos) {
-        position.letter = letter;
+    const newCurrentWords = currentWords.map((word, i) => {
+      // If this is not the currently 'focussed' word
+      if (i !== currentWordIndex) {
+        // Leave word unmodified
+        return word;
       }
-      return position;
+
+      // If the entered word is longer than the target word
+      if (word.length >= gridConfig.words[currentWordIndex].word.length) {
+        // Don't accept any more characters
+        return word;
+      }
+
+      // Add the letter to the word
+      return `${word}${letter}`;
     });
 
-    setCurrentGrid(newWordGrid);
-
-    // Move input co-ordinates along
-    if (currentInputCoordinates.oreintation === "horizontal") {
-      setCurrentInputCoordinates({
-        xPos: currentInputCoordinates.xPos + 1,
-        yPos: currentInputCoordinates.yPos,
-        oreintation: currentInputCoordinates.oreintation,
-      });
-    } else if (currentInputCoordinates.oreintation === "vertical") {
-      setCurrentInputCoordinates({
-        xPos: currentInputCoordinates.xPos,
-        yPos: currentInputCoordinates.yPos + 1,
-        oreintation: currentInputCoordinates.oreintation,
-      });
-    }
+    setCurrentWords(newCurrentWords);
   }
 
-  function onBackspace() {}
+  function onBackspace() {
+    const newCurrentWords = currentWords.map((word, i) => {
+      // If this is not the currently 'focussed' word
+      if (i !== currentWordIndex) {
+        // Leave word unmodified
+        return word;
+      }
+
+      // If the entered word is empty
+      if (word.length === 0) {
+        // Don't remove any more characters
+        return word;
+      }
+
+      // Remove ae letter from the word
+      return word.substring(0, word.length - 1);
+    });
+
+    setCurrentWords(newCurrentWords);
+  }
 
   function onEnter() {}
 
@@ -178,18 +174,56 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
    * @returns
    */
   function populateRow(y: number): JSX.Element {
+    const grid = getCorrectLetterGrid();
+
     return (
       <div className="word-grid-row" key={y}>
         {Array.from({ length: gridConfig.width }).map((_, x) => {
-          const letter = currentGrid.find((letter) => letter.x === x && letter.y === y)?.letter || "";
+          const matchingGridEntry = grid.find((letter) => letter.x === x && letter.y === y);
+          const currentWord =
+            matchingGridEntry?.wordIndex !== undefined ? currentWords[matchingGridEntry.wordIndex] : "";
+
+          // Find the letter to display
+          const letter = (() => {
+            // If the tile has no word (i.e. blank)
+            if (!matchingGridEntry?.letter) {
+              // Render blank
+              return "";
+            }
+
+            // If no current word yet
+            if (!currentWord || matchingGridEntry.wordIndex === undefined) {
+              return "?";
+            }
+
+            const targetWord = gridConfig.words[matchingGridEntry.wordIndex];
+
+            switch (targetWord.orientation) {
+              case "horizontal": {
+                const xOffset = x - targetWord.startingXPos;
+
+                return currentWord[xOffset] || "?";
+              }
+
+              case "vertical": {
+                const yOffset = y - targetWord.startingYPos;
+
+                return currentWord[yOffset] || "?";
+              }
+            }
+          })();
 
           return (
             <LetterTile
               key={x}
               letter={letter}
               settings={props.settings}
-              status="not set"
-              onClick={() => findClickedWord(x, y)}
+              status={matchingGridEntry?.wordIndex === currentWordIndex ? "contains" : "not set"}
+              onClick={
+                matchingGridEntry?.wordIndex !== undefined
+                  ? () => setCurrentWordIndex(matchingGridEntry.wordIndex!)
+                  : undefined
+              }
               additionalProps={letter ? undefined : { style: { visibility: "hidden" } }}
             ></LetterTile>
           );
@@ -227,17 +261,15 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
         {
           <Keyboard
             mode={"word_grid"}
-            onEnter={() => onEnter()}
-            onSubmitLetter={(letter) => {
-              onSubmitLetter(letter);
-            }}
-            onBackspace={() => onBackspace()}
+            onEnter={onEnter}
+            onSubmitLetter={onSubmitLetter}
+            onBackspace={onBackspace}
             guesses={[]}
             targetWord={""}
             inDictionary={true}
             letterStatuses={[]}
             settings={props.settings}
-            disabled={inProgress}
+            disabled={!inProgress}
             allowSpaces={allowSpaces()}
           ></Keyboard>
         }
