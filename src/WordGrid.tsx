@@ -34,7 +34,7 @@ export const WordGrid: React.FC<Props> = (props) => {
     xPos: number;
     yPos: number;
     oreintation: Orientation;
-  }>({ xPos: 0, yPos: 0, oreintation: "vertical" });
+  }>();
 
   /**
    *
@@ -141,6 +141,10 @@ export const WordGrid: React.FC<Props> = (props) => {
   }
 
   function onSubmitLetter(letter: string) {
+    if (!currentInputCoordinates) {
+      return;
+    }
+
     // Add letter to grid
     const newWordGrid = currentGrid.map((position) => {
       if (position.x === currentInputCoordinates.xPos && position.y === currentInputCoordinates.yPos) {
@@ -243,7 +247,7 @@ export const WordGrid: React.FC<Props> = (props) => {
             inDictionary={true}
             letterStatuses={[]}
             settings={props.settings}
-            disabled={inProgress}
+            disabled={!inProgress}
             allowSpaces={allowSpaces()}
           ></Keyboard>
         }
