@@ -3,10 +3,10 @@ import "./index.scss";
 import { SettingsData } from "./SaveData";
 
 interface Props {
-  onClick?: (xPos: number, yPos: number) => void;
   letter: string;
   status: "incorrect" | "contains" | "correct" | "not set" | "not in word";
   settings: SettingsData;
+  onClick?: () => void;
   indexInWord?: number;
   animationDelayMultiplier?: number;
   applyAnimation?: boolean;
@@ -70,7 +70,7 @@ const LetterTile: React.FC<Props> = (props) => {
     // [data-has-been-submitted="true"] - Reveal animation is applied to LetterTile
     <div
       className="letter_tile"
-      onClick={() => props.onClick}
+      onClick={() => props.onClick?.()}
       data-animation-setting={props.settings.graphics.animation}
       data-apply-animation={props.applyAnimation !== false}
       data-new-letter-added={Boolean(props.status === "not set" && props.letter)}
