@@ -1835,9 +1835,21 @@ $nubble-colors-names: (
   }
 }
 
-.word_grid {
-  .word-grid-row {
+.wordle_interlinked {
+  background-repeat: no-repeat;
+  background-size: 100%;
+  .word_grid {
     display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 65vh;
+    .word-grid-row {
+      display: flex;
+      .letter_tile {
+        font-size: 1.7em !important;
+      }
+    }
   }
 }
 

@@ -21,7 +21,7 @@ interface Props {
   theme?: Theme;
 }
 
-export const WordGrid: React.FC<Props> = (props) => {
+export const WordleInterlinked: React.FC<Props> = (props) => {
   const [inProgress, setInProgress] = useState(true);
   const [gridConfig, setGridConfig] = useState<GridConfig>(generateGridConfig());
   const [currentGrid, setCurrentGrid] = useState<{ x: number; y: number; letter: string }[]>(
@@ -218,17 +218,11 @@ export const WordGrid: React.FC<Props> = (props) => {
   }
 
   return (
-    <>
-      <div
-        className="App word_grid"
-        style={{
-          backgroundImage: props.theme && `url(${props.theme.backgroundImageSrc})`,
-          backgroundSize: "100%",
-          backgroundRepeat: "no-repeat",
-        }}
-      >
-        {populateGrid()}
-      </div>
+    <div
+      className="App wordle_interlinked"
+      style={{ backgroundImage: props.theme && `url(${props.theme.backgroundImageSrc})` }}
+    >
+      <div className="word_grid">{populateGrid()}</div>
       <div className="keyboard">
         {
           <Keyboard
@@ -248,6 +242,6 @@ export const WordGrid: React.FC<Props> = (props) => {
           ></Keyboard>
         }
       </div>
-    </>
+    </div>
   );
 };

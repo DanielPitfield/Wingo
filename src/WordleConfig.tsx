@@ -19,7 +19,7 @@ import { words_colours } from "./WordArrays/Categories/colours";
 import { words_fruits_and_vegetables } from "./WordArrays/Categories/fruits_and_vegetables";
 import { words_sports } from "./WordArrays/Categories/sports";
 import { Theme } from "./Themes";
-import { WordGrid } from "./WordGrid";
+import { WordleInterlinked } from "./WordleInterlinked";
 
 export interface WordleConfigProps {
   mode: "daily" | "repeat" | "category" | "increasing" | "limitless" | "puzzle" | "interlinked";
@@ -766,7 +766,7 @@ const WordleConfig: React.FC<Props> = (props) => {
 
   if (props.mode === "interlinked") {
     return (
-      <WordGrid
+      <WordleInterlinked
         targetWordArray={categoryMappings[Math.round(Math.random() * (categoryMappings.length - 1))].array}
         numWords={6}
         theme={props.theme}
