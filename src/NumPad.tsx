@@ -25,7 +25,7 @@ export const NumPad: React.FC<Props> = (props) => {
     const handleKeyDown = (event: KeyboardEvent) => {
       const input_key = event.key.toString().toLowerCase();
 
-      if (input_key === "f12") {
+      if (["f1", "f2", "f3", "f4", "f5", "f6", "f7", "f8", "f9", "f10", "f11", "f12"].includes(input_key)) {
         return;
       }
 
