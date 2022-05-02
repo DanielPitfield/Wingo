@@ -4,6 +4,7 @@ import crossWordGenerator from "cwg";
 import { useState } from "react";
 import { shuffleArray } from "./NumbersArithmetic/ArithmeticDrag";
 import { Theme } from "./Themes";
+import { Keyboard } from "./Keyboard";
 
 type Orientation = "vertical" | "horizontal";
 
@@ -21,7 +22,19 @@ interface Props {
 }
 
 export const WordGrid: React.FC<Props> = (props) => {
+  const [inProgress, setInProgress] = useState(true);
   const [gridConfig, setGridConfig] = useState<GridConfig>(generateGridConfig());
+  const [currentGrid, setCurrentGrid] = useState<{ x: number; y: number; letter: string }[]>(
+    getCorrectLetterGrid().map((position) => {
+      position.letter = "?";
+      return position;
+    })
+  );
+  const [currentInputCoordinates, setCurrentInputCoordinates] = useState<{
+    xPos: number;
+    yPos: number;
+    oreintation: Orientation;
+  }>({ xPos: 0, yPos: 0, oreintation: "vertical" });
 
   /**
    *
@@ -54,10 +67,10 @@ export const WordGrid: React.FC<Props> = (props) => {
   }
 
   /**
-   *
+   * The correct and fully populated crossword/grid
    * @returns
    */
-  function getLetterGrid(): { x: number; y: number; letter: string }[] {
+  function getCorrectLetterGrid(): { x: number; y: number; letter: string }[] {
     const grid = [];
 
     const gridWordCoordinates: { x: number; y: number; letter: string }[] = gridConfig.words.flatMap((configWord) => {
@@ -110,17 +123,70 @@ export const WordGrid: React.FC<Props> = (props) => {
     return grid;
   }
 
+  function findClickedWord(xPos: number, yPos: number) {
+    // The word which the LetterTile clicked is the first letter of
+    const clickedWord = gridConfig.words.find((word) => word.startingXPos === xPos && word.startingYPos === yPos);
+
+    // Not the first LetterTile of a word
+    if (!clickedWord) {
+      return;
+    }
+
+    // Keyboard input can now start at this location
+    setCurrentInputCoordinates({
+      xPos: clickedWord.startingXPos,
+      yPos: clickedWord.startingYPos,
+      oreintation: clickedWord.orientation,
+    });
+  }
+
+  function onSubmitLetter(letter: string) {
+    // Add letter to grid
+    const newWordGrid = currentGrid.map((position) => {
+      if (position.x === currentInputCoordinates.xPos && position.y === currentInputCoordinates.yPos) {
+        position.letter = letter;
+      }
+      return position;
+    });
+
+    setCurrentGrid(newWordGrid);
+
+    // Move input co-ordinates along
+    if (currentInputCoordinates.oreintation === "horizontal") {
+      setCurrentInputCoordinates({
+        xPos: currentInputCoordinates.xPos + 1,
+        yPos: currentInputCoordinates.yPos,
+        oreintation: currentInputCoordinates.oreintation,
+      });
+    }
+    else if (currentInputCoordinates.oreintation === "vertical") {
+      setCurrentInputCoordinates({
+        xPos: currentInputCoordinates.xPos,
+        yPos: currentInputCoordinates.yPos + 1,
+        oreintation: currentInputCoordinates.oreintation,
+      });
+    }
+  }
+
+  function onBackspace() {
+
+  }
+
+  function onEnter() {
+
+  }
+
   /**
    *
    * @param y
    * @param letterGrid
    * @returns
    */
-  function populateRow(y: number, letterGrid: { x: number; y: number; letter: string }[]): JSX.Element {
+  function populateRow(y: number): JSX.Element {
     return (
       <div className="word-grid-row" key={y}>
         {Array.from({ length: gridConfig.width }).map((_, x) => {
-          const letter = letterGrid.find((letter) => letter.x === x && letter.y === y)?.letter || "";
+          const letter = currentGrid.find((letter) => letter.x === x && letter.y === y)?.letter || "";
 
           return (
             <LetterTile
@@ -128,6 +194,7 @@ export const WordGrid: React.FC<Props> = (props) => {
               letter={letter}
               settings={props.settings}
               status="not set"
+              onClick={() => findClickedWord(x, y)}
               additionalProps={letter ? undefined : { style: { visibility: "hidden" } }}
             ></LetterTile>
           );
@@ -141,26 +208,51 @@ export const WordGrid: React.FC<Props> = (props) => {
    * @returns
    */
   function populateGrid() {
-    const letterGrid = getLetterGrid();
     const grid = [];
 
     for (let y = 0; y < gridConfig.height; y++) {
-      grid.push(populateRow(y, letterGrid));
+      grid.push(populateRow(y));
     }
 
     return grid;
   }
 
+  function allowSpaces() {
+    // Any word with spaces, return true
+    return props.targetWordArray.filter((word) => word.indexOf(" ") >= 0).length > 0;
+  }
+
   return (
-    <div
-      className="App word_grid"
-      style={{
-        backgroundImage: props.theme && `url(${props.theme.backgroundImageSrc})`,
-        backgroundSize: "100%",
-        backgroundRepeat: "no-repeat",
-      }}
-    >
-      {populateGrid()}
-    </div>
+    <>
+      <div
+        className="App word_grid"
+        style={{
+          backgroundImage: props.theme && `url(${props.theme.backgroundImageSrc})`,
+          backgroundSize: "100%",
+          backgroundRepeat: "no-repeat",
+        }}
+      >
+        {populateGrid()}
+      </div>
+      <div className="keyboard">
+        {
+          <Keyboard
+            mode={"word_grid"}
+            onEnter={() => onEnter()}
+            onSubmitLetter={(letter) => {
+              onSubmitLetter(letter);
+            }}
+            onBackspace={() => onBackspace()}
+            guesses={[]}
+            targetWord={""}
+            inDictionary={true}
+            letterStatuses={[]}
+            settings={props.settings}
+            disabled={inProgress}
+            allowSpaces={allowSpaces()}
+          ></Keyboard>
+        }
+      </div>
+    </>
   );
 };
