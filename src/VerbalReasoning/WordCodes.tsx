@@ -696,7 +696,7 @@ const WordCodes: React.FC<Props> = (props) => {
           settings={props.settings}
           onSubmitLetter={onSubmitLetter}
           targetWord=""
-          mode=""
+          mode={"verbal_reasoning/word_codes/match"}
           guesses={[]}
           letterStatuses={[]}
           inDictionary

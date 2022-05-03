@@ -24,6 +24,8 @@ interface Props extends CountdownLettersConfigProps {
   addGold: (gold: number) => void;
 }
 
+// TODO: Not needed here, duplicate function in WordleConfig
+/*
 export function getWordSummary(word: string, targetWord: string, inDictionary: boolean) {
   // Character and status array
   let defaultCharacterStatuses = word.split("").map((character, index) => ({
@@ -75,6 +77,7 @@ export function getLetterStatus(
 
   return status;
 }
+*/
 
 export function isWordValid(countdownWord: string, guessedWord: string) {
   if (!countdownWord || !guessedWord) {
@@ -173,7 +176,9 @@ const CountdownLettersConfig: React.FC<Props> = (props) => {
     };
   }, [setSeconds, seconds, props.timerConfig.isTimed, countdownWord]);
 
+  // TODO: Delete?
   // Updates letter status (which is passed through to Keyboard to update button colours)
+  /*
   React.useEffect(() => {
     const letterStatusesCopy = letterStatuses.slice();
 
@@ -192,6 +197,7 @@ const CountdownLettersConfig: React.FC<Props> = (props) => {
 
     setletterStatuses(letterStatusesCopy);
   }, [guesses]);
+  */
 
   function ResetGame() {
     setGuesses([]);

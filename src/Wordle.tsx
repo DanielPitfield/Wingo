@@ -339,7 +339,7 @@ const Wordle: React.FC<Props> = (props) => {
         {
           /* TODO: Add options to turn keyboard/timer/first letter after Wordle has been launched (during the game) */ props.keyboard && (
             <Keyboard
-              mode={props.mode}
+              mode={`wingo/${props.mode}` as Page}
               onEnter={props.onEnter}
               onSubmitLetter={(letter) => {
                 props.onSubmitLetter(letter);

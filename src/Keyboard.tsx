@@ -4,13 +4,14 @@ import { Button } from "./Button";
 import { getWordSummary } from "./WordleConfig";
 import { SettingsData } from "./SaveData";
 import { useClickChime } from "./Sounds";
+import { Page } from "./App";
 
 interface Props {
   settings: SettingsData;
   onSubmitLetter: (letter: string) => void;
   onEnter: () => void;
   onBackspace: () => void;
-  mode: string;
+  mode: Page;
   guesses: string[];
   targetWord: string;
   inDictionary: boolean;
@@ -31,11 +32,11 @@ export const Keyboard: React.FC<Props> = (props) => {
   const [playClickSoundEffect] = useClickChime(props.settings);
   const alphabet = props.customAlphabet || DEFAULT_ALPHABET;
 
-  const modesWithSpaces = ["category", "letters_categories"];
-  const modesWithoutKeyboardStatuses = [
+  const modesWithSpaces: Page[] = ["wingo/category", "letters_categories", "wingo/interlinked"];
+  const modesWithoutKeyboardStatuses: Page[] = [
     "letters_categories",
-    "countdown_letters_casual",
-    "countdown_letters_realistic",
+    "countdown/letters",
+    "wingo/interlinked",
   ];
 
   React.useEffect(() => {

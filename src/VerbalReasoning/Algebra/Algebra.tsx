@@ -335,7 +335,7 @@ const Algebra: React.FC<Props> = (props) => {
           customAlphabet={"ABCDEFGHIJKLMNOPQRSTUVWXYZ".slice(0, algebraTemplate?.inputs.length).split("")}
           showBackspace={false}
           targetWord=""
-          mode=""
+          mode="verbal_reasoning/algebra"
           guesses={[]}
           letterStatuses={[]}
           inDictionary

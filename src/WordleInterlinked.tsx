@@ -5,6 +5,9 @@ import { useState } from "react";
 import { shuffleArray } from "./NumbersArithmetic/ArithmeticDrag";
 import { Theme } from "./Themes";
 import { Keyboard } from "./Keyboard";
+import { getWordSummary } from "./WordleConfig";
+import { Button } from "./Button";
+import React from "react";
 
 type Orientation = "vertical" | "horizontal";
 
@@ -27,8 +30,20 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
   const [correctGrid, setCorrectGrid] = useState<{ x: number; y: number; letter: string; wordIndex?: number }[]>(
     getCorrectLetterGrid()
   );
+  const [tileStatuses, setTileStatuses] = useState<
+    { x: number; y: number; status: "incorrect" | "contains" | "correct" | "not set" | "not in word" }[]
+  >(
+    getCorrectLetterGrid().map((position) => {
+      return { x: position.x, y: position.y, status: "not set" };
+    })
+  );
   const [currentWords, setCurrentWords] = useState<string[]>(Array.from({ length: props.numWords }).map((x) => ""));
   const [currentWordIndex, setCurrentWordIndex] = useState<number>(0);
+
+  // Re-evaluate tile statuses each time a word is highlighted/picked
+  React.useEffect(() => {
+    checkTileStatuses(currentWords);
+  },[currentWordIndex]);
 
   /**
    *
@@ -140,34 +155,79 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
     // Al the information about the word (that should at where was clicked)
     const correctWordInfo = gridConfig.words[matchingGridEntry.wordIndex];
 
+    // Log the correct word (when it becomes highlighted)
+    console.log(correctWordInfo.word);
+
     if (!correctWordInfo) {
       return;
     }
 
-    // Update the wordIndex of all the tiles of the clicked word to the same index
+    // Update the wordIndex of all the tiles of the clicked word (to the same index)
     const newCorrectLetterGrid = correctGrid.map((position) => {
-      if (
-        correctWordInfo.orientation === "horizontal" &&
-        position.x >= correctWordInfo.startingXPos &&
-        position.x <= correctWordInfo.startingXPos + correctWordInfo.word.length &&
-        position.y === correctWordInfo.startingYPos
-      ) {
+      if (isWordAtPosition(correctWordInfo, position)) {
         position.wordIndex = matchingGridEntry.wordIndex;
-        return position;
-      } else if (
-        correctWordInfo.orientation === "vertical" &&
-        position.y >= correctWordInfo.startingYPos &&
-        position.y <= correctWordInfo.startingYPos + correctWordInfo.word.length &&
-        position.x === correctWordInfo.startingXPos
-      ) {
-        position.wordIndex = matchingGridEntry.wordIndex;
-        return position;
-      } else {
-        return position;
       }
+      return position;
     });
 
     setCorrectGrid(newCorrectLetterGrid);
+  }
+
+  // Does the word have a letter at the provided position?
+  function isWordAtPosition(
+    wordInfo: { word: string; orientation: Orientation; startingXPos: number; startingYPos: number },
+    /* TODO: Position is used as an element of correctGrid but also of tileStatuses */
+    position: { x: number, y: number },
+  ) {
+    const horizontalCondition =
+      wordInfo.orientation === "horizontal" &&
+      position.x >= wordInfo.startingXPos &&
+      position.x <= wordInfo.startingXPos + wordInfo.word.length &&
+      position.y === wordInfo.startingYPos;
+
+    const verticalCondition =
+      wordInfo.orientation === "vertical" &&
+      position.y >= wordInfo.startingYPos &&
+      position.y <= wordInfo.startingYPos + wordInfo.word.length &&
+      position.x === wordInfo.startingXPos;
+
+    if (horizontalCondition || verticalCondition) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  function checkTileStatuses(currentWords: string[]) {
+    let newTileStatuses = tileStatuses.slice();
+
+    // For each guessed word
+    for (let i = 0; i < currentWords.length; i++) {
+      const wordGuessed = currentWords[i];
+      const targetWordInfo = gridConfig.words[i];
+
+      if (wordGuessed.length > 2) {
+        console.log(wordGuessed);
+        console.log(targetWordInfo.word);
+      }
+
+      // Returns summary of each letter's status in the guess
+      const wordSummary = getWordSummary("wordle_interlinked", wordGuessed, targetWordInfo.word, true);
+
+      newTileStatuses = newTileStatuses.map((position) => {
+        if (!isWordAtPosition(targetWordInfo, position)) {
+          return position;
+        } else if (targetWordInfo.orientation === "horizontal") {
+          const xOffset = position.x - targetWordInfo.startingXPos;
+          position.status = wordSummary[xOffset]?.status;
+        } else if (targetWordInfo.orientation === "vertical") {
+          const yOffset = position.y - targetWordInfo.startingYPos;
+          position.status = wordSummary[yOffset]?.status;
+        }
+        return position;
+      });
+    }
+    setTileStatuses(newTileStatuses);
   }
 
   function onSubmitLetter(letter: string) {
@@ -210,6 +270,9 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
     });
 
     setCurrentWords(newCurrentWords);
+    
+    // Remove any previous statuses (from when a letter was there before)
+    checkTileStatuses(newCurrentWords);
   }
 
   function onEnter() {}
@@ -227,6 +290,7 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
           const matchingGridEntry = correctGrid.find((letter) => letter.x === x && letter.y === y);
           const currentWord =
             matchingGridEntry?.wordIndex !== undefined ? currentWords[matchingGridEntry.wordIndex] : "";
+          const tileStatus = tileStatuses.find((tile) => tile.x === x && tile.y === y)?.status;
 
           // Find the letter to display
           const letter = (() => {
@@ -264,7 +328,7 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
                 key={x}
                 letter={letter}
                 settings={props.settings}
-                status="not set"
+                status={letter === "?" ? "not set" : tileStatus ? tileStatus : "not set"}
                 onClick={matchingGridEntry ? () => updateGridWordIndexes(matchingGridEntry) : undefined}
                 additionalProps={letter ? undefined : { style: { visibility: "hidden" } }}
               />
@@ -300,10 +364,15 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
       style={{ backgroundImage: props.theme && `url(${props.theme.backgroundImageSrc})` }}
     >
       <div className="word_grid">{populateGrid()}</div>
+      {inProgress && (
+        <Button mode="accept" settings={props.settings} onClick={() => checkTileStatuses(currentWords)}>
+          Check input
+        </Button>
+      )}
       <div className="keyboard">
         {
           <Keyboard
-            mode={"word_grid"}
+            mode={"wingo/interlinked"}
             onEnter={onEnter}
             onSubmitLetter={onSubmitLetter}
             onBackspace={onBackspace}
