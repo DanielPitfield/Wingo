@@ -24,6 +24,9 @@ interface Props {
 export const WordleInterlinked: React.FC<Props> = (props) => {
   const [inProgress, setInProgress] = useState(true);
   const [gridConfig] = useState<GridConfig>(generateGridConfig());
+  const [correctGrid, setCorrectGrid] = useState<{ x: number; y: number; letter: string; wordIndex?: number }[]>(
+    getCorrectLetterGrid()
+  );
   const [currentWords, setCurrentWords] = useState<string[]>(Array.from({ length: props.numWords }).map((x) => ""));
   const [currentWordIndex, setCurrentWordIndex] = useState<number>(0);
 
@@ -123,6 +126,50 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
     return grid;
   }
 
+  // Changes the precedence of wordIndex for intersection points (when a word is clicked)
+  function updateGridWordIndexes(
+    matchingGridEntry: { x: number; y: number; letter: string; wordIndex?: number } | undefined
+  ) {
+    if (matchingGridEntry === undefined || matchingGridEntry.wordIndex === undefined) {
+      return;
+    }
+
+    // Update the currently highlighted word
+    setCurrentWordIndex(matchingGridEntry.wordIndex!);
+
+    // Al the information about the word (that should at where was clicked)
+    const correctWordInfo = gridConfig.words[matchingGridEntry.wordIndex];
+
+    if (!correctWordInfo) {
+      return;
+    }
+
+    // Update the wordIndex of all the tiles of the clicked word to the same index
+    const newCorrectLetterGrid = correctGrid.map((position) => {
+      if (
+        correctWordInfo.orientation === "horizontal" &&
+        position.x >= correctWordInfo.startingXPos &&
+        position.x <= correctWordInfo.startingXPos + correctWordInfo.word.length &&
+        position.y === correctWordInfo.startingYPos
+      ) {
+        position.wordIndex = matchingGridEntry.wordIndex;
+        return position;
+      } else if (
+        correctWordInfo.orientation === "vertical" &&
+        position.y >= correctWordInfo.startingYPos &&
+        position.y <= correctWordInfo.startingYPos + correctWordInfo.word.length &&
+        position.x === correctWordInfo.startingXPos
+      ) {
+        position.wordIndex = matchingGridEntry.wordIndex;
+        return position;
+      } else {
+        return position;
+      }
+    });
+
+    setCorrectGrid(newCorrectLetterGrid);
+  }
+
   function onSubmitLetter(letter: string) {
     const newCurrentWords = currentWords.map((word, i) => {
       // If this is not the currently 'focussed' word
@@ -174,12 +221,10 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
    * @returns
    */
   function populateRow(y: number): JSX.Element {
-    const grid = getCorrectLetterGrid();
-
     return (
       <div className="word-grid-row" key={y}>
         {Array.from({ length: gridConfig.width }).map((_, x) => {
-          const matchingGridEntry = grid.find((letter) => letter.x === x && letter.y === y);
+          const matchingGridEntry = correctGrid.find((letter) => letter.x === x && letter.y === y);
           const currentWord =
             matchingGridEntry?.wordIndex !== undefined ? currentWords[matchingGridEntry.wordIndex] : "";
 
@@ -220,11 +265,7 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
                 letter={letter}
                 settings={props.settings}
                 status="not set"
-                onClick={
-                  matchingGridEntry?.wordIndex !== undefined
-                    ? () => setCurrentWordIndex(matchingGridEntry.wordIndex!)
-                    : undefined
-                }
+                onClick={matchingGridEntry ? () => updateGridWordIndexes(matchingGridEntry) : undefined}
                 additionalProps={letter ? undefined : { style: { visibility: "hidden" } }}
               />
             </div>
