@@ -24,61 +24,6 @@ interface Props extends CountdownLettersConfigProps {
   addGold: (gold: number) => void;
 }
 
-// TODO: Not needed here, duplicate function in WordleConfig
-/*
-export function getWordSummary(word: string, targetWord: string, inDictionary: boolean) {
-  // Character and status array
-  let defaultCharacterStatuses = word.split("").map((character, index) => ({
-    character: character,
-    status: getLetterStatus(character, index, targetWord, inDictionary),
-  }));
-  // Changing status because of repeated letters
-  let finalCharacterStatuses = defaultCharacterStatuses.map((x, index) => {
-    // If there is a green tile of a letter, don't show any orange tiles
-    if (
-      x.status === "contains" &&
-      defaultCharacterStatuses.some((y) => y.character === x.character && y.status === "correct")
-    ) {
-      x.status = "not in word";
-    }
-    // Only ever show 1 orange tile of each letter
-    if (
-      x.status === "contains" &&
-      defaultCharacterStatuses.findIndex((y) => y.character === x.character && y.status === "contains") !== index
-    ) {
-      x.status = "not in word";
-    }
-    return x;
-  });
-  return finalCharacterStatuses;
-}
-
-export function getLetterStatus(
-  letter: string,
-  index: number,
-  targetWord: string,
-  inDictionary: boolean
-): "incorrect" | "contains" | "correct" | "not set" | "not in word" {
-  var status: "incorrect" | "contains" | "correct" | "not set" | "not in word";
-
-  if (!inDictionary) {
-    // Red
-    status = "incorrect";
-  } else if (targetWord?.[index]?.toUpperCase() === letter?.toUpperCase()) {
-    // Green
-    status = "correct";
-  } else if (targetWord?.toUpperCase().includes(letter?.toUpperCase())) {
-    // Yellow
-    status = "contains";
-  } else {
-    // Grey
-    status = "not in word";
-  }
-
-  return status;
-}
-*/
-
 export function isWordValid(countdownWord: string, guessedWord: string) {
   if (!countdownWord || !guessedWord) {
     return false;
@@ -175,29 +120,6 @@ const CountdownLettersConfig: React.FC<Props> = (props) => {
       clearInterval(timer);
     };
   }, [setSeconds, seconds, props.timerConfig.isTimed, countdownWord]);
-
-  // TODO: Delete?
-  // Updates letter status (which is passed through to Keyboard to update button colours)
-  /*
-  React.useEffect(() => {
-    const letterStatusesCopy = letterStatuses.slice();
-
-    for (const guess of guesses) {
-      for (let i = 0; i < guess.length; i++) {
-        const letter = guess[i];
-
-        const currentLetterStatus = letterStatusesCopy.find((x) => x.letter.toLowerCase() === letter.toLowerCase());
-        const newStatus = getLetterStatus(letter, i, targetWord!, inDictionary);
-
-        if (newStatus !== "incorrect") {
-          currentLetterStatus!.status = newStatus;
-        }
-      }
-    }
-
-    setletterStatuses(letterStatusesCopy);
-  }, [guesses]);
-  */
 
   function ResetGame() {
     setGuesses([]);
