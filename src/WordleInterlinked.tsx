@@ -43,6 +43,7 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
   // Re-evaluate tile statuses each time a word is highlighted/picked
   React.useEffect(() => {
     //checkTileStatuses(currentWords);
+    console.log(gridConfig.words[currentWordIndex]);
   }, [currentWordIndex]);
 
   /**
@@ -281,6 +282,22 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
         // Don't remove any more characters
         return word;
       }
+
+      // Information about the correct word that the removed tile should be one of the letters of
+      const correctWordInfo = gridConfig.words[currentWordIndex];
+      // Find the location of the removed/backspaced tile
+      const removedTilePosX = correctWordInfo.orientation === "vertical" ? correctWordInfo.startingXPos : correctWordInfo.startingXPos + (word.length - 1);
+      const removedTilePosY = correctWordInfo.orientation === "horizontal" ? correctWordInfo.startingYPos : correctWordInfo.startingYPos + (word.length - 1);
+
+      // Change status back to "not set" for removed/backspaced tile
+      const newTileStatuses = tileStatuses.slice().map(position => {
+        if (position.x === removedTilePosX && position.y === removedTilePosY) {
+          position.status = "not set";
+        }
+        return position;
+      });
+
+      setTileStatuses(newTileStatuses);
 
       // Remove a letter from the word
       return word.substring(0, word.length - 1);
