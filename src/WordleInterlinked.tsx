@@ -42,8 +42,8 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
 
   // Re-evaluate tile statuses each time a word is highlighted/picked
   React.useEffect(() => {
-    checkTileStatuses(currentWords);
-  },[currentWordIndex]);
+    //checkTileStatuses(currentWords);
+  }, [currentWordIndex]);
 
   /**
    *
@@ -177,7 +177,7 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
   function isWordAtPosition(
     wordInfo: { word: string; orientation: Orientation; startingXPos: number; startingYPos: number },
     /* TODO: Position is used as an element of correctGrid but also of tileStatuses */
-    position: { x: number, y: number },
+    position: { x: number; y: number }
   ) {
     const horizontalCondition =
       wordInfo.orientation === "horizontal" &&
@@ -201,10 +201,27 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
   function checkTileStatuses(currentWords: string[]) {
     let newTileStatuses = tileStatuses.slice();
 
+    /*
+    The most recently entered/highlighted word needs to be evaluated last
+    The most recent word must be the last element in both currentWords and gridConfig.words
+    */
+
+    const currentWordsCopy = currentWords.slice();
+    // Remove most recent word from this copy
+    const mostRecentWord = currentWordsCopy.splice(currentWordIndex, 1);
+    // Put it back at the end of array
+    const currentWordsOrdered = currentWordsCopy.concat(mostRecentWord);
+
+    const gridConfigWordsCopy = gridConfig.words.slice();
+    // Find which index the most recent word is at
+    const mostRecentWordIndex = gridConfigWordsCopy.findIndex((wordInfo) => wordInfo.word === mostRecentWord[0]);
+    // gridConfig.words but with the most recently changed word moved to the end
+    const gridConfigWords = gridConfigWordsCopy.concat(gridConfigWordsCopy.splice(mostRecentWordIndex, 1));
+
     // For each guessed word
-    for (let i = 0; i < currentWords.length; i++) {
-      const wordGuessed = currentWords[i];
-      const targetWordInfo = gridConfig.words[i];
+    for (let i = 0; i < currentWordsOrdered.length; i++) {
+      const wordGuessed = currentWordsOrdered[i];
+      const targetWordInfo = gridConfigWords[i];
 
       if (wordGuessed.length > 2) {
         console.log(wordGuessed);
@@ -265,14 +282,15 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
         return word;
       }
 
-      // Remove ae letter from the word
+      // Remove a letter from the word
       return word.substring(0, word.length - 1);
     });
 
     setCurrentWords(newCurrentWords);
-    
+
+    // TODO: Delete?
     // Remove any previous statuses (from when a letter was there before)
-    checkTileStatuses(newCurrentWords);
+    // checkTileStatuses(newCurrentWords);
   }
 
   function onEnter() {}
