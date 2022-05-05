@@ -8,6 +8,7 @@ import { Keyboard } from "./Keyboard";
 import { getWordSummary } from "./WordleConfig";
 import { Button } from "./Button";
 import React from "react";
+import { MessageNotification } from "./MessageNotification";
 
 type Orientation = "vertical" | "horizontal";
 
@@ -20,12 +21,14 @@ type GridConfig = {
 interface Props {
   targetWordArray: string[];
   numWords: number;
+  numGuesses: number;
   settings: SettingsData;
   theme?: Theme;
 }
 
 export const WordleInterlinked: React.FC<Props> = (props) => {
   const [inProgress, setInProgress] = useState(true);
+  const [remainingGuesses, setRemainingGuesses] = useState(props.numGuesses);
   const [gridConfig] = useState<GridConfig>(generateGridConfig());
   const [correctGrid, setCorrectGrid] = useState<{ x: number; y: number; letter: string; wordIndex?: number }[]>(
     getCorrectLetterGrid()
@@ -196,6 +199,18 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
       return true;
     } else {
       return false;
+    }
+  }
+
+  function checkInput() {
+    checkTileStatuses(currentWords);
+
+    // Decrease number of guesses
+    setRemainingGuesses(remainingGuesses - 1);
+
+    // If just used last guess
+    if (remainingGuesses <= 1) {
+      setInProgress(false);
     }
   }
 
@@ -387,9 +402,12 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
       className="App wordle_interlinked"
       style={{ backgroundImage: props.theme && `url(${props.theme.backgroundImageSrc})` }}
     >
+      {inProgress && (
+        <MessageNotification type="default">{`Guesses left: ${remainingGuesses}`}</MessageNotification>
+      )}
       <div className="word_grid">{populateGrid()}</div>
       {inProgress && (
-        <Button mode="accept" settings={props.settings} onClick={() => checkTileStatuses(currentWords)}>
+        <Button mode="accept" settings={props.settings} onClick={checkInput}>
           Check input
         </Button>
       )}
