@@ -29,7 +29,7 @@ interface Props {
 export const WordleInterlinked: React.FC<Props> = (props) => {
   const [inProgress, setInProgress] = useState(true);
   const [remainingGuesses, setRemainingGuesses] = useState(props.numGuesses);
-  const [gridConfig] = useState<GridConfig>(generateGridConfig());
+  const [gridConfig, setGridConfig] = useState<GridConfig>(generateGridConfig());
   const [correctGrid, setCorrectGrid] = useState<{ x: number; y: number; letter: string; wordIndex?: number }[]>(
     getCorrectLetterGrid()
   );
@@ -86,7 +86,7 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
     console.log(gridConfig.words[currentWordIndex].word);
   }, [currentWordIndex]);
 
-  // Count how many words are correct each time tile statuses are updated
+  // Check if the grid has been completed each time the tileStatuses are updated
   React.useEffect(() => {
     if (!inProgress) {
       return;
@@ -306,7 +306,7 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
     if (!inProgress) {
       return;
     }
-    
+
     const newCurrentWords = currentWords.map((word, i) => {
       // If this is not the currently 'focussed' word
       if (i !== currentWordIndex) {
@@ -400,7 +400,7 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
             <div className="letter-tile-wrapper" data-is-focussed={matchingGridEntry?.wordIndex === currentWordIndex}>
               <LetterTile
                 key={x}
-                letter={letter}
+                letter={inProgress ? letter : matchingGridEntry ? matchingGridEntry?.letter : "?"}
                 settings={props.settings}
                 status={letter === "?" ? "not set" : tileStatus ? tileStatus : "not set"}
                 onClick={matchingGridEntry ? () => setCurrentWordIndex(matchingGridEntry.wordIndex!) : undefined}
@@ -432,11 +432,56 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
     return props.targetWordArray.filter((word) => word.indexOf(" ") >= 0).length > 0;
   }
 
+  function displayOutcome(): React.ReactNode {
+    // Game still in progress, don't display anything
+    if (inProgress) {
+      return;
+    }
+
+    // TODO: Show correctLetterGrid
+
+    // Is the grid completed (all correct words entered?)
+    const gridCompleted = tileStatuses.every(tile => {
+      if (tile.status === "correct") {
+        return true;
+      }
+    });
+
+    return (
+      <>
+        <MessageNotification type={gridCompleted ? "success" : "error"}>
+          <strong>
+            {gridCompleted ? "Correct!" : `Incorrect! The correct answers were:`}
+          </strong>
+        </MessageNotification>
+
+        <br></br>
+
+        <Button mode="accept" settings={props.settings} onClick={() => ResetGame()}>
+          Restart
+        </Button>
+      </>
+    );
+  }
+
+  function ResetGame() {
+    setInProgress(true);
+    setCurrentWordIndex(0);
+    setRemainingGuesses(props.numGuesses);
+    setTileStatuses(getCorrectLetterGrid().map((position) => {
+      return { x: position.x, y: position.y, status: "not set" };
+    }));
+    setCurrentWords(Array.from({ length: props.numWords }).map((x) => ""));
+    setGridConfig(generateGridConfig());
+    setCorrectGrid(getCorrectLetterGrid());
+  }
+
   return (
     <div
       className="App wordle_interlinked"
       style={{ backgroundImage: props.theme && `url(${props.theme.backgroundImageSrc})` }}
     >
+      {!inProgress && (<div className="outcome">{displayOutcome()}</div>)}
       {inProgress && (
         <MessageNotification type="default">{`Guesses left: ${remainingGuesses}`}</MessageNotification>
       )}

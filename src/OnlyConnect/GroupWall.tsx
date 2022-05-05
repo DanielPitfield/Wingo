@@ -366,7 +366,7 @@ const GroupWall: React.FC<Props> = (props) => {
       className="App only_connect_wall"
       style={{ backgroundImage: `url(${props.theme.backgroundImageSrc})`, backgroundSize: "100%" }}
     >
-      <div className="outcome">{displayOutcome()}</div>
+      {!inProgress && (<div className="outcome">{displayOutcome()}</div>)}
       {Boolean(inProgress && numCompletedGroups === props.numGroups - 2) && (
         <MessageNotification type="default">{`Guesses left: ${remainingGuesses}`}</MessageNotification>
       )}
