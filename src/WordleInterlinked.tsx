@@ -217,7 +217,8 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
       const wordSummary = getWordSummary("wordle_interlinked", wordGuessed, targetWordInfo.word, true);
 
       newTileStatuses = newTileStatuses.map((position) => {
-        if (!isWordAtPosition(targetWordInfo, position)) {
+        // Not a tile where the word should be or a guess hasn't been made for this word yet
+        if (!isWordAtPosition(targetWordInfo, position) || wordGuessed === "") {
           return position;
         } else if (targetWordInfo.orientation === "horizontal") {
           const xOffset = position.x - targetWordInfo.startingXPos;
