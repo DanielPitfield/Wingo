@@ -45,6 +45,10 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
 
   // Each time a word is highlighted/picked
   React.useEffect(() => {
+    if (!inProgress) {
+      return;
+    }
+
     let newCurrentWords = currentWords.slice();
     // Move currently highlighted word to start of array
     newCurrentWords.unshift(newCurrentWords.splice(currentWordIndex, 1)[0]);
@@ -81,6 +85,24 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
     // Log the correct word
     console.log(gridConfig.words[currentWordIndex].word);
   }, [currentWordIndex]);
+
+  // Count how many words are correct each time tile statuses are updated
+  React.useEffect(() => {
+    if (!inProgress) {
+      return;
+    }
+
+    const gridCompleted = tileStatuses.every(tile => {
+      if (tile.status === "correct") {
+        return true;
+      }
+    });
+
+    if (gridCompleted) {
+      setInProgress(false);
+    }
+
+  },[tileStatuses]);
 
   /**
    *
@@ -203,7 +225,9 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
   }
 
   function checkInput() {
-    checkTileStatuses(currentWords);
+    if (!inProgress) {
+      return;
+    }
 
     // Decrease number of guesses
     setRemainingGuesses(remainingGuesses - 1);
@@ -212,6 +236,9 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
     if (remainingGuesses <= 1) {
       setInProgress(false);
     }
+
+    // Check if grid is completed
+    checkTileStatuses(currentWords);
   }
 
   function checkTileStatuses(currentWords: string[]) {
@@ -251,6 +278,10 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
   }
 
   function onSubmitLetter(letter: string) {
+    if (!inProgress) {
+      return;
+    }
+
     const newCurrentWords = currentWords.map((word, i) => {
       // If this is not the currently 'focussed' word
       if (i !== currentWordIndex) {
@@ -272,6 +303,10 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
   }
 
   function onBackspace() {
+    if (!inProgress) {
+      return;
+    }
+    
     const newCurrentWords = currentWords.map((word, i) => {
       // If this is not the currently 'focussed' word
       if (i !== currentWordIndex) {
