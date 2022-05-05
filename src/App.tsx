@@ -55,6 +55,7 @@ export type Page =
   | "wingo/limitless"
   | "wingo/puzzle"
   | "wingo/interlinked"
+  | "wingo/crossword"
   | "letters_categories"
   | "countdown/letters"
   | "countdown/numbers"
@@ -107,8 +108,14 @@ export const pages: { page: Page; title: string; description?: string; shortTitl
   {
     page: "wingo/interlinked",
     title: "Wingo Interlinked",
-    description: "Guess two or more words, interlinked by at least 1 letter",
+    description: "Guess two words interlinked by a shared letter",
     shortTitle: "Interlinked",
+  },
+  {
+    page: "wingo/crossword",
+    title: "Wingo Crossword",
+    description: "Guess a crossword of words",
+    shortTitle: "Crossword",
   },
   {
     page: "letters_categories",
@@ -256,6 +263,12 @@ export const App: React.FC = () => {
     },
     {
       page: "wingo/interlinked",
+      firstLetter: false,
+      timer: false,
+      keyboard: true,
+    },
+    {
+      page: "wingo/crossword",
       firstLetter: false,
       timer: false,
       keyboard: true,
@@ -640,7 +653,24 @@ export const App: React.FC = () => {
                 : { isTimed: false }
             }
             keyboard={gameOptionToggles.find((x) => x.page === "wingo/interlinked")?.keyboard || false}
-            defaultWordLength={wordLength}
+            //defaultWordLength={wordLength}
+            enforceFullLengthGuesses={true}
+          />
+        );
+
+        case "wingo/crossword":
+        return (
+          <WordleConfig
+            {...commonWingoProps}
+            mode="crossword"
+            firstLetterProvided={gameOptionToggles.find((x) => x.page === "wingo/crossword")?.firstLetter || false}
+            timerConfig={
+              gameOptionToggles.find((x) => x.page === "wingo/crossword")?.timer
+                ? { isTimed: true, seconds: 30 }
+                : { isTimed: false }
+            }
+            keyboard={gameOptionToggles.find((x) => x.page === "wingo/crossword")?.keyboard || false}
+            //defaultWordLength={wordLength}
             enforceFullLengthGuesses={true}
           />
         );

@@ -22,7 +22,7 @@ import { Theme } from "./Themes";
 import { WordleInterlinked } from "./WordleInterlinked";
 
 export interface WordleConfigProps {
-  mode: "daily" | "repeat" | "category" | "increasing" | "limitless" | "puzzle" | "interlinked";
+  mode: "daily" | "repeat" | "category" | "increasing" | "limitless" | "puzzle" | "interlinked" | "crossword";
   targetWord?: string;
   wordArray?: string[];
   enforceFullLengthGuesses: boolean;
@@ -173,7 +173,6 @@ const WordleConfig: React.FC<Props> = (props) => {
   const [isIncompleteWord, setisIncompleteWord] = useState(false);
   const [wordLength, setwordLength] = useState(props.defaultWordLength || props.targetWord?.length!);
   const [targetWord, settargetWord] = useState(props.targetWord ? props.targetWord : "");
-  const [interlinkedWord, setinterlinkedWord] = useState<string>();
   const [targetHint, settargetHint] = useState("");
   const [targetCategory, settargetCategory] = useState("");
   const [hasSelectedTargetCategory, sethasSelectedTargetCategory] = useState(false);
@@ -767,9 +766,29 @@ const WordleConfig: React.FC<Props> = (props) => {
   if (props.mode === "interlinked") {
     return (
       <WordleInterlinked
-        targetWordArray={categoryMappings[Math.round(Math.random() * (categoryMappings.length - 1))].array}
+        targetWordArray={
+          props.defaultWordLength
+            ? wordLengthMappingsGuessable.find((x) => x.value === wordLength)?.array!
+            : categoryMappings[Math.round(Math.random() * (categoryMappings.length - 1))].array
+        }
+        numWords={2}
+        numGuesses={6}
+        theme={props.theme}
+        settings={props.settings}
+      />
+    );
+  }
+
+  if (props.mode === "crossword") {
+    return (
+      <WordleInterlinked
+        targetWordArray={
+          props.defaultWordLength
+            ? wordLengthMappingsGuessable.find((x) => x.value === wordLength)?.array!
+            : categoryMappings[Math.round(Math.random() * (categoryMappings.length - 1))].array
+        }
         numWords={6}
-        numGuesses={4}
+        numGuesses={6}
         theme={props.theme}
         settings={props.settings}
       />
