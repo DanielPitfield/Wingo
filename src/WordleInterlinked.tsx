@@ -40,6 +40,39 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
   const [currentWords, setCurrentWords] = useState<string[]>(Array.from({ length: props.numWords }).map((x) => ""));
   const [currentWordIndex, setCurrentWordIndex] = useState<number>(0);
 
+  // Each time a word is highlighted/picked
+  React.useEffect(() => {
+    // All the information about the word (that should be at where was clicked)
+    const correctWordInfo = gridConfig.words[currentWordIndex];
+
+    if (!correctWordInfo) {
+      return;
+    }
+
+    // Update the status of all tiles of the word to "not set"
+    const newTileStatuses = tileStatuses.map((position) => {
+      if (isWordAtPosition(correctWordInfo, position)) {
+        position.status = "not set";
+      }
+      return position;
+    });
+
+    setTileStatuses(newTileStatuses);
+
+    // Update the wordIndex of all the tiles to the same index
+    const newCorrectLetterGrid = correctGrid.map((position) => {
+      if (isWordAtPosition(correctWordInfo, position)) {
+        position.wordIndex = currentWordIndex;
+      }
+      return position;
+    });
+
+    setCorrectGrid(newCorrectLetterGrid);
+
+    // Log the correct word
+    console.log(gridConfig.words[currentWordIndex].word);
+  }, [currentWordIndex]);
+
   /**
    *
    * @returns
@@ -136,38 +169,6 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
     return grid;
   }
 
-  // Changes the precedence of wordIndex for intersection points (when a word is clicked)
-  function updateGridWordIndexes(
-    matchingGridEntry: { x: number; y: number; letter: string; wordIndex?: number } | undefined
-  ) {
-    if (matchingGridEntry === undefined || matchingGridEntry.wordIndex === undefined) {
-      return;
-    }
-
-    // Update the currently highlighted word
-    setCurrentWordIndex(matchingGridEntry.wordIndex!);
-
-    // All the information about the word (that should be at where was clicked)
-    const correctWordInfo = gridConfig.words[matchingGridEntry.wordIndex];
-
-    // Log the correct word (when it becomes highlighted)
-    console.log(correctWordInfo.word);
-
-    if (!correctWordInfo) {
-      return;
-    }
-
-    // Update the wordIndex of all the tiles of the clicked word (to the same index)
-    const newCorrectLetterGrid = correctGrid.map((position) => {
-      if (isWordAtPosition(correctWordInfo, position)) {
-        position.wordIndex = matchingGridEntry.wordIndex;
-      }
-      return position;
-    });
-
-    setCorrectGrid(newCorrectLetterGrid);
-  }
-
   // Does the word have a letter at the provided position?
   function isWordAtPosition(
     wordInfo: { word: string; orientation: Orientation; startingXPos: number; startingYPos: number },
@@ -195,23 +196,12 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
   function checkTileStatuses(currentWords: string[]) {
     let newTileStatuses = tileStatuses.slice();
 
-    /*
-    The most recently entered/highlighted word needs to be evaluated last
-    The most recent word must be the last element in both currentWords and gridConfig.words
-    */
-
-    const currentWordsCopy = currentWords.slice();
-    // currentWords but with the most recently changed word moved to the end
-    const currentWordsOrdered = currentWordsCopy.concat(currentWordsCopy.splice(currentWordIndex, 1));
-
-    const gridConfigWordsCopy = gridConfig.words.slice();
-    // gridConfig.words but with the most recently changed word moved to the end
-    const gridConfigWords = gridConfigWordsCopy.concat(gridConfigWordsCopy.splice(currentWordIndex, 1));
-
     // For each guessed word
-    for (let i = 0; i < currentWordsOrdered.length; i++) {
-      const wordGuessed = currentWordsOrdered[i];
-      const targetWordInfo = gridConfigWords[i];
+    for (let i = 0; i < currentWords.length; i++) {
+      const wordGuessed = currentWords[i];
+      const targetWordInfo = gridConfig.words[i];
+
+      // TODO: Order currentWords by the order in which they are entered (so that the status of tiles at intersection points show the most relevant status)
 
       // Returns summary of each letter's status in the guess
       const wordSummary = getWordSummary("wordle_interlinked", wordGuessed, targetWordInfo.word, true);
@@ -271,11 +261,17 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
       // Information about the correct word that the removed tile should be one of the letters of
       const correctWordInfo = gridConfig.words[currentWordIndex];
       // Find the location of the removed/backspaced tile
-      const removedTilePosX = correctWordInfo.orientation === "vertical" ? correctWordInfo.startingXPos : correctWordInfo.startingXPos + (word.length - 1);
-      const removedTilePosY = correctWordInfo.orientation === "horizontal" ? correctWordInfo.startingYPos : correctWordInfo.startingYPos + (word.length - 1);
+      const removedTilePosX =
+        correctWordInfo.orientation === "vertical"
+          ? correctWordInfo.startingXPos
+          : correctWordInfo.startingXPos + (word.length - 1);
+      const removedTilePosY =
+        correctWordInfo.orientation === "horizontal"
+          ? correctWordInfo.startingYPos
+          : correctWordInfo.startingYPos + (word.length - 1);
 
       // Change status back to "not set" for removed/backspaced tile
-      const newTileStatuses = tileStatuses.slice().map(position => {
+      const newTileStatuses = tileStatuses.slice().map((position) => {
         if (position.x === removedTilePosX && position.y === removedTilePosY) {
           position.status = "not set";
         }
@@ -345,7 +341,7 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
                 letter={letter}
                 settings={props.settings}
                 status={letter === "?" ? "not set" : tileStatus ? tileStatus : "not set"}
-                onClick={matchingGridEntry ? () => updateGridWordIndexes(matchingGridEntry) : undefined}
+                onClick={matchingGridEntry ? () => setCurrentWordIndex(matchingGridEntry.wordIndex!) : undefined}
                 additionalProps={letter ? undefined : { style: { visibility: "hidden" } }}
               />
             </div>
