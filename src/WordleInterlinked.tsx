@@ -42,6 +42,12 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
 
   // Each time a word is highlighted/picked
   React.useEffect(() => {
+    let newCurrentWords = currentWords.slice();
+    // Move currently highlighted word to start of array
+    newCurrentWords.unshift(newCurrentWords.splice(currentWordIndex, 1)[0]);
+
+    setCurrentWords(newCurrentWords);
+
     // All the information about the word (that should be at where was clicked)
     const correctWordInfo = gridConfig.words[currentWordIndex];
 
@@ -201,14 +207,20 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
       const wordGuessed = currentWords[i];
       const targetWordInfo = gridConfig.words[i];
 
-      // TODO: Order currentWords by the order in which they are entered (so that the status of tiles at intersection points show the most relevant status)
-
       // Returns summary of each letter's status in the guess
       const wordSummary = getWordSummary("wordle_interlinked", wordGuessed, targetWordInfo.word, true);
 
       newTileStatuses = newTileStatuses.map((position) => {
-        // Not a tile where the word should be or a guess hasn't been made for this word yet
-        if (!isWordAtPosition(targetWordInfo, position) || wordGuessed === "") {
+        // Status has already been changed from a previous (higher precedence) word comparison
+        if (position.status !== "not set") {
+          return position;
+        }
+        // Not a tile where the word should be
+        else if (!isWordAtPosition(targetWordInfo, position)) {
+          return position;
+        }
+        // Guess hasn't been made for this word yet
+        else if (wordGuessed === "") {
           return position;
         } else if (targetWordInfo.orientation === "horizontal") {
           const xOffset = position.x - targetWordInfo.startingXPos;
