@@ -21,14 +21,16 @@ type GridConfig = {
 interface Props {
   targetWordArray: string[];
   numWords: number;
-  numGuesses: number;
+  numWordGuesses?: number;
+  numGridGuesses: number;
   settings: SettingsData;
   theme?: Theme;
 }
 
 export const WordleInterlinked: React.FC<Props> = (props) => {
   const [inProgress, setInProgress] = useState(true);
-  const [remainingGuesses, setRemainingGuesses] = useState(props.numGuesses);
+  const [remainingWordGuesses, setRemainingWordGuesses] = useState(props.numWordGuesses ? props.numWordGuesses : undefined);
+  const [remainingGridGuesses, setRemainingGridGuesses] = useState(props.numGridGuesses);
   const [gridConfig, setGridConfig] = useState<GridConfig>(generateGridConfig());
   const [correctGrid, setCorrectGrid] = useState<{ x: number; y: number; letter: string; wordIndex?: number }[]>(
     getCorrectLetterGrid()
@@ -86,7 +88,7 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
       return;
     }
 
-    const gridCompleted = tileStatuses.every(tile => {
+    const gridCompleted = tileStatuses.every((tile) => {
       if (tile.status === "correct") {
         return true;
       }
@@ -95,8 +97,7 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
     if (gridCompleted) {
       setInProgress(false);
     }
-
-  },[tileStatuses]);
+  }, [tileStatuses]);
 
   /**
    *
@@ -218,24 +219,32 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
     }
   }
 
-  function checkInput() {
+  function checkInput(wordsToCheck: "current" | "all") {
     if (!inProgress) {
       return;
     }
 
-    // Decrease number of guesses
-    setRemainingGuesses(remainingGuesses - 1);
-
-    // If just used last guess
-    if (remainingGuesses <= 1) {
-      setInProgress(false);
-    }
-
     // Check if grid is completed
-    checkTileStatuses(currentWords);
+    checkTileStatuses(currentWords, wordsToCheck);
+
+    if (wordsToCheck === "current" && props.numWordGuesses) {
+      // Used last current word guess and no grid guesses left
+      if (remainingWordGuesses! <= 1 && remainingGridGuesses <= 0) {
+        setInProgress(false);
+      }
+      setRemainingWordGuesses(remainingWordGuesses! - 1);
+    } else if (wordsToCheck === "all") {
+      // Word guesses were not enabled or were but just used last one
+      const noWordGuessesLeft = (!props.numWordGuesses || props.numWordGuesses && remainingWordGuesses! <= 1)
+      // Used last grid guess and no word guesses left
+      if (remainingGridGuesses <= 1 && noWordGuessesLeft) {
+        setInProgress(false);
+      }
+      setRemainingGridGuesses(remainingGridGuesses - 1);
+    }
   }
 
-  function checkTileStatuses(currentWords: string[]) {
+  function checkTileStatuses(currentWords: string[], wordsToCheck: "current" | "all") {
     let newTileStatuses = tileStatuses.slice();
 
     /* 
@@ -281,6 +290,11 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
         }
         return position;
       });
+
+      // Don't check any other words
+      if (wordsToCheck === "current") {
+        break;
+      }
     }
     setTileStatuses(newTileStatuses);
   }
@@ -447,7 +461,7 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
     }
 
     // Is the grid completed (all correct words entered?)
-    const gridCompleted = tileStatuses.every(tile => {
+    const gridCompleted = tileStatuses.every((tile) => {
       if (tile.status === "correct") {
         return true;
       }
@@ -456,9 +470,7 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
     return (
       <>
         <MessageNotification type={gridCompleted ? "success" : "error"}>
-          <strong>
-            {gridCompleted ? "Correct!" : `Incorrect! The correct answers were:`}
-          </strong>
+          <strong>{gridCompleted ? "Correct!" : `Incorrect! The correct answers were:`}</strong>
         </MessageNotification>
 
         <br></br>
@@ -473,10 +485,13 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
   function ResetGame() {
     setInProgress(true);
     setCurrentWordIndex(0);
-    setRemainingGuesses(props.numGuesses);
-    setTileStatuses(getCorrectLetterGrid().map((position) => {
-      return { x: position.x, y: position.y, status: "not set" };
-    }));
+    setRemainingWordGuesses(props.numWordGuesses ? props.numWordGuesses : undefined);
+    setRemainingGridGuesses(props.numGridGuesses);
+    setTileStatuses(
+      getCorrectLetterGrid().map((position) => {
+        return { x: position.x, y: position.y, status: "not set" };
+      })
+    );
     setCurrentWords(Array.from({ length: props.numWords }).map((x) => ""));
     setGridConfig(generateGridConfig());
     setCorrectGrid(getCorrectLetterGrid());
@@ -487,14 +502,22 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
       className="App wordle_interlinked"
       style={{ backgroundImage: props.theme && `url(${props.theme.backgroundImageSrc})` }}
     >
-      {!inProgress && (<div className="outcome">{displayOutcome()}</div>)}
+      {!inProgress && <div className="outcome">{displayOutcome()}</div>}
       {inProgress && (
-        <MessageNotification type="default">{`Guesses left: ${remainingGuesses}`}</MessageNotification>
+        <MessageNotification type="default">{`Grid Guesses left: ${remainingGridGuesses}`}</MessageNotification>
+      )}
+      {Boolean(inProgress && props.numWordGuesses) && (
+        <MessageNotification type="default">{`Current word Guesses left: ${remainingWordGuesses}`}</MessageNotification>
       )}
       <div className="word_grid">{populateGrid()}</div>
+      {Boolean(inProgress && props.numWordGuesses) && (
+        <Button mode="accept" settings={props.settings} onClick={() => checkInput("current")}>
+          Check current word
+        </Button>
+      )}
       {inProgress && (
-        <Button mode="accept" settings={props.settings} onClick={checkInput}>
-          Check input
+        <Button mode="accept" settings={props.settings} onClick={() => checkInput("all")}>
+          Check crossword
         </Button>
       )}
       <div className="keyboard">

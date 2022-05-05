@@ -772,7 +772,7 @@ const WordleConfig: React.FC<Props> = (props) => {
             : categoryMappings[Math.round(Math.random() * (categoryMappings.length - 1))].array
         }
         numWords={2}
-        numGuesses={6}
+        numGridGuesses={6}
         theme={props.theme}
         settings={props.settings}
       />
@@ -788,7 +788,8 @@ const WordleConfig: React.FC<Props> = (props) => {
             : categoryMappings[Math.round(Math.random() * (categoryMappings.length - 1))].array
         }
         numWords={6}
-        numGuesses={6}
+        numWordGuesses={10}
+        numGridGuesses={6}
         theme={props.theme}
         settings={props.settings}
       />
