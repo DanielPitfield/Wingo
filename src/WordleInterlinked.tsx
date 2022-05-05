@@ -40,12 +40,6 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
   const [currentWords, setCurrentWords] = useState<string[]>(Array.from({ length: props.numWords }).map((x) => ""));
   const [currentWordIndex, setCurrentWordIndex] = useState<number>(0);
 
-  // Re-evaluate tile statuses each time a word is highlighted/picked
-  React.useEffect(() => {
-    //checkTileStatuses(currentWords);
-    console.log(gridConfig.words[currentWordIndex]);
-  }, [currentWordIndex]);
-
   /**
    *
    * @returns
@@ -153,7 +147,7 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
     // Update the currently highlighted word
     setCurrentWordIndex(matchingGridEntry.wordIndex!);
 
-    // Al the information about the word (that should at where was clicked)
+    // All the information about the word (that should be at where was clicked)
     const correctWordInfo = gridConfig.words[matchingGridEntry.wordIndex];
 
     // Log the correct word (when it becomes highlighted)
@@ -177,7 +171,6 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
   // Does the word have a letter at the provided position?
   function isWordAtPosition(
     wordInfo: { word: string; orientation: Orientation; startingXPos: number; startingYPos: number },
-    /* TODO: Position is used as an element of correctGrid but also of tileStatuses */
     position: { x: number; y: number }
   ) {
     const horizontalCondition =
@@ -208,26 +201,17 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
     */
 
     const currentWordsCopy = currentWords.slice();
-    // Remove most recent word from this copy
-    const mostRecentWord = currentWordsCopy.splice(currentWordIndex, 1);
-    // Put it back at the end of array
-    const currentWordsOrdered = currentWordsCopy.concat(mostRecentWord);
+    // currentWords but with the most recently changed word moved to the end
+    const currentWordsOrdered = currentWordsCopy.concat(currentWordsCopy.splice(currentWordIndex, 1));
 
     const gridConfigWordsCopy = gridConfig.words.slice();
-    // Find which index the most recent word is at
-    const mostRecentWordIndex = gridConfigWordsCopy.findIndex((wordInfo) => wordInfo.word === mostRecentWord[0]);
     // gridConfig.words but with the most recently changed word moved to the end
-    const gridConfigWords = gridConfigWordsCopy.concat(gridConfigWordsCopy.splice(mostRecentWordIndex, 1));
+    const gridConfigWords = gridConfigWordsCopy.concat(gridConfigWordsCopy.splice(currentWordIndex, 1));
 
     // For each guessed word
     for (let i = 0; i < currentWordsOrdered.length; i++) {
       const wordGuessed = currentWordsOrdered[i];
       const targetWordInfo = gridConfigWords[i];
-
-      if (wordGuessed.length > 2) {
-        console.log(wordGuessed);
-        console.log(targetWordInfo.word);
-      }
 
       // Returns summary of each letter's status in the guess
       const wordSummary = getWordSummary("wordle_interlinked", wordGuessed, targetWordInfo.word, true);
@@ -304,10 +288,6 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
     });
 
     setCurrentWords(newCurrentWords);
-
-    // TODO: Delete?
-    // Remove any previous statuses (from when a letter was there before)
-    // checkTileStatuses(newCurrentWords);
   }
 
   function onEnter() {}
