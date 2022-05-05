@@ -49,12 +49,6 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
       return;
     }
 
-    let newCurrentWords = currentWords.slice();
-    // Move currently highlighted word to start of array
-    newCurrentWords.unshift(newCurrentWords.splice(currentWordIndex, 1)[0]);
-
-    setCurrentWords(newCurrentWords);
-
     // All the information about the word (that should be at where was clicked)
     const correctWordInfo = gridConfig.words[currentWordIndex];
 
@@ -244,10 +238,24 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
   function checkTileStatuses(currentWords: string[]) {
     let newTileStatuses = tileStatuses.slice();
 
+    /* 
+    Most recently entered word needs to take precedence (to provide most relevant status at intersection points)
+    Therefore, move the current word and correct word to the start of (sliced copies of) currentWords and gridConfig.words
+    (the first condition when mapping the newTileStatuses ensures a tile's status is set to the status of the highest precedence word)
+    */
+
+    let currentWordsOrdered = currentWords.slice();
+    // Move currently highlighted word to start of array
+    currentWordsOrdered.unshift(currentWordsOrdered.splice(currentWordIndex, 1)[0]);
+
+    let gridWordsOrdered = gridConfig.words.slice();
+    // Move correct word (of currently highlighted row/column) to start of array
+    gridWordsOrdered.unshift(gridWordsOrdered.splice(currentWordIndex, 1)[0]);
+
     // For each guessed word
-    for (let i = 0; i < currentWords.length; i++) {
-      const wordGuessed = currentWords[i];
-      const targetWordInfo = gridConfig.words[i];
+    for (let i = 0; i < currentWordsOrdered.length; i++) {
+      const wordGuessed = currentWordsOrdered[i];
+      const targetWordInfo = gridWordsOrdered[i];
 
       // Returns summary of each letter's status in the guess
       const wordSummary = getWordSummary("wordle_interlinked", wordGuessed, targetWordInfo.word, true);
