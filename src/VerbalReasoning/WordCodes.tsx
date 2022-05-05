@@ -409,7 +409,7 @@ const WordCodes: React.FC<Props> = (props) => {
               onMove={(toIndex) =>
                 inProgress
                   ? setWordTiles(arrayMove(wordTiles, index, toIndex))
-                  : /* TODO: Disable drag entirely if game is over */ console.log("Game over")
+                  : undefined
               }
             >
               <LetterTile letter={tile.word} status={tile.status} settings={props.settings} />
@@ -429,7 +429,7 @@ const WordCodes: React.FC<Props> = (props) => {
               onMove={(toIndex) =>
                 inProgress
                   ? setCodeTiles(arrayMove(codeTiles, index, toIndex))
-                  : /* TODO: Disable drag entirely if game is over */ console.log("Game over")
+                  : undefined
               }
             >
               <LetterTile letter={tile.code} status={tile.status} settings={props.settings} />

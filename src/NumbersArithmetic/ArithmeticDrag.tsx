@@ -285,7 +285,7 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
               onMove={(toIndex) =>
                 inProgress
                   ? setExpressionTiles(arrayMove(expressionTiles, index, toIndex))
-                  : /* TODO: Disable drag entirely if game is over */ console.log("Game over")
+                  : undefined
               }
             >
               <LetterTile letter={tile.expression} status={tile.status} settings={props.settings} />
@@ -306,7 +306,7 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
                 onMove={(toIndex) =>
                   inProgress
                     ? setResultTiles(arrayMove(resultTiles, index, toIndex))
-                    : /* TODO: Disable drag entirely if game is over */ console.log("Game over")
+                    : undefined
                 }
               >
                 <LetterTile letter={tile.total.toString()} status={tile.status} settings={props.settings} />

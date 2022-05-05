@@ -446,8 +446,6 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
       return;
     }
 
-    // TODO: Show correctLetterGrid
-
     // Is the grid completed (all correct words entered?)
     const gridCompleted = tileStatuses.every(tile => {
       if (tile.status === "correct") {
