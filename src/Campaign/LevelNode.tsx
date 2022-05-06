@@ -61,7 +61,7 @@ export const LevelNode: React.FC<{
         ref={setReferenceElement as any}
         key={`Area ${areaInfo?.name} Level ${props.index + 1}`}
         onClick={() => {
-          if (level_unlocked) {
+          if (level_unlocked && !level_completed) {
             playClickSoundEffect();
             props.setSelectedCampaignLevel(props.level);
             props.setPage("campaign/area/level");
