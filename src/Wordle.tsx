@@ -11,6 +11,7 @@ import { SaveData, SettingsData } from "./SaveData";
 import { useCorrectChime, useFailureChime, useLightPingChime } from "./Sounds";
 
 interface Props {
+  isCampaignLevel: boolean;
   mode: "daily" | "repeat" | "category" | "increasing" | "limitless" | "puzzle" | "letters_categories";
   timerConfig: { isTimed: false } | { isTimed: true; totalSeconds: number; elapsedSeconds: number };
   keyboard: boolean;
@@ -158,10 +159,18 @@ const Wordle: React.FC<Props> = (props) => {
       return (
         <MessageNotification type="error">
           <strong>{props.currentWord.toUpperCase()}</strong> is not a valid word
-          <br />
-          The word was: <strong>{props.targetWord.toUpperCase()}</strong>
-          <br />
-          {props.mode === "limitless" && <strong>-1 life</strong>}
+          {!props.isCampaignLevel && (
+            <>
+              <br></br>
+              The word was: <strong>{props.targetWord.toUpperCase()}</strong>
+            </>
+          )}
+          {props.mode === "limitless" && (
+            <>
+              <br></br>
+              <strong>-1 life</strong>
+            </>
+          )}
         </MessageNotification>
       );
     }
@@ -188,8 +197,12 @@ const Wordle: React.FC<Props> = (props) => {
       } else {
         return (
           <MessageNotification type="default">
-            The word was: <strong>{props.targetWord.toUpperCase()}</strong>
-            <br />
+            {!props.isCampaignLevel && (
+              <>
+                The word was: <strong>{props.targetWord.toUpperCase()}</strong>
+                <br></br>
+              </>
+            )}
             <strong>-1 life</strong>
           </MessageNotification>
         );
@@ -215,7 +228,11 @@ const Wordle: React.FC<Props> = (props) => {
     } else {
       return (
         <MessageNotification type="default">
-          The word was: <strong>{props.targetWord.toUpperCase()}</strong>
+          {!props.isCampaignLevel && (
+            <>
+              The word was: <strong>{props.targetWord.toUpperCase()}</strong>
+            </>
+          )}
         </MessageNotification>
       );
     }

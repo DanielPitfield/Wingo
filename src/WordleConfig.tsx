@@ -798,6 +798,7 @@ const WordleConfig: React.FC<Props> = (props) => {
 
   return (
     <Wordle
+      isCampaignLevel={props.page === "campaign/area/level"}
       mode={props.mode}
       timerConfig={
         props.timerConfig.isTimed
