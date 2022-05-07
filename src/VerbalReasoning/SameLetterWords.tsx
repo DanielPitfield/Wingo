@@ -154,31 +154,55 @@ const SameLetterWords: React.FC<Props> = (props) => {
   function getGridWords(): string[] {
     // Array to hold all the words for the grid
     let grid_words: string[] = [];
+
     // The word array containing all the words of the specified length
-    const targetWordArray = wordLengthMappingsTargets.find((x) => x.value === props.wordLength)?.array!;
-    // Choose a random word from this array
-    const originalWord = targetWordArray[Math.round(Math.random() * (targetWordArray.length - 1))];
+    let targetWordArray: string[] = [];
+
     // The letters a word must have to match the original word (in alphabetical order)
-    const validLetters = originalWord.split("").sort((a, b) => a.localeCompare(b));
+    let validLetters: string[] = [];
 
     function isWordValid(validLetters: string[], word: string) {
       // Letters of the word (in alphabetical order)
       const word_letters = word.split("").sort((a, b) => a.localeCompare(b));
+
       return word_letters.join("") === validLetters.join("");
     }
 
-    // Matching words
-    const original_matches = targetWordArray.filter((word) => isWordValid(validLetters, word));
+    // Start from prop.numMatchingWords, and decrement down (if we could not find that number of matching words in targetWordArray)
+    for (let numMatchingWords = props.numMatchingWords; numMatchingWords >= 1; numMatchingWords--) {
+      console.log(`Trying to find ${numMatchingWords} matching words in array`);
 
-    // There are as many or less words made of the same letters (than needed)
-    if (original_matches.length <= props.numMatchingWords) {
-      // Use all the found matches
-      grid_words = original_matches;
-    } else {
-      // Otherwise, select a subset of the matching words (shuffle and slice)
-      const shuffled_matches = shuffleArray(original_matches);
-      const subset_matches = shuffled_matches.slice(0, props.numMatchingWords);
-      grid_words = subset_matches;
+      // Determine the maximum number of times to find the props.numMatchingWords in the targetArray, before just continuing
+      const MAX_ATTEMPTS_BEFORE_TRYING_LOWER_NUM = 15;
+
+      // For a sensible number of attempts for this numMatchingWords
+      for (let attemptNo = 1; attemptNo <= MAX_ATTEMPTS_BEFORE_TRYING_LOWER_NUM; attemptNo++) {
+        // The word array containing all the words of the specified length
+        targetWordArray = wordLengthMappingsTargets.find((x) => x.value === props.wordLength)?.array!;
+
+        // Choose a random word from this array
+        const originalWord = targetWordArray[Math.round(Math.random() * (targetWordArray.length - 1))];
+
+        // The letters a word must have to match the original word (in alphabetical order)
+        validLetters = originalWord.split("").sort((a, b) => a.localeCompare(b));
+
+        // Matching words
+        const original_matches = targetWordArray.filter((word) => isWordValid(validLetters, word));
+
+        // Otherwise, select a subset of the matching words (shuffle and slice)
+        const shuffled_matches = shuffleArray(original_matches);
+        grid_words = shuffled_matches.slice(0, props.numMatchingWords);
+
+        // If a suitable number of grid words was found
+        if (grid_words.length >= numMatchingWords) {
+          break;
+        }
+      }
+
+      // If a suitable number of grid words was found
+      if (grid_words.length >= numMatchingWords) {
+        break;
+      }
     }
 
     const matching_words = grid_words.slice();
@@ -188,6 +212,7 @@ const SameLetterWords: React.FC<Props> = (props) => {
 
     // Non-matching words
     let fail_count = 0;
+
     while (grid_words.length < props.numTotalWords && fail_count < 100) {
       // Choose a random word from target array
       const randomWord = targetWordArray[Math.round(Math.random() * (targetWordArray.length - 1))];
