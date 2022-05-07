@@ -64,7 +64,7 @@ const LetterCategories: React.FC<Props> = (props) => {
       }
 
       const row = props.categoryNames?.[i] ? (
-        <div className="word-row-category-wrapper">
+        <div className="word-row-category-wrapper" key={i}>
           <div className="word-row-category-name">{props.categoryNames?.[i]}</div>
           <WordRow
             key={i}
@@ -112,7 +112,7 @@ const LetterCategories: React.FC<Props> = (props) => {
     if (props.correctGuessesCount === props.numGuesses) {
       return (
         <MessageNotification type="success">
-          <strong>{`You guessed a correct word for all ${props.correctGuessesCount} categories!`}</strong>
+          You guessed a correct word for <strong>all</strong> {props.correctGuessesCount} categories!
         </MessageNotification>
       );
     }
@@ -120,7 +120,7 @@ const LetterCategories: React.FC<Props> = (props) => {
     else if (props.correctGuessesCount === 0) {
       return (
         <MessageNotification type="error">
-          <strong>{`You didn't guess a correct word for any of the ${props.numGuesses} categories`}</strong>
+          You didn't guess a correct word for <strong>any</strong> of the <strong>{props.numGuesses}</strong> categories
         </MessageNotification>
       );
     }
@@ -128,7 +128,8 @@ const LetterCategories: React.FC<Props> = (props) => {
     else {
       return (
         <MessageNotification type="default">
-          <strong>{`You guessed a correct word for ${props.correctGuessesCount} of the ${props.numGuesses} categories`}</strong>
+          You guessed a correct word for <strong>{props.correctGuessesCount}</strong> of the{" "}
+          <strong>{props.numGuesses}</strong> categories
         </MessageNotification>
       );
     }
