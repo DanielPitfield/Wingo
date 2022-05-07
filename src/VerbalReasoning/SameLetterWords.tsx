@@ -329,7 +329,16 @@ const SameLetterWords: React.FC<Props> = (props) => {
       style={{ backgroundImage: `url(${props.theme.backgroundImageSrc})`, backgroundSize: "100%" }}
     >
       <div className="outcome">{displayOutcome()}</div>
-      {inProgress && <MessageNotification type="default">{`Guesses left: ${remainingGuesses}`}</MessageNotification>}
+      {inProgress && (
+        <>
+          <MessageNotification type="default">
+            Find the <strong>{validWords.length}</strong> words with the same letters
+          </MessageNotification>
+          <MessageNotification type="default">
+            Guesses left: <strong>{remainingGuesses}</strong>
+          </MessageNotification>
+        </>
+      )}
       <div className="grid">{displayGrid()}</div>
       <div>
         {props.timerConfig.isTimed && (
