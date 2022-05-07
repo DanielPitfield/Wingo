@@ -82,11 +82,11 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
 
     // Log the correct word
     console.log(
-      `%Index:%c ${currentWordIndex}\n%cWord:%c ${gridConfig.words[currentWordIndex].word}`,
+      `%cIndex:%c ${currentWordIndex}\n%cWord:%c ${gridConfig.words[currentWordIndex].word}`,
       "font-weight: bold",
       "font-weight: normal",
       "font-weight: bold",
-      "font-weight: normal",
+      "font-weight: normal"
     );
   }, [currentWordIndex]);
 
