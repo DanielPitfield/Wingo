@@ -531,7 +531,7 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
         </MessageNotification>
       )}
       {inProgress && hint && (
-        <MessageNotification type="default">
+        <MessageNotification type="info">
           <strong>Hint:</strong> {hint}
         </MessageNotification>
       )}

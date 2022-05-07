@@ -752,6 +752,12 @@ $data-statuses: (
   color: #002004;
 }
 
+.message-notification[data-type="info"] {
+  background-color: #aff3ff;
+  border-color: #004a4d;
+  color: #003336;
+}
+
 .message-notification[data-type="warning"] {
   background-color: #ffe6b0;
   border-color: #945400;

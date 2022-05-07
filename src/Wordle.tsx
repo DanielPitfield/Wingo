@@ -153,7 +153,7 @@ const Wordle: React.FC<Props> = (props) => {
     if (props.inProgress) {
       return (
         props.targetHint && (
-          <MessageNotification type="default">
+          <MessageNotification type="info">
             <strong>Hint:</strong> {props.targetHint}
           </MessageNotification>
         )
