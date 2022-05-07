@@ -35,6 +35,7 @@ export interface WordleConfigProps {
   firstLetterProvided: boolean;
   timerConfig: { isTimed: false } | { isTimed: true; seconds: number };
   keyboard: boolean;
+  showHint?: boolean;
   defaultWordLength?: number;
   puzzleRevealMs: number;
   puzzleLeaveNumBlanks: number;
@@ -246,7 +247,15 @@ const WordleConfig: React.FC<Props> = (props) => {
         const daily_word_index = Math.round(days_since_epoch % targetWordArray.length); // Number in the range (0, wordArray.length)
 
         newTarget = targetWordArray[daily_word_index];
-        console.log(`Mode: daily\nHint: ${newTarget.hint}\nWord: ${newTarget.word}`);
+        console.log(
+          `%cMode:%c daily\n%cHint:%c ${newTarget.hint}\n%cWord:%c ${newTarget.word}`,
+          "font-weight: bold",
+          "font-weight: normal",
+          "font-weight: bold",
+          "font-weight: normal",
+          "font-weight: bold",
+          "font-weight: normal"
+        );
         setTargetWord(newTarget.word);
         setTargetHint(newTarget.hint);
 
@@ -325,7 +334,15 @@ const WordleConfig: React.FC<Props> = (props) => {
       newTarget = targetWordArray[Math.round(Math.random() * (targetWordArray.length - 1))];
 
       // Log the current gamemode and the target word
-      console.log(`Mode: ${props.mode}\nHint: ${newTarget.hint}\nWord: ${newTarget.word}`);
+      console.log(
+        `%cMode:%c ${props.mode}\n%cHint:%c ${newTarget.hint}\n%cWord:%c ${newTarget.word}`,
+        "font-weight: bold",
+        "font-weight: normal",
+        "font-weight: bold",
+        "font-weight: normal",
+        "font-weight: bold",
+        "font-weight: normal"
+      );
       setTargetWord(newTarget.word);
       setTargetHint(newTarget.hint);
     }
@@ -392,7 +409,15 @@ const WordleConfig: React.FC<Props> = (props) => {
       }
 
       const newTarget = wordArray[Math.round(Math.random() * (wordArray.length - 1))];
-      console.log(`Mode: ${props.mode}\nHint: ${newTarget.hint}\nWord: ${newTarget.word}`);
+      console.log(
+        `%cMode:%c ${props.mode}\n%cHint:%c ${newTarget.hint}\n%cWord:%c ${newTarget.word}`,
+        "font-weight: bold",
+        "font-weight: normal",
+        "font-weight: bold",
+        "font-weight: normal",
+        "font-weight: bold",
+        "font-weight: normal"
+      );
       setTargetWord(newTarget.word);
       setTargetHint(newTarget.hint);
     }
@@ -845,7 +870,7 @@ const WordleConfig: React.FC<Props> = (props) => {
       isIncompleteWord={isIncompleteWord}
       hasSubmitLetter={hasSubmitLetter}
       targetWord={targetWord || ""}
-      targetHint={targetHint || ""}
+      targetHint={props.showHint === false ? "" : targetHint}
       targetCategory={targetCategory || ""}
       puzzleRevealMs={props.puzzleRevealMs}
       puzzleLeaveNumBlanks={props.puzzleLeaveNumBlanks}
