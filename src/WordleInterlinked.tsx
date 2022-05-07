@@ -19,7 +19,7 @@ type GridConfig = {
 };
 
 interface Props {
-  targetWordArray: string[];
+  targetWordArray: { word: string; hint: string }[];
   numWords: number;
   numWordGuesses?: number;
   numGridGuesses: number;
@@ -29,7 +29,9 @@ interface Props {
 
 export const WordleInterlinked: React.FC<Props> = (props) => {
   const [inProgress, setInProgress] = useState(true);
-  const [remainingWordGuesses, setRemainingWordGuesses] = useState(props.numWordGuesses ? props.numWordGuesses : undefined);
+  const [remainingWordGuesses, setRemainingWordGuesses] = useState(
+    props.numWordGuesses ? props.numWordGuesses : undefined
+  );
   const [remainingGridGuesses, setRemainingGridGuesses] = useState(props.numGridGuesses);
   const [gridConfig, setGridConfig] = useState<GridConfig>(generateGridConfig());
   const [correctGrid, setCorrectGrid] = useState<{ x: number; y: number; letter: string; wordIndex?: number }[]>(
@@ -79,7 +81,7 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
     setCorrectGrid(newCorrectLetterGrid);
 
     // Log the correct word
-    console.log(gridConfig.words[currentWordIndex].word);
+    console.log(`Index: ${currentWordIndex}\nWord: ${gridConfig.words[currentWordIndex].word}`);
   }, [currentWordIndex]);
 
   // Check if the grid has been completed each time the tileStatuses are updated
@@ -108,7 +110,7 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
     let result: CrosswordGenerationResult;
 
     do {
-      result = crossWordGenerator(targetWordArraySliced);
+      result = crossWordGenerator(targetWordArraySliced.map((x) => x.word));
 
       if (!result) {
         targetWordArraySliced = shuffleArray(props.targetWordArray).slice(0, props.numWords);
@@ -235,7 +237,7 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
       setRemainingWordGuesses(remainingWordGuesses! - 1);
     } else if (wordsToCheck === "all") {
       // Word guesses were not enabled or were but just used last one
-      const noWordGuessesLeft = (!props.numWordGuesses || props.numWordGuesses && remainingWordGuesses! <= 1)
+      const noWordGuessesLeft = !props.numWordGuesses || (props.numWordGuesses && remainingWordGuesses! <= 1);
       // Used last grid guess and no word guesses left
       if (remainingGridGuesses <= 1 && noWordGuessesLeft) {
         setInProgress(false);
@@ -371,7 +373,9 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
     setCurrentWords(newCurrentWords);
   }
 
-  function onEnter() {}
+  function onEnter() {
+    checkInput("current");
+  }
 
   /**
    *
@@ -419,7 +423,11 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
           })();
 
           return (
-            <div className="letter-tile-wrapper" data-is-focussed={matchingGridEntry?.wordIndex === currentWordIndex}>
+            <div
+              key={x}
+              className="letter-tile-wrapper"
+              data-is-focussed={matchingGridEntry?.wordIndex === currentWordIndex}
+            >
               <LetterTile
                 key={x}
                 letter={inProgress ? letter : matchingGridEntry ? matchingGridEntry?.letter : "?"}
@@ -451,7 +459,7 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
 
   function allowSpaces() {
     // Any word with spaces, return true
-    return props.targetWordArray.filter((word) => word.indexOf(" ") >= 0).length > 0;
+    return props.targetWordArray.filter(({ word }) => word.indexOf(" ") >= 0).length > 0;
   }
 
   function displayOutcome(): React.ReactNode {
@@ -497,6 +505,8 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
     setCorrectGrid(getCorrectLetterGrid());
   }
 
+  const hint = props.targetWordArray.find((x) => x.word === gridConfig.words[currentWordIndex].word)?.hint;
+
   return (
     <div
       className="App wordle_interlinked"
@@ -504,10 +514,20 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
     >
       {!inProgress && <div className="outcome">{displayOutcome()}</div>}
       {inProgress && (
-        <MessageNotification type="default">{`Grid Guesses left: ${remainingGridGuesses}`}</MessageNotification>
+        <MessageNotification type="default">
+          Grid guesses left: <strong>{remainingGridGuesses}</strong>
+          {props.numWordGuesses && (
+            <>
+              <br />
+              Current word guesses left: <strong>{remainingWordGuesses}</strong>
+            </>
+          )}
+        </MessageNotification>
       )}
-      {Boolean(inProgress && props.numWordGuesses) && (
-        <MessageNotification type="default">{`Current word Guesses left: ${remainingWordGuesses}`}</MessageNotification>
+      {inProgress && hint && (
+        <MessageNotification type="default">
+          <strong>Hint:</strong> {hint}
+        </MessageNotification>
       )}
       <div className="word_grid">{populateGrid()}</div>
       {Boolean(inProgress && props.numWordGuesses) && (
@@ -521,21 +541,19 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
         </Button>
       )}
       <div className="keyboard">
-        {
-          <Keyboard
-            mode={"wingo/interlinked"}
-            onEnter={onEnter}
-            onSubmitLetter={onSubmitLetter}
-            onBackspace={onBackspace}
-            guesses={[]}
-            targetWord={""}
-            inDictionary={true}
-            letterStatuses={[]}
-            settings={props.settings}
-            disabled={!inProgress}
-            allowSpaces={allowSpaces()}
-          ></Keyboard>
-        }
+        <Keyboard
+          mode={"wingo/interlinked"}
+          onEnter={onEnter}
+          onSubmitLetter={onSubmitLetter}
+          onBackspace={onBackspace}
+          guesses={[]}
+          targetWord={""}
+          inDictionary={true}
+          letterStatuses={[]}
+          settings={props.settings}
+          disabled={!inProgress}
+          allowSpaces={allowSpaces()}
+        />
       </div>
     </div>
   );

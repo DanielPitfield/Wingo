@@ -256,7 +256,7 @@ const GroupWall: React.FC<Props> = (props) => {
         // Until a full group of words has been determined from the category
         while (wordSubset.length < props.groupSize) {
           const newIndex = Math.round(Math.random() * (wordList.length - 1));
-          const randomWord = wordList[newIndex];
+          const randomWord = wordList[newIndex].word;
 
           // Word has not already been selected (avoids duplicates)
           if (randomWord && !wordSubset.includes(randomWord)) {
@@ -366,7 +366,7 @@ const GroupWall: React.FC<Props> = (props) => {
       className="App only_connect_wall"
       style={{ backgroundImage: `url(${props.theme.backgroundImageSrc})`, backgroundSize: "100%" }}
     >
-      {!inProgress && (<div className="outcome">{displayOutcome()}</div>)}
+      {!inProgress && <div className="outcome">{displayOutcome()}</div>}
       {Boolean(inProgress && numCompletedGroups === props.numGroups - 2) && (
         <MessageNotification type="default">{`Guesses left: ${remainingGuesses}`}</MessageNotification>
       )}

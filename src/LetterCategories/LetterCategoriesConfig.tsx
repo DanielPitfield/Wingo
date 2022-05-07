@@ -64,7 +64,7 @@ const LetterCategoriesConfig: React.FC<Props> = (props) => {
 
       setCurrentWord(start_letter);
 
-      console.log("Start Letter: " + start_letter);
+      console.log(`%cStart Letter:%c ${start_letter}`, "font-weight: bold", "font-weight: normal");
 
       let category_names: string[] = [];
 
@@ -77,7 +77,7 @@ const LetterCategoriesConfig: React.FC<Props> = (props) => {
         // If the category has not already been used
         if (!category_names.includes(categoryMappings[newIndex].name)) {
           // Get all the words in that category starting with start_letter
-          const words = categoryMappings[newIndex].array.filter((x) => x.charAt(0) === start_letter);
+          const words = categoryMappings[newIndex].array.map((x) => x.word).filter((x) => x.charAt(0) === start_letter);
           if (words && words.length >= 1) {
             // Push these words as an array
             category_target_words.push(words);
@@ -96,7 +96,15 @@ const LetterCategoriesConfig: React.FC<Props> = (props) => {
       // Keep reference of which categories have been used
       setCategoryNames(category_names);
 
-      console.log(category_target_words);
+      for (let i = 0; i < category_target_words.length; i++) {
+        console.log(
+          `%cCategory:%c ${category_names[i]}\n%cWords:%c ${category_target_words[i].join(", ")}`,
+          "font-weight: bold",
+          "font-weight: normal",
+          "font-weight: bold",
+          "font-weight: normal"
+        );
+      }
 
       setCategoryWordTargets(category_target_words);
 

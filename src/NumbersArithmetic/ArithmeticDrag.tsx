@@ -24,7 +24,7 @@ interface Props {
 }
 
 // https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array
-export function shuffleArray(array: any[]) {
+export function shuffleArray<T>(array: T[]): T[] {
   let currentIndex = array.length;
   let randomIndex;
 
@@ -248,7 +248,11 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
       // Once expression is desired length, return
       return { expression: expression, total: total, status: "not set" };
     }
-  }, [/* TODO: Dependency and set method (expressionTiles and setExpressionTiles loop) */ expressionTiles, resultTiles, props.numTiles]);
+  }, [
+    /* TODO: Dependency and set method (expressionTiles and setExpressionTiles loop) */ expressionTiles,
+    resultTiles,
+    props.numTiles,
+  ]);
 
   // (Guess) Timer Setup
   React.useEffect(() => {
@@ -283,9 +287,7 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
               key={index}
               index={index}
               onMove={(toIndex) =>
-                inProgress
-                  ? setExpressionTiles(arrayMove(expressionTiles, index, toIndex))
-                  : undefined
+                inProgress ? setExpressionTiles(arrayMove(expressionTiles, index, toIndex)) : undefined
               }
             >
               <LetterTile letter={tile.expression} status={tile.status} settings={props.settings} />
@@ -303,11 +305,7 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
               <DraggableItem
                 key={index}
                 index={index}
-                onMove={(toIndex) =>
-                  inProgress
-                    ? setResultTiles(arrayMove(resultTiles, index, toIndex))
-                    : undefined
-                }
+                onMove={(toIndex) => (inProgress ? setResultTiles(arrayMove(resultTiles, index, toIndex)) : undefined)}
               >
                 <LetterTile letter={tile.total.toString()} status={tile.status} settings={props.settings} />
               </DraggableItem>

@@ -16,10 +16,16 @@ import { words_dogs } from "./WordArrays/Categories/dogs";
 import { words_countries } from "./WordArrays/Categories/countries";
 import { words_chemical_elements } from "./WordArrays/Categories/chemical_elements";
 import { words_colours } from "./WordArrays/Categories/colours";
-import { words_fruits_and_vegetables } from "./WordArrays/Categories/fruits_and_vegetables";
+import { words_fruits } from "./WordArrays/Categories/fruits";
 import { words_sports } from "./WordArrays/Categories/sports";
 import { Theme } from "./Themes";
 import { WordleInterlinked } from "./WordleInterlinked";
+import { words_vegetables } from "./WordArrays/Categories/vegetables";
+import { words_pizza_toppings } from "./WordArrays/Categories/pizza_toppings";
+import { words_capital_cities } from "./WordArrays/Categories/capital_cities";
+import { words_animals } from "./WordArrays/Categories/animals";
+import { words_herbs_and_spices } from "./WordArrays/Categories/herbs_and_spices";
+import { words_meats_and_fish } from "./WordArrays/Categories/meats_and_fish";
 
 export interface WordleConfigProps {
   mode: "daily" | "repeat" | "category" | "increasing" | "limitless" | "puzzle" | "interlinked" | "crossword";
@@ -72,17 +78,19 @@ export const wordLengthMappingsTargets = [
   { value: 11, array: words_eleven_targets },
 ];
 
-// TODO: Populate empty category word lists
 export const categoryMappings = [
-  //{ name: "Capital Cities", array: words_capital_cities },
+  { name: "Animals", array: words_animals },
+  { name: "Capital Cities", array: words_capital_cities },
   { name: "Chemical Elements", array: words_chemical_elements },
   { name: "Colours", array: words_colours },
   { name: "Countries", array: words_countries },
   { name: "Dog Breeds", array: words_dogs },
-  { name: "Fruits and Vegetables", array: words_fruits_and_vegetables },
-  //{ name: "Jobs", array: words_jobs },
-  //{ name: "Pizza Toppings", array: words_pizza_toppings },
+  { name: "Fruits", array: words_fruits },
+  { name: "Herbs and Spices", array: words_herbs_and_spices },
+  { name: "Meats and Fish", array: words_meats_and_fish },
+  { name: "Pizza Toppings", array: words_pizza_toppings },
   { name: "Sports", array: words_sports },
+  { name: "Vegetables", array: words_vegetables },
 ];
 
 export function getNewLives(numGuesses: number, wordIndex: number): number {
@@ -171,10 +179,10 @@ const WordleConfig: React.FC<Props> = (props) => {
   const [inProgress, setinProgress] = useState(true);
   const [inDictionary, setinDictionary] = useState(true);
   const [isIncompleteWord, setisIncompleteWord] = useState(false);
-  const [wordLength, setwordLength] = useState(props.defaultWordLength || props.targetWord?.length!);
-  const [targetWord, settargetWord] = useState(props.targetWord ? props.targetWord : "");
-  const [targetHint, settargetHint] = useState("");
-  const [targetCategory, settargetCategory] = useState("");
+  const [wordLength, setWordLength] = useState(props.defaultWordLength || props.targetWord?.length!);
+  const [targetWord, setTargetWord] = useState(props.targetWord ? props.targetWord : "");
+  const [targetHint, setTargetHint] = useState("");
+  const [targetCategory, setTargetCategory] = useState("");
   const [hasSelectedTargetCategory, sethasSelectedTargetCategory] = useState(false);
   const [hasSubmitLetter, sethasSubmitLetter] = useState(false);
   const [revealedLetterIndexes, setRevealedLetterIndexes] = useState<number[]>([]);
@@ -224,9 +232,11 @@ const WordleConfig: React.FC<Props> = (props) => {
 
   function generateTargetWord() {
     // Most modes choose a target word based on length (will be reassigned if not one of these modes)
-    let targetWordArray = wordLengthMappingsTargets.find((x) => x.value === wordLength)?.array!;
+    let targetWordArray = wordLengthMappingsTargets
+      .find((x) => x.value === wordLength)
+      ?.array.map((x) => ({ word: x, hint: "" }))!;
 
-    let newTargetWord;
+    let newTarget;
 
     switch (props.mode) {
       case "daily":
@@ -235,14 +245,15 @@ const WordleConfig: React.FC<Props> = (props) => {
         const days_since_epoch = Math.floor(timestamp / ms_per_day);
         const daily_word_index = Math.round(days_since_epoch % targetWordArray.length); // Number in the range (0, wordArray.length)
 
-        newTargetWord = targetWordArray[daily_word_index];
-        console.log("Mode: daily" + "\n" + "Word: " + newTargetWord);
-        settargetWord(newTargetWord);
+        newTarget = targetWordArray[daily_word_index];
+        console.log(`Mode: daily\nHint: ${newTarget.hint}\nWord: ${newTarget.word}`);
+        setTargetWord(newTarget.word);
+        setTargetHint(newTarget.hint);
 
         // Load previous attempts at daily (if applicable)
         const daily_word_storage = SaveData.getDailyWordGuesses();
         // The actual daily word and the daily word set in local storage are the same
-        if (newTargetWord === daily_word_storage?.dailyWord) {
+        if (newTarget.word === daily_word_storage?.dailyWord) {
           // Display the sava data on the word grid
           setGuesses(daily_word_storage.guesses);
           setWordIndex(daily_word_storage.wordIndex);
@@ -255,11 +266,11 @@ const WordleConfig: React.FC<Props> = (props) => {
       case "puzzle":
         // Get a random puzzle (from words_puzzles.ts)
         const puzzle = wordHintMappings[Math.round(Math.random() * wordHintMappings.length - 1)];
-        settargetHint(puzzle.hint);
+        setTargetHint(puzzle.hint);
 
-        newTargetWord = puzzle.word;
-        console.log("Mode: puzzle" + "\n" + "Word: " + newTargetWord);
-        settargetWord(newTargetWord);
+        console.log(`Mode: puzzle\nHint:${puzzle.hint}\nWord: ${puzzle.word}`);
+        setTargetWord(puzzle.word);
+        setTargetHint(puzzle.hint);
         return;
 
       case "category":
@@ -270,7 +281,7 @@ const WordleConfig: React.FC<Props> = (props) => {
         } else {
           // Otherwise, randomly choose a category (can be changed afterwards)
           const random_category = categoryMappings[Math.round(Math.random() * (categoryMappings.length - 1))];
-          settargetCategory(random_category.name);
+          setTargetCategory(random_category.name);
           // A random word from this category is set in a useEffect(), so return
           return;
         }
@@ -300,8 +311,10 @@ const WordleConfig: React.FC<Props> = (props) => {
         // There is no array for the current wordLength
         if (!targetWordArray) {
           // Don't reset otherwise the number of lives would be lost, just go back to 4 letter words
-          setwordLength(4);
-          targetWordArray = wordLengthMappingsTargets.find((x) => x.value === 4)?.array!;
+          setWordLength(4);
+          targetWordArray = wordLengthMappingsTargets
+            .find((x) => x.value === 4)
+            ?.array.map((x) => ({ word: x, hint: "" }))!;
         }
 
         break;
@@ -309,11 +322,12 @@ const WordleConfig: React.FC<Props> = (props) => {
 
     // A new target word can be determined
     if (targetWordArray) {
-      newTargetWord = targetWordArray[Math.round(Math.random() * (targetWordArray.length - 1))];
+      newTarget = targetWordArray[Math.round(Math.random() * (targetWordArray.length - 1))];
 
       // Log the current gamemode and the target word
-      console.log("Mode: " + props.mode + "\n" + "Word: " + newTargetWord);
-      settargetWord(newTargetWord);
+      console.log(`Mode: ${props.mode}\nHint: ${newTarget.hint}\nWord: ${newTarget.word}`);
+      setTargetWord(newTarget.word);
+      setTargetHint(newTarget.hint);
     }
   }
 
@@ -360,7 +374,7 @@ const WordleConfig: React.FC<Props> = (props) => {
     // Update word length every time the target word changes during category mode
     if (props.mode === "category") {
       if (targetWord) {
-        setwordLength(targetWord.length);
+        setWordLength(targetWord.length);
       }
     }
   }, [targetWord]);
@@ -377,9 +391,10 @@ const WordleConfig: React.FC<Props> = (props) => {
         return;
       }
 
-      const newTargetWord = wordArray[Math.round(Math.random() * (wordArray.length - 1))];
-      console.log("Mode: " + props.mode + "\n" + "Word: " + newTargetWord);
-      settargetWord(newTargetWord);
+      const newTarget = wordArray[Math.round(Math.random() * (wordArray.length - 1))];
+      console.log(`Mode: ${props.mode}\nHint: ${newTarget.hint}\nWord: ${newTarget.word}`);
+      setTargetWord(newTarget.word);
+      setTargetHint(newTarget.hint);
     }
   }, [targetCategory]);
 
@@ -514,7 +529,7 @@ const WordleConfig: React.FC<Props> = (props) => {
       // Ending of any game mode
       setNumGuesses(props.defaultnumGuesses);
       if (props.mode !== "category") {
-        setwordLength(props.defaultWordLength || targetWord.length);
+        setWordLength(props.defaultWordLength || targetWord.length);
       }
     } else {
       // Game mode is limitless and there are still rows
@@ -529,7 +544,7 @@ const WordleConfig: React.FC<Props> = (props) => {
     setWordIndex(0);
     setinProgress(true);
     setinDictionary(true);
-    setwordLength(wordLength + 1);
+    setWordLength(wordLength + 1);
     sethasSubmitLetter(false);
     setRevealedLetterIndexes([]);
     setletterStatuses(defaultLetterStatuses);
@@ -647,7 +662,9 @@ const WordleConfig: React.FC<Props> = (props) => {
         return;
       } else {
         // Category mode - Find the array which includes the target word
-        wordArray = categoryMappings.find((x) => x.array.includes(targetWord))?.array!;
+        wordArray = categoryMappings
+          .find((categoryMapping) => categoryMapping.array.some(({ word }) => word === targetWord))
+          ?.array.map((x) => x.word)!;
       }
     } else {
       // Most gamemodes
@@ -747,7 +764,7 @@ const WordleConfig: React.FC<Props> = (props) => {
 
   function onSubmitTargetCategory(category: string) {
     if (categoryMappings.find((x) => x.name === category)) {
-      settargetCategory(category);
+      setTargetCategory(category);
       sethasSelectedTargetCategory(true);
     }
   }
@@ -766,11 +783,15 @@ const WordleConfig: React.FC<Props> = (props) => {
   if (props.mode === "interlinked") {
     return (
       <WordleInterlinked
-        targetWordArray={
-          props.defaultWordLength
-            ? wordLengthMappingsGuessable.find((x) => x.value === wordLength)?.array!
-            : categoryMappings[Math.round(Math.random() * (categoryMappings.length - 1))].array
-        }
+        targetWordArray={categoryMappings
+          // Combine all categories
+          .flatMap((categoryMappings) => categoryMappings.array)
+          // Return words around the length of props.defaultWordLength, if it was specified
+          .filter(
+            ({ word }) =>
+              props.defaultWordLength === undefined ||
+              (word.length >= props.defaultWordLength - 3 && word.length <= props.defaultWordLength + 3)
+          )}
         numWords={2}
         numGridGuesses={6}
         theme={props.theme}
@@ -782,11 +803,15 @@ const WordleConfig: React.FC<Props> = (props) => {
   if (props.mode === "crossword") {
     return (
       <WordleInterlinked
-        targetWordArray={
-          props.defaultWordLength
-            ? wordLengthMappingsGuessable.find((x) => x.value === wordLength)?.array!
-            : categoryMappings[Math.round(Math.random() * (categoryMappings.length - 1))].array
-        }
+        targetWordArray={categoryMappings
+          // Combine all categories
+          .flatMap((categoryMappings) => categoryMappings.array)
+          // Return words around the length of props.defaultWordLength, if it was specified
+          .filter(
+            ({ word }) =>
+              props.defaultWordLength === undefined ||
+              (word.length >= props.defaultWordLength - 3 && word.length <= props.defaultWordLength + 3)
+          )}
         numWords={6}
         numWordGuesses={10}
         numGridGuesses={6}

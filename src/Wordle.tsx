@@ -149,9 +149,11 @@ const Wordle: React.FC<Props> = (props) => {
   }, [props.inProgress]);
 
   function displayOutcome() {
-    // Game still in progress, don't display anything
+    // Game still in progress
     if (props.inProgress) {
-      return;
+      return (
+        props.targetHint && <MessageNotification type="default">{props.targetHint || "No hint"}</MessageNotification>
+      );
     }
 
     // Invalid word (wrong spelling)
@@ -315,12 +317,6 @@ const Wordle: React.FC<Props> = (props) => {
           >
             {props.finishingButtonText || (isOutcomeContinue() ? "Continue" : "Restart")}
           </Button>
-        )}
-      </div>
-
-      <div className="puzzle_hint">
-        {props.inProgress && props.mode === "puzzle" && (
-          <MessageNotification type="default">{props.targetHint}</MessageNotification>
         )}
       </div>
 
