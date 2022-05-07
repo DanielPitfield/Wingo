@@ -26,6 +26,7 @@ import { words_capital_cities } from "./WordArrays/Categories/capital_cities";
 import { words_animals } from "./WordArrays/Categories/animals";
 import { words_herbs_and_spices } from "./WordArrays/Categories/herbs_and_spices";
 import { words_meats_and_fish } from "./WordArrays/Categories/meats_and_fish";
+import { words_gemstones } from "./WordArrays/Categories/gemstones";
 
 export interface WordleConfigProps {
   mode: "daily" | "repeat" | "category" | "increasing" | "limitless" | "puzzle" | "interlinked" | "crossword";
@@ -87,6 +88,7 @@ export const categoryMappings = [
   { name: "Countries", array: words_countries },
   { name: "Dog Breeds", array: words_dogs },
   { name: "Fruits", array: words_fruits },
+  { name: "Gemstones", array: words_gemstones },
   { name: "Herbs and Spices", array: words_herbs_and_spices },
   { name: "Meats and Fish", array: words_meats_and_fish },
   { name: "Pizza Toppings", array: words_pizza_toppings },
