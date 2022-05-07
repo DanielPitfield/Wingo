@@ -199,9 +199,8 @@ const CountdownLetters: React.FC<Props> = (props) => {
 
     // Read only letter selection WordRow
     Grid.push(
-      <div className="countdown-letters-wrapper">
+      <div key={"letter_selection"} className="countdown-letters-wrapper">
         <WordRow
-          key={"letter_selection"}
           mode={props.mode}
           word={props.countdownWord}
           isVertical={false}
@@ -210,7 +209,7 @@ const CountdownLetters: React.FC<Props> = (props) => {
           hasSubmit={false}
           inDictionary={props.inDictionary}
           settings={props.settings}
-        ></WordRow>
+        />
         <div className="add-letter-buttons-wrapper">
           <Button
             mode={"default"}
@@ -454,8 +453,8 @@ const CountdownLetters: React.FC<Props> = (props) => {
       </div>
 
       <div className="countdown/letters_guesses">
-        {props.guesses.map((guess) => (
-          <label className="countdown/letters_guess_label">
+        {props.guesses.map((guess, i) => (
+          <label key={i} className="countdown/letters_guess_label">
             <input
               type="radio"
               checked={selectedFinalGuess === guess}
