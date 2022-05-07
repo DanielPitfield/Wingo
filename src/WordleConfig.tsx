@@ -277,7 +277,16 @@ const WordleConfig: React.FC<Props> = (props) => {
         const puzzle = wordHintMappings[Math.round(Math.random() * wordHintMappings.length - 1)];
         setTargetHint(puzzle.hint);
 
-        console.log(`Mode: puzzle\nHint:${puzzle.hint}\nWord: ${puzzle.word}`);
+        // Log the current gamemode and the target word
+        console.log(
+          `%cMode:%c ${props.mode}\n%cHint:%c ${puzzle.hint}\n%cWord:%c ${puzzle.word}`,
+          "font-weight: bold",
+          "font-weight: normal",
+          "font-weight: bold",
+          "font-weight: normal",
+          "font-weight: bold",
+          "font-weight: normal"
+        );
         setTargetWord(puzzle.word);
         setTargetHint(puzzle.hint);
         return;

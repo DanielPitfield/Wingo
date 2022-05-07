@@ -7,7 +7,7 @@ import { MessageNotification } from "./MessageNotification";
 import ProgressBar, { GreenToRedColorTransition } from "./ProgressBar";
 import { categoryMappings, getNewLives } from "./WordleConfig";
 import { Theme } from "./Themes";
-import { SaveData, SettingsData } from "./SaveData";
+import { SettingsData } from "./SaveData";
 import { useCorrectChime, useFailureChime, useLightPingChime } from "./Sounds";
 
 interface Props {
@@ -152,7 +152,11 @@ const Wordle: React.FC<Props> = (props) => {
     // Game still in progress
     if (props.inProgress) {
       return (
-        props.targetHint && <MessageNotification type="default">{props.targetHint || "No hint"}</MessageNotification>
+        props.targetHint && (
+          <MessageNotification type="default">
+            <strong>Hint:</strong> {props.targetHint}
+          </MessageNotification>
+        )
       );
     }
 
