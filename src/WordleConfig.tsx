@@ -10,7 +10,7 @@ import { words_eight_guessable, words_eight_targets } from "./WordArrays/Lengths
 import { words_nine_guessable, words_nine_targets } from "./WordArrays/Lengths/words_9";
 import { words_ten_guessable, words_ten_targets } from "./WordArrays/Lengths/words_10";
 import { words_eleven_guessable, words_eleven_targets } from "./WordArrays/Lengths/words_11";
-import { wordHintMappings } from "./WordArrays/words_puzzles";
+import { words_puzzles } from "./WordArrays/words_puzzles";
 import { SaveData, SettingsData } from "./SaveData";
 import { words_dogs } from "./WordArrays/Categories/dogs";
 import { words_countries } from "./WordArrays/Categories/countries";
@@ -90,6 +90,7 @@ export const categoryMappings = [
   { name: "Herbs and Spices", array: words_herbs_and_spices },
   { name: "Meats and Fish", array: words_meats_and_fish },
   { name: "Pizza Toppings", array: words_pizza_toppings },
+  { name: "Puzzles", array: words_puzzles },
   { name: "Sports", array: words_sports },
   { name: "Vegetables", array: words_vegetables },
 ];
@@ -274,7 +275,7 @@ const WordleConfig: React.FC<Props> = (props) => {
 
       case "puzzle":
         // Get a random puzzle (from words_puzzles.ts)
-        const puzzle = wordHintMappings[Math.round(Math.random() * wordHintMappings.length - 1)];
+        const puzzle = words_puzzles[Math.round(Math.random() * words_puzzles.length - 1)];
         setTargetHint(puzzle.hint);
 
         // Log the current gamemode and the target word
