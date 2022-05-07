@@ -286,13 +286,13 @@ const SameLetterWords: React.FC<Props> = (props) => {
     if (successCondition) {
       message_notification = (
         <MessageNotification type="success">
-          <strong>All {validWords.length} words with the same letters found!</strong>
+          All <strong>{validWords.length}</strong> words with the same letters found!
         </MessageNotification>
       );
     } else {
       message_notification = (
         <MessageNotification type="error">
-          <strong>You didn't find the {validWords.length} words with the same letters</strong>
+          You didn't find the <strong>{validWords.length}</strong> words with the same letters
         </MessageNotification>
       );
     }
