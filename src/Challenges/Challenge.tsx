@@ -45,10 +45,14 @@ export const Challenge: React.FC<{
           mode="default"
           className="challenge-redeem-reward"
           settings={props.settings}
-          onClick={() => {
+          onClick={(event) => {
             challenge.isRedeemed = true;
             props.addGold(challenge.reward().goldCoins);
             playNotificationChime();
+
+            // Stop the onClick of the parent DIV firing as well
+            event.preventDefault();
+            event.stopPropagation();
           }}
         >
           Redeem
