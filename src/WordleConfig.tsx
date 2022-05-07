@@ -820,16 +820,10 @@ const WordleConfig: React.FC<Props> = (props) => {
   if (props.mode === "interlinked") {
     return (
       <WordleInterlinked
-        targetWordArray={categoryMappings
-          // Combine all categories
-          .flatMap((categoryMappings) => categoryMappings.array)
-          // Return words around the length of props.defaultWordLength, if it was specified
-          .filter(
-            ({ word }) =>
-              props.defaultWordLength === undefined ||
-              (word.length >= props.defaultWordLength - 3 && word.length <= props.defaultWordLength + 3)
-          )}
+        config={{isCategory: false, displayHints: false, provideWords: false}}
         numWords={2}
+        minWordLength={props.defaultWordLength ? props.defaultWordLength : 5}
+        maxWordLength={props.defaultWordLength ? props.defaultWordLength : 5}
         numGridGuesses={6}
         theme={props.theme}
         settings={props.settings}
@@ -840,16 +834,10 @@ const WordleConfig: React.FC<Props> = (props) => {
   if (props.mode === "crossword") {
     return (
       <WordleInterlinked
-        targetWordArray={categoryMappings
-          // Combine all categories
-          .flatMap((categoryMappings) => categoryMappings.array)
-          // Return words around the length of props.defaultWordLength, if it was specified
-          .filter(
-            ({ word }) =>
-              props.defaultWordLength === undefined ||
-              (word.length >= props.defaultWordLength - 3 && word.length <= props.defaultWordLength + 3)
-          )}
+        config={{isCategory: true, displayHints: true, provideWords: false}}
         numWords={6}
+        minWordLength={props.defaultWordLength ? props.defaultWordLength - 3 : 2}
+        maxWordLength={props.defaultWordLength ? props.defaultWordLength + 3 : 8}
         numWordGuesses={10}
         numGridGuesses={6}
         theme={props.theme}

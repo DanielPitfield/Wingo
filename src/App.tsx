@@ -656,7 +656,7 @@ export const App: React.FC = () => {
                 : { isTimed: false }
             }
             keyboard={gameOptionToggles.find((x) => x.page === "wingo/interlinked")?.keyboard || true}
-            //defaultWordLength={wordLength}
+            defaultWordLength={wordLength}
             enforceFullLengthGuesses={true}
           />
         );
@@ -674,7 +674,7 @@ export const App: React.FC = () => {
                 : { isTimed: false }
             }
             keyboard={gameOptionToggles.find((x) => x.page === "wingo/crossword")?.keyboard || true}
-            //defaultWordLength={wordLength}
+            defaultWordLength={wordLength}
             enforceFullLengthGuesses={true}
           />
         );

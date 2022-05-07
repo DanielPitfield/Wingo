@@ -5,7 +5,7 @@ import { useState } from "react";
 import { shuffleArray } from "./NumbersArithmetic/ArithmeticDrag";
 import { Theme } from "./Themes";
 import { Keyboard } from "./Keyboard";
-import { getWordSummary } from "./WordleConfig";
+import { categoryMappings, getWordSummary, wordLengthMappingsTargets } from "./WordleConfig";
 import { Button } from "./Button";
 import React from "react";
 import { MessageNotification } from "./MessageNotification";
@@ -19,8 +19,10 @@ type GridConfig = {
 };
 
 interface Props {
-  targetWordArray: { word: string; hint: string }[];
+  config: { isCategory: boolean; displayHints: boolean; provideWords: boolean };
   numWords: number;
+  minWordLength: number;
+  maxWordLength: number;
   numWordGuesses?: number;
   numGridGuesses: number;
   settings: SettingsData;
@@ -46,6 +48,27 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
   );
   const [currentWords, setCurrentWords] = useState<string[]>(Array.from({ length: props.numWords }).map((x) => ""));
   const [currentWordIndex, setCurrentWordIndex] = useState<number>(0);
+
+  const targetWordArray = getTargetWordArray();
+
+  function getTargetWordArray(): string[] | { word: string; hint: string }[] {
+    let targetWordArray: string[] | { word: string; hint: string }[] = [];
+
+    if (props.config.isCategory) {
+      targetWordArray = categoryMappings
+        // Combine all categories
+        .flatMap((categoryMappings) => categoryMappings.array)
+        // Return words between minimum and maximum length
+        .filter(({ word }) => word.length >= props.minWordLength && word.length <= props.maxWordLength);
+    } else if (!props.config.isCategory) {
+      // Combine all length word arrays between minimum and maximum length
+      targetWordArray = wordLengthMappingsTargets
+        .filter((mapping) => mapping.value >= props.minWordLength && mapping.value <= props.maxWordLength)
+        .flatMap((lengthMappings) => lengthMappings.array);
+    }
+
+    return targetWordArray;
+  }
 
   // Each time a word is highlighted/picked
   React.useEffect(() => {
@@ -112,14 +135,15 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
    * @returns
    */
   function generateGridConfig(): GridConfig {
-    let targetWordArraySliced = shuffleArray(props.targetWordArray).slice(0, props.numWords);
+    let targetWordArraySliced = shuffleArray(targetWordArray).slice(0, props.numWords);
     let result: CrosswordGenerationResult;
 
     do {
+      // TODO: Handle category (words and hints) or lengths (just words)
       result = crossWordGenerator(targetWordArraySliced.map((x) => x.word));
 
       if (!result) {
-        targetWordArraySliced = shuffleArray(props.targetWordArray).slice(0, props.numWords);
+        targetWordArraySliced = shuffleArray(targetWordArray).slice(0, props.numWords);
       }
     } while (!result);
 
@@ -465,6 +489,7 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
 
   function allowSpaces() {
     // Any word with spaces, return true
+    // TODO: Handle category (words and hints) or lengths (just words)
     return props.targetWordArray.filter(({ word }) => word.indexOf(" ") >= 0).length > 0;
   }
 
@@ -511,7 +536,7 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
     setCorrectGrid(getCorrectLetterGrid());
   }
 
-  const hint = props.targetWordArray.find((x) => x.word === gridConfig.words[currentWordIndex].word)?.hint;
+  const hint = targetWordArray.find((x) => x.word === gridConfig.words[currentWordIndex].word)?.hint;
 
   return (
     <div
@@ -530,7 +555,7 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
           )}
         </MessageNotification>
       )}
-      {inProgress && hint && (
+      {inProgress && props.config.displayHints && hint && (
         <MessageNotification type="info">
           <strong>Hint:</strong> {hint}
         </MessageNotification>
