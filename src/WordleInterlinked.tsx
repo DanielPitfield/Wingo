@@ -81,7 +81,13 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
     setCorrectGrid(newCorrectLetterGrid);
 
     // Log the correct word
-    console.log(`Index: ${currentWordIndex}\nWord: ${gridConfig.words[currentWordIndex].word}`);
+    console.log(
+      `%Index:%c ${currentWordIndex}\n%cWord:%c ${gridConfig.words[currentWordIndex].word}`,
+      "font-weight: bold",
+      "font-weight: normal",
+      "font-weight: bold",
+      "font-weight: normal",
+    );
   }, [currentWordIndex]);
 
   // Check if the grid has been completed each time the tileStatuses are updated

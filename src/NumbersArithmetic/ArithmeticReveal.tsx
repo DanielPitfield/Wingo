@@ -91,7 +91,13 @@ const ArithmeticReveal: React.FC<Props> = (props) => {
       // The running total now become the target number
       newTargetNumbers.push(runningTotal);
 
-      console.log(`Target Number: ${runningTotal}; Tiles: ${checkpointTiles.join(", ")}`);
+      console.log(
+        `%cTarget Number:%c ${runningTotal}; %cTiles:%c ${checkpointTiles.join(", ")}`,
+        "font-weight: bold",
+        "font-weight: normal",
+        "font-weight: bold",
+        "font-weight: normal"
+      );
     }
 
     setTiles(newTiles);
