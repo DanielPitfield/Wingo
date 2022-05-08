@@ -30,7 +30,17 @@ import { words_gemstones } from "./WordArrays/Categories/gemstones";
 import { Chance } from "chance";
 
 export interface WordleConfigProps {
-  mode: "daily" | "repeat" | "category" | "increasing" | "limitless" | "puzzle" | "interlinked" | "crossword";
+  mode:
+    | "daily"
+    | "repeat"
+    | "category"
+    | "increasing"
+    | "limitless"
+    | "puzzle"
+    | "interlinked"
+    | "crossword/daily"
+    | "crossword/weekly"
+    | "crossword";
   targetWord?: string;
   wordArray?: string[];
   enforceFullLengthGuesses: boolean;
@@ -892,6 +902,56 @@ const WordleConfig: React.FC<Props> = (props) => {
     return (
       <WordleInterlinked
         wordArrayConfig={{ type: "category" }}
+        displayHints={true}
+        provideWords={false}
+        numWords={6}
+        minWordLength={props.defaultWordLength ? props.defaultWordLength - 3 : 2}
+        maxWordLength={props.defaultWordLength ? props.defaultWordLength + 3 : 8}
+        numWordGuesses={10}
+        numGridGuesses={6}
+        theme={props.theme}
+        settings={props.settings}
+      />
+    );
+  }
+
+  if (props.mode === "crossword/daily") {
+    return (
+      <WordleInterlinked
+        wordArrayConfig={{
+          type: "custom",
+          array: getDeterministicArrayItems(
+            { seedType: "today" },
+            6,
+            categoryMappings.flatMap((categoryMappings) => categoryMappings.array.map((mapping) => mapping.word))
+          ),
+          useExact: true,
+        }}
+        displayHints={true}
+        provideWords={false}
+        numWords={6}
+        minWordLength={props.defaultWordLength ? props.defaultWordLength - 3 : 2}
+        maxWordLength={props.defaultWordLength ? props.defaultWordLength + 3 : 8}
+        numWordGuesses={10}
+        numGridGuesses={6}
+        theme={props.theme}
+        settings={props.settings}
+      />
+    );
+  }
+
+  if (props.mode === "crossword/weekly") {
+    return (
+      <WordleInterlinked
+        wordArrayConfig={{
+          type: "custom",
+          array: getDeterministicArrayItems(
+            { seedType: "this-week" },
+            6,
+            categoryMappings.flatMap((categoryMappings) => categoryMappings.array.map((mapping) => mapping.word))
+          ),
+          useExact: true,
+        }}
         displayHints={true}
         provideWords={false}
         numWords={6}

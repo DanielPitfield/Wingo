@@ -56,6 +56,8 @@ export type Page =
   | "wingo/puzzle"
   | "wingo/interlinked"
   | "wingo/crossword"
+  | "wingo/crossword/weekly"
+  | "wingo/crossword/daily"
   | "letters_categories"
   | "countdown/letters"
   | "countdown/numbers"
@@ -116,6 +118,18 @@ export const pages: { page: Page; title: string; description?: string; shortTitl
     title: "Wingo Crossword",
     description: "Guess a crossword of words",
     shortTitle: "Crossword",
+  },
+  {
+    page: "wingo/crossword/weekly",
+    title: "Wingo Crossword (Weekly)",
+    description: "Guess a crossword for this week",
+    shortTitle: "Weekly Crossword",
+  },
+  {
+    page: "wingo/crossword/daily",
+    title: "Wingo Crossword (Daily)",
+    description: "Guess a crossword for today",
+    shortTitle: "Daily Crossword",
   },
   {
     page: "letters_categories",
@@ -666,6 +680,42 @@ export const App: React.FC = () => {
           <WordleConfig
             {...commonWingoProps}
             mode="crossword"
+            firstLetterProvided={gameOptionToggles.find((x) => x.page === "wingo/crossword")?.firstLetter || false}
+            showHint={gameOptionToggles.find((x) => x.page === "wingo/crossword")?.showHint || true}
+            timerConfig={
+              gameOptionToggles.find((x) => x.page === "wingo/crossword")?.timer
+                ? { isTimed: true, seconds: 30 }
+                : { isTimed: false }
+            }
+            keyboard={gameOptionToggles.find((x) => x.page === "wingo/crossword")?.keyboard || true}
+            defaultWordLength={wordLength}
+            enforceFullLengthGuesses={true}
+          />
+        );
+
+      case "wingo/crossword/weekly":
+        return (
+          <WordleConfig
+            {...commonWingoProps}
+            mode="crossword/weekly"
+            firstLetterProvided={gameOptionToggles.find((x) => x.page === "wingo/crossword")?.firstLetter || false}
+            showHint={gameOptionToggles.find((x) => x.page === "wingo/crossword")?.showHint || true}
+            timerConfig={
+              gameOptionToggles.find((x) => x.page === "wingo/crossword")?.timer
+                ? { isTimed: true, seconds: 30 }
+                : { isTimed: false }
+            }
+            keyboard={gameOptionToggles.find((x) => x.page === "wingo/crossword")?.keyboard || true}
+            defaultWordLength={wordLength}
+            enforceFullLengthGuesses={true}
+          />
+        );
+
+      case "wingo/crossword/daily":
+        return (
+          <WordleConfig
+            {...commonWingoProps}
+            mode="crossword/daily"
             firstLetterProvided={gameOptionToggles.find((x) => x.page === "wingo/crossword")?.firstLetter || false}
             showHint={gameOptionToggles.find((x) => x.page === "wingo/crossword")?.showHint || true}
             timerConfig={
