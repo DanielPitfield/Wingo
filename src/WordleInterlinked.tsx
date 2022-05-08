@@ -19,7 +19,9 @@ type GridConfig = {
 };
 
 interface Props {
-  config: { isCategory: boolean; displayHints: boolean; provideWords: boolean };
+  wordArrayConfig: { type: "custom"; array: string[] } | { type: "category" | "length" };
+  displayHints: boolean;
+  provideWords: boolean;
   numWords: number;
   minWordLength: number;
   maxWordLength: number;
@@ -31,11 +33,13 @@ interface Props {
 
 export const WordleInterlinked: React.FC<Props> = (props) => {
   const [inProgress, setInProgress] = useState(true);
+  const [allowSpaces, setAllowSpaces] = useState(false);
   const [remainingWordGuesses, setRemainingWordGuesses] = useState(
     props.numWordGuesses ? props.numWordGuesses : undefined
   );
   const [remainingGridGuesses, setRemainingGridGuesses] = useState(props.numGridGuesses);
-  const [gridConfig, setGridConfig] = useState<GridConfig>(generateGridConfig());
+  // Crossword configuration generated when provided with an array of words
+  const [gridConfig, setGridConfig] = useState<GridConfig>(generateGridConfig(getTargetWordArray()));
   const [correctGrid, setCorrectGrid] = useState<{ x: number; y: number; letter: string; wordIndex?: number }[]>(
     getCorrectLetterGrid()
   );
@@ -49,25 +53,53 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
   const [currentWords, setCurrentWords] = useState<string[]>(Array.from({ length: props.numWords }).map((x) => ""));
   const [currentWordIndex, setCurrentWordIndex] = useState<number>(0);
 
-  const targetWordArray = getTargetWordArray();
+  // Words and their hints
+  const wordHints = getWordHints();
 
-  function getTargetWordArray(): string[] | { word: string; hint: string }[] {
-    let targetWordArray: string[] | { word: string; hint: string }[] = [];
+  function getTargetWordArray(): string[] {
+    let targetWordArray: string[] = [];
 
-    if (props.config.isCategory) {
+    if (props.wordArrayConfig.type === "category") {
       targetWordArray = categoryMappings
-        // Combine all categories
-        .flatMap((categoryMappings) => categoryMappings.array)
+        // Combine all categories (just the words)
+        .flatMap((categoryMappings) => categoryMappings.array.map((mapping) => mapping.word))
         // Return words between minimum and maximum length
-        .filter(({ word }) => word.length >= props.minWordLength && word.length <= props.maxWordLength);
-    } else if (!props.config.isCategory) {
+        .filter((word) => word.length >= props.minWordLength && word.length <= props.maxWordLength);
+    } else if (props.wordArrayConfig.type === "length") {
       // Combine all length word arrays between minimum and maximum length
       targetWordArray = wordLengthMappingsTargets
         .filter((mapping) => mapping.value >= props.minWordLength && mapping.value <= props.maxWordLength)
         .flatMap((lengthMappings) => lengthMappings.array);
+    } else if (props.wordArrayConfig.type === "custom") {
+      // Use the custom array provided
+      targetWordArray = props.wordArrayConfig.array;
+    }
+
+    // Any word with spaces, return true
+    if (targetWordArray.filter((word) => word.indexOf(" ") >= 0).length > 0) {
+      // Adds space to keyboard
+      setAllowSpaces(true);
     }
 
     return targetWordArray;
+  }
+
+  function getWordHints() {
+    if (props.wordArrayConfig.type !== "category") {
+      return;
+    }
+
+    if (!props.displayHints) {
+      return;
+    }
+
+    const wordHints = categoryMappings
+      // Combine all categories
+      .flatMap((categoryMappings) => categoryMappings.array)
+      // Return words between minimum and maximum length
+      .filter(({ word }) => word.length >= props.minWordLength && word.length <= props.maxWordLength);
+
+    return wordHints;
   }
 
   // Each time a word is highlighted/picked
@@ -134,13 +166,12 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
    *
    * @returns
    */
-  function generateGridConfig(): GridConfig {
+  function generateGridConfig(targetWordArray: string[]): GridConfig {
     let targetWordArraySliced = shuffleArray(targetWordArray).slice(0, props.numWords);
     let result: CrosswordGenerationResult;
 
     do {
-      // TODO: Handle category (words and hints) or lengths (just words)
-      result = crossWordGenerator(targetWordArraySliced.map((x) => x.word));
+      result = crossWordGenerator(targetWordArraySliced);
 
       if (!result) {
         targetWordArraySliced = shuffleArray(targetWordArray).slice(0, props.numWords);
@@ -487,12 +518,6 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
     return grid;
   }
 
-  function allowSpaces() {
-    // Any word with spaces, return true
-    // TODO: Handle category (words and hints) or lengths (just words)
-    return props.targetWordArray.filter(({ word }) => word.indexOf(" ") >= 0).length > 0;
-  }
-
   function displayOutcome(): React.ReactNode {
     // Game still in progress, don't display anything
     if (inProgress) {
@@ -532,11 +557,11 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
       })
     );
     setCurrentWords(Array.from({ length: props.numWords }).map((x) => ""));
-    setGridConfig(generateGridConfig());
+    setGridConfig(generateGridConfig(getTargetWordArray()));
     setCorrectGrid(getCorrectLetterGrid());
   }
 
-  const hint = targetWordArray.find((x) => x.word === gridConfig.words[currentWordIndex].word)?.hint;
+  const hint = wordHints?.find((x) => x.word === gridConfig.words[currentWordIndex].word)?.hint;
 
   return (
     <div
@@ -555,7 +580,7 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
           )}
         </MessageNotification>
       )}
-      {inProgress && props.config.displayHints && hint && (
+      {inProgress && props.displayHints && hint && (
         <MessageNotification type="info">
           <strong>Hint:</strong> {hint}
         </MessageNotification>
@@ -583,7 +608,7 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
           letterStatuses={[]}
           settings={props.settings}
           disabled={!inProgress}
-          allowSpaces={allowSpaces()}
+          allowSpaces={allowSpaces}
         />
       </div>
     </div>

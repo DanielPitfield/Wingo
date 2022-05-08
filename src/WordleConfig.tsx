@@ -820,7 +820,9 @@ const WordleConfig: React.FC<Props> = (props) => {
   if (props.mode === "interlinked") {
     return (
       <WordleInterlinked
-        config={{isCategory: false, displayHints: false, provideWords: false}}
+      wordArrayConfig={{type: "length"}}
+      displayHints={false}
+      provideWords={false}
         numWords={2}
         minWordLength={props.defaultWordLength ? props.defaultWordLength : 5}
         maxWordLength={props.defaultWordLength ? props.defaultWordLength : 5}
@@ -834,7 +836,9 @@ const WordleConfig: React.FC<Props> = (props) => {
   if (props.mode === "crossword") {
     return (
       <WordleInterlinked
-        config={{isCategory: true, displayHints: true, provideWords: false}}
+        wordArrayConfig={{type: "category"}}
+        displayHints={true}
+        provideWords={false}
         numWords={6}
         minWordLength={props.defaultWordLength ? props.defaultWordLength - 3 : 2}
         maxWordLength={props.defaultWordLength ? props.defaultWordLength + 3 : 8}
