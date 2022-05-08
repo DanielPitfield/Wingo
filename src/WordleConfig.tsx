@@ -38,6 +38,7 @@ export interface WordleConfigProps {
     | "limitless"
     | "puzzle"
     | "interlinked"
+    | "crossword/fit"
     | "crossword/daily"
     | "crossword/weekly"
     | "crossword";
@@ -959,6 +960,24 @@ const WordleConfig: React.FC<Props> = (props) => {
         maxWordLength={props.defaultWordLength ? props.defaultWordLength + 3 : 8}
         numWordGuesses={10}
         numGridGuesses={6}
+        theme={props.theme}
+        settings={props.settings}
+      />
+    );
+  }
+
+  if (props.mode === "crossword/fit") {
+    return (
+      <WordleInterlinked
+        wordArrayConfig={{ type: "length" }}
+        displayHints={false}
+        provideWords={true}
+        fitRestriction={0}
+        numWords={6}
+        minWordLength={6}
+        maxWordLength={6}
+        numWordGuesses={0}
+        numGridGuesses={1}
         theme={props.theme}
         settings={props.settings}
       />
