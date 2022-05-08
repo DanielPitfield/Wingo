@@ -29,7 +29,16 @@ import { words_meats_and_fish } from "./WordArrays/Categories/meats_and_fish";
 import { words_gemstones } from "./WordArrays/Categories/gemstones";
 
 export interface WordleConfigProps {
-  mode: "daily" | "repeat" | "category" | "increasing" | "limitless" | "puzzle" | "interlinked" | "crossword" | "crossword/fit";
+  mode:
+    | "daily"
+    | "repeat"
+    | "category"
+    | "increasing"
+    | "limitless"
+    | "puzzle"
+    | "interlinked"
+    | "crossword"
+    | "crossword/fit";
   targetWord?: string;
   wordArray?: string[];
   enforceFullLengthGuesses: boolean;
@@ -549,7 +558,10 @@ const WordleConfig: React.FC<Props> = (props) => {
   }, [props.page, targetWord]);
 
   function ResetGame() {
-    props.onComplete?.(currentWord.toLowerCase() === targetWord.toLowerCase());
+    debugger;
+    if (currentWord.length > 0) {
+      props.onComplete?.(currentWord.toLowerCase() === targetWord.toLowerCase());
+    }
     setGuesses([]);
     setCurrentWord("");
     setWordIndex(0);
@@ -575,7 +587,6 @@ const WordleConfig: React.FC<Props> = (props) => {
   }
 
   function ContinueGame() {
-    props.onComplete?.(currentWord.toLowerCase() === targetWord.toLowerCase());
     setGuesses([]);
     setCurrentWord("");
     setWordIndex(0);
@@ -820,9 +831,9 @@ const WordleConfig: React.FC<Props> = (props) => {
   if (props.mode === "interlinked") {
     return (
       <WordleInterlinked
-      wordArrayConfig={{type: "length"}}
-      displayHints={false}
-      provideWords={false}
+        wordArrayConfig={{ type: "length" }}
+        displayHints={false}
+        provideWords={false}
         numWords={2}
         minWordLength={props.defaultWordLength ? props.defaultWordLength : 5}
         maxWordLength={props.defaultWordLength ? props.defaultWordLength : 5}
@@ -836,7 +847,7 @@ const WordleConfig: React.FC<Props> = (props) => {
   if (props.mode === "crossword") {
     return (
       <WordleInterlinked
-        wordArrayConfig={{type: "category"}}
+        wordArrayConfig={{ type: "category" }}
         displayHints={true}
         provideWords={false}
         numWords={6}
@@ -853,7 +864,7 @@ const WordleConfig: React.FC<Props> = (props) => {
   if (props.mode === "crossword/fit") {
     return (
       <WordleInterlinked
-        wordArrayConfig={{type: "length"}}
+        wordArrayConfig={{ type: "length" }}
         displayHints={false}
         provideWords={true}
         fitRestriction={0}

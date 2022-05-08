@@ -248,6 +248,7 @@ export const App: React.FC = () => {
 
   const [loadingState, setLoadingState] = useState<"loading" | "loaded">("loading");
   const [page, setPage] = useState<Page>("splash-screen");
+  const [isRandomSession, setIsRandomSession] = useState(false);
   const [selectedCampaignArea, setSelectedCampaignArea] = useState<AreaConfig | null>(null);
   const [selectedCampaignLevel, setSelectedCampaignLevel] = useState<LevelConfig | null>(null);
   const [settings, setSettings] = useState<SettingsData>(SaveData.getSettings());
@@ -400,6 +401,10 @@ export const App: React.FC = () => {
       const playablePages = pages.filter((page) => page.isPlayable);
       const newPage = playablePages[Math.round(Math.random() * (playablePages.length - 1))]?.page;
       setPage(newPage);
+      setIsRandomSession(true);
+    }
+    else if (page === "home") {
+      setIsRandomSession(false);
     }
   }, [page]);
 
@@ -491,6 +496,7 @@ export const App: React.FC = () => {
       setTheme: setThemeIfNoPreferredSet,
       addGold: addGold,
       settings: settings,
+      onComplete: isRandomSession ? (wasCorrect: boolean) => { setPage("random"); debugger } : undefined
     };
 
     switch (page) {
