@@ -74,139 +74,173 @@ export type Page =
   | "campaign/area"
   | "campaign/area/level"
   | "challenges"
-  | "settings";
+  | "settings"
+  | "random";
 
 // This is needed for runtime; make sure it matches the Page type
-export const pages: { page: Page; title: string; description?: string; shortTitle?: string }[] = [
-  { page: "splash-screen", title: "Wingo" },
-  { page: "home", title: "" },
-  { page: "wingo/daily", title: "Daily Wingo", description: "Guess today's word", shortTitle: "Daily" },
-  { page: "wingo/repeat", title: "Standard/Normal Wingo", description: "Guess a word", shortTitle: "Standard" },
+export const pages: { page: Page; title: string; description?: string; shortTitle?: string; isPlayable: boolean }[] = [
+  { page: "splash-screen", title: "Wingo", isPlayable: false },
+  { page: "home", title: "", isPlayable: false },
+  {
+    page: "wingo/daily",
+    title: "Daily Wingo",
+    description: "Guess today's word",
+    shortTitle: "Daily",
+    isPlayable: true,
+  },
+  {
+    page: "wingo/repeat",
+    title: "Standard/Normal Wingo",
+    description: "Guess a word",
+    shortTitle: "Standard",
+    isPlayable: true,
+  },
   {
     page: "wingo/category",
     title: "Wingo Categories",
     description: "Guess a word related to a category",
     shortTitle: "Categories",
+    isPlayable: true,
   },
   {
     page: "wingo/increasing",
     title: "Wingo Increasing Length",
     description: "Increase the word length to guess with every correct answer",
     shortTitle: "Increasing",
+    isPlayable: true,
   },
   {
     page: "wingo/limitless",
     title: "Wingo Limitless/Survival",
     description: "Gain lives with correct, early answers; how long can you survive?",
     shortTitle: "Limitless",
+    isPlayable: true,
   },
   {
     page: "wingo/puzzle",
     title: "Wingo Puzzle",
     description: "Use a cryptic clue to guess the word as fast as possible!",
     shortTitle: "Puzzle",
+    isPlayable: true,
   },
   {
     page: "wingo/interlinked",
     title: "Wingo Interlinked",
     description: "Guess two words interlinked by a shared letter",
     shortTitle: "Interlinked",
+    isPlayable: true,
   },
   {
     page: "wingo/crossword",
     title: "Wingo Crossword",
     description: "Guess a crossword of words",
     shortTitle: "Crossword",
+    isPlayable: true,
   },
   {
     page: "wingo/crossword/fit",
     title: "Wingo Crossword Fit",
     description: "Fill the crossword with the provided words",
     shortTitle: "Crossword Fit",
+    isPlayable: true,
   },
   {
     page: "letters_categories",
     title: "Letters Categories",
     description: "Guess the word for each category",
     shortTitle: "Categories (5)",
+    isPlayable: true,
   },
   {
     page: "countdown/letters",
     title: "Countdown Letters",
     description: "Find the highest scoring word from the list of random letters",
     shortTitle: "Countdown",
+    isPlayable: true,
   },
   {
     page: "countdown/numbers",
     title: "Countdown Numbers",
     description: "Get the target number using a list of random numbers",
     shortTitle: "Countdown",
+    isPlayable: true,
   },
   {
     page: "numbers/arithmetic_reveal",
     title: "Quick Maths",
     description: "Test your arithmetic with quickfire calculations",
     shortTitle: "Quick Maths",
+    isPlayable: true,
   },
   {
     page: "numbers/arithmetic_drag/order",
     title: "Arithmetic order",
     description: "Put the arithmetic expressions in order from smallest to largest",
     shortTitle: "Order",
+    isPlayable: true,
   },
   {
     page: "numbers/arithmetic_drag/match",
     title: "Arithmetic match",
     description: "Match the arithmetic expressions with the results they evaluate to",
     shortTitle: "Match",
+    isPlayable: true,
   },
   {
     page: "nubble",
     title: "Nubble",
     description: "Find the highest scoring number from a list of random numbers",
     shortTitle: "Nubble",
+    isPlayable: true,
   },
   {
     page: "only_connect/wall",
     title: "Only Connect",
     description: "Find groups of words from a scrambled word grid",
     shortTitle: "Only Connect",
+    isPlayable: true,
   },
   {
     page: "verbal_reasoning/match",
     title: "Same Letter Words",
     description: "Find the words which are made from the same letters",
     shortTitle: "Same Letter Words",
+    isPlayable: true,
   },
   {
     page: "verbal_reasoning/number_sets",
     title: "Number Sets",
     description: "Find the answer to a unique number set",
     shortTitle: "Number Sets",
+    isPlayable: true,
   },
   {
     page: "verbal_reasoning/algebra",
     title: "Algebra",
     description: "Find the answer to a unique number set",
     shortTitle: "Algebra",
+    isPlayable: true,
   },
   {
     page: "verbal_reasoning/word_codes/match",
     title: "Word Codes",
     description: "Decipher codes to find words (and vice versa)",
     shortTitle: "Word Codes",
+    isPlayable: true,
   },
   {
     page: "puzzle/sequence",
     title: "Sequence Puzzle",
     description: "Find what comes next in the sequence",
     shortTitle: "Sequence",
+    isPlayable: true,
   },
-  { page: "campaign", title: "Campaign", shortTitle: "Campaign" },
-  { page: "campaign/area", title: "Campaign Areas", shortTitle: "Areas" },
-  { page: "campaign/area/level", title: "Campaign Level", shortTitle: "Level" },
-  { page: "challenges", title: "Challenges", shortTitle: "Challenges" },
-  { page: "settings", title: "Settings", shortTitle: "Settings" },
+  { page: "campaign", title: "Campaign", shortTitle: "Campaign", isPlayable: false },
+  { page: "campaign/area", title: "Campaign Areas", shortTitle: "Areas", isPlayable: false },
+  { page: "campaign/area/level", title: "Campaign Level", shortTitle: "Level", isPlayable: false },
+  { page: "challenges", title: "Challenges", shortTitle: "Challenges", isPlayable: false },
+  { page: "settings", title: "Settings", shortTitle: "Settings", isPlayable: false },
+  { page: "random", title: "Random", shortTitle: "Random", isPlayable: false },
 ];
 
 export const App: React.FC = () => {
@@ -360,6 +394,14 @@ export const App: React.FC = () => {
     // Set home page after load
     window.setTimeout(() => setPage(pageFromUrl || "home"), LOADING_TIMEOUT_MS + FADE_OUT_DURATION_MS);
   }, [saveData]);
+
+  useEffect(() => {
+    if (page === "random") {
+      const playablePages = pages.filter((page) => page.isPlayable);
+      const newPage = playablePages[Math.round(Math.random() * (playablePages.length - 1))]?.page;
+      setPage(newPage);
+    }
+  }, [page]);
 
   useEffect(() => {
     SaveData.setGold(gold);
@@ -693,7 +735,7 @@ export const App: React.FC = () => {
           />
         );
 
-        case "wingo/crossword/fit":
+      case "wingo/crossword/fit":
         return (
           <WordleConfig
             {...commonWingoProps}
@@ -930,6 +972,9 @@ export const App: React.FC = () => {
 
       case "settings":
         return <Settings settings={settings} onSettingsChange={setSettings} />;
+
+      case "random":
+        return null;
     }
   })();
 
