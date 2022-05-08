@@ -776,6 +776,7 @@ export const App: React.FC = () => {
             setTheme={setThemeIfNoPreferredSet}
             setPage={setPage}
             addGold={addGold}
+            onComplete={commonWingoProps.onComplete}
           />
         );
 
