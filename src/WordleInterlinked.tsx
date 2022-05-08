@@ -236,7 +236,6 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
     let result: CrosswordGenerationResult | null = null;
 
     if (props.wordArrayConfig.type === "custom" && props.wordArrayConfig.useExact) {
-      console.log(targetWordArray);
       result = crossWordGenerator(targetWordArray);
 
       if (!result) {
