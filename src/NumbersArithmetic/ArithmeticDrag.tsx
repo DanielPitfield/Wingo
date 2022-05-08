@@ -21,6 +21,7 @@ interface Props {
   theme: Theme;
   settings: SettingsData;
   setPage: (page: Page) => void;
+  onComplete?:(wasCorrect: boolean) => void;
 }
 
 // https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array
@@ -414,6 +415,7 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
   }
 
   function ResetGame() {
+    props.onComplete?.(true);
     setInProgress(true);
     setExpressionTiles([]);
     setRemainingGuesses(props.numGuesses);

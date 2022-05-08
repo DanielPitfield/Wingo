@@ -814,6 +814,7 @@ export const App: React.FC = () => {
             setTheme={setThemeIfNoPreferredSet}
             setPage={setPage}
             addGold={addGold}
+            onComplete={commonWingoProps.onComplete}
           />
         );
 
@@ -832,6 +833,7 @@ export const App: React.FC = () => {
             theme={theme}
             settings={settings}
             setPage={setPage}
+            onComplete={commonWingoProps.onComplete}            
           />
         );
 
@@ -851,6 +853,7 @@ export const App: React.FC = () => {
             theme={theme}
             settings={settings}
             setPage={setPage}
+            onComplete={commonWingoProps.onComplete}
           />
         );
 
@@ -870,6 +873,7 @@ export const App: React.FC = () => {
             theme={theme}
             settings={settings}
             setPage={setPage}
+            onComplete={commonWingoProps.onComplete}
           />
         );
 
@@ -903,6 +907,7 @@ export const App: React.FC = () => {
             theme={theme}
             settings={settings}
             setPage={setPage}
+            onComplete={commonWingoProps.onComplete}
           />
         );
 
@@ -921,6 +926,7 @@ export const App: React.FC = () => {
             theme={theme}
             settings={settings}
             setPage={setPage}
+            onComplete={commonWingoProps.onComplete}
           />
         );
 
@@ -935,6 +941,7 @@ export const App: React.FC = () => {
             theme={theme}
             settings={settings}
             setPage={setPage}
+            onComplete={commonWingoProps.onComplete}
           />
         );
 
@@ -949,6 +956,7 @@ export const App: React.FC = () => {
             theme={theme}
             settings={settings}
             setPage={setPage}
+            onComplete={commonWingoProps.onComplete}            
           />
         );
 
@@ -968,11 +976,12 @@ export const App: React.FC = () => {
             theme={theme}
             settings={settings}
             setPage={setPage}
+            onComplete={commonWingoProps.onComplete}
           />
         );
 
       case "puzzle/sequence":
-        return <PuzzleConfig theme={theme} setTheme={setThemeIfNoPreferredSet} settings={settings} />;
+        return <PuzzleConfig theme={theme} setTheme={setThemeIfNoPreferredSet} settings={settings} onComplete={commonWingoProps.onComplete} />;
 
       case "challenges":
         return <ChallengesInfo settings={settings} addGold={addGold} />;
