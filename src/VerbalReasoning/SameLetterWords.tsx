@@ -19,6 +19,7 @@ interface Props {
   theme: Theme;
   settings: SettingsData;
   setPage: (page: Page) => void;
+  onComplete?:(wasCorrect: boolean) => void;
 }
 
 /** */
@@ -311,6 +312,7 @@ const SameLetterWords: React.FC<Props> = (props) => {
   }
 
   function ResetGame() {
+    props.onComplete?.(true);
     setInProgress(true);
     setSelectedWords([]);
     setValidWords([]);

@@ -31,6 +31,7 @@ interface Props {
   numGridGuesses: number;
   settings: SettingsData;
   theme?: Theme;
+  onComplete?:(wasCorrect: boolean) => void;
 }
 
 export const WordleInterlinked: React.FC<Props> = (props) => {
@@ -609,6 +610,7 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
   }
 
   function ResetGame() {
+    props.onComplete?.(true);
     setInProgress(true);
     setCurrentWordIndex(0);
     setRemainingWordGuesses(props.numWordGuesses ? props.numWordGuesses : undefined);

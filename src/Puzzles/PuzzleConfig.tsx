@@ -97,7 +97,7 @@ export const PuzzleConfig: React.FC<Props> = (props) => {
    * Resets the game.
    */
   function resetGame() {
-    props.onComplete?.(result === "correct");
+    props.onComplete?.(true);
     setResult("in-progress");
     setPuzzle({ ...Object.values(Puzzles)[Math.round(Math.random() * (Object.values(Puzzles).length - 1))] });
   }

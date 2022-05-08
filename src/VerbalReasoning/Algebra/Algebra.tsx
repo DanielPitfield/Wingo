@@ -29,6 +29,7 @@ interface Props {
   theme: Theme;
   settings: SettingsData;
   setPage: (page: Page) => void;
+  onComplete?:(wasCorrect: boolean) => void;
 }
 
 export function getQuestionSetOutcome(numCorrectAnswers: number, numQuestions: number) {
@@ -239,6 +240,7 @@ const Algebra: React.FC<Props> = (props) => {
 
   // Restart with new set of questions
   function ResetGame() {
+    props.onComplete?.(true);
     setInProgress(true);
     setGuess("");
     setAlgebraTemplate({

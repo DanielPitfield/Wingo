@@ -17,6 +17,7 @@ interface Props {
   setTheme: (theme: Theme) => void;
   setPage: (page: Page) => void;
   addGold: (gold: number) => void;
+  onComplete?:(wasCorrect: boolean) => void;
 }
 
 export const operators: { name: "÷" | "-" | "+" | "×"; function: (num1: number, num2: number) => number }[] = [
@@ -173,6 +174,7 @@ const CountdownNumbersConfig: React.FC<Props> = (props) => {
   }
 
   function ResetGame() {
+    props.onComplete?.(true);
     setCurrentGuesses([]);
     setClosestGuessSoFar(null);
     setCountdownStatuses(defaultCountdownStatuses);

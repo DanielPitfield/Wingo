@@ -15,10 +15,10 @@ interface Props {
   finishingButtonText?: string;
   theme: Theme;
   settings: SettingsData;
-  onComplete?: () => void;
   page: Page;
   setPage: (page: Page) => void;
-  addGold: (gold: number) => void;
+  addGold: (gold: number) => void;  
+  onComplete?: (wasCorrect: boolean) => void;
 }
 
 const LetterCategoriesConfig: React.FC<Props> = (props) => {
@@ -131,7 +131,7 @@ const LetterCategoriesConfig: React.FC<Props> = (props) => {
   }, [inProgress]);
 
   function ResetGame() {
-    props.onComplete?.();
+    props.onComplete?.(true);
     setGuesses([]);
     setCurrentWord("");
     setWordIndex(0);
