@@ -1,6 +1,5 @@
 import LetterTile from "./LetterTile";
 import { SettingsData } from "./SaveData";
-import crossWordGenerator from "cwg";
 import { useState } from "react";
 import { shuffleArray } from "./NumbersArithmetic/ArithmeticDrag";
 import { Theme } from "./Themes";
@@ -9,6 +8,7 @@ import { categoryMappings, getWordSummary, wordLengthMappingsTargets } from "./W
 import { Button } from "./Button";
 import React from "react";
 import { MessageNotification } from "./MessageNotification";
+import { CrosswordGenerationResult, crosswordGenerator as crossWordGenerator } from "./CrossWordGenerator";
 
 type Orientation = "vertical" | "horizontal";
 
@@ -19,7 +19,7 @@ type GridConfig = {
 };
 
 interface Props {
-  wordArrayConfig: { type: "custom"; array: string[] } | { type: "category" | "length" };
+  wordArrayConfig: { type: "custom"; array: string[]; useExact: boolean } | { type: "category" } | { type: "length" };
   displayHints: boolean;
   provideWords: boolean;
   // Additional units allowed in grid height or width (in addition to maxWordLength)
@@ -62,20 +62,32 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
   function getTargetWordArray(): string[] {
     let targetWordArray: string[] = [];
 
-    if (props.wordArrayConfig.type === "category") {
-      targetWordArray = categoryMappings
-        // Combine all categories (just the words)
-        .flatMap((categoryMappings) => categoryMappings.array.map((mapping) => mapping.word))
-        // Return words between minimum and maximum length
-        .filter((word) => word.length >= props.minWordLength && word.length <= props.maxWordLength);
-    } else if (props.wordArrayConfig.type === "length") {
-      // Combine all length word arrays between minimum and maximum length
-      targetWordArray = wordLengthMappingsTargets
-        .filter((mapping) => mapping.value >= props.minWordLength && mapping.value <= props.maxWordLength)
-        .flatMap((lengthMappings) => lengthMappings.array);
-    } else if (props.wordArrayConfig.type === "custom") {
-      // Use the custom array provided
-      targetWordArray = props.wordArrayConfig.array;
+    switch (props.wordArrayConfig.type) {
+      case "category": {
+        targetWordArray = categoryMappings
+          // Combine all categories (just the words)
+          .flatMap((categoryMappings) => categoryMappings.array.map((mapping) => mapping.word))
+          // Return words between minimum and maximum length
+          .filter((word) => word.length >= props.minWordLength && word.length <= props.maxWordLength);
+
+        break;
+      }
+
+      case "length": {
+        // Combine all length word arrays between minimum and maximum length
+        targetWordArray = wordLengthMappingsTargets
+          .filter((mapping) => mapping.value >= props.minWordLength && mapping.value <= props.maxWordLength)
+          .flatMap((lengthMappings) => lengthMappings.array);
+
+        break;
+      }
+
+      case "custom": {
+        // Use the custom array provided
+        targetWordArray = props.wordArrayConfig.array;
+
+        break;
+      }
     }
 
     // Any word with spaces, return true
@@ -166,15 +178,24 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
   }, [tileStatuses]);
 
   /**
-   *
-   * @returns
+   * Generates the crossword grid from the target word array.
+   * If `useExact` is set true on the "custom" type, the exact target word array, without shuffling or slicing will be used.
+   * @param targetWordArray Target word array.
+   * @returns Generated grid config.
    */
   function generateGridConfig(targetWordArray: string[]): GridConfig {
     let targetWordArraySliced = shuffleArray(targetWordArray).slice(0, props.numWords);
     let result: CrosswordGenerationResult | null = null;
 
-    // Crossword fit
-    if (props.fitRestriction !== undefined) {
+    if (props.wordArrayConfig.type === "custom" && props.wordArrayConfig.useExact) {
+      console.log(targetWordArray);
+      result = crossWordGenerator(targetWordArray);
+
+      if (!result) {
+        throw new Error("The specified targetWordArray could not generate a crossword");
+      }
+    } else if (props.fitRestriction !== undefined) {
+      // Crossword fit
       // Height and width can't exceed this value (to begin with)
       const DEFAULT_MAX_GRID_DIMENSION = props.maxWordLength + props.fitRestriction;
 
@@ -612,7 +633,9 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
       style={{ backgroundImage: props.theme && `url(${props.theme.backgroundImageSrc})` }}
     >
       {!inProgress && <div className="outcome">{displayOutcome()}</div>}
-      {Boolean(inProgress && props.provideWords) && <div className="provided_words">{gridConfig.words.map(wordInfo => wordInfo.word).join(",")}</div>}
+      {Boolean(inProgress && props.provideWords) && (
+        <div className="provided_words">{gridConfig.words.map((wordInfo) => wordInfo.word).join(",")}</div>
+      )}
       {inProgress && (
         <MessageNotification type="default">
           Grid guesses left: <strong>{remainingGridGuesses}</strong>
