@@ -151,12 +151,14 @@ export const pages: { page: Page; title: string; description?: string; shortTitl
     title: "Wingo Crossword (Weekly)",
     description: "Guess a crossword for this week",
     shortTitle: "Weekly Crossword",
+    isPlayable: true
   },
   {
     page: "wingo/crossword/daily",
     title: "Wingo Crossword (Daily)",
     description: "Guess a crossword for today",
     shortTitle: "Daily Crossword",
+    isPlayable: true
   },
   {
     page: "letters_categories",
