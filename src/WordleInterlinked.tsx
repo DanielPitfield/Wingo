@@ -22,6 +22,8 @@ interface Props {
   wordArrayConfig: { type: "custom"; array: string[] } | { type: "category" | "length" };
   displayHints: boolean;
   provideWords: boolean;
+  // Additional units allowed in grid height or width (in addition to maxWordLength)
+  fitRestriction?: number;
   numWords: number;
   minWordLength: number;
   maxWordLength: number;
@@ -168,17 +170,56 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
    */
   function generateGridConfig(targetWordArray: string[]): GridConfig {
     let targetWordArraySliced = shuffleArray(targetWordArray).slice(0, props.numWords);
-    let result: CrosswordGenerationResult;
+    let result: CrosswordGenerationResult | null = null;
 
-    do {
-      result = crossWordGenerator(targetWordArraySliced);
+    // Crossword fit
+    if (props.fitRestriction !== undefined) {
+      // Height and width can't exceed this value (to begin with)
+      const DEFAULT_MAX_GRID_DIMENSION = props.maxWordLength + props.fitRestriction;
 
-      if (!result) {
-        targetWordArraySliced = shuffleArray(targetWordArray).slice(0, props.numWords);
+      // Start with DEFAULT_MAX_GRID_DIMENSION and slowly increment until a result is found
+      for (
+        let maxGridDimension = DEFAULT_MAX_GRID_DIMENSION;
+        maxGridDimension < DEFAULT_MAX_GRID_DIMENSION + 10;
+        maxGridDimension++
+      ) {
+        // Determine the maximum number of times to find the a result with current maxGridDimension
+        const MAX_ATTEMPTS_BEFORE_TRYING_LOWER_NUM = 15;
+
+        // For this number of max attempts
+        for (let attemptNo = 1; attemptNo <= MAX_ATTEMPTS_BEFORE_TRYING_LOWER_NUM; attemptNo++) {
+          // Try generate a crossword result
+          result = crossWordGenerator(targetWordArraySliced);
+
+          // Found an ideal result
+          if (result && result.width <= maxGridDimension && result.height <= maxGridDimension) {
+            break;
+          }
+
+          // Try another random slice of the array
+          targetWordArraySliced = shuffleArray(targetWordArray).slice(0, props.numWords);
+        }
+
+        // Break out of outer loop too
+        if (result && result.width <= maxGridDimension && result.height <= maxGridDimension) {
+          break;
+        }
       }
-    } while (!result);
+    } else {
+      do {
+        result = crossWordGenerator(targetWordArraySliced);
 
-    const words = result.positionObjArr.map((position) => ({
+        if (!result) {
+          targetWordArraySliced = shuffleArray(targetWordArray).slice(0, props.numWords);
+        }
+      } while (!result);
+    }
+
+    if (!result) {
+      throw new Error("No crossword");
+    }
+
+    const words = result!.positionObjArr.map((position) => ({
       orientation: position.isHorizon ? "horizontal" : ("vertical" as Orientation),
       startingXPos: position.xNum,
       startingYPos: position.yNum,
@@ -569,10 +610,11 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
       style={{ backgroundImage: props.theme && `url(${props.theme.backgroundImageSrc})` }}
     >
       {!inProgress && <div className="outcome">{displayOutcome()}</div>}
+      {Boolean(inProgress && props.provideWords) && <div className="provided_words">{gridConfig.words.map(wordInfo => wordInfo.word).join(",")}</div>}
       {inProgress && (
         <MessageNotification type="default">
           Grid guesses left: <strong>{remainingGridGuesses}</strong>
-          {props.numWordGuesses && (
+          {Boolean(props.numWordGuesses) && (
             <>
               <br />
               Current word guesses left: <strong>{remainingWordGuesses}</strong>
@@ -580,7 +622,7 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
           )}
         </MessageNotification>
       )}
-      {inProgress && props.displayHints && hint && (
+      {Boolean(inProgress && props.displayHints && hint) && (
         <MessageNotification type="info">
           <strong>Hint:</strong> {hint}
         </MessageNotification>

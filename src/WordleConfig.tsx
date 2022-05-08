@@ -29,7 +29,7 @@ import { words_meats_and_fish } from "./WordArrays/Categories/meats_and_fish";
 import { words_gemstones } from "./WordArrays/Categories/gemstones";
 
 export interface WordleConfigProps {
-  mode: "daily" | "repeat" | "category" | "increasing" | "limitless" | "puzzle" | "interlinked" | "crossword";
+  mode: "daily" | "repeat" | "category" | "increasing" | "limitless" | "puzzle" | "interlinked" | "crossword" | "crossword/fit";
   targetWord?: string;
   wordArray?: string[];
   enforceFullLengthGuesses: boolean;
@@ -844,6 +844,24 @@ const WordleConfig: React.FC<Props> = (props) => {
         maxWordLength={props.defaultWordLength ? props.defaultWordLength + 3 : 8}
         numWordGuesses={10}
         numGridGuesses={6}
+        theme={props.theme}
+        settings={props.settings}
+      />
+    );
+  }
+
+  if (props.mode === "crossword/fit") {
+    return (
+      <WordleInterlinked
+        wordArrayConfig={{type: "length"}}
+        displayHints={false}
+        provideWords={true}
+        fitRestriction={0}
+        numWords={6}
+        minWordLength={6}
+        maxWordLength={6}
+        numWordGuesses={0}
+        numGridGuesses={1}
         theme={props.theme}
         settings={props.settings}
       />
