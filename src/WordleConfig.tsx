@@ -930,6 +930,8 @@ const WordleConfig: React.FC<Props> = (props) => {
           ),
           useExact: true,
         }}
+        onSave={SaveData.setDailyCrossWordGuesses}
+        initialConfig={SaveData.getDailyCrossWordGuesses() || undefined}
         displayHints={true}
         provideWords={false}
         numWords={6}
@@ -955,6 +957,8 @@ const WordleConfig: React.FC<Props> = (props) => {
           ),
           useExact: true,
         }}
+        onSave={SaveData.setWeeklyCrossWordGuesses}
+        initialConfig={SaveData.getWeeklyCrossWordGuesses() || undefined}
         displayHints={true}
         provideWords={false}
         numWords={6}

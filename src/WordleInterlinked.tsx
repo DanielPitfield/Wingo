@@ -18,6 +18,12 @@ type GridConfig = {
   words: { word: string; orientation: Orientation; startingXPos: number; startingYPos: number }[];
 };
 
+export type TileStatus = {
+  x: number;
+  y: number;
+  status: "incorrect" | "contains" | "correct" | "not set" | "not in word";
+};
+
 interface Props {
   wordArrayConfig: { type: "custom"; array: string[]; useExact: boolean } | { type: "category" } | { type: "length" };
   displayHints: boolean;
@@ -30,31 +36,74 @@ interface Props {
   numWordGuesses?: number;
   numGridGuesses: number;
   settings: SettingsData;
+  initialConfig?: {
+    words: string[];
+    inProgress: boolean;
+    tileStatuses: TileStatus[];
+    currentWords: string[];
+    currentWordIndex: number;
+    remainingGridGuesses: number;
+    remainingWordGuesses?: number;
+  };
   theme?: Theme;
-  onComplete?:(wasCorrect: boolean) => void;
+  onSave?: (
+    words: string[],
+    inProgress: boolean,
+    tileStatuses: TileStatus[],
+    currentWords: string[],
+    currentWordIndex: number,
+    remainingGridGuesses: number,
+    remainingWordGuesses?: number
+  ) => void;
+  onComplete?: (wasCorrect: boolean) => void;
 }
 
 export const WordleInterlinked: React.FC<Props> = (props) => {
-  const [inProgress, setInProgress] = useState(true);
+  const [inProgress, setInProgress] = useState(props.initialConfig?.inProgress ?? true);
   const [allowSpaces, setAllowSpaces] = useState(false);
   const [remainingWordGuesses, setRemainingWordGuesses] = useState(
-    props.numWordGuesses ? props.numWordGuesses : undefined
+    props.initialConfig?.remainingWordGuesses ?? props.numWordGuesses
   );
-  const [remainingGridGuesses, setRemainingGridGuesses] = useState(props.numGridGuesses);
+  const [remainingGridGuesses, setRemainingGridGuesses] = useState(
+    props.initialConfig?.remainingGridGuesses ?? props.numGridGuesses
+  );
   // Crossword configuration generated when provided with an array of words
   const [gridConfig, setGridConfig] = useState<GridConfig>(generateGridConfig(getTargetWordArray()));
   const [correctGrid, setCorrectGrid] = useState<{ x: number; y: number; letter: string; wordIndex?: number }[]>(
     getCorrectLetterGrid()
   );
-  const [tileStatuses, setTileStatuses] = useState<
-    { x: number; y: number; status: "incorrect" | "contains" | "correct" | "not set" | "not in word" }[]
-  >(
-    getCorrectLetterGrid().map((position) => {
-      return { x: position.x, y: position.y, status: "not set" };
-    })
+
+  const [tileStatuses, setTileStatuses] = useState<TileStatus[]>(
+    props.initialConfig?.tileStatuses ??
+      getCorrectLetterGrid().map((position) => {
+        return { x: position.x, y: position.y, status: "not set" };
+      })
   );
-  const [currentWords, setCurrentWords] = useState<string[]>(Array.from({ length: props.numWords }).map((x) => ""));
-  const [currentWordIndex, setCurrentWordIndex] = useState<number>(0);
+  const [currentWords, setCurrentWords] = useState<string[]>(
+    props.initialConfig?.currentWords ?? Array.from({ length: props.numWords }).map((x) => "")
+  );
+  const [currentWordIndex, setCurrentWordIndex] = useState<number>(props.initialConfig?.currentWordIndex ?? 0);
+
+  // Save gameplay progress
+  React.useEffect(() => {
+    props.onSave?.(
+      gridConfig.words.map((x) => x.word),
+      inProgress,
+      tileStatuses,
+      currentWords,
+      currentWordIndex,
+      remainingGridGuesses,
+      remainingWordGuesses
+    );
+  }, [
+    gridConfig,
+    inProgress,
+    tileStatuses,
+    currentWords,
+    currentWordIndex,
+    remainingGridGuesses,
+    remainingWordGuesses,
+  ]);
 
   // Words and their hints
   const wordHints = getWordHints();
@@ -188,7 +237,6 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
     let result: CrosswordGenerationResult | null = null;
 
     if (props.wordArrayConfig.type === "custom" && props.wordArrayConfig.useExact) {
-      console.log(targetWordArray);
       result = crossWordGenerator(targetWordArray);
 
       if (!result) {

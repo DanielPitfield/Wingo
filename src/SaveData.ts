@@ -2,6 +2,7 @@ import { Page } from "./App";
 import { LevelConfig } from "./Campaign/Level";
 import { BaseChallenge } from "./Challenges/BaseChallenge";
 import { Themes } from "./Themes";
+import { TileStatus } from "./WordleInterlinked";
 
 export type CampaignSaveData = {
   areas: { name: string; status: "locked" | "unlockable" | "unlocked"; completedLevelIds: string[] }[];
@@ -19,13 +20,23 @@ export type SettingsData = {
   };
 };
 
-export type DailyWordSaveData = {
+export type DailyWingoSaveData = {
   dailyWord: string;
   guesses: string[];
   wordIndex: number;
   inProgress: boolean;
   inDictionary: boolean;
   currentWord: string;
+};
+
+export type CrossWordSaveData = {
+  words: string[];
+  inProgress: boolean;
+  tileStatuses: TileStatus[];
+  currentWords: string[];
+  currentWordIndex: number;
+  remainingGridGuesses: number;
+  remainingWordGuesses?: number;
 };
 
 export type RedeemedChallengesData = {
@@ -269,7 +280,73 @@ export class SaveData {
         inDictionary,
         inProgress,
         currentWord,
-      } as DailyWordSaveData)
+      } as DailyWingoSaveData)
+    );
+  }
+
+  /**
+   * Sets the last daily crossword guesses played.
+   * @param words The word being played.
+   * @param inProgress
+   * @param tileStatuses
+   * @param currentWords
+   * @param currentWordIndex
+   * @param remainingGridGuesses
+   * @param remainingWordGuesses
+   */
+  public static setDailyCrossWordGuesses(
+    words: string[],
+    inProgress: boolean,
+    tileStatuses: TileStatus[],
+    currentWords: string[],
+    currentWordIndex: number,
+    remainingGridGuesses: number,
+    remainingWordGuesses?: number
+  ) {
+    localStorage.setItem(
+      "dailyCrossWordGuesses",
+      JSON.stringify({
+        words,
+        inProgress,
+        tileStatuses,
+        currentWords,
+        currentWordIndex,
+        remainingGridGuesses,
+        remainingWordGuesses,
+      } as CrossWordSaveData)
+    );
+  }
+
+  /**
+   * Sets the last daily crossword guesses played.
+   * @param words The word being played.
+   * @param inProgress
+   * @param tileStatuses
+   * @param currentWords
+   * @param currentWordIndex
+   * @param remainingGridGuesses
+   * @param remainingWordGuesses
+   */
+  public static setWeeklyCrossWordGuesses(
+    words: string[],
+    inProgress: boolean,
+    tileStatuses: TileStatus[],
+    currentWords: string[],
+    currentWordIndex: number,
+    remainingGridGuesses: number,
+    remainingWordGuesses?: number
+  ) {
+    localStorage.setItem(
+      "weeklyCrossWordGuesses",
+      JSON.stringify({
+        words,
+        inProgress,
+        tileStatuses,
+        currentWords,
+        currentWordIndex,
+        remainingGridGuesses,
+        remainingWordGuesses,
+      } as CrossWordSaveData)
     );
   }
 
@@ -291,11 +368,37 @@ export class SaveData {
   /**
    * Gets the last daily word guesses played, or null if not yet played.
    */
-  public static getDailyWordGuesses(): DailyWordSaveData | null {
+  public static getDailyWordGuesses(): DailyWingoSaveData | null {
     const dailyWordGuesses = localStorage.getItem("dailyWordGuesses");
 
     if (dailyWordGuesses) {
-      return JSON.parse(dailyWordGuesses) as DailyWordSaveData;
+      return JSON.parse(dailyWordGuesses) as DailyWingoSaveData;
+    }
+
+    return null;
+  }
+
+  /**
+   * Gets the last daily crossword guesses played, or null if not yet played.
+   */
+  public static getDailyCrossWordGuesses(): CrossWordSaveData | null {
+    const dailyCrossWordGuesses = localStorage.getItem("dailyCrossWordGuesses");
+
+    if (dailyCrossWordGuesses) {
+      return JSON.parse(dailyCrossWordGuesses) as CrossWordSaveData;
+    }
+
+    return null;
+  }
+
+  /**
+   * Gets the last weekly crossword guesses played, or null if not yet played.
+   */
+  public static getWeeklyCrossWordGuesses(): CrossWordSaveData | null {
+    const weeklyCrossWordGuesses = localStorage.getItem("weeklyCrossWordGuesses");
+
+    if (weeklyCrossWordGuesses) {
+      return JSON.parse(weeklyCrossWordGuesses) as CrossWordSaveData;
     }
 
     return null;
