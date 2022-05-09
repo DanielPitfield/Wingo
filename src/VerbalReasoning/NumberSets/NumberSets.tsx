@@ -31,6 +31,7 @@ interface Props {
   theme: Theme;
   settings: SettingsData;
   setPage: (page: Page) => void;
+  onComplete?:(wasCorrect: boolean) => void;
 }
 
 /** */
@@ -182,6 +183,7 @@ const NumberSets: React.FC<Props> = (props) => {
   }
 
   function ResetGame() {
+    props.onComplete?.(true);
     setInProgress(true);
     setGuess("");
 

@@ -615,7 +615,9 @@ const WordleConfig: React.FC<Props> = (props) => {
   }, [props.page, targetWord]);
 
   function ResetGame() {
-    props.onComplete?.(currentWord.toLowerCase() === targetWord.toLowerCase());
+    if (currentWord.length > 0) {
+      props.onComplete?.(currentWord.toLowerCase() === targetWord.toLowerCase());
+    }
     setGuesses([]);
     setCurrentWord("");
     setWordIndex(0);
@@ -641,7 +643,6 @@ const WordleConfig: React.FC<Props> = (props) => {
   }
 
   function ContinueGame() {
-    props.onComplete?.(currentWord.toLowerCase() === targetWord.toLowerCase());
     setGuesses([]);
     setCurrentWord("");
     setWordIndex(0);
@@ -895,6 +896,7 @@ const WordleConfig: React.FC<Props> = (props) => {
         numGridGuesses={6}
         theme={props.theme}
         settings={props.settings}
+        onComplete={props.onComplete}
       />
     );
   }
@@ -966,6 +968,7 @@ const WordleConfig: React.FC<Props> = (props) => {
         numGridGuesses={6}
         theme={props.theme}
         settings={props.settings}
+        onComplete={props.onComplete}
       />
     );
   }
@@ -984,6 +987,7 @@ const WordleConfig: React.FC<Props> = (props) => {
         numGridGuesses={1}
         theme={props.theme}
         settings={props.settings}
+        onComplete={props.onComplete}
       />
     );
   }

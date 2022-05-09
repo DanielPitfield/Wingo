@@ -22,6 +22,7 @@ interface Props extends CountdownLettersConfigProps {
   setTheme: (theme: Theme) => void;
   setPage: (page: Page) => void;
   addGold: (gold: number) => void;
+  onComplete?:(wasCorrect: boolean) => void;
 }
 
 export function isWordValid(countdownWord: string, guessedWord: string) {
@@ -122,6 +123,7 @@ const CountdownLettersConfig: React.FC<Props> = (props) => {
   }, [setSeconds, seconds, props.timerConfig.isTimed, countdownWord]);
 
   function ResetGame() {
+    props.onComplete?.(true);
     setGuesses([]);
     setCountdownWord("");
     setCurrentWord("");

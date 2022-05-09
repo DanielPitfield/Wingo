@@ -27,6 +27,7 @@ interface Props {
   theme: Theme;
   settings: SettingsData;
   setPage: (page: Page) => void;
+  onComplete?:(wasCorrect: boolean) => void;
 }
 
 /** */
@@ -586,6 +587,7 @@ const WordCodes: React.FC<Props> = (props) => {
 
   // Restart with new word codes and set of questions
   function ResetGame() {
+    props.onComplete?.(true);
     setGuess("");
     setInProgress(true);
     setWordTiles([]);

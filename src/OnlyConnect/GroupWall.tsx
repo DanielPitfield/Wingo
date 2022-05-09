@@ -17,6 +17,7 @@ interface Props {
   theme: Theme;
   settings: SettingsData;
   setPage: (page: Page) => void;
+  onComplete?:(wasCorrect: boolean) => void;
 }
 
 export function getPrettyWord(text: string): string {
@@ -349,6 +350,7 @@ const GroupWall: React.FC<Props> = (props) => {
   }
 
   function ResetGame() {
+    props.onComplete?.(true);
     setInProgress(true);
     setGridWords(getGridWords());
     setSelectedWords([]);
