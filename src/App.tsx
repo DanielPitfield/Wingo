@@ -77,7 +77,8 @@ export type Page =
   | "campaign/area/level"
   | "challenges"
   | "settings"
-  | "random";
+  | "random"
+  | "countdown/gameshow";
 
 // This is needed for runtime; make sure it matches the Page type
 export const pages: { page: Page; title: string; description?: string; shortTitle?: string; isPlayable: boolean }[] = [
@@ -88,7 +89,7 @@ export const pages: { page: Page; title: string; description?: string; shortTitl
     title: "Daily Wingo",
     description: "Guess today's word",
     shortTitle: "Daily",
-    isPlayable: true,
+    isPlayable: false,
   },
   {
     page: "wingo/repeat",
@@ -151,14 +152,14 @@ export const pages: { page: Page; title: string; description?: string; shortTitl
     title: "Wingo Crossword (Weekly)",
     description: "Guess a crossword for this week",
     shortTitle: "Weekly Crossword",
-    isPlayable: true
+    isPlayable: false,
   },
   {
     page: "wingo/crossword/daily",
     title: "Wingo Crossword (Daily)",
     description: "Guess a crossword for today",
     shortTitle: "Daily Crossword",
-    isPlayable: true
+    isPlayable: false,
   },
   {
     page: "letters_categories",
@@ -257,6 +258,7 @@ export const pages: { page: Page; title: string; description?: string; shortTitl
   { page: "challenges", title: "Challenges", shortTitle: "Challenges", isPlayable: false },
   { page: "settings", title: "Settings", shortTitle: "Settings", isPlayable: false },
   { page: "random", title: "Random", shortTitle: "Random", isPlayable: false },
+  { page: "countdown/gameshow", title: "Countdown Gameshow", shortTitle: "Countdown Gameshow", isPlayable: false },
 ];
 
 export const App: React.FC = () => {
@@ -264,7 +266,12 @@ export const App: React.FC = () => {
 
   const [loadingState, setLoadingState] = useState<"loading" | "loaded">("loading");
   const [page, setPage] = useState<Page>("splash-screen");
+  // Is a session of randomly selecting a gamemode after completion, currently in progress?
   const [isRandomSession, setIsRandomSession] = useState(false);
+  // Is a session of alternating between countdownLetters and countdownNumbers, currently in progress?
+  const [isCountdownGameshowSession, setIsCountdownGameshowSession] = useState(false);
+  // What is the current round number of the countdown game session?
+  const [countdownGameshowRoundNumber, setCountdownGameshowRoundNumber] = useState(0);
   const [selectedCampaignArea, setSelectedCampaignArea] = useState<AreaConfig | null>(null);
   const [selectedCampaignLevel, setSelectedCampaignLevel] = useState<LevelConfig | null>(null);
   const [settings, setSettings] = useState<SettingsData>(SaveData.getSettings());
@@ -412,15 +419,39 @@ export const App: React.FC = () => {
     window.setTimeout(() => setPage(pageFromUrl || "home"), LOADING_TIMEOUT_MS + FADE_OUT_DURATION_MS);
   }, [saveData]);
 
+  // Determine if next round of countdown gameshow session is letters or numbers round
   useEffect(() => {
+    if (!isCountdownGameshowSession) {
+      return;
+    }
+
+    // https://wiki.apterous.org/15_round_format_(new)
+    const numberRounds = [3, 6, 9, 14];
+
+    if (numberRounds.includes(countdownGameshowRoundNumber)) {
+      setPage("countdown/numbers");
+    } else {
+      setPage("countdown/letters");
+    }
+  }, [countdownGameshowRoundNumber]);
+
+  useEffect(() => {
+    // Set the page to any playable page
     if (page === "random") {
       const playablePages = pages.filter((page) => page.isPlayable);
       const newPage = playablePages[Math.round(Math.random() * (playablePages.length - 1))]?.page;
       setPage(newPage);
       setIsRandomSession(true);
     }
+    // Set the round number to 1 to set the page to the first letters round
+    else if (page === "countdown/gameshow") {
+      setCountdownGameshowRoundNumber(1);
+      setIsCountdownGameshowSession(true);
+    }
+    // Pressing back (returning to home) should stop any sessions which dictate the next gamemode
     else if (page === "home") {
       setIsRandomSession(false);
+      setIsCountdownGameshowSession(false);
     }
   }, [page]);
 
@@ -500,6 +531,16 @@ export const App: React.FC = () => {
     return highestCampaignArea;
   }
 
+  function onComplete() {
+    if (isRandomSession) {
+      // New random page
+      setPage("random");
+    } else if (isCountdownGameshowSession) {
+      // Next round (letters or numbers)
+      setCountdownGameshowRoundNumber(countdownGameshowRoundNumber + 1);
+    }
+  }
+
   const pageComponent = (() => {
     const commonWingoProps = {
       saveData: saveData,
@@ -512,7 +553,7 @@ export const App: React.FC = () => {
       setTheme: setThemeIfNoPreferredSet,
       addGold: addGold,
       settings: settings,
-      onComplete: isRandomSession ? (wasCorrect: boolean) => { setPage("random"); debugger } : undefined
+      onComplete: onComplete,
     };
 
     switch (page) {
@@ -885,7 +926,7 @@ export const App: React.FC = () => {
             theme={theme}
             settings={settings}
             setPage={setPage}
-            onComplete={commonWingoProps.onComplete}            
+            onComplete={commonWingoProps.onComplete}
           />
         );
 
@@ -1008,7 +1049,7 @@ export const App: React.FC = () => {
             theme={theme}
             settings={settings}
             setPage={setPage}
-            onComplete={commonWingoProps.onComplete}            
+            onComplete={commonWingoProps.onComplete}
           />
         );
 
@@ -1033,7 +1074,14 @@ export const App: React.FC = () => {
         );
 
       case "puzzle/sequence":
-        return <PuzzleConfig theme={theme} setTheme={setThemeIfNoPreferredSet} settings={settings} onComplete={commonWingoProps.onComplete} />;
+        return (
+          <PuzzleConfig
+            theme={theme}
+            setTheme={setThemeIfNoPreferredSet}
+            settings={settings}
+            onComplete={commonWingoProps.onComplete}
+          />
+        );
 
       case "challenges":
         return <ChallengesInfo settings={settings} addGold={addGold} />;
@@ -1042,6 +1090,9 @@ export const App: React.FC = () => {
         return <Settings settings={settings} onSettingsChange={setSettings} />;
 
       case "random":
+        return null;
+
+      case "countdown/gameshow":
         return null;
     }
   })();

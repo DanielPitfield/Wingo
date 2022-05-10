@@ -159,6 +159,7 @@ export const LobbyMenu: React.FC<Props> = (props) => {
             {renderGameModeTile("wingo/crossword/daily")}
             {renderGameModeTile("countdown/letters")}
             {renderGameModeTile("random")}
+            {renderGameModeTile("countdown/gameshow")}
           </ul>
         </div>
 
