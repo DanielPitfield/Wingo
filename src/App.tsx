@@ -522,7 +522,6 @@ export const App: React.FC = () => {
 
     setLingoWordLength(nextRoundInfo?.wordLength);
     setPage(nextRoundInfo?.mode as Page);
-    
   }, [lingoGameshowRoundNumber]);
 
   useEffect(() => {
@@ -782,10 +781,16 @@ export const App: React.FC = () => {
           <WordleConfig
             {...commonWingoProps}
             mode="repeat"
-            firstLetterProvided={gameOptionToggles.find((x) => x.page === "wingo/repeat")?.firstLetter || false}
+            firstLetterProvided={
+              isLingoGameshowSession
+                ? true
+                : gameOptionToggles.find((x) => x.page === "wingo/repeat")?.firstLetter || false
+            }
             showHint={gameOptionToggles.find((x) => x.page === "wingo/repeat")?.showHint || true}
             timerConfig={
-              gameOptionToggles.find((x) => x.page === "wingo/repeat")?.timer
+              isLingoGameshowSession
+                ? { isTimed: true, seconds: 30 }
+                : gameOptionToggles.find((x) => x.page === "wingo/repeat")?.timer
                 ? { isTimed: true, seconds: 30 } // TODO: Confgiure timer value
                 : { isTimed: false }
             }
