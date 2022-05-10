@@ -37,7 +37,7 @@ interface Props {
   onSubmitCountdownWord: (word: string) => void;
   onSubmitLetter: (letter: string) => void;
   onBackspace: () => void;
-  ResetGame: () => void;
+  ResetGame: (score: number | null) => void;
   ContinueGame: () => void;
 }
 
@@ -415,7 +415,8 @@ const CountdownLetters: React.FC<Props> = (props) => {
           <Button
             mode={"accept"}
             settings={props.settings}
-            onClick={() => props.ResetGame()}
+            // Reset the game (but callback the score that was just achieved)
+            onClick={() => props.ResetGame(selectedFinalGuess ? selectedFinalGuess.length : 0)}
             additionalProps={{ autoFocus: true }}
           >
             Restart

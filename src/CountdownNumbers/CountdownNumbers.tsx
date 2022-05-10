@@ -45,7 +45,7 @@ interface Props {
   onSubmitCountdownExpression: (numberExpression: number[]) => void;
   onSubmitNumber: (number: number) => void;
   onBackspace: () => void;
-  resetGame: () => void;
+  resetGame: (score: number | null) => void;
   setOperator: (operator: Guess["operator"]) => void;
   addGold: (gold: number) => void;
 }
@@ -248,15 +248,47 @@ const CountdownNumbers: React.FC<Props> = (props) => {
     return props.closestGuessSoFar;
   }
 
+  function determineDifference(): number | null {
+    if (!props.targetNumber) {
+      return null;
+    }
+        // Evaluate player's attempt(s)
+    const best_guess = determineBestGuess();
+
+    if (!best_guess) {
+      return null;
+    }
+
+    const difference = Math.abs(best_guess - props.targetNumber);
+
+    return difference;
+  }
+
+  function determineScore(): number | null {
+    if (!props.targetNumber) {
+      return null;
+    }
+
+    const difference = determineDifference();
+
+    if (!difference) {
+      return null;
+    }
+
+    // Difference is 0, score is 10
+    const score = 10 - difference;
+
+    return score;
+  }
+
   function displayOutcome() {
     if (props.inProgress || !props.hasTimerEnded || !props.targetNumber) {
       return;
     }
 
-    // Evaluate player's attempt(s)
-    const best_guess = determineBestGuess();
+    const score = determineScore();
 
-    if (best_guess === null) {
+    if (score === null) {
       return (
         <>
           <MessageNotification type="error">
@@ -267,11 +299,6 @@ const CountdownNumbers: React.FC<Props> = (props) => {
         </>
       );
     } else {
-      const difference = Math.abs(best_guess - props.targetNumber);
-
-      // Guess the target number exactly, difference is 0, score is 10
-      const score = 10 - difference;
-
       if (score === 10) {
         return (
           <MessageNotification type="success">
@@ -283,7 +310,7 @@ const CountdownNumbers: React.FC<Props> = (props) => {
       } else if (score >= 1 && score <= 9) {
         return (
           <MessageNotification type="success">
-            You were <strong>{difference}</strong> away from the target number
+            You were <strong>{determineDifference()}</strong> away from the target number
             <br />
             <strong>{score}</strong> points
           </MessageNotification>
@@ -291,7 +318,7 @@ const CountdownNumbers: React.FC<Props> = (props) => {
       } else {
         return (
           <MessageNotification type="error">
-            You were {difference} away from the target number
+            You were {determineDifference()} away from the target number
             <br />
             <strong>0</strong> points
           </MessageNotification>
@@ -337,7 +364,7 @@ const CountdownNumbers: React.FC<Props> = (props) => {
 
           <Button
             mode={"accept"}
-            onClick={() => props.resetGame()}
+            onClick={() => props.resetGame(determineScore())}
             settings={props.settings}
             additionalProps={{ autoFocus: true }}
           >

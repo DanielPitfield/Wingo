@@ -531,11 +531,16 @@ export const App: React.FC = () => {
     return highestCampaignArea;
   }
 
-  function onComplete() {
+  function onComplete(wasCorrect: boolean, score?: number | null) {
     if (isRandomSession) {
       // New random page
       setPage("random");
     } else if (isCountdownGameshowSession) {
+      if (score !== null) {
+        // TODO: Add score to persistent gameshow score counter
+        console.log(score);
+      }
+
       // Next round (letters or numbers)
       setCountdownGameshowRoundNumber(countdownGameshowRoundNumber + 1);
     }
