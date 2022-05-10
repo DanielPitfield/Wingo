@@ -23,6 +23,7 @@ interface Props extends CountdownLettersConfigProps {
   setPage: (page: Page) => void;
   addGold: (gold: number) => void;
   onComplete?: (wasCorrect: boolean, score: number | null) => void;
+  gameshowScore: number | null;
 }
 
 export function isWordValid(countdownWord: string, guessedWord: string) {
@@ -263,6 +264,7 @@ const CountdownLettersConfig: React.FC<Props> = (props) => {
       ContinueGame={ContinueGame}
       setPage={props.setPage}
       addGold={props.addGold}
+      gameshowScore={props.gameshowScore}
     ></CountdownLetters>
   );
 };

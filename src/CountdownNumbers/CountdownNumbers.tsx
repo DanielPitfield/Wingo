@@ -48,6 +48,7 @@ interface Props {
   resetGame: (score: number | null) => void;
   setOperator: (operator: Guess["operator"]) => void;
   addGold: (gold: number) => void;
+  gameshowScore: number | null;
 }
 
 /**
@@ -252,7 +253,7 @@ const CountdownNumbers: React.FC<Props> = (props) => {
     if (!props.targetNumber) {
       return null;
     }
-        // Evaluate player's attempt(s)
+    // Evaluate player's attempt(s)
     const best_guess = determineBestGuess();
 
     if (!best_guess) {
@@ -327,8 +328,23 @@ const CountdownNumbers: React.FC<Props> = (props) => {
     }
   }
 
+  function displayGameshowScore() {
+    if (props.gameshowScore === null) {
+      return;
+    }
+
+    return (
+      <MessageNotification type="default">
+        <strong>Gameshow points: </strong>
+        {props.gameshowScore}
+      </MessageNotification>
+    );
+  }
+
   return (
     <div className="App" style={{ backgroundImage: `url(${props.theme.backgroundImageSrc})`, backgroundSize: "100%" }}>
+      <div className="countdown-gameshow-score">{displayGameshowScore()}</div>
+
       <div className="countdown-numbers-grid">{populateGrid(props.expressionLength)}</div>
 
       {props.inProgress && (
@@ -368,7 +384,7 @@ const CountdownNumbers: React.FC<Props> = (props) => {
             settings={props.settings}
             additionalProps={{ autoFocus: true }}
           >
-            Restart
+            {props.gameshowScore ? "Next round" : "Restart"}
           </Button>
         </>
       )}

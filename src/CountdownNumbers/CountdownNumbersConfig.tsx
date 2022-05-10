@@ -18,6 +18,7 @@ interface Props {
   setPage: (page: Page) => void;
   addGold: (gold: number) => void;
   onComplete?: (wasCorrect: boolean, score: number | null) => void;
+  gameshowScore: number | null;
 }
 
 export const operators: { name: "÷" | "-" | "+" | "×"; function: (num1: number, num2: number) => number }[] = [
@@ -497,6 +498,7 @@ const CountdownNumbersConfig: React.FC<Props> = (props) => {
       setPage={props.setPage}
       setOperator={(operator) => setCurrentGuess({ ...currentGuess, operator })}
       addGold={props.addGold}
+      gameshowScore={props.gameshowScore}
     />
   );
 };

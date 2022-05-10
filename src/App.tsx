@@ -272,6 +272,8 @@ export const App: React.FC = () => {
   const [isCountdownGameshowSession, setIsCountdownGameshowSession] = useState(false);
   // What is the current round number of the countdown game session?
   const [countdownGameshowRoundNumber, setCountdownGameshowRoundNumber] = useState(0);
+  // The cumulative score for the countdown gameshow session
+  const [countdownGameshowScore, setCountdownGameshowScore] = useState(0);
   const [selectedCampaignArea, setSelectedCampaignArea] = useState<AreaConfig | null>(null);
   const [selectedCampaignLevel, setSelectedCampaignLevel] = useState<LevelConfig | null>(null);
   const [settings, setSettings] = useState<SettingsData>(SaveData.getSettings());
@@ -536,9 +538,8 @@ export const App: React.FC = () => {
       // New random page
       setPage("random");
     } else if (isCountdownGameshowSession) {
-      if (score !== null) {
-        // TODO: Add score to persistent gameshow score counter
-        console.log(score);
+      if (score) {
+        setCountdownGameshowScore(countdownGameshowScore + score);
       }
 
       // Next round (letters or numbers)
@@ -875,6 +876,7 @@ export const App: React.FC = () => {
             setPage={setPage}
             addGold={addGold}
             onComplete={commonWingoProps.onComplete}
+            gameshowScore={isCountdownGameshowSession ? countdownGameshowScore : null}
           />
         );
 
@@ -913,6 +915,7 @@ export const App: React.FC = () => {
             setPage={setPage}
             addGold={addGold}
             onComplete={commonWingoProps.onComplete}
+            gameshowScore={isCountdownGameshowSession ? countdownGameshowScore : null}
           />
         );
 
