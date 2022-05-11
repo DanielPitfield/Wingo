@@ -39,7 +39,7 @@ interface Props {
   onBackspace: () => void;
   ResetGame: (score: number | null) => void;
   ContinueGame: () => void;
-  gameshowScore: number | null;
+  gameshowScore?: number;
 }
 
 const CountdownLetters: React.FC<Props> = (props) => {
@@ -390,19 +390,6 @@ const CountdownLetters: React.FC<Props> = (props) => {
     }
   }
 
-  function displayGameshowScore() {
-    if (props.gameshowScore === null) {
-      return;
-    }
-
-    return (
-      <MessageNotification type="default">
-        <strong>Gameshow points: </strong>
-        {props.gameshowScore}
-      </MessageNotification>
-    );
-  }
-
   // Set the selected final guess to the longest word (as long as `manualGuessSelectionMade` is false)
   React.useEffect(() => {
     // If a manual selection has been made
@@ -420,9 +407,22 @@ const CountdownLetters: React.FC<Props> = (props) => {
     setSelectedFinalGuess(longestWord);
   }, [manualGuessSelectionMade, props.guesses]);
 
+  function displayGameshowScore() {
+    if (props.gameshowScore === undefined || props.gameshowScore === null) {
+      return;
+    }
+
+    return (
+      <MessageNotification type="default">
+        <strong>Gameshow points: </strong>
+        {props.gameshowScore}
+      </MessageNotification>
+    );
+  }
+
   return (
     <div className="App" style={{ backgroundImage: `url(${props.theme.backgroundImageSrc})`, backgroundSize: "100%" }}>
-      <div className="countdown-gameshow-score">{displayGameshowScore()}</div>
+      {props.gameshowScore !== undefined && <div className="countdown-gameshow-score">{displayGameshowScore()}</div>}
 
       <div>{displayOutcome()}</div>
 
@@ -435,7 +435,7 @@ const CountdownLetters: React.FC<Props> = (props) => {
             onClick={() => props.ResetGame(selectedFinalGuess ? selectedFinalGuess.length : 0)}
             additionalProps={{ autoFocus: true }}
           >
-            {props.gameshowScore ? "Next round" : "Restart"}
+            {props.gameshowScore !== undefined ? "Next round" : "Restart"}
           </Button>
         )}
       </div>

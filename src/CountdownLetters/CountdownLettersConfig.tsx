@@ -23,7 +23,7 @@ interface Props extends CountdownLettersConfigProps {
   setPage: (page: Page) => void;
   addGold: (gold: number) => void;
   onComplete?: (wasCorrect: boolean, score: number | null) => void;
-  gameshowScore: number | null;
+  gameshowScore?: number;
 }
 
 export function isWordValid(countdownWord: string, guessedWord: string) {

@@ -28,6 +28,7 @@ import NumberSets from "./VerbalReasoning/NumberSets/NumberSets";
 import Algebra from "./VerbalReasoning/Algebra/Algebra";
 import { ChallengesInfo } from "./Challenges/ChallengesInfo";
 import WordCodes from "./VerbalReasoning/WordCodes";
+import { CountdownGameshow } from "./CountdownGameshow";
 
 const wordLength = 5;
 const numGuesses = 6;
@@ -322,15 +323,9 @@ export const App: React.FC = () => {
   // Is a session of randomly selecting a gamemode after completion, currently in progress?
   const [isRandomSession, setIsRandomSession] = useState(false);
 
-  // Is a session of alternating between countdownLetters and countdownNumbers, currently in progress?
-  const [isCountdownGameshowSession, setIsCountdownGameshowSession] = useState(false);
-  // What is the current round number of the countdown game session?
-  const [countdownGameshowRoundNumber, setCountdownGameshowRoundNumber] = useState(0);
-  // The cumulative score for the countdown gameshow session
-  const [countdownGameshowScore, setCountdownGameshowScore] = useState(0);
-
   // Is a session of alternating between various lengths of Wingo and Puzzle Wingos, currently in progress?
   const [isLingoGameshowSession, setIsLingoGameshowSession] = useState(false);
+
   // What is the current round number of the lingo game session?
   const [lingoGameshowRoundNumber, setLingoGameshowRoundNumber] = useState(0);
   // The cumulative score for the lingo gameshow session
@@ -485,24 +480,6 @@ export const App: React.FC = () => {
     window.setTimeout(() => setPage(pageFromUrl || "home"), LOADING_TIMEOUT_MS + FADE_OUT_DURATION_MS);
   }, [saveData]);
 
-  // Determine if next round of countdown gameshow session is letters or numbers round
-  useEffect(() => {
-    if (!isCountdownGameshowSession) {
-      return;
-    }
-
-    // TODO: Configure total length of countdown gameshow, how many letter rounds and how many number rounds (from lobby menu)
-
-    // https://wiki.apterous.org/15_round_format_(new)
-    const numberRounds = [3, 6, 9, 14];
-
-    if (numberRounds.includes(countdownGameshowRoundNumber)) {
-      setPage("countdown/numbers");
-    } else {
-      setPage("countdown/letters");
-    }
-  }, [countdownGameshowRoundNumber]);
-
   // Determine if next round of lingo gameshow session is normal or puzzle wingo and what wordLength?
   useEffect(() => {
     if (!isLingoGameshowSession) {
@@ -532,11 +509,6 @@ export const App: React.FC = () => {
       setPage(newPage);
       setIsRandomSession(true);
     }
-    // Set the round number to 1 to set the page to the first letters round
-    else if (page === "countdown/gameshow") {
-      setCountdownGameshowRoundNumber(1);
-      setIsCountdownGameshowSession(true);
-    }
     // Set the round number to 1 to set the page to the first Wingo round
     else if (page === "lingo/gameshow") {
       setLingoGameshowRoundNumber(1);
@@ -545,7 +517,6 @@ export const App: React.FC = () => {
     // Pressing back (returning to home) should stop any sessions (which dictate the next gamemode)
     else if (page === "home") {
       setIsRandomSession(false);
-      setIsCountdownGameshowSession(false);
       setIsLingoGameshowSession(false);
     }
   }, [page]);
@@ -630,19 +601,7 @@ export const App: React.FC = () => {
     if (isRandomSession) {
       // New random page
       setPage("random");
-    } else if (isCountdownGameshowSession) {
-      if (score) {
-        setCountdownGameshowScore(countdownGameshowScore + score);
-      }
-
-      // More rounds to go
-      if (countdownGameshowRoundNumber < 14) {
-        // Next round (letters or numbers)
-        setCountdownGameshowRoundNumber(countdownGameshowRoundNumber + 1);
-      }
-    } else if (isLingoGameshowSession) {
-      // Next round (wingo or puzzle wingo)
-      setLingoGameshowRoundNumber(lingoGameshowRoundNumber + 1);
+      return;
     }
   }
 
@@ -981,7 +940,6 @@ export const App: React.FC = () => {
             setPage={setPage}
             addGold={addGold}
             onComplete={commonWingoProps.onComplete}
-            gameshowScore={isCountdownGameshowSession ? countdownGameshowScore : null}
           />
         );
 
@@ -1020,7 +978,6 @@ export const App: React.FC = () => {
             setPage={setPage}
             addGold={addGold}
             onComplete={commonWingoProps.onComplete}
-            gameshowScore={isCountdownGameshowSession ? countdownGameshowScore : null}
           />
         );
 
@@ -1206,7 +1163,17 @@ export const App: React.FC = () => {
         return null;
 
       case "countdown/gameshow":
-        return null;
+        return (
+          <CountdownGameshow
+            settings={settings}
+            setPage={setPage}
+            page={page}
+            themes={[Themes.GenericLetterCountdown, Themes.GenericNumberCountdown]}
+            setTheme={setThemeIfNoPreferredSet}
+            addGold={addGold}
+            onComplete={commonWingoProps.onComplete}
+          />
+        );
 
       case "lingo/gameshow":
         return null;

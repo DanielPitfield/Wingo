@@ -18,7 +18,7 @@ interface Props {
   setPage: (page: Page) => void;
   addGold: (gold: number) => void;
   onComplete?: (wasCorrect: boolean, score: number | null) => void;
-  gameshowScore: number | null;
+  gameshowScore?: number;
 }
 
 export const operators: { name: "÷" | "-" | "+" | "×"; function: (num1: number, num2: number) => number }[] = [
