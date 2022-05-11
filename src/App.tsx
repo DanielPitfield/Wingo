@@ -29,6 +29,7 @@ import Algebra from "./VerbalReasoning/Algebra/Algebra";
 import { ChallengesInfo } from "./Challenges/ChallengesInfo";
 import WordCodes from "./VerbalReasoning/WordCodes";
 import { CountdownGameshow } from "./CountdownGameshow";
+import { LingoGameshow } from "./LingoGameshow";
 
 const wordLength = 5;
 const numGuesses = 6;
@@ -45,56 +46,6 @@ const puzzleLeaveNumBlanks = 3;
 const countdown_numbers_NumOperands = 6;
 const countdown_numbers_ExpressionLength = 5;
 const countdown_numbers_NumGuesses = 5;
-
-const lingoRounds = [
-  /* NOTE: firstLetterProvided for all rounds */
-
-  /* --- ROUND 1 - FOUR LETTER LINGOS --- */
-
-  // 4 rounds of four letter lingos (£200 for correct answer)
-  { roundNumber: 1, mode: "wingo/repeat", wordLength: 4, points: 200 },
-  { roundNumber: 2, mode: "wingo/repeat", wordLength: 4, points: 200 },
-  { roundNumber: 3, mode: "wingo/repeat", wordLength: 4, points: 200 },
-  { roundNumber: 4, mode: "wingo/repeat", wordLength: 4, points: 200 },
-
-  // 9 letter puzzle word (starts at £300, -£40 for each revealed letter after first)
-  { roundNumber: 5, mode: "wingo/puzzle", wordLength: 9, points: 300 },
-
-  /* --- ROUND 2 - FIVE LETTER LINGOS --- */
-
-  // 3 rounds of five letter lingos (£300 for correct answer)
-  { roundNumber: 6, mode: "wingo/repeat", wordLength: 5, points: 300 },
-  { roundNumber: 7, mode: "wingo/repeat", wordLength: 5, points: 300 },
-  { roundNumber: 8, mode: "wingo/repeat", wordLength: 5, points: 300 },
-
-  // 10 letter puzzle word (starts at £400, -£60 for each revealed letter after first)
-  { roundNumber: 9, mode: "wingo/puzzle", wordLength: 10, points: 400 },
-
-  /* --- ROUND 3 - FOUR AND FIVE LETTER LINGOS --- */
-
-  // 2 rounds of four letter lingos (starts at £500, -£50 for each subsequent guess)
-  { roundNumber: 10, mode: "wingo/repeat", wordLength: 4, points: 500 },
-  { roundNumber: 11, mode: "wingo/repeat", wordLength: 4, points: 500 },
-
-  // 11 letter puzzle word (starts at £750, -£130 for each revealed letter after first)
-  { roundNumber: 12, mode: "wingo/puzzle", wordLength: 11, points: 750 },
-
-  // 2 rounds of five letter lingos (starts at £500, -£50 for each subsequent guess)
-  { roundNumber: 13, mode: "wingo/repeat", wordLength: 4, points: 500 },
-  { roundNumber: 14, mode: "wingo/repeat", wordLength: 4, points: 500 },
-
-  // 11 letter puzzle word (starts at £750, -£130 for each revealed letter after first)
-  { roundNumber: 15, mode: "wingo/puzzle", wordLength: 11, points: 750 },
-
-  /* --- ROUND 4 - FINAL (90 seconds) --- */
-
-  // Four letter lingo (for half of points earned so far)
-  { roundNumber: 16, mode: "wingo/repeat", wordLength: 4, points: 0 },
-  // Five letter lingo (for all points earned so far)
-  { roundNumber: 17, mode: "wingo/repeat", wordLength: 5, points: 0 },
-  // Six letter lingo (for double of points earned so far)
-  { roundNumber: 18, mode: "wingo/repeat", wordLength: 6, points: 0 },
-];
 
 export type Page =
   | "splash-screen"
@@ -323,16 +274,6 @@ export const App: React.FC = () => {
   // Is a session of randomly selecting a gamemode after completion, currently in progress?
   const [isRandomSession, setIsRandomSession] = useState(false);
 
-  // Is a session of alternating between various lengths of Wingo and Puzzle Wingos, currently in progress?
-  const [isLingoGameshowSession, setIsLingoGameshowSession] = useState(false);
-
-  // What is the current round number of the lingo game session?
-  const [lingoGameshowRoundNumber, setLingoGameshowRoundNumber] = useState(0);
-  // The cumulative score for the lingo gameshow session
-  const [lingoGameshowScore, setLingoGameshowScore] = useState(0);
-  // Change as needed before rounds (for lingo gameshow)
-  const [lingoWordLength, setLingoWordLength] = useState(wordLength);
-
   const [selectedCampaignArea, setSelectedCampaignArea] = useState<AreaConfig | null>(null);
   const [selectedCampaignLevel, setSelectedCampaignLevel] = useState<LevelConfig | null>(null);
   const [settings, setSettings] = useState<SettingsData>(SaveData.getSettings());
@@ -480,27 +421,6 @@ export const App: React.FC = () => {
     window.setTimeout(() => setPage(pageFromUrl || "home"), LOADING_TIMEOUT_MS + FADE_OUT_DURATION_MS);
   }, [saveData]);
 
-  // Determine if next round of lingo gameshow session is normal or puzzle wingo and what wordLength?
-  useEffect(() => {
-    if (!isLingoGameshowSession) {
-      return;
-    }
-
-    // TODO: Configure total length of custom wingo gameshow, how many 4,5,6 wordLength wingo rounds and how many puzzle wingo rounds (from lobby menu)
-
-    const nextRoundInfo = lingoRounds.find((roundInfo) => roundInfo.roundNumber === lingoGameshowRoundNumber);
-
-    // Missing required information for next round
-    if (!nextRoundInfo || !nextRoundInfo.wordLength || !nextRoundInfo.mode) {
-      // Stop gameshow session by returning to home page
-      setPage("home");
-      return;
-    }
-
-    setLingoWordLength(nextRoundInfo?.wordLength);
-    setPage(nextRoundInfo?.mode as Page);
-  }, [lingoGameshowRoundNumber]);
-
   useEffect(() => {
     // Set the page to any playable page
     if (page === "random") {
@@ -509,15 +429,9 @@ export const App: React.FC = () => {
       setPage(newPage);
       setIsRandomSession(true);
     }
-    // Set the round number to 1 to set the page to the first Wingo round
-    else if (page === "lingo/gameshow") {
-      setLingoGameshowRoundNumber(1);
-      setIsLingoGameshowSession(true);
-    }
     // Pressing back (returning to home) should stop any sessions (which dictate the next gamemode)
     else if (page === "home") {
       setIsRandomSession(false);
-      setIsLingoGameshowSession(false);
     }
   }, [page]);
 
@@ -597,11 +511,12 @@ export const App: React.FC = () => {
     return highestCampaignArea;
   }
 
-  function onComplete(wasCorrect: boolean, score?: number | null) {
-    if (isRandomSession) {
+  function onComplete(wasCorrect: boolean) {
+    if (!isRandomSession) {
+      return;
+    } else {
       // New random page
       setPage("random");
-      return;
     }
   }
 
@@ -740,21 +655,15 @@ export const App: React.FC = () => {
           <WordleConfig
             {...commonWingoProps}
             mode="repeat"
-            firstLetterProvided={
-              isLingoGameshowSession
-                ? true
-                : gameOptionToggles.find((x) => x.page === "wingo/repeat")?.firstLetter || false
-            }
+            firstLetterProvided={gameOptionToggles.find((x) => x.page === "wingo/repeat")?.firstLetter || false}
             showHint={gameOptionToggles.find((x) => x.page === "wingo/repeat")?.showHint || true}
             timerConfig={
-              isLingoGameshowSession
-                ? { isTimed: true, seconds: 30 }
-                : gameOptionToggles.find((x) => x.page === "wingo/repeat")?.timer
+              gameOptionToggles.find((x) => x.page === "wingo/repeat")?.timer
                 ? { isTimed: true, seconds: 30 } // TODO: Confgiure timer value
                 : { isTimed: false }
             }
             keyboard={gameOptionToggles.find((x) => x.page === "wingo/repeat")?.keyboard || true}
-            defaultWordLength={isLingoGameshowSession ? lingoWordLength : wordLength}
+            defaultWordLength={wordLength}
             enforceFullLengthGuesses={false}
           />
         );
@@ -826,7 +735,7 @@ export const App: React.FC = () => {
                 : { isTimed: false }
             }
             keyboard={gameOptionToggles.find((x) => x.page === "wingo/puzzle")?.keyboard || true}
-            defaultWordLength={isLingoGameshowSession ? lingoWordLength : wordLength_puzzle}
+            defaultWordLength={wordLength_puzzle}
             defaultnumGuesses={numGuesses_puzzle}
             enforceFullLengthGuesses={true}
           />
@@ -1171,12 +1080,11 @@ export const App: React.FC = () => {
             themes={[Themes.GenericLetterCountdown, Themes.GenericNumberCountdown]}
             setTheme={setThemeIfNoPreferredSet}
             addGold={addGold}
-            onComplete={commonWingoProps.onComplete}
           />
         );
 
       case "lingo/gameshow":
-        return null;
+        return <LingoGameshow commonWingoProps={commonWingoProps} />;
     }
   })();
 

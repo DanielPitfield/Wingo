@@ -13,7 +13,6 @@ interface Props {
   themes: Theme[];
   setTheme: (theme: Theme) => void;
   addGold: (gold: number) => void;
-  onComplete?: (wasCorrect: boolean, score: number | null) => void;
 }
 
 export const CountdownGameshow: React.FC<Props> = (props) => {
@@ -49,7 +48,7 @@ export const CountdownGameshow: React.FC<Props> = (props) => {
       return;
     }
 
-    // TODO: Configure total length of countdown gameshow, how many letter rounds and how many number rounds (from lobby menu)
+    // TODO: Configure total length of custom countdown gameshow, how many letter rounds and how many number rounds (from lobby menu)
 
     // https://wiki.apterous.org/15_round_format_(new)
     const numberRounds = [3, 6, 9, 14];

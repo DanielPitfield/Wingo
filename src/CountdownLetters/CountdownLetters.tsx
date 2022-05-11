@@ -422,7 +422,7 @@ const CountdownLetters: React.FC<Props> = (props) => {
 
   return (
     <div className="App" style={{ backgroundImage: `url(${props.theme.backgroundImageSrc})`, backgroundSize: "100%" }}>
-      {props.gameshowScore !== undefined && <div className="countdown-gameshow-score">{displayGameshowScore()}</div>}
+      {props.gameshowScore !== undefined && <div className="gameshow-score">{displayGameshowScore()}</div>}
 
       <div>{displayOutcome()}</div>
 

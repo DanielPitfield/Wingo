@@ -45,6 +45,7 @@ interface Props {
   ResetGame: () => void;
   ContinueGame: () => void;
   setTheme: (theme: Theme) => void;
+  gameshowScore?: number;
 }
 
 const Wordle: React.FC<Props> = (props) => {
@@ -295,11 +296,25 @@ const Wordle: React.FC<Props> = (props) => {
     return () => clearInterval(intervalId);
   }, [props.mode, props.inProgress]);
 
+  function displayGameshowScore() {
+    if (props.gameshowScore === undefined || props.gameshowScore === null) {
+      return;
+    }
+
+    return (
+      <MessageNotification type="default">
+        <strong>Gameshow points: </strong>
+        {props.gameshowScore}
+      </MessageNotification>
+    );
+  }
+
   return (
     <div
       className="App"
       style={{ backgroundImage: props.theme && `url(${props.theme.backgroundImageSrc})`, backgroundSize: "100%" }}
     >
+      {props.gameshowScore !== undefined && <div className="gameshow-score">{displayGameshowScore()}</div>}
       <div>{displayOutcome()}</div>
       {props.mode === "daily" && !props.inProgress && (
         <MessageNotification type="default">
@@ -319,7 +334,7 @@ const Wordle: React.FC<Props> = (props) => {
             }
             additionalProps={{ autoFocus: true }}
           >
-            {props.finishingButtonText || (isOutcomeContinue() ? "Continue" : "Restart")}
+            {props.gameshowScore !== undefined ? "Next round" : props.finishingButtonText || (isOutcomeContinue() ? "Continue" : "Restart")}
           </Button>
         )}
       </div>
