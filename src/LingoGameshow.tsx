@@ -6,20 +6,19 @@ import { Theme } from "./Themes";
 import WordleConfig from "./WordleConfig";
 
 interface Props {
-  commonWingoProps:
-  {
-    saveData: Storage,
-    defaultnumGuesses: number,
-    puzzleRevealMs: number,
-    puzzleLeaveNumBlanks: number,
-    page: Page,
-    theme: Theme,
+  commonWingoProps: {
+    saveData: Storage;
+    defaultnumGuesses: number;
+    puzzleRevealMs: number;
+    puzzleLeaveNumBlanks: number;
+    page: Page;
+    theme: Theme;
     setPage: (page: Page) => void;
     setTheme: (theme: Theme) => void;
     addGold: (gold: number) => void;
-    settings: SettingsData,
-    onComplete: (wasCorrect: boolean) => void,
-  }  
+    settings: SettingsData;
+    onComplete: (wasCorrect: boolean) => void;
+  };
 }
 
 export const LingoGameshow: React.FC<Props> = (props) => {
@@ -34,78 +33,76 @@ export const LingoGameshow: React.FC<Props> = (props) => {
     /* --- ROUND 1 - FOUR LETTER LINGOS --- */
 
     // 4 rounds of four letter lingos (£200 for correct answer)
-    { roundNumber: 1, isPuzzle: false, wordLength: 4, points: 200 },
-    { roundNumber: 2, isPuzzle: false, wordLength: 4, points: 200 },
-    { roundNumber: 3, isPuzzle: false, wordLength: 4, points: 200 },
-    { roundNumber: 4, isPuzzle: false, wordLength: 4, points: 200 },
+    { roundNumber: 1, isPuzzle: false, wordLength: 4, basePoints: 200, pointsLostPerGuess: 0 },
+    { roundNumber: 2, isPuzzle: false, wordLength: 4, basePoints: 200, pointsLostPerGuess: 0 },
+    { roundNumber: 3, isPuzzle: false, wordLength: 4, basePoints: 200, pointsLostPerGuess: 0 },
+    { roundNumber: 4, isPuzzle: false, wordLength: 4, basePoints: 200, pointsLostPerGuess: 0 },
 
     // 9 letter puzzle word (starts at £300, -£40 for each revealed letter after first)
-    { roundNumber: 5, isPuzzle: true, wordLength: 9, points: 300 },
+    { roundNumber: 5, isPuzzle: true, wordLength: 9, basePoints: 300, pointsLostPerGuess: 40 },
 
     /* --- ROUND 2 - FIVE LETTER LINGOS --- */
 
     // 3 rounds of five letter lingos (£300 for correct answer)
-    { roundNumber: 6, isPuzzle: false, wordLength: 5, points: 300 },
-    { roundNumber: 7, isPuzzle: false, wordLength: 5, points: 300 },
-    { roundNumber: 8, isPuzzle: false, wordLength: 5, points: 300 },
+    { roundNumber: 6, isPuzzle: false, wordLength: 5, basePoints: 300, pointsLostPerGuess: 0 },
+    { roundNumber: 7, isPuzzle: false, wordLength: 5, basePoints: 300, pointsLostPerGuess: 0 },
+    { roundNumber: 8, isPuzzle: false, wordLength: 5, basePoints: 300, pointsLostPerGuess: 0 },
 
     // 10 letter puzzle word (starts at £400, -£60 for each revealed letter after first)
-    { roundNumber: 9, isPuzzle: true, wordLength: 10, points: 400 },
+    { roundNumber: 9, isPuzzle: true, wordLength: 10, basePoints: 400, pointsLostPerGuess: 60 },
 
     /* --- ROUND 3 - FOUR AND FIVE LETTER LINGOS --- */
 
     // 2 rounds of four letter lingos (starts at £500, -£50 for each subsequent guess)
-    { roundNumber: 10, isPuzzle: false, wordLength: 4, points: 500 },
-    { roundNumber: 11, isPuzzle: false, wordLength: 4, points: 500 },
+    { roundNumber: 10, isPuzzle: false, wordLength: 4, basePoints: 500, pointsLostPerGuess: 50 },
+    { roundNumber: 11, isPuzzle: false, wordLength: 4, basePoints: 500, pointsLostPerGuess: 50 },
 
     // 11 letter puzzle word (starts at £750, -£130 for each revealed letter after first)
-    { roundNumber: 12, isPuzzle: true, wordLength: 11, points: 750 },
+    { roundNumber: 12, isPuzzle: true, wordLength: 11, basePoints: 750, pointsLostPerGuess: 130 },
 
     // 2 rounds of five letter lingos (starts at £500, -£50 for each subsequent guess)
-    { roundNumber: 13, isPuzzle: false, wordLength: 4, points: 500 },
-    { roundNumber: 14, isPuzzle: false, wordLength: 4, points: 500 },
+    { roundNumber: 13, isPuzzle: false, wordLength: 4, basePoints: 500, pointsLostPerGuess: 50 },
+    { roundNumber: 14, isPuzzle: false, wordLength: 4, basePoints: 500, pointsLostPerGuess: 50 },
 
     // 11 letter puzzle word (starts at £750, -£130 for each revealed letter after first)
-    { roundNumber: 15, isPuzzle: true, wordLength: 11, points: 750 },
+    { roundNumber: 15, isPuzzle: true, wordLength: 11, basePoints: 750, pointsLostPerGuess: 130 },
 
     /* --- ROUND 4 - FINAL (90 seconds) --- */
 
-    // Four letter lingo (for half of points earned so far)
-    { roundNumber: 16, isPuzzle: false, wordLength: 4, points: 0 },
-    // Five letter lingo (for all points earned so far)
-    { roundNumber: 17, isPuzzle: false, wordLength: 5, points: 0 },
-    // Six letter lingo (for double of points earned so far)
-    { roundNumber: 18, isPuzzle: false, wordLength: 6, points: 0 },
+    // Four letter lingo (for half of basePoints earned so far)
+    { roundNumber: 16, isPuzzle: false, wordLength: 4, basePoints: 0, pointsLostPerGuess: 0 },
+    // Five letter lingo (for all basePoints earned so far)
+    { roundNumber: 17, isPuzzle: false, wordLength: 5, basePoints: 0, pointsLostPerGuess: 0 },
+    // Six letter lingo (for double of basePoints earned so far)
+    { roundNumber: 18, isPuzzle: false, wordLength: 6, basePoints: 0, pointsLostPerGuess: 0 },
   ];
 
   function onComplete(wasCorrect: boolean, score?: number | null) {
+    // Increment round number if there are more rounds to go
+    if (roundNumber < lingoRounds.length) {
+      setRoundNumber(roundNumber + 1);
+    } else {
+      // TODO: Gameshow summary page?
+      setInProgress(false);
+    }
+
+    if (!wasCorrect) {
+      return;
+    }
+
     // Score for completed round couldn't be determined
     if ((score === null && score !== 0) || score === undefined) {
       setInProgress(false);
       return;
     }
 
-    if (inProgress) {
-      // Update cumulative score
-      setGameshowScore(gameshowScore + score);
+    // Update cumulative score
+    setGameshowScore(gameshowScore + score);
 
-      // Increment round number if there are more rounds to go
-      if (roundNumber < 14) {
-        setRoundNumber(roundNumber + 1);
-      } else {
-        // TODO: Gameshow summary page?
-        setInProgress(false);
-      }
-
-      return;
-    }
+    return;
   }
 
   React.useEffect(() => {
-    if (!inProgress) {
-      return;
-    }
-
     // TODO: Configure total length of custom wingo gameshow, how many 4,5,6 wordLength wingo rounds and how many puzzle wingo rounds (from lobby menu)
 
     const nextRoundInfo = lingoRounds.find((roundInfo) => roundInfo.roundNumber === roundNumber);
@@ -118,13 +115,9 @@ export const LingoGameshow: React.FC<Props> = (props) => {
 
     // Before loading round, set the word length needed
     setWordLength(nextRoundInfo?.wordLength);
-  }, [roundNumber])
+  }, [roundNumber]);
 
   function getNextRound() {
-    if (!inProgress) {
-      return;
-    }
-
     const nextRoundInfo = lingoRounds.find((roundInfo) => roundInfo.roundNumber === roundNumber);
 
     // Missing required information for next round
@@ -132,6 +125,13 @@ export const LingoGameshow: React.FC<Props> = (props) => {
       setInProgress(false);
       return;
     }
+
+    console.log(nextRoundInfo);
+
+    const roundScoringInfo = {
+      basePoints: nextRoundInfo.basePoints,
+      pointsLostPerGuess: nextRoundInfo.pointsLostPerGuess,
+    };
 
     if (nextRoundInfo.isPuzzle) {
       return (
@@ -146,6 +146,7 @@ export const LingoGameshow: React.FC<Props> = (props) => {
           defaultWordLength={wordLength}
           defaultnumGuesses={1}
           enforceFullLengthGuesses={true}
+          roundScoringInfo={roundScoringInfo}
           gameshowScore={gameshowScore}
         />
       );
@@ -161,6 +162,7 @@ export const LingoGameshow: React.FC<Props> = (props) => {
           keyboard={true}
           defaultWordLength={wordLength}
           enforceFullLengthGuesses={true}
+          roundScoringInfo={roundScoringInfo}
           gameshowScore={gameshowScore}
         />
       );

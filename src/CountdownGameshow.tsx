@@ -3,8 +3,9 @@ import "./index.scss";
 import { SettingsData } from "./SaveData";
 import { Page } from "./App";
 import CountdownLettersConfig from "./CountdownLetters/CountdownLettersConfig";
-import { Theme } from "./Themes";
 import CountdownNumbersConfig from "./CountdownNumbers/CountdownNumbersConfig";
+import { Theme } from "./Themes";
+
 
 interface Props {
   settings: SettingsData;
@@ -20,34 +21,33 @@ export const CountdownGameshow: React.FC<Props> = (props) => {
   const [roundNumber, setRoundNumber] = useState(1);
   const [gameshowScore, setGameshowScore] = useState(0);
 
+  const NUM_COUNTDOWN_ROUNDS = 14;
+
   function onComplete(wasCorrect: boolean, score?: number | null) {
+    // Increment round number if there are more rounds to go
+    if (roundNumber < NUM_COUNTDOWN_ROUNDS) {
+      setRoundNumber(roundNumber + 1);
+    } else {
+      // TODO: Gameshow summary page?
+      setInProgress(false);
+    }
+
+    if (!wasCorrect) {
+      return;
+    }
     // Score for completed round couldn't be determined
     if ((score === null && score !== 0) || score === undefined) {
       setInProgress(false);
       return;
     }
 
-    if (inProgress) {
-      // Update cumulative score
-      setGameshowScore(gameshowScore + score);
+    // Update cumulative score
+    setGameshowScore(gameshowScore + score);
 
-      // Increment round number if there are more rounds to go
-      if (roundNumber < 14) {
-        setRoundNumber(roundNumber + 1);
-      } else {
-        // TODO: Gameshow summary page?
-        setInProgress(false);
-      }
-
-      return;
-    }
+    return;
   }
 
   function getNextRound() {
-    if (!inProgress) {
-      return;
-    }
-
     // TODO: Configure total length of custom countdown gameshow, how many letter rounds and how many number rounds (from lobby menu)
 
     // https://wiki.apterous.org/15_round_format_(new)
