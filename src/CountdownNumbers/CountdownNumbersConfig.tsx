@@ -136,6 +136,7 @@ const CountdownNumbersConfig: React.FC<Props> = (props) => {
       if (seconds > 0) {
         setSeconds(seconds - 1);
       } else {
+        submitBestGuess();
         sethasTimerEnded(true);
         setinProgress(false);
       }
@@ -426,6 +427,16 @@ const CountdownNumbersConfig: React.FC<Props> = (props) => {
   }
 
   function clearGrid() {
+    if (inProgress) {
+      setWordIndex(0);
+      setCurrentGuesses([]);
+      setCurrentGuess({ operand1: null, operator: "+", operand2: null });
+      setCountdownStatuses(countdownStatuses.map((x) => ({ ...x, picked: false })));
+      setNumGuesses(props.defaultNumGuesses);
+    }
+  }
+
+  function submitBestGuess() {
     // Get the closest intermediary guess
     const newClosest = countdownStatuses
       .filter((x) => x.type === "intermediary")
@@ -440,16 +451,6 @@ const CountdownNumbersConfig: React.FC<Props> = (props) => {
 
     setClosestGuessSoFar(newClosest);
 
-    if (inProgress) {
-      setWordIndex(0);
-      setCurrentGuesses([]);
-      setCurrentGuess({ operand1: null, operator: "+", operand2: null });
-      setCountdownStatuses(countdownStatuses.map((x) => ({ ...x, picked: false })));
-      setNumGuesses(props.defaultNumGuesses);
-    }
-  }
-
-  function submitBestGuess() {
     // If game is in progress and there is an intermediary number
     if (inProgress && wordIndex >= 1) {
       // End the game prematurely
