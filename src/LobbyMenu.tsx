@@ -144,9 +144,17 @@ export const LobbyMenu: React.FC<Props> = (props) => {
         </div>
 
         <div className="sidebar">
-          <div className="sidebar-title">Letters</div>
+          <div className="sidebar-title">Daily / Weekly</div>
           <ul className="widgets">
             {renderGameModeTile("wingo/daily")}
+            {renderGameModeTile("wingo/crossword/daily")}
+            {renderGameModeTile("wingo/crossword/weekly")}
+          </ul>
+        </div>
+
+        <div className="sidebar">
+          <div className="sidebar-title">Letters</div>
+          <ul className="widgets">
             {renderGameModeTile("wingo/repeat")}
             {renderGameModeTile("wingo/category")}
             {renderGameModeTile("wingo/increasing")}
@@ -155,12 +163,7 @@ export const LobbyMenu: React.FC<Props> = (props) => {
             {renderGameModeTile("wingo/interlinked")}
             {renderGameModeTile("wingo/crossword")}
             {renderGameModeTile("wingo/crossword/fit")}
-            {renderGameModeTile("wingo/crossword/weekly")}
-            {renderGameModeTile("wingo/crossword/daily")}
             {renderGameModeTile("countdown/letters")}
-            {renderGameModeTile("random")}
-            {renderGameModeTile("countdown/gameshow")}
-            {renderGameModeTile("lingo/gameshow")}
           </ul>
         </div>
 
@@ -185,6 +188,15 @@ export const LobbyMenu: React.FC<Props> = (props) => {
             {renderGameModeTile("verbal_reasoning/algebra")}
             {renderGameModeTile("verbal_reasoning/word_codes/match")}
             {renderGameModeTile("letters_categories")}
+          </ul>
+        </div>
+
+        <div className="sidebar">
+          <div className="sidebar-title">Gameshow Presets</div>
+          <ul className="widgets">
+            {renderGameModeTile("lingo/gameshow")}
+            {renderGameModeTile("countdown/gameshow")}
+            {renderGameModeTile("random")}
           </ul>
         </div>
       </div>
