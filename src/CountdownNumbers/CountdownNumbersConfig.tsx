@@ -437,6 +437,10 @@ const CountdownNumbersConfig: React.FC<Props> = (props) => {
   }
 
   function submitBestGuess() {
+    if (!inProgress) {
+      return;
+    }
+    
     // Get the closest intermediary guess
     const newClosest = countdownStatuses
       .filter((x) => x.type === "intermediary")
@@ -450,6 +454,7 @@ const CountdownNumbersConfig: React.FC<Props> = (props) => {
       }, null);
 
     setClosestGuessSoFar(newClosest);
+    console.log(newClosest);
 
     // If game is in progress and there is an intermediary number
     if (inProgress && wordIndex >= 1) {

@@ -256,7 +256,7 @@ const CountdownNumbers: React.FC<Props> = (props) => {
     // Evaluate player's attempt(s)
     const best_guess = determineBestGuess();
 
-    if (!best_guess) {
+    if (best_guess === null) {
       return null;
     }
 
@@ -272,7 +272,7 @@ const CountdownNumbers: React.FC<Props> = (props) => {
 
     const difference = determineDifference();
 
-    if (!difference) {
+    if (difference === null) {
       return null;
     }
 

@@ -25,7 +25,7 @@ export const CountdownGameshow: React.FC<Props> = (props) => {
   >([]);
 
   // TODO: 14 without conundrum, 15 with
-  const NUM_COUNTDOWN_ROUNDS = 2;
+  const NUM_COUNTDOWN_ROUNDS = 6;
 
   React.useEffect(() => {
     if (!summary || summary.length === 0) {
@@ -44,7 +44,7 @@ export const CountdownGameshow: React.FC<Props> = (props) => {
 
   function onComplete(wasCorrect: boolean, answer: string, targetAnswer: string, score: number | null) {
     // Incorrect answer or score couldn't be determined, use score of 0
-    const newScore = !wasCorrect || score || score === undefined || score === null ? 0 : score;
+    const newScore = !wasCorrect || !score || score === undefined || score === null ? 0 : score;
 
     const roundSummary = {
       roundNumber: roundNumber,
@@ -75,7 +75,7 @@ export const CountdownGameshow: React.FC<Props> = (props) => {
       return (
         <CountdownLettersConfig
           mode={"countdown_letters_casual"}
-          timerConfig={{ isTimed: true, seconds: 30 }}
+          timerConfig={{ isTimed: true, seconds: 2 }}
           keyboard={true}
           defaultWordLength={9}
           page={"countdown/letters"}
@@ -92,7 +92,7 @@ export const CountdownGameshow: React.FC<Props> = (props) => {
       return (
         <CountdownNumbersConfig
           mode={"countdown_numbers_casual"}
-          timerConfig={{ isTimed: true, seconds: 30 }}
+          timerConfig={{ isTimed: true, seconds: 200 }}
           defaultNumOperands={6}
           defaultExpressionLength={5}
           defaultNumGuesses={5}

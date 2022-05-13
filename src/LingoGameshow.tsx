@@ -31,10 +31,9 @@ export function displayGameshowSummary(
       {summary.map((round) => {
         const roundSummary = (
           <>
-            <br></br>
             <strong>{`Round ${round.roundNumber}`}</strong>
             <br></br>
-            {`Guess: ${round.answer}`}
+            {`Guess: ${round.answer ? round.answer : "-"}`}
             {round.targetAnswer.length > 0 && (
               <>
                 <br></br>
@@ -150,7 +149,7 @@ export const LingoGameshow: React.FC<Props> = (props) => {
 
     // Completed all rounds of gameshow
     // TODO: lingoRounds.length
-    if (roundNumber > 2) {
+    if (roundNumber > lingoRounds.length) {
       setInProgress(false);
     }
 
