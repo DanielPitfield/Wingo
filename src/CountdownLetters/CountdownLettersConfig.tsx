@@ -22,7 +22,7 @@ interface Props extends CountdownLettersConfigProps {
   setTheme: (theme: Theme) => void;
   setPage: (page: Page) => void;
   addGold: (gold: number) => void;
-  onComplete?: (wasCorrect: boolean, score: number | null) => void;
+  onComplete?: (wasCorrect: boolean, answer: string, score? : number | null) => void;
   gameshowScore?: number;
 }
 
@@ -123,9 +123,9 @@ const CountdownLettersConfig: React.FC<Props> = (props) => {
     };
   }, [setSeconds, seconds, props.timerConfig.isTimed, countdownWord]);
 
-  function ResetGame(score: number | null) {
+  function ResetGame(wasCorrect: boolean, answer: string, score? : number | null) {
     // Callback of the score achieved (used for Countdown Gameshow)
-    props.onComplete?.(true, score);
+    props.onComplete?.(wasCorrect, answer, score);
     setGuesses([]);
     setCountdownWord("");
     setCurrentWord("");

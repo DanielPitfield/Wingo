@@ -45,7 +45,7 @@ interface Props {
   onSubmitCountdownExpression: (numberExpression: number[]) => void;
   onSubmitNumber: (number: number) => void;
   onBackspace: () => void;
-  resetGame: (score: number | null) => void;
+  resetGame: (wasCorrect: boolean, answer: string, score?: number | null) => void;
   setOperator: (operator: Guess["operator"]) => void;
   addGold: (gold: number) => void;
   gameshowScore?: number;
@@ -380,7 +380,16 @@ const CountdownNumbers: React.FC<Props> = (props) => {
 
           <Button
             mode={"accept"}
-            onClick={() => props.resetGame(determineScore())}
+            onClick={() =>
+              props.resetGame(
+                // correct?
+                !determineScore() ? false : determineScore()! > 0,
+                // guess made
+                !determineBestGuess() ? "" : determineBestGuess()!.toString(),
+                // score
+                !determineScore() ? 0 : determineScore()
+              )
+            }
             settings={props.settings}
             additionalProps={{ autoFocus: true }}
           >

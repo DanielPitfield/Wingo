@@ -5,7 +5,7 @@ import { Page } from "./App";
 import CountdownLettersConfig from "./CountdownLetters/CountdownLettersConfig";
 import CountdownNumbersConfig from "./CountdownNumbers/CountdownNumbersConfig";
 import { Theme } from "./Themes";
-
+import { displayGameshowSummary } from "./LingoGameshow";
 
 interface Props {
   settings: SettingsData;
@@ -20,29 +20,42 @@ export const CountdownGameshow: React.FC<Props> = (props) => {
   const [inProgress, setInProgress] = useState(true);
   const [roundNumber, setRoundNumber] = useState(1);
   const [gameshowScore, setGameshowScore] = useState(0);
+  const [summary, setSummary] = useState<{ roundNumber: number; answer: string; score: number }[]>([]);
 
-  const NUM_COUNTDOWN_ROUNDS = 14;
+  // TODO: 14 without conundrum, 15 with
+  const NUM_COUNTDOWN_ROUNDS = 2;
 
-  function onComplete(wasCorrect: boolean, score?: number | null) {
-    // Increment round number if there are more rounds to go
-    if (roundNumber < NUM_COUNTDOWN_ROUNDS) {
-      setRoundNumber(roundNumber + 1);
-    } else {
-      // TODO: Gameshow summary page?
-      setInProgress(false);
-    }
-
-    if (!wasCorrect) {
-      return;
-    }
-    // Score for completed round couldn't be determined
-    if ((score === null && score !== 0) || score === undefined) {
-      setInProgress(false);
+  React.useEffect(() => {
+    if (!summary || summary.length === 0) {
       return;
     }
 
-    // Update cumulative score
-    setGameshowScore(gameshowScore + score);
+    const totalScore = summary.map((round) => round.score).reduce((prev, next) => prev + next);
+    setGameshowScore(totalScore);
+  }, [summary]);
+
+  React.useEffect(() => {
+    if (roundNumber > NUM_COUNTDOWN_ROUNDS) {
+      setInProgress(false);
+    }
+  }, [roundNumber]);
+
+  function onComplete(wasCorrect: boolean, answer: string, score?: number | null) {
+    // Incorrect answer or score couldn't be determined, use score of 0
+    const newScore =
+      wasCorrect || score || score === undefined || score === null
+        ? 0
+        : score;
+
+    const roundSummary = { roundNumber: roundNumber, answer: answer, score: newScore };
+
+    // Update summary with answer and score for current round
+    let newSummary = summary.slice();
+    newSummary.push(roundSummary);
+    setSummary(newSummary);
+
+    // Start next round
+    setRoundNumber(roundNumber + 1);
 
     return;
   }
@@ -91,5 +104,13 @@ export const CountdownGameshow: React.FC<Props> = (props) => {
     }
   }
 
-  return <>{getNextRound()}</>;
+  return (
+    <>
+      {inProgress ? (
+        getNextRound()
+      ) : (
+        <div className="gameshow-summary-container">{displayGameshowSummary(summary)}</div>
+      )}
+    </>
+  );
 };

@@ -21,6 +21,26 @@ interface Props {
   };
 }
 
+export function displayGameshowSummary(summary: { roundNumber: number; answer: string; score: number }[]) {
+  return summary.map((round) => {
+    const roundSummary = (
+      <>
+        <br></br>
+        <strong>{`Round ${round.roundNumber}`}</strong>
+        <br></br>
+        {`Answer: ${round.answer}`}
+        <br></br>
+        {`Score: ${round.score}`}
+      </>
+    );
+    return (
+      <div className="gameshow-round-summary" style={{ backgroundColor: round.score > 0 ? "green" : "red" }}>
+        {roundSummary}
+      </div>
+    );
+  });
+}
+
 export const LingoGameshow: React.FC<Props> = (props) => {
   const [inProgress, setInProgress] = useState(true);
   const [roundNumber, setRoundNumber] = useState(1);
@@ -88,38 +108,29 @@ export const LingoGameshow: React.FC<Props> = (props) => {
 
   function onComplete(wasCorrect: boolean, answer: string, score?: number | null) {
     // Incorrect answer or score couldn't be determined, use score of 0
-    const newScore = !wasCorrect || !score || score === undefined ? 0 : score;
+    const newScore = !wasCorrect || !score || score === undefined || score === null ? 0 : score;
 
     const roundSummary = { roundNumber: roundNumber, answer: answer, score: newScore };
 
     // Update summary with answer and score for current round
     let newSummary = summary.slice();
     newSummary.push(roundSummary);
-
     setSummary(newSummary);
 
-    // Increment round number if there are more rounds to go
-    if (roundNumber < 2) {
-      setRoundNumber(roundNumber + 1);
-    } else {
-      setInProgress(false);
-    }
-
-    if (!wasCorrect) {
-      return;
-    }
-
-    // Score for completed round couldn't be determined
-    if ((score === null && score !== 0) || score === undefined) {
-      setInProgress(false);
-      return;
-    }
+    // Start next round
+    setRoundNumber(roundNumber + 1);
 
     return;
   }
 
   React.useEffect(() => {
     // TODO: Configure total length of custom wingo gameshow, how many 4,5,6 wordLength wingo rounds and how many puzzle wingo rounds (from lobby menu)
+
+    // Completed all rounds of gameshow
+    // TODO: lingoRounds.length
+    if (roundNumber > 2) {
+      setInProgress(false);
+    }
 
     const nextRoundInfo = lingoRounds.find((roundInfo) => roundInfo.roundNumber === roundNumber);
 
@@ -141,8 +152,6 @@ export const LingoGameshow: React.FC<Props> = (props) => {
       setInProgress(false);
       return;
     }
-
-    console.log(nextRoundInfo);
 
     const roundScoringInfo = {
       basePoints: nextRoundInfo.basePoints,
@@ -185,25 +194,13 @@ export const LingoGameshow: React.FC<Props> = (props) => {
     }
   }
 
-  function getGameshowSummary() {
-    return summary.map((round) => {
-      const roundSummary = (
-        <>
-          <br></br>
-          <strong>{`Round ${round.roundNumber}`}</strong>
-          <br></br>
-          {`Answer: ${round.answer}`}
-          <br></br>
-          {`Score: ${round.score}`}
-        </>
-      );
-      return (
-        <div className="gameshow-round-summary" style={{ backgroundColor: round.score > 0 ? "green" : "red" }}>
-          {roundSummary}
-        </div>
-      );
-    });
-  }
-
-  return <>{inProgress ? getNextRound() : <div className="gameshow-summary-container">{getGameshowSummary()}</div>}</>;
+  return (
+    <>
+      {inProgress ? (
+        getNextRound()
+      ) : (
+        <div className="gameshow-summary-container">{displayGameshowSummary(summary)}</div>
+      )}
+    </>
+  );
 };
