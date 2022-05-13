@@ -17,7 +17,7 @@ interface Props {
   setTheme: (theme: Theme) => void;
   setPage: (page: Page) => void;
   addGold: (gold: number) => void;
-  onComplete?: (wasCorrect: boolean, answer: string, score? : number | null) => void;
+  onComplete?: (wasCorrect: boolean, answer: string, targetAnswer: string, score: number | null) => void;
   gameshowScore?: number;
 }
 
@@ -175,9 +175,9 @@ const CountdownNumbersConfig: React.FC<Props> = (props) => {
     return Math.floor(Math.random() * (max - min) + min);
   }
 
-  function ResetGame(wasCorrect: boolean, answer: string, score? : number | null) {
+  function ResetGame(wasCorrect: boolean, answer: string, targetAnswer: string, score: number | null) {
     // Callback of the score achieved (used for Countdown Gameshow)
-    props.onComplete?.(wasCorrect, answer, score);
+    props.onComplete?.(wasCorrect, answer, targetAnswer, score);
     setCurrentGuesses([]);
     setClosestGuessSoFar(null);
     setCountdownStatuses(defaultCountdownStatuses);

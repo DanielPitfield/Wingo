@@ -55,7 +55,7 @@ interface Props {
     remainingGridGuesses: number,
     remainingWordGuesses?: number
   ) => void;
-  onComplete?: (wasCorrect: boolean, answer: string, score?: number | null) => void;
+  onComplete?: (wasCorrect: boolean, answer: string, targetAnswer: string, score: number | null) => void;
 }
 
 export const WordleInterlinked: React.FC<Props> = (props) => {
@@ -658,8 +658,14 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
   }
 
   function ResetGame() {
+    const gridCompleted = tileStatuses.every((tile) => {
+      if (tile.status === "correct") {
+        return true;
+      }
+    });
+
     // TODO: Scoring method instead of 10 value
-    props.onComplete?.(true, currentWords.join(""), 10);
+    props.onComplete?.(gridCompleted, currentWords.join(""), gridConfig.words.map((x) => x.word).join(""), 10);
     setInProgress(true);
     setCurrentWordIndex(0);
     setRemainingWordGuesses(props.numWordGuesses ? props.numWordGuesses : undefined);

@@ -37,7 +37,7 @@ interface Props {
   onSubmitCountdownWord: (word: string) => void;
   onSubmitLetter: (letter: string) => void;
   onBackspace: () => void;
-  ResetGame: (wasCorrect: boolean, answer: string, score?: number | null) => void;
+  ResetGame: (wasCorrect: boolean, answer: string, targetAnswer: string, score: number | null) => void;
   ContinueGame: () => void;
   gameshowScore?: number;
 }
@@ -438,6 +438,8 @@ const CountdownLetters: React.FC<Props> = (props) => {
                 selectedFinalGuess ? selectedFinalGuess.length > 0 : false,
                 // guess made
                 selectedFinalGuess ? selectedFinalGuess : "",
+                // target word
+                "",
                 // score
                 selectedFinalGuess ? selectedFinalGuess.length : 0
               )

@@ -20,7 +20,7 @@ export const CountdownGameshow: React.FC<Props> = (props) => {
   const [inProgress, setInProgress] = useState(true);
   const [roundNumber, setRoundNumber] = useState(1);
   const [gameshowScore, setGameshowScore] = useState(0);
-  const [summary, setSummary] = useState<{ roundNumber: number; answer: string; score: number }[]>([]);
+  const [summary, setSummary] = useState<{ roundNumber: number; wasCorrect: boolean, answer: string; targetAnswer: string, score: number }[]>([]);
 
   // TODO: 14 without conundrum, 15 with
   const NUM_COUNTDOWN_ROUNDS = 2;
@@ -40,14 +40,14 @@ export const CountdownGameshow: React.FC<Props> = (props) => {
     }
   }, [roundNumber]);
 
-  function onComplete(wasCorrect: boolean, answer: string, score?: number | null) {
+  function onComplete(wasCorrect: boolean, answer: string, targetAnswer: string, score: number | null) {
     // Incorrect answer or score couldn't be determined, use score of 0
     const newScore =
-      wasCorrect || score || score === undefined || score === null
+      !wasCorrect || score || score === undefined || score === null
         ? 0
         : score;
 
-    const roundSummary = { roundNumber: roundNumber, answer: answer, score: newScore };
+    const roundSummary = { roundNumber: roundNumber, wasCorrect: wasCorrect, answer: answer, targetAnswer: targetAnswer, score: newScore };
 
     // Update summary with answer and score for current round
     let newSummary = summary.slice();
