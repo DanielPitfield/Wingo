@@ -655,7 +655,15 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
     return (
       <>
         <MessageNotification type={gridCompleted ? "success" : "error"}>
-          <strong>{gridCompleted ? "Correct!" : `Incorrect! The correct answers were:`}</strong>
+          <strong>{gridCompleted ? "Correct!" : "Incorrect"}</strong>
+          {!gridCompleted && (
+            <>
+            <br></br>
+              <>The correct answers were:</>
+              <br></br>
+              <>{gridConfig.words.map((x) => x.word).join(", ")}</>
+            </>
+          )}
         </MessageNotification>
 
         <br></br>
@@ -719,12 +727,22 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
       )}
       <div className="word_grid">{populateGrid()}</div>
       {Boolean(inProgress && props.numWordGuesses) && (
-        <Button mode="accept" disabled={remainingWordGuesses! <= 0} settings={props.settings} onClick={() => checkInput("current")}>
+        <Button
+          mode="accept"
+          disabled={remainingWordGuesses! <= 0}
+          settings={props.settings}
+          onClick={() => checkInput("current")}
+        >
           Check current word
         </Button>
       )}
       {inProgress && (
-        <Button mode="accept" disabled={remainingGridGuesses! <= 0} settings={props.settings} onClick={() => checkInput("all")}>
+        <Button
+          mode="accept"
+          disabled={remainingGridGuesses! <= 0}
+          settings={props.settings}
+          onClick={() => checkInput("all")}
+        >
           Check crossword
         </Button>
       )}
