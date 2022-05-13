@@ -3,7 +3,7 @@ import "./index.scss";
 import { SettingsData } from "./SaveData";
 import { Page } from "./App";
 import { Theme } from "./Themes";
-import WordleConfig from "./WordleConfig";
+import WordleConfig, { getWordSummary } from "./WordleConfig";
 
 interface Props {
   commonWingoProps: {
@@ -28,8 +28,6 @@ export const LingoGameshow: React.FC<Props> = (props) => {
   const [wordLength, setWordLength] = useState(4);
 
   const lingoRounds = [
-    /* NOTE: firstLetterProvided for all rounds */
-
     /* --- ROUND 1 - FOUR LETTER LINGOS --- */
 
     // 4 rounds of four letter lingos (£200 for correct answer)
@@ -77,12 +75,24 @@ export const LingoGameshow: React.FC<Props> = (props) => {
     { roundNumber: 18, isPuzzle: false, wordLength: 6, basePoints: 0, pointsLostPerGuess: 0 },
   ];
 
-  function onComplete(wasCorrect: boolean, score?: number | null) {
+  const [summary, setSummary] = useState<{ roundNumber: number; answer: string; score: number }[]>([]);
+
+  function onComplete(wasCorrect: boolean, answer: string, score?: number | null) {
+    // Incorrect answer or score couldn't be determined, use score of 0
+    const newScore = !wasCorrect || !score || score === undefined ? 0 : score;
+
+    const roundSummary = { roundNumber: roundNumber, answer: answer, score: newScore };
+
+    // Update summary with answer and score for current round
+    let newSummary = summary.slice();
+    newSummary.push(roundSummary);
+
+    setSummary(newSummary);
+
     // Increment round number if there are more rounds to go
-    if (roundNumber < lingoRounds.length) {
+    if (roundNumber < 2) {
       setRoundNumber(roundNumber + 1);
     } else {
-      // TODO: Gameshow summary page?
       setInProgress(false);
     }
 
@@ -169,5 +179,25 @@ export const LingoGameshow: React.FC<Props> = (props) => {
     }
   }
 
-  return <>{getNextRound()}</>;
+  function getGameshowSummary() {
+    return summary.map((round) => {
+      const roundSummary = (
+        <>
+          <br></br>
+          <strong>{`Round ${round.roundNumber}`}</strong>
+          <br></br>
+          {`Answer: ${round.answer}`}
+          <br></br>
+          {`Score: ${round.score}`}
+        </>
+      );
+      return (
+        <div className="gameshow-round-summary" style={{ backgroundColor: round.score > 0 ? "green" : "red" }}>
+          {roundSummary}
+        </div>
+      );
+    });
+  }
+
+  return <>{inProgress ? getNextRound() : <div className="gameshow-summary-container">{getGameshowSummary()}</div>}</>;
 };

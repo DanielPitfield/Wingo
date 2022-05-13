@@ -56,7 +56,7 @@ export interface WordleConfigProps {
   guesses?: string[];
   checkInDictionary?: boolean;
   finishingButtonText?: string;
-  onComplete?: (wasCorrect: boolean, score? : number | null) => void;
+  onComplete?: (wasCorrect: boolean, answer: string, score? : number | null) => void;
   roundScoringInfo?: { basePoints: number; pointsLostPerGuess: number };
   gameshowScore?: number;
 }
@@ -633,7 +633,7 @@ const WordleConfig: React.FC<Props> = (props) => {
 
   function ResetGame() {
     if (currentWord.length > 0) {
-      props.onComplete?.(currentWord.toUpperCase() === targetWord?.toUpperCase(), determineScore());
+      props.onComplete?.(currentWord.toUpperCase() === targetWord?.toUpperCase(), currentWord, determineScore());
     }
     setGuesses([]);
     setCurrentWord("");
