@@ -6,6 +6,7 @@ import CountdownLettersConfig from "./CountdownLetters/CountdownLettersConfig";
 import CountdownNumbersConfig from "./CountdownNumbers/CountdownNumbersConfig";
 import { Theme } from "./Themes";
 import { displayGameshowSummary } from "./LingoGameshow";
+import { Button } from "./Button";
 
 interface Props {
   settings: SettingsData;
@@ -109,5 +110,19 @@ export const CountdownGameshow: React.FC<Props> = (props) => {
     }
   }
 
-  return <>{inProgress ? getNextRound() : displayGameshowSummary(gameshowScore, summary)}</>;
+  return (
+    <>
+      {inProgress ? getNextRound() : displayGameshowSummary(gameshowScore, summary)}
+      {!inProgress && (
+        <Button
+          mode={"accept"}
+          onClick={() => props.setPage("home")}
+          settings={props.settings}
+          additionalProps={{ autoFocus: true }}
+        >
+          Back to Home
+        </Button>
+      )}
+    </>
+  );
 };

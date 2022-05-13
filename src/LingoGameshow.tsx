@@ -4,6 +4,7 @@ import { SettingsData } from "./SaveData";
 import { Page } from "./App";
 import { Theme } from "./Themes";
 import WordleConfig from "./WordleConfig";
+import { Button } from "./Button";
 
 interface Props {
   commonWingoProps: {
@@ -215,5 +216,19 @@ export const LingoGameshow: React.FC<Props> = (props) => {
     }
   }
 
-  return <>{inProgress ? getNextRound() : displayGameshowSummary(gameshowScore, summary)}</>;
+  return (
+    <>
+      {inProgress ? getNextRound() : displayGameshowSummary(gameshowScore, summary)}
+      {!inProgress && (
+        <Button
+          mode={"accept"}
+          onClick={() => props.commonWingoProps.setPage("home")}
+          settings={props.commonWingoProps.settings}
+          additionalProps={{ autoFocus: true }}
+        >
+          Back to Home
+        </Button>
+      )}
+    </>
+  );
 };
