@@ -21,25 +21,38 @@ interface Props {
   };
 }
 
-export function displayGameshowSummary(summary: { roundNumber: number; wasCorrect: boolean, answer: string; targetAnswer: string, score: number }[]) {
-  return summary.map((round) => {
-    const roundSummary = (
-      <>
-        <br></br>
-        <strong>{`Round ${round.roundNumber}`}</strong>
-        <br></br>
-        {`Guess: ${round.answer}`}
-        {round.targetAnswer.length > 0 && <><br></br>{`Answer: ${round.targetAnswer}`}</>}
-        <br></br>
-        {`Score: ${round.score}`}
-      </>
-    );
-    return (
-      <div className="gameshow-round-summary" style={{ backgroundColor: round.score > 0 ? "green" : "red" }}>
-        {roundSummary}
-      </div>
-    );
-  });
+export function displayGameshowSummary(
+  totalScore: number,
+  summary: { roundNumber: number; wasCorrect: boolean; answer: string; targetAnswer: string; score: number }[]
+) {
+  return (
+    <div className="gameshow-summary-container">
+      <div className="gameshow-summary-totalScore">{totalScore}</div>
+      {summary.map((round) => {
+        const roundSummary = (
+          <>
+            <br></br>
+            <strong>{`Round ${round.roundNumber}`}</strong>
+            <br></br>
+            {`Guess: ${round.answer}`}
+            {round.targetAnswer.length > 0 && (
+              <>
+                <br></br>
+                {`Answer: ${round.targetAnswer}`}
+              </>
+            )}
+            <br></br>
+            {`Score: ${round.score}`}
+          </>
+        );
+        return (
+          <div className="gameshow-round-summary" style={{ backgroundColor: round.score > 0 ? "green" : "red" }}>
+            {roundSummary}
+          </div>
+        );
+      })}
+    </div>
+  );
 }
 
 export const LingoGameshow: React.FC<Props> = (props) => {
@@ -96,7 +109,9 @@ export const LingoGameshow: React.FC<Props> = (props) => {
     { roundNumber: 18, isPuzzle: false, wordLength: 6, basePoints: 0, pointsLostPerGuess: 0 },
   ];
 
-  const [summary, setSummary] = useState<{ roundNumber: number; wasCorrect: boolean, answer: string; targetAnswer: string, score: number }[]>([]);
+  const [summary, setSummary] = useState<
+    { roundNumber: number; wasCorrect: boolean; answer: string; targetAnswer: string; score: number }[]
+  >([]);
 
   React.useEffect(() => {
     if (!summary || summary.length === 0) {
@@ -111,7 +126,13 @@ export const LingoGameshow: React.FC<Props> = (props) => {
     // Incorrect answer or score couldn't be determined, use score of 0
     const newScore = !wasCorrect || !score || score === undefined || score === null ? 0 : score;
 
-    const roundSummary = { roundNumber: roundNumber, wasCorrect: wasCorrect, answer: answer, targetAnswer: targetAnswer, score: newScore };
+    const roundSummary = {
+      roundNumber: roundNumber,
+      wasCorrect: wasCorrect,
+      answer: answer,
+      targetAnswer: targetAnswer,
+      score: newScore,
+    };
 
     // Update summary with answer and score for current round
     let newSummary = summary.slice();
@@ -195,13 +216,5 @@ export const LingoGameshow: React.FC<Props> = (props) => {
     }
   }
 
-  return (
-    <>
-      {inProgress ? (
-        getNextRound()
-      ) : (
-        <div className="gameshow-summary-container">{displayGameshowSummary(summary)}</div>
-      )}
-    </>
-  );
+  return <>{inProgress ? getNextRound() : displayGameshowSummary(gameshowScore, summary)}</>;
 };
