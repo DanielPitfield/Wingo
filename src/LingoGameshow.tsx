@@ -78,6 +78,10 @@ export const LingoGameshow: React.FC<Props> = (props) => {
   const [summary, setSummary] = useState<{ roundNumber: number; answer: string; score: number }[]>([]);
 
   React.useEffect(() => {
+    if (!summary || summary.length === 0) {
+      return;
+    }
+
     const totalScore = summary.map((round) => round.score).reduce((prev, next) => prev + next);
     setGameshowScore(totalScore);
   }, [summary]);
