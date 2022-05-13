@@ -77,6 +77,11 @@ export const LingoGameshow: React.FC<Props> = (props) => {
 
   const [summary, setSummary] = useState<{ roundNumber: number; answer: string; score: number }[]>([]);
 
+  React.useEffect(() => {
+    const totalScore = summary.map((round) => round.score).reduce((prev, next) => prev + next);
+    setGameshowScore(totalScore);
+  }, [summary]);
+
   function onComplete(wasCorrect: boolean, answer: string, score?: number | null) {
     // Incorrect answer or score couldn't be determined, use score of 0
     const newScore = !wasCorrect || !score || score === undefined ? 0 : score;
@@ -105,9 +110,6 @@ export const LingoGameshow: React.FC<Props> = (props) => {
       setInProgress(false);
       return;
     }
-
-    // Update cumulative score
-    setGameshowScore(gameshowScore + score);
 
     return;
   }
