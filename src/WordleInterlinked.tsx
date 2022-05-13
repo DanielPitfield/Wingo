@@ -398,23 +398,33 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
       return;
     }
 
-    // Check if grid is completed
-    checkTileStatuses(currentWords, wordsToCheck);
-
     if (wordsToCheck === "current" && props.numWordGuesses) {
-      // Used last current word guess and no grid guesses left
+      // Still a 'Check current word' guess left
+      if (remainingWordGuesses! >= 1) {
+        setRemainingWordGuesses(remainingWordGuesses! - 1);
+        // Check current word
+        checkTileStatuses(currentWords, wordsToCheck);
+      }
+
+      // Used last current word guess and also no grid guesses left
       if (remainingWordGuesses! <= 1 && remainingGridGuesses <= 0) {
         setInProgress(false);
       }
-      setRemainingWordGuesses(remainingWordGuesses! - 1);
     } else if (wordsToCheck === "all") {
+      // Still a 'Check Crossword' guess left
+      if (remainingGridGuesses! >= 1) {
+        setRemainingGridGuesses(remainingGridGuesses! - 1);
+        // Check entire crossword
+        checkTileStatuses(currentWords, wordsToCheck);
+      }
+
       // Word guesses were not enabled or were but just used last one
       const noWordGuessesLeft = !props.numWordGuesses || (props.numWordGuesses && remainingWordGuesses! <= 1);
-      // Used last grid guess and no word guesses left
+
+      // Used last grid guess and also no word guesses left
       if (remainingGridGuesses <= 1 && noWordGuessesLeft) {
         setInProgress(false);
       }
-      setRemainingGridGuesses(remainingGridGuesses - 1);
     }
   }
 
@@ -709,12 +719,12 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
       )}
       <div className="word_grid">{populateGrid()}</div>
       {Boolean(inProgress && props.numWordGuesses) && (
-        <Button mode="accept" settings={props.settings} onClick={() => checkInput("current")}>
+        <Button mode="accept" disabled={remainingWordGuesses! <= 0} settings={props.settings} onClick={() => checkInput("current")}>
           Check current word
         </Button>
       )}
       {inProgress && (
-        <Button mode="accept" settings={props.settings} onClick={() => checkInput("all")}>
+        <Button mode="accept" disabled={remainingGridGuesses! <= 0} settings={props.settings} onClick={() => checkInput("all")}>
           Check crossword
         </Button>
       )}
