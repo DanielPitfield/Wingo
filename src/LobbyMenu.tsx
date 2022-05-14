@@ -200,6 +200,7 @@ export const LobbyMenu: React.FC<Props> = (props) => {
           </ul>
         </div>
       </div>
+      
       {optionsConfig.isConfigShown && renderConfigModal(optionsConfig.Page)}
 
       <section className="challenges">
