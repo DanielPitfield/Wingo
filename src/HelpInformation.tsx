@@ -4,6 +4,7 @@ import { Modal } from "./Modal";
 
 interface Props {
   page: Page;
+  onClose: () => void;
 }
 
 export const HelpInformation: React.FC<Props> = (props) => {
@@ -17,6 +18,9 @@ export const HelpInformation: React.FC<Props> = (props) => {
     switch (props.page) {
       case "wingo/daily":
         return <p>Daily resets every 24 hours</p>;
+
+      default:
+        return null;
     }
     // ...
   }
@@ -26,10 +30,10 @@ export const HelpInformation: React.FC<Props> = (props) => {
       mode="default"
       title={
         <>
-          <strong>{pageInfo?.title}</strong>
+          <strong>{pageInfo?.title || props.page}</strong>
         </>
       }
-      onClose={() => {}}
+      onClose={props.onClose}
     >
       {getModalBody()}
     </Modal>

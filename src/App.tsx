@@ -30,6 +30,8 @@ import { ChallengesInfo } from "./Challenges/ChallengesInfo";
 import WordCodes from "./VerbalReasoning/WordCodes";
 import { CountdownGameshow } from "./CountdownGameshow";
 import { LingoGameshow } from "./LingoGameshow";
+import { FaQuestion } from "react-icons/fa";
+import HelpInformation from "./HelpInformation";
 
 const wordLength = 5;
 const numGuesses = 6;
@@ -270,6 +272,9 @@ export const App: React.FC = () => {
 
   const [loadingState, setLoadingState] = useState<"loading" | "loaded">("loading");
   const [page, setPage] = useState<Page>("splash-screen");
+
+  // Modal explaining current gamemode is shown?
+  const [isHelpInfoShown, setIsHelpInfoShown] = useState(false);
 
   // Is a session of randomly selecting a gamemode after completion, currently in progress?
   const [isRandomSession, setIsRandomSession] = useState(false);
@@ -1115,6 +1120,14 @@ export const App: React.FC = () => {
               </nav>
             )}
             <h1 className="title">{pages.find((x) => x.page === page)?.title}</h1>
+            {page !== "home" && (<Button
+              mode="default"
+              className="game_options"
+              settings={settings}
+              onClick={() => setIsHelpInfoShown(true)}
+            >
+              <FaQuestion />
+            </Button>)}
             <Button mode="default" className="settings-button" settings={settings} onClick={() => setPage("settings")}>
               Settings
             </Button>
@@ -1128,6 +1141,9 @@ export const App: React.FC = () => {
       <ErrorBoundary FallbackComponent={ErrorFallback} onReset={() => window.location.reload()}>
         {pageComponent}
       </ErrorBoundary>
+      {isHelpInfoShown && (
+        <HelpInformation page={page} onClose={() => setIsHelpInfoShown(false)}></HelpInformation>
+      )}
       <div className="version">{VERSION}</div>
     </div>
   );
