@@ -1105,6 +1105,8 @@ export const App: React.FC = () => {
                   className="back-button"
                   settings={settings}
                   onClick={() => {
+                    setIsHelpInfoShown(false);
+
                     if (page === "campaign/area/level") {
                       setPage("campaign/area");
                     } else if (page === "campaign/area") {
@@ -1120,15 +1122,25 @@ export const App: React.FC = () => {
               </nav>
             )}
             <h1 className="title">{pages.find((x) => x.page === page)?.title}</h1>
-            {page !== "home" && (<Button
+            {Boolean(page !== "home" && page !== "settings") && (
+              <Button
+                mode="default"
+                className="game_options"
+                settings={settings}
+                onClick={() => setIsHelpInfoShown(true)}
+              >
+                <FaQuestion />
+              </Button>
+            )}
+            <Button
               mode="default"
-              className="game_options"
+              className="settings-button"
               settings={settings}
-              onClick={() => setIsHelpInfoShown(true)}
+              onClick={() => {
+                setPage("settings");
+                setIsHelpInfoShown(false);
+              }}
             >
-              <FaQuestion />
-            </Button>)}
-            <Button mode="default" className="settings-button" settings={settings} onClick={() => setPage("settings")}>
               Settings
             </Button>
             <div className="gold_counter" onClick={() => setPage("challenges")}>
@@ -1141,7 +1153,7 @@ export const App: React.FC = () => {
       <ErrorBoundary FallbackComponent={ErrorFallback} onReset={() => window.location.reload()}>
         {pageComponent}
       </ErrorBoundary>
-      {isHelpInfoShown && (
+      {Boolean(isHelpInfoShown && page !== "home" && page !== "settings") && (
         <HelpInformation page={page} onClose={() => setIsHelpInfoShown(false)}></HelpInformation>
       )}
       <div className="version">{VERSION}</div>
