@@ -74,6 +74,7 @@ export type Page =
   | "verbal_reasoning/match"
   | "verbal_reasoning/number_sets"
   | "verbal_reasoning/algebra"
+  | "verbal_reasoning/word_codes"
   | "verbal_reasoning/word_codes/match"
   | "puzzle/sequence"
   | "campaign"
@@ -196,16 +197,16 @@ export const pages: { page: Page; title: string; description?: string; shortTitl
   },
   {
     page: "numbers/arithmetic_drag/order",
-    title: "Arithmetic order",
+    title: "Arithmetic (Order)",
     description: "Put the arithmetic expressions in order from smallest to largest",
-    shortTitle: "Order",
+    shortTitle: "Arithmetic (Order)",
     isPlayable: true,
   },
   {
     page: "numbers/arithmetic_drag/match",
-    title: "Arithmetic match",
+    title: "Arithmetic (Match)",
     description: "Match the arithmetic expressions with the results they evaluate to",
-    shortTitle: "Match",
+    shortTitle: "Arithmetic (Match)",
     isPlayable: true,
   },
   {
@@ -244,10 +245,17 @@ export const pages: { page: Page; title: string; description?: string; shortTitl
     isPlayable: true,
   },
   {
-    page: "verbal_reasoning/word_codes/match",
+    page: "verbal_reasoning/word_codes",
     title: "Word Codes",
     description: "Decipher codes to find words (and vice versa)",
     shortTitle: "Word Codes",
+    isPlayable: true,
+  },
+  {
+    page: "verbal_reasoning/word_codes/match",
+    title: "Word Codes (Match)",
+    description: "Match the words to their codes",
+    shortTitle: "Word Codes (Match)",
     isPlayable: true,
   },
   {
@@ -298,12 +306,6 @@ export const App: React.FC = () => {
       keyboard?: boolean;
     }[]
   >([
-    {
-      page: "wingo/daily",
-      showHint: true,
-      timer: false,
-      keyboard: true,
-    },
     {
       page: "wingo/repeat",
       firstLetter: false,
@@ -403,7 +405,19 @@ export const App: React.FC = () => {
       timer: true,
     },
     {
+      page: "verbal_reasoning/word_codes",
+      timer: true,
+    },
+    {
       page: "verbal_reasoning/word_codes/match",
+      timer: true,
+    },
+    {
+      page: "puzzle/sequence",
+      timer: true,
+    },
+    {
+      page: "nubble",
       timer: true,
     },
   ]);
@@ -1037,10 +1051,30 @@ export const App: React.FC = () => {
           />
         );
 
-      case "verbal_reasoning/word_codes/match":
+      case "verbal_reasoning/word_codes":
         return (
           <WordCodes
             modeConfig={{ isMatch: false, numCodes: 3, numWordToCodeQuestions: 2, numCodeToWordQuestions: 1 }}
+            numWords={4}
+            wordLength={5}
+            numAdditionalLetters={2}
+            numGuesses={3}
+            timerConfig={
+              gameOptionToggles.find((x) => x.page === "verbal_reasoning/word_codes")?.timer
+                ? { isTimed: true, seconds: 100 }
+                : { isTimed: false }
+            }
+            theme={theme}
+            settings={settings}
+            setPage={setPage}
+            onComplete={commonWingoProps.onComplete}
+          />
+        );
+
+        case "verbal_reasoning/word_codes/match":
+        return (
+          <WordCodes
+            modeConfig={{isMatch: true}}
             numWords={4}
             wordLength={5}
             numAdditionalLetters={2}

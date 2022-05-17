@@ -45,6 +45,8 @@ export const LobbyMenu: React.FC<Props> = (props) => {
    */
   function renderGameModeTile(page: Page) {
     const pageInfo = pages.find((x) => x.page === page);
+    // Does the page have game options/settings?
+    const hasSettings = props.gameOptionToggles.find((x) => x.page === page) !== undefined;
 
     return (
       <li className="widget">
@@ -57,14 +59,16 @@ export const LobbyMenu: React.FC<Props> = (props) => {
           <Button mode="accept" data-game-mode={page} settings={props.settings} onClick={() => props.setPage(page)}>
             Play
           </Button>
-          <Button
-            mode="default"
-            className="game_options"
-            settings={props.settings}
-            onClick={() => setOptionsConfig({ isConfigShown: true, Page: page })}
-          >
-            <BsGearFill />
-          </Button>
+          {hasSettings && (
+            <Button
+              mode="default"
+              className="game_options"
+              settings={props.settings}
+              onClick={() => setOptionsConfig({ isConfigShown: true, Page: page })}
+            >
+              <BsGearFill />
+            </Button>
+          )}
         </div>
       </li>
     );
@@ -72,6 +76,13 @@ export const LobbyMenu: React.FC<Props> = (props) => {
 
   function renderConfigModal(page: Page): React.ReactNode {
     const pageInfo = pages.find((x) => x.page === page);
+    // Does the page have game options/settings?
+    const hasSettings = props.gameOptionToggles.find((x) => x.page === page) !== undefined;
+
+    // Don't need a config modal (for a page with nothing to configure)
+    if (!hasSettings) {
+      return;
+    }
 
     return (
       <Modal
@@ -83,7 +94,6 @@ export const LobbyMenu: React.FC<Props> = (props) => {
         }
         onClose={() => setOptionsConfig({ isConfigShown: false })}
       >
-        {props.gameOptionToggles.find((x) => x.page === page) === undefined && <em>No options for this game mode</em>}
         {props.gameOptionToggles.find((x) => x.page === page)?.firstLetter !== undefined && (
           <label>
             <input
@@ -186,6 +196,7 @@ export const LobbyMenu: React.FC<Props> = (props) => {
             {renderGameModeTile("verbal_reasoning/match")}
             {renderGameModeTile("verbal_reasoning/number_sets")}
             {renderGameModeTile("verbal_reasoning/algebra")}
+            {renderGameModeTile("verbal_reasoning/word_codes")}
             {renderGameModeTile("verbal_reasoning/word_codes/match")}
             {renderGameModeTile("letters_categories")}
           </ul>
@@ -200,7 +211,7 @@ export const LobbyMenu: React.FC<Props> = (props) => {
           </ul>
         </div>
       </div>
-      
+
       {optionsConfig.isConfigShown && renderConfigModal(optionsConfig.Page)}
 
       <section className="challenges">
