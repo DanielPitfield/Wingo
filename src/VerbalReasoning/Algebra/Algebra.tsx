@@ -26,6 +26,7 @@ export type QuestionTemplate = {
 interface Props {
   defaultTemplate?: AlgebraConfigProps;
   timerConfig: { isTimed: false } | { isTimed: true; seconds: number };
+  keyboard: boolean;
   theme: Theme;
   settings: SettingsData;
   setPage: (page: Page) => void;
@@ -320,7 +321,7 @@ const Algebra: React.FC<Props> = (props) => {
           settings={props.settings}
         ></LetterTile>
       </div>
-      {algebraTemplate?.questions[questionNumber].answerType === "number" && (
+      {Boolean(algebraTemplate?.questions[questionNumber].answerType === "number" && props.keyboard) && (
         <NumPad
           onEnter={() => setInProgress(false)}
           onBackspace={onBackspace}
@@ -328,7 +329,7 @@ const Algebra: React.FC<Props> = (props) => {
           settings={props.settings}
         />
       )}
-      {algebraTemplate?.questions[questionNumber].answerType === "letter" && inProgress && (
+      {Boolean(algebraTemplate?.questions[questionNumber].answerType === "letter" && inProgress && props.keyboard) && (
         <Keyboard
           onEnter={() => setInProgress(false)}
           onBackspace={onBackspace}

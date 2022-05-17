@@ -28,10 +28,11 @@ export type NumberSetTemplate = {
 interface Props {
   defaultSet?: NumberSetConfigProps;
   timerConfig: { isTimed: false } | { isTimed: true; seconds: number };
+  keyboard: boolean;
   theme: Theme;
   settings: SettingsData;
   setPage: (page: Page) => void;
-  onComplete?:(wasCorrect: boolean) => void;
+  onComplete?: (wasCorrect: boolean) => void;
 }
 
 /** */
@@ -238,13 +239,15 @@ const NumberSets: React.FC<Props> = (props) => {
           settings={props.settings}
         ></LetterTile>
       </div>
-      <NumPad
-        onEnter={() => setInProgress(false)}
-        onBackspace={onBackspace}
-        onSubmitNumber={onSubmitNumber}
-        settings={props.settings}
-        disabled={!inProgress}
-      />
+      {props.keyboard && (
+        <NumPad
+          onEnter={() => setInProgress(false)}
+          onBackspace={onBackspace}
+          onSubmitNumber={onSubmitNumber}
+          settings={props.settings}
+          disabled={!inProgress}
+        />
+      )}
       <div>
         {props.timerConfig.isTimed && (
           <ProgressBar

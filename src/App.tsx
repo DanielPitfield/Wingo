@@ -367,6 +367,7 @@ export const App: React.FC = () => {
     {
       page: "countdown/letters",
       timer: true,
+      keyboard: true,
     },
     {
       page: "letters_categories",
@@ -381,6 +382,7 @@ export const App: React.FC = () => {
     {
       page: "numbers/arithmetic_reveal",
       timer: true,
+      keyboard: true,
     },
     {
       page: "numbers/arithmetic_drag/order",
@@ -401,14 +403,17 @@ export const App: React.FC = () => {
     {
       page: "verbal_reasoning/number_sets",
       timer: true,
+      keyboard: true,
     },
     {
       page: "verbal_reasoning/algebra",
       timer: true,
+      keyboard: true,
     },
     {
       page: "verbal_reasoning/word_codes",
       timer: true,
+      keyboard: true,
     },
     {
       page: "verbal_reasoning/word_codes/match",
@@ -667,13 +672,13 @@ export const App: React.FC = () => {
             {...commonWingoProps}
             mode="daily"
             firstLetterProvided={gameOptionToggles.find((x) => x.page === "wingo/daily")?.firstLetter || false}
-            showHint={gameOptionToggles.find((x) => x.page === "wingo/daily")?.showHint || true}
+            showHint={gameOptionToggles.find((x) => x.page === "wingo/daily")?.showHint || false}
             timerConfig={
               gameOptionToggles.find((x) => x.page === "wingo/daily")?.timer
                 ? { isTimed: true, seconds: 30 }
                 : { isTimed: false }
             }
-            keyboard={gameOptionToggles.find((x) => x.page === "wingo/daily")?.keyboard || true}
+            keyboard={gameOptionToggles.find((x) => x.page === "wingo/daily")?.keyboard || false}
             defaultWordLength={wordLength}
             enforceFullLengthGuesses={true}
           />
@@ -685,13 +690,13 @@ export const App: React.FC = () => {
             {...commonWingoProps}
             mode="repeat"
             firstLetterProvided={gameOptionToggles.find((x) => x.page === "wingo/repeat")?.firstLetter || false}
-            showHint={gameOptionToggles.find((x) => x.page === "wingo/repeat")?.showHint || true}
+            showHint={gameOptionToggles.find((x) => x.page === "wingo/repeat")?.showHint || false}
             timerConfig={
               gameOptionToggles.find((x) => x.page === "wingo/repeat")?.timer
                 ? { isTimed: true, seconds: 30 } // TODO: Confgiure timer value
                 : { isTimed: false }
             }
-            keyboard={gameOptionToggles.find((x) => x.page === "wingo/repeat")?.keyboard || true}
+            keyboard={gameOptionToggles.find((x) => x.page === "wingo/repeat")?.keyboard || false}
             defaultWordLength={gameOptionToggles.find((x) => x.page === "wingo/repeat")?.wordLength || wordLength}
             enforceFullLengthGuesses={false}
           />
@@ -703,13 +708,13 @@ export const App: React.FC = () => {
             {...commonWingoProps}
             mode="category"
             firstLetterProvided={gameOptionToggles.find((x) => x.page === "wingo/category")?.firstLetter || false}
-            showHint={gameOptionToggles.find((x) => x.page === "wingo/category")?.showHint || true}
+            showHint={gameOptionToggles.find((x) => x.page === "wingo/category")?.showHint || false}
             timerConfig={
               gameOptionToggles.find((x) => x.page === "wingo/category")?.timer
                 ? { isTimed: true, seconds: 30 }
                 : { isTimed: false }
             }
-            keyboard={gameOptionToggles.find((x) => x.page === "wingo/category")?.keyboard || true}
+            keyboard={gameOptionToggles.find((x) => x.page === "wingo/category")?.keyboard || false}
             defaultWordLength={wordLength}
             enforceFullLengthGuesses={false}
           />
@@ -721,13 +726,13 @@ export const App: React.FC = () => {
             {...commonWingoProps}
             mode="increasing"
             firstLetterProvided={gameOptionToggles.find((x) => x.page === "wingo/increasing")?.firstLetter || false}
-            showHint={gameOptionToggles.find((x) => x.page === "wingo/increasing")?.showHint || true}
+            showHint={gameOptionToggles.find((x) => x.page === "wingo/increasing")?.showHint || false}
             timerConfig={
               gameOptionToggles.find((x) => x.page === "wingo/increasing")?.timer
                 ? { isTimed: true, seconds: 30 }
                 : { isTimed: false }
             }
-            keyboard={gameOptionToggles.find((x) => x.page === "wingo/increasing")?.keyboard || true}
+            keyboard={gameOptionToggles.find((x) => x.page === "wingo/increasing")?.keyboard || false}
             defaultWordLength={wordLength_increasing}
             enforceFullLengthGuesses={true}
           />
@@ -739,13 +744,13 @@ export const App: React.FC = () => {
             {...commonWingoProps}
             mode="limitless"
             firstLetterProvided={gameOptionToggles.find((x) => x.page === "wingo/limitless")?.firstLetter || false}
-            showHint={gameOptionToggles.find((x) => x.page === "wingo/limitless")?.showHint || true}
+            showHint={gameOptionToggles.find((x) => x.page === "wingo/limitless")?.showHint || false}
             timerConfig={
               gameOptionToggles.find((x) => x.page === "wingo/limitless")?.timer
                 ? { isTimed: true, seconds: 30 }
                 : { isTimed: false }
             }
-            keyboard={gameOptionToggles.find((x) => x.page === "wingo/limitless")?.keyboard || true}
+            keyboard={gameOptionToggles.find((x) => x.page === "wingo/limitless")?.keyboard || false}
             defaultWordLength={wordLength_limitless}
             enforceFullLengthGuesses={true}
           />
@@ -757,13 +762,13 @@ export const App: React.FC = () => {
             {...commonWingoProps}
             mode="puzzle"
             firstLetterProvided={gameOptionToggles.find((x) => x.page === "wingo/puzzle")?.firstLetter || false}
-            showHint={gameOptionToggles.find((x) => x.page === "wingo/puzzle")?.showHint || true}
+            showHint={gameOptionToggles.find((x) => x.page === "wingo/puzzle")?.showHint || false}
             timerConfig={
               gameOptionToggles.find((x) => x.page === "wingo/puzzle")?.timer
                 ? { isTimed: true, seconds: 30 }
                 : { isTimed: false }
             }
-            keyboard={gameOptionToggles.find((x) => x.page === "wingo/puzzle")?.keyboard || true}
+            keyboard={gameOptionToggles.find((x) => x.page === "wingo/puzzle")?.keyboard || false}
             defaultWordLength={wordLength_puzzle}
             defaultnumGuesses={numGuesses_puzzle}
             enforceFullLengthGuesses={true}
@@ -776,13 +781,13 @@ export const App: React.FC = () => {
             {...commonWingoProps}
             mode="interlinked"
             firstLetterProvided={gameOptionToggles.find((x) => x.page === "wingo/interlinked")?.firstLetter || false}
-            showHint={gameOptionToggles.find((x) => x.page === "wingo/interlinked")?.showHint || true}
+            showHint={gameOptionToggles.find((x) => x.page === "wingo/interlinked")?.showHint || false}
             timerConfig={
               gameOptionToggles.find((x) => x.page === "wingo/interlinked")?.timer
                 ? { isTimed: true, seconds: 30 }
                 : { isTimed: false }
             }
-            keyboard={gameOptionToggles.find((x) => x.page === "wingo/interlinked")?.keyboard || true}
+            keyboard={gameOptionToggles.find((x) => x.page === "wingo/interlinked")?.keyboard || false}
             defaultWordLength={wordLength}
             enforceFullLengthGuesses={true}
           />
@@ -794,13 +799,13 @@ export const App: React.FC = () => {
             {...commonWingoProps}
             mode="crossword"
             firstLetterProvided={gameOptionToggles.find((x) => x.page === "wingo/crossword")?.firstLetter || false}
-            showHint={gameOptionToggles.find((x) => x.page === "wingo/crossword")?.showHint || true}
+            showHint={gameOptionToggles.find((x) => x.page === "wingo/crossword")?.showHint || false}
             timerConfig={
               gameOptionToggles.find((x) => x.page === "wingo/crossword")?.timer
                 ? { isTimed: true, seconds: 30 }
                 : { isTimed: false }
             }
-            keyboard={gameOptionToggles.find((x) => x.page === "wingo/crossword")?.keyboard || true}
+            keyboard={gameOptionToggles.find((x) => x.page === "wingo/crossword")?.keyboard || false}
             defaultWordLength={wordLength}
             enforceFullLengthGuesses={true}
           />
@@ -812,13 +817,13 @@ export const App: React.FC = () => {
             {...commonWingoProps}
             mode="crossword/fit"
             firstLetterProvided={gameOptionToggles.find((x) => x.page === "wingo/crossword/fit")?.firstLetter || false}
-            showHint={gameOptionToggles.find((x) => x.page === "wingo/crossword/fit")?.showHint || true}
+            showHint={gameOptionToggles.find((x) => x.page === "wingo/crossword/fit")?.showHint || false}
             timerConfig={
               gameOptionToggles.find((x) => x.page === "wingo/crossword/fit")?.timer
                 ? { isTimed: true, seconds: 30 }
                 : { isTimed: false }
             }
-            keyboard={gameOptionToggles.find((x) => x.page === "wingo/crossword/fit")?.keyboard || true}
+            keyboard={gameOptionToggles.find((x) => x.page === "wingo/crossword/fit")?.keyboard || false}
             defaultWordLength={wordLength}
             enforceFullLengthGuesses={true}
           />
@@ -830,13 +835,13 @@ export const App: React.FC = () => {
             {...commonWingoProps}
             mode="crossword/weekly"
             firstLetterProvided={gameOptionToggles.find((x) => x.page === "wingo/crossword")?.firstLetter || false}
-            showHint={gameOptionToggles.find((x) => x.page === "wingo/crossword")?.showHint || true}
+            showHint={gameOptionToggles.find((x) => x.page === "wingo/crossword")?.showHint || false}
             timerConfig={
               gameOptionToggles.find((x) => x.page === "wingo/crossword")?.timer
                 ? { isTimed: true, seconds: 30 }
                 : { isTimed: false }
             }
-            keyboard={gameOptionToggles.find((x) => x.page === "wingo/crossword")?.keyboard || true}
+            keyboard={gameOptionToggles.find((x) => x.page === "wingo/crossword")?.keyboard || false}
             defaultWordLength={wordLength}
             enforceFullLengthGuesses={true}
           />
@@ -848,13 +853,13 @@ export const App: React.FC = () => {
             {...commonWingoProps}
             mode="crossword/daily"
             firstLetterProvided={gameOptionToggles.find((x) => x.page === "wingo/crossword")?.firstLetter || false}
-            showHint={gameOptionToggles.find((x) => x.page === "wingo/crossword")?.showHint || true}
+            showHint={gameOptionToggles.find((x) => x.page === "wingo/crossword")?.showHint || false}
             timerConfig={
               gameOptionToggles.find((x) => x.page === "wingo/crossword")?.timer
                 ? { isTimed: true, seconds: 30 }
                 : { isTimed: false }
             }
-            keyboard={gameOptionToggles.find((x) => x.page === "wingo/crossword")?.keyboard || true}
+            keyboard={gameOptionToggles.find((x) => x.page === "wingo/crossword")?.keyboard || false}
             defaultWordLength={wordLength}
             enforceFullLengthGuesses={true}
           />
@@ -869,7 +874,7 @@ export const App: React.FC = () => {
                 ? { isTimed: true, seconds: 30 }
                 : { isTimed: false }
             }
-            keyboard={gameOptionToggles.find((x) => x.page === "countdown/letters")?.keyboard || true}
+            keyboard={gameOptionToggles.find((x) => x.page === "countdown/letters")?.keyboard || false}
             defaultWordLength={wordLength_countdown_letters}
             page={page}
             theme={Themes.GenericLetterCountdown}
@@ -891,7 +896,7 @@ export const App: React.FC = () => {
                 : { isTimed: false }
             }
             theme={theme}
-            keyboard={gameOptionToggles.find((x) => x.page === "letters_categories")?.keyboard || true}
+            keyboard={gameOptionToggles.find((x) => x.page === "letters_categories")?.keyboard || false}
             defaultWordLength={10}
             enforceFullLengthGuesses={false}
           />
@@ -931,6 +936,7 @@ export const App: React.FC = () => {
                 ? { isTimed: true, seconds: 10 }
                 : { isTimed: false }
             }
+            keyboard={gameOptionToggles.find((x) => x.page === "numbers/arithmetic_reveal")?.keyboard || false}
             theme={theme}
             settings={settings}
             setPage={setPage}
@@ -1039,6 +1045,7 @@ export const App: React.FC = () => {
                 ? { isTimed: true, seconds: 100 }
                 : { isTimed: false }
             }
+            keyboard={gameOptionToggles.find((x) => x.page === "verbal_reasoning/number_sets")?.keyboard || false}
             theme={theme}
             settings={settings}
             setPage={setPage}
@@ -1054,6 +1061,7 @@ export const App: React.FC = () => {
                 ? { isTimed: true, seconds: 100 }
                 : { isTimed: false }
             }
+            keyboard={gameOptionToggles.find((x) => x.page === "verbal_reasoning/algebra")?.keyboard || false}
             theme={theme}
             settings={settings}
             setPage={setPage}
@@ -1074,6 +1082,7 @@ export const App: React.FC = () => {
                 ? { isTimed: true, seconds: 100 }
                 : { isTimed: false }
             }
+            keyboard={gameOptionToggles.find((x) => x.page === "verbal_reasoning/word_codes")?.keyboard || false}
             theme={theme}
             settings={settings}
             setPage={setPage}
@@ -1094,6 +1103,7 @@ export const App: React.FC = () => {
                 ? { isTimed: true, seconds: 100 }
                 : { isTimed: false }
             }
+            keyboard={false}
             theme={theme}
             settings={settings}
             setPage={setPage}
