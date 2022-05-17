@@ -63,7 +63,7 @@ const NubbleConfig: React.FC<Props> = (props) => {
       case "hexagon": {
         switch (props.gridSize) {
           case 100: {
-            // Use square adjacent mappings for now
+            // TODO: Use square adjacent mappings for now (change to its own adjacency)
             return square_100_adj;
           }
           case 64: {
@@ -289,6 +289,47 @@ const NubbleConfig: React.FC<Props> = (props) => {
 
     throw new Error(`Unexpected number for grid size: ${props.gridSize} NUmber:  ${number}`);
   }
+
+  function determineRowValues() {
+    switch (props.gridSize) {
+      case 25: {
+        return [
+          { rowNumber: 1, values: [] },
+          { rowNumber: 2, values: [] },
+          { rowNumber: 3, values: [] },
+          { rowNumber: 4, values: [] },
+          { rowNumber: 5, values: [] },
+        ];
+      }
+      case 64: {
+        return [
+          { rowNumber: 1, values: [] },
+          { rowNumber: 2, values: [] },
+          { rowNumber: 3, values: [] },
+          { rowNumber: 4, values: [] },
+          { rowNumber: 5, values: [] },
+          { rowNumber: 6, values: [] },
+          { rowNumber: 7, values: [] },
+          { rowNumber: 8, values: [] },
+        ];
+      }
+      case 100: {
+        return [
+          { rowNumber: 1, values: [1, 3, 6, 10, 15, 21, 28, 36, 45, 55] },
+          { rowNumber: 2, values: [2, 5, 9, 14, 20, 27, 35, 44, 54, 64] },
+          { rowNumber: 3, values: [4, 8, 13, 19, 26, 34, 43, 53, 63, 72] },
+          { rowNumber: 4, values: [7, 12, 18, 25, 33, 42, 52, 62, 71, 79] },
+          { rowNumber: 5, values: [11, 17, 24, 32, 41, 51, 61, 70, 78, 85] },
+          { rowNumber: 6, values: [16, 23, 31, 40, 50, 60, 69, 77, 84, 90] },
+          { rowNumber: 7, values: [22, 30, 39, 49, 59, 68, 76, 83, 89, 94] },
+          { rowNumber: 8, values: [29, 38, 48, 58, 67, 75, 82, 88, 93, 97] },
+          { rowNumber: 9, values: [37, 47, 57, 66, 74, 81, 87, 92, 97, 99] },
+          { rowNumber: 10, values: [46, 56, 65, 73, 80, 86, 91, 95, 98, 100] },
+        ];
+      }
+    }
+  }
+
   return (
     <Nubble
       theme={props.theme}
@@ -297,6 +338,7 @@ const NubbleConfig: React.FC<Props> = (props) => {
       diceMax={props.diceMax}
       gridSize={props.gridSize}
       gridShape={props.gridShape}
+      determineRowValues={determineRowValues}
       determinePoints={determinePoints}
       determinePointColourMappings={determinePointColourMappings}
       determineAdjacentMappings={determineAdjacentMappings}

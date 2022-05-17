@@ -13,6 +13,7 @@ interface Props {
   diceMax: number;
   gridSize: 25 | 64 | 100;
   gridShape: "square" | "hexagon";
+  determineRowValues: () => { rowNumber: number; values: number[] }[];
   determinePoints: (value: number) => number;
   determinePointColourMappings: () => { points: number; colour: string }[];
   determineAdjacentMappings: () => { pin: number; adjacent_pins: number[] }[];
@@ -203,58 +204,63 @@ const Nubble: React.FC<Props> = (props) => {
         }}
       >
         {Array.from({ length: rowLength }).map((_, i) => {
-          /* TODO: Hexagon grid values
-          From left to right (across the row):
+          if (props.gridShape === "square") {
+            // What was the highest value included in the previous row?
+            const prevRowEndingValue = (rowNumber - 1) * rowLength;
+            // Start from that value and add the index to it
+            let value = prevRowEndingValue + i;
+            // Index is zero based, add an additional one
+            value = value + 1;
 
-          1st value = 1st value of previous row + (rowNumber - 1)
+            let isPicked = pickedPins.includes(value);
 
-          Difference = rowNumber + 1
-          2nd value = 1st value + Difference
+            const pointColourMappings = props.determinePointColourMappings();
+            let colour = pointColourMappings.find((x) => x.points === props.determinePoints(value))?.colour;
 
-          Difference = rowNumber + 2
-          3rd value = 2nd value + Difference
+            return (
+              <button
+                key={i}
+                className="nubble-button"
+                data-prime={isPrime(value)}
+                data-shape={props.gridShape}
+                data-picked={isPicked}
+                data-colour={colour}
+                onClick={() => onClick(value)}
+                disabled={isPicked || status !== "dice-rolled-awaiting-pick"}
+              >
+                {value}
+              </button>
+            );
+          } else if (props.gridShape === "hexagon") {
+            // TODO: Calling function to return all values is expensive
+            const value = props.determineRowValues().find(row => rowNumber === row.rowNumber)?.values[i];
 
-          ....
+            if (!value) {
+              return;
+            }
+            
+            let isPicked = pickedPins.includes(value);
 
-          The difference can only be a maximum of 10
-          Once a difference of 10 has been used twice consecutively
-          Start decrementing the difference (use 9 and go down from then on)
-
-          */
-          
-
-        
-
-
-          // What was the highest value included in the previous row?
-          const prevRowEndingValue = (rowNumber - 1) * rowLength;
-          // Start from that value and add the index to it
-          let value = prevRowEndingValue + i;
-          // Index is zero based, add an additional one
-          value = value + 1;
-
-          let isPicked = pickedPins.includes(value);
-
-          const pointColourMappings = props.determinePointColourMappings();
-          let colour = pointColourMappings.find((x) => x.points === props.determinePoints(value))?.colour;
-
-          return (
-            <button
-              key={i}
-              className="nubble-button"
-              data-prime={isPrime(value)}
-              data-shape={props.gridShape}
-              data-picked={isPicked}
-              data-colour={colour}
-              onClick={() => onClick(value)}
-              disabled={isPicked || status !== "dice-rolled-awaiting-pick"}
-            >
-              {props.gridShape === "hexagon" && <span className="top"></span>}
-              {props.gridShape === "hexagon" && <span className="middle">{value}</span>}
-              {props.gridShape === "hexagon" && <span className="bottom"></span>}
-              {props.gridShape === "square" && value}
-            </button>
-          );
+            const pointColourMappings = props.determinePointColourMappings();
+            let colour = pointColourMappings.find((x) => x.points === props.determinePoints(value))?.colour;
+            
+            return (
+              <button
+                key={i}
+                className="nubble-button"
+                data-prime={isPrime(value)}
+                data-shape={props.gridShape}
+                data-picked={isPicked}
+                data-colour={colour}
+                onClick={() => onClick(value)}
+                disabled={isPicked || status !== "dice-rolled-awaiting-pick"}
+              >
+                <span className="top"></span>
+                <span className="middle">{value}</span>
+                <span className="bottom"></span>
+              </button>
+            );
+          }
         })}
       </div>
     );
