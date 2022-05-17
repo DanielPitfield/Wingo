@@ -294,23 +294,23 @@ const NubbleConfig: React.FC<Props> = (props) => {
     switch (props.gridSize) {
       case 25: {
         return [
-          { rowNumber: 1, values: [] },
-          { rowNumber: 2, values: [] },
-          { rowNumber: 3, values: [] },
-          { rowNumber: 4, values: [] },
-          { rowNumber: 5, values: [] },
+          { rowNumber: 1, values: [1, 3, 6, 10, 15] },
+          { rowNumber: 2, values: [2, 5, 9, 14, 19] },
+          { rowNumber: 3, values: [4, 8, 13, 18, 22] },
+          { rowNumber: 4, values: [7, 12, 17, 21, 24] },
+          { rowNumber: 5, values: [11, 16, 20, 23, 25] },
         ];
       }
       case 64: {
         return [
-          { rowNumber: 1, values: [] },
-          { rowNumber: 2, values: [] },
-          { rowNumber: 3, values: [] },
-          { rowNumber: 4, values: [] },
-          { rowNumber: 5, values: [] },
-          { rowNumber: 6, values: [] },
-          { rowNumber: 7, values: [] },
-          { rowNumber: 8, values: [] },
+          { rowNumber: 1, values: [1, 3, 6, 10, 15, 21, 28, 36] },
+          { rowNumber: 2, values: [2, 5, 9, 14, 20, 27, 35, 43] },
+          { rowNumber: 3, values: [4, 8, 13, 19, 26, 34, 42, 49] },
+          { rowNumber: 4, values: [7, 12, 18, 25, 33, 41, 48, 54] },
+          { rowNumber: 5, values: [11, 17, 24, 32, 40, 47, 53, 58] },
+          { rowNumber: 6, values: [16, 23, 31, 29, 46, 52, 57, 61] },
+          { rowNumber: 7, values: [22, 30, 38, 45, 51, 56, 60, 63] },
+          { rowNumber: 8, values: [29, 37, 44, 50, 55, 59, 62, 64] },
         ];
       }
       case 100: {
