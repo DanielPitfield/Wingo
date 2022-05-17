@@ -18,12 +18,14 @@ interface Props {
   setPage: (page: Page) => void;
   setSelectedArea: (areaConfig: AreaConfig) => void;
   setSelectedCampaignLevel: (level: LevelConfig) => void;
+  wordLengthValue: (value: number, page: Page) => void;
   firstLetterToggle: (value: boolean, page: Page) => void;
   showHintToggle: (value: boolean, page: Page) => void;
   timerToggle: (value: boolean, page: Page) => void;
   keyboardToggle: (value: boolean, page: Page) => void;
   gameOptionToggles: {
     page: Page;
+    wordLength?: number;
     firstLetter?: boolean;
     showHint?: boolean;
     timer?: boolean;
@@ -94,10 +96,22 @@ export const LobbyMenu: React.FC<Props> = (props) => {
         }
         onClose={() => setOptionsConfig({ isConfigShown: false })}
       >
+        {props.gameOptionToggles.find((x) => x.page === page)?.wordLength !== undefined && (
+          <label>
+            <input
+              type="number"
+              value={props.gameOptionToggles.find((x) => x.page === page)?.wordLength}
+              min={4}
+              max={11}
+              onChange={(e) => props.wordLengthValue(parseInt(e.target.value), page)}
+            ></input>
+            Word Length
+          </label>
+        )}
         {props.gameOptionToggles.find((x) => x.page === page)?.firstLetter !== undefined && (
           <label>
             <input
-              checked={props.gameOptionToggles.find((x) => x.page === page)?.firstLetter || false}
+              checked={props.gameOptionToggles.find((x) => x.page === page)?.firstLetter}
               type="checkbox"
               onChange={(e) => props.firstLetterToggle(e.target.checked, page)}
             ></input>
@@ -107,7 +121,7 @@ export const LobbyMenu: React.FC<Props> = (props) => {
         {props.gameOptionToggles.find((x) => x.page === page)?.showHint !== undefined && (
           <label>
             <input
-              checked={props.gameOptionToggles.find((x) => x.page === page)?.showHint || false}
+              checked={props.gameOptionToggles.find((x) => x.page === page)?.showHint}
               type="checkbox"
               onChange={(e) => props.showHintToggle(e.target.checked, page)}
             ></input>
@@ -117,7 +131,7 @@ export const LobbyMenu: React.FC<Props> = (props) => {
         {props.gameOptionToggles.find((x) => x.page === page)?.keyboard !== undefined && (
           <label>
             <input
-              checked={props.gameOptionToggles.find((x) => x.page === page)?.keyboard || true}
+              checked={props.gameOptionToggles.find((x) => x.page === page)?.keyboard}
               type="checkbox"
               onChange={(e) => props.keyboardToggle(e.target.checked, page)}
             ></input>
@@ -127,7 +141,7 @@ export const LobbyMenu: React.FC<Props> = (props) => {
         {props.gameOptionToggles.find((x) => x.page === page)?.timer !== undefined && (
           <label>
             <input
-              checked={props.gameOptionToggles.find((x) => x.page === page)?.timer || false}
+              checked={props.gameOptionToggles.find((x) => x.page === page)?.timer}
               type="checkbox"
               onChange={(e) => props.timerToggle(e.target.checked, page)}
             ></input>

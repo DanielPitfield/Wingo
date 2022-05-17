@@ -300,6 +300,7 @@ export const App: React.FC = () => {
   const [gameOptionToggles, setGameOptionToggles] = useState<
     {
       page: Page;
+      wordLength?: number;
       firstLetter?: boolean;
       showHint?: boolean;
       timer?: boolean;
@@ -308,6 +309,7 @@ export const App: React.FC = () => {
   >([
     {
       page: "wingo/repeat",
+      wordLength: 5,
       firstLetter: false,
       showHint: true,
       timer: false,
@@ -570,6 +572,14 @@ export const App: React.FC = () => {
              * @param value Checkbox checked (true) or not checked (false)
              * @param Page The page for the game type which options have just changed
              */
+             wordLengthValue={(value, page) =>
+              setGameOptionToggles(
+                gameOptionToggles.map((gameOption) => ({
+                  ...gameOption,
+                  wordLength: gameOption.page === page ? value : gameOption.wordLength,
+                }))
+              )
+            }
             firstLetterToggle={(value, page) =>
               setGameOptionToggles(
                 gameOptionToggles.map((gameOption) => ({
@@ -682,7 +692,7 @@ export const App: React.FC = () => {
                 : { isTimed: false }
             }
             keyboard={gameOptionToggles.find((x) => x.page === "wingo/repeat")?.keyboard || true}
-            defaultWordLength={wordLength}
+            defaultWordLength={gameOptionToggles.find((x) => x.page === "wingo/repeat")?.wordLength || wordLength}
             enforceFullLengthGuesses={false}
           />
         );
