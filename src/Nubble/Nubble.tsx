@@ -185,8 +185,8 @@ const Nubble: React.FC<Props> = (props) => {
     // Calculate the middle row
     const middle = Math.sqrt(props.gridSize) / 2;
 
-    // Calculate the offset from the middle row (negative is below middle)
-    const offset = middle - rowNumber;
+    // Calculate the offset from the middle row (negative offset applied to rows below middle)
+    const offset = (middle - rowNumber) * -1;
 
     // How much to slant the parallelogram
     const X_SLANT = 2.45;
@@ -203,7 +203,36 @@ const Nubble: React.FC<Props> = (props) => {
         }}
       >
         {Array.from({ length: rowLength }).map((_, i) => {
-          let value = rowNumber * rowLength + i + 1;
+          /* TODO: Hexagon grid values
+          From left to right (across the row):
+
+          1st value = 1st value of previous row + (rowNumber - 1)
+
+          Difference = rowNumber + 1
+          2nd value = 1st value + Difference
+
+          Difference = rowNumber + 2
+          3rd value = 2nd value + Difference
+
+          ....
+
+          The difference can only be a maximum of 10
+          Once a difference of 10 has been used twice consecutively
+          Start decrementing the difference (use 9 and go down from then on)
+
+          */
+          
+
+        
+
+
+          // What was the highest value included in the previous row?
+          const prevRowEndingValue = (rowNumber - 1) * rowLength;
+          // Start from that value and add the index to it
+          let value = prevRowEndingValue + i;
+          // Index is zero based, add an additional one
+          value = value + 1;
+
           let isPicked = pickedPins.includes(value);
 
           const pointColourMappings = props.determinePointColourMappings();
@@ -239,7 +268,9 @@ const Nubble: React.FC<Props> = (props) => {
     var Grid = [];
 
     const rowLength = Math.sqrt(props.gridSize);
-    for (let i = 0; i < rowLength; i++) {
+
+    // Start with higher value rows (so that they are rendered first, at the top of the grid)
+    for (let i = rowLength; i >= 1; i--) {
       Grid.push(populateRow(rowLength, i));
     }
     return Grid;
