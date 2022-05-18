@@ -443,7 +443,7 @@ const NubbleConfig: React.FC<Props> = (props) => {
           { rowNumber: 6, values: [16, 23, 31, 40, 50, 60, 69, 77, 84, 90] },
           { rowNumber: 7, values: [22, 30, 39, 49, 59, 68, 76, 83, 89, 94] },
           { rowNumber: 8, values: [29, 38, 48, 58, 67, 75, 82, 88, 93, 97] },
-          { rowNumber: 9, values: [37, 47, 57, 66, 74, 81, 87, 92, 97, 99] },
+          { rowNumber: 9, values: [37, 47, 57, 66, 74, 81, 87, 92, 96, 99] },
           { rowNumber: 10, values: [46, 56, 65, 73, 80, 86, 91, 95, 98, 100] },
         ];
       }
