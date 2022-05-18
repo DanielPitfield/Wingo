@@ -2,15 +2,14 @@ import React from "react";
 import "../index.scss";
 import { SettingsData } from "../SaveData";
 import { Theme } from "../Themes";
-import { square_100_adj, square_25_adj, square_64_adj } from "./adjacentMappings";
 import Nubble from "./Nubble";
 import {
-  parallelogram_100,
-  parallelogram_25,
-  parallelogram_64,
+  hexagon_100, 
+  hexagon_64,
+  hexagon_25,
   square_100,
-  square_25,
   square_64,
+  square_25,
 } from "./pointColourMappings";
 
 interface Props {
@@ -27,18 +26,19 @@ interface Props {
 }
 
 const NubbleConfig: React.FC<Props> = (props) => {
+  // Returns the number of points awarded for each colour of pin (imported from pointColourMappings.ts)
   function determinePointColourMappings(): { points: number; colour: string }[] {
     switch (props.gridShape) {
       case "hexagon": {
         switch (props.gridSize) {
           case 100: {
-            return parallelogram_100;
+            return hexagon_100;
           }
           case 64: {
-            return parallelogram_64;
+            return hexagon_64;
           }
           case 25: {
-            return parallelogram_25;
+            return hexagon_25;
           }
         }
       }
@@ -58,38 +58,104 @@ const NubbleConfig: React.FC<Props> = (props) => {
     }
   }
 
+  // Gets the adjacent pins of an individual pin (for square grid shape)
+  function getSquareAdjacentPins(pin: number, gridSize: number): number[] {
+    let adjacent_pins: number[] = [];
+    const rowLength = Math.sqrt(gridSize);
+
+    // Declare functions to add adjacent tiles in each of the four directions
+    function addLeft(pin: number) {
+      adjacent_pins.push(pin - 1);
+    }
+
+    function addRight(pin: number) {
+      adjacent_pins.push(pin + 1);
+    }
+
+    function addTop(pin: number) {
+      adjacent_pins.push(pin - rowLength);
+    }
+
+    function addBottom(pin: number) {
+      adjacent_pins.push(pin + rowLength);
+    }
+
+    const topLeftCorner = pin === 1;
+    const topRightCorner = pin === rowLength;
+    const bottomLeftCorner = pin === rowLength * rowLength - rowLength;
+    const bottomRightCorner = pin === rowLength * rowLength;
+
+    const leftBorder = pin % rowLength === 1 && !topLeftCorner && !bottomLeftCorner;
+    const rightBorder = pin % rowLength === 0 && !topRightCorner && !bottomRightCorner;
+    const topBorder = pin > 1 && pin < rowLength;
+    const bottomBorder = pin > rowLength * rowLength - rowLength && pin < rowLength * rowLength;
+
+    // Start with the corners of the square
+    if (topLeftCorner) {
+      addRight(pin);
+      addBottom(pin);
+    } else if (topRightCorner) {
+      addLeft(pin);
+      addBottom(pin);
+    } else if (bottomLeftCorner) {
+      addRight(pin);
+      addTop(pin);
+    } else if (bottomRightCorner) {
+      addLeft(pin);
+      addTop(pin);
+    }
+    // Now each of the borders (excluding the corner pins)
+    else if (leftBorder) {
+      addRight(pin);
+      addTop(pin);
+      addBottom(pin);
+    } else if (rightBorder) {
+      addLeft(pin);
+      addTop(pin);
+      addBottom(pin);
+    } else if (topBorder) {
+      addLeft(pin);
+      addRight(pin);
+      addBottom(pin);
+    } else if (bottomBorder) {
+      addLeft(pin);
+      addRight(pin);
+      addTop(pin);
+    }
+    // Pin towards the middle of the square
+    else {
+      addLeft(pin);
+      addRight(pin);
+      addTop(pin);
+      addBottom(pin);
+    }
+
+    // Safety check, remove any non-integers or values outside grid range
+    const valid_adjacent_pins = adjacent_pins.filter((x) => x > 0 && x <= rowLength * rowLength && Math.round(x) === x);
+
+    return valid_adjacent_pins;
+  }
+
+  // Returns the adjacent pins of every pin
   function determineAdjacentMappings(): { pin: number; adjacent_pins: number[] }[] {
     switch (props.gridShape) {
       case "hexagon": {
-        switch (props.gridSize) {
-          case 100: {
-            // TODO: Use square adjacent mappings for now (change to its own adjacency)
-            return square_100_adj;
-          }
-          case 64: {
-            return square_64_adj;
-          }
-          case 25: {
-            return square_25_adj;
-          }
-        }
+        // TODO: Currently using square adjacencies
+        return Array.from({ length: props.gridSize }).map((_, i) => ({
+          pin: i + 1,
+          adjacent_pins: getSquareAdjacentPins(i + 1, props.gridSize),
+        }));        
       }
       case "square": {
-        switch (props.gridSize) {
-          case 100: {
-            return square_100_adj;
-          }
-          case 64: {
-            return square_64_adj;
-          }
-          case 25: {
-            return square_25_adj;
-          }
-        }
+        return Array.from({ length: props.gridSize }).map((_, i) => ({
+          pin: i + 1,
+          adjacent_pins: getSquareAdjacentPins(i + 1, props.gridSize),
+        }));
       }
     }
   }
 
+  // Returns the number of points awarded for a selected pin
   function determinePoints(number: number): number {
     switch (props.gridShape) {
       case "hexagon": {
@@ -290,7 +356,8 @@ const NubbleConfig: React.FC<Props> = (props) => {
     throw new Error(`Unexpected number for grid size: ${props.gridSize} NUmber:  ${number}`);
   }
 
-  function determineRowValues() {
+  // Returns which pin values are on which rows (only used for hexagon shape)
+  function determineHexagonRowValues() {
     switch (props.gridSize) {
       case 25: {
         return [
@@ -338,7 +405,7 @@ const NubbleConfig: React.FC<Props> = (props) => {
       diceMax={props.diceMax}
       gridSize={props.gridSize}
       gridShape={props.gridShape}
-      determineRowValues={determineRowValues}
+      determineHexagonRowValues={determineHexagonRowValues}
       determinePoints={determinePoints}
       determinePointColourMappings={determinePointColourMappings}
       determineAdjacentMappings={determineAdjacentMappings}

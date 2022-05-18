@@ -1,7 +1,9 @@
 // Define the different pin colours (and their respective points) for the game based on grid shape and grid size
 
 // TODO: Could we expand the objects to hold a minimum and maxiumum value, meaning we could get rid of determinePoints()
-export const parallelogram_100 = [
+
+// Hexagon shape
+export const hexagon_100 = [
   { points: 10, colour: "orange" },
   { points: 20, colour: "light-blue" },
   { points: 50, colour: "yellow" },
@@ -11,7 +13,7 @@ export const parallelogram_100 = [
   { points: 500, colour: "red" },
 ];
 
-export const parallelogram_64 = [
+export const hexagon_64 = [
   { points: 10, colour: "orange" },
   { points: 20, colour: "yellow" },
   { points: 50, colour: "dark-blue" },
@@ -20,7 +22,7 @@ export const parallelogram_64 = [
   { points: 500, colour: "red" },
 ];
 
-export const parallelogram_25 = [
+export const hexagon_25 = [
   { points: 20, colour: "orange" },
   { points: 50, colour: "yellow" },
   { points: 100, colour: "dark-blue" },
@@ -29,6 +31,7 @@ export const parallelogram_25 = [
   { points: 500, colour: "red" },
 ];
 
+// Square shape
 export const square_100 = [
   { points: 10, colour: "orange" },
   { points: 20, colour: "light-blue" },

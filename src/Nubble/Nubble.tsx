@@ -13,7 +13,7 @@ interface Props {
   diceMax: number;
   gridSize: 25 | 64 | 100;
   gridShape: "square" | "hexagon";
-  determineRowValues: () => { rowNumber: number; values: number[] }[];
+  determineHexagonRowValues: () => { rowNumber: number; values: number[] }[];
   determinePoints: (value: number) => number;
   determinePointColourMappings: () => { points: number; colour: string }[];
   determineAdjacentMappings: () => { pin: number; adjacent_pins: number[] }[];
@@ -233,7 +233,7 @@ const Nubble: React.FC<Props> = (props) => {
             );
           } else if (props.gridShape === "hexagon") {
             // TODO: Calling function to return all values is expensive
-            const value = props.determineRowValues().find(row => rowNumber === row.rowNumber)?.values[i];
+            const value = props.determineHexagonRowValues().find(row => rowNumber === row.rowNumber)?.values[i];
 
             if (!value) {
               return;
