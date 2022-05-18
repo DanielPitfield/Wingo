@@ -1887,6 +1887,56 @@ $nubble-colors-names: (
   }
 }
 
+.gameshow-round-summary {
+  position: relative;
+  opacity: 0.95;
+  padding: 0.8em;
+  margin: 0.9em;
+  opacity: 0.9;
+  cursor: pointer;
+  user-select: none;
+  color: #eee;
+  background: linear-gradient(122deg, #cccccc 0%, #cecece 18%, #e0e0e0 46%);
+  &[data-correct="false"] {
+    border: 3px solid #b40d01aa;
+    background: linear-gradient(122deg, #d10000aa 0%, #d50101aa 18%, #e30000aa 46%);
+    .gameshow-round-summary-title {
+      color: #ffb5b5;
+    }
+  }
+  &[data-correct="true"] {
+    border: 3px solid #16b401aa;
+    background: linear-gradient(122deg, #00d10aaa 0%, #01d51daa 18%, #00e31eaa 46%);
+    .gameshow-round-summary-title {
+      color: #94fc86;
+    }
+  }
+  &[data-status="superseded"] {
+    opacity: 0.5;
+  }
+  .gameshow-round-summary-icon {
+    margin: 0.2em;
+    position: absolute;
+    right: 0;
+    top: 0;
+    opacity: 0.7;
+  }
+  .gameshow-round-summary-title {
+    margin: 0.2em 0;
+    color: #cccccc;
+    text-shadow: #111 1px 0px 3px;
+  }
+  .gameshow-round-summary-reward {
+    margin-top: 0.5em;
+    padding-right: 0.6em;
+  }
+  .gameshow-round-summary-description {
+    margin: 0;
+    margin-top: 0.2em;
+    text-shadow: #111 1px 0px 3px;
+  }
+}
+
 .shimmer[data-animation-setting="true"] {
   mask: linear-gradient(-65deg, #000 30%, #0006, #000 75%) right / 300% 100%;
   animation: shimmer 2s infinite;

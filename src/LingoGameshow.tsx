@@ -5,6 +5,8 @@ import { Page } from "./App";
 import { Theme } from "./Themes";
 import WordleConfig from "./WordleConfig";
 import { Button } from "./Button";
+import { ChallengeReward } from "./Challenges/Challenge";
+import Star from "./images/star.png";
 
 interface Props {
   commonWingoProps: {
@@ -24,33 +26,34 @@ interface Props {
 
 export function displayGameshowSummary(
   totalScore: number,
-  summary: { roundNumber: number; wasCorrect: boolean; answer: string; targetAnswer: string; score: number }[]
+  summary: { roundNumber: number; wasCorrect: boolean; answer: string; targetAnswer: string; score: number }[],
+  settings: SettingsData
 ) {
   return (
     <div className="gameshow-summary-container">
       <div className="gameshow-summary-totalScore">{totalScore}</div>
-      {summary.map((round) => {
-        const roundSummary = (
-          <>
-            <strong>{`Round ${round.roundNumber}`}</strong>
-            <br></br>
-            {`Guess: ${round.answer ? round.answer : "-"}`}
+      {summary.map((round) => (
+        <div
+          key={round.roundNumber}
+          className="gameshow-round-summary"
+          data-correct={round.score > 0}
+          data-animation-setting={settings.graphics.animation}
+        >
+          <img className="gameshow-round-summary-icon" src={Star} width={32} height={32} alt="" />
+          <h3 className="gameshow-round-summary-title">Round {round.roundNumber}</h3>
+          <p className="gameshow-round-summary-description">
+            <p className="guess">
+              <strong>Guess:</strong> {round.answer ? round.answer.toUpperCase() : "-"}
+            </p>
             {round.targetAnswer.length > 0 && (
-              <>
-                <br></br>
-                {`Answer: ${round.targetAnswer}`}
-              </>
+              <p className="answer">
+                <strong>Answer:</strong> {round.targetAnswer.toUpperCase()}
+              </p>
             )}
-            <br></br>
-            {`Score: ${round.score}`}
-          </>
-        );
-        return (
-          <div className="gameshow-round-summary" style={{ backgroundColor: round.score > 0 ? "green" : "red" }}>
-            {roundSummary}
-          </div>
-        );
-      })}
+          </p>
+          <ChallengeReward goldCoins={round.score} />
+        </div>
+      ))}
     </div>
   );
 }
@@ -218,7 +221,7 @@ export const LingoGameshow: React.FC<Props> = (props) => {
 
   return (
     <>
-      {inProgress ? getNextRound() : displayGameshowSummary(gameshowScore, summary)}
+      {inProgress ? getNextRound() : displayGameshowSummary(gameshowScore, summary, props.commonWingoProps.settings)}
       {!inProgress && (
         <Button
           mode={"accept"}

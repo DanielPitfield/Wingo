@@ -112,7 +112,7 @@ export const CountdownGameshow: React.FC<Props> = (props) => {
 
   return (
     <>
-      {inProgress ? getNextRound() : displayGameshowSummary(gameshowScore, summary)}
+      {inProgress ? getNextRound() : displayGameshowSummary(gameshowScore, summary, props.settings)}
       {!inProgress && (
         <Button
           mode={"accept"}
