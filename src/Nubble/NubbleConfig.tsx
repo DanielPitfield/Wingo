@@ -3,14 +3,7 @@ import "../index.scss";
 import { SettingsData } from "../SaveData";
 import { Theme } from "../Themes";
 import Nubble from "./Nubble";
-import {
-  hexagon_100, 
-  hexagon_64,
-  hexagon_25,
-  square_100,
-  square_64,
-  square_25,
-} from "./pointColourMappings";
+import { hexagon_100, hexagon_64, hexagon_25, square_100, square_64, square_25 } from "./pointColourMappings";
 
 interface Props {
   theme: Theme;
@@ -24,6 +17,15 @@ interface Props {
   settings: SettingsData;
   gameOverOnIncorrectPick?: boolean;
 }
+
+export type HexagonPinAdjacency = {
+  leftAbove: number | null;
+  rightAbove: number | null;
+  leftBelow: number | null;
+  rightBelow: number | null;
+  left: number | null;
+  right: number | null;
+};
 
 const NubbleConfig: React.FC<Props> = (props) => {
   // Returns the number of points awarded for each colour of pin (imported from pointColourMappings.ts)
@@ -59,60 +61,48 @@ const NubbleConfig: React.FC<Props> = (props) => {
   }
 
   // Gets the adjacent pins of an individual pin (for hexagon grid shape)
-  function getHexagonAdjacentPins(pin: number, gridSize: number): number[] {
-    let adjacent_pins = [];
+  function getHexagonAdjacentPins(pin: number, gridSize: number): HexagonPinAdjacency {
     // TODO: Calling function to return all row values each time for every pin is expensive
-    const rowValues = determineHexagonRowValues();    
+    const rowValues = determineHexagonRowValues();
 
     // Information about the entire row (of the pin)
-    const pinRow = rowValues.find(row => row.values.includes(pin));
+    const pinRow = rowValues.find((row) => row.values.includes(pin));
 
     if (!pinRow) {
-      return [];
+      // No adjacent pins are able to be found
+      return {
+        leftAbove: null,
+        rightAbove: null,
+        leftBelow: null,
+        rightBelow: null,
+        left: null,
+        right: null,
+      } as HexagonPinAdjacency;
     }
 
     // Which row number has the pin?
     const pinRowNumber = pinRow.rowNumber;
 
     // How far along the row is the pin?
-    const positionIndex = pinRow.values.findIndex(x => x === pin);
+    const positionIndex = pinRow.values.findIndex((x) => x === pin);
 
     // A pin can have up to a maximum of 6 adjacent pins (2 above, 2 below, 1 left, 1 right)
 
-    const leftAbove = rowValues.find(row => row.rowNumber === pinRowNumber + 1)?.values[positionIndex - 1];
-    if (leftAbove !== undefined) {
-      adjacent_pins.push(leftAbove);
-    }
+    const leftAbove = rowValues.find((row) => row.rowNumber === pinRowNumber + 1)?.values[positionIndex - 1];
+    const rightAbove = rowValues.find((row) => row.rowNumber === pinRowNumber + 1)?.values[positionIndex];
+    const leftBelow = rowValues.find((row) => row.rowNumber === pinRowNumber - 1)?.values[positionIndex];
+    const rightBelow = rowValues.find((row) => row.rowNumber === pinRowNumber - 1)?.values[positionIndex + 1];
+    const left = rowValues.find((row) => row.rowNumber === pinRowNumber)?.values[positionIndex - 1];
+    const right = rowValues.find((row) => row.rowNumber === pinRowNumber)?.values[positionIndex + 1];
 
-    const rightAbove = rowValues.find(row => row.rowNumber === pinRowNumber + 1)?.values[positionIndex];
-    if (rightAbove !== undefined) {
-      adjacent_pins.push(rightAbove);
-    }
-
-    const leftBelow = rowValues.find(row => row.rowNumber === pinRowNumber - 1)?.values[positionIndex];
-    if (leftBelow !== undefined) {
-      adjacent_pins.push(leftBelow);
-    }
-
-    const rightBelow = rowValues.find(row => row.rowNumber === pinRowNumber - 1)?.values[positionIndex + 1];
-    if (rightBelow !== undefined) {
-      adjacent_pins.push(rightBelow);
-    }
-
-    const left = rowValues.find(row => row.rowNumber === pinRowNumber)?.values[positionIndex - 1];
-    if (left !== undefined) {
-      adjacent_pins.push(left);
-    }
-
-    const right = rowValues.find(row => row.rowNumber === pinRowNumber)?.values[positionIndex + 1];
-    if (right !== undefined) {
-      adjacent_pins.push(right);
-    }
-
-    // Safety check, remove any non-integers or values outside grid range
-    const valid_adjacent_pins = adjacent_pins.filter((x) => x > 0 && x <= gridSize && Math.round(x) === x && x !== undefined);
-    
-    return valid_adjacent_pins;
+    return {
+      leftAbove: leftAbove || null,
+      rightAbove: rightAbove || null,
+      leftBelow: leftBelow || null,
+      rightBelow: rightBelow || null,
+      left: left || null,
+      right: right || null,
+    } as HexagonPinAdjacency;
   }
 
   // Gets the adjacent pins of an individual pin (for square grid shape)
@@ -189,27 +179,33 @@ const NubbleConfig: React.FC<Props> = (props) => {
     }
 
     // Safety check, remove any non-integers or values outside grid range
-    const valid_adjacent_pins = adjacent_pins.filter((x) => x > 0 && x <= gridSize && Math.round(x) === x && x !== undefined);
+    const valid_adjacent_pins = adjacent_pins.filter(
+      (x) => x > 0 && x <= gridSize && Math.round(x) === x && x !== undefined
+    );
 
     return valid_adjacent_pins;
   }
 
-  // Returns the adjacent pins of every pin
-  function determineAdjacentMappings(): { pin: number; adjacent_pins: number[] }[] {
-    switch (props.gridShape) {
-      case "hexagon": {
-        return Array.from({ length: props.gridSize }).map((_, i) => ({
-          pin: i + 1,
-          adjacent_pins: getHexagonAdjacentPins(i + 1, props.gridSize),
-        }));        
-      }
-      case "square": {
-        return Array.from({ length: props.gridSize }).map((_, i) => ({
-          pin: i + 1,
-          adjacent_pins: getSquareAdjacentPins(i + 1, props.gridSize),
-        }));
-      }
-    }
+  // Returns the adjacent pins of every pin (for square grid shape)
+  function determineSquareAdjacentMappings(): {
+    pin: number;
+    adjacent_pins: number[];
+  }[] {
+    return Array.from({ length: props.gridSize }).map((_, i) => ({
+      pin: i + 1,
+      adjacent_pins: getSquareAdjacentPins(i + 1, props.gridSize),
+    }));
+  }
+
+  // Returns the adjacent pins of every pin (for hexagon grid shape)
+  function determineHexagonAdjacentMappings(): {
+    pin: number;
+    adjacent_pins: HexagonPinAdjacency;
+  }[] {
+    return Array.from({ length: props.gridSize }).map((_, i) => ({
+      pin: i + 1,
+      adjacent_pins: getHexagonAdjacentPins(i + 1, props.gridSize),
+    }));
   }
 
   // Returns the number of points awarded for a selected pin
@@ -465,7 +461,8 @@ const NubbleConfig: React.FC<Props> = (props) => {
       determineHexagonRowValues={determineHexagonRowValues}
       determinePoints={determinePoints}
       determinePointColourMappings={determinePointColourMappings}
-      determineAdjacentMappings={determineAdjacentMappings}
+      determineSquareAdjacentMappings={determineSquareAdjacentMappings}
+      determineHexagonAdjacentMappings={determineHexagonAdjacentMappings}
       numTeams={props.numTeams}
       timeLengthMins={props.timeLengthMins}
       gameOverOnIncorrectPick={props.gameOverOnIncorrectPick}

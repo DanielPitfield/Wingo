@@ -5,6 +5,7 @@ import { MessageNotification } from "../MessageNotification";
 import { SettingsData } from "../SaveData";
 import { Theme } from "../Themes";
 import DiceGrid from "./DiceGrid";
+import { HexagonPinAdjacency } from "./NubbleConfig";
 
 interface Props {
   theme: Theme;
@@ -16,7 +17,14 @@ interface Props {
   determineHexagonRowValues: () => { rowNumber: number; values: number[] }[];
   determinePoints: (value: number) => number;
   determinePointColourMappings: () => { points: number; colour: string }[];
-  determineAdjacentMappings: () => { pin: number; adjacent_pins: number[] }[];
+  determineSquareAdjacentMappings: () => {
+    pin: number;
+    adjacent_pins: number[];
+  }[];
+  determineHexagonAdjacentMappings: () => {
+    pin: number;
+    adjacent_pins: HexagonPinAdjacency;
+  }[];
   numTeams: number;
   timeLengthMins: number;
   settings: SettingsData;
@@ -105,25 +113,90 @@ const Nubble: React.FC<Props> = (props) => {
    * @param pinNumber
    * @returns
    */
-  function isAdjacentBonus(pinNumber: number) {
-    // Array detailing pin adjacency for this grid size and shape
-    const adjacentMappings = props.determineAdjacentMappings();
+  function isAdjacentBonus(pinNumber: number): boolean {
+    if (props.gridShape === "square") {
+      // Pin adjacency information
+      const adjacentMappings = props.determineSquareAdjacentMappings();
+      // Adjacent pins of the clicked pin
+      const adjacent_pins = adjacentMappings.find((x) => x.pin === pinNumber)?.adjacent_pins;
 
-    // Adjacent pins of the clicked pin
-    const adjacent_pins = adjacentMappings.find((x) => x.pin === pinNumber)?.adjacent_pins;
+      if (!adjacent_pins) {
+        return false;
+      }
 
-    // All the adjacent pins which have also previously been picked
-    const picked_adjacent_pins = pickedPins.filter((x) => adjacent_pins?.includes(x));
+      // All the adjacent pins which have also previously been picked
+      const picked_adjacent_pins = pickedPins.filter((x) => adjacent_pins?.includes(x));
 
-    // The pin and the 3 adjacent pins to make a 2x2 square
-    if (props.gridShape === "square" && picked_adjacent_pins.length >= 3) {
-      return true;
-    } else if (
-      props.gridShape ===
-      "hexagon" /* TODO: Hexagon - triangle adjacent bonus - 2 adjacent pins can form a triangle but they must be the correct direction of adjacency */
-    ) {
-      return true;
-    } else {
+      // The pin and the 3 adjacent pins to make a 2x2 square
+      if (picked_adjacent_pins.length >= 3) {
+        return true;
+      } else {
+        return false;
+      }
+    } else if (props.gridShape === "hexagon") {
+      // Pin adjacency information
+      const adjacentMappings = props.determineHexagonAdjacentMappings();
+      // Adjacent pins of the clicked pin
+      const adjacent_pins = adjacentMappings.find((x) => x.pin === pinNumber)?.adjacent_pins;
+
+      if (!adjacent_pins) {
+        return false;
+      }
+
+      // The pin and two adjacent pins forming a triangle can happen in six ways
+
+      // In a clockwise direction...
+      const topTriangle =
+        adjacent_pins.leftAbove !== null &&
+        pickedPins.includes(adjacent_pins.leftAbove) &&
+        adjacent_pins.rightAbove !== null &&
+        pickedPins.includes(adjacent_pins.rightAbove);
+
+      const topRightTriangle =
+        adjacent_pins.rightAbove !== null &&
+        pickedPins.includes(adjacent_pins.rightAbove) &&
+        adjacent_pins.right !== null &&
+        pickedPins.includes(adjacent_pins.right);
+
+      const bottomRightTriangle =
+        adjacent_pins.rightBelow !== null &&
+        pickedPins.includes(adjacent_pins.rightBelow) &&
+        adjacent_pins.right !== null &&
+        pickedPins.includes(adjacent_pins.right);
+
+      const bottomTriangle =
+        adjacent_pins.leftBelow !== null &&
+        pickedPins.includes(adjacent_pins.leftBelow) &&
+        adjacent_pins.rightBelow !== null &&
+        pickedPins.includes(adjacent_pins.rightBelow);
+
+      const bottomLeftTriangle =
+        adjacent_pins.leftBelow !== null &&
+        pickedPins.includes(adjacent_pins.leftBelow) &&
+        adjacent_pins.left !== null &&
+        pickedPins.includes(adjacent_pins.left);
+
+      const topLeftTriangle =
+        adjacent_pins.leftAbove !== null &&
+        pickedPins.includes(adjacent_pins.leftAbove) &&
+        adjacent_pins.left !== null &&
+        pickedPins.includes(adjacent_pins.left);
+
+      if (
+        topTriangle ||
+        topRightTriangle ||
+        bottomRightTriangle ||
+        bottomTriangle ||
+        bottomLeftTriangle ||
+        topLeftTriangle
+      ) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+    else {
+      // Unexpected grid shape
       return false;
     }
   }
@@ -176,6 +249,7 @@ const Nubble: React.FC<Props> = (props) => {
     const adjacentBonus = 200;
 
     if (isAdjacentBonus(pinNumber)) {
+      console.log("Adjacent bonus!");
       pinScore = pinScore! + adjacentBonus;
     }
 
