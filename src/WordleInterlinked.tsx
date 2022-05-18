@@ -664,7 +664,7 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
               <br></br>
               <>The correct answers were:</>
               <br></br>
-              <>{gridConfig.words.map((x) => x.word).join(", ")}</>
+              <>{gridConfig.words.map((x) => x.word.toUpperCase()).join(", ")}</>
             </>
           )}
         </MessageNotification>
@@ -713,7 +713,11 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
     >
       {!inProgress && <div className="outcome">{displayOutcome()}</div>}
       {Boolean(inProgress && props.provideWords) && (
-        <div className="provided_words">{gridConfig.words.map((wordInfo) => wordInfo.word).join(",")}</div>
+        <MessageNotification type="info">
+          <strong>Provided words:</strong>
+          <br />
+          {gridConfig.words.map((wordInfo) => wordInfo.word.toUpperCase()).join(", ")}
+        </MessageNotification>
       )}
       {inProgress && (
         <MessageNotification type="default">
