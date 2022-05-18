@@ -25,7 +25,10 @@ export type TileStatus = {
 };
 
 interface Props {
-  wordArrayConfig: { type: "custom"; array: string[]; useExact: boolean } | { type: "category" } | { type: "length" };
+  wordArrayConfig:
+    | { type: "custom"; array: string[]; useExact: boolean; canRestart: boolean }
+    | { type: "category" }
+    | { type: "length" };
   displayHints: boolean;
   provideWords: boolean;
   // Additional units allowed in grid height or width (in addition to maxWordLength)
@@ -658,7 +661,7 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
           <strong>{gridCompleted ? "Correct!" : "Incorrect"}</strong>
           {!gridCompleted && (
             <>
-            <br></br>
+              <br></br>
               <>The correct answers were:</>
               <br></br>
               <>{gridConfig.words.map((x) => x.word).join(", ")}</>
@@ -666,11 +669,14 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
           )}
         </MessageNotification>
 
-        <br></br>
-
-        <Button mode="accept" settings={props.settings} onClick={() => ResetGame()}>
-          Restart
-        </Button>
+        {(props.wordArrayConfig.type !== "custom" || props.wordArrayConfig.canRestart) && (
+          <>
+            <br />
+            <Button mode="accept" settings={props.settings} onClick={() => ResetGame()}>
+              Restart
+            </Button>
+          </>
+        )}
       </>
     );
   }

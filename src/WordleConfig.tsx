@@ -633,7 +633,12 @@ const WordleConfig: React.FC<Props> = (props) => {
 
   function ResetGame() {
     if (currentWord.length > 0) {
-      props.onComplete?.(currentWord.toUpperCase() === targetWord?.toUpperCase(), currentWord, targetWord, determineScore());
+      props.onComplete?.(
+        currentWord.toUpperCase() === targetWord?.toUpperCase(),
+        currentWord,
+        targetWord,
+        determineScore()
+      );
     }
     setGuesses([]);
     setCurrentWord("");
@@ -946,6 +951,7 @@ const WordleConfig: React.FC<Props> = (props) => {
             categoryMappings.flatMap((categoryMappings) => categoryMappings.array.map((mapping) => mapping.word))
           ),
           useExact: true,
+          canRestart: false,
         }}
         onSave={SaveData.setDailyCrossWordGuesses}
         initialConfig={SaveData.getDailyCrossWordGuesses() || undefined}
@@ -973,6 +979,7 @@ const WordleConfig: React.FC<Props> = (props) => {
             categoryMappings.flatMap((categoryMappings) => categoryMappings.array.map((mapping) => mapping.word))
           ),
           useExact: true,
+          canRestart: false,
         }}
         onSave={SaveData.setWeeklyCrossWordGuesses}
         initialConfig={SaveData.getWeeklyCrossWordGuesses() || undefined}
