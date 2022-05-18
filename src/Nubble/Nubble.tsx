@@ -117,6 +117,8 @@ const Nubble: React.FC<Props> = (props) => {
     const picked_adjacent_pins = pickedPins.filter((x) => adjacent_pins?.includes(x));
 
     // Determine if there is a nubble triangle (3 adjacent picked pins)
+
+    // TODO: 3 adjacent pins is not a good enough check (2 can be sufficient but adjacent left and adjacent right dont form a triangle)
     if (picked_adjacent_pins.length >= 3) {
       return true;
     }
