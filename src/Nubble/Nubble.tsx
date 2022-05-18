@@ -105,10 +105,9 @@ const Nubble: React.FC<Props> = (props) => {
    * @param pinNumber
    * @returns
    */
-  function isAdjacentTriangle(pinNumber: number) {
-    // Array deatiling pin adjacency for this gridSize
+  function isAdjacentBonus(pinNumber: number) {
+    // Array detailing pin adjacency for this grid size and shape
     const adjacentMappings = props.determineAdjacentMappings();
-    console.log(adjacentMappings);
 
     // Adjacent pins of the clicked pin
     const adjacent_pins = adjacentMappings.find((x) => x.pin === pinNumber)?.adjacent_pins;
@@ -116,14 +115,17 @@ const Nubble: React.FC<Props> = (props) => {
     // All the adjacent pins which have also previously been picked
     const picked_adjacent_pins = pickedPins.filter((x) => adjacent_pins?.includes(x));
 
-    // Determine if there is a nubble triangle (3 adjacent picked pins)
-
-    // TODO: 3 adjacent pins is not a good enough check (2 can be sufficient but adjacent left and adjacent right dont form a triangle)
-    if (picked_adjacent_pins.length >= 3) {
+    // The pin and the 3 adjacent pins to make a 2x2 square
+    if (props.gridShape === "square" && picked_adjacent_pins.length >= 3) {
       return true;
+    } else if (
+      props.gridShape ===
+      "hexagon" /* TODO: Hexagon - triangle adjacent bonus - 2 adjacent pins can form a triangle but they must be the correct direction of adjacency */
+    ) {
+      return true;
+    } else {
+      return false;
     }
-
-    return false;
   }
 
   /**
@@ -173,7 +175,7 @@ const Nubble: React.FC<Props> = (props) => {
     // Bonus points awarded for nubble triangle
     const adjacentBonus = 200;
 
-    if (isAdjacentTriangle(pinNumber)) {
+    if (isAdjacentBonus(pinNumber)) {
       pinScore = pinScore! + adjacentBonus;
     }
 
@@ -235,17 +237,17 @@ const Nubble: React.FC<Props> = (props) => {
             );
           } else if (props.gridShape === "hexagon") {
             // TODO: Calling function to return all values is expensive
-            const value = props.determineHexagonRowValues().find(row => rowNumber === row.rowNumber)?.values[i];
+            const value = props.determineHexagonRowValues().find((row) => rowNumber === row.rowNumber)?.values[i];
 
             if (!value) {
               return;
             }
-            
+
             let isPicked = pickedPins.includes(value);
 
             const pointColourMappings = props.determinePointColourMappings();
             let colour = pointColourMappings.find((x) => x.points === props.determinePoints(value))?.colour;
-            
+
             return (
               <button
                 key={i}
