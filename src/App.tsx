@@ -492,6 +492,7 @@ export const App: React.FC = () => {
     {
       page: "countdown/conundrum",
       timer: true,
+      keyboard: true,
     },
     {
       page: "numbers/arithmetic_reveal",
@@ -1047,7 +1048,6 @@ export const App: React.FC = () => {
                 : { isTimed: false }
             }
             keyboard={gameOptionToggles.find((x) => x.page === "countdown/conundrum")?.keyboard || false}
-            defaultWordLength={wordLength_countdown_letters}
             page={page}
             theme={Themes.GenericLetterCountdown}
             settings={settings}
@@ -1267,6 +1267,7 @@ export const App: React.FC = () => {
       case "countdown/gameshow":
         return (
           <CountdownGameshow
+          keyboard={gameOptionToggles.find((x) => x.page === "countdown/letters")?.keyboard || gameOptionToggles.find((x) => x.page === "countdown/conundrum")?.keyboard || false}
             settings={settings}
             setPage={setPage}
             page={page}

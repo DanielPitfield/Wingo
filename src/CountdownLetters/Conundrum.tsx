@@ -10,7 +10,6 @@ interface Props {
   timerConfig: { isTimed: false } | { isTimed: true; seconds: number };
   keyboard: boolean;
   page: Page;
-  defaultWordLength: number;
   theme: Theme;
   settings: SettingsData;
   setTheme: (theme: Theme) => void;
