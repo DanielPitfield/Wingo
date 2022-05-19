@@ -32,6 +32,7 @@ import { CountdownGameshow } from "./CountdownGameshow";
 import { LingoGameshow } from "./LingoGameshow";
 import { FaQuestion } from "react-icons/fa";
 import HelpInformation from "./HelpInformation";
+import { Conundrum } from "./CountdownLetters/Conundrum";
 
 const wordLength = 5;
 const numGuesses = 6;
@@ -66,6 +67,7 @@ export type Page =
   | "letters_categories"
   | "countdown/letters"
   | "countdown/numbers"
+  | "countdown/conundrum"
   | "numbers/arithmetic_reveal"
   | "numbers/arithmetic_drag/order"
   | "numbers/arithmetic_drag/match"
@@ -290,6 +292,13 @@ export const pages: {
     isPlayable: true,
   },
   {
+    page: "countdown/conundrum",
+    title: "Countdown Conundrum",
+    description: "Find the single word which uses all the letters",
+    shortTitle: "Conundrum",
+    isPlayable: true,
+  },
+  {
     page: "numbers/arithmetic_reveal",
     title: "Quick Maths",
     description: "Test your arithmetic with quickfire calculations",
@@ -466,18 +475,22 @@ export const App: React.FC = () => {
       keyboard: true,
     },
     {
-      page: "countdown/letters",
-      timer: true,
-      keyboard: true,
-    },
-    {
       page: "letters_categories",
       firstLetter: false,
       timer: true,
       keyboard: true,
     },
     {
+      page: "countdown/letters",
+      timer: true,
+      keyboard: true,
+    },
+    {
       page: "countdown/numbers",
+      timer: true,
+    },
+    {
+      page: "countdown/conundrum",
       timer: true,
     },
     {
@@ -966,6 +979,22 @@ export const App: React.FC = () => {
           />
         );
 
+      case "letters_categories":
+        return (
+          <LetterCategoriesConfig
+            {...commonWingoProps}
+            timerConfig={
+              gameOptionToggles.find((x) => x.page === "letters_categories")?.timer
+                ? { isTimed: true, seconds: 30 }
+                : { isTimed: false }
+            }
+            theme={theme}
+            keyboard={gameOptionToggles.find((x) => x.page === "letters_categories")?.keyboard || false}
+            defaultWordLength={10}
+            enforceFullLengthGuesses={false}
+          />
+        );
+
       case "countdown/letters":
         return (
           <CountdownLettersConfig
@@ -987,22 +1016,6 @@ export const App: React.FC = () => {
           />
         );
 
-      case "letters_categories":
-        return (
-          <LetterCategoriesConfig
-            {...commonWingoProps}
-            timerConfig={
-              gameOptionToggles.find((x) => x.page === "letters_categories")?.timer
-                ? { isTimed: true, seconds: 30 }
-                : { isTimed: false }
-            }
-            theme={theme}
-            keyboard={gameOptionToggles.find((x) => x.page === "letters_categories")?.keyboard || false}
-            defaultWordLength={10}
-            enforceFullLengthGuesses={false}
-          />
-        );
-
       case "countdown/numbers":
         return (
           <CountdownNumbersConfig
@@ -1017,6 +1030,26 @@ export const App: React.FC = () => {
             defaultNumGuesses={countdown_numbers_NumGuesses}
             page={page}
             theme={Themes.GenericNumberCountdown}
+            settings={settings}
+            setTheme={setThemeIfNoPreferredSet}
+            setPage={setPage}
+            addGold={addGold}
+            onComplete={commonWingoProps.onComplete}
+          />
+        );
+
+      case "countdown/conundrum":
+        return (
+          <Conundrum
+            timerConfig={
+              gameOptionToggles.find((x) => x.page === "countdown/conundrum")?.timer
+                ? { isTimed: true, seconds: 30 }
+                : { isTimed: false }
+            }
+            keyboard={gameOptionToggles.find((x) => x.page === "countdown/conundrum")?.keyboard || false}
+            defaultWordLength={wordLength_countdown_letters}
+            page={page}
+            theme={Themes.GenericLetterCountdown}
             settings={settings}
             setTheme={setThemeIfNoPreferredSet}
             setPage={setPage}
