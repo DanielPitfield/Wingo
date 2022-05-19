@@ -15,6 +15,11 @@ interface Props {
   themes: Theme[];
   setTheme: (theme: Theme) => void;
   addGold: (gold: number) => void;
+  numSets: number;
+  numLetterRoundsPerSet: number;
+  numNumberRoundsPerSet: number;
+  numConundrumRoundsPerSet: number;
+  hasFinishingConundrum: boolean;
 }
 
 export const CountdownGameshow: React.FC<Props> = (props) => {
@@ -71,6 +76,20 @@ export const CountdownGameshow: React.FC<Props> = (props) => {
 
     // https://wiki.apterous.org/15_round_format_(new)
     const numberRounds = [3, 6, 9, 14];
+
+    const rounds: ("number" | "letter" | "conundrum")[] = Array.from({ length: props.numSets })
+      .flatMap(
+        (_, i) =>
+          Array.from({ length: props.numLetterRoundsPerSet })
+            .map((_) => "letter")
+            .concat(Array.from({ length: props.numNumberRoundsPerSet }).map((_) => "number"))
+            .concat(Array.from({ length: props.numConundrumRoundsPerSet }).map((_) => "conundrum")) as (
+            | "number"
+            | "letter"
+            | "conundrum"
+          )[]
+      )
+      .concat(props.hasFinishingConundrum ? ["conundrum"] : []);
 
     if (!numberRounds.includes(roundNumber)) {
       return (

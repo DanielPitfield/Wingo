@@ -1273,6 +1273,11 @@ export const App: React.FC = () => {
             themes={[Themes.GenericLetterCountdown, Themes.GenericNumberCountdown]}
             setTheme={setThemeIfNoPreferredSet}
             addGold={addGold}
+            numSets={5}
+            numLetterRoundsPerSet={2}
+            numNumberRoundsPerSet={1}
+            numConundrumRoundsPerSet={0}
+            hasFinishingConundrum={true}
           />
         );
 
