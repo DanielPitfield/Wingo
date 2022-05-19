@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Page } from "../App";
 import { SettingsData } from "../SaveData";
+import { useFailureChime } from "../Sounds";
 import { Theme } from "../Themes";
 import { words_nine_targets } from "../WordArrays/Lengths/words_9";
 import { wordLengthMappingsTargets } from "../WordleConfig";
@@ -20,8 +21,13 @@ interface Props {
 }
 
 export const Conundrum: React.FC<Props> = (props) => {
+  const [inProgress, setInProgress] = useState(true);
+  
   const [conundrum, setConundrum] = useState("");
   const [solution, setSolution] = useState("");
+
+  const [seconds, setSeconds] = useState(props.timerConfig.isTimed ? props.timerConfig.seconds : 0);
+  const [playFailureChimeSoundEffect] = useFailureChime(props.settings);
 
   /*
   Combinations of word lengths that could make up a 9 letter conundrum
@@ -41,6 +47,26 @@ export const Conundrum: React.FC<Props> = (props) => {
   React.useEffect(() => {
     generateConundrum();
   },[])
+
+  // Timer Setup
+  React.useEffect(() => {
+    if (!props.timerConfig.isTimed || !inProgress) {
+      return;
+    }
+
+    const timerGuess = setInterval(() => {
+      if (seconds > 0) {
+        setSeconds(seconds - 1);
+      } else {
+        playFailureChimeSoundEffect();
+        setInProgress(false);
+        clearInterval(timerGuess);
+      }
+    }, 1000);
+    return () => {
+      clearInterval(timerGuess);
+    };
+  }, [setSeconds, seconds, props.timerConfig.isTimed]);
 
   function checkAnagram(constructedWord: string, targetWord: string) {
     var constructedWordLetters = constructedWord.split("").sort().join("");
@@ -102,6 +128,16 @@ export const Conundrum: React.FC<Props> = (props) => {
 
     // TODO: Try a different wordLength combination after failing a number of times
 
+  }
+
+  function ResetGame(wasCorrect: boolean, answer: string, targetAnswer: string, score: number | null) {
+    // Callback of the score achieved (used for Countdown Gameshow)
+    props.onComplete?.(wasCorrect, answer, targetAnswer, score);
+    generateConundrum();
+    if (props.timerConfig.isTimed) {
+      // Reset the timer if it is enabled in the game options
+      setSeconds(props.timerConfig.seconds);
+    }
   }
 
   return (
