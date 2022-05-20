@@ -1267,7 +1267,11 @@ export const App: React.FC = () => {
       case "countdown/gameshow":
         return (
           <CountdownGameshow
-          keyboard={gameOptionToggles.find((x) => x.page === "countdown/letters")?.keyboard || gameOptionToggles.find((x) => x.page === "countdown/conundrum")?.keyboard || false}
+            keyboard={
+              gameOptionToggles.find((x) => x.page === "countdown/letters")?.keyboard ||
+              gameOptionToggles.find((x) => x.page === "countdown/conundrum")?.keyboard ||
+              false
+            }
             settings={settings}
             setPage={setPage}
             page={page}
@@ -1283,7 +1287,20 @@ export const App: React.FC = () => {
         );
 
       case "lingo/gameshow":
-        return <LingoGameshow commonWingoProps={commonWingoProps} />;
+        return (
+          <LingoGameshow
+            keyboard={
+              gameOptionToggles.find((x) => x.page === "wingo/repeat")?.keyboard ||
+              gameOptionToggles.find((x) => x.page === "wingo/puzzle")?.keyboard ||
+              false
+            }
+            firstRoundConfig={{ numLingos: 4, numPuzzles: 1 }}
+            secondRoundConfig={{ numLingos: 3, numPuzzles: 1 }}
+            thirdRoundConfig={{ numFourLengthLingos: 2, numPuzzles: 1, numFiveLengthLingos: 2, numberPuzzles: 1 }}
+            hasFinalRound={true}
+            commonWingoProps={commonWingoProps}
+          />
+        );
     }
   })();
 

@@ -79,30 +79,11 @@ export const CountdownGameshow: React.FC<Props> = (props) => {
     }
   }, [roundNumber]);
 
-  function onComplete(wasCorrect: boolean, answer: string, targetAnswer: string, score: number | null) {
-    // Incorrect answer or score couldn't be determined, use score of 0
-    const newScore = !wasCorrect || !score || score === undefined || score === null ? 0 : score;
-
-    const roundSummary = {
-      roundNumber: roundNumber,
-      wasCorrect: wasCorrect,
-      answer: answer,
-      targetAnswer: targetAnswer,
-      score: newScore,
-    };
-
-    // Update summary with answer and score for current round
-    let newSummary = summary.slice();
-    newSummary.push(roundSummary);
-    setSummary(newSummary);
-
-    // Start next round
-    setRoundNumber(roundNumber + 1);
-
-    return;
-  }
-
   function getNextRound() {
+    if (!roundOrder || roundOrder.length === 0) {
+      return;
+    }
+
     if (roundOrder[roundNumber] === "letter") {
       return (
         <CountdownLettersConfig
@@ -152,6 +133,29 @@ export const CountdownGameshow: React.FC<Props> = (props) => {
         ></Conundrum>
       );
     }
+  }
+
+  function onComplete(wasCorrect: boolean, answer: string, targetAnswer: string, score: number | null) {
+    // Incorrect answer or score couldn't be determined, use score of 0
+    const newScore = !wasCorrect || !score || score === undefined || score === null ? 0 : score;
+
+    const roundSummary = {
+      roundNumber: roundNumber,
+      wasCorrect: wasCorrect,
+      answer: answer,
+      targetAnswer: targetAnswer,
+      score: newScore,
+    };
+
+    // Update summary with answer and score for current round
+    let newSummary = summary.slice();
+    newSummary.push(roundSummary);
+    setSummary(newSummary);
+
+    // Start next round
+    setRoundNumber(roundNumber + 1);
+
+    return;
   }
 
   return (
