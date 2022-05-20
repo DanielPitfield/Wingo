@@ -74,7 +74,7 @@ export const CountdownGameshow: React.FC<Props> = (props) => {
       return;
     }
 
-    if (roundNumber > roundOrder.length) {
+    if (roundNumber >= roundOrder.length) {
       setInProgress(false);
     }
   }, [roundNumber]);
