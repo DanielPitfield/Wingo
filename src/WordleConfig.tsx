@@ -255,7 +255,13 @@ const WordleConfig: React.FC<Props> = (props) => {
   const [inProgress, setinProgress] = useState(true);
   const [inDictionary, setinDictionary] = useState(true);
   const [isIncompleteWord, setisIncompleteWord] = useState(false);
-  const [wordLength, setWordLength] = useState(props.defaultWordLength || props.targetWord?.length!);
+  const [wordLength, setWordLength] = useState(
+    // Take highest of either defaultWordLength and targetWord length (if specified)
+    Math.max.apply(
+      undefined,
+      [props.defaultWordLength!, props.targetWord?.length!].filter((x) => x)
+    )
+  );
   const [targetWord, setTargetWord] = useState(props.targetWord ? props.targetWord : "");
   const [targetHint, setTargetHint] = useState("");
   const [targetCategory, setTargetCategory] = useState("");
@@ -468,11 +474,9 @@ const WordleConfig: React.FC<Props> = (props) => {
       }
     }
 
-    // Update word length every time the target word changes during category mode
-    if (props.mode === "category") {
-      if (targetWord) {
-        setWordLength(targetWord.length);
-      }
+    // Update word length every time the target word changes
+    if (targetWord) {
+      setWordLength(targetWord.length);
     }
   }, [targetWord]);
 
