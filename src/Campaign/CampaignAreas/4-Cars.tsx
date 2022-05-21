@@ -15,7 +15,6 @@ export const area: AreaConfig = {
         enforceFullLengthGuesses: true,
         defaultWordLength: 4,
         defaultnumGuesses: 6,
-        keyboard: true,
         firstLetterProvided: true,
         checkInDictionary: false,
         puzzleLeaveNumBlanks: 0,

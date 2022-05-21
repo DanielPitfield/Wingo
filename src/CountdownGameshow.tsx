@@ -10,7 +10,6 @@ import { displayGameshowSummary } from "./LingoGameshow";
 import { Button } from "./Button";
 
 interface Props {
-  keyboard: boolean;
   settings: SettingsData;
   setPage: (page: Page) => void;
   page: Page;
@@ -107,7 +106,6 @@ export const CountdownGameshow: React.FC<Props> = (props) => {
         <CountdownLettersConfig
           mode={"countdown_letters_casual"}
           timerConfig={{ isTimed: true, seconds: 2 }}
-          keyboard={props.keyboard}
           defaultWordLength={9}
           page={"countdown/letters"}
           theme={props.themes[0]}
@@ -147,7 +145,6 @@ export const CountdownGameshow: React.FC<Props> = (props) => {
           setTheme={props.setTheme}
           setPage={props.setPage}
           addGold={props.addGold}
-          keyboard={props.keyboard}
         ></Conundrum>
       );
     }

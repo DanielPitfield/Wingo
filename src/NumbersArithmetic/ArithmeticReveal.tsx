@@ -16,7 +16,6 @@ interface Props {
   numCheckpoints: number;
   difficulty: "easy" | "normal" | "hard";
   timerConfig: { isTimed: false } | { isTimed: true; seconds: number };
-  keyboard: boolean;
   theme: Theme;
   settings: SettingsData;
   setPage: (page: Page) => void;
@@ -441,7 +440,7 @@ const ArithmeticReveal: React.FC<Props> = (props) => {
           ></LetterTile>
         </div>
       )}
-      {Boolean(revealState.type === "finished" && props.keyboard) && (
+      {Boolean(revealState.type === "finished" && props.settings.gameplay.keyboard) && (
         <NumPad
           onEnter={() => setInProgress(false)}
           onBackspace={onBackspace}

@@ -24,7 +24,6 @@ interface Props {
   numAdditionalLetters: number;
   numGuesses: number;
   timerConfig: { isTimed: false } | { isTimed: true; seconds: number };
-  keyboard: boolean;
   theme: Theme;
   settings: SettingsData;
   setPage: (page: Page) => void;
@@ -683,7 +682,7 @@ const WordCodes: React.FC<Props> = (props) => {
           ></LetterTile>
         </div>
       )}
-      {Boolean(!props.modeConfig.isMatch && questionWordCodes[questionNumber]?.isWordToCode && props.keyboard) && (
+      {Boolean(!props.modeConfig.isMatch && questionWordCodes[questionNumber]?.isWordToCode && props.settings.gameplay.keyboard) && (
         <NumPad
           onEnter={() => setInProgress(false)}
           onBackspace={onBackspace}
@@ -692,7 +691,7 @@ const WordCodes: React.FC<Props> = (props) => {
           disabled={!inProgress}
         />
       )}
-      {Boolean(!props.modeConfig.isMatch && !questionWordCodes[questionNumber]?.isWordToCode && props.keyboard) && (
+      {Boolean(!props.modeConfig.isMatch && !questionWordCodes[questionNumber]?.isWordToCode && props.settings.gameplay.keyboard) && (
         <Keyboard
           onEnter={() => setInProgress(false)}
           onBackspace={onBackspace}
