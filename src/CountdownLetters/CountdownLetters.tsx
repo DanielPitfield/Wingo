@@ -450,22 +450,21 @@ const CountdownLetters: React.FC<Props> = (props) => {
 
       <div className="countdown/word_grid">{populateGrid(props.wordLength)}</div>
 
-      {props.settings.gameplay.keyboard && (
-        <div className="keyboard">
-          <Keyboard
-            mode={"countdown/letters"}
-            onEnter={props.onEnter}
-            onSubmitLetter={props.onSubmitLetter}
-            onBackspace={props.onBackspace}
-            guesses={props.guesses}
-            targetWord={props.targetWord}
-            inDictionary={props.inDictionary}
-            letterStatuses={props.letterStatuses}
-            settings={props.settings}
-            disabled={!props.inProgress}
-          ></Keyboard>
-        </div>
-      )}
+      <div className="keyboard">
+        <Keyboard
+          mode={"countdown/letters"}
+          onEnter={props.onEnter}
+          onSubmitLetter={props.onSubmitLetter}
+          onBackspace={props.onBackspace}
+          guesses={props.guesses}
+          targetWord={props.targetWord}
+          inDictionary={props.inDictionary}
+          letterStatuses={props.letterStatuses}
+          settings={props.settings}
+          disabled={!props.inProgress}
+          showKeyboard={props.settings.gameplay.keyboard}
+        />
+      </div>
 
       <div>
         {props.timerConfig.isTimed && (

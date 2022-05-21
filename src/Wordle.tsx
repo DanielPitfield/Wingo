@@ -368,26 +368,25 @@ const Wordle: React.FC<Props> = (props) => {
 
       <div className="word_grid">{populateGrid(props.numGuesses, props.wordLength)}</div>
 
-      {props.settings.gameplay.keyboard && (
-        <div className="keyboard">
-          <Keyboard
-            mode={`wingo/${props.mode}` as Page}
-            onEnter={props.onEnter}
-            onSubmitLetter={(letter) => {
-              props.onSubmitLetter(letter);
-              playLightPingSoundEffect();
-            }}
-            onBackspace={props.onBackspace}
-            guesses={props.guesses}
-            targetWord={props.targetWord}
-            inDictionary={props.inDictionary}
-            letterStatuses={props.letterStatuses}
-            settings={props.settings}
-            disabled={!props.inProgress}
-            allowSpaces={props.targetWord.includes("-") || props.targetWord.includes(" ") || undefined}
-          ></Keyboard>
-        </div>
-      )}
+      <div className="keyboard">
+        <Keyboard
+          mode={`wingo/${props.mode}` as Page}
+          onEnter={props.onEnter}
+          onSubmitLetter={(letter) => {
+            props.onSubmitLetter(letter);
+            playLightPingSoundEffect();
+          }}
+          onBackspace={props.onBackspace}
+          guesses={props.guesses}
+          targetWord={props.targetWord}
+          inDictionary={props.inDictionary}
+          letterStatuses={props.letterStatuses}
+          settings={props.settings}
+          disabled={!props.inProgress}
+          showKeyboard={props.settings.gameplay.keyboard}
+          allowSpaces={props.targetWord.includes("-") || props.targetWord.includes(" ") || undefined}
+        />
+      </div>
 
       <div>
         {props.timerConfig.isTimed && (

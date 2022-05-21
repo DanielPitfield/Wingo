@@ -238,15 +238,14 @@ const NumberSets: React.FC<Props> = (props) => {
           settings={props.settings}
         ></LetterTile>
       </div>
-      {props.settings.gameplay.keyboard && (
-        <NumPad
-          onEnter={() => setInProgress(false)}
-          onBackspace={onBackspace}
-          onSubmitNumber={onSubmitNumber}
-          settings={props.settings}
-          disabled={!inProgress}
-        />
-      )}
+      <NumPad
+        onEnter={() => setInProgress(false)}
+        onBackspace={onBackspace}
+        onSubmitNumber={onSubmitNumber}
+        settings={props.settings}
+        disabled={!inProgress}
+        showKeyboard={props.settings.gameplay.keyboard}
+      />
       <div>
         {props.timerConfig.isTimed && (
           <ProgressBar

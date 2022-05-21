@@ -756,23 +756,22 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
           Check crossword
         </Button>
       )}
-      {props.settings.gameplay.keyboard && (
-        <div className="keyboard">
-          <Keyboard
-            mode={"wingo/interlinked"}
-            onEnter={onEnter}
-            onSubmitLetter={onSubmitLetter}
-            onBackspace={onBackspace}
-            guesses={[]}
-            targetWord={""}
-            inDictionary={true}
-            letterStatuses={[]}
-            settings={props.settings}
-            disabled={!inProgress}
-            allowSpaces={allowSpaces}
-          />
-        </div>
-      )}
+      <div className="keyboard">
+        <Keyboard
+          mode={"wingo/interlinked"}
+          onEnter={onEnter}
+          onSubmitLetter={onSubmitLetter}
+          onBackspace={onBackspace}
+          guesses={[]}
+          targetWord={""}
+          inDictionary={true}
+          letterStatuses={[]}
+          settings={props.settings}
+          disabled={!inProgress}
+          showKeyboard={props.settings.gameplay.keyboard}
+          allowSpaces={allowSpaces}
+        />
+      </div>
     </div>
   );
 };

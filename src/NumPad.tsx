@@ -10,6 +10,7 @@ interface Props {
   onSubmitNumber: (number: number) => void;
   onEnter: () => void;
   onBackspace: () => void;
+  showKeyboard: boolean;
   disabled?: boolean;
 }
 
@@ -70,6 +71,10 @@ export const NumPad: React.FC<Props> = (props) => {
         {number}
       </Button>
     ));
+  }
+
+  if (!props.showKeyboard) {
+    return <></>;
   }
 
   return (
