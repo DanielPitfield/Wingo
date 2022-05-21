@@ -30,7 +30,15 @@ export const CountdownGameshow: React.FC<Props> = (props) => {
   const [roundNumber, setRoundNumber] = useState(0);
   const [gameshowScore, setGameshowScore] = useState(0);
   const [summary, setSummary] = useState<
-    { roundNumber: number; wasCorrect: boolean; answer: string; targetAnswer: string; score: number }[]
+    {
+      roundNumber: number;
+      mode: string;
+      modeName: string;
+      wasCorrect: boolean;
+      answer: string;
+      targetAnswer: string;
+      score: number;
+    }[]
   >([]);
 
   // Determine round order (from props)
@@ -79,12 +87,22 @@ export const CountdownGameshow: React.FC<Props> = (props) => {
     }
   }, [roundNumber]);
 
-  function getNextRound() {
+  function getRoundType() {
     if (!roundOrder || roundOrder.length === 0) {
       return;
     }
 
-    if (roundOrder[roundNumber] === "letter") {
+    return roundOrder[roundNumber];
+  }
+
+  function getNextRound() {
+    const roundType = getRoundType();
+
+    if (!roundType) {
+      return;
+    }
+
+    if (roundType === "letter") {
       return (
         <CountdownLettersConfig
           mode={"countdown_letters_casual"}
@@ -101,7 +119,7 @@ export const CountdownGameshow: React.FC<Props> = (props) => {
           gameshowScore={gameshowScore}
         />
       );
-    } else if (roundOrder[roundNumber] === "number") {
+    } else if (roundType === "number") {
       return (
         <CountdownNumbersConfig
           mode={"countdown_numbers_casual"}
@@ -119,7 +137,7 @@ export const CountdownGameshow: React.FC<Props> = (props) => {
           gameshowScore={gameshowScore}
         />
       );
-    } else if (roundOrder[roundNumber] === "conundrum") {
+    } else if (roundType === "conundrum") {
       return (
         <Conundrum
           timerConfig={{ isTimed: true, seconds: 200 }}
@@ -142,6 +160,8 @@ export const CountdownGameshow: React.FC<Props> = (props) => {
     const roundSummary = {
       roundNumber: roundNumber,
       wasCorrect: wasCorrect,
+      mode: getRoundType()?.toString() || "",
+      modeName: getRoundType()?.toString() || "",
       answer: answer,
       targetAnswer: targetAnswer,
       score: newScore,
@@ -160,7 +180,7 @@ export const CountdownGameshow: React.FC<Props> = (props) => {
 
   return (
     <>
-      {inProgress ? getNextRound() : displayGameshowSummary(gameshowScore, summary, props.settings)}
+      {inProgress ? getNextRound() : displayGameshowSummary(summary, props.settings, () => props.setPage("home"))}
       {!inProgress && (
         <Button
           mode={"accept"}

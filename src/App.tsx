@@ -786,14 +786,14 @@ export const App: React.FC = () => {
           <WordleConfig
             {...commonWingoProps}
             mode="daily"
-            firstLetterProvided={gameOptionToggles.find((x) => x.page === "wingo/daily")?.firstLetter || false}
-            showHint={gameOptionToggles.find((x) => x.page === "wingo/daily")?.showHint || false}
+            firstLetterProvided={false}
+            showHint={true}
             timerConfig={
               gameOptionToggles.find((x) => x.page === "wingo/daily")?.timer
                 ? { isTimed: true, seconds: 30 }
                 : { isTimed: false }
             }
-            keyboard={gameOptionToggles.find((x) => x.page === "wingo/daily")?.keyboard || false}
+            keyboard={true}
             defaultWordLength={wordLength}
             enforceFullLengthGuesses={true}
           />

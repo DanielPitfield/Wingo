@@ -6,7 +6,8 @@ import { Theme } from "./Themes";
 import WordleConfig from "./WordleConfig";
 import { Button } from "./Button";
 import { ChallengeReward } from "./Challenges/Challenge";
-import Star from "./images/star.png";
+import Success from "./images/success.svg";
+import Error from "./images/error.svg";
 
 interface Props {
   keyboard: boolean;
@@ -35,37 +36,116 @@ interface Props {
   };
 }
 
-export function displayGameshowSummary(
-  totalScore: number,
-  summary: { roundNumber: number; wasCorrect: boolean; answer: string; targetAnswer: string; score: number }[],
-  settings: SettingsData
-) {
+type RoundInfo = {
+  roundNumber: number;
+  mode: string;
+  modeName: string;
+  wasCorrect: boolean;
+  answer: string;
+  targetAnswer: string;
+  score: number;
+};
+
+export function displayGameshowSummary(summary: RoundInfo[], settings: SettingsData, onBackToHome: () => void) {
   return (
-    <div className="gameshow-summary-container">
-      <div className="gameshow-summary-totalScore">{totalScore}</div>
-      {summary.map((round) => (
-        <div
-          key={round.roundNumber}
-          className="gameshow-round-summary"
-          data-correct={round.score > 0}
-          data-animation-setting={settings.graphics.animation}
-        >
-          <img className="gameshow-round-summary-icon" src={Star} width={32} height={32} alt="" />
-          <h3 className="gameshow-round-summary-title">Round {round.roundNumber}</h3>
-          <p className="gameshow-round-summary-description">
-            <p className="guess">
-              <strong>Guess:</strong> {round.answer ? round.answer.toUpperCase() : "-"}
-            </p>
-            {round.targetAnswer.length > 0 && (
-              <p className="answer">
-                <strong>Answer:</strong> {round.targetAnswer.toUpperCase()}
-              </p>
-            )}
-          </p>
-          <ChallengeReward goldCoins={round.score} />
-        </div>
-      ))}
-    </div>
+    <section className="gameshow-summary-info">
+      <h2 className="gameshow-summary-info-title">Summary</h2>
+      <p className="total-acheived">
+        Total Acheived <br />
+        <strong>
+          {summary.reduce((total, round) => (total += round.score > 0 ? 1 : 0), 0)} / {summary.length} (
+          {Math.round((summary.reduce((total, round) => (total += round.score > 0 ? 1 : 0), 0) / summary.length) * 100)}
+          %)
+        </strong>
+      </p>
+      <p className="total-gold-coins">
+        Total score: <br />
+        <ChallengeReward goldCoins={summary.reduce((total, x) => (total += x.score), 0)} />
+      </p>
+      <Button mode="accept" onClick={() => onBackToHome()} settings={settings} additionalProps={{ autoFocus: true }}>
+        Back to Home
+      </Button>
+      <div className="gameshow-summary-groups">
+        {summary
+          .reduce<
+            {
+              mode: string;
+              rounds: RoundInfo[];
+            }[]
+          >((all, round, i) => {
+            if (summary[i - 1]?.mode === round.mode) {
+              all[all.length - 1].rounds.push(round);
+            } else {
+              all.push({
+                mode: round.mode,
+                rounds: [round],
+              });
+            }
+
+            return all;
+          }, [])
+          .map((group) => (
+            <div key={group.mode} className="gameshow-group" data-category-name={group.mode}>
+              <div className="gameshow-group-heading">
+                <h2 className="gameshow-group-title">{group.mode}</h2>
+                <p className="total-acheived">
+                  Total Acheived <br />
+                  <strong>
+                    {group.rounds.reduce((total, round) => (total += round.score > 0 ? 1 : 0), 0)} /{" "}
+                    {group.rounds.length} (
+                    {Math.round(
+                      (group.rounds.reduce((total, round) => (total += round.score > 0 ? 1 : 0), 0) /
+                        group.rounds.length) *
+                        100
+                    )}
+                    %)
+                  </strong>
+                </p>
+                <p className="total-gold-coins">
+                  Total score: <br />
+                  <ChallengeReward goldCoins={group.rounds.reduce((total, x) => (total += x.score), 0)} />
+                </p>
+              </div>
+              <div className="gameshow-round-summaries">
+                {group.rounds.map((round, i) => (
+                  <>
+                    <div
+                      key={round.roundNumber}
+                      className="gameshow-round-summary"
+                      data-correct={round.score > 0}
+                      data-animation-setting={settings.graphics.animation}
+                    >
+                      <img
+                        className="gameshow-round-summary-icon"
+                        src={round.score > 0 ? Success : Error}
+                        width={26}
+                        height={26}
+                        alt=""
+                      />
+                      <h3 className="gameshow-round-summary-title">Round {round.roundNumber + 1}</h3>
+                      <p className="gameshow-round-summary-description">
+                        <p className="guess">
+                          <strong>Mode:</strong> {round.modeName}
+                        </p>
+                        <p className="guess">
+                          <strong>Guess:</strong> {round.answer ? round.answer.toUpperCase() : "-"}
+                        </p>
+                        {round.targetAnswer.length > 0 && (
+                          <p className="answer">
+                            <strong>Answer:</strong> {round.targetAnswer.toUpperCase()}
+                          </p>
+                        )}
+                      </p>
+                      <ChallengeReward goldCoins={round.score} />
+                    </div>
+                    {summary[i + 1]?.mode[0] !== round.mode[0] && <div className="break"></div>}
+                  </>
+                ))}
+              </div>
+            </div>
+          ))}
+      </div>
+    </section>
   );
 }
 
@@ -78,7 +158,15 @@ export const LingoGameshow: React.FC<Props> = (props) => {
   const [wordLength, setWordLength] = useState(4);
   const [gameshowScore, setGameshowScore] = useState(0);
   const [summary, setSummary] = useState<
-    { roundNumber: number; wasCorrect: boolean; answer: string; targetAnswer: string; score: number }[]
+    {
+      roundNumber: number;
+      mode: string;
+      modeName: string;
+      wasCorrect: boolean;
+      answer: string;
+      targetAnswer: string;
+      score: number;
+    }[]
   >([]);
 
   // Determine round order (from props)
@@ -149,15 +237,23 @@ export const LingoGameshow: React.FC<Props> = (props) => {
     setWordLength(nextRoundInfo?.wordLength);
   }, [roundNumber]);
 
-  function getNextRound() {
+  function getRoundInfo() {
     if (!roundOrder || roundOrder.length === 0) {
       return;
     }
 
-    const nextRoundInfo = roundOrder[roundNumber];
+    return roundOrder[roundNumber];
+  }
+
+  function getNextRound() {
+    const nextRoundInfo = getRoundInfo();
+
+    if (!nextRoundInfo) {
+      return;
+    }
 
     // Missing required information for next round
-    if (!nextRoundInfo || !nextRoundInfo.wordLength) {
+    if (!nextRoundInfo.wordLength) {
       setInProgress(false);
       return;
     }
@@ -207,8 +303,12 @@ export const LingoGameshow: React.FC<Props> = (props) => {
     // Incorrect answer or score couldn't be determined, use score of 0
     const newScore = !wasCorrect || !score || score === undefined || score === null ? 0 : score;
 
+    const roundInfo = getRoundInfo();
+
     const roundSummary = {
       roundNumber: roundNumber,
+      mode: roundInfo?.isPuzzle ? "Puzzle" : "Standard",
+      modeName: `${roundInfo?.isPuzzle ? "Puzzle" : "Standard"} (${roundInfo?.wordLength} letters)`,
       wasCorrect: wasCorrect,
       answer: answer,
       targetAnswer: targetAnswer,
@@ -228,17 +328,11 @@ export const LingoGameshow: React.FC<Props> = (props) => {
 
   return (
     <>
-      {inProgress ? getNextRound() : displayGameshowSummary(gameshowScore, summary, props.commonWingoProps.settings)}
-      {!inProgress && (
-        <Button
-          mode={"accept"}
-          onClick={() => props.commonWingoProps.setPage("home")}
-          settings={props.commonWingoProps.settings}
-          additionalProps={{ autoFocus: true }}
-        >
-          Back to Home
-        </Button>
-      )}
+      {inProgress
+        ? getNextRound()
+        : displayGameshowSummary(summary, props.commonWingoProps.settings, () =>
+            props.commonWingoProps.setPage("home")
+          )}
     </>
   );
 };
