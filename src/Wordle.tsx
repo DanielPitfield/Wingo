@@ -14,7 +14,6 @@ interface Props {
   isCampaignLevel: boolean;
   mode: "daily" | "repeat" | "category" | "increasing" | "limitless" | "puzzle" | "letters_categories";
   timerConfig: { isTimed: false } | { isTimed: true; totalSeconds: number; elapsedSeconds: number };
-  keyboard: boolean;
   wordLength: number;
   numGuesses: number;
   guesses: string[];
@@ -334,7 +333,9 @@ const Wordle: React.FC<Props> = (props) => {
             }
             additionalProps={{ autoFocus: true }}
           >
-            {props.gameshowScore !== undefined ? "Next round" : props.finishingButtonText || (isOutcomeContinue() ? "Continue" : "Restart")}
+            {props.gameshowScore !== undefined
+              ? "Next round"
+              : props.finishingButtonText || (isOutcomeContinue() ? "Continue" : "Restart")}
           </Button>
         )}
       </div>
@@ -367,28 +368,26 @@ const Wordle: React.FC<Props> = (props) => {
 
       <div className="word_grid">{populateGrid(props.numGuesses, props.wordLength)}</div>
 
-      <div className="keyboard">
-        {
-          /* TODO: Add options to turn keyboard/timer/first letter after Wordle has been launched (during the game) */ props.keyboard && (
-            <Keyboard
-              mode={`wingo/${props.mode}` as Page}
-              onEnter={props.onEnter}
-              onSubmitLetter={(letter) => {
-                props.onSubmitLetter(letter);
-                playLightPingSoundEffect();
-              }}
-              onBackspace={props.onBackspace}
-              guesses={props.guesses}
-              targetWord={props.targetWord}
-              inDictionary={props.inDictionary}
-              letterStatuses={props.letterStatuses}
-              settings={props.settings}
-              disabled={!props.inProgress}
-              allowSpaces={props.targetWord.includes("-") || props.targetWord.includes(" ") || undefined}
-            ></Keyboard>
-          )
-        }
-      </div>
+      {props.settings.gameplay.keyboard && (
+        <div className="keyboard">
+          <Keyboard
+            mode={`wingo/${props.mode}` as Page}
+            onEnter={props.onEnter}
+            onSubmitLetter={(letter) => {
+              props.onSubmitLetter(letter);
+              playLightPingSoundEffect();
+            }}
+            onBackspace={props.onBackspace}
+            guesses={props.guesses}
+            targetWord={props.targetWord}
+            inDictionary={props.inDictionary}
+            letterStatuses={props.letterStatuses}
+            settings={props.settings}
+            disabled={!props.inProgress}
+            allowSpaces={props.targetWord.includes("-") || props.targetWord.includes(" ") || undefined}
+          ></Keyboard>
+        </div>
+      )}
 
       <div>
         {props.timerConfig.isTimed && (

@@ -8,7 +8,6 @@ import { SettingsData } from "../SaveData";
 export interface CountdownLettersConfigProps {
   mode: "countdown_letters_casual" | "countdown_letters_realistic";
   timerConfig: { isTimed: false } | { isTimed: true; seconds: number };
-  keyboard: boolean;
   defaultWordLength: number;
   guesses?: string[];
   countdownWord?: string;
@@ -241,7 +240,6 @@ const CountdownLettersConfig: React.FC<Props> = (props) => {
             }
           : { isTimed: false }
       }
-      keyboard={props.keyboard}
       wordLength={wordLength}
       guesses={guesses}
       currentWord={currentWord}

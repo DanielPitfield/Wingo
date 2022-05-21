@@ -28,7 +28,6 @@ export type NumberSetTemplate = {
 interface Props {
   defaultSet?: NumberSetConfigProps;
   timerConfig: { isTimed: false } | { isTimed: true; seconds: number };
-  keyboard: boolean;
   theme: Theme;
   settings: SettingsData;
   setPage: (page: Page) => void;
@@ -239,7 +238,7 @@ const NumberSets: React.FC<Props> = (props) => {
           settings={props.settings}
         ></LetterTile>
       </div>
-      {props.keyboard && (
+      {props.settings.gameplay.keyboard && (
         <NumPad
           onEnter={() => setInProgress(false)}
           onBackspace={onBackspace}

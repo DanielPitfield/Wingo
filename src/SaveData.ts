@@ -18,6 +18,9 @@ export type SettingsData = {
     preferredTheme: keyof typeof Themes | null;
     animation: boolean;
   };
+  gameplay: {
+    keyboard: boolean;
+  };
 };
 
 export type DailyWingoSaveData = {
@@ -89,12 +92,14 @@ export class SaveData {
   public static DISABLED_SETTINGS: SettingsData = {
     sound: { masterVolume: 0, effectsVolume: 0, backgroundVolume: 0 },
     graphics: { preferredTheme: null, animation: false },
+    gameplay: { keyboard: false },
   };
 
   /** Default settings */
   public static DEFAULT_SETTINGS: SettingsData = {
     sound: { masterVolume: 0.5, effectsVolume: 0.5, backgroundVolume: 0.35 },
     graphics: { preferredTheme: null, animation: true },
+    gameplay: { keyboard: true },
   };
 
   /**

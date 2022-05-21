@@ -8,7 +8,6 @@ import { wordLengthMappingsTargets } from "../WordleConfig";
 
 interface Props {
   timerConfig: { isTimed: false } | { isTimed: true; seconds: number };
-  keyboard: boolean;
   page: Page;
   theme: Theme;
   settings: SettingsData;
