@@ -1339,6 +1339,7 @@ export const App: React.FC = () => {
                 className="help-info-button"
                 settings={settings}
                 onClick={() => setIsHelpInfoShown(true)}
+                additionalProps={{ "aria-label": "help", title: "Get help with this game mode" }}
               >
                 <FaQuestion />
               </Button>

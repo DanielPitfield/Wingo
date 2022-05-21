@@ -803,6 +803,9 @@ $data-statuses: (
     padding: 0.52em 0.6em;
     margin: 0.3em;
   }
+  .help-info-button {
+    cursor: help;
+  }
   .title {
     display: flex;
     flex-grow: 1;
