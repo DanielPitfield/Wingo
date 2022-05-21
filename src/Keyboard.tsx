@@ -5,6 +5,7 @@ import { getWordSummary } from "./WordleConfig";
 import { SettingsData } from "./SaveData";
 import { useClickChime } from "./Sounds";
 import { Page } from "./App";
+import { FiChevronLeft, FiCornerDownLeft } from "react-icons/fi";
 
 interface Props {
   settings: SettingsData;
@@ -33,11 +34,7 @@ export const Keyboard: React.FC<Props> = (props) => {
   const alphabet = props.customAlphabet || DEFAULT_ALPHABET;
 
   const modesWithSpaces: Page[] = ["wingo/category", "letters_categories", "wingo/interlinked"];
-  const modesWithoutKeyboardStatuses: Page[] = [
-    "letters_categories",
-    "countdown/letters",
-    "wingo/interlinked",
-  ];
+  const modesWithoutKeyboardStatuses: Page[] = ["letters_categories", "countdown/letters", "wingo/interlinked"];
 
   React.useEffect(() => {
     if (props.disabled) {
@@ -188,8 +185,14 @@ export const Keyboard: React.FC<Props> = (props) => {
       <div className="keyboard_row_bottom">
         <>{props.customAlphabet ? null : populateKeyboard("ZXCVBNM")}</>
         {props.showBackspace !== false && (
-          <Button mode="destructive" settings={props.settings} onClick={props.onBackspace} disabled={props.disabled}>
-            &lt;
+          <Button
+            mode="destructive"
+            settings={props.settings}
+            onClick={props.onBackspace}
+            disabled={props.disabled}
+            additionalProps={{ title: "Backspace" }}
+          >
+            <FiChevronLeft />
           </Button>
         )}
       </div>
@@ -198,7 +201,7 @@ export const Keyboard: React.FC<Props> = (props) => {
       </div>
       <div className="keyboard_enter">
         <Button mode="accept" settings={props.settings} onClick={props.onEnter} disabled={props.disabled}>
-          Enter
+          <FiCornerDownLeft /> Enter
         </Button>
       </div>
     </div>

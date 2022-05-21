@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { IconType } from "react-icons";
+import { FiCompass, FiHeadphones, FiInfo, FiMonitor } from "react-icons/fi";
 import { Button } from "./Button";
 import { SettingsData } from "./SaveData";
 import { StudioLogo } from "./StudioLogo";
@@ -34,17 +36,20 @@ export const Settings: React.FC<Props> = (props) => {
     | {
         type: "settings";
         name: SettingArea;
+        icon: IconType;
         settings: Setting[];
       }
     | {
         type: "custom";
         name: SettingArea;
+        icon: IconType;
         component: React.ReactNode;
       }
   )[] = [
     {
       name: "Sound",
       type: "settings",
+      icon: FiHeadphones,
       settings: [
         {
           name: "Master",
@@ -72,6 +77,7 @@ export const Settings: React.FC<Props> = (props) => {
     {
       name: "Video",
       type: "settings",
+      icon: FiMonitor,
       settings: [
         {
           name: "Preferred Theme",
@@ -96,11 +102,13 @@ export const Settings: React.FC<Props> = (props) => {
     {
       name: "Gameplay",
       type: "settings",
+      icon: FiCompass,
       settings: [],
     },
     {
       name: "About",
       type: "custom",
+      icon: FiInfo,
       component: (
         <>
           <div>
@@ -184,6 +192,7 @@ export const Settings: React.FC<Props> = (props) => {
               className="setting-section-link"
               onClick={() => setSelectedSettingAreaName(settingSection.name)}
             >
+              <settingSection.icon />
               {settingSection.name}
             </Button>
           </>

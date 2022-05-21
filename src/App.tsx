@@ -30,9 +30,10 @@ import { ChallengesInfo } from "./Challenges/ChallengesInfo";
 import WordCodes from "./VerbalReasoning/WordCodes";
 import { CountdownGameshow } from "./CountdownGameshow";
 import { LingoGameshow } from "./LingoGameshow";
-import { FaQuestion } from "react-icons/fa";
+import { FiArrowLeft, FiHelpCircle, FiSettings } from "react-icons/fi";
 import HelpInformation from "./HelpInformation";
 import { Conundrum } from "./CountdownLetters/Conundrum";
+import { TitlePage } from "./TitlePage";
 
 const wordLength = 5;
 const numGuesses = 6;
@@ -52,6 +53,7 @@ const countdown_numbers_NumGuesses = 5;
 
 export type Page =
   | "splash-screen"
+  | "title-page"
   | "home"
   | "wingo/daily"
   | "wingo/repeat"
@@ -99,6 +101,7 @@ export const pages: {
   helpInfo?: JSX.Element;
 }[] = [
   { page: "splash-screen", title: "Wingo", isPlayable: false },
+  { page: "title-page", title: "", isPlayable: false },
   { page: "home", title: "", isPlayable: false },
   {
     page: "wingo/daily",
@@ -558,8 +561,8 @@ export const App: React.FC = () => {
       pageFromUrl = "campaign";
     }
 
-    // Set home page after load
-    window.setTimeout(() => setPage(pageFromUrl || "home"), LOADING_TIMEOUT_MS + FADE_OUT_DURATION_MS);
+    // Set title page after load
+    window.setTimeout(() => setPage(pageFromUrl || "title-page"), LOADING_TIMEOUT_MS + FADE_OUT_DURATION_MS);
   }, [saveData]);
 
   useEffect(() => {
@@ -679,6 +682,9 @@ export const App: React.FC = () => {
     switch (page) {
       case "splash-screen":
         return <SplashScreen loadingState={loadingState} settings={settings} />;
+
+      case "title-page":
+        return <TitlePage setPage={setPage} settings={settings} />;
 
       case "home":
         return (
@@ -1306,7 +1312,7 @@ export const App: React.FC = () => {
 
   return (
     <div className="app" data-automation-id="app" data-automation-page-name={page}>
-      {page !== "splash-screen" && (
+      {page !== "splash-screen" && page !== "title-page" && (
         <>
           <div className="toolbar">
             {page !== "home" && (
@@ -1324,11 +1330,10 @@ export const App: React.FC = () => {
                       setPage("campaign");
                     } else {
                       setPage("home");
-                      //window.history.back();
                     }
                   }}
                 >
-                  Back
+                  <FiArrowLeft /> Back
                 </Button>
               </nav>
             )}
@@ -1341,7 +1346,7 @@ export const App: React.FC = () => {
                 onClick={() => setIsHelpInfoShown(true)}
                 additionalProps={{ "aria-label": "help", title: "Get help with this game mode" }}
               >
-                <FaQuestion />
+                <FiHelpCircle /> Help
               </Button>
             )}
             <Button
@@ -1353,7 +1358,7 @@ export const App: React.FC = () => {
                 setIsHelpInfoShown(false);
               }}
             >
-              Settings
+              <FiSettings /> Settings
             </Button>
             <div className="gold_counter" onClick={() => setPage("challenges")}>
               <img className="gold_coin_image" src={GoldCoin} alt="Gold" />
@@ -1365,7 +1370,7 @@ export const App: React.FC = () => {
       <ErrorBoundary FallbackComponent={ErrorFallback} onReset={() => window.location.reload()}>
         {pageComponent}
       </ErrorBoundary>
-      {Boolean(isHelpInfoShown && page !== "home" && page !== "settings") && (
+      {Boolean(isHelpInfoShown && page !== "home" && page !== "title-page" && page !== "settings") && (
         <HelpInformation page={page} onClose={() => setIsHelpInfoShown(false)}></HelpInformation>
       )}
       <div className="version">{VERSION}</div>

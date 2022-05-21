@@ -3,6 +3,7 @@ import "./index.scss";
 import { Button } from "./Button";
 import { SettingsData } from "./SaveData";
 import { useClickChime } from "./Sounds";
+import { FiChevronLeft, FiCornerDownLeft } from "react-icons/fi";
 
 interface Props {
   settings: SettingsData;
@@ -85,12 +86,12 @@ export const NumPad: React.FC<Props> = (props) => {
       <div className="keyboard_row_bottom">
         <>{populateNumpad([0])}</>
         <Button mode="destructive" settings={props.settings} onClick={props.onBackspace} disabled={props.disabled}>
-          &lt;
+          <FiChevronLeft />
         </Button>
       </div>
       <div className="keyboard_enter">
         <Button mode="accept" settings={props.settings} onClick={props.onEnter} disabled={props.disabled}>
-          Enter
+          <FiCornerDownLeft /> Enter
         </Button>
       </div>
     </div>

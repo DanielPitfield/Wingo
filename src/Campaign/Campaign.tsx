@@ -7,6 +7,7 @@ import { CampaignSaveData, SaveData, SettingsData } from "../SaveData";
 import { Theme } from "../Themes";
 import { AllCampaignAreas } from "./AllCampaignAreas";
 import BackgroundImageSrc from "../images/background.png";
+import { FiCheck, FiLock, FiPlay } from "react-icons/fi";
 
 /** The entire campaign, showing the list of areas */
 export const Campaign: React.FC<{
@@ -92,13 +93,23 @@ export const Campaign: React.FC<{
                 settings={props.settings}
                 onClick={() => onAreaClick(area, unlock_status)}
               >
-                {unlock_status === "locked"
-                  ? "Unlock"
-                  : isCompleted
-                  ? "Completed!"
-                  : props.onlyShowCurrentArea
-                  ? "Continue Campaign"
-                  : "Explore"}
+                {unlock_status === "locked" ? (
+                  <>
+                    <FiLock /> Unlock
+                  </>
+                ) : isCompleted ? (
+                  <>
+                    <FiCheck /> Completed!
+                  </>
+                ) : props.onlyShowCurrentArea ? (
+                  <>
+                    <FiPlay /> Continue Campaign
+                  </>
+                ) : (
+                  <>
+                    <FiPlay /> Explore
+                  </>
+                )}
               </Button>
               {unlock_status === "unlocked"
                 ? `${Math.max(0, current_level_count - 1)} / ${area.levels.length}`

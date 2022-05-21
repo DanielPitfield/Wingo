@@ -10,6 +10,7 @@ import { Theme } from "./Themes";
 import { AreaConfig } from "./Campaign/Area";
 import { LevelConfig } from "./Campaign/Level";
 import { Modal } from "./Modal";
+import { FiPlay } from "react-icons/fi";
 
 interface Props {
   theme: Theme;
@@ -59,7 +60,7 @@ export const LobbyMenu: React.FC<Props> = (props) => {
         </span>
         <div className="widget-button-wrapper">
           <Button mode="accept" data-game-mode={page} settings={props.settings} onClick={() => props.setPage(page)}>
-            Play
+            <FiPlay /> Play
           </Button>
           {hasSettings && (
             <Button
