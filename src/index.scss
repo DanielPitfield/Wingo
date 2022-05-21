@@ -1046,7 +1046,8 @@ $data-statuses: (
     margin: 1em;
     flex-shrink: 0;
     flex-grow: 1;
-    max-width: 25em;
+    max-width: 35em;
+    box-shadow: 0 0 3px 3px #333;
     .modal-header {
       display: flex;
       align-items: center;
@@ -1056,6 +1057,9 @@ $data-statuses: (
       color: #eee;
       &[data-mode="default"] {
         background-color: #333;
+      }
+      &[data-mode="info"] {
+        background-color: #0e6a8f;
       }
       &[data-mode="success"] {
         background-color: #739673;

@@ -12,7 +12,8 @@ export const HelpInformation: React.FC<Props> = (props) => {
 
   return (
     <Modal
-      mode="default"
+      mode="info"
+      name="help"
       title={
         <>
           <strong>{pageInfo?.title || props.page}</strong>

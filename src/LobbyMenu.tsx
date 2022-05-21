@@ -89,6 +89,7 @@ export const LobbyMenu: React.FC<Props> = (props) => {
     return (
       <Modal
         mode="default"
+        name="options"
         title={
           <>
             Options for <strong>{pageInfo?.title || page}</strong>
