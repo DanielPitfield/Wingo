@@ -8,7 +8,6 @@ import { wordLengthMappingsTargets } from "../WordleConfig";
 
 interface Props {
   timerConfig: { isTimed: false } | { isTimed: true; seconds: number };
-  keyboard: boolean;
   page: Page;
   theme: Theme;
   settings: SettingsData;
@@ -21,7 +20,7 @@ interface Props {
 
 export const Conundrum: React.FC<Props> = (props) => {
   const [inProgress, setInProgress] = useState(true);
-  
+
   const [conundrum, setConundrum] = useState("");
   const [solution, setSolution] = useState("");
 
@@ -45,7 +44,7 @@ export const Conundrum: React.FC<Props> = (props) => {
 
   React.useEffect(() => {
     generateConundrum();
-  },[])
+  }, []);
 
   // Timer Setup
   React.useEffect(() => {
@@ -76,17 +75,18 @@ export const Conundrum: React.FC<Props> = (props) => {
 
   function generateConundrum() {
     // Get a random word length combination
-    let wordLengthCombination =
-      wordLengthCombinations[Math.round(Math.random() * (wordLengthCombinations.length - 1))];
+    let wordLengthCombination = wordLengthCombinations[Math.round(Math.random() * (wordLengthCombinations.length - 1))];
 
     let conundrumSolution;
 
+    let failCount = 0;
+    const MAX_FAIL_COUNT = 100;
+
     // Loop until a conundrum is found
-    while (conundrumSolution === undefined) {
+    while (conundrumSolution === undefined && failCount < MAX_FAIL_COUNT) {
       let constructedWord = "";
 
       for (const wordLength of wordLengthCombination) {
-        // TODO: Guessable or target words?
         const wordArray = wordLengthMappingsTargets.find((mapping) => mapping.value === wordLength)?.array;
         if (!wordArray) {
           break;
@@ -102,31 +102,26 @@ export const Conundrum: React.FC<Props> = (props) => {
         constructedWord += word;
       }
 
-      // Can't be an anagram if not the same length
-      if (constructedWord.length !== 9) {
-        continue;
-      }
-
-      // TODO: Guessable or target words?
+      // Find 9 letter words which are anagrams of constructedWord
       const anagrams = words_nine_targets.filter((word) => checkAnagram(constructedWord, word));
 
-      // TODO: Ideally, there is only one solution to the conundrum (anagrams.length === 1)
-      
-      // There is a 9 letter anagram to use
-      if (anagrams.length >= 1) {
-        console.log("found");
-        // Choose one of them
-        const randomAnagram = anagrams[Math.round(Math.random() * (anagrams.length - 1))];
-        // A conundrum has been found, stop looping
-        conundrumSolution = randomAnagram;
-        // Set state
+      // Only one unique anagram
+      if (anagrams.length === 1) {
+        conundrumSolution = anagrams[0];
         setConundrum(constructedWord);
         setSolution(conundrumSolution);
       }
+      // Failed to find unique anagram
+      else {
+        failCount += 1;
+        if (failCount === MAX_FAIL_COUNT) {
+          // Try a different wordLengthCombination
+          wordLengthCombination =
+            wordLengthCombinations[Math.round(Math.random() * (wordLengthCombinations.length - 1))];
+          failCount = 0;
+        }
+      }
     }
-
-    // TODO: Try a different wordLength combination after failing a number of times
-
   }
 
   function ResetGame(wasCorrect: boolean, answer: string, targetAnswer: string, score: number | null) {
