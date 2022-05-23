@@ -74,6 +74,7 @@ const Wordle: React.FC<Props> = (props) => {
         <WordRow
           key={"read-only"}
           mode={props.mode}
+          isReadOnly={true}
           word={displayWord}
           isVertical={false}
           length={wordLength}
@@ -84,13 +85,13 @@ const Wordle: React.FC<Props> = (props) => {
           settings={props.settings}
         />
       );
-    }
-    else if (props.mode === "conundrum" && props.conundrum) {
+    } else if (props.mode === "conundrum" && props.conundrum) {
       // Create read only WordRow that reveals conundrum
       Grid.push(
         <WordRow
           key={"read-only"}
           mode={props.mode}
+          isReadOnly={true}
           word={props.conundrum}
           isVertical={false}
           length={wordLength}
@@ -133,6 +134,7 @@ const Wordle: React.FC<Props> = (props) => {
         <WordRow
           key={i}
           mode={props.mode}
+          isReadOnly={false}
           inProgress={props.inProgress}
           isVertical={false}
           word={word}

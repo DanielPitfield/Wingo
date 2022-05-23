@@ -5,6 +5,7 @@ import { getWordSummary } from "./WordleConfig";
 
 interface Props {
   mode: string;
+  isReadOnly: boolean;
   inProgress?: boolean;
   length: number;
   word: string;
@@ -43,6 +44,14 @@ export const WordRow: React.FC<Props> = (props) => {
         return x;
       });
     }
+  }
+
+  // Don't show status if read only (overwrite to not set)
+  if (props.isReadOnly) {
+    wordSummary.map((x) => {
+      x.status = "not set";
+      return x;
+    });
   }
 
   function isAnimationEnabled(letterIndex: number) {

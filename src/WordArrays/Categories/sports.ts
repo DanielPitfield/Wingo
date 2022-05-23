@@ -33,6 +33,7 @@ export const words_sports = [
   { word: "netball", hint: "" },
   { word: "olympic-sports", hint: "" },
   { word: "rowing", hint: "" },
+  { word: "rugby", hint: "" },
   { word: "rugby-league", hint: "" },
   { word: "rugby-union", hint: "" },
   { word: "sailing", hint: "" },

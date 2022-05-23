@@ -201,6 +201,7 @@ const CountdownLetters: React.FC<Props> = (props) => {
       <div key={"letter_selection"} className="countdown-letters-wrapper">
         <WordRow
           mode={props.mode}
+          isReadOnly={true}
           word={props.countdownWord}
           isVertical={false}
           length={wordLength}
@@ -243,6 +244,7 @@ const CountdownLetters: React.FC<Props> = (props) => {
       <WordRow
         key={"countdown/letters_input"}
         mode={props.mode}
+        isReadOnly={false}
         isVertical={false}
         word={props.currentWord}
         length={wordLength}

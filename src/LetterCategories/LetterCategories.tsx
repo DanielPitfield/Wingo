@@ -68,6 +68,7 @@ const LetterCategories: React.FC<Props> = (props) => {
           <WordRow
             key={i}
             mode={"letters_categories"}
+            isReadOnly={false}
             inProgress={props.inProgress}
             isVertical={false}
             word={word}
@@ -83,6 +84,7 @@ const LetterCategories: React.FC<Props> = (props) => {
         <WordRow
           key={i}
           mode={"letters_categories"}
+          isReadOnly={false}
           inProgress={props.inProgress}
           isVertical={false}
           word={word}
