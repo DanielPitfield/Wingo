@@ -699,6 +699,7 @@ const WordleConfig: React.FC<Props> = (props) => {
     setinProgress(true);
     setinDictionary(true);
     sethasSubmitLetter(false);
+    setConundrum("");
     setRevealedLetterIndexes([]);
     setletterStatuses(defaultLetterStatuses);
     if (props.timerConfig.isTimed) {
