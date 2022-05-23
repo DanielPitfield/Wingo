@@ -659,18 +659,29 @@ const WordleConfig: React.FC<Props> = (props) => {
   }, [props.page, targetWord]);
 
   function determineScore(): number | null {
-    if (!props.roundScoringInfo) {
+    // Correct conundrum
+    if (props.conundrum && currentWord.toUpperCase() === targetWord.toUpperCase()) {
+      return 10;
+    }
+    // Incorrect conundrum
+    else if (props.conundrum && currentWord.toUpperCase() !== targetWord.toUpperCase()) {
+      return 0;
+    }
+    // Lingo round but no scoring information
+    else if (!props.roundScoringInfo) {
       return null;
     }
+    // Lingo round
+    else {
+      const pointsLost =
+        props.mode === "puzzle"
+          ? (revealedLetterIndexes.length - 1) * props.roundScoringInfo?.pointsLostPerGuess
+          : numGuesses * props.roundScoringInfo.pointsLostPerGuess;
 
-    const pointsLost =
-      props.mode === "puzzle"
-        ? (revealedLetterIndexes.length - 1) * props.roundScoringInfo?.pointsLostPerGuess
-        : numGuesses * props.roundScoringInfo.pointsLostPerGuess;
+      const score = props.roundScoringInfo.basePoints - pointsLost;
 
-    const score = props.roundScoringInfo.basePoints - pointsLost;
-
-    return score;
+      return score;
+    }
   }
 
   function ResetGame() {
