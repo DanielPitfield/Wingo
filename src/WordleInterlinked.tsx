@@ -454,7 +454,7 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
       const targetWordInfo = gridWordsOrdered[i];
 
       // Returns summary of each letter's status in the guess
-      const wordSummary = getWordSummary("wordle_interlinked", wordGuessed, targetWordInfo.word, true);
+      const wordSummary = getWordSummary("wingo/interlinked", wordGuessed, targetWordInfo.word, true);
 
       newTileStatuses = newTileStatuses.map((position) => {
         // Status has already been changed from a previous (higher precedence) word comparison

@@ -28,6 +28,7 @@ import { words_herbs_and_spices } from "./WordArrays/Categories/herbs_and_spices
 import { words_meats_and_fish } from "./WordArrays/Categories/meats_and_fish";
 import { words_gemstones } from "./WordArrays/Categories/gemstones";
 import { Chance } from "chance";
+import { generateConundrum } from "./CountdownLetters/Conundrum";
 
 export interface WordleConfigProps {
   mode:
@@ -41,7 +42,9 @@ export interface WordleConfigProps {
     | "crossword/fit"
     | "crossword/daily"
     | "crossword/weekly"
-    | "crossword";
+    | "crossword"
+    | "conundrum";
+  conundrum?: string;
   targetWord?: string;
   wordArray?: string[];
   enforceFullLengthGuesses: boolean;
@@ -121,19 +124,20 @@ export function getNewLives(numGuesses: number, wordIndex: number): number {
 }
 
 export function getWordSummary(mode: string, word: string, targetWord: string, inDictionary: boolean) {
+  const simpleStatusModes = ["letters_categories"];
   // Character and status array
   let defaultCharacterStatuses = (word || "").split("").map((character, index) => ({
     character: character,
     status: getLetterStatus(character, index, targetWord, inDictionary),
   }));
 
-  if (mode === "letters_categories" && word === targetWord) {
+  if (simpleStatusModes.includes(mode) && word === targetWord) {
     let finalCharacterStatuses = defaultCharacterStatuses.map((x) => {
       x.status = "correct";
       return x;
     });
     return finalCharacterStatuses;
-  } else if (mode === "letters_categories" && word !== targetWord) {
+  } else if (simpleStatusModes.includes(mode) && word !== targetWord) {
     let finalCharacterStatuses = defaultCharacterStatuses.map((x) => {
       x.status = "incorrect";
       return x;
@@ -261,6 +265,7 @@ const WordleConfig: React.FC<Props> = (props) => {
       [props.defaultWordLength!, props.targetWord?.length!].filter((x) => x)
     )
   );
+  const [conundrum, setConundrum] = useState("");
   const [targetWord, setTargetWord] = useState(props.targetWord ? props.targetWord : "");
   const [targetHint, setTargetHint] = useState("");
   const [targetCategory, setTargetCategory] = useState("");
@@ -351,7 +356,6 @@ const WordleConfig: React.FC<Props> = (props) => {
       case "puzzle":
         // Get a random puzzle (from words_puzzles.ts)
         const puzzle = words_puzzles[Math.round(Math.random() * words_puzzles.length - 1)];
-        setTargetHint(puzzle.hint);
 
         // Log the current gamemode and the target word
         console.log(
@@ -412,6 +416,21 @@ const WordleConfig: React.FC<Props> = (props) => {
         }
 
         break;
+
+      case "conundrum":
+        const newConundrum = generateConundrum();
+        if (newConundrum) {
+          console.log(
+            `%cMode:%c ${props.mode}\n%cWord:%c ${newConundrum.answer}`,
+            "font-weight: bold",
+            "font-weight: normal",
+            "font-weight: bold",
+            "font-weight: normal",
+          );
+          setConundrum(newConundrum.question)
+          setTargetWord(newConundrum.answer);
+          return;
+        }
     }
 
     // A new target word can be determined
@@ -1039,6 +1058,7 @@ const WordleConfig: React.FC<Props> = (props) => {
       inDictionary={inDictionary}
       isIncompleteWord={isIncompleteWord}
       hasSubmitLetter={hasSubmitLetter}
+      conundrum={conundrum || ""}
       targetWord={targetWord || ""}
       targetHint={props.showHint === false ? "" : targetHint}
       targetCategory={targetCategory || ""}

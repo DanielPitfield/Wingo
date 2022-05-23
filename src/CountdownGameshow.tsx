@@ -4,10 +4,10 @@ import { SettingsData } from "./SaveData";
 import { Page } from "./App";
 import CountdownLettersConfig from "./CountdownLetters/CountdownLettersConfig";
 import CountdownNumbersConfig from "./CountdownNumbers/CountdownNumbersConfig";
-import { Conundrum } from "./CountdownLetters/Conundrum";
 import { Theme } from "./Themes";
 import { displayGameshowSummary } from "./LingoGameshow";
 import { Button } from "./Button";
+import WordleConfig from "./WordleConfig";
 
 interface Props {
   settings: SettingsData;
@@ -21,6 +21,20 @@ interface Props {
   numNumberRoundsPerSet: number;
   numConundrumRoundsPerSet: number;
   hasFinishingConundrum: boolean;
+
+  commonWingoProps: {
+    saveData: Storage;
+    defaultnumGuesses: number;
+    puzzleRevealMs: number;
+    puzzleLeaveNumBlanks: number;
+    page: Page;
+    theme: Theme;
+    setPage: (page: Page) => void;
+    setTheme: (theme: Theme) => void;
+    addGold: (gold: number) => void;
+    settings: SettingsData;
+    onComplete: (wasCorrect: boolean) => void;
+  };
 }
 
 export const CountdownGameshow: React.FC<Props> = (props) => {
@@ -137,15 +151,16 @@ export const CountdownGameshow: React.FC<Props> = (props) => {
       );
     } else if (roundType === "conundrum") {
       return (
-        <Conundrum
-          timerConfig={{ isTimed: true, seconds: 200 }}
-          page={"countdown/conundrum"}
-          theme={props.themes[1]}
-          settings={props.settings}
-          setTheme={props.setTheme}
-          setPage={props.setPage}
-          addGold={props.addGold}
-        ></Conundrum>
+        <WordleConfig
+          {...props.commonWingoProps}
+          mode="conundrum"
+          firstLetterProvided={false}
+          showHint={false}
+          timerConfig={{ isTimed: true, seconds: 30 }}
+          defaultWordLength={9}
+          defaultnumGuesses={1}
+          enforceFullLengthGuesses={true}
+        />
       );
     }
   }

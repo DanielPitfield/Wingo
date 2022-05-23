@@ -12,7 +12,7 @@ import { useCorrectChime, useFailureChime, useLightPingChime } from "./Sounds";
 
 interface Props {
   isCampaignLevel: boolean;
-  mode: "daily" | "repeat" | "category" | "increasing" | "limitless" | "puzzle" | "letters_categories";
+  mode: "daily" | "repeat" | "category" | "increasing" | "limitless" | "puzzle" | "letters_categories" | "conundrum";
   timerConfig: { isTimed: false } | { isTimed: true; totalSeconds: number; elapsedSeconds: number };
   wordLength: number;
   numGuesses: number;
@@ -23,6 +23,7 @@ interface Props {
   inDictionary: boolean;
   isIncompleteWord: boolean;
   hasSubmitLetter: boolean;
+  conundrum?: string;
   targetWord: string;
   targetHint?: string;
   targetCategory?: string;
@@ -74,6 +75,23 @@ const Wordle: React.FC<Props> = (props) => {
           key={"read-only"}
           mode={props.mode}
           word={displayWord}
+          isVertical={false}
+          length={wordLength}
+          targetWord={props.targetWord}
+          revealedLetterIndexes={props.revealedLetterIndexes}
+          hasSubmit={true}
+          inDictionary={props.inDictionary}
+          settings={props.settings}
+        />
+      );
+    }
+    else if (props.mode === "conundrum" && props.conundrum) {
+      // Create read only WordRow that reveals conundrum
+      Grid.push(
+        <WordRow
+          key={"read-only"}
+          mode={props.mode}
+          word={props.conundrum}
           isVertical={false}
           length={wordLength}
           targetWord={props.targetWord}

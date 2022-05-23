@@ -32,7 +32,6 @@ import { CountdownGameshow } from "./CountdownGameshow";
 import { LingoGameshow } from "./LingoGameshow";
 import { FiArrowLeft, FiHelpCircle, FiSettings } from "react-icons/fi";
 import HelpInformation from "./HelpInformation";
-import { Conundrum } from "./CountdownLetters/Conundrum";
 import { TitlePage } from "./TitlePage";
 
 const wordLength = 5;
@@ -91,7 +90,6 @@ export type Page =
   | "lingo/gameshow";
 
 // This is needed for runtime; make sure it matches the Page type
-// // TODO: Every gamemode has this helpInfo component, use state with callback to determine whether it is currently displayed or not
 export const pages: {
   page: Page;
   title: string;
@@ -1008,23 +1006,23 @@ export const App: React.FC = () => {
           />
         );
 
-      case "countdown/conundrum":
-        return (
-          <Conundrum
-            timerConfig={
-              gameOptionToggles.find((x) => x.page === "countdown/conundrum")?.timer
-                ? { isTimed: true, seconds: 30 }
-                : { isTimed: false }
-            }
-            page={page}
-            theme={Themes.GenericLetterCountdown}
-            settings={settings}
-            setTheme={setThemeIfNoPreferredSet}
-            setPage={setPage}
-            addGold={addGold}
-            onComplete={commonWingoProps.onComplete}
-          />
-        );
+        case "countdown/conundrum":
+          return (
+            <WordleConfig
+              {...commonWingoProps}
+              mode="conundrum"
+              firstLetterProvided={gameOptionToggles.find((x) => x.page === "countdown/conundrum")?.firstLetter || false}
+              showHint={gameOptionToggles.find((x) => x.page === "countdown/conundrum")?.showHint || false}
+              timerConfig={
+                gameOptionToggles.find((x) => x.page === "countdown/conundrum")?.timer
+                  ? { isTimed: true, seconds: 30 }
+                  : { isTimed: false }
+              }
+              defaultWordLength={wordLength_puzzle}
+              defaultnumGuesses={numGuesses_puzzle}
+              enforceFullLengthGuesses={true}
+            />
+          );
 
       case "numbers/arithmetic_reveal":
         return (
@@ -1241,6 +1239,7 @@ export const App: React.FC = () => {
             numNumberRoundsPerSet={1}
             numConundrumRoundsPerSet={0}
             hasFinishingConundrum={true}
+            commonWingoProps={commonWingoProps}
           />
         );
 
