@@ -328,7 +328,7 @@ const WordleConfig: React.FC<Props> = (props) => {
       case "daily":
         newTarget = getDeterministicArrayItems({ seedType: "today" }, 1, targetWordArray)[0];
         console.log(
-          `%cMode:%c ${props.mode}\n%cHint:%c ${newTarget.hint}\n%cWord:%c ${newTarget.word}`,
+          `%cMode:%c ${props.mode}\n%cHint:%c ${newTarget.hint || "-"}\n%cWord:%c ${newTarget.word || "-"}`,
           "font-weight: bold",
           "font-weight: normal",
           "font-weight: bold",
@@ -336,8 +336,14 @@ const WordleConfig: React.FC<Props> = (props) => {
           "font-weight: bold",
           "font-weight: normal"
         );
-        setTargetWord(newTarget.word);
-        setTargetHint(newTarget.hint);
+
+        if (newTarget.word) {
+          setTargetWord(newTarget.word);
+        }
+
+        if (props.showHint && newTarget.hint) {
+          setTargetHint(newTarget.hint);
+        }
 
         // Load previous attempts at daily (if applicable)
         const daily_word_storage = SaveData.getDailyWordGuesses();
@@ -351,6 +357,7 @@ const WordleConfig: React.FC<Props> = (props) => {
           setCurrentWord(daily_word_storage.currentWord);
           setinDictionary(daily_word_storage.inDictionary);
         }
+
         return;
 
       case "puzzle":
@@ -359,7 +366,7 @@ const WordleConfig: React.FC<Props> = (props) => {
 
         // Log the current gamemode and the target word
         console.log(
-          `%cMode:%c ${props.mode}\n%cHint:%c ${puzzle.hint}\n%cWord:%c ${puzzle.word}`,
+          `%cMode:%c ${props.mode}\n%cHint:%c ${puzzle.hint || "-"}\n%cWord:%c ${puzzle.word || "-"}`,
           "font-weight: bold",
           "font-weight: normal",
           "font-weight: bold",
@@ -367,8 +374,15 @@ const WordleConfig: React.FC<Props> = (props) => {
           "font-weight: bold",
           "font-weight: normal"
         );
-        setTargetWord(puzzle.word);
-        setTargetHint(puzzle.hint);
+
+        if (puzzle.word) {
+          setTargetWord(puzzle.word);
+        }
+
+        if (props.showHint && puzzle.hint) {
+          setTargetHint(puzzle.hint);
+        }
+
         return;
 
       case "category":
@@ -421,25 +435,26 @@ const WordleConfig: React.FC<Props> = (props) => {
         const newConundrum = generateConundrum();
         if (newConundrum) {
           console.log(
-            `%cMode:%c ${props.mode}\n%cWord:%c ${newConundrum.answer}`,
+            `%cMode:%c ${props.mode}\n%cWord:%c ${newConundrum.answer || "-"}`,
             "font-weight: bold",
             "font-weight: normal",
             "font-weight: bold",
-            "font-weight: normal",
+            "font-weight: normal"
           );
-          setConundrum(newConundrum.question)
+
+          setConundrum(newConundrum.question);
           setTargetWord(newConundrum.answer);
           return;
         }
     }
 
-    // A new target word can be determined
+    // A new target word needs to be determined (not returned from function yet)
     if (targetWordArray) {
       newTarget = targetWordArray[Math.round(Math.random() * (targetWordArray.length - 1))];
 
       // Log the current gamemode and the target word
       console.log(
-        `%cMode:%c ${props.mode}\n%cHint:%c ${newTarget.hint}\n%cWord:%c ${newTarget.word}`,
+        `%cMode:%c ${props.mode}\n%cHint:%c ${newTarget.hint || "-"}\n%cWord:%c ${newTarget.word || "-"}`,
         "font-weight: bold",
         "font-weight: normal",
         "font-weight: bold",
@@ -447,8 +462,14 @@ const WordleConfig: React.FC<Props> = (props) => {
         "font-weight: bold",
         "font-weight: normal"
       );
-      setTargetWord(newTarget.word);
-      setTargetHint(newTarget.hint);
+
+      if (newTarget.word) {
+        setTargetWord(newTarget.word);
+      }
+
+      if (newTarget.hint) {
+        setTargetHint(newTarget.hint);
+      }
     }
   }
 
