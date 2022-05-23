@@ -16,6 +16,7 @@ interface Props {
   guesses: string[];
   targetWord: string;
   inDictionary: boolean;
+  showKeyboard: boolean;
   letterStatuses: {
     letter: string;
     status: "" | "contains" | "correct" | "not set" | "not in word";
@@ -162,6 +163,10 @@ export const Keyboard: React.FC<Props> = (props) => {
     }
 
     return KeyboardButtons;
+  }
+
+  if (!props.showKeyboard) {
+    return <></>;
   }
 
   return (

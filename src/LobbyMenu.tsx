@@ -23,14 +23,12 @@ interface Props {
   firstLetterToggle: (value: boolean, page: Page) => void;
   showHintToggle: (value: boolean, page: Page) => void;
   timerToggle: (value: boolean, page: Page) => void;
-  keyboardToggle: (value: boolean, page: Page) => void;
   gameOptionToggles: {
     page: Page;
     wordLength?: number;
     firstLetter?: boolean;
     showHint?: boolean;
     timer?: boolean;
-    keyboard?: boolean;
   }[];
   addGold: (gold: number) => void;
 }
@@ -128,16 +126,6 @@ export const LobbyMenu: React.FC<Props> = (props) => {
               onChange={(e) => props.showHintToggle(e.target.checked, page)}
             ></input>
             Hints
-          </label>
-        )}
-        {props.gameOptionToggles.find((x) => x.page === page)?.keyboard !== undefined && (
-          <label>
-            <input
-              checked={props.gameOptionToggles.find((x) => x.page === page)?.keyboard}
-              type="checkbox"
-              onChange={(e) => props.keyboardToggle(e.target.checked, page)}
-            ></input>
-            Keyboard
           </label>
         )}
         {props.gameOptionToggles.find((x) => x.page === page)?.timer !== undefined && (

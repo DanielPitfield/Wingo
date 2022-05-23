@@ -13,7 +13,6 @@ import { SaveData, SettingsData } from "../SaveData";
 interface Props {
   mode: "countdown_letters_casual" | "countdown_letters_realistic";
   timerConfig: { isTimed: false } | { isTimed: true; totalSeconds: number; elapsedSeconds: number };
-  keyboard: boolean;
   wordLength: number;
   guesses: string[];
   hasTimerEnded: boolean;
@@ -71,7 +70,6 @@ const CountdownLetters: React.FC<Props> = (props) => {
       levelProps: {
         countdownWord: props.countdownWord,
         guesses: props.guesses,
-        keyboard: props.keyboard,
         mode: props.mode,
         timerConfig: props.timerConfig.isTimed
           ? { isTimed: true, seconds: props.timerConfig.totalSeconds }
@@ -379,7 +377,6 @@ const CountdownLetters: React.FC<Props> = (props) => {
         levelProps: {
           countdownWord: props.countdownWord,
           guesses: props.guesses,
-          keyboard: props.keyboard,
           mode: props.mode,
           timerConfig: props.timerConfig.isTimed
             ? { isTimed: true, seconds: props.timerConfig.totalSeconds }
@@ -454,20 +451,19 @@ const CountdownLetters: React.FC<Props> = (props) => {
       <div className="countdown/word_grid">{populateGrid(props.wordLength)}</div>
 
       <div className="keyboard">
-        {props.keyboard && (
-          <Keyboard
-            mode={"countdown/letters"}
-            onEnter={props.onEnter}
-            onSubmitLetter={props.onSubmitLetter}
-            onBackspace={props.onBackspace}
-            guesses={props.guesses}
-            targetWord={props.targetWord}
-            inDictionary={props.inDictionary}
-            letterStatuses={props.letterStatuses}
-            settings={props.settings}
-            disabled={!props.inProgress}
-          ></Keyboard>
-        )}
+        <Keyboard
+          mode={"countdown/letters"}
+          onEnter={props.onEnter}
+          onSubmitLetter={props.onSubmitLetter}
+          onBackspace={props.onBackspace}
+          guesses={props.guesses}
+          targetWord={props.targetWord}
+          inDictionary={props.inDictionary}
+          letterStatuses={props.letterStatuses}
+          settings={props.settings}
+          disabled={!props.inProgress}
+          showKeyboard={props.settings.gameplay.keyboard}
+        />
       </div>
 
       <div>

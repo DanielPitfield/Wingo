@@ -103,7 +103,14 @@ export const Settings: React.FC<Props> = (props) => {
       name: "Gameplay",
       type: "settings",
       icon: FiCompass,
-      settings: [],
+      settings: [
+        {
+          name: "Display on-screen keyboard",
+          type: "boolean",
+          value: props.settings.gameplay.keyboard,
+          onChange: (keyboard) => ({ ...settings, gameplay: { ...settings.gameplay, keyboard } }),
+        },
+      ],
     },
     {
       name: "About",

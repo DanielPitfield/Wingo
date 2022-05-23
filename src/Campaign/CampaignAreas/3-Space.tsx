@@ -16,7 +16,7 @@ export const area: AreaConfig = {
         enforceFullLengthGuesses: true,
         defaultWordLength: 5,
         defaultnumGuesses: 6,
-        keyboard: true,
+        
         firstLetterProvided: false,
         checkInDictionary: false,
         puzzleLeaveNumBlanks: 0,
@@ -42,7 +42,7 @@ export const area: AreaConfig = {
           enforceFullLengthGuesses: true,
           defaultWordLength: 5,
           defaultnumGuesses: 6,
-          keyboard: true,
+          
           firstLetterProvided: true,
           puzzleLeaveNumBlanks: 0,
           puzzleRevealMs: 0,
@@ -65,7 +65,7 @@ export const area: AreaConfig = {
           enforceFullLengthGuesses: true,
           defaultWordLength: 4,
           defaultnumGuesses: 6,
-          keyboard: true,
+          
           firstLetterProvided: false,
           puzzleLeaveNumBlanks: 0,
           puzzleRevealMs: 0,
@@ -88,7 +88,7 @@ export const area: AreaConfig = {
           enforceFullLengthGuesses: true,
           defaultWordLength: 5,
           defaultnumGuesses: 6,
-          keyboard: true,
+          
           firstLetterProvided: true,
           puzzleLeaveNumBlanks: 0,
           puzzleRevealMs: 0,
@@ -111,7 +111,7 @@ export const area: AreaConfig = {
           enforceFullLengthGuesses: true,
           defaultWordLength: 5,
           defaultnumGuesses: 6,
-          keyboard: true,
+          
           firstLetterProvided: false,
           puzzleLeaveNumBlanks: 0,
           puzzleRevealMs: 0,
@@ -134,7 +134,7 @@ export const area: AreaConfig = {
           enforceFullLengthGuesses: true,
           defaultWordLength: 7,
           defaultnumGuesses: 6,
-          keyboard: true,
+          
           firstLetterProvided: false,
           puzzleLeaveNumBlanks: 0,
           puzzleRevealMs: 0,
@@ -157,7 +157,7 @@ export const area: AreaConfig = {
           enforceFullLengthGuesses: true,
           defaultWordLength: 7,
           defaultnumGuesses: 6,
-          keyboard: true,
+          
           firstLetterProvided: true,
           puzzleLeaveNumBlanks: 4,
           puzzleRevealMs: 1500,
@@ -180,7 +180,7 @@ export const area: AreaConfig = {
           enforceFullLengthGuesses: true,
           defaultWordLength: 7,
           defaultnumGuesses: 6,
-          keyboard: true,
+          
           firstLetterProvided: true,
           puzzleLeaveNumBlanks: 0,
           puzzleRevealMs: 0,
@@ -203,7 +203,7 @@ export const area: AreaConfig = {
           enforceFullLengthGuesses: true,
           defaultWordLength: 6,
           defaultnumGuesses: 6,
-          keyboard: true,
+          
           firstLetterProvided: true,
           puzzleLeaveNumBlanks: 0,
           puzzleRevealMs: 0,
@@ -226,7 +226,7 @@ export const area: AreaConfig = {
           enforceFullLengthGuesses: true,
           defaultWordLength: 7,
           defaultnumGuesses: 6,
-          keyboard: true,
+          
           firstLetterProvided: false,
           puzzleLeaveNumBlanks: 0,
           puzzleRevealMs: 0,
@@ -249,7 +249,7 @@ export const area: AreaConfig = {
           enforceFullLengthGuesses: true,
           defaultWordLength: 5,
           defaultnumGuesses: 6,
-          keyboard: true,
+          
           firstLetterProvided: false,
           puzzleLeaveNumBlanks: 3,
           puzzleRevealMs: 1500,
@@ -286,7 +286,7 @@ export const area: AreaConfig = {
           enforceFullLengthGuesses: true,
           defaultWordLength: 6,
           defaultnumGuesses: 6,
-          keyboard: true,
+          
           firstLetterProvided: false,
           puzzleLeaveNumBlanks: 0,
           puzzleRevealMs: 0,
@@ -309,7 +309,7 @@ export const area: AreaConfig = {
           enforceFullLengthGuesses: true,
           defaultWordLength: 6,
           defaultnumGuesses: 6,
-          keyboard: true,
+          
           firstLetterProvided: false,
           puzzleLeaveNumBlanks: 3,
           puzzleRevealMs: 1500,
@@ -332,7 +332,7 @@ export const area: AreaConfig = {
           enforceFullLengthGuesses: true,
           defaultWordLength: 6,
           defaultnumGuesses: 6,
-          keyboard: true,
+          
           firstLetterProvided: false,
           puzzleLeaveNumBlanks: 0,
           puzzleRevealMs: 0,
@@ -355,7 +355,7 @@ export const area: AreaConfig = {
           enforceFullLengthGuesses: true,
           defaultWordLength: 6,
           defaultnumGuesses: 7,
-          keyboard: true,
+          
           firstLetterProvided: true,
           puzzleLeaveNumBlanks: 3,
           puzzleRevealMs: 1500,

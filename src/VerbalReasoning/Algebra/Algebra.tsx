@@ -26,11 +26,10 @@ export type QuestionTemplate = {
 interface Props {
   defaultTemplate?: AlgebraConfigProps;
   timerConfig: { isTimed: false } | { isTimed: true; seconds: number };
-  keyboard: boolean;
   theme: Theme;
   settings: SettingsData;
   setPage: (page: Page) => void;
-  onComplete?:(wasCorrect: boolean) => void;
+  onComplete?: (wasCorrect: boolean) => void;
 }
 
 export function getQuestionSetOutcome(numCorrectAnswers: number, numQuestions: number) {
@@ -321,15 +320,16 @@ const Algebra: React.FC<Props> = (props) => {
           settings={props.settings}
         ></LetterTile>
       </div>
-      {Boolean(algebraTemplate?.questions[questionNumber].answerType === "number" && props.keyboard) && (
+      {algebraTemplate?.questions[questionNumber].answerType === "number" && (
         <NumPad
           onEnter={() => setInProgress(false)}
           onBackspace={onBackspace}
           onSubmitNumber={onSubmitNumber}
           settings={props.settings}
+          showKeyboard={props.settings.gameplay.keyboard}
         />
       )}
-      {Boolean(algebraTemplate?.questions[questionNumber].answerType === "letter" && inProgress && props.keyboard) && (
+      {algebraTemplate?.questions[questionNumber].answerType === "letter" && inProgress && (
         <Keyboard
           onEnter={() => setInProgress(false)}
           onBackspace={onBackspace}
@@ -343,6 +343,7 @@ const Algebra: React.FC<Props> = (props) => {
           letterStatuses={[]}
           inDictionary
           disabled={!inProgress}
+          showKeyboard={props.settings.gameplay.keyboard}
         />
       )}
       <div>

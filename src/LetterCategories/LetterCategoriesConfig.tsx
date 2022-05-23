@@ -9,7 +9,6 @@ import { Theme } from "../Themes";
 interface Props {
   enforceFullLengthGuesses: boolean;
   timerConfig: { isTimed: false } | { isTimed: true; seconds: number };
-  keyboard: boolean;
   defaultWordLength: number;
   defaultnumGuesses: number;
   finishingButtonText?: string;
@@ -249,7 +248,6 @@ const LetterCategoriesConfig: React.FC<Props> = (props) => {
             }
           : { isTimed: false }
       }
-      keyboard={props.keyboard}
       wordLength={wordLength}
       numGuesses={numGuesses}
       guesses={guesses}

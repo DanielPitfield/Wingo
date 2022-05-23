@@ -768,6 +768,7 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
           letterStatuses={[]}
           settings={props.settings}
           disabled={!inProgress}
+          showKeyboard={props.settings.gameplay.keyboard}
           allowSpaces={allowSpaces}
         />
       </div>

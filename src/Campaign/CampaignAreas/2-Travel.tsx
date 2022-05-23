@@ -14,7 +14,7 @@ export const area: AreaConfig = {
         targetWord: "travel",
         enforceFullLengthGuesses: true,
         defaultnumGuesses: 6,
-        keyboard: true,
+
         firstLetterProvided: true,
         checkInDictionary: false,
         puzzleLeaveNumBlanks: 0,
@@ -39,7 +39,7 @@ export const area: AreaConfig = {
           targetWord: "canada",
           enforceFullLengthGuesses: true,
           defaultnumGuesses: 6,
-          keyboard: true,
+
           firstLetterProvided: true,
           puzzleLeaveNumBlanks: 0,
           puzzleRevealMs: 0,
@@ -61,7 +61,7 @@ export const area: AreaConfig = {
           targetWord: "poutine",
           enforceFullLengthGuesses: true,
           defaultnumGuesses: 6,
-          keyboard: true,
+
           firstLetterProvided: true,
           puzzleLeaveNumBlanks: 0,
           puzzleRevealMs: 0,
@@ -83,7 +83,7 @@ export const area: AreaConfig = {
           targetWord: "moose",
           enforceFullLengthGuesses: true,
           defaultnumGuesses: 6,
-          keyboard: true,
+
           firstLetterProvided: false,
           puzzleLeaveNumBlanks: 3,
           puzzleRevealMs: 1500,
@@ -105,7 +105,7 @@ export const area: AreaConfig = {
           targetWord: "maple-syrup",
           enforceFullLengthGuesses: true,
           defaultnumGuesses: 5,
-          keyboard: true,
+
           firstLetterProvided: false,
           puzzleLeaveNumBlanks: 0,
           puzzleRevealMs: 0,
@@ -127,7 +127,7 @@ export const area: AreaConfig = {
           targetWord: "polar-bear",
           enforceFullLengthGuesses: true,
           defaultnumGuesses: 6,
-          keyboard: true,
+
           firstLetterProvided: false,
           puzzleLeaveNumBlanks: 3,
           puzzleRevealMs: 1500,
@@ -149,7 +149,7 @@ export const area: AreaConfig = {
           targetWord: "usa",
           enforceFullLengthGuesses: true,
           defaultnumGuesses: 6,
-          keyboard: true,
+
           firstLetterProvided: false,
           puzzleLeaveNumBlanks: 0,
           puzzleRevealMs: 0,
@@ -171,7 +171,7 @@ export const area: AreaConfig = {
           targetWord: "constitution",
           enforceFullLengthGuesses: true,
           defaultnumGuesses: 7,
-          keyboard: true,
+
           firstLetterProvided: true,
           puzzleLeaveNumBlanks: 3,
           puzzleRevealMs: 1500,
@@ -193,7 +193,7 @@ export const area: AreaConfig = {
           targetWord: "cheeseburger",
           enforceFullLengthGuesses: true,
           defaultnumGuesses: 7,
-          keyboard: true,
+
           firstLetterProvided: false,
           puzzleLeaveNumBlanks: 3,
           puzzleRevealMs: 1500,
@@ -215,7 +215,7 @@ export const area: AreaConfig = {
           targetWord: "baseball",
           enforceFullLengthGuesses: true,
           defaultnumGuesses: 5,
-          keyboard: true,
+
           firstLetterProvided: false,
           puzzleLeaveNumBlanks: 3,
           puzzleRevealMs: 1500,
@@ -237,7 +237,7 @@ export const area: AreaConfig = {
           targetWord: "mexico",
           enforceFullLengthGuesses: true,
           defaultnumGuesses: 5,
-          keyboard: true,
+
           firstLetterProvided: true,
           puzzleLeaveNumBlanks: 3,
           puzzleRevealMs: 1500,
@@ -259,7 +259,7 @@ export const area: AreaConfig = {
           targetWord: "mariachi",
           enforceFullLengthGuesses: true,
           defaultnumGuesses: 7,
-          keyboard: true,
+
           firstLetterProvided: true,
           puzzleLeaveNumBlanks: 3,
           puzzleRevealMs: 1500,
@@ -281,7 +281,7 @@ export const area: AreaConfig = {
           targetWord: "brazil",
           enforceFullLengthGuesses: true,
           defaultnumGuesses: 5,
-          keyboard: true,
+
           firstLetterProvided: true,
           puzzleLeaveNumBlanks: 3,
           puzzleRevealMs: 1500,
@@ -303,7 +303,7 @@ export const area: AreaConfig = {
           targetWord: "carnival",
           enforceFullLengthGuesses: true,
           defaultnumGuesses: 6,
-          keyboard: true,
+
           firstLetterProvided: false,
           puzzleLeaveNumBlanks: 3,
           puzzleRevealMs: 1500,
@@ -325,7 +325,7 @@ export const area: AreaConfig = {
           targetWord: "samba",
           enforceFullLengthGuesses: true,
           defaultnumGuesses: 4,
-          keyboard: true,
+
           firstLetterProvided: false,
           puzzleLeaveNumBlanks: 3,
           puzzleRevealMs: 1500,
@@ -347,7 +347,7 @@ export const area: AreaConfig = {
           targetWord: "football",
           enforceFullLengthGuesses: true,
           defaultnumGuesses: 6,
-          keyboard: true,
+
           firstLetterProvided: false,
           puzzleLeaveNumBlanks: 3,
           puzzleRevealMs: 1500,
@@ -369,7 +369,7 @@ export const area: AreaConfig = {
           targetWord: "chile",
           enforceFullLengthGuesses: true,
           defaultnumGuesses: 7,
-          keyboard: true,
+
           firstLetterProvided: true,
           puzzleLeaveNumBlanks: 3,
           puzzleRevealMs: 1500,
@@ -391,7 +391,7 @@ export const area: AreaConfig = {
           targetWord: "argentina",
           enforceFullLengthGuesses: true,
           defaultnumGuesses: 7,
-          keyboard: true,
+
           firstLetterProvided: true,
           puzzleLeaveNumBlanks: 3,
           puzzleRevealMs: 1500,
@@ -413,7 +413,7 @@ export const area: AreaConfig = {
           targetWord: "south-africa",
           enforceFullLengthGuesses: true,
           defaultnumGuesses: 7,
-          keyboard: true,
+
           firstLetterProvided: true,
           puzzleLeaveNumBlanks: 3,
           puzzleRevealMs: 1500,
@@ -435,7 +435,7 @@ export const area: AreaConfig = {
           targetWord: "a",
           enforceFullLengthGuesses: true,
           defaultnumGuesses: 7,
-          keyboard: true,
+
           firstLetterProvided: true,
           puzzleLeaveNumBlanks: 3,
           puzzleRevealMs: 1500,
@@ -457,7 +457,7 @@ export const area: AreaConfig = {
           targetWord: "a",
           enforceFullLengthGuesses: true,
           defaultnumGuesses: 7,
-          keyboard: true,
+
           firstLetterProvided: true,
           puzzleLeaveNumBlanks: 3,
           puzzleRevealMs: 1500,
@@ -479,7 +479,7 @@ export const area: AreaConfig = {
           targetWord: "a",
           enforceFullLengthGuesses: true,
           defaultnumGuesses: 7,
-          keyboard: true,
+
           firstLetterProvided: true,
           puzzleLeaveNumBlanks: 3,
           puzzleRevealMs: 1500,
@@ -501,7 +501,7 @@ export const area: AreaConfig = {
           targetWord: "a",
           enforceFullLengthGuesses: true,
           defaultnumGuesses: 7,
-          keyboard: true,
+
           firstLetterProvided: true,
           puzzleLeaveNumBlanks: 3,
           puzzleRevealMs: 1500,
@@ -523,7 +523,7 @@ export const area: AreaConfig = {
           targetWord: "a",
           enforceFullLengthGuesses: true,
           defaultnumGuesses: 7,
-          keyboard: true,
+
           firstLetterProvided: true,
           puzzleLeaveNumBlanks: 3,
           puzzleRevealMs: 1500,
@@ -545,7 +545,7 @@ export const area: AreaConfig = {
           targetWord: "a",
           enforceFullLengthGuesses: true,
           defaultnumGuesses: 7,
-          keyboard: true,
+
           firstLetterProvided: true,
           puzzleLeaveNumBlanks: 3,
           puzzleRevealMs: 1500,
@@ -567,7 +567,7 @@ export const area: AreaConfig = {
           targetWord: "a",
           enforceFullLengthGuesses: true,
           defaultnumGuesses: 7,
-          keyboard: true,
+
           firstLetterProvided: true,
           puzzleLeaveNumBlanks: 3,
           puzzleRevealMs: 1500,
@@ -589,7 +589,7 @@ export const area: AreaConfig = {
           targetWord: "a",
           enforceFullLengthGuesses: true,
           defaultnumGuesses: 7,
-          keyboard: true,
+
           firstLetterProvided: true,
           puzzleLeaveNumBlanks: 3,
           puzzleRevealMs: 1500,
@@ -611,7 +611,7 @@ export const area: AreaConfig = {
           targetWord: "a",
           enforceFullLengthGuesses: true,
           defaultnumGuesses: 7,
-          keyboard: true,
+
           firstLetterProvided: true,
           puzzleLeaveNumBlanks: 3,
           puzzleRevealMs: 1500,
@@ -633,7 +633,7 @@ export const area: AreaConfig = {
           targetWord: "a",
           enforceFullLengthGuesses: true,
           defaultnumGuesses: 7,
-          keyboard: true,
+
           firstLetterProvided: true,
           puzzleLeaveNumBlanks: 3,
           puzzleRevealMs: 1500,
@@ -655,7 +655,7 @@ export const area: AreaConfig = {
           targetWord: "a",
           enforceFullLengthGuesses: true,
           defaultnumGuesses: 7,
-          keyboard: true,
+
           firstLetterProvided: true,
           puzzleLeaveNumBlanks: 3,
           puzzleRevealMs: 1500,
@@ -677,7 +677,7 @@ export const area: AreaConfig = {
           targetWord: "a",
           enforceFullLengthGuesses: true,
           defaultnumGuesses: 7,
-          keyboard: true,
+
           firstLetterProvided: true,
           puzzleLeaveNumBlanks: 3,
           puzzleRevealMs: 1500,
@@ -699,7 +699,7 @@ export const area: AreaConfig = {
           targetWord: "a",
           enforceFullLengthGuesses: true,
           defaultnumGuesses: 7,
-          keyboard: true,
+
           firstLetterProvided: true,
           puzzleLeaveNumBlanks: 3,
           puzzleRevealMs: 1500,
@@ -721,7 +721,7 @@ export const area: AreaConfig = {
           targetWord: "a",
           enforceFullLengthGuesses: true,
           defaultnumGuesses: 7,
-          keyboard: true,
+
           firstLetterProvided: true,
           puzzleLeaveNumBlanks: 3,
           puzzleRevealMs: 1500,
@@ -743,7 +743,7 @@ export const area: AreaConfig = {
           targetWord: "a",
           enforceFullLengthGuesses: true,
           defaultnumGuesses: 7,
-          keyboard: true,
+
           firstLetterProvided: true,
           puzzleLeaveNumBlanks: 3,
           puzzleRevealMs: 1500,
@@ -765,7 +765,7 @@ export const area: AreaConfig = {
           targetWord: "a",
           enforceFullLengthGuesses: true,
           defaultnumGuesses: 7,
-          keyboard: true,
+
           firstLetterProvided: true,
           puzzleLeaveNumBlanks: 3,
           puzzleRevealMs: 1500,
@@ -787,7 +787,7 @@ export const area: AreaConfig = {
           targetWord: "a",
           enforceFullLengthGuesses: true,
           defaultnumGuesses: 7,
-          keyboard: true,
+
           firstLetterProvided: true,
           puzzleLeaveNumBlanks: 3,
           puzzleRevealMs: 1500,

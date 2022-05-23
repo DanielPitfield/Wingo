@@ -10,7 +10,6 @@ import { SettingsData } from "../SaveData";
 
 interface Props {
   timerConfig: { isTimed: false } | { isTimed: true; totalSeconds: number; elapsedSeconds: number };
-  keyboard: boolean;
   wordLength: number;
   numGuesses: number;
   guesses: string[];
@@ -154,22 +153,19 @@ const LetterCategories: React.FC<Props> = (props) => {
       <div className="word_grid">{populateGrid(props.numGuesses, props.wordLength)}</div>
 
       <div className="keyboard">
-        {
-          /* TODO: Add options to turn keyboard/timer/first letter after Wordle has been launched (during the game) */ props.keyboard && (
-            <Keyboard
-              mode={"letters_categories"}
-              onEnter={props.onEnter}
-              onSubmitLetter={props.onSubmitLetter}
-              onBackspace={props.onBackspace}
-              guesses={props.guesses}
-              targetWord={""}
-              inDictionary={true}
-              letterStatuses={[]}
-              settings={props.settings}
-              disabled={!props.inProgress}
-            ></Keyboard>
-          )
-        }
+        <Keyboard
+          mode={"letters_categories"}
+          onEnter={props.onEnter}
+          onSubmitLetter={props.onSubmitLetter}
+          onBackspace={props.onBackspace}
+          guesses={props.guesses}
+          targetWord={""}
+          inDictionary={true}
+          letterStatuses={[]}
+          settings={props.settings}
+          disabled={!props.inProgress}
+          showKeyboard={props.settings.gameplay.keyboard}
+        />
       </div>
 
       <div>

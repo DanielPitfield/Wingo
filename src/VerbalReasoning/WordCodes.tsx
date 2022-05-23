@@ -24,11 +24,10 @@ interface Props {
   numAdditionalLetters: number;
   numGuesses: number;
   timerConfig: { isTimed: false } | { isTimed: true; seconds: number };
-  keyboard: boolean;
   theme: Theme;
   settings: SettingsData;
   setPage: (page: Page) => void;
-  onComplete?:(wasCorrect: boolean) => void;
+  onComplete?: (wasCorrect: boolean) => void;
 }
 
 /** */
@@ -408,11 +407,7 @@ const WordCodes: React.FC<Props> = (props) => {
             <DraggableItem
               key={index}
               index={index}
-              onMove={(toIndex) =>
-                inProgress
-                  ? setWordTiles(arrayMove(wordTiles, index, toIndex))
-                  : undefined
-              }
+              onMove={(toIndex) => (inProgress ? setWordTiles(arrayMove(wordTiles, index, toIndex)) : undefined)}
             >
               <LetterTile letter={tile.word} status={tile.status} settings={props.settings} />
             </DraggableItem>
@@ -428,11 +423,7 @@ const WordCodes: React.FC<Props> = (props) => {
             <DraggableItem
               key={index}
               index={index}
-              onMove={(toIndex) =>
-                inProgress
-                  ? setCodeTiles(arrayMove(codeTiles, index, toIndex))
-                  : undefined
-              }
+              onMove={(toIndex) => (inProgress ? setCodeTiles(arrayMove(codeTiles, index, toIndex)) : undefined)}
             >
               <LetterTile letter={tile.code} status={tile.status} settings={props.settings} />
             </DraggableItem>
@@ -683,16 +674,17 @@ const WordCodes: React.FC<Props> = (props) => {
           ></LetterTile>
         </div>
       )}
-      {Boolean(!props.modeConfig.isMatch && questionWordCodes[questionNumber]?.isWordToCode && props.keyboard) && (
+      {Boolean(!props.modeConfig.isMatch && questionWordCodes[questionNumber]?.isWordToCode) && (
         <NumPad
           onEnter={() => setInProgress(false)}
           onBackspace={onBackspace}
           onSubmitNumber={onSubmitNumber}
           settings={props.settings}
           disabled={!inProgress}
+          showKeyboard={props.settings.gameplay.keyboard}
         />
       )}
-      {Boolean(!props.modeConfig.isMatch && !questionWordCodes[questionNumber]?.isWordToCode && props.keyboard) && (
+      {Boolean(!props.modeConfig.isMatch && !questionWordCodes[questionNumber]?.isWordToCode) && (
         <Keyboard
           onEnter={() => setInProgress(false)}
           onBackspace={onBackspace}
@@ -704,6 +696,7 @@ const WordCodes: React.FC<Props> = (props) => {
           letterStatuses={[]}
           inDictionary
           disabled={!inProgress}
+          showKeyboard={props.settings.gameplay.keyboard}
         />
       )}
       <div>

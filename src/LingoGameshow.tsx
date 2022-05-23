@@ -10,7 +10,6 @@ import Success from "./images/success.svg";
 import Error from "./images/error.svg";
 
 interface Props {
-  keyboard: boolean;
   firstRoundConfig: { numLingos: number; numPuzzles: number };
   secondRoundConfig: { numLingos: number; numPuzzles: number };
   thirdRoundConfig: {
@@ -272,7 +271,6 @@ export const LingoGameshow: React.FC<Props> = (props) => {
           firstLetterProvided={true}
           showHint={false}
           timerConfig={{ isTimed: false }}
-          keyboard={props.keyboard}
           defaultWordLength={wordLength}
           defaultnumGuesses={1}
           enforceFullLengthGuesses={true}
@@ -289,7 +287,6 @@ export const LingoGameshow: React.FC<Props> = (props) => {
           firstLetterProvided={true}
           showHint={false}
           timerConfig={{ isTimed: true, seconds: 30 }}
-          keyboard={props.keyboard}
           defaultWordLength={wordLength}
           enforceFullLengthGuesses={true}
           roundScoringInfo={roundScoringInfo}

@@ -47,7 +47,6 @@ export interface WordleConfigProps {
   enforceFullLengthGuesses: boolean;
   firstLetterProvided: boolean;
   timerConfig: { isTimed: false } | { isTimed: true; seconds: number };
-  keyboard: boolean;
   showHint?: boolean;
   defaultWordLength?: number;
   puzzleRevealMs: number;
@@ -610,7 +609,6 @@ const WordleConfig: React.FC<Props> = (props) => {
         defaultWordLength: props.defaultWordLength,
         defaultnumGuesses: props.defaultnumGuesses,
         enforceFullLengthGuesses: props.enforceFullLengthGuesses,
-        keyboard: props.keyboard,
         timerConfig: props.timerConfig,
         checkInDictionary: props.checkInDictionary,
         wordArray: props.wordArray,
@@ -871,7 +869,6 @@ const WordleConfig: React.FC<Props> = (props) => {
           defaultWordLength: props.defaultWordLength,
           defaultnumGuesses: props.defaultnumGuesses,
           enforceFullLengthGuesses: props.enforceFullLengthGuesses,
-          keyboard: props.keyboard,
           timerConfig: props.timerConfig,
           checkInDictionary: props.checkInDictionary,
           wordArray: props.wordArray,
@@ -1033,7 +1030,6 @@ const WordleConfig: React.FC<Props> = (props) => {
             }
           : { isTimed: false }
       }
-      keyboard={props.keyboard}
       wordLength={wordLength}
       numGuesses={numGuesses}
       guesses={guesses}
