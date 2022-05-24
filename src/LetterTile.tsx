@@ -49,6 +49,7 @@ const LetterTile: React.FC<Props> = (props) => {
 
     // Take the delay, multiply by multipler
     return delayForIndexSeconds * delayMultipler;
+
   }
 
   const [delayedStatus, setDelayedStatus] = useState<Props["status"]>("not set");

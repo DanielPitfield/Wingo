@@ -209,6 +209,7 @@ const CountdownLetters: React.FC<Props> = (props) => {
           hasSubmit={false}
           inDictionary={props.inDictionary}
           settings={props.settings}
+          applyAnimation={false}
         />
         <div className="add-letter-buttons-wrapper">
           <Button

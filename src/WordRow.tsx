@@ -68,8 +68,12 @@ export const WordRow: React.FC<Props> = (props) => {
     }
     // Apply animation only to LetterTiles which have been revealed in Puzzle mode
     else if (props.mode === "puzzle") {
-      if (animation_criteria && props.revealedLetterIndexes && props.revealedLetterIndexes.includes(letterIndex)) {
-        return false; // TODO: Set to true when animationDelay is fixed
+      if (
+        props.revealedLetterIndexes &&
+        props.revealedLetterIndexes.length > 0 &&
+        props.revealedLetterIndexes.includes(letterIndex)
+      ) {
+        return true;
       }
     }
     // Apply animation to LetterTiles if the minimum criteria is met (in any other mode)
@@ -88,10 +92,15 @@ export const WordRow: React.FC<Props> = (props) => {
           key={i}
           indexInWord={props.revealedLetterIndexes ? props.revealedLetterIndexes.length : i}
           letter={props.word?.[i]}
-          // Either the props.applyAnimation is not specified (undefined) or is true, and this word should be animated
-          applyAnimation={(props.applyAnimation === undefined || props.applyAnimation) && isAnimationEnabled(i)}
-          // If the word is correct, show a faster animation
-          animationDelayMultiplier={allCorrect ? 0.3 : undefined}
+          // Use props.applyAnimation or otherwise determine if animation is enabled
+          applyAnimation={props.applyAnimation !== undefined ? props.applyAnimation : isAnimationEnabled(i)}
+          /*
+          When props.revealedLetterIndexes is specified, there is no delay with revealing letters because
+          animation will only be applied starting from when the there is at least one index (and also when the tile is given a letter)
+
+          If the word is correct, show a faster animation
+          */
+          animationDelayMultiplier={props.revealedLetterIndexes ? 0 : allCorrect ? 0.3 : undefined}
           settings={props.settings}
           status={!props.hasSubmit || !props.word ? "not set" : wordSummary[i]?.status}
         ></LetterTile>
