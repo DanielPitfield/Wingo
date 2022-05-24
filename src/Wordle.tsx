@@ -88,19 +88,21 @@ const Wordle: React.FC<Props> = (props) => {
     } else if (props.mode === "conundrum" && props.conundrum) {
       // Create read only WordRow that reveals conundrum
       Grid.push(
-        <WordRow
-          key={"read-only"}
-          mode={props.mode}
-          isReadOnly={true}
-          word={props.conundrum}
-          isVertical={false}
-          length={wordLength}
-          targetWord={props.targetWord}
-          revealedLetterIndexes={props.revealedLetterIndexes}
-          hasSubmit={true}
-          inDictionary={props.inDictionary}
-          settings={props.settings}
-        />
+        <div key={"conundrum_reveal"} className="countdown-letters-wrapper">
+          <WordRow
+            key={"read-only"}
+            mode={props.mode}
+            isReadOnly={true}
+            word={props.conundrum}
+            isVertical={false}
+            length={wordLength}
+            targetWord={props.targetWord}
+            revealedLetterIndexes={props.revealedLetterIndexes}
+            hasSubmit={true}
+            inDictionary={props.inDictionary}
+            settings={props.settings}
+          />
+        </div>
       );
     }
 
