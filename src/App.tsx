@@ -1006,23 +1006,23 @@ export const App: React.FC = () => {
           />
         );
 
-        case "countdown/conundrum":
-          return (
-            <WordleConfig
-              {...commonWingoProps}
-              mode="conundrum"
-              firstLetterProvided={gameOptionToggles.find((x) => x.page === "countdown/conundrum")?.firstLetter || false}
-              showHint={gameOptionToggles.find((x) => x.page === "countdown/conundrum")?.showHint || false}
-              timerConfig={
-                gameOptionToggles.find((x) => x.page === "countdown/conundrum")?.timer
-                  ? { isTimed: true, seconds: 30 }
-                  : { isTimed: false }
-              }
-              defaultWordLength={wordLength_puzzle}
-              defaultnumGuesses={numGuesses_puzzle}
-              enforceFullLengthGuesses={true}
-            />
-          );
+      case "countdown/conundrum":
+        return (
+          <WordleConfig
+            {...commonWingoProps}
+            mode="conundrum"
+            firstLetterProvided={gameOptionToggles.find((x) => x.page === "countdown/conundrum")?.firstLetter || false}
+            showHint={gameOptionToggles.find((x) => x.page === "countdown/conundrum")?.showHint || false}
+            timerConfig={
+              gameOptionToggles.find((x) => x.page === "countdown/conundrum")?.timer
+                ? { isTimed: true, seconds: 30 }
+                : { isTimed: false }
+            }
+            defaultWordLength={wordLength_puzzle}
+            defaultnumGuesses={numGuesses_puzzle}
+            enforceFullLengthGuesses={true}
+          />
+        );
 
       case "numbers/arithmetic_reveal":
         return (
@@ -1313,7 +1313,17 @@ export const App: React.FC = () => {
           </div>
         </>
       )}
-      <ErrorBoundary FallbackComponent={ErrorFallback} onReset={() => window.location.reload()}>
+      <ErrorBoundary
+        fallbackRender={({ error, resetErrorBoundary }) => (
+          <ErrorFallback
+            error={error}
+            resetErrorBoundary={resetErrorBoundary}
+            settingsData={SaveData.getSettings()}
+            version={VERSION}
+          ></ErrorFallback>
+        )}
+        onReset={() => window.location.reload()}
+      >
         {pageComponent}
       </ErrorBoundary>
       {Boolean(isHelpInfoShown && page !== "home" && page !== "title-page" && page !== "settings") && (
