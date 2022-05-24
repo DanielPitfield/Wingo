@@ -184,23 +184,27 @@ const Wordle: React.FC<Props> = (props) => {
 
     // Invalid word (wrong spelling)
     if (!props.inDictionary) {
-      return (
-        <MessageNotification type="error">
-          <strong>{props.currentWord.toUpperCase()}</strong> is not a valid word
-          {!props.isCampaignLevel && (
-            <>
-              <br></br>
-              The word was: <strong>{props.targetWord.toUpperCase()}</strong>
-            </>
-          )}
-          {props.mode === "limitless" && (
-            <>
-              <br></br>
-              <strong>-1 life</strong>
-            </>
-          )}
-        </MessageNotification>
-      );
+      if (props.mode === "puzzle" || props.mode === "conundrum") {
+        return <MessageNotification type="error">Incorrect</MessageNotification>;
+      } else {
+        return (
+          <MessageNotification type="error">
+            <strong>{props.currentWord.toUpperCase()}</strong> is not a valid word
+            {!props.isCampaignLevel && (
+              <>
+                <br></br>
+                The word was: <strong>{props.targetWord.toUpperCase()}</strong>
+              </>
+            )}
+            {props.mode === "limitless" && (
+              <>
+                <br></br>
+                <strong>-1 life</strong>
+              </>
+            )}
+          </MessageNotification>
+        );
+      }
     }
 
     // The number of rows not used in guessing word
@@ -239,7 +243,7 @@ const Wordle: React.FC<Props> = (props) => {
 
     // Other modes
     if (props.wordIndex === 0 && props.currentWord.toUpperCase() === props.targetWord.toUpperCase()) {
-      if (props.mode === "puzzle") {
+      if (props.mode === "puzzle" || props.mode === "conundrum") {
         return <MessageNotification type="success">Correct</MessageNotification>;
       } else {
         return <MessageNotification type="success">You guessed the word in one guess</MessageNotification>;
