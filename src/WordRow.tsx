@@ -66,8 +66,8 @@ export const WordRow: React.FC<Props> = (props) => {
     else if (props.mode === "daily" && !props.inProgress && props.word && props.hasSubmit) {
       return false;
     }
-    // Apply animation only to LetterTiles which have been revealed in Puzzle mode
-    else if (props.mode === "puzzle") {
+    // Apply animation only to LetterTiles which have been revealed in Puzzle or Conundrum modes
+    else if (props.mode === "puzzle" || props.mode === "conundrum") {
       if (
         props.revealedLetterIndexes &&
         props.revealedLetterIndexes.length > 0 &&

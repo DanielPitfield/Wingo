@@ -444,6 +444,9 @@ const WordleConfig: React.FC<Props> = (props) => {
 
           setConundrum(newConundrum.question);
           setTargetWord(newConundrum.answer);
+          // All letters revealed from start
+          setRevealedLetterIndexes(Array.from({ length: newConundrum.answer.length }).map((_, index) => index));
+          
           return;
         }
     }
