@@ -701,6 +701,8 @@ const WordleConfig: React.FC<Props> = (props) => {
         determineScore()
       );
     }
+    setisIncompleteWord(false);
+    setTargetWord("");
     setGuesses([]);
     setCurrentWord("");
     setWordIndex(0);
