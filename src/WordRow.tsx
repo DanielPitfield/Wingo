@@ -54,40 +54,13 @@ export const WordRow: React.FC<Props> = (props) => {
     });
   }
 
-  function isAnimationEnabled(letterIndex: number): boolean {
-    if (!props.inProgress) {
-      return false;
-    }
+  function isAnimationEnabled(): boolean {
     // Don't apply animation for LetterTiles in Countdown Letters mode
-    else if (props.mode === "countdown_letters_casual" || props.mode === "countdown_letters_realistic") {
+    if (props.mode === "countdown_letters_casual" || props.mode === "countdown_letters_realistic") {
       return false;
     }
     // Don't apply animation for LetterTiles in daily mode, when the game reports as having ended
     else if (props.mode === "daily" && !props.inProgress && props.word && props.hasSubmit) {
-      return false;
-    }
-    // Apply animation only to LetterTiles which have been revealed in Puzzle or Conundrum modes
-    else if (props.mode === "puzzle" || props.mode === "conundrum") {
-      if (
-        props.revealedLetterIndexes &&
-        props.revealedLetterIndexes.length > 0 &&
-        props.revealedLetterIndexes.includes(letterIndex)
-      ) {
-        return true;
-      } else {
-        return false;
-      }
-    }
-    // Neither animation (pop or reveal) is needed when there are no letters in the word
-    else if (!props.word || props.word.length <= 0) {
-      return false;
-    }
-    // Undefined letter index
-    else if (letterIndex === undefined) {
-      return false;
-    }
-    // No letter
-    else if (props.word.charAt(letterIndex) === "" || props.word.charAt(letterIndex) === undefined) {
       return false;
     }
     // Other modes and everything is suitable for animation
@@ -107,7 +80,7 @@ export const WordRow: React.FC<Props> = (props) => {
           indexInWord={props.revealedLetterIndexes ? props.revealedLetterIndexes.length : i}
           letter={props.word?.[i]}
           // Should the LetterTile pop/reveal in this gamemode?
-          applyAnimation={isAnimationEnabled(i)}
+          applyAnimation={isAnimationEnabled()}
           /*
           When props.revealedLetterIndexes is specified, there is no delay with revealing letters because
           animation will only be applied starting from when the there is at least one index (and also when the tile is given a letter)

@@ -74,10 +74,12 @@ const LetterTile: React.FC<Props> = (props) => {
       onClick={() => props.onClick?.()}
       data-animation-setting={props.settings.graphics.animation}
       data-apply-animation={props.applyAnimation}
-      data-new-letter-added={props.status === "not set" && props.letter}
-      data-has-been-submitted={props.status !== "not set" && props.letter}
+      // TODO: CRITICAL: Puzzle and conundrum read only tiles always pop and never reveal
+      data-new-letter-added={props.status === "not set" && props.letter !== undefined}
+      data-has-been-submitted={props.status !== "not set" && props.letter !== undefined}
       data-status={delayedStatus}
       data-is-clickable={props.onClick !== undefined}
+      // TODO: CRITICAL: animationDelay should only be for reveal animation NOT the pop animation
       style={delayForThisLetterSeconds ? { animationDelay: `${delayForThisLetterSeconds()}s` } : undefined}
       {...props.additionalProps}
     >
