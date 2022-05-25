@@ -202,6 +202,7 @@ const CountdownLetters: React.FC<Props> = (props) => {
         <WordRow
           mode={props.mode}
           isReadOnly={true}
+          inProgress={props.inProgress}
           word={props.countdownWord}
           isVertical={false}
           length={wordLength}
@@ -246,6 +247,7 @@ const CountdownLetters: React.FC<Props> = (props) => {
         key={"countdown/letters_input"}
         mode={props.mode}
         isReadOnly={false}
+        inProgress={props.inProgress}
         isVertical={false}
         word={props.currentWord}
         length={wordLength}
@@ -253,6 +255,7 @@ const CountdownLetters: React.FC<Props> = (props) => {
         hasSubmit={!props.inProgress}
         inDictionary={props.inDictionary}
         settings={props.settings}
+        applyAnimation={false}
       ></WordRow>
     );
 

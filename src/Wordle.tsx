@@ -75,6 +75,7 @@ const Wordle: React.FC<Props> = (props) => {
           key={"read-only"}
           mode={props.mode}
           isReadOnly={true}
+          inProgress={props.inProgress}
           word={displayWord}
           isVertical={false}
           length={wordLength}
@@ -93,6 +94,7 @@ const Wordle: React.FC<Props> = (props) => {
             key={"read-only"}
             mode={props.mode}
             isReadOnly={true}
+            inProgress={props.inProgress}
             word={props.conundrum}
             isVertical={false}
             length={wordLength}
@@ -145,7 +147,7 @@ const Wordle: React.FC<Props> = (props) => {
           hasSubmit={props.wordIndex > i || !props.inProgress}
           inDictionary={props.inDictionary}
           isIncompleteWord={props.isIncompleteWord}
-          applyAnimation={props.inProgress && i > props.wordIndex}
+          applyAnimation={true}
           settings={props.settings}
         />
       );

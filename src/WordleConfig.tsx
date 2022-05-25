@@ -627,12 +627,12 @@ const WordleConfig: React.FC<Props> = (props) => {
   // targetWord generation
   React.useEffect(() => {
     // Don't need to determine a target word, if it is explicitly specified
-    if (props.targetWord) {
+    if (!inProgress || props.targetWord) {
       return;
     }
 
-    // Already a targetWord of the needed wordLength (for the in progress game)
-    if (targetWord && targetWord.length > 0 && targetWord.length === wordLength && inProgress) {
+    // Already a conundrum of the required length (TODO: This somehow fixes bug 318?)
+    if (props.mode === "conundrum" && targetWord && targetWord.length > 0 && targetWord.length === wordLength) {
       return;
     }
 

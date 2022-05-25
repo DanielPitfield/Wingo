@@ -176,12 +176,24 @@ input {
   }
 }
 
+// Shake entire WordRow with invalid word
 .word_row[data-invalid-word-submitted="true"][data-apply-animation="true"][data-animation-setting="true"] {
   animation: shakeIncorrectInput 0.4s;
 }
 
+// Jump every LetterTile in WordRow when a correct word is submitted
+.word_row[data-correct-word-submitted="true"][data-apply-animation="true"] .letter_tile[data-animation-setting="true"] {
+  animation: jumpCorrectInput 1.2s;
+}
+
+// Pop LetterTile when a letter is added
 .letter_tile[data-new-letter-added="true"][data-apply-animation="true"][data-animation-setting="true"] {
   animation: popLetterInput 0.2s;
+}
+
+// Flip LetterTile after submmited a WordRow
+.letter_tile[data-has-been-submitted="true"][data-apply-animation="true"][data-animation-setting="true"] {
+  animation: flipRevealLetter 1.5s;
 }
 
 // For the target tile on Number Arithmetic
@@ -189,14 +201,6 @@ input {
   .letter_tile[data-new-letter-added="true"][data-apply-animation="true"][data-animation-setting="true"] {
     animation: flipRevealLetter 1.5s;
   }
-}
-
-.letter_tile[data-has-been-submitted="true"][data-apply-animation="true"][data-animation-setting="true"] {
-  animation: flipRevealLetter 1.5s;
-}
-
-.word_row[data-correct-word-submitted="true"][data-apply-animation="true"] .letter_tile[data-animation-setting="true"] {
-  animation: jumpCorrectInput 1.2s;
 }
 
 .letter_tile {

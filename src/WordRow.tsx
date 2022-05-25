@@ -54,12 +54,12 @@ export const WordRow: React.FC<Props> = (props) => {
     });
   }
 
-  function isAnimationEnabled(letterIndex: number) {
-    // Minimum set of criteria that must be satisfied for animation to be applied
-    const animation_criteria =
-      props.hasSubmit && props.word !== undefined && props.word?.[letterIndex] !== undefined && props.inDictionary;
+  function isAnimationEnabled(letterIndex: number): boolean {
+    if (!props.inProgress) {
+      return false;
+    }
     // Don't apply animation for LetterTiles in Countdown Letters mode
-    if (props.mode === "countdown_letters_casual" || props.mode === "countdown_letters_realistic") {
+    else if (props.mode === "countdown_letters_casual" || props.mode === "countdown_letters_realistic") {
       return false;
     }
     // Don't apply animation for LetterTiles in daily mode, when the game reports as having ended
@@ -74,10 +74,24 @@ export const WordRow: React.FC<Props> = (props) => {
         props.revealedLetterIndexes.includes(letterIndex)
       ) {
         return true;
+      } else {
+        return false;
       }
     }
-    // Apply animation to LetterTiles if the minimum criteria is met (in any other mode)
-    else if (!props.revealedLetterIndexes && animation_criteria) {
+    // Neither animation (pop or reveal) is needed when there are no letters in the word
+    else if (!props.word || props.word.length <= 0) {
+      return false;
+    }
+    // Undefined letter index
+    else if (letterIndex === undefined) {
+      return false;
+    }
+    // No letter
+    else if (props.word.charAt(letterIndex) === "" || props.word.charAt(letterIndex) === undefined) {
+      return false;
+    }
+    // Other modes and everything is suitable for animation
+    else {
       return true;
     }
   }
@@ -92,8 +106,8 @@ export const WordRow: React.FC<Props> = (props) => {
           key={i}
           indexInWord={props.revealedLetterIndexes ? props.revealedLetterIndexes.length : i}
           letter={props.word?.[i]}
-          // Use props.applyAnimation or otherwise determine if animation is enabled
-          applyAnimation={props.applyAnimation !== undefined ? props.applyAnimation : isAnimationEnabled(i)}
+          // Should the LetterTile pop/reveal in this gamemode?
+          applyAnimation={isAnimationEnabled(i)}
           /*
           When props.revealedLetterIndexes is specified, there is no delay with revealing letters because
           animation will only be applied starting from when the there is at least one index (and also when the tile is given a letter)
@@ -117,7 +131,8 @@ export const WordRow: React.FC<Props> = (props) => {
     <div
       className={props.isVertical ? "word_row_vertical" : "word_row"}
       data-animation-setting={props.settings.graphics.animation}
-      data-apply-animation={props.applyAnimation}
+      // Only false if directly specified as false with props.applyAnimation
+      data-apply-animation={props.applyAnimation === undefined || props.applyAnimation}
       data-invalid-word-submitted={Boolean(
         (props.word && props.hasSubmit && !props.inDictionary) || (props.isIncompleteWord && props.word)
       )}

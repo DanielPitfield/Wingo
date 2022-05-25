@@ -650,6 +650,7 @@ export const App: React.FC = () => {
     const commonWingoProps = {
       saveData: saveData,
       defaultnumGuesses: numGuesses,
+      enforceFullLengthGuesses: true,
       puzzleRevealMs: puzzleRevealMs,
       puzzleLeaveNumBlanks: puzzleLeaveNumBlanks,
       page: page,
@@ -774,7 +775,6 @@ export const App: React.FC = () => {
                 : { isTimed: false }
             }
             defaultWordLength={wordLength}
-            enforceFullLengthGuesses={true}
           />
         );
 
@@ -791,7 +791,6 @@ export const App: React.FC = () => {
                 : { isTimed: false }
             }
             defaultWordLength={gameOptionToggles.find((x) => x.page === "wingo/repeat")?.wordLength || wordLength}
-            enforceFullLengthGuesses={false}
           />
         );
 
@@ -825,7 +824,6 @@ export const App: React.FC = () => {
                 : { isTimed: false }
             }
             defaultWordLength={wordLength_increasing}
-            enforceFullLengthGuesses={true}
           />
         );
 
@@ -842,7 +840,6 @@ export const App: React.FC = () => {
                 : { isTimed: false }
             }
             defaultWordLength={wordLength_limitless}
-            enforceFullLengthGuesses={true}
           />
         );
 
@@ -860,7 +857,6 @@ export const App: React.FC = () => {
             }
             defaultWordLength={wordLength_puzzle}
             defaultnumGuesses={numGuesses_puzzle}
-            enforceFullLengthGuesses={true}
           />
         );
 
@@ -877,7 +873,6 @@ export const App: React.FC = () => {
                 : { isTimed: false }
             }
             defaultWordLength={wordLength}
-            enforceFullLengthGuesses={true}
           />
         );
 
@@ -894,7 +889,6 @@ export const App: React.FC = () => {
                 : { isTimed: false }
             }
             defaultWordLength={wordLength}
-            enforceFullLengthGuesses={true}
           />
         );
 
@@ -911,7 +905,6 @@ export const App: React.FC = () => {
                 : { isTimed: false }
             }
             defaultWordLength={wordLength}
-            enforceFullLengthGuesses={true}
           />
         );
 
@@ -928,7 +921,6 @@ export const App: React.FC = () => {
                 : { isTimed: false }
             }
             defaultWordLength={wordLength}
-            enforceFullLengthGuesses={true}
           />
         );
 
@@ -945,7 +937,6 @@ export const App: React.FC = () => {
                 : { isTimed: false }
             }
             defaultWordLength={wordLength}
-            enforceFullLengthGuesses={true}
           />
         );
 
@@ -1020,7 +1011,6 @@ export const App: React.FC = () => {
             }
             defaultWordLength={wordLength_puzzle}
             defaultnumGuesses={numGuesses_puzzle}
-            enforceFullLengthGuesses={true}
           />
         );
 

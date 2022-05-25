@@ -66,16 +66,16 @@ const LetterTile: React.FC<Props> = (props) => {
   }, [props.status]);
 
   return (
-    // [data-apply-animation="false"] - No animations are applied to WordRow
+    // [data-apply-animation="false"] - No animations are applied to LetterTile
     // [data-new-letter-added="true"] - Pop animation is applied to LetterTile
     // [data-has-been-submitted="true"] - Reveal animation is applied to LetterTile
     <div
       className="letter_tile"
       onClick={() => props.onClick?.()}
       data-animation-setting={props.settings.graphics.animation}
-      data-apply-animation={props.applyAnimation !== false}
-      data-new-letter-added={Boolean(props.status === "not set" && props.letter)}
-      data-has-been-submitted={props.applyAnimation}
+      data-apply-animation={props.applyAnimation}
+      data-new-letter-added={props.status === "not set" && props.letter}
+      data-has-been-submitted={props.status !== "not set" && props.letter}
       data-status={delayedStatus}
       data-is-clickable={props.onClick !== undefined}
       style={delayForThisLetterSeconds ? { animationDelay: `${delayForThisLetterSeconds()}s` } : undefined}
