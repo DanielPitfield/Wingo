@@ -446,7 +446,7 @@ const WordleConfig: React.FC<Props> = (props) => {
           setTargetWord(newConundrum.answer);
           // All letters revealed from start
           setRevealedLetterIndexes(Array.from({ length: newConundrum.answer.length }).map((_, index) => index));
-          
+
           return;
         }
     }
@@ -627,7 +627,12 @@ const WordleConfig: React.FC<Props> = (props) => {
   // targetWord generation
   React.useEffect(() => {
     // Don't need to determine a target word, if it is explicitly specified
-    if (!inProgress || props.targetWord) {
+    if (props.targetWord) {
+      return;
+    }
+
+    // Already a targetWord of the needed wordLength (for the in progress game)
+    if (targetWord && targetWord.length > 0 && targetWord.length === wordLength && inProgress) {
       return;
     }
 
@@ -663,19 +668,15 @@ const WordleConfig: React.FC<Props> = (props) => {
 
   function determineScore(): number | null {
     // Correct conundrum
-    if (props.conundrum && currentWord.toUpperCase() === targetWord.toUpperCase()) {
+    if (props.mode === "conundrum" && props.conundrum && currentWord.toUpperCase() === targetWord.toUpperCase()) {
       return 10;
     }
     // Incorrect conundrum
-    else if (props.conundrum && currentWord.toUpperCase() !== targetWord.toUpperCase()) {
+    else if (props.mode === "conundrum" && props.conundrum && currentWord.toUpperCase() !== targetWord.toUpperCase()) {
       return 0;
     }
-    // Lingo round but no scoring information
-    else if (!props.roundScoringInfo) {
-      return null;
-    }
     // Lingo round
-    else {
+    else if (props.mode !== "conundrum" && props.roundScoringInfo) {
       const pointsLost =
         props.mode === "puzzle"
           ? (revealedLetterIndexes.length - 1) * props.roundScoringInfo?.pointsLostPerGuess
@@ -684,6 +685,10 @@ const WordleConfig: React.FC<Props> = (props) => {
       const score = props.roundScoringInfo.basePoints - pointsLost;
 
       return score;
+    }
+    // Unexpected round type or Lingo round but with no scoring information
+    else {
+      return null;
     }
   }
 
