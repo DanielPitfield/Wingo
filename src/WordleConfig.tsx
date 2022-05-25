@@ -631,7 +631,7 @@ const WordleConfig: React.FC<Props> = (props) => {
       return;
     }
 
-    // Already a conundrum of the required length (TODO: This somehow fixes bug 318?)
+    // TODO: (This somehow fixes bug #318?) Already a conundrum of the required length
     if (props.mode === "conundrum" && targetWord && targetWord.length > 0 && targetWord.length === wordLength) {
       return;
     }
