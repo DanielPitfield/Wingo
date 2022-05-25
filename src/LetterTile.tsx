@@ -29,6 +29,11 @@ const LetterTile: React.FC<Props> = (props) => {
       return undefined;
     }
 
+    // No animation delay for pop animation (when tile statuses are not set)
+    if (props.status === "not set") {
+      return undefined;
+    }
+
     if (!props.letter) {
       return undefined;
     }
@@ -79,7 +84,6 @@ const LetterTile: React.FC<Props> = (props) => {
       data-has-been-submitted={props.status !== "not set" && props.letter !== undefined}
       data-status={delayedStatus}
       data-is-clickable={props.onClick !== undefined}
-      // TODO: CRITICAL: animationDelay should only be for reveal animation NOT the pop animation
       style={delayForThisLetterSeconds ? { animationDelay: `${delayForThisLetterSeconds()}s` } : undefined}
       {...props.additionalProps}
     >
