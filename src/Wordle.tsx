@@ -104,6 +104,7 @@ const Wordle: React.FC<Props> = (props) => {
             hasSubmit={true}
             inDictionary={props.inDictionary}
             settings={props.settings}
+            applyAnimation={false}
           />
         </div>
       );

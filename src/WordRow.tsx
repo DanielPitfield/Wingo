@@ -121,7 +121,7 @@ export const WordRow: React.FC<Props> = (props) => {
     <div
       className={props.isVertical ? "word_row_vertical" : "word_row"}
       data-animation-setting={props.settings.graphics.animation}
-      // Only false if directly specified as false with props.applyAnimation
+      // Only false if directly specified as false with props.applyAnimation (defaults to true)
       data-apply-animation={props.applyAnimation === undefined || props.applyAnimation}
       data-invalid-word-submitted={Boolean(
         (props.word && props.hasSubmit && !props.inDictionary) || (props.isIncompleteWord && props.word)
