@@ -46,17 +46,34 @@ export const WordRow: React.FC<Props> = (props) => {
     }
   }
 
-  // Don't show status if read only (overwrite to not set)
+  // Tile status for read only WordRows
   if (props.isReadOnly) {
     wordSummary.map((x) => {
-      x.status = "not set";
+      // There is a letter
+      if (x.character !== undefined && x.character !== "" && x.character !== " ") {
+        x.status = "correct";
+      }
+      else {
+        x.status = "not set";
+      }
+      
       return x;
     });
   }
 
-  function isAnimationEnabled(): boolean {
+  function isAnimationEnabled(letterIndex: number): boolean {
+    // Puzzle and conundrum read only WordRows
+    if (props.revealedLetterIndexes !== undefined && props.isReadOnly) {
+      // The letter is revealed
+      if (props.revealedLetterIndexes.includes(letterIndex)) {
+        return true;
+      }
+      else {
+        return false;
+      }
+    }
     // Don't apply animation for LetterTiles in Countdown Letters mode
-    if (props.mode === "countdown_letters_casual" || props.mode === "countdown_letters_realistic") {
+    else if (props.mode === "countdown_letters_casual" || props.mode === "countdown_letters_realistic") {
       return false;
     }
     // Don't apply animation for LetterTiles in daily mode, when the game reports as having ended
@@ -80,7 +97,7 @@ export const WordRow: React.FC<Props> = (props) => {
           indexInWord={props.revealedLetterIndexes ? props.revealedLetterIndexes.length : i}
           letter={props.word?.[i]}
           // Should the LetterTile pop/reveal in this gamemode?
-          applyAnimation={isAnimationEnabled()}
+          applyAnimation={isAnimationEnabled(i)}
           /*
           When props.revealedLetterIndexes is specified, there is no delay with revealing letters because
           animation will only be applied starting from when the there is at least one index (and also when the tile is given a letter)
