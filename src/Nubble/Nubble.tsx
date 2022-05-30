@@ -249,7 +249,6 @@ const Nubble: React.FC<Props> = (props) => {
     const adjacentBonus = 200;
 
     if (isAdjacentBonus(pinNumber)) {
-      console.log("Adjacent bonus!");
       pinScore = pinScore! + adjacentBonus;
     }
 
@@ -270,6 +269,12 @@ const Nubble: React.FC<Props> = (props) => {
     // How much to slant the parallelogram
     const X_SLANT = 2.45;
     const Y_SLANT = 1.8;
+    
+    // Information regarding which pin values are on the current row (for hexagon grid shape)
+    const rowInformation = props.determineHexagonRowValues().find((row) => rowNumber === row.rowNumber);
+    
+    // Information regarding what colour the rows are and how many points are awarded for each row
+    const pointColourInformation = props.determinePointColourMappings();
 
     return (
       <div
@@ -285,15 +290,12 @@ const Nubble: React.FC<Props> = (props) => {
           if (props.gridShape === "square") {
             // What was the highest value included in the previous row?
             const prevRowEndingValue = (rowNumber - 1) * rowLength;
-            // Start from that value and add the index to it
-            let value = prevRowEndingValue + i;
-            // Index is zero based, add an additional one
-            value = value + 1;
-
-            let isPicked = pickedPins.includes(value);
-
-            const pointColourMappings = props.determinePointColourMappings();
-            let colour = pointColourMappings.find((x) => x.points === props.determinePoints(value))?.colour;
+            // Start from that value and add the index to it (index is zero based, so add an additional one)
+            const value = prevRowEndingValue + i + 1;
+            // Has the pin already been picked?
+            const isPicked = pickedPins.includes(value);
+            // What colour should the pin be?
+            const colour = pointColourInformation.find((x) => x.points === props.determinePoints(value))?.colour;
 
             return (
               <button
@@ -310,17 +312,14 @@ const Nubble: React.FC<Props> = (props) => {
               </button>
             );
           } else if (props.gridShape === "hexagon") {
-            // TODO: Calling function to return all values is expensive
-            const value = props.determineHexagonRowValues().find((row) => rowNumber === row.rowNumber)?.values[i];
+            const value = rowInformation?.values[i];
 
             if (!value) {
               return;
             }
 
-            let isPicked = pickedPins.includes(value);
-
-            const pointColourMappings = props.determinePointColourMappings();
-            let colour = pointColourMappings.find((x) => x.points === props.determinePoints(value))?.colour;
+            const isPicked = pickedPins.includes(value);
+            const colour = pointColourInformation.find((x) => x.points === props.determinePoints(value))?.colour;
 
             return (
               <button
@@ -365,52 +364,45 @@ const Nubble: React.FC<Props> = (props) => {
    * @returns
    */
   function displayPinScores() {
-    const all_pin_scores = [];
+    const pinScores = [];
     const pointColourMappings = props.determinePointColourMappings();
 
-    // Create nubble pin of each colour with text of how many points it awards
-    for (let i = 0; i < pointColourMappings.length; i++) {
-      all_pin_scores.push(
+    // Create read-only nubble pin of each colour with text of how many points it awards
+    for (const row of pointColourMappings) {
+      pinScores.push(
         <button
-          key={i}
+          key={row.colour}
           className="nubble-button-display"
           data-prime={false}
           data-picked={false}
-          data-colour={pointColourMappings[i].colour}
-          // Do nothing
-          onClick={() => onClick(0)}
+          data-colour={row.colour}
+          onClick={() => {/* Do nothing */}}
           disabled={false}
         >
-          {pointColourMappings[i].points}
+          {row.points}
         </button>
       );
     }
+    
+    // Use the last/highest row colour to show prime nubble pin
+    const lastPointColourMapping = pointColourMappings[pointColourMappings.length - 1];
 
-    let trimmed_pin_scores = [];
-    if (props.gridShape === "square") {
-      const numRows = Math.sqrt(props.gridSize);
-      trimmed_pin_scores = all_pin_scores.slice(all_pin_scores.length - numRows, all_pin_scores.length);
-    } else {
-      trimmed_pin_scores = all_pin_scores.slice();
-    }
-
-    // Create a prime nubble pin to show it awards double points
-    trimmed_pin_scores.push(
+    // Create a prime nubble pin (a pin with a border) to show it awards double points
+    pinScores.push(
       <button
         key={"prime-read-only"}
         className="nubble-button-display"
         data-prime={true}
         data-picked={false}
-        // Choose last colour mapping (red)
-        data-colour={pointColourMappings[pointColourMappings.length - 1].colour}
-        // Do nothing
-        onClick={() => onClick(0)}
+        data-colour={lastPointColourMapping.colour}
+        onClick={() => {}}
         disabled={false}
       >
-        {pointColourMappings[pointColourMappings.length - 1].points * 2}
+        {lastPointColourMapping.points * 2}
       </button>
     );
-    return trimmed_pin_scores;
+
+    return pinScores;
   }
 
   return (

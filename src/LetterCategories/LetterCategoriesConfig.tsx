@@ -194,10 +194,8 @@ const LetterCategoriesConfig: React.FC<Props> = (props) => {
       return;
     }
 
-    // TODO: Optimisation: Not determining all the words which are valid guesses EVERY and every time enter is pressed?
-
-    // wordArray generation
-    let wordArray = categoryWordTargets[wordIndex];
+    // Array of valid words (for the row's category)
+    const wordArray = categoryWordTargets[wordIndex];
 
     if (!wordArray || wordArray.length === 0) {
       return;
