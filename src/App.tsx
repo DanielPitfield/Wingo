@@ -387,6 +387,19 @@ export const pages: {
 ];
 
 export const App: React.FC = () => {
+  // App wide listener for right click event
+  document.addEventListener("contextmenu", handleRightClick);
+
+  /* 
+  To re-enable it for a component, use:
+  document.removeEventListener('contextmenu', handleRightClick);
+  */
+
+  // Prevent default right click context menu from appearing
+  function handleRightClick(event: MouseEvent) {
+    event.preventDefault();
+  }
+
   const saveData = window.localStorage;
 
   const [loadingState, setLoadingState] = useState<"loading" | "loaded">("loading");

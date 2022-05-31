@@ -370,8 +370,6 @@ const CountdownNumbersConfig: React.FC<Props> = (props) => {
   }
 
   function removeOperandFromGuess(number: number | null, index: number) {
-    // TODO: Prevent default (context menu appearing)
-
     // Tile that was right clicked had no value (empty)
     if (!number) {
       return;
