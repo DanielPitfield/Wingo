@@ -522,6 +522,39 @@ const WordleConfig: React.FC<Props> = (props) => {
     if (targetWord) {
       setWordLength(targetWord.length);
     }
+
+    let wordArray: string[] = [];
+
+    // Valid word array directly specified
+    if (props.wordArray) {
+      wordArray = props.wordArray;
+    }
+    // Category mode - Find the array which includes the target word
+    else if (props.mode === "category") {
+      wordArray = categoryMappings
+        .find((categoryMapping) => categoryMapping.array.some(({ word }) => word === targetWord))
+        ?.array.map((x) => x.word)!;
+    }
+    // Find the valid array using wordLength
+    else {
+      // All arrays containing words of length up to and including the wordLength combined together (full and partial length guesses)
+      for (let i = 3; i <= wordLength; i++) {
+        // Find array containing words of i length
+        const currentLengthWordArray = wordLengthMappingsGuessable.find((x) => x.value === i)?.array!;
+        if (currentLengthWordArray) {
+          // Add array to valid words
+          wordArray = wordArray.concat(currentLengthWordArray);
+        }
+      }
+    }
+
+    // When full length guesses is enforced, to be a valid guess, the guess must be of the current wordLength
+    if (props.enforceFullLengthGuesses) {
+      wordArray = wordArray.filter(word => word.length === wordLength);
+    }
+
+    // Update the currently valid guesses which can be made
+    setWordArray(wordArray);
   }, [targetWord]);
 
   // Update targetWord every time the targetCategory changes
@@ -835,37 +868,6 @@ const WordleConfig: React.FC<Props> = (props) => {
     // The word is complete or enforce full length guesses is off
     else {
       setisIncompleteWord(false);
-    }
-
-    // TODO: Optimisation: Not determining all the words which are valid guesses EVERY and every time enter is pressed?
-
-    // wordArray generation
-    let wordArray: string[] = [];
-
-    // Valid word array directly specified
-    if (props.wordArray) {
-      wordArray = props.wordArray;
-    }
-    // Category mode - Find the array which includes the target word
-    else if (props.mode === "category") {
-      wordArray = categoryMappings
-        .find((categoryMapping) => categoryMapping.array.some(({ word }) => word === targetWord))
-        ?.array.map((x) => x.word)!;
-    }
-    // Only full length guesses - Find the array by length of word
-    else if (props.enforceFullLengthGuesses) {
-      wordArray = wordLengthMappingsGuessable.find((x) => x.value === wordLength)?.array || [];
-    }
-    // Full AND partial length guesses - All arrays containing words up to the wordLength (inclusive)
-    else {
-      for (let i = 3; i <= wordLength; i++) {
-        // Find array containing words of i length
-        const currentLengthWordArray = wordLengthMappingsGuessable.find((x) => x.value === i)?.array!;
-        if (currentLengthWordArray) {
-          // Add smaller word array to larger wordArray
-          wordArray = wordArray.concat(currentLengthWordArray);
-        }
-      }
     }
 
     // Don't end game prematurely (before wordArray is determined)
