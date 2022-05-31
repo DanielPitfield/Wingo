@@ -79,7 +79,6 @@ const LetterTile: React.FC<Props> = (props) => {
       onClick={() => props.onClick?.()}
       data-animation-setting={props.settings.graphics.animation}
       data-apply-animation={props.applyAnimation}
-      // TODO: Bug #321
       data-new-letter-added={props.status === "not set" && props.letter !== undefined}
       data-has-been-submitted={props.status !== "not set" && props.status !== "incorrect" && props.letter !== undefined}
       data-status={delayedStatus}

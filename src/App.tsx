@@ -1009,7 +1009,7 @@ export const App: React.FC = () => {
                 ? { isTimed: true, seconds: 30 }
                 : { isTimed: false }
             }
-            defaultWordLength={wordLength_puzzle}
+            defaultWordLength={wordLength_countdown_letters}
             defaultnumGuesses={numGuesses_puzzle}
           />
         );
