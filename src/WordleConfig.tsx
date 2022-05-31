@@ -267,6 +267,8 @@ const WordleConfig: React.FC<Props> = (props) => {
   );
   const [conundrum, setConundrum] = useState("");
   const [targetWord, setTargetWord] = useState(props.targetWord ? props.targetWord : "");
+  // The words which are valid to be used as guesses
+  const [wordArray, setWordArray] = useState(props.wordArray ? props.wordArray : []);
   const [targetHint, setTargetHint] = useState("");
   const [targetCategory, setTargetCategory] = useState("");
   const [hasSelectedTargetCategory, sethasSelectedTargetCategory] = useState(false);
@@ -797,84 +799,81 @@ const WordleConfig: React.FC<Props> = (props) => {
   }
 
   function onEnter() {
-    // Pressing Enter to Continue or Restart
-    if (!inProgress) {
-      // Daily mode is strictly one attempt only (no continue or restart)
-      if (props.mode !== "daily") {
-        if (
-          targetWord?.toUpperCase() === currentWord.toUpperCase() &&
-          (props.mode === "increasing" || props.mode === "limitless")
-        ) {
-          ContinueGame();
-        } else {
-          ResetGame();
-        }
+    // Pressing Enter to Continue or Restart (daily mode is strictly one attempt only, so no continue or restart)
+    if (!inProgress && props.mode !== "daily") {
+      // Correct word and either increasing or limitless mode
+      if (
+        targetWord?.toUpperCase() === currentWord.toUpperCase() &&
+        (props.mode === "increasing" || props.mode === "limitless")
+      ) {
+        ContinueGame();
+      } else {
+        ResetGame();
       }
+
+      return;
+    }
+
+    // Used all guesses
+    if (wordIndex >= numGuesses) {
       return;
     }
 
     // Start as true until proven otherwise
     setinDictionary(true);
 
-    let outcome: "success" | "failure" | "in-progress" = "in-progress";
-
-    // Don't allow incomplete words (if specified in props)
-    if (props.enforceFullLengthGuesses) {
-      if (currentWord.length !== wordLength) {
-        // Incomplete (length of) word
-        setisIncompleteWord(true);
-        return;
-      }
+    // Category mode but no target word (to determine the valid category)
+    if (props.mode === "category" && !targetWord) {
+      return;
     }
 
-    // Reached here, the word is complete or enforce full length guesses is off
-    setisIncompleteWord(false);
-
-    if (wordIndex >= props.defaultnumGuesses) {
-      // Used all the available rows (out of guesses)
+    // Don't allow incomplete words (if specified in props)
+    if (props.enforceFullLengthGuesses && currentWord.length !== wordLength) {
+      setisIncompleteWord(true);
       return;
+    }
+    // The word is complete or enforce full length guesses is off
+    else {
+      setisIncompleteWord(false);
     }
 
     // TODO: Optimisation: Not determining all the words which are valid guesses EVERY and every time enter is pressed?
 
     // wordArray generation
     let wordArray: string[] = [];
-    // wordArray was explicitly specified, so use that
+
+    // Valid word array directly specified
     if (props.wordArray) {
       wordArray = props.wordArray;
-    } else if (props.mode === "category") {
-      if (!targetWord) {
-        return;
-      } else {
-        // Category mode - Find the array which includes the target word
-        wordArray = categoryMappings
-          .find((categoryMapping) => categoryMapping.array.some(({ word }) => word === targetWord))
-          ?.array.map((x) => x.word)!;
-      }
-    } else {
-      // Most gamemodes
-
-      // Only full length guesses - Find the array by length of word
-      if (props.enforceFullLengthGuesses) {
-        wordArray = wordLengthMappingsGuessable.find((x) => x.value === wordLength)?.array || [];
-      }
-      // Full AND partial length guesses - All arrays containing words up to the wordLength (inclusive)
-      else {
-        for (let i = 3; i <= wordLength; i++) {
-          // Find array of containing words of i length
-          const currentLengthWordArray = wordLengthMappingsGuessable.find((x) => x.value === i)?.array!;
-          if (currentLengthWordArray) {
-            // Add smaller word array to larger wordArray
-            wordArray = wordArray.concat(currentLengthWordArray);
-            console.log(wordArray);
-          }
+    }
+    // Category mode - Find the array which includes the target word
+    else if (props.mode === "category") {
+      wordArray = categoryMappings
+        .find((categoryMapping) => categoryMapping.array.some(({ word }) => word === targetWord))
+        ?.array.map((x) => x.word)!;
+    }
+    // Only full length guesses - Find the array by length of word
+    else if (props.enforceFullLengthGuesses) {
+      wordArray = wordLengthMappingsGuessable.find((x) => x.value === wordLength)?.array || [];
+    }
+    // Full AND partial length guesses - All arrays containing words up to the wordLength (inclusive)
+    else {
+      for (let i = 3; i <= wordLength; i++) {
+        // Find array containing words of i length
+        const currentLengthWordArray = wordLengthMappingsGuessable.find((x) => x.value === i)?.array!;
+        if (currentLengthWordArray) {
+          // Add smaller word array to larger wordArray
+          wordArray = wordArray.concat(currentLengthWordArray);
         }
       }
     }
 
+    // Don't end game prematurely (before wordArray is determined)
     if (wordArray.length === 0 && currentWord.toLowerCase() !== targetWord.toLowerCase()) {
       return;
     }
+
+    let outcome: "success" | "failure" | "in-progress" = "in-progress";
 
     // If checking against the dictionary is disabled, or is enabled and the word is in the dictionary,
     // or is the target word exactly (to protect against a bug where the target word may not be in the dictionary)
@@ -912,6 +911,7 @@ const WordleConfig: React.FC<Props> = (props) => {
       outcome = "failure";
     }
 
+    // Save round to history
     if (outcome !== "in-progress" && gameId) {
       SaveData.addCompletedRoundToGameHistory(gameId, {
         timestamp: new Date().toISOString(),
