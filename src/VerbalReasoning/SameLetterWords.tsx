@@ -234,9 +234,13 @@ const SameLetterWords: React.FC<Props> = (props) => {
   function populateRow(rowNumber: number) {
     return (
       <div className="only-connect-row" key={rowNumber}>
-        {Array.from({ /* TODO: Change from always using 4 rows */ length: props.numTotalWords / 4 }).map((_, i) => {
-          const index = rowNumber * (props.numTotalWords / 4) + i;
+        {Array.from({ length: props.numMatchingWords }).map((_, i) => {
+          const index = (rowNumber * props.numMatchingWords) + i;
           const word = gridWords[index];
+
+          if (!word) {
+            return;
+          }
 
           return (
             <button
@@ -263,8 +267,11 @@ const SameLetterWords: React.FC<Props> = (props) => {
 
   function displayGrid() {
     var Grid = [];
+    
+    // The number of total words divided by the number of words that make up the correct selection (rounded up)
+    const numRows = Math.ceil(props.numTotalWords / props.numMatchingWords);
 
-    for (let i = 0; i < 4; i++) {
+    for (let i = 0; i < numRows; i++) {
       Grid.push(populateRow(i));
     }
 
