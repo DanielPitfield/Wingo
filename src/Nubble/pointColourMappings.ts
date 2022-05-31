@@ -1,7 +1,5 @@
 // Define the different pin colours (and their respective points) for the game based on grid shape and grid size
 
-// TODO: Could we expand the objects to hold a minimum and maxiumum value, meaning we could get rid of determinePoints()
-
 // Hexagon shape
 export const hexagon_100 = [
   { points: 10, colour: "orange" },

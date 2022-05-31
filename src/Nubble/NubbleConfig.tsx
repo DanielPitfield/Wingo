@@ -28,6 +28,47 @@ export type HexagonPinAdjacency = {
 };
 
 const NubbleConfig: React.FC<Props> = (props) => {
+  // Returns which pin values are on which rows for hexagon grid shape
+  function determineHexagonRowValues() {
+    switch (props.gridSize) {
+      case 25: {
+        return [
+          { rowNumber: 1, values: [1, 3, 6, 10, 15] },
+          { rowNumber: 2, values: [2, 5, 9, 14, 19] },
+          { rowNumber: 3, values: [4, 8, 13, 18, 22] },
+          { rowNumber: 4, values: [7, 12, 17, 21, 24] },
+          { rowNumber: 5, values: [11, 16, 20, 23, 25] },
+        ];
+      }
+      case 64: {
+        return [
+          { rowNumber: 1, values: [1, 3, 6, 10, 15, 21, 28, 36] },
+          { rowNumber: 2, values: [2, 5, 9, 14, 20, 27, 35, 43] },
+          { rowNumber: 3, values: [4, 8, 13, 19, 26, 34, 42, 49] },
+          { rowNumber: 4, values: [7, 12, 18, 25, 33, 41, 48, 54] },
+          { rowNumber: 5, values: [11, 17, 24, 32, 40, 47, 53, 58] },
+          { rowNumber: 6, values: [16, 23, 31, 39, 46, 52, 57, 61] },
+          { rowNumber: 7, values: [22, 30, 38, 45, 51, 56, 60, 63] },
+          { rowNumber: 8, values: [29, 37, 44, 50, 55, 59, 62, 64] },
+        ];
+      }
+      case 100: {
+        return [
+          { rowNumber: 1, values: [1, 3, 6, 10, 15, 21, 28, 36, 45, 55] },
+          { rowNumber: 2, values: [2, 5, 9, 14, 20, 27, 35, 44, 54, 64] },
+          { rowNumber: 3, values: [4, 8, 13, 19, 26, 34, 43, 53, 63, 72] },
+          { rowNumber: 4, values: [7, 12, 18, 25, 33, 42, 52, 62, 71, 79] },
+          { rowNumber: 5, values: [11, 17, 24, 32, 41, 51, 61, 70, 78, 85] },
+          { rowNumber: 6, values: [16, 23, 31, 40, 50, 60, 69, 77, 84, 90] },
+          { rowNumber: 7, values: [22, 30, 39, 49, 59, 68, 76, 83, 89, 94] },
+          { rowNumber: 8, values: [29, 38, 48, 58, 67, 75, 82, 88, 93, 97] },
+          { rowNumber: 9, values: [37, 47, 57, 66, 74, 81, 87, 92, 96, 99] },
+          { rowNumber: 10, values: [46, 56, 65, 73, 80, 86, 91, 95, 98, 100] },
+        ];
+      }
+    }
+  }
+
   // Returns the number of points awarded for each colour of pin (imported from pointColourMappings.ts)
   function determinePointColourMappings(): { points: number; colour: string }[] {
     switch (props.gridShape) {
@@ -58,154 +99,6 @@ const NubbleConfig: React.FC<Props> = (props) => {
         }
       }
     }
-  }
-
-  // Gets the adjacent pins of an individual pin (for hexagon grid shape)
-  function getHexagonAdjacentPins(pin: number, gridSize: number): HexagonPinAdjacency {
-    // TODO: Calling function to return all row values each time for every pin is expensive
-    const rowValues = determineHexagonRowValues();
-
-    // Information about the entire row (of the pin)
-    const pinRow = rowValues.find((row) => row.values.includes(pin));
-
-    if (!pinRow) {
-      // No adjacent pins are able to be found
-      return {
-        leftAbove: null,
-        rightAbove: null,
-        leftBelow: null,
-        rightBelow: null,
-        left: null,
-        right: null,
-      } as HexagonPinAdjacency;
-    }
-
-    // Which row number has the pin?
-    const pinRowNumber = pinRow.rowNumber;
-
-    // How far along the row is the pin?
-    const positionIndex = pinRow.values.findIndex((x) => x === pin);
-
-    // A pin can have up to a maximum of 6 adjacent pins (2 above, 2 below, 1 left, 1 right)
-
-    const leftAbove = rowValues.find((row) => row.rowNumber === pinRowNumber + 1)?.values[positionIndex - 1];
-    const rightAbove = rowValues.find((row) => row.rowNumber === pinRowNumber + 1)?.values[positionIndex];
-    const leftBelow = rowValues.find((row) => row.rowNumber === pinRowNumber - 1)?.values[positionIndex];
-    const rightBelow = rowValues.find((row) => row.rowNumber === pinRowNumber - 1)?.values[positionIndex + 1];
-    const left = rowValues.find((row) => row.rowNumber === pinRowNumber)?.values[positionIndex - 1];
-    const right = rowValues.find((row) => row.rowNumber === pinRowNumber)?.values[positionIndex + 1];
-
-    return {
-      leftAbove: leftAbove || null,
-      rightAbove: rightAbove || null,
-      leftBelow: leftBelow || null,
-      rightBelow: rightBelow || null,
-      left: left || null,
-      right: right || null,
-    } as HexagonPinAdjacency;
-  }
-
-  // Gets the adjacent pins of an individual pin (for square grid shape)
-  function getSquareAdjacentPins(pin: number, gridSize: number): number[] {
-    let adjacent_pins: number[] = [];
-    const rowLength = Math.sqrt(gridSize);
-
-    // Declare functions to add adjacent tiles in each of the four directions
-    // TODO: These functions don't need their own parameters, just use main function paramater
-    function addLeft(pin: number) {
-      adjacent_pins.push(pin - 1);
-    }
-
-    function addRight(pin: number) {
-      adjacent_pins.push(pin + 1);
-    }
-
-    function addTop(pin: number) {
-      adjacent_pins.push(pin - rowLength);
-    }
-
-    function addBottom(pin: number) {
-      adjacent_pins.push(pin + rowLength);
-    }
-
-    const topLeftCorner = pin === 1;
-    const topRightCorner = pin === rowLength;
-    const bottomLeftCorner = pin === rowLength * rowLength - rowLength;
-    const bottomRightCorner = pin === rowLength * rowLength;
-
-    const leftBorder = pin % rowLength === 1 && !topLeftCorner && !bottomLeftCorner;
-    const rightBorder = pin % rowLength === 0 && !topRightCorner && !bottomRightCorner;
-    const topBorder = pin > 1 && pin < rowLength;
-    const bottomBorder = pin > rowLength * rowLength - rowLength && pin < rowLength * rowLength;
-
-    // Start with the corners of the square
-    if (topLeftCorner) {
-      addRight(pin);
-      addBottom(pin);
-    } else if (topRightCorner) {
-      addLeft(pin);
-      addBottom(pin);
-    } else if (bottomLeftCorner) {
-      addRight(pin);
-      addTop(pin);
-    } else if (bottomRightCorner) {
-      addLeft(pin);
-      addTop(pin);
-    }
-    // Now each of the borders (excluding the corner pins)
-    else if (leftBorder) {
-      addRight(pin);
-      addTop(pin);
-      addBottom(pin);
-    } else if (rightBorder) {
-      addLeft(pin);
-      addTop(pin);
-      addBottom(pin);
-    } else if (topBorder) {
-      addLeft(pin);
-      addRight(pin);
-      addBottom(pin);
-    } else if (bottomBorder) {
-      addLeft(pin);
-      addRight(pin);
-      addTop(pin);
-    }
-    // Pin towards the middle of the square
-    else {
-      addLeft(pin);
-      addRight(pin);
-      addTop(pin);
-      addBottom(pin);
-    }
-
-    // Safety check, remove any non-integers or values outside grid range
-    const valid_adjacent_pins = adjacent_pins.filter(
-      (x) => x > 0 && x <= gridSize && Math.round(x) === x && x !== undefined
-    );
-
-    return valid_adjacent_pins;
-  }
-
-  // Returns the adjacent pins of every pin (for square grid shape)
-  function determineSquareAdjacentMappings(): {
-    pin: number;
-    adjacent_pins: number[];
-  }[] {
-    return Array.from({ length: props.gridSize }).map((_, i) => ({
-      pin: i + 1,
-      adjacent_pins: getSquareAdjacentPins(i + 1, props.gridSize),
-    }));
-  }
-
-  // Returns the adjacent pins of every pin (for hexagon grid shape)
-  function determineHexagonAdjacentMappings(): {
-    pin: number;
-    adjacent_pins: HexagonPinAdjacency;
-  }[] {
-    return Array.from({ length: props.gridSize }).map((_, i) => ({
-      pin: i + 1,
-      adjacent_pins: getHexagonAdjacentPins(i + 1, props.gridSize),
-    }));
   }
 
   // Returns the number of points awarded for a selected pin
@@ -406,48 +299,157 @@ const NubbleConfig: React.FC<Props> = (props) => {
       }
     }
 
-    throw new Error(`Unexpected number for grid size: ${props.gridSize} NUmber:  ${number}`);
+    throw new Error(`Unexpected number for grid size: ${props.gridSize} Number:  ${number}`);
   }
 
-  // Returns which pin values are on which rows (only used for hexagon shape)
-  function determineHexagonRowValues() {
-    switch (props.gridSize) {
-      case 25: {
-        return [
-          { rowNumber: 1, values: [1, 3, 6, 10, 15] },
-          { rowNumber: 2, values: [2, 5, 9, 14, 19] },
-          { rowNumber: 3, values: [4, 8, 13, 18, 22] },
-          { rowNumber: 4, values: [7, 12, 17, 21, 24] },
-          { rowNumber: 5, values: [11, 16, 20, 23, 25] },
-        ];
-      }
-      case 64: {
-        return [
-          { rowNumber: 1, values: [1, 3, 6, 10, 15, 21, 28, 36] },
-          { rowNumber: 2, values: [2, 5, 9, 14, 20, 27, 35, 43] },
-          { rowNumber: 3, values: [4, 8, 13, 19, 26, 34, 42, 49] },
-          { rowNumber: 4, values: [7, 12, 18, 25, 33, 41, 48, 54] },
-          { rowNumber: 5, values: [11, 17, 24, 32, 40, 47, 53, 58] },
-          { rowNumber: 6, values: [16, 23, 31, 39, 46, 52, 57, 61] },
-          { rowNumber: 7, values: [22, 30, 38, 45, 51, 56, 60, 63] },
-          { rowNumber: 8, values: [29, 37, 44, 50, 55, 59, 62, 64] },
-        ];
-      }
-      case 100: {
-        return [
-          { rowNumber: 1, values: [1, 3, 6, 10, 15, 21, 28, 36, 45, 55] },
-          { rowNumber: 2, values: [2, 5, 9, 14, 20, 27, 35, 44, 54, 64] },
-          { rowNumber: 3, values: [4, 8, 13, 19, 26, 34, 43, 53, 63, 72] },
-          { rowNumber: 4, values: [7, 12, 18, 25, 33, 42, 52, 62, 71, 79] },
-          { rowNumber: 5, values: [11, 17, 24, 32, 41, 51, 61, 70, 78, 85] },
-          { rowNumber: 6, values: [16, 23, 31, 40, 50, 60, 69, 77, 84, 90] },
-          { rowNumber: 7, values: [22, 30, 39, 49, 59, 68, 76, 83, 89, 94] },
-          { rowNumber: 8, values: [29, 38, 48, 58, 67, 75, 82, 88, 93, 97] },
-          { rowNumber: 9, values: [37, 47, 57, 66, 74, 81, 87, 92, 96, 99] },
-          { rowNumber: 10, values: [46, 56, 65, 73, 80, 86, 91, 95, 98, 100] },
-        ];
-      }
+  const rowValues = determineHexagonRowValues();
+  
+  // Gets the adjacent pins of an individual pin (for hexagon grid shape)
+  function getHexagonAdjacentPins(pin: number): HexagonPinAdjacency {
+    // Information about the entire row (of the pin)
+    const pinRow = rowValues.find((row) => row.values.includes(pin));
+
+    if (!pinRow) {
+      // No adjacent pins are able to be found
+      return {
+        leftAbove: null,
+        rightAbove: null,
+        leftBelow: null,
+        rightBelow: null,
+        left: null,
+        right: null,
+      } as HexagonPinAdjacency;
     }
+
+    // Which row number has the pin?
+    const pinRowNumber = pinRow.rowNumber;
+
+    // How far along the row is the pin?
+    const positionIndex = pinRow.values.findIndex((x) => x === pin);
+
+    // A pin can have up to a maximum of 6 adjacent pins (2 above, 2 below, 1 left, 1 right)
+    const leftAbove = rowValues.find((row) => row.rowNumber === pinRowNumber + 1)?.values[positionIndex - 1];
+    const rightAbove = rowValues.find((row) => row.rowNumber === pinRowNumber + 1)?.values[positionIndex];
+    const leftBelow = rowValues.find((row) => row.rowNumber === pinRowNumber - 1)?.values[positionIndex];
+    const rightBelow = rowValues.find((row) => row.rowNumber === pinRowNumber - 1)?.values[positionIndex + 1];
+    const left = rowValues.find((row) => row.rowNumber === pinRowNumber)?.values[positionIndex - 1];
+    const right = rowValues.find((row) => row.rowNumber === pinRowNumber)?.values[positionIndex + 1];
+
+    return {
+      leftAbove: leftAbove || null,
+      rightAbove: rightAbove || null,
+      leftBelow: leftBelow || null,
+      rightBelow: rightBelow || null,
+      left: left || null,
+      right: right || null,
+    } as HexagonPinAdjacency;
+  }
+
+  // Gets the adjacent pins of an individual pin (for square grid shape)
+  function getSquareAdjacentPins(pin: number, gridSize: number): number[] {
+    let adjacentPins: number[] = [];
+
+    const rowLength = Math.sqrt(gridSize);
+
+    // Declare functions to add adjacent tiles in each of the four directions
+    function addLeft() {
+      adjacentPins.push(pin - 1);
+    }
+
+    function addRight() {
+      adjacentPins.push(pin + 1);
+    }
+
+    function addTop() {
+      adjacentPins.push(pin - rowLength);
+    }
+
+    function addBottom() {
+      adjacentPins.push(pin + rowLength);
+    }
+
+    // Determine whereabouts the current pin places amongst the grid shape
+
+    // Is the pin a corner of the grid?
+    const topLeftCorner = pin === 1;
+    const topRightCorner = pin === rowLength;
+    const bottomLeftCorner = pin === rowLength * rowLength - rowLength;
+    const bottomRightCorner = pin === rowLength * rowLength;
+
+    // Is the pin along a border of the grid?
+    const leftBorder = pin % rowLength === 1 && !topLeftCorner && !bottomLeftCorner;
+    const rightBorder = pin % rowLength === 0 && !topRightCorner && !bottomRightCorner;
+    const topBorder = pin > 1 && pin < rowLength;
+    const bottomBorder = pin > rowLength * rowLength - rowLength && pin < rowLength * rowLength;
+
+    // Start with the corners of the square
+    if (topLeftCorner) {
+      addRight();
+      addBottom();
+    } else if (topRightCorner) {
+      addLeft();
+      addBottom();
+    } else if (bottomLeftCorner) {
+      addRight();
+      addTop();
+    } else if (bottomRightCorner) {
+      addLeft();
+      addTop();
+    }
+    // Now each of the borders (excluding the corner pins)
+    else if (leftBorder) {
+      addRight();
+      addTop();
+      addBottom();
+    } else if (rightBorder) {
+      addLeft();
+      addTop();
+      addBottom();
+    } else if (topBorder) {
+      addLeft();
+      addRight();
+      addBottom();
+    } else if (bottomBorder) {
+      addLeft();
+      addRight();
+      addTop();
+    }
+    // Pin towards the middle of the square
+    else {
+      addLeft();
+      addRight();
+      addTop();
+      addBottom();
+    }
+
+    // Safety check, remove any non-integers or values outside grid range
+    adjacentPins = adjacentPins.filter(
+      (x) => x > 0 && x <= gridSize && Math.round(x) === x && x !== undefined
+    );
+
+    return adjacentPins;
+  }
+
+  // Returns the adjacent pins of every pin (for square grid shape)
+  function determineSquareAdjacentMappings(): {
+    pin: number;
+    adjacent_pins: number[];
+  }[] {
+    return Array.from({ length: props.gridSize }).map((_, i) => ({
+      pin: i + 1,
+      adjacent_pins: getSquareAdjacentPins(i + 1, props.gridSize),
+    }));
+  }
+
+  // Returns the adjacent pins of every pin (for hexagon grid shape)
+  function determineHexagonAdjacentMappings(): {
+    pin: number;
+    adjacent_pins: HexagonPinAdjacency;
+  }[] {
+    return Array.from({ length: props.gridSize }).map((_, i) => ({
+      pin: i + 1,
+      adjacent_pins: getHexagonAdjacentPins(i + 1),
+    }));
   }
 
   return (
