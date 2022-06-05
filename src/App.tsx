@@ -962,8 +962,8 @@ export const App: React.FC = () => {
                 ? { isTimed: true, seconds: 30 }
                 : { isTimed: false }
             }
+            numCategories={5}
             theme={theme}
-            defaultWordLength={10}
             enforceFullLengthGuesses={false}
           />
         );

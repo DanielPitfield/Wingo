@@ -9,14 +9,14 @@ import { Theme } from "../Themes";
 interface Props {
   enforceFullLengthGuesses: boolean;
   timerConfig: { isTimed: false } | { isTimed: true; seconds: number };
-  defaultWordLength: number;
+  numCategories: number;
   defaultnumGuesses: number;
   finishingButtonText?: string;
   theme: Theme;
   settings: SettingsData;
   page: Page;
   setPage: (page: Page) => void;
-  addGold: (gold: number) => void;  
+  addGold: (gold: number) => void;
   onComplete?: (wasCorrect: boolean) => void;
 }
 
@@ -27,7 +27,7 @@ const LetterCategoriesConfig: React.FC<Props> = (props) => {
   const [currentWord, setCurrentWord] = useState("");
   const [wordIndex, setWordIndex] = useState(0);
   const [inProgress, setinProgress] = useState(true);
-  const [wordLength, setwordLength] = useState(props.defaultWordLength);
+  const [wordLength, setwordLength] = useState(4);
   const [correctGuessesCount, setCorrectGuessesCount] = useState(0);
   const [categoryRequiredStartingLetter, setCategoryRequiredStartingLetter] = useState("");
   const [categoryNames, setCategoryNames] = useState<string[]>([]);
@@ -57,47 +57,60 @@ const LetterCategoriesConfig: React.FC<Props> = (props) => {
   React.useEffect(() => {
     if (inProgress) {
       // Get a random letter from the Alphabet
-      const start_letter = DEFAULT_ALPHABET[Math.round(Math.random() * (DEFAULT_ALPHABET.length - 1))];
+      const firstLetter = DEFAULT_ALPHABET[Math.round(Math.random() * (DEFAULT_ALPHABET.length - 1))];
       // Set this letter as the letter that all words must begin with
-      setCategoryRequiredStartingLetter(start_letter);
+      setCategoryRequiredStartingLetter(firstLetter);
+      // Provide this letter as the start of guesses/words
+      setCurrentWord(firstLetter);
 
-      setCurrentWord(start_letter);
+      console.log(`%cStart Letter:%c ${firstLetter}`, "font-weight: bold", "font-weight: normal");
 
-      console.log(`%cStart Letter:%c ${start_letter}`, "font-weight: bold", "font-weight: normal");
+      // The names of the categories in play
+      let categoryNames: string[] = [];
 
-      let category_names: string[] = [];
+      // The valid words for each of the categories
+      let categoryTargetWords: string[][] = [];
 
-      let category_target_words: string[][] = [];
-      let failed_search_count = 0;
+      let failedSearchCount = 0;
+      const MAX_NUM_FAILED_SEARCHES = 50;
 
       do {
         // Get a random index of categoryMappings
         const newIndex = Math.round(Math.random() * (categoryMappings.length - 1));
-        // If the category has not already been used
-        if (!category_names.includes(categoryMappings[newIndex].name)) {
-          // Get all the words in that category starting with start_letter
-          const words = categoryMappings[newIndex].array.map((x) => x.word).filter((x) => x.charAt(0) === start_letter);
-          if (words && words.length >= 1) {
-            // Push these words as an array
-            category_target_words.push(words);
-            // Keep track this category has been used
-            category_names.push(categoryMappings[newIndex].name);
-          } else {
-            failed_search_count += 1;
-          }
+        // Is the category (randomly selected with the index) a category which has not been used yet?
+        const isNewCategory = !categoryNames.includes(categoryMappings[newIndex].name);
+
+        // Already used this category, so loop around again
+        if (!isNewCategory) {
+          failedSearchCount += 1;
+          continue;
         }
+
+        // Get all the words in the category starting with firstLetter
+        const words = categoryMappings[newIndex].array.map((x) => x.word).filter((x) => x.charAt(0) === firstLetter);
+
+        // No words starting with firstLetter
+        if (!words) {
+          failedSearchCount += 1;
+          continue;
+        }
+
+        // Push these words as an array
+        categoryTargetWords.push(words);
+        // Keep track this category has been used
+        categoryNames.push(categoryMappings[newIndex].name);
       } while (
-        // Stop once there are 5 categories or 20 attempts were made at finding categories
-        category_names.length < 5 &&
-        failed_search_count <= 20
+        // Until there are the specified number of categories (or MAX_NUM_FAILED_SEARCHES attempts were made at finding categories)
+        categoryNames.length < props.numCategories &&
+        failedSearchCount <= MAX_NUM_FAILED_SEARCHES
       );
 
       // Keep reference of which categories have been used
-      setCategoryNames(category_names);
+      setCategoryNames(categoryNames);
 
-      for (let i = 0; i < category_target_words.length; i++) {
+      for (let i = 0; i < categoryTargetWords.length; i++) {
         console.log(
-          `%cCategory:%c ${category_names[i]}\n%cWords:%c ${category_target_words[i].join(", ")}`,
+          `%cCategory:%c ${categoryNames[i]}\n%cWords:%c ${categoryTargetWords[i].join(", ")}`,
           "font-weight: bold",
           "font-weight: normal",
           "font-weight: bold",
@@ -105,27 +118,28 @@ const LetterCategoriesConfig: React.FC<Props> = (props) => {
         );
       }
 
-      setCategoryWordTargets(category_target_words);
+      setCategoryWordTargets(categoryTargetWords);
 
       // Number of rows needs to be the same as the number of categories
-      setNumGuesses(category_target_words.length);
+      setNumGuesses(categoryTargetWords.length);
 
-      // Start wordLength at 4
-      let longest_valid_length = 4;
+      // Start longestValidLength (at 4)
+      let longestValidLength = wordLength;
+
       // Find the longest word in the array of valid words for each category
-      for (let i = 0; i < category_target_words.length; i++) {
-        const longestWordInArray = category_target_words[i].reduce(
+      for (let i = 0; i < categoryTargetWords.length; i++) {
+        const longestWordInArray = categoryTargetWords[i].reduce(
           (currentWord, nextWord) => (currentWord.length > nextWord.length ? currentWord : nextWord),
           ""
         );
-        // Increase wordLength if a valid word is longer than the current wordLength
-        if (longestWordInArray.length > longest_valid_length) {
-          longest_valid_length = longestWordInArray.length;
+        // Update longestValidLength (if there is a longer valid word)
+        if (longestWordInArray.length > longestValidLength) {
+          longestValidLength = longestWordInArray.length;
         }
       }
 
       // Set the wordLength to the length of the largest valid word in any of the categories
-      setwordLength(longest_valid_length);
+      setwordLength(longestValidLength);
     }
   }, [inProgress]);
 
@@ -142,44 +156,45 @@ const LetterCategoriesConfig: React.FC<Props> = (props) => {
     }
   }
 
-  function calculateGoldAwarded(
-    wordLength: number,
-    /*win_streak: number,*/
-    numGuesses: number
-  ) {
-    const gamemode_value = 50;
+  function calculateGoldAwarded(numCorrectAnswers: number) {
+    const baseValue = 50;
 
     // Incremental multiplier with wordLength
-    const wordLength_Gold_Mappings = [
-      { value: 4, multiplier: 1 },
-      { value: 5, multiplier: 1.05 },
-      { value: 6, multiplier: 1.25 },
-      { value: 7, multiplier: 1.5 },
-      { value: 8, multiplier: 2 },
-      { value: 9, multiplier: 3 },
-      { value: 10, multiplier: 5 },
-      { value: 11, multiplier: 7.5 },
+    const numCorrectAnswerMultipliers = [
+      { value: 1, multiplier: 1 },
+      { value: 2, multiplier: 1.05 },
+      { value: 3, multiplier: 1.25 },
+      { value: 4, multiplier: 1.5 },
+      { value: 5, multiplier: 2 },
+      { value: 6, multiplier: 3 },
+      { value: 7, multiplier: 4 },
+      { value: 8, multiplier: 5 },
+      { value: 9, multiplier: 7.5 },
+      { value: 10, multiplier: 10 },
     ];
 
-    const wordLength_multiplier = wordLength_Gold_Mappings.find((x) => x.value === wordLength)?.multiplier!;
+    // Bonus multiplier for several correct answers
+    let currentNumCorrectAnswerMultiplier;
 
-    // Small bonus for early guesses
-    const numGuesses_Gold_Mappings = [
-      {
-        guesses: 1,
-        value: 250,
-      }, // TODO: Balancing, puzzle words are always 1 guess
-      { guesses: 2, value: 100 },
-      { guesses: 3, value: 50 },
-      { guesses: 4, value: 25 },
-      { guesses: 5, value: 10 },
-      { guesses: 6, value: 0 },
-    ];
+    // More correct answers (then the highest specified above)
+    if (numCorrectAnswers > numCorrectAnswerMultipliers.length) {
+      // Use the biggest specified multiplier
+      currentNumCorrectAnswerMultiplier = numCorrectAnswerMultipliers.find(
+        (x) => x.value === numCorrectAnswerMultipliers.length
+      )?.multiplier;
+    } else {
+      // Use the multiplier for the number of correct answers
+      currentNumCorrectAnswerMultiplier = numCorrectAnswerMultipliers.find(
+        (x) => x.value === numCorrectAnswers
+      )?.multiplier;
+    }
 
-    const numGuesses_bonus = numGuesses_Gold_Mappings.find((x) => x.guesses === numGuesses)?.value!;
-
-    const goldTotal = Math.round(gamemode_value * wordLength_multiplier + numGuesses_bonus);
-    return goldTotal;
+    if (currentNumCorrectAnswerMultiplier) {
+      const goldTotal = Math.round(baseValue * numCorrectAnswers * currentNumCorrectAnswerMultiplier);
+      return goldTotal;
+    } else {
+      return 0;
+    }
   }
 
   function onEnter() {
@@ -211,6 +226,10 @@ const LetterCategoriesConfig: React.FC<Props> = (props) => {
     if (wordIndex + 1 === numGuesses) {
       // Out of guesses
       setinProgress(false);
+
+      // Calculate and add gold (only after all guesses have been made)
+      const goldBanked = calculateGoldAwarded(correctGuessesCount);
+      props.addGold(goldBanked);
     } else {
       setCurrentWord(categoryRequiredStartingLetter);
       setWordIndex(wordIndex + 1); // Increment index to indicate new word has been started
