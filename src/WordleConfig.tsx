@@ -319,11 +319,9 @@ const WordleConfig: React.FC<Props> = (props) => {
   const [seconds, setSeconds] = useState(props.timerConfig.isTimed ? props.timerConfig.seconds : 0);
 
   function generateTargetWord() {
-    // Most modes choose a target word based on length (will be reassigned if not one of these modes)
-    let targetWordArray = wordLengthMappingsTargets
-      .find((x) => x.value === wordLength)
-      ?.array.map((x) => ({ word: x, hint: "" }))!;
-
+    // Array of words to choose from
+    let targetWordArray: { word: string; hint: string }[] = [];
+    // The singular word chosen
     let newTarget;
 
     switch (props.mode) {
@@ -451,6 +449,13 @@ const WordleConfig: React.FC<Props> = (props) => {
 
           return;
         }
+        break;
+
+      default:
+        // Other modes choose a target word based on length
+        targetWordArray = wordLengthMappingsTargets
+          .find((x) => x.value === wordLength)
+          ?.array.map((x) => ({ word: x, hint: "" }))!;
     }
 
     // A new target word needs to be determined (not returned from function yet)
@@ -550,7 +555,7 @@ const WordleConfig: React.FC<Props> = (props) => {
 
     // When full length guesses is enforced, to be a valid guess, the guess must be of the current wordLength
     if (props.enforceFullLengthGuesses) {
-      wordArray = wordArray.filter(word => word.length === wordLength);
+      wordArray = wordArray.filter((word) => word.length === wordLength);
     }
 
     // Update the currently valid guesses which can be made
