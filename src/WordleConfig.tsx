@@ -318,6 +318,8 @@ const WordleConfig: React.FC<Props> = (props) => {
 
   const [seconds, setSeconds] = useState(props.timerConfig.isTimed ? props.timerConfig.seconds : 0);
 
+  const gamemodeSettings = generateSettings();
+
   function generateTargetWord() {
     // Array of words to choose from
     let targetWordArray: { word: string; hint: string }[] = [];
@@ -971,6 +973,90 @@ const WordleConfig: React.FC<Props> = (props) => {
     }
   }
 
+  function generateSettings(): React.ReactNode {
+    /* 
+    "daily"
+    "repeat"
+    "category"
+    "increasing"
+    "limitless"
+    "puzzle"
+    "interlinked"
+    "crossword/fit"
+    "crossword/daily"
+    "crossword/weekly"
+    "crossword"
+    "conundrum"
+    */
+
+    // Which settings are configurable in which modes?
+    const modesWordLength = ["repeat", "category", "puzzle", "interlinked", "crossword/fit", "crossword", "conundrum"];
+    const modesFirstLetterProvided = [
+      "repeat",
+      "category",
+      "increasing",
+      "limitless",
+      "interlinked",
+      "crossword/fit",
+      "crossword",
+    ];
+    const modesHints = ["repeat", "category", "increasing", "limitless", "interlinked", "crossword/fit", "crossword"];
+    const modesTimer = ["repeat", "category", "increasing", "limitless", "interlinked", "crossword/fit", "crossword"];
+
+    let settings;
+
+    settings = (
+      <>
+        {modesWordLength.includes(props.mode) && (
+          <label>
+            <input
+              type="number"
+              value={wordLength}
+              min={props.mode === "puzzle" ? 9 : 4}
+              max={11}
+              onChange={(e) => setWordLength(parseInt(e.target.value))}
+            ></input>
+            Word Length
+          </label>
+        )}
+        {modesFirstLetterProvided.includes(props.mode) && (
+          <label>
+            <input
+              checked={true}
+              type="checkbox"
+              onChange={(e) => {
+                /* TODO: Change from using prop to using state for firstLetterProvided */
+              }}
+            ></input>
+            First Letter Provided
+          </label>
+        )}
+        {modesHints.includes(props.mode) && (
+          <label>
+            <input
+              checked={true}
+              type="checkbox"
+              onChange={(e) => {}}
+            ></input>
+            Hints
+          </label>
+        )}
+        {modesTimer.includes(props.mode) && (
+          <label>
+            <input
+              checked={true}
+              type="checkbox"
+              onChange={(e) => {}}
+            ></input>
+            Timer
+          </label>
+        )}
+      </>
+    );
+
+    return settings;
+  }
+
   if (props.mode === "interlinked") {
     return (
       <WordleInterlinked
@@ -1094,6 +1180,7 @@ const WordleConfig: React.FC<Props> = (props) => {
             }
           : { isTimed: false }
       }
+      gamemodeSettings={gamemodeSettings}
       wordLength={wordLength}
       numGuesses={numGuesses}
       guesses={guesses}

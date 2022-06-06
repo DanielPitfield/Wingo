@@ -9,11 +9,13 @@ import { categoryMappings, getNewLives } from "./WordleConfig";
 import { Theme } from "./Themes";
 import { SettingsData } from "./SaveData";
 import { useCorrectChime, useFailureChime, useLightPingChime } from "./Sounds";
+import GamemodeSettingsMenu from "./GamemodeSettingsMenu";
 
 interface Props {
   isCampaignLevel: boolean;
-  mode: "daily" | "repeat" | "category" | "increasing" | "limitless" | "puzzle" | "letters_categories" | "conundrum";
+  mode: "daily" | "repeat" | "category" | "increasing" | "limitless" | "puzzle" | "conundrum";
   timerConfig: { isTimed: false } | { isTimed: true; totalSeconds: number; elapsedSeconds: number };
+  gamemodeSettings: React.ReactNode;
   wordLength: number;
   numGuesses: number;
   guesses: string[];
@@ -394,6 +396,10 @@ const Wordle: React.FC<Props> = (props) => {
             </div>
           </MessageNotification>
         )}
+      </div>
+
+      <div className="gamemodeSettings">
+        <GamemodeSettingsMenu>{props.gamemodeSettings}</GamemodeSettingsMenu>
       </div>
 
       <div className="word_grid">{populateGrid(props.numGuesses, props.wordLength)}</div>
