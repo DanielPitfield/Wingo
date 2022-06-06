@@ -14,7 +14,7 @@ import GamemodeSettingsMenu from "./GamemodeSettingsMenu";
 interface Props {
   isCampaignLevel: boolean;
   mode: "daily" | "repeat" | "category" | "increasing" | "limitless" | "puzzle" | "conundrum";
-  timerConfig: { isTimed: false } | { isTimed: true; totalSeconds: number; elapsedSeconds: number };
+  timerConfig: { isTimed: false } | { isTimed: true; totalSeconds: number; remainingSeconds: number };
   gamemodeSettings: React.ReactNode;
   wordLength: number;
   numGuesses: number;
@@ -427,7 +427,7 @@ const Wordle: React.FC<Props> = (props) => {
       <div>
         {props.timerConfig.isTimed && (
           <ProgressBar
-            progress={props.timerConfig.elapsedSeconds}
+            progress={props.timerConfig.remainingSeconds}
             total={props.timerConfig.totalSeconds}
             display={{ type: "transition", colorTransition: GreenToRedColorTransition }}
           ></ProgressBar>

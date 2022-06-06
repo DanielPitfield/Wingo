@@ -259,10 +259,11 @@ const WordleConfig: React.FC<Props> = (props) => {
     props.firstLetterProvided !== undefined ? props.firstLetterProvided : false
   );
   const [isHintShown, setIsHintShown] = useState(props.showHint === true);
-  const [isTimerEnabled, setIsTimerEnabled] = useState(props.timerConfig?.isTimed ?? false);
-  const [seconds, setSeconds] = useState(props.timerConfig?.isTimed ? props.timerConfig.seconds : 0);
 
-  
+  const [isTimerEnabled, setIsTimerEnabled] = useState(props.timerConfig?.isTimed ?? false);
+  const DEFAULT_TIMER_VALUE = 30;
+  const [remainingSeconds, setRemainingSeconds] = useState(props.timerConfig?.isTimed ? props.timerConfig.seconds : DEFAULT_TIMER_VALUE);
+  const [totalSeconds, setTotalSeconds] = useState(props.timerConfig?.isTimed ? props.timerConfig.seconds : DEFAULT_TIMER_VALUE);
 
   const [currentWord, setCurrentWord] = useState("");
   const [wordIndex, setWordIndex] = useState(0);
@@ -498,13 +499,13 @@ const WordleConfig: React.FC<Props> = (props) => {
 
   // Timer Setup
   React.useEffect(() => {
-    if (!props.timerConfig?.isTimed) {
+    if (!isTimerEnabled) {
       return;
     }
 
     const timer = setInterval(() => {
-      if (seconds > 0) {
-        setSeconds(seconds - 1);
+      if (remainingSeconds > 0) {
+        setRemainingSeconds(remainingSeconds - 1);
       } else {
         setinDictionary(false);
         setinProgress(false);
@@ -513,7 +514,7 @@ const WordleConfig: React.FC<Props> = (props) => {
     return () => {
       clearInterval(timer);
     };
-  }, [setSeconds, seconds, props.timerConfig?.isTimed]);
+  }, [setRemainingSeconds, remainingSeconds, isTimerEnabled]);
 
   // Save gameplay progress of daily wingo
   React.useEffect(() => {
@@ -769,9 +770,9 @@ const WordleConfig: React.FC<Props> = (props) => {
     setConundrum("");
     setRevealedLetterIndexes([]);
     setletterStatuses(defaultLetterStatuses);
-    if (props.timerConfig?.isTimed) {
+    if (isTimerEnabled) {
       // Reset the timer if it is enabled in the game options
-      setSeconds(props.timerConfig.seconds);
+      setRemainingSeconds(totalSeconds);
     }
     if (props.mode !== "limitless" || numGuesses <= 1) {
       // Ending of any game mode
@@ -796,8 +797,8 @@ const WordleConfig: React.FC<Props> = (props) => {
     setRevealedLetterIndexes([]);
     setletterStatuses(defaultLetterStatuses);
 
-    if (props.timerConfig?.isTimed) {
-      setSeconds(props.timerConfig.seconds);
+    if (isTimerEnabled) {
+      setRemainingSeconds(totalSeconds);
     }
 
     if (props.mode === "limitless") {
@@ -963,8 +964,8 @@ const WordleConfig: React.FC<Props> = (props) => {
       });
     }
 
-    if (props.timerConfig?.isTimed) {
-      setSeconds(props.timerConfig.seconds);
+    if (isTimerEnabled) {
+      setRemainingSeconds(totalSeconds);
     }
   }
 
@@ -1081,11 +1082,13 @@ const WordleConfig: React.FC<Props> = (props) => {
               <label>
                 <input
                   type="number"
-                  value={seconds}
+                  value={totalSeconds}
                   min={10}
                   max={120}
+                  step={5}
                   onChange={(e) => {
-                    setSeconds(e.target.valueAsNumber);
+                    setRemainingSeconds(e.target.valueAsNumber);
+                    setTotalSeconds(e.target.valueAsNumber);
                   }}
                 ></input>
                 Seconds
@@ -1214,11 +1217,11 @@ const WordleConfig: React.FC<Props> = (props) => {
       isCampaignLevel={props.page === "campaign/area/level"}
       mode={props.mode}
       timerConfig={
-        props.timerConfig?.isTimed
+        isTimerEnabled
           ? {
               isTimed: true,
-              elapsedSeconds: seconds,
-              totalSeconds: props.timerConfig.seconds,
+              remainingSeconds: remainingSeconds,
+              totalSeconds: totalSeconds,
             }
           : { isTimed: false }
       }
