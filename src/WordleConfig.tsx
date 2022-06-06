@@ -48,7 +48,7 @@ export interface WordleConfigProps {
   targetWord?: string;
   wordArray?: string[];
   enforceFullLengthGuesses: boolean;
-  firstLetterProvided: boolean;
+  firstLetterProvided?: boolean;
   timerConfig: { isTimed: false } | { isTimed: true; seconds: number };
   showHint?: boolean;
   defaultWordLength?: number;
@@ -253,6 +253,9 @@ const WordleConfig: React.FC<Props> = (props) => {
   const [guesses, setGuesses] = useState<string[]>(props.guesses ?? []);
   const [numGuesses, setNumGuesses] = useState(props.defaultnumGuesses);
   const [gameId, setGameId] = useState<string | null>(null);
+  const [isFirstLetterProvided, setIsFirstLetterProvided] = useState(
+    props.firstLetterProvided !== undefined ? props.firstLetterProvided : false
+  );
   const [currentWord, setCurrentWord] = useState("");
   const [wordIndex, setWordIndex] = useState(0);
   const [inProgress, setinProgress] = useState(true);
@@ -517,12 +520,8 @@ const WordleConfig: React.FC<Props> = (props) => {
     }
 
     // Show first letter of the target word (if enabled)
-    if (props.firstLetterProvided) {
-      if (props.targetWord) {
-        setCurrentWord(props.targetWord.charAt(0));
-      } else {
-        setCurrentWord(targetWord.charAt(0));
-      }
+    if (isFirstLetterProvided) {
+      setCurrentWord(targetWord.charAt(0));
     }
 
     // Update word length every time the target word changes
@@ -563,6 +562,18 @@ const WordleConfig: React.FC<Props> = (props) => {
     // Update the currently valid guesses which can be made
     setWordArray(wordArray);
   }, [targetWord]);
+
+  React.useEffect(() => {
+    if (!inProgress) {
+      return;
+    }
+
+    if (isFirstLetterProvided) {
+      setCurrentWord(targetWord.charAt(0));
+    } else {
+      setCurrentWord("");
+    }
+  }, [isFirstLetterProvided]);
 
   // Update targetWord every time the targetCategory changes
   React.useEffect(() => {
@@ -687,7 +698,7 @@ const WordleConfig: React.FC<Props> = (props) => {
       gameCategory: "wingo",
       levelProps: {
         mode: props.mode,
-        firstLetterProvided: props.firstLetterProvided,
+        firstLetterProvided: isFirstLetterProvided,
         puzzleLeaveNumBlanks: props.puzzleLeaveNumBlanks,
         puzzleRevealMs: props.puzzleRevealMs,
         targetWord,
@@ -906,7 +917,7 @@ const WordleConfig: React.FC<Props> = (props) => {
         outcome = "failure";
       } else {
         // Not yet guessed
-        if (props.firstLetterProvided) {
+        if (isFirstLetterProvided) {
           setCurrentWord(targetWord?.charAt(0)!);
         } else {
           setCurrentWord(""); // Start new word as empty string
@@ -928,7 +939,7 @@ const WordleConfig: React.FC<Props> = (props) => {
         outcome,
         levelProps: {
           mode: props.mode,
-          firstLetterProvided: props.firstLetterProvided,
+          firstLetterProvided: isFirstLetterProvided,
           puzzleLeaveNumBlanks: props.puzzleLeaveNumBlanks,
           puzzleRevealMs: props.puzzleRevealMs,
           targetWord,
@@ -965,7 +976,7 @@ const WordleConfig: React.FC<Props> = (props) => {
   function onBackspace() {
     if (currentWord.length > 0 && inProgress) {
       // If only the first letter and it was provided to begin with
-      if (currentWord.length === 1 && props.firstLetterProvided) {
+      if (currentWord.length === 1 && isFirstLetterProvided) {
         return; // Don't allow backspace
       }
       // If there is a letter to remove
@@ -1022,10 +1033,11 @@ const WordleConfig: React.FC<Props> = (props) => {
         {modesFirstLetterProvided.includes(props.mode) && (
           <label>
             <input
-              checked={true}
+              checked={isFirstLetterProvided}
               type="checkbox"
               onChange={(e) => {
-                /* TODO: Change from using prop to using state for firstLetterProvided */
+                // TODO: Can't toggle this when midway through game
+                setIsFirstLetterProvided(!isFirstLetterProvided);
               }}
             ></input>
             First Letter Provided
@@ -1033,21 +1045,13 @@ const WordleConfig: React.FC<Props> = (props) => {
         )}
         {modesHints.includes(props.mode) && (
           <label>
-            <input
-              checked={true}
-              type="checkbox"
-              onChange={(e) => {}}
-            ></input>
+            <input checked={true} type="checkbox" onChange={(e) => {}}></input>
             Hints
           </label>
         )}
         {modesTimer.includes(props.mode) && (
           <label>
-            <input
-              checked={true}
-              type="checkbox"
-              onChange={(e) => {}}
-            ></input>
+            <input checked={true} type="checkbox" onChange={(e) => {}}></input>
             Timer
           </label>
         )}

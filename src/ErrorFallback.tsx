@@ -46,7 +46,8 @@ export const ErrorFallback: React.FC<Props> = (props) => {
         </Button>
       </div>
 
-      {/* Testing: <pre>{message}</pre>*/}
+      {/* TODO: Displays Stack, for testing purposes */}
+      {<pre>{message}</pre>}
 
       <div className="error-fallback-action-wrapper">
         <Button className="error-fallback-reset" mode="default" onClick={props.resetErrorBoundary}>
