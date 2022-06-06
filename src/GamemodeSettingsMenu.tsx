@@ -8,8 +8,8 @@ interface Props {
 
 const GamemodeSettingsMenu: React.FC<Props> = (props) => {
   return (
-    <Collapsible trigger="Settings">
-      {props.children}
+    <Collapsible className="gamemode-settings-wrapper" trigger="Settings">
+      <div className="gamemode-settings-body">{props.children}</div>
     </Collapsible>
   );
 };

@@ -50,7 +50,7 @@ export interface WordleConfigProps {
   enforceFullLengthGuesses: boolean;
   firstLetterProvided?: boolean;
   showHint?: boolean;
-  timerConfig: { isTimed: false } | { isTimed: true; seconds: number };
+  timerConfig?: { isTimed: false } | { isTimed: true; seconds: number };
   defaultWordLength?: number;
   puzzleRevealMs: number;
   puzzleLeaveNumBlanks: number;
@@ -258,7 +258,11 @@ const WordleConfig: React.FC<Props> = (props) => {
   const [isFirstLetterProvided, setIsFirstLetterProvided] = useState(
     props.firstLetterProvided !== undefined ? props.firstLetterProvided : false
   );
-  const [isHintShown, setIsHintShown] = useState(props.showHint !== undefined ? props.showHint : false);
+  const [isHintShown, setIsHintShown] = useState(props.showHint === true);
+  const [isTimerEnabled, setIsTimerEnabled] = useState(props.timerConfig?.isTimed ?? false);
+  const [seconds, setSeconds] = useState(props.timerConfig?.isTimed ? props.timerConfig.seconds : 0);
+
+  
 
   const [currentWord, setCurrentWord] = useState("");
   const [wordIndex, setWordIndex] = useState(0);
@@ -322,9 +326,8 @@ const WordleConfig: React.FC<Props> = (props) => {
       status: "" | "contains" | "correct" | "not set" | "not in word";
     }[]
   >(defaultLetterStatuses);
-
-  const [seconds, setSeconds] = useState(props.timerConfig.isTimed ? props.timerConfig.seconds : 0);
-
+  
+  // Generate the elements to configure the gamemode settings
   const gamemodeSettings = generateSettings();
 
   function generateTargetWord() {
@@ -495,7 +498,7 @@ const WordleConfig: React.FC<Props> = (props) => {
 
   // Timer Setup
   React.useEffect(() => {
-    if (!props.timerConfig.isTimed) {
+    if (!props.timerConfig?.isTimed) {
       return;
     }
 
@@ -510,7 +513,7 @@ const WordleConfig: React.FC<Props> = (props) => {
     return () => {
       clearInterval(timer);
     };
-  }, [setSeconds, seconds, props.timerConfig.isTimed]);
+  }, [setSeconds, seconds, props.timerConfig?.isTimed]);
 
   // Save gameplay progress of daily wingo
   React.useEffect(() => {
@@ -766,7 +769,7 @@ const WordleConfig: React.FC<Props> = (props) => {
     setConundrum("");
     setRevealedLetterIndexes([]);
     setletterStatuses(defaultLetterStatuses);
-    if (props.timerConfig.isTimed) {
+    if (props.timerConfig?.isTimed) {
       // Reset the timer if it is enabled in the game options
       setSeconds(props.timerConfig.seconds);
     }
@@ -793,7 +796,7 @@ const WordleConfig: React.FC<Props> = (props) => {
     setRevealedLetterIndexes([]);
     setletterStatuses(defaultLetterStatuses);
 
-    if (props.timerConfig.isTimed) {
+    if (props.timerConfig?.isTimed) {
       setSeconds(props.timerConfig.seconds);
     }
 
@@ -960,7 +963,7 @@ const WordleConfig: React.FC<Props> = (props) => {
       });
     }
 
-    if (props.timerConfig.isTimed) {
+    if (props.timerConfig?.isTimed) {
       setSeconds(props.timerConfig.seconds);
     }
   }
@@ -1033,7 +1036,7 @@ const WordleConfig: React.FC<Props> = (props) => {
               value={wordLength}
               min={props.mode === "puzzle" ? 9 : 4}
               max={11}
-              onChange={(e) => setWordLength(parseInt(e.target.value))}
+              onChange={(e) => setWordLength(e.target.valueAsNumber)}
             ></input>
             Word Length
           </label>
@@ -1063,10 +1066,32 @@ const WordleConfig: React.FC<Props> = (props) => {
           </label>
         )}
         {modesTimer.includes(props.mode) && (
-          <label>
-            <input checked={true} type="checkbox" onChange={(e) => {}}></input>
-            Timer
-          </label>
+          <>
+            <label>
+              <input
+                checked={isTimerEnabled}
+                type="checkbox"
+                onChange={(e) => {
+                  setIsTimerEnabled(!isTimerEnabled);
+                }}
+              ></input>
+              Timer
+            </label>
+            {isTimerEnabled && (
+              <label>
+                <input
+                  type="number"
+                  value={seconds}
+                  min={10}
+                  max={120}
+                  onChange={(e) => {
+                    setSeconds(e.target.valueAsNumber);
+                  }}
+                ></input>
+                Seconds
+              </label>
+            )}
+          </>
         )}
       </>
     );
@@ -1189,7 +1214,7 @@ const WordleConfig: React.FC<Props> = (props) => {
       isCampaignLevel={props.page === "campaign/area/level"}
       mode={props.mode}
       timerConfig={
-        props.timerConfig.isTimed
+        props.timerConfig?.isTimed
           ? {
               isTimed: true,
               elapsedSeconds: seconds,
