@@ -49,8 +49,8 @@ export interface WordleConfigProps {
   wordArray?: string[];
   enforceFullLengthGuesses: boolean;
   firstLetterProvided?: boolean;
-  timerConfig: { isTimed: false } | { isTimed: true; seconds: number };
   showHint?: boolean;
+  timerConfig: { isTimed: false } | { isTimed: true; seconds: number };
   defaultWordLength?: number;
   puzzleRevealMs: number;
   puzzleLeaveNumBlanks: number;
@@ -253,9 +253,13 @@ const WordleConfig: React.FC<Props> = (props) => {
   const [guesses, setGuesses] = useState<string[]>(props.guesses ?? []);
   const [numGuesses, setNumGuesses] = useState(props.defaultnumGuesses);
   const [gameId, setGameId] = useState<string | null>(null);
+
+  // Gamemode settings
   const [isFirstLetterProvided, setIsFirstLetterProvided] = useState(
     props.firstLetterProvided !== undefined ? props.firstLetterProvided : false
   );
+  const [isHintShown, setIsHintShown] = useState(props.showHint !== undefined ? props.showHint : false);
+
   const [currentWord, setCurrentWord] = useState("");
   const [wordIndex, setWordIndex] = useState(0);
   const [inProgress, setinProgress] = useState(true);
@@ -346,7 +350,7 @@ const WordleConfig: React.FC<Props> = (props) => {
           setTargetWord(newTarget.word);
         }
 
-        if (props.showHint && newTarget.hint) {
+        if (isHintShown && newTarget.hint) {
           setTargetHint(newTarget.hint);
         }
 
@@ -367,6 +371,7 @@ const WordleConfig: React.FC<Props> = (props) => {
 
       case "puzzle":
         // Get a random puzzle (from words_puzzles.ts)
+        // TODO: Expand to have 9, 10 and 11 length puzzles
         const puzzle = words_puzzles[Math.round(Math.random() * words_puzzles.length - 1)];
 
         // Log the current gamemode and the target word
@@ -384,7 +389,7 @@ const WordleConfig: React.FC<Props> = (props) => {
           setTargetWord(puzzle.word);
         }
 
-        if (props.showHint && puzzle.hint) {
+        if (isHintShown && puzzle.hint) {
           setTargetHint(puzzle.hint);
         }
 
@@ -563,6 +568,7 @@ const WordleConfig: React.FC<Props> = (props) => {
     setWordArray(wordArray);
   }, [targetWord]);
 
+  // Update gamemode with new gamemode settings
   React.useEffect(() => {
     if (!inProgress) {
       return;
@@ -1016,6 +1022,8 @@ const WordleConfig: React.FC<Props> = (props) => {
 
     let settings;
 
+    // TODO: Can't toggle these settings when midway through game
+
     settings = (
       <>
         {modesWordLength.includes(props.mode) && (
@@ -1036,7 +1044,6 @@ const WordleConfig: React.FC<Props> = (props) => {
               checked={isFirstLetterProvided}
               type="checkbox"
               onChange={(e) => {
-                // TODO: Can't toggle this when midway through game
                 setIsFirstLetterProvided(!isFirstLetterProvided);
               }}
             ></input>
@@ -1045,7 +1052,13 @@ const WordleConfig: React.FC<Props> = (props) => {
         )}
         {modesHints.includes(props.mode) && (
           <label>
-            <input checked={true} type="checkbox" onChange={(e) => {}}></input>
+            <input
+              checked={isHintShown}
+              type="checkbox"
+              onChange={(e) => {
+                setIsHintShown(!isHintShown);
+              }}
+            ></input>
             Hints
           </label>
         )}
@@ -1196,7 +1209,7 @@ const WordleConfig: React.FC<Props> = (props) => {
       hasSubmitLetter={hasSubmitLetter}
       conundrum={conundrum || ""}
       targetWord={targetWord || ""}
-      targetHint={props.showHint === false ? "" : targetHint}
+      targetHint={isHintShown ? targetHint : ""}
       targetCategory={targetCategory || ""}
       puzzleRevealMs={props.puzzleRevealMs}
       puzzleLeaveNumBlanks={props.puzzleLeaveNumBlanks}
