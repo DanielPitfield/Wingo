@@ -501,7 +501,6 @@ export const App: React.FC = () => {
     {
       page: "letters_categories",
       settings: {
-        firstLetter: false,
         timer: { isTimed: true, seconds: 30 },
       },
     },

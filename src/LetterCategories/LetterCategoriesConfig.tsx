@@ -38,17 +38,26 @@ const LetterCategoriesConfig: React.FC<Props> = (props) => {
   const [categoryNames, setCategoryNames] = useState<string[]>([]);
   const [categoryWordTargets, setCategoryWordTargets] = useState<string[][]>([[]]);
   const [hasSubmitLetter, sethasSubmitLetter] = useState(false);
-  const [seconds, setSeconds] = useState(props.timerConfig.isTimed ? props.timerConfig.seconds : 0);
+
+  // Gamemode settings
+  const [isTimerEnabled, setIsTimerEnabled] = useState(props.gamemodeSettings?.timer?.isTimed === true ?? false);
+  const DEFAULT_TIMER_VALUE = 30;
+  const [remainingSeconds, setRemainingSeconds] = useState(
+    props.gamemodeSettings?.timer?.isTimed === true ? props.gamemodeSettings?.timer.seconds : DEFAULT_TIMER_VALUE
+  );
+  const [totalSeconds, setTotalSeconds] = useState(
+    props.gamemodeSettings?.timer?.isTimed === true ? props.gamemodeSettings?.timer.seconds : DEFAULT_TIMER_VALUE
+  );
 
   // Timer Setup
   React.useEffect(() => {
-    if (!props.timerConfig.isTimed) {
+    if (!isTimerEnabled) {
       return;
     }
 
     const timer = setInterval(() => {
-      if (seconds > 0) {
-        setSeconds(seconds - 1);
+      if (remainingSeconds > 0) {
+        setRemainingSeconds(remainingSeconds - 1);
       } else {
         setinProgress(false);
       }
@@ -56,7 +65,7 @@ const LetterCategoriesConfig: React.FC<Props> = (props) => {
     return () => {
       clearInterval(timer);
     };
-  }, [setSeconds, seconds, props.timerConfig.isTimed]);
+  }, [setRemainingSeconds, remainingSeconds, isTimerEnabled]);
 
   // targetWord generation
   React.useEffect(() => {
@@ -155,9 +164,9 @@ const LetterCategoriesConfig: React.FC<Props> = (props) => {
     setWordIndex(0);
     setinProgress(true);
     sethasSubmitLetter(false);
-    if (props.timerConfig.isTimed) {
+    if (isTimerEnabled) {
       // Reset the timer if it is enabled in the game options
-      setSeconds(props.timerConfig.seconds);
+      setRemainingSeconds(totalSeconds);
     }
   }
 
@@ -262,11 +271,11 @@ const LetterCategoriesConfig: React.FC<Props> = (props) => {
   return (
     <LetterCategories
       timerConfig={
-        props.timerConfig.isTimed
+        isTimerEnabled
           ? {
               isTimed: true,
-              elapsedSeconds: seconds,
-              totalSeconds: props.timerConfig.seconds,
+              remainingSeconds: remainingSeconds,
+              totalSeconds: totalSeconds,
             }
           : { isTimed: false }
       }

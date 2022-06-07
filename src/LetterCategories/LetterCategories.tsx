@@ -9,7 +9,7 @@ import { Theme } from "../Themes";
 import { SettingsData } from "../SaveData";
 
 interface Props {
-  timerConfig: { isTimed: false } | { isTimed: true; totalSeconds: number; elapsedSeconds: number };
+  timerConfig: { isTimed: false } | { isTimed: true; remainingSeconds: number; totalSeconds: number };
   wordLength: number;
   numGuesses: number;
   guesses: string[];
@@ -173,7 +173,7 @@ const LetterCategories: React.FC<Props> = (props) => {
       <div>
         {props.timerConfig.isTimed && (
           <ProgressBar
-            progress={props.timerConfig.elapsedSeconds}
+            progress={props.timerConfig.remainingSeconds}
             total={props.timerConfig.totalSeconds}
             display={{ type: "transition", colorTransition: GreenToRedColorTransition }}
           ></ProgressBar>
