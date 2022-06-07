@@ -8,10 +8,15 @@ import { SettingsData } from "../SaveData";
 interface Props {
   page: Page;
   mode: "countdown_numbers_casual" | "countdown_numbers_realistic";
+  gamemodeSettings?: {
+    wordLength?: boolean;
+    firstLetter?: boolean;
+    showHint?: boolean;
+    timer?: { isTimed: true; seconds: number } | { isTimed: false };
+  };
   defaultNumOperands: number;
   defaultNumGuesses: number;
   defaultExpressionLength: number;
-  timerConfig: { isTimed: false } | { isTimed: true; seconds: number };
   theme: Theme;
   settings: SettingsData;
   setTheme: (theme: Theme) => void;

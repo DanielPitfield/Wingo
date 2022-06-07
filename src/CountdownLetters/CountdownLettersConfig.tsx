@@ -7,7 +7,12 @@ import { SettingsData } from "../SaveData";
 
 export interface CountdownLettersConfigProps {
   mode: "countdown_letters_casual" | "countdown_letters_realistic";
-  timerConfig: { isTimed: false } | { isTimed: true; seconds: number };
+  gamemodeSettings?: {
+    wordLength?: boolean;
+    firstLetter?: boolean;
+    showHint?: boolean;
+    timer?: { isTimed: true; seconds: number } | { isTimed: false };
+  };
   defaultWordLength: number;
   guesses?: string[];
   countdownWord?: string;

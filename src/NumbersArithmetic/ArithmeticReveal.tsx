@@ -11,11 +11,16 @@ import { Theme } from "../Themes";
 import { SettingsData } from "../SaveData";
 
 interface Props {
+  gamemodeSettings?: {
+    wordLength?: boolean;
+    firstLetter?: boolean;
+    showHint?: boolean;
+    timer?: { isTimed: true; seconds: number } | { isTimed: false };
+  };
   revealIntervalSeconds: number;
   numTiles: number;
   numCheckpoints: number;
   difficulty: "easy" | "normal" | "hard";
-  timerConfig: { isTimed: false } | { isTimed: true; seconds: number };
   theme: Theme;
   settings: SettingsData;
   setPage: (page: Page) => void;

@@ -19,11 +19,16 @@ interface Props {
   modeConfig:
     | { isMatch: false; numCodes: number; numWordToCodeQuestions: number; numCodeToWordQuestions: number }
     | { isMatch: true };
+  gamemodeSettings?: {
+    wordLength?: boolean;
+    firstLetter?: boolean;
+    showHint?: boolean;
+    timer?: { isTimed: true; seconds: number } | { isTimed: false };
+  };
   numWords: number;
   wordLength: number;
   numAdditionalLetters: number;
   numGuesses: number;
-  timerConfig: { isTimed: false } | { isTimed: true; seconds: number };
   theme: Theme;
   settings: SettingsData;
   setPage: (page: Page) => void;

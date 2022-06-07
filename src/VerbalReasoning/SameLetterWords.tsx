@@ -11,11 +11,16 @@ import { Theme } from "../Themes";
 import { wordLengthMappingsTargets } from "../WordleConfig";
 
 interface Props {
+  gamemodeSettings?: {
+    wordLength?: boolean;
+    firstLetter?: boolean;
+    showHint?: boolean;
+    timer?: { isTimed: true; seconds: number } | { isTimed: false };
+  };
   numMatchingWords: number;
   numTotalWords: number;
   wordLength: number;
   numGuesses: number;
-  timerConfig: { isTimed: false } | { isTimed: true; seconds: number };
   theme: Theme;
   settings: SettingsData;
   setPage: (page: Page) => void;

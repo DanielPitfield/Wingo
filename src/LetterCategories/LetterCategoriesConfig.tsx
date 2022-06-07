@@ -7,8 +7,13 @@ import { categoryMappings } from "../WordleConfig";
 import { Theme } from "../Themes";
 
 interface Props {
+  gamemodeSettings?: {
+    wordLength?: boolean;
+    firstLetter?: boolean;
+    showHint?: boolean;
+    timer?: { isTimed: true; seconds: number } | { isTimed: false };
+  };
   enforceFullLengthGuesses: boolean;
-  timerConfig: { isTimed: false } | { isTimed: true; seconds: number };
   numCategories: number;
   defaultnumGuesses: number;
   finishingButtonText?: string;

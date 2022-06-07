@@ -10,10 +10,15 @@ import { Theme } from "../Themes";
 import { categoryMappings } from "../WordleConfig";
 
 interface Props {
+  gamemodeSettings?: {
+    wordLength?: boolean;
+    firstLetter?: boolean;
+    showHint?: boolean;
+    timer?: { isTimed: true; seconds: number } | { isTimed: false };
+  };
   numGroups: number;
   groupSize: number;
   numGuesses: number;
-  timerConfig: { isTimed: false } | { isTimed: true; seconds: number };
   theme: Theme;
   settings: SettingsData;
   setPage: (page: Page) => void;

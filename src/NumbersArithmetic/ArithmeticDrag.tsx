@@ -13,11 +13,16 @@ import { DraggableItem } from "./DraggableItem";
 
 interface Props {
   mode: "order" | "match";
+  gamemodeSettings?: {
+    wordLength?: boolean;
+    firstLetter?: boolean;
+    showHint?: boolean;
+    timer?: { isTimed: true; seconds: number } | { isTimed: false };
+  };
   numTiles: number;
   numOperands: 2 | 3;
   numGuesses: number;
   difficulty: "easy" | "normal" | "hard";
-  timerConfig: { isTimed: false } | { isTimed: true; seconds: number };
   theme: Theme;
   settings: SettingsData;
   setPage: (page: Page) => void;

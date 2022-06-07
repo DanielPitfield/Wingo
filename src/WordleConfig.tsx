@@ -44,13 +44,16 @@ export interface WordleConfigProps {
     | "crossword/weekly"
     | "crossword"
     | "conundrum";
+  gamemodeSettings?: {
+    wordLength?: boolean;
+    firstLetter?: boolean;
+    showHint?: boolean;
+    timer?: { isTimed: true; seconds: number } | { isTimed: false };
+  };
   conundrum?: string;
   targetWord?: string;
   wordArray?: string[];
   enforceFullLengthGuesses: boolean;
-  firstLetterProvided?: boolean;
-  showHint?: boolean;
-  timerConfig?: { isTimed: false } | { isTimed: true; seconds: number };
   defaultWordLength?: number;
   puzzleRevealMs: number;
   puzzleLeaveNumBlanks: number;
@@ -255,18 +258,16 @@ const WordleConfig: React.FC<Props> = (props) => {
   const [gameId, setGameId] = useState<string | null>(null);
 
   // Gamemode settings
-  const [isFirstLetterProvided, setIsFirstLetterProvided] = useState(
-    props.firstLetterProvided !== undefined ? props.firstLetterProvided : false
-  );
-  const [isHintShown, setIsHintShown] = useState(props.showHint === true);
+  const [isFirstLetterProvided, setIsFirstLetterProvided] = useState(props.gamemodeSettings?.firstLetter ?? false);
+  const [isHintShown, setIsHintShown] = useState(props.gamemodeSettings?.showHint ?? false);
 
-  const [isTimerEnabled, setIsTimerEnabled] = useState(props.timerConfig?.isTimed ?? false);
+  const [isTimerEnabled, setIsTimerEnabled] = useState(props.gamemodeSettings?.timer?.isTimed === true ?? false);
   const DEFAULT_TIMER_VALUE = 30;
   const [remainingSeconds, setRemainingSeconds] = useState(
-    props.timerConfig?.isTimed ? props.timerConfig.seconds : DEFAULT_TIMER_VALUE
+    props.gamemodeSettings?.timer?.isTimed === true ? props.gamemodeSettings?.timer.seconds : DEFAULT_TIMER_VALUE
   );
   const [totalSeconds, setTotalSeconds] = useState(
-    props.timerConfig?.isTimed ? props.timerConfig.seconds : DEFAULT_TIMER_VALUE
+    props.gamemodeSettings?.timer?.isTimed === true ? props.gamemodeSettings?.timer.seconds : DEFAULT_TIMER_VALUE
   );
 
   const [currentWord, setCurrentWord] = useState("");
@@ -582,11 +583,11 @@ const WordleConfig: React.FC<Props> = (props) => {
       // Reset time left
       setRemainingSeconds(totalSeconds);
     }
-    
+
     if (isFirstLetterProvided) {
       setCurrentWord(targetWord.charAt(0));
     }
-    // firstLetterProvided now disabled (but first letter remains from when it was enabled) 
+    // firstLetterProvided now disabled (but first letter remains from when it was enabled)
     else if (currentWord.length > 0) {
       ResetGame();
       return;
@@ -732,14 +733,15 @@ const WordleConfig: React.FC<Props> = (props) => {
       gameCategory: "wingo",
       levelProps: {
         mode: props.mode,
-        firstLetterProvided: isFirstLetterProvided,
+        // TODO: firstLetterProvided and timerEnabled are no longer apart of WordleConfigProps
+        //firstLetterProvided: isFirstLetterProvided,
+        //timerEnabled: isTimerEnabled,
         puzzleLeaveNumBlanks: props.puzzleLeaveNumBlanks,
         puzzleRevealMs: props.puzzleRevealMs,
         targetWord,
         defaultWordLength: props.defaultWordLength,
         defaultnumGuesses: props.defaultnumGuesses,
         enforceFullLengthGuesses: props.enforceFullLengthGuesses,
-        timerConfig: props.timerConfig,
         checkInDictionary: props.checkInDictionary,
         wordArray: props.wordArray,
       },
@@ -970,17 +972,18 @@ const WordleConfig: React.FC<Props> = (props) => {
       SaveData.addCompletedRoundToGameHistory(gameId, {
         timestamp: new Date().toISOString(),
         gameCategory: "wingo",
+
         outcome,
         levelProps: {
           mode: props.mode,
-          firstLetterProvided: isFirstLetterProvided,
+          //firstLetterProvided: isFirstLetterProvided,
+          //timerEnabled: isTimerEnabled,
           puzzleLeaveNumBlanks: props.puzzleLeaveNumBlanks,
           puzzleRevealMs: props.puzzleRevealMs,
           targetWord,
           defaultWordLength: props.defaultWordLength,
           defaultnumGuesses: props.defaultnumGuesses,
           enforceFullLengthGuesses: props.enforceFullLengthGuesses,
-          timerConfig: props.timerConfig,
           checkInDictionary: props.checkInDictionary,
           wordArray: props.wordArray,
           guesses,
@@ -1034,27 +1037,13 @@ const WordleConfig: React.FC<Props> = (props) => {
     "conundrum"
     */
 
-    // Which settings are configurable in which modes?
-    const modesWordLength = ["repeat", "category", "puzzle", "interlinked", "crossword/fit", "crossword", "conundrum"];
-    const modesFirstLetterProvided = [
-      "repeat",
-      "category",
-      "increasing",
-      "limitless",
-      "interlinked",
-      "crossword/fit",
-      "crossword",
-    ];
-    const modesHints = ["repeat", "category", "increasing", "limitless", "interlinked", "crossword/fit", "crossword"];
-    const modesTimer = ["repeat", "category", "increasing", "limitless", "interlinked", "crossword/fit", "crossword"];
-
     let settings;
 
     // TODO: Can't toggle these settings when midway through game
 
     settings = (
       <>
-        {modesWordLength.includes(props.mode) && (
+        {props.gamemodeSettings?.wordLength !== undefined && (
           <label>
             <input
               type="number"
@@ -1066,7 +1055,7 @@ const WordleConfig: React.FC<Props> = (props) => {
             Word Length
           </label>
         )}
-        {modesFirstLetterProvided.includes(props.mode) && (
+        {props.gamemodeSettings?.firstLetter !== undefined && (
           <label>
             <input
               checked={isFirstLetterProvided}
@@ -1078,7 +1067,7 @@ const WordleConfig: React.FC<Props> = (props) => {
             First Letter Provided
           </label>
         )}
-        {modesHints.includes(props.mode) && (
+        {props.gamemodeSettings?.showHint !== undefined && (
           <label>
             <input
               checked={isHintShown}
@@ -1090,7 +1079,7 @@ const WordleConfig: React.FC<Props> = (props) => {
             Hints
           </label>
         )}
-        {modesTimer.includes(props.mode) && (
+        {props.gamemodeSettings?.timer !== undefined && (
           <>
             <label>
               <input
