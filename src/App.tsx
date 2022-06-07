@@ -689,46 +689,8 @@ export const App: React.FC = () => {
             setSelectedCampaignLevel={setSelectedCampaignLevel}
             setTheme={setThemeIfNoPreferredSet}
             theme={theme}
-            /**
-             * Updates game type configurations
-             * @param value Checkbox checked (true) or not checked (false)
-             * @param Page The page for the game type which options have just changed
-             */
-            wordLengthValue={(value, page) =>
-              setGameOptionToggles(
-                gameOptionToggles.map((gameOption) => ({
-                  ...gameOption,
-                  wordLength: gameOption.page === page ? value : gameOption.wordLength,
-                }))
-              )
-            }
-            firstLetterToggle={(value, page) =>
-              setGameOptionToggles(
-                gameOptionToggles.map((gameOption) => ({
-                  ...gameOption,
-                  firstLetter: gameOption.page === page ? value : gameOption.firstLetter,
-                }))
-              )
-            }
-            showHintToggle={(value, page) =>
-              setGameOptionToggles(
-                gameOptionToggles.map((gameOption) => ({
-                  ...gameOption,
-                  showHint: gameOption.page === page ? value : gameOption.showHint,
-                }))
-              )
-            }
-            timerToggle={(value, page) =>
-              setGameOptionToggles(
-                gameOptionToggles.map((gameOption) => ({
-                  ...gameOption,
-                  timer: gameOption.page === page ? value : gameOption.timer,
-                }))
-              )
-            }
             setPage={setPage}
             addGold={addGold}
-            gameOptionToggles={gameOptionToggles}
             settings={settings}
           />
         );
