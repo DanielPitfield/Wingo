@@ -74,8 +74,6 @@ const CountdownLetters: React.FC<Props> = (props) => {
         countdownWord: props.countdownWord,
         guesses: props.guesses,
         mode: props.mode,
-        //firstLetterProvided: isFirstLetterProvided,
-        //timerEnabled: isTimerEnabled,
         defaultWordLength: props.wordLength,
       },
     });
@@ -386,9 +384,6 @@ const CountdownLetters: React.FC<Props> = (props) => {
           countdownWord: props.countdownWord,
           guesses: props.guesses,
           mode: props.mode,
-          // TODO: firstLetterProvided and timerEnabled are no longer apart of CountdownLettersConfigProps
-          //firstLetterProvided: isFirstLetterProvided,
-          //timerEnabled: isTimerEnabled,
           defaultWordLength: props.wordLength,
         },
       });

@@ -425,7 +425,7 @@ export const App: React.FC = () => {
   const gamemodeSettings: {
     page: Page;
     settings: {
-      wordLength?: boolean;
+      wordLength?: number;
       firstLetter?: boolean;
       showHint?: boolean;
       timer?: { isTimed: true; seconds: number } | { isTimed: false };
@@ -434,7 +434,7 @@ export const App: React.FC = () => {
     {
       page: "wingo/repeat",
       settings: {
-        wordLength: true,
+        wordLength: wordLength,
         firstLetter: false,
         showHint: false,
         timer: { isTimed: false },
@@ -443,7 +443,6 @@ export const App: React.FC = () => {
     {
       page: "wingo/category",
       settings: {
-        wordLength: true,
         firstLetter: false,
         showHint: false,
         timer: { isTimed: false },
@@ -468,13 +467,13 @@ export const App: React.FC = () => {
     {
       page: "wingo/puzzle",
       settings: {
-        wordLength: true,
+        wordLength: wordLength_puzzle,
       },
     },
     {
       page: "wingo/interlinked",
       settings: {
-        wordLength: true,
+        wordLength: wordLength,
         firstLetter: false,
         showHint: false,
         timer: { isTimed: false },
@@ -483,7 +482,7 @@ export const App: React.FC = () => {
     {
       page: "wingo/crossword",
       settings: {
-        wordLength: true,
+        wordLength: wordLength,
         firstLetter: false,
         showHint: true,
         timer: { isTimed: false },
@@ -492,7 +491,7 @@ export const App: React.FC = () => {
     {
       page: "wingo/crossword/fit",
       settings: {
-        wordLength: true,
+        wordLength: wordLength,
         firstLetter: false,
         showHint: true,
         timer: { isTimed: true, seconds: 30 },

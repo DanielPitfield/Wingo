@@ -63,9 +63,6 @@ const CountdownLettersConfig: React.FC<Props> = (props) => {
   const [remainingSeconds, setRemainingSeconds] = useState(DEFAULT_TIMER_VALUE);
   const [totalSeconds, setTotalSeconds] = useState(DEFAULT_TIMER_VALUE);
 
-  // Generate the elements to configure the gamemode settings
-  const gamemodeSettings = generateSettings();
-
   const defaultLetterStatuses: {
     letter: string;
     status: "" | "contains" | "correct" | "not set" | "not in word";
@@ -104,6 +101,9 @@ const CountdownLettersConfig: React.FC<Props> = (props) => {
       status: "" | "contains" | "correct" | "not set" | "not in word";
     }[]
   >(defaultLetterStatuses);
+
+  // Generate the elements to configure the gamemode settings
+  const gamemodeSettings = generateSettings();
 
   // Timer Setup
   React.useEffect(() => {

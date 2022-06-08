@@ -80,9 +80,6 @@ const CountdownNumbersConfig: React.FC<Props> = (props) => {
   const [remainingSeconds, setRemainingSeconds] = useState(DEFAULT_TIMER_VALUE);
   const [totalSeconds, setTotalSeconds] = useState(DEFAULT_TIMER_VALUE);
 
-  // Generate the elements to configure the gamemode settings
-  const gamemodeSettings = generateSettings();
-
   const defaultCountdownStatuses: (
     | {
         type: "original";
@@ -127,6 +124,9 @@ const CountdownNumbersConfig: React.FC<Props> = (props) => {
   const [targetNumber, settargetNumber] = useState<number | null>(null);
   const [hasSubmitNumber, sethasSubmitNumber] = useState(false);
   const [wordIndex, setWordIndex] = useState(0);
+
+  // Generate the elements to configure the gamemode settings
+  const gamemodeSettings = generateSettings();
 
   // Timer Setup
   React.useEffect(() => {

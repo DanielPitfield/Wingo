@@ -45,7 +45,7 @@ export interface WordleConfigProps {
     | "crossword"
     | "conundrum";
   gamemodeSettings?: {
-    wordLength?: boolean;
+    wordLength?: number;
     firstLetter?: boolean;
     showHint?: boolean;
     timer?: { isTimed: true; seconds: number } | { isTimed: false };
@@ -270,8 +270,7 @@ const WordleConfig: React.FC<Props> = (props) => {
     props.gamemodeSettings?.timer?.isTimed === true ? props.gamemodeSettings?.timer.seconds : DEFAULT_TIMER_VALUE
   );
   
-  // Generate the elements to configure the gamemode settings
-  const gamemodeSettings = generateSettings();
+  
 
   const [currentWord, setCurrentWord] = useState("");
   const [wordIndex, setWordIndex] = useState(0);
@@ -282,7 +281,7 @@ const WordleConfig: React.FC<Props> = (props) => {
     // Take highest of either defaultWordLength and targetWord length (if specified)
     Math.max.apply(
       undefined,
-      [props.defaultWordLength!, props.targetWord?.length!].filter((x) => x)
+      [props.gamemodeSettings?.wordLength!, props.targetWord?.length!].filter((x) => x)
     )
   );
   const [conundrum, setConundrum] = useState("");
@@ -335,6 +334,9 @@ const WordleConfig: React.FC<Props> = (props) => {
       status: "" | "contains" | "correct" | "not set" | "not in word";
     }[]
   >(defaultLetterStatuses);
+  
+  // Generate the elements to configure the gamemode settings
+  const gamemodeSettings = generateSettings();
 
   function generateTargetWord() {
     // Array of words to choose from
@@ -733,9 +735,12 @@ const WordleConfig: React.FC<Props> = (props) => {
       gameCategory: "wingo",
       levelProps: {
         mode: props.mode,
-        // TODO: firstLetterProvided and timerEnabled are no longer apart of WordleConfigProps
-        //firstLetterProvided: isFirstLetterProvided,
-        //timerEnabled: isTimerEnabled,
+        gamemodeSettings: {
+          wordLength: wordLength,
+          firstLetter: isFirstLetterProvided,
+          showHint: isHintShown,
+          timer: isTimerEnabled ? {isTimed: true, seconds: remainingSeconds} : {isTimed: false},
+        },        
         puzzleLeaveNumBlanks: props.puzzleLeaveNumBlanks,
         puzzleRevealMs: props.puzzleRevealMs,
         targetWord,
@@ -976,8 +981,12 @@ const WordleConfig: React.FC<Props> = (props) => {
         outcome,
         levelProps: {
           mode: props.mode,
-          //firstLetterProvided: isFirstLetterProvided,
-          //timerEnabled: isTimerEnabled,
+          gamemodeSettings: {
+            wordLength: wordLength,
+            firstLetter: isFirstLetterProvided,
+            showHint: isHintShown,
+            timer: isTimerEnabled ? {isTimed: true, seconds: remainingSeconds} : {isTimed: false},
+          }, 
           puzzleLeaveNumBlanks: props.puzzleLeaveNumBlanks,
           puzzleRevealMs: props.puzzleRevealMs,
           targetWord,
