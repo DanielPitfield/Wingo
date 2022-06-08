@@ -268,9 +268,6 @@ export const LingoGameshow: React.FC<Props> = (props) => {
           {...props.commonWingoProps}
           onComplete={onComplete}
           mode="puzzle"
-          firstLetterProvided={true}
-          showHint={false}
-          timerConfig={{ isTimed: false }}
           defaultWordLength={wordLength}
           defaultnumGuesses={1}
           enforceFullLengthGuesses={true}
@@ -284,9 +281,6 @@ export const LingoGameshow: React.FC<Props> = (props) => {
           {...props.commonWingoProps}
           onComplete={onComplete}
           mode="repeat"
-          firstLetterProvided={true}
-          showHint={false}
-          timerConfig={{ isTimed: true, seconds: 30 }}
           defaultWordLength={wordLength}
           enforceFullLengthGuesses={true}
           roundScoringInfo={roundScoringInfo}

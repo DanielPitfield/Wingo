@@ -152,9 +152,6 @@ export const CountdownGameshow: React.FC<Props> = (props) => {
         <WordleConfig
           {...props.commonWingoProps}
           mode="conundrum"
-          firstLetterProvided={false}
-          showHint={false}
-          timerConfig={{ isTimed: true, seconds: 30 }}
           defaultWordLength={9}
           defaultnumGuesses={1}
           enforceFullLengthGuesses={true}
