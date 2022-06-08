@@ -421,7 +421,7 @@ export const App: React.FC = () => {
   const [gold, setGold] = useState<number>(SaveData.readGold());
   const [playBackgroundMusic, stopBackgroundMusic] = useBackgroundMusic(settings, theme);
 
-  // The configurable options for each gamemode (with their default value)
+  // The configurable options available for each gamemode variation of Wordle/WordleConfig
   const gamemodeSettings: {
     page: Page;
     settings: {
@@ -498,30 +498,32 @@ export const App: React.FC = () => {
         timer: { isTimed: true, seconds: 30 },
       },
     },
-    /* TODO: Which settings for each of the gamemodes
-    Probably best to outline the difference in settings between the different Wordle modes
-    But the settings for other modes could just be baked in to the component (state, input elements dictate the settings available)
-    */
-
-    // TODO: Disable changing the settings for campaign levels!
+    // Although named as if it isn't, the conundrum mode is actually a mode of WordleConfig 
     {
       page: "countdown/conundrum",
       settings: {
         timer: { isTimed: true, seconds: 30 },
       },
     },
+
+    // TODO: Disable changing the settings for campaign levels!
+    
+    /*
     {
       page: "puzzle/sequence",
       settings: {
         timer: { isTimed: true, seconds: 10 },
       },
     },
+    // TODO: QOL: Nubble guess timer (baked into component)
     {
       page: "nubble",
       settings: {
         timer: { isTimed: false },
       },
     },
+    */
+
   ];
 
   useEffect(() => {
