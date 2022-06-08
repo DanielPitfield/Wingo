@@ -498,6 +498,12 @@ export const App: React.FC = () => {
         timer: { isTimed: true, seconds: 30 },
       },
     },
+    /* TODO: Which settings for each of the gamemodes
+    Probably best to outline the difference in settings between the different Wordle modes
+    But the settings for other modes could just be baked in to the component (state, input elements dictate the settings available)
+    */
+
+    // TODO: Disable changing the settings for campaign levels!
     {
       page: "letters_categories",
       settings: {

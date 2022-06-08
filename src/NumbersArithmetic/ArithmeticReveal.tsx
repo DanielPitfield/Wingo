@@ -9,6 +9,7 @@ import { Button } from "../Button";
 import { operators } from "../CountdownNumbers/CountdownNumbersConfig";
 import { Theme } from "../Themes";
 import { SettingsData } from "../SaveData";
+import GamemodeSettingsMenu from "../GamemodeSettingsMenu";
 
 interface Props {
   gamemodeSettings?: {
@@ -38,10 +39,22 @@ const ArithmeticReveal: React.FC<Props> = (props) => {
   );
   const [currentCheckpoint, setCurrentCheckpoint] = useState(0);
   const [inProgress, setInProgress] = useState(true);
-  const [seconds, setSeconds] = useState(props.timerConfig.isTimed ? props.timerConfig.seconds : 0);
   const [guess, setGuess] = useState("");
   const [tiles, setTiles] = useState<string[][]>([]);
   const [targetTransitioned, setTargetTransitioned] = useState(false);
+
+  // Gamemode settings
+  const [isTimerEnabled, setIsTimerEnabled] = useState(props.gamemodeSettings?.timer?.isTimed === true ?? false);
+  const DEFAULT_TIMER_VALUE = 30;
+  const [remainingSeconds, setRemainingSeconds] = useState(
+    props.gamemodeSettings?.timer?.isTimed === true ? props.gamemodeSettings?.timer.seconds : DEFAULT_TIMER_VALUE
+  );
+  const [totalSeconds, setTotalSeconds] = useState(
+    props.gamemodeSettings?.timer?.isTimed === true ? props.gamemodeSettings?.timer.seconds : DEFAULT_TIMER_VALUE
+  );
+  
+  // Generate the elements to configure the gamemode settings
+  const gamemodeSettings = generateSettings();
 
   function getStartingNumberLimit(): number {
     switch (props.difficulty) {
@@ -238,7 +251,7 @@ const ArithmeticReveal: React.FC<Props> = (props) => {
     setInProgress(true);
     setRevealState({ type: "in-progress", revealedTiles: 0 });
     setGuess("");
-    setSeconds(props.timerConfig.isTimed ? props.timerConfig.seconds : 0);
+    setRemainingSeconds(totalSeconds);
   }, [currentCheckpoint]);
 
   React.useEffect(() => {
@@ -269,7 +282,7 @@ const ArithmeticReveal: React.FC<Props> = (props) => {
 
   // (Guess) Timer Setup
   React.useEffect(() => {
-    if (!props.timerConfig.isTimed || !inProgress) {
+    if (!isTimerEnabled || !inProgress) {
       return;
     }
 
@@ -279,8 +292,8 @@ const ArithmeticReveal: React.FC<Props> = (props) => {
     }
 
     const timerGuess = setInterval(() => {
-      if (seconds > 0) {
-        setSeconds(seconds - 1);
+      if (remainingSeconds > 0) {
+        setRemainingSeconds(remainingSeconds - 1);
       } else {
         setInProgress(false);
         clearInterval(timerGuess);
@@ -288,7 +301,7 @@ const ArithmeticReveal: React.FC<Props> = (props) => {
     }, 1000);
 
     return () => clearInterval(timerGuess);
-  }, [setSeconds, seconds, props.timerConfig.isTimed, revealState, inProgress]);
+  }, [setRemainingSeconds, remainingSeconds, isTimerEnabled, revealState, inProgress]);
 
   /**
    *
@@ -392,10 +405,9 @@ const ArithmeticReveal: React.FC<Props> = (props) => {
     setRevealState({ type: "in-progress", revealedTiles: 0 });
     setTargetNumbers([]);
     setTiles([]);
-
-    if (props.timerConfig.isTimed) {
+    if (isTimerEnabled) {
       // Reset the timer if it is enabled in the game options
-      setSeconds(props.timerConfig.seconds);
+      setRemainingSeconds(totalSeconds);
     }
   }
 
@@ -419,11 +431,68 @@ const ArithmeticReveal: React.FC<Props> = (props) => {
     setTargetTransitioned(false);
   }, [targetTransitioned]);
 
+  function generateSettings(): React.ReactNode {
+    let settings;
+
+    settings = (
+      <>
+        {/* TODO: QOL: Configure speed, difficulty, number of checkpoints  */
+        /*props.gamemodeSettings?.wordLength !== undefined && (
+          <label>
+            <input
+              type="number"
+              value={wordLength}
+              min={props.mode === "puzzle" ? 9 : 4}
+              max={11}
+              onChange={(e) => setWordLength(e.target.valueAsNumber)}
+            ></input>
+            Word Length
+          </label>
+        )*/}
+        {props.gamemodeSettings?.timer !== undefined && (
+          <>
+            <label>
+              <input
+                checked={isTimerEnabled}
+                type="checkbox"
+                onChange={(e) => {
+                  setIsTimerEnabled(!isTimerEnabled);
+                }}
+              ></input>
+              Timer
+            </label>
+            {isTimerEnabled && (
+              <label>
+                <input
+                  type="number"
+                  value={totalSeconds}
+                  min={10}
+                  max={120}
+                  step={5}
+                  onChange={(e) => {
+                    setRemainingSeconds(e.target.valueAsNumber);
+                    setTotalSeconds(e.target.valueAsNumber);
+                  }}
+                ></input>
+                Seconds
+              </label>
+            )}
+          </>
+        )}
+      </>
+    );
+
+    return settings;
+  }
+
   return (
     <div
       className="App numbers_arithmetic"
       style={{ backgroundImage: `url(${props.theme.backgroundImageSrc})`, backgroundSize: "100%" }}
     >
+      <div className="gamemodeSettings">
+        <GamemodeSettingsMenu>{gamemodeSettings}</GamemodeSettingsMenu>
+      </div>
       <div className="outcome">{displayOutcome()}</div>
       {inProgress && (
         <div className="target">
@@ -457,10 +526,10 @@ const ArithmeticReveal: React.FC<Props> = (props) => {
       )}
       {revealState.type === "finished" && (
         <div>
-          {props.timerConfig.isTimed && (
+          {isTimerEnabled && (
             <ProgressBar
-              progress={seconds}
-              total={props.timerConfig.seconds}
+              progress={remainingSeconds}
+              total={totalSeconds}
               display={{ type: "transition", colorTransition: GreenToRedColorTransition }}
             ></ProgressBar>
           )}
