@@ -269,6 +269,9 @@ const WordleConfig: React.FC<Props> = (props) => {
   const [totalSeconds, setTotalSeconds] = useState(
     props.gamemodeSettings?.timer?.isTimed === true ? props.gamemodeSettings?.timer.seconds : DEFAULT_TIMER_VALUE
   );
+  
+  // Generate the elements to configure the gamemode settings
+  const gamemodeSettings = generateSettings();
 
   const [currentWord, setCurrentWord] = useState("");
   const [wordIndex, setWordIndex] = useState(0);
@@ -332,9 +335,6 @@ const WordleConfig: React.FC<Props> = (props) => {
       status: "" | "contains" | "correct" | "not set" | "not in word";
     }[]
   >(defaultLetterStatuses);
-
-  // Generate the elements to configure the gamemode settings
-  const gamemodeSettings = generateSettings();
 
   function generateTargetWord() {
     // Array of words to choose from
@@ -1022,24 +1022,7 @@ const WordleConfig: React.FC<Props> = (props) => {
   }
 
   function generateSettings(): React.ReactNode {
-    /* 
-    "daily"
-    "repeat"
-    "category"
-    "increasing"
-    "limitless"
-    "puzzle"
-    "interlinked"
-    "crossword/fit"
-    "crossword/daily"
-    "crossword/weekly"
-    "crossword"
-    "conundrum"
-    */
-
     let settings;
-
-    // TODO: Can't toggle these settings when midway through game
 
     settings = (
       <>

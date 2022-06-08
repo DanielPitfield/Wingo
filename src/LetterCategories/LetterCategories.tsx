@@ -7,9 +7,11 @@ import { MessageNotification } from "../MessageNotification";
 import ProgressBar, { GreenToRedColorTransition } from "../ProgressBar";
 import { Theme } from "../Themes";
 import { SettingsData } from "../SaveData";
+import GamemodeSettingsMenu from "../GamemodeSettingsMenu";
 
 interface Props {
   timerConfig: { isTimed: false } | { isTimed: true; remainingSeconds: number; totalSeconds: number };
+  gamemodeSettings: React.ReactNode;
   wordLength: number;
   numGuesses: number;
   guesses: string[];
@@ -150,6 +152,10 @@ const LetterCategories: React.FC<Props> = (props) => {
             Restart
           </Button>
         )}
+      </div>
+
+      <div className="gamemodeSettings">
+        <GamemodeSettingsMenu>{props.gamemodeSettings}</GamemodeSettingsMenu>
       </div>
 
       <div className="word_grid">{populateGrid(props.numGuesses, props.wordLength)}</div>

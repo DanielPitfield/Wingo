@@ -49,6 +49,9 @@ const LetterCategoriesConfig: React.FC<Props> = (props) => {
     props.gamemodeSettings?.timer?.isTimed === true ? props.gamemodeSettings?.timer.seconds : DEFAULT_TIMER_VALUE
   );
 
+  // Generate the elements to configure the gamemode settings
+  const gamemodeSettings = generateSettings();
+
   // Timer Setup
   React.useEffect(() => {
     if (!isTimerEnabled) {
@@ -268,6 +271,47 @@ const LetterCategoriesConfig: React.FC<Props> = (props) => {
     }
   }
 
+  function generateSettings(): React.ReactNode {
+    let settings;
+
+    settings = (
+      <>
+        {props.gamemodeSettings?.timer !== undefined && (
+          <>
+            <label>
+              <input
+                checked={isTimerEnabled}
+                type="checkbox"
+                onChange={(e) => {
+                  setIsTimerEnabled(!isTimerEnabled);
+                }}
+              ></input>
+              Timer
+            </label>
+            {isTimerEnabled && (
+              <label>
+                <input
+                  type="number"
+                  value={totalSeconds}
+                  min={10}
+                  max={120}
+                  step={5}
+                  onChange={(e) => {
+                    setRemainingSeconds(e.target.valueAsNumber);
+                    setTotalSeconds(e.target.valueAsNumber);
+                  }}
+                ></input>
+                Seconds
+              </label>
+            )}
+          </>
+        )}
+      </>
+    );
+
+    return settings;
+  }
+
   return (
     <LetterCategories
       timerConfig={
@@ -279,6 +323,7 @@ const LetterCategoriesConfig: React.FC<Props> = (props) => {
             }
           : { isTimed: false }
       }
+      gamemodeSettings={gamemodeSettings}
       wordLength={wordLength}
       numGuesses={numGuesses}
       guesses={guesses}
