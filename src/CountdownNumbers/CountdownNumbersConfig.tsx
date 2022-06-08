@@ -8,12 +8,6 @@ import { SettingsData } from "../SaveData";
 interface Props {
   page: Page;
   mode: "countdown_numbers_casual" | "countdown_numbers_realistic";
-  gamemodeSettings?: {
-    wordLength?: boolean;
-    firstLetter?: boolean;
-    showHint?: boolean;
-    timer?: { isTimed: true; seconds: number } | { isTimed: false };
-  };
   defaultNumOperands: number;
   defaultNumGuesses: number;
   defaultExpressionLength: number;
@@ -81,15 +75,11 @@ const CountdownNumbersConfig: React.FC<Props> = (props) => {
   const [numGuesses, setNumGuesses] = useState(props.defaultNumGuesses);
 
   // Gamemode settings
-  const [isTimerEnabled, setIsTimerEnabled] = useState(props.gamemodeSettings?.timer?.isTimed === true ?? false);
+  const [isTimerEnabled, setIsTimerEnabled] = useState(true);
   const DEFAULT_TIMER_VALUE = 30;
-  const [remainingSeconds, setRemainingSeconds] = useState(
-    props.gamemodeSettings?.timer?.isTimed === true ? props.gamemodeSettings?.timer.seconds : DEFAULT_TIMER_VALUE
-  );
-  const [totalSeconds, setTotalSeconds] = useState(
-    props.gamemodeSettings?.timer?.isTimed === true ? props.gamemodeSettings?.timer.seconds : DEFAULT_TIMER_VALUE
-  );
-  
+  const [remainingSeconds, setRemainingSeconds] = useState(DEFAULT_TIMER_VALUE);
+  const [totalSeconds, setTotalSeconds] = useState(DEFAULT_TIMER_VALUE);
+
   // Generate the elements to configure the gamemode settings
   const gamemodeSettings = generateSettings();
 
@@ -456,7 +446,7 @@ const CountdownNumbersConfig: React.FC<Props> = (props) => {
     if (!inProgress) {
       return;
     }
-    
+
     // Get the closest intermediary guess
     const newClosest = countdownStatuses
       .filter((x) => x.type === "intermediary")
@@ -486,49 +476,40 @@ const CountdownNumbersConfig: React.FC<Props> = (props) => {
 
     settings = (
       <>
-        {/* TODO: QOL: Configure number of numbers (use wordLength as expressionLength?) */
-        /*props.gamemodeSettings?.wordLength !== undefined && (
+        {/* TODO: QOL: Configure number of numbers in available selection */}
+        <label>
+          <input type="number" value={6} min={3} max={10} onChange={(e) => {}}></input>
+          Numbers in selection
+        </label>
+        )
+        <>
           <label>
             <input
-              type="number"
-              value={wordLength}
-              min={props.mode === "puzzle" ? 9 : 4}
-              max={11}
-              onChange={(e) => setWordLength(e.target.valueAsNumber)}
+              checked={isTimerEnabled}
+              type="checkbox"
+              onChange={(e) => {
+                setIsTimerEnabled(!isTimerEnabled);
+              }}
             ></input>
-            Word Length
+            Timer
           </label>
-        )*/}
-        {props.gamemodeSettings?.timer !== undefined && (
-          <>
+          {isTimerEnabled && (
             <label>
               <input
-                checked={isTimerEnabled}
-                type="checkbox"
+                type="number"
+                value={totalSeconds}
+                min={10}
+                max={120}
+                step={5}
                 onChange={(e) => {
-                  setIsTimerEnabled(!isTimerEnabled);
+                  setRemainingSeconds(e.target.valueAsNumber);
+                  setTotalSeconds(e.target.valueAsNumber);
                 }}
               ></input>
-              Timer
+              Seconds
             </label>
-            {isTimerEnabled && (
-              <label>
-                <input
-                  type="number"
-                  value={totalSeconds}
-                  min={10}
-                  max={120}
-                  step={5}
-                  onChange={(e) => {
-                    setRemainingSeconds(e.target.valueAsNumber);
-                    setTotalSeconds(e.target.valueAsNumber);
-                  }}
-                ></input>
-                Seconds
-              </label>
-            )}
-          </>
-        )}
+          )}
+        </>
       </>
     );
 

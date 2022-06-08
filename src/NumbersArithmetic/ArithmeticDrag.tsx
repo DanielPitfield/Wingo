@@ -14,12 +14,6 @@ import { DraggableItem } from "./DraggableItem";
 
 interface Props {
   mode: "order" | "match";
-  gamemodeSettings?: {
-    wordLength?: boolean;
-    firstLetter?: boolean;
-    showHint?: boolean;
-    timer?: { isTimed: true; seconds: number } | { isTimed: false };
-  };
   numTiles: number;
   numOperands: 2 | 3;
   numGuesses: number;
@@ -27,7 +21,7 @@ interface Props {
   theme: Theme;
   settings: SettingsData;
   setPage: (page: Page) => void;
-  onComplete?:(wasCorrect: boolean) => void;
+  onComplete?: (wasCorrect: boolean) => void;
 }
 
 // https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array
@@ -62,15 +56,11 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
   const [resultTiles, setResultTiles] = useState<{ total: number; status: "incorrect" | "correct" | "not set" }[]>([]);
 
   // Gamemode settings
-  const [isTimerEnabled, setIsTimerEnabled] = useState(props.gamemodeSettings?.timer?.isTimed === true ?? false);
-  const DEFAULT_TIMER_VALUE = 30;
-  const [remainingSeconds, setRemainingSeconds] = useState(
-    props.gamemodeSettings?.timer?.isTimed === true ? props.gamemodeSettings?.timer.seconds : DEFAULT_TIMER_VALUE
-  );
-  const [totalSeconds, setTotalSeconds] = useState(
-    props.gamemodeSettings?.timer?.isTimed === true ? props.gamemodeSettings?.timer.seconds : DEFAULT_TIMER_VALUE
-  );
-  
+  const [isTimerEnabled, setIsTimerEnabled] = useState(true);
+  const DEFAULT_TIMER_VALUE = 100;
+  const [remainingSeconds, setRemainingSeconds] = useState(DEFAULT_TIMER_VALUE);
+  const [totalSeconds, setTotalSeconds] = useState(DEFAULT_TIMER_VALUE);
+
   // Generate the elements to configure the gamemode settings
   const gamemodeSettings = generateSettings();
 
@@ -448,49 +438,39 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
 
     settings = (
       <>
-        {/* TODO: QOL: Configure number of arithmetic expression to order/match  */
-        /*props.gamemodeSettings?.wordLength !== undefined && (
+        {/* TODO: QOL: Configure number of arithmetic expression to order/match */}
+        <label>
+          <input type="number" value={6} min={2} max={10} onChange={(e) => {}}></input>
+          Number of expressions
+        </label>
+        <>
           <label>
             <input
-              type="number"
-              value={wordLength}
-              min={props.mode === "puzzle" ? 9 : 4}
-              max={11}
-              onChange={(e) => setWordLength(e.target.valueAsNumber)}
+              checked={isTimerEnabled}
+              type="checkbox"
+              onChange={(e) => {
+                setIsTimerEnabled(!isTimerEnabled);
+              }}
             ></input>
-            Word Length
+            Timer
           </label>
-        )*/}
-        {props.gamemodeSettings?.timer !== undefined && (
-          <>
+          {isTimerEnabled && (
             <label>
               <input
-                checked={isTimerEnabled}
-                type="checkbox"
+                type="number"
+                value={totalSeconds}
+                min={10}
+                max={120}
+                step={5}
                 onChange={(e) => {
-                  setIsTimerEnabled(!isTimerEnabled);
+                  setRemainingSeconds(e.target.valueAsNumber);
+                  setTotalSeconds(e.target.valueAsNumber);
                 }}
               ></input>
-              Timer
+              Seconds
             </label>
-            {isTimerEnabled && (
-              <label>
-                <input
-                  type="number"
-                  value={totalSeconds}
-                  min={10}
-                  max={120}
-                  step={5}
-                  onChange={(e) => {
-                    setRemainingSeconds(e.target.valueAsNumber);
-                    setTotalSeconds(e.target.valueAsNumber);
-                  }}
-                ></input>
-                Seconds
-              </label>
-            )}
-          </>
-        )}
+          )}
+        </>
       </>
     );
 

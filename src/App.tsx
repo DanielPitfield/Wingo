@@ -74,7 +74,7 @@ export type Page =
   | "numbers/arithmetic_drag/match"
   | "nubble"
   | "only_connect/wall"
-  | "verbal_reasoning/match"
+  | "verbal_reasoning/sameLetters"
   | "verbal_reasoning/number_sets"
   | "verbal_reasoning/algebra"
   | "verbal_reasoning/word_codes"
@@ -335,7 +335,7 @@ export const pages: {
     isPlayable: true,
   },
   {
-    page: "verbal_reasoning/match",
+    page: "verbal_reasoning/sameLetters",
     title: "Same Letter Words",
     description: "Find the words which are made from the same letters",
     shortTitle: "Same Letter Words",
@@ -505,69 +505,9 @@ export const App: React.FC = () => {
 
     // TODO: Disable changing the settings for campaign levels!
     {
-      page: "letters_categories",
-      settings: {
-        timer: { isTimed: true, seconds: 30 },
-      },
-    },
-    {
       page: "countdown/conundrum",
       settings: {
         timer: { isTimed: true, seconds: 30 },
-      },
-    },
-    {
-      page: "numbers/arithmetic_reveal",
-      settings: {
-        timer: { isTimed: true, seconds: 10 },
-      },
-    },
-    {
-      page: "numbers/arithmetic_drag/order",
-      settings: {
-        timer: { isTimed: true, seconds: 100 },
-      },
-    },
-    {
-      page: "numbers/arithmetic_drag/match",
-      settings: {
-        timer: { isTimed: true, seconds: 100 },
-      },
-    },
-    {
-      page: "only_connect/wall",
-      settings: {
-        timer: { isTimed: true, seconds: 60 },
-      },
-    },
-    {
-      page: "verbal_reasoning/match",
-      settings: {
-        timer: { isTimed: true, seconds: 100 },
-      },
-    },
-    {
-      page: "verbal_reasoning/number_sets",
-      settings: {
-        timer: { isTimed: true, seconds: 100 },
-      },
-    },
-    {
-      page: "verbal_reasoning/algebra",
-      settings: {
-        timer: { isTimed: true, seconds: 100 },
-      },
-    },
-    {
-      page: "verbal_reasoning/word_codes",
-      settings: {
-        timer: { isTimed: true, seconds: 100 },
-      },
-    },
-    {
-      page: "verbal_reasoning/word_codes/match",
-      settings: {
-        timer: { isTimed: true, seconds: 100 },
       },
     },
     {
@@ -946,7 +886,7 @@ export const App: React.FC = () => {
           />
         );
 
-      case "verbal_reasoning/match":
+      case "verbal_reasoning/sameLetters":
         return (
           <SameLetterWords
             numMatchingWords={4}

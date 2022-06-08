@@ -12,12 +12,6 @@ import { Theme } from "../Themes";
 import { wordLengthMappingsTargets } from "../WordleConfig";
 
 interface Props {
-  gamemodeSettings?: {
-    wordLength?: boolean;
-    firstLetter?: boolean;
-    showHint?: boolean;
-    timer?: { isTimed: true; seconds: number } | { isTimed: false };
-  };
   numMatchingWords: number;
   numTotalWords: number;
   wordLength: number;
@@ -37,14 +31,10 @@ const SameLetterWords: React.FC<Props> = (props) => {
   const [remainingGuesses, setRemainingGuesses] = useState(props.numGuesses);
 
   // Gamemode settings
-  const [isTimerEnabled, setIsTimerEnabled] = useState(props.gamemodeSettings?.timer?.isTimed === true ?? false);
-  const DEFAULT_TIMER_VALUE = 30;
-  const [remainingSeconds, setRemainingSeconds] = useState(
-    props.gamemodeSettings?.timer?.isTimed === true ? props.gamemodeSettings?.timer.seconds : DEFAULT_TIMER_VALUE
-  );
-  const [totalSeconds, setTotalSeconds] = useState(
-    props.gamemodeSettings?.timer?.isTimed === true ? props.gamemodeSettings?.timer.seconds : DEFAULT_TIMER_VALUE
-  );
+  const [isTimerEnabled, setIsTimerEnabled] = useState(true);
+  const DEFAULT_TIMER_VALUE = 100;
+  const [remainingSeconds, setRemainingSeconds] = useState(DEFAULT_TIMER_VALUE);
+  const [totalSeconds, setTotalSeconds] = useState(DEFAULT_TIMER_VALUE);
 
   // Generate the elements to configure the gamemode settings
   const gamemodeSettings = generateSettings();
@@ -357,35 +347,31 @@ const SameLetterWords: React.FC<Props> = (props) => {
 
     settings = (
       <>
-        {props.gamemodeSettings?.timer !== undefined && (
-          <>
-            <label>
-              <input
-                checked={isTimerEnabled}
-                type="checkbox"
-                onChange={(e) => {
-                  setIsTimerEnabled(!isTimerEnabled);
-                }}
-              ></input>
-              Timer
-            </label>
-            {isTimerEnabled && (
-              <label>
-                <input
-                  type="number"
-                  value={totalSeconds}
-                  min={10}
-                  max={120}
-                  step={5}
-                  onChange={(e) => {
-                    setRemainingSeconds(e.target.valueAsNumber);
-                    setTotalSeconds(e.target.valueAsNumber);
-                  }}
-                ></input>
-                Seconds
-              </label>
-            )}
-          </>
+        <label>
+          <input
+            checked={isTimerEnabled}
+            type="checkbox"
+            onChange={(e) => {
+              setIsTimerEnabled(!isTimerEnabled);
+            }}
+          ></input>
+          Timer
+        </label>
+        {isTimerEnabled && (
+          <label>
+            <input
+              type="number"
+              value={totalSeconds}
+              min={10}
+              max={120}
+              step={5}
+              onChange={(e) => {
+                setRemainingSeconds(e.target.valueAsNumber);
+                setTotalSeconds(e.target.valueAsNumber);
+              }}
+            ></input>
+            Seconds
+          </label>
         )}
       </>
     );

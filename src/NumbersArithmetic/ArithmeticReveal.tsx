@@ -12,12 +12,6 @@ import { SettingsData } from "../SaveData";
 import GamemodeSettingsMenu from "../GamemodeSettingsMenu";
 
 interface Props {
-  gamemodeSettings?: {
-    wordLength?: boolean;
-    firstLetter?: boolean;
-    showHint?: boolean;
-    timer?: { isTimed: true; seconds: number } | { isTimed: false };
-  };
   revealIntervalSeconds: number;
   numTiles: number;
   numCheckpoints: number;
@@ -25,7 +19,7 @@ interface Props {
   theme: Theme;
   settings: SettingsData;
   setPage: (page: Page) => void;
-  onComplete?:(wasCorrect: boolean) => void;
+  onComplete?: (wasCorrect: boolean) => void;
 }
 
 /** */
@@ -44,15 +38,11 @@ const ArithmeticReveal: React.FC<Props> = (props) => {
   const [targetTransitioned, setTargetTransitioned] = useState(false);
 
   // Gamemode settings
-  const [isTimerEnabled, setIsTimerEnabled] = useState(props.gamemodeSettings?.timer?.isTimed === true ?? false);
-  const DEFAULT_TIMER_VALUE = 30;
-  const [remainingSeconds, setRemainingSeconds] = useState(
-    props.gamemodeSettings?.timer?.isTimed === true ? props.gamemodeSettings?.timer.seconds : DEFAULT_TIMER_VALUE
-  );
-  const [totalSeconds, setTotalSeconds] = useState(
-    props.gamemodeSettings?.timer?.isTimed === true ? props.gamemodeSettings?.timer.seconds : DEFAULT_TIMER_VALUE
-  );
-  
+  const [isTimerEnabled, setIsTimerEnabled] = useState(true);
+  const DEFAULT_TIMER_VALUE = 10;
+  const [remainingSeconds, setRemainingSeconds] = useState(DEFAULT_TIMER_VALUE);
+  const [totalSeconds, setTotalSeconds] = useState(DEFAULT_TIMER_VALUE);
+
   // Generate the elements to configure the gamemode settings
   const gamemodeSettings = generateSettings();
 
@@ -436,49 +426,39 @@ const ArithmeticReveal: React.FC<Props> = (props) => {
 
     settings = (
       <>
-        {/* TODO: QOL: Configure speed, difficulty, number of checkpoints  */
-        /*props.gamemodeSettings?.wordLength !== undefined && (
+        {/* TODO: QOL: Configure speed, difficulty, number of checkpoints */}
+        <label>
+          <input type="number" value={3} min={1} max={10} onChange={(e) => {}}></input>
+          Number of Checkpoints
+        </label>
+        <>
           <label>
             <input
-              type="number"
-              value={wordLength}
-              min={props.mode === "puzzle" ? 9 : 4}
-              max={11}
-              onChange={(e) => setWordLength(e.target.valueAsNumber)}
+              checked={isTimerEnabled}
+              type="checkbox"
+              onChange={(e) => {
+                setIsTimerEnabled(!isTimerEnabled);
+              }}
             ></input>
-            Word Length
+            Timer
           </label>
-        )*/}
-        {props.gamemodeSettings?.timer !== undefined && (
-          <>
+          {isTimerEnabled && (
             <label>
               <input
-                checked={isTimerEnabled}
-                type="checkbox"
+                type="number"
+                value={totalSeconds}
+                min={10}
+                max={120}
+                step={5}
                 onChange={(e) => {
-                  setIsTimerEnabled(!isTimerEnabled);
+                  setRemainingSeconds(e.target.valueAsNumber);
+                  setTotalSeconds(e.target.valueAsNumber);
                 }}
               ></input>
-              Timer
+              Seconds
             </label>
-            {isTimerEnabled && (
-              <label>
-                <input
-                  type="number"
-                  value={totalSeconds}
-                  min={10}
-                  max={120}
-                  step={5}
-                  onChange={(e) => {
-                    setRemainingSeconds(e.target.valueAsNumber);
-                    setTotalSeconds(e.target.valueAsNumber);
-                  }}
-                ></input>
-                Seconds
-              </label>
-            )}
-          </>
-        )}
+          )}
+        </>
       </>
     );
 
