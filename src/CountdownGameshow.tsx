@@ -119,7 +119,6 @@ export const CountdownGameshow: React.FC<Props> = (props) => {
       return (
         <CountdownLettersConfig
           mode={"countdown_letters_casual"}
-          timerConfig={{ isTimed: true, seconds: 2 }}
           defaultWordLength={9}
           page={"countdown/letters"}
           theme={props.themes[0]}
@@ -135,7 +134,6 @@ export const CountdownGameshow: React.FC<Props> = (props) => {
       return (
         <CountdownNumbersConfig
           mode={"countdown_numbers_casual"}
-          timerConfig={{ isTimed: true, seconds: 200 }}
           defaultNumOperands={6}
           defaultExpressionLength={5}
           defaultNumGuesses={5}

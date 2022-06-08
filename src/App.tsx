@@ -511,18 +511,6 @@ export const App: React.FC = () => {
       },
     },
     {
-      page: "countdown/letters",
-      settings: {
-        timer: { isTimed: true, seconds: 30 },
-      },
-    },
-    {
-      page: "countdown/numbers",
-      settings: {
-        timer: { isTimed: true, seconds: 30 },
-      },
-    },
-    {
       page: "countdown/conundrum",
       settings: {
         timer: { isTimed: true, seconds: 30 },
