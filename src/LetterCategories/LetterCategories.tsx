@@ -10,6 +10,7 @@ import { SettingsData } from "../SaveData";
 import GamemodeSettingsMenu from "../GamemodeSettingsMenu";
 
 interface Props {
+  isCampaignLevel: boolean;
   timerConfig: { isTimed: false } | { isTimed: true; remainingSeconds: number; totalSeconds: number };
   gamemodeSettings: React.ReactNode;
   wordLength: number;
@@ -154,9 +155,10 @@ const LetterCategories: React.FC<Props> = (props) => {
         )}
       </div>
 
+      {!props.isCampaignLevel && (
       <div className="gamemodeSettings">
         <GamemodeSettingsMenu>{props.gamemodeSettings}</GamemodeSettingsMenu>
-      </div>
+      </div>)}
 
       <div className="word_grid">{populateGrid(props.numGuesses, props.wordLength)}</div>
 

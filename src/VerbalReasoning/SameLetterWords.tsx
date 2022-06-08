@@ -12,6 +12,7 @@ import { Theme } from "../Themes";
 import { wordLengthMappingsTargets } from "../WordleConfig";
 
 interface Props {
+  isCampaignLevel: boolean;
   numMatchingWords: number;
   numTotalWords: number;
   wordLength: number;
@@ -384,9 +385,10 @@ const SameLetterWords: React.FC<Props> = (props) => {
       className="App same_letter_words"
       style={{ backgroundImage: `url(${props.theme.backgroundImageSrc})`, backgroundSize: "100%" }}
     >
+      {!props.isCampaignLevel && (
       <div className="gamemodeSettings">
         <GamemodeSettingsMenu>{gamemodeSettings}</GamemodeSettingsMenu>
-      </div>
+      </div>)}
       <div className="outcome">{displayOutcome()}</div>
       {inProgress && (
         <>

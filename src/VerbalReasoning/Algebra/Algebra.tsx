@@ -25,6 +25,7 @@ export type QuestionTemplate = {
 };
 
 interface Props {
+  isCampaignLevel: boolean;
   defaultTemplate?: AlgebraConfigProps;
   theme: Theme;
   settings: SettingsData;
@@ -350,9 +351,10 @@ const Algebra: React.FC<Props> = (props) => {
       className="App algebra"
       style={{ backgroundImage: `url(${props.theme.backgroundImageSrc})`, backgroundSize: "100%" }}
     >
+      {!props.isCampaignLevel && (
       <div className="gamemodeSettings">
         <GamemodeSettingsMenu>{gamemodeSettings}</GamemodeSettingsMenu>
-      </div>
+      </div>)}
       <div className="outcome">{displayOutcome()}</div>
       {displayInputs()}
       {displayQuestion()}

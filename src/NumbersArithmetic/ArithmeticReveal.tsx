@@ -12,6 +12,7 @@ import { SettingsData } from "../SaveData";
 import GamemodeSettingsMenu from "../GamemodeSettingsMenu";
 
 interface Props {
+  isCampaignLevel: boolean;
   revealIntervalSeconds: number;
   numTiles: number;
   numCheckpoints: number;
@@ -470,9 +471,10 @@ const ArithmeticReveal: React.FC<Props> = (props) => {
       className="App numbers_arithmetic"
       style={{ backgroundImage: `url(${props.theme.backgroundImageSrc})`, backgroundSize: "100%" }}
     >
+      {!props.isCampaignLevel && (
       <div className="gamemodeSettings">
         <GamemodeSettingsMenu>{gamemodeSettings}</GamemodeSettingsMenu>
-      </div>
+      </div>)}
       <div className="outcome">{displayOutcome()}</div>
       {inProgress && (
         <div className="target">

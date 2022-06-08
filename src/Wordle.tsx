@@ -398,9 +398,11 @@ const Wordle: React.FC<Props> = (props) => {
         )}
       </div>
 
-      <div className="gamemodeSettings">
-        <GamemodeSettingsMenu>{props.gamemodeSettings}</GamemodeSettingsMenu>
-      </div>
+      {/* Not a campaign level or part of gameshow preset */ !props.isCampaignLevel && !props.gameshowScore && (
+        <div className="gamemodeSettings">
+          <GamemodeSettingsMenu>{props.gamemodeSettings}</GamemodeSettingsMenu>
+        </div>
+      )}
 
       <div className="word_grid">{populateGrid(props.numGuesses, props.wordLength)}</div>
 

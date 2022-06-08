@@ -13,6 +13,7 @@ import { Theme } from "../Themes";
 import { DraggableItem } from "./DraggableItem";
 
 interface Props {
+  isCampaignLevel: boolean;
   mode: "order" | "match";
   numTiles: number;
   numOperands: 2 | 3;
@@ -482,9 +483,12 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
       className="App numbers_arithmetic"
       style={{ backgroundImage: `url(${props.theme.backgroundImageSrc})`, backgroundSize: "100%" }}
     >
-      <div className="gamemodeSettings">
-        <GamemodeSettingsMenu>{gamemodeSettings}</GamemodeSettingsMenu>
-      </div>
+      {!props.isCampaignLevel && (
+        <div className="gamemodeSettings">
+          <GamemodeSettingsMenu>{gamemodeSettings}</GamemodeSettingsMenu>
+        </div>
+      )}
+
       <div className="outcome">{displayOutcome()}</div>
       {inProgress && <MessageNotification type="default">{`Guesses left: ${remainingGuesses}`}</MessageNotification>}
       <div className="tile_row">{displayTiles()}</div>

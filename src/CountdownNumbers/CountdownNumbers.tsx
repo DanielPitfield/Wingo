@@ -13,6 +13,7 @@ import { SettingsData } from "../SaveData";
 import GamemodeSettingsMenu from "../GamemodeSettingsMenu";
 
 interface Props {
+  isCampaignLevel: boolean;
   mode: "countdown_numbers_casual" | "countdown_numbers_realistic";
   timerConfig: { isTimed: false } | { isTimed: true; remainingSeconds: number; totalSeconds: number; };
   gamemodeSettings: React.ReactNode;
@@ -345,9 +346,10 @@ const CountdownNumbers: React.FC<Props> = (props) => {
 
   return (
     <div className="App" style={{ backgroundImage: `url(${props.theme.backgroundImageSrc})`, backgroundSize: "100%" }}>
+      {!props.isCampaignLevel && !props.gameshowScore && (
       <div className="gamemodeSettings">
         <GamemodeSettingsMenu>{props.gamemodeSettings}</GamemodeSettingsMenu>
-      </div>
+      </div>)}
       
       {props.gameshowScore !== undefined && <div className="gameshow-score">{displayGameshowScore()}</div>}
 

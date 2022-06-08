@@ -498,7 +498,7 @@ export const App: React.FC = () => {
         timer: { isTimed: true, seconds: 30 },
       },
     },
-    // Although named as if it isn't, the conundrum mode is actually a mode of WordleConfig 
+    // Although named as if it isn't, the conundrum mode is actually a mode of WordleConfig
     {
       page: "countdown/conundrum",
       settings: {
@@ -507,7 +507,7 @@ export const App: React.FC = () => {
     },
 
     // TODO: Disable changing the settings for campaign levels!
-    
+
     /*
     {
       page: "puzzle/sequence",
@@ -523,7 +523,6 @@ export const App: React.FC = () => {
       },
     },
     */
-
   ];
 
   useEffect(() => {
@@ -818,6 +817,7 @@ export const App: React.FC = () => {
       case "numbers/arithmetic_reveal":
         return (
           <ArithmeticReveal
+            isCampaignLevel={false}
             revealIntervalSeconds={3}
             numTiles={4}
             numCheckpoints={3}
@@ -832,6 +832,7 @@ export const App: React.FC = () => {
       case "numbers/arithmetic_drag/order":
         return (
           <ArithmeticDrag
+            isCampaignLevel={false}
             mode="order"
             numGuesses={3}
             numTiles={6}
@@ -847,6 +848,7 @@ export const App: React.FC = () => {
       case "numbers/arithmetic_drag/match":
         return (
           <ArithmeticDrag
+            isCampaignLevel={false}
             mode="match"
             numGuesses={3}
             numTiles={6}
@@ -878,6 +880,7 @@ export const App: React.FC = () => {
       case "only_connect/wall":
         return (
           <GroupWall
+            isCampaignLevel={false}
             groupSize={4}
             numGroups={4}
             numGuesses={3}
@@ -891,6 +894,7 @@ export const App: React.FC = () => {
       case "verbal_reasoning/sameLetters":
         return (
           <SameLetterWords
+            isCampaignLevel={false}
             numMatchingWords={4}
             numTotalWords={16}
             wordLength={5}
@@ -904,15 +908,30 @@ export const App: React.FC = () => {
 
       case "verbal_reasoning/number_sets":
         return (
-          <NumberSets theme={theme} settings={settings} setPage={setPage} onComplete={commonWingoProps.onComplete} />
+          <NumberSets
+            isCampaignLevel={false}
+            theme={theme}
+            settings={settings}
+            setPage={setPage}
+            onComplete={commonWingoProps.onComplete}
+          />
         );
 
       case "verbal_reasoning/algebra":
-        return <Algebra theme={theme} settings={settings} setPage={setPage} onComplete={commonWingoProps.onComplete} />;
+        return (
+          <Algebra
+            isCampaignLevel={false}
+            theme={theme}
+            settings={settings}
+            setPage={setPage}
+            onComplete={commonWingoProps.onComplete}
+          />
+        );
 
       case "verbal_reasoning/word_codes":
         return (
           <WordCodes
+            isCampaignLevel={false}
             modeConfig={{ isMatch: false, numCodes: 3, numWordToCodeQuestions: 2, numCodeToWordQuestions: 1 }}
             numWords={4}
             wordLength={5}
@@ -928,6 +947,7 @@ export const App: React.FC = () => {
       case "verbal_reasoning/word_codes/match":
         return (
           <WordCodes
+            isCampaignLevel={false}
             modeConfig={{ isMatch: true }}
             numWords={4}
             wordLength={5}

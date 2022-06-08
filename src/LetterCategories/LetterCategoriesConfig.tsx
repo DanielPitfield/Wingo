@@ -300,6 +300,7 @@ const LetterCategoriesConfig: React.FC<Props> = (props) => {
 
   return (
     <LetterCategories
+      isCampaignLevel={props.page === "campaign/area/level"}
       timerConfig={
         isTimerEnabled
           ? {

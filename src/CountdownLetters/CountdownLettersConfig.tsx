@@ -282,6 +282,7 @@ const CountdownLettersConfig: React.FC<Props> = (props) => {
 
   return (
     <CountdownLetters
+      isCampaignLevel={props.page === "campaign/area/level"}
       mode={props.mode}
       timerConfig={
         isTimerEnabled

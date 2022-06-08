@@ -27,6 +27,7 @@ export type NumberSetTemplate = {
 };
 
 interface Props {
+  isCampaignLevel: boolean;
   defaultSet?: NumberSetConfigProps;
   theme: Theme;
   settings: SettingsData;
@@ -273,9 +274,10 @@ const NumberSets: React.FC<Props> = (props) => {
       className="App number_sets"
       style={{ backgroundImage: `url(${props.theme.backgroundImageSrc})`, backgroundSize: "100%" }}
     >
+      {!props.isCampaignLevel && (
       <div className="gamemodeSettings">
         <GamemodeSettingsMenu>{gamemodeSettings}</GamemodeSettingsMenu>
-      </div>
+      </div>)}
       <div className="outcome">{displayOutcome()}</div>
       {displayExamples()}
       {displayQuestion()}

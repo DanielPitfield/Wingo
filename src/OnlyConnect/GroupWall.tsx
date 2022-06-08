@@ -11,6 +11,7 @@ import { Theme } from "../Themes";
 import { categoryMappings } from "../WordleConfig";
 
 interface Props {
+  isCampaignLevel: boolean;
   numGroups: number;
   groupSize: number;
   numGuesses: number;
@@ -415,9 +416,10 @@ const GroupWall: React.FC<Props> = (props) => {
       className="App only_connect_wall"
       style={{ backgroundImage: `url(${props.theme.backgroundImageSrc})`, backgroundSize: "100%" }}
     >
+      {!props.isCampaignLevel && (
       <div className="gamemodeSettings">
         <GamemodeSettingsMenu>{gamemodeSettings}</GamemodeSettingsMenu>
-      </div>
+      </div>)}
       {!inProgress && <div className="outcome">{displayOutcome()}</div>}
       {Boolean(inProgress && numCompletedGroups === props.numGroups - 2) && (
         <MessageNotification type="default">{`Guesses left: ${remainingGuesses}`}</MessageNotification>

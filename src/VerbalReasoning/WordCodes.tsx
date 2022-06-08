@@ -17,6 +17,7 @@ import { getQuestionSetOutcome } from "./Algebra/Algebra";
 import GamemodeSettingsMenu from "../GamemodeSettingsMenu";
 
 interface Props {
+  isCampaignLevel: boolean;
   modeConfig:
     | { isMatch: false; numCodes: number; numWordToCodeQuestions: number; numCodeToWordQuestions: number }
     | { isMatch: true };
@@ -692,9 +693,10 @@ const WordCodes: React.FC<Props> = (props) => {
       className="App word_codes"
       style={{ backgroundImage: `url(${props.theme.backgroundImageSrc})`, backgroundSize: "100%" }}
     >
+      {!props.isCampaignLevel && (
       <div className="gamemodeSettings">
         <GamemodeSettingsMenu>{gamemodeSettings}</GamemodeSettingsMenu>
-      </div>
+      </div>)}
 
       <div className="outcome">{displayOutcome()}</div>
 
