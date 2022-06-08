@@ -3,6 +3,7 @@ import { arrayMove, OrderGroup } from "react-draggable-order";
 import { Page } from "../App";
 import { Button } from "../Button";
 import { operators, operators_symbols } from "../CountdownNumbers/CountdownNumbersConfig";
+import GamemodeSettingsMenu from "../GamemodeSettingsMenu";
 import LetterTile from "../LetterTile";
 import { MessageNotification } from "../MessageNotification";
 import { randomIntFromInterval } from "../Nubble/Nubble";
@@ -12,16 +13,16 @@ import { Theme } from "../Themes";
 import { DraggableItem } from "./DraggableItem";
 
 interface Props {
+  isCampaignLevel: boolean;
   mode: "order" | "match";
   numTiles: number;
   numOperands: 2 | 3;
   numGuesses: number;
   difficulty: "easy" | "normal" | "hard";
-  timerConfig: { isTimed: false } | { isTimed: true; seconds: number };
   theme: Theme;
   settings: SettingsData;
   setPage: (page: Page) => void;
-  onComplete?:(wasCorrect: boolean) => void;
+  onComplete?: (wasCorrect: boolean) => void;
 }
 
 // https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array
@@ -49,12 +50,20 @@ export function shuffleArray<T>(array: T[]): T[] {
 const ArithmeticDrag: React.FC<Props> = (props) => {
   const [inProgress, setInProgress] = useState(true);
   const [remainingGuesses, setRemainingGuesses] = useState(props.numGuesses);
-  const [seconds, setSeconds] = useState(props.timerConfig.isTimed ? props.timerConfig.seconds : 0);
   const [expressionTiles, setExpressionTiles] = useState<
     { expression: string; total: number; status: "incorrect" | "correct" | "not set" }[]
   >([]);
   // For the match game mode type
   const [resultTiles, setResultTiles] = useState<{ total: number; status: "incorrect" | "correct" | "not set" }[]>([]);
+
+  // Gamemode settings
+  const [isTimerEnabled, setIsTimerEnabled] = useState(true);
+  const DEFAULT_TIMER_VALUE = 100;
+  const [remainingSeconds, setRemainingSeconds] = useState(DEFAULT_TIMER_VALUE);
+  const [totalSeconds, setTotalSeconds] = useState(DEFAULT_TIMER_VALUE);
+
+  // Generate the elements to configure the gamemode settings
+  const gamemodeSettings = generateSettings();
 
   function getStartingNumberLimit(): number {
     switch (props.difficulty) {
@@ -257,13 +266,13 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
 
   // (Guess) Timer Setup
   React.useEffect(() => {
-    if (!props.timerConfig.isTimed || !inProgress) {
+    if (!isTimerEnabled || !inProgress) {
       return;
     }
 
     const timerGuess = setInterval(() => {
-      if (seconds > 0) {
-        setSeconds(seconds - 1);
+      if (remainingSeconds > 0) {
+        setRemainingSeconds(remainingSeconds - 1);
       } else {
         setInProgress(false);
       }
@@ -271,7 +280,7 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
     return () => {
       clearInterval(timerGuess);
     };
-  }, [setSeconds, seconds, props.timerConfig.isTimed]);
+  }, [setRemainingSeconds, remainingSeconds, isTimerEnabled]);
 
   /**
    * LetterTile Debug: letter={`R: ${tile.total}`}
@@ -419,11 +428,54 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
     setInProgress(true);
     setExpressionTiles([]);
     setRemainingGuesses(props.numGuesses);
-
-    if (props.timerConfig.isTimed) {
+    if (isTimerEnabled) {
       // Reset the timer if it is enabled in the game options
-      setSeconds(props.timerConfig.seconds);
+      setRemainingSeconds(totalSeconds);
     }
+  }
+
+  function generateSettings(): React.ReactNode {
+    let settings;
+
+    settings = (
+      <>
+        {/* TODO: QOL: Configure number of arithmetic expression to order/match */}
+        <label>
+          <input type="number" value={6} min={2} max={10} onChange={(e) => {}}></input>
+          Number of expressions
+        </label>
+        <>
+          <label>
+            <input
+              checked={isTimerEnabled}
+              type="checkbox"
+              onChange={(e) => {
+                setIsTimerEnabled(!isTimerEnabled);
+              }}
+            ></input>
+            Timer
+          </label>
+          {isTimerEnabled && (
+            <label>
+              <input
+                type="number"
+                value={totalSeconds}
+                min={10}
+                max={120}
+                step={5}
+                onChange={(e) => {
+                  setRemainingSeconds(e.target.valueAsNumber);
+                  setTotalSeconds(e.target.valueAsNumber);
+                }}
+              ></input>
+              Seconds
+            </label>
+          )}
+        </>
+      </>
+    );
+
+    return settings;
   }
 
   return (
@@ -431,6 +483,12 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
       className="App numbers_arithmetic"
       style={{ backgroundImage: `url(${props.theme.backgroundImageSrc})`, backgroundSize: "100%" }}
     >
+      {!props.isCampaignLevel && (
+        <div className="gamemodeSettings">
+          <GamemodeSettingsMenu>{gamemodeSettings}</GamemodeSettingsMenu>
+        </div>
+      )}
+
       <div className="outcome">{displayOutcome()}</div>
       {inProgress && <MessageNotification type="default">{`Guesses left: ${remainingGuesses}`}</MessageNotification>}
       <div className="tile_row">{displayTiles()}</div>
@@ -444,10 +502,10 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
         </Button>
       )}
       <div>
-        {props.timerConfig.isTimed && (
+        {isTimerEnabled && (
           <ProgressBar
-            progress={seconds}
-            total={props.timerConfig.seconds}
+            progress={remainingSeconds}
+            total={totalSeconds}
             display={{ type: "transition", colorTransition: GreenToRedColorTransition }}
           ></ProgressBar>
         )}

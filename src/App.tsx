@@ -74,7 +74,7 @@ export type Page =
   | "numbers/arithmetic_drag/match"
   | "nubble"
   | "only_connect/wall"
-  | "verbal_reasoning/match"
+  | "verbal_reasoning/sameLetters"
   | "verbal_reasoning/number_sets"
   | "verbal_reasoning/algebra"
   | "verbal_reasoning/word_codes"
@@ -335,7 +335,7 @@ export const pages: {
     isPlayable: true,
   },
   {
-    page: "verbal_reasoning/match",
+    page: "verbal_reasoning/sameLetters",
     title: "Same Letter Words",
     description: "Find the words which are made from the same letters",
     shortTitle: "Same Letter Words",
@@ -421,126 +421,108 @@ export const App: React.FC = () => {
   const [gold, setGold] = useState<number>(SaveData.readGold());
   const [playBackgroundMusic, stopBackgroundMusic] = useBackgroundMusic(settings, theme);
 
-  const [gameOptionToggles, setGameOptionToggles] = useState<
-    {
-      page: Page;
+  // The configurable options available for each gamemode variation of Wordle/WordleConfig
+  const gamemodeSettings: {
+    page: Page;
+    settings: {
       wordLength?: number;
       firstLetter?: boolean;
       showHint?: boolean;
-      timer?: boolean;
-    }[]
-  >([
+      timer?: { isTimed: true; seconds: number } | { isTimed: false };
+    };
+  }[] = [
     {
       page: "wingo/repeat",
-      wordLength: 5,
-      firstLetter: false,
-      showHint: true,
-      timer: false,
+      settings: {
+        wordLength: wordLength,
+        firstLetter: false,
+        showHint: false,
+        timer: { isTimed: false },
+      },
     },
     {
       page: "wingo/category",
-      firstLetter: false,
-      showHint: true,
-      timer: false,
+      settings: {
+        firstLetter: false,
+        showHint: false,
+        timer: { isTimed: false },
+      },
     },
     {
       page: "wingo/increasing",
-      firstLetter: false,
-      showHint: true,
-      timer: false,
+      settings: {
+        firstLetter: false,
+        showHint: false,
+        timer: { isTimed: false },
+      },
     },
     {
       page: "wingo/limitless",
-      firstLetter: false,
-      showHint: true,
-      timer: false,
+      settings: {
+        firstLetter: false,
+        showHint: false,
+        timer: { isTimed: false },
+      },
     },
     {
       page: "wingo/puzzle",
-      firstLetter: false,
-      showHint: true,
-      timer: false,
+      settings: {
+        wordLength: wordLength_puzzle,
+      },
     },
     {
       page: "wingo/interlinked",
-      firstLetter: false,
-      showHint: true,
-      timer: false,
+      settings: {
+        wordLength: wordLength,
+        firstLetter: false,
+        showHint: false,
+        timer: { isTimed: false },
+      },
     },
     {
       page: "wingo/crossword",
-      firstLetter: false,
-      showHint: true,
-      timer: false,
+      settings: {
+        wordLength: wordLength,
+        firstLetter: false,
+        showHint: true,
+        timer: { isTimed: false },
+      },
     },
     {
       page: "wingo/crossword/fit",
-      firstLetter: false,
-      showHint: true,
-      timer: false,
+      settings: {
+        wordLength: wordLength,
+        firstLetter: false,
+        showHint: true,
+        timer: { isTimed: true, seconds: 30 },
+      },
     },
-    {
-      page: "letters_categories",
-      firstLetter: false,
-      timer: true,
-    },
-    {
-      page: "countdown/letters",
-      timer: true,
-    },
-    {
-      page: "countdown/numbers",
-      timer: true,
-    },
+    // Although named as if it isn't, the conundrum mode is actually a mode of WordleConfig
     {
       page: "countdown/conundrum",
-      timer: true,
+      settings: {
+        timer: { isTimed: true, seconds: 30 },
+      },
     },
-    {
-      page: "numbers/arithmetic_reveal",
-      timer: true,
-    },
-    {
-      page: "numbers/arithmetic_drag/order",
-      timer: true,
-    },
-    {
-      page: "numbers/arithmetic_drag/match",
-      timer: true,
-    },
-    {
-      page: "only_connect/wall",
-      timer: true,
-    },
-    {
-      page: "verbal_reasoning/match",
-      timer: true,
-    },
-    {
-      page: "verbal_reasoning/number_sets",
-      timer: true,
-    },
-    {
-      page: "verbal_reasoning/algebra",
-      timer: true,
-    },
-    {
-      page: "verbal_reasoning/word_codes",
-      timer: true,
-    },
-    {
-      page: "verbal_reasoning/word_codes/match",
-      timer: true,
-    },
+
+    // TODO: Disable changing the settings for campaign levels!
+
+    /*
     {
       page: "puzzle/sequence",
-      timer: true,
+      settings: {
+        timer: { isTimed: true, seconds: 10 },
+      },
     },
+    // TODO: QOL: Nubble guess timer (baked into component)
     {
       page: "nubble",
-      timer: true,
+      settings: {
+        timer: { isTimed: false },
+      },
     },
-  ]);
+    */
+  ];
 
   useEffect(() => {
     const LOADING_TIMEOUT_MS = 2000;
@@ -661,6 +643,8 @@ export const App: React.FC = () => {
 
   const pageComponent = (() => {
     const commonWingoProps = {
+      gamemodeSettings: gamemodeSettings.find((x) => x.page === page)?.settings,
+      defaultWordLength: wordLength,
       saveData: saveData,
       defaultnumGuesses: numGuesses,
       enforceFullLengthGuesses: true,
@@ -738,192 +722,49 @@ export const App: React.FC = () => {
         );
 
       case "wingo/daily":
-        return (
-          <WordleConfig
-            {...commonWingoProps}
-            mode="daily"
-            firstLetterProvided={false}
-            showHint={true}
-            timerConfig={
-              gameOptionToggles.find((x) => x.page === "wingo/daily")?.timer
-                ? { isTimed: true, seconds: 30 }
-                : { isTimed: false }
-            }
-            defaultWordLength={wordLength}
-          />
-        );
+        return <WordleConfig {...commonWingoProps} mode="daily" />;
 
       case "wingo/repeat":
-        return (
-          <WordleConfig
-            {...commonWingoProps}
-            mode="repeat"
-            firstLetterProvided={gameOptionToggles.find((x) => x.page === "wingo/repeat")?.firstLetter || false}
-            showHint={gameOptionToggles.find((x) => x.page === "wingo/repeat")?.showHint || false}
-            timerConfig={
-              gameOptionToggles.find((x) => x.page === "wingo/repeat")?.timer
-                ? { isTimed: true, seconds: 30 } // TODO: Confgiure timer value
-                : { isTimed: false }
-            }
-            defaultWordLength={gameOptionToggles.find((x) => x.page === "wingo/repeat")?.wordLength || wordLength}
-          />
-        );
+        return <WordleConfig {...commonWingoProps} mode="repeat" />;
 
       case "wingo/category":
-        return (
-          <WordleConfig
-            {...commonWingoProps}
-            mode="category"
-            firstLetterProvided={gameOptionToggles.find((x) => x.page === "wingo/category")?.firstLetter || false}
-            showHint={gameOptionToggles.find((x) => x.page === "wingo/category")?.showHint || false}
-            timerConfig={
-              gameOptionToggles.find((x) => x.page === "wingo/category")?.timer
-                ? { isTimed: true, seconds: 30 }
-                : { isTimed: false }
-            }
-            defaultWordLength={wordLength}
-            enforceFullLengthGuesses={false}
-          />
-        );
+        return <WordleConfig {...commonWingoProps} mode="category" enforceFullLengthGuesses={false} />;
 
       case "wingo/increasing":
-        return (
-          <WordleConfig
-            {...commonWingoProps}
-            mode="increasing"
-            firstLetterProvided={gameOptionToggles.find((x) => x.page === "wingo/increasing")?.firstLetter || false}
-            showHint={gameOptionToggles.find((x) => x.page === "wingo/increasing")?.showHint || false}
-            timerConfig={
-              gameOptionToggles.find((x) => x.page === "wingo/increasing")?.timer
-                ? { isTimed: true, seconds: 30 }
-                : { isTimed: false }
-            }
-            defaultWordLength={wordLength_increasing}
-          />
-        );
+        return <WordleConfig {...commonWingoProps} mode="increasing" defaultWordLength={wordLength_increasing} />;
 
       case "wingo/limitless":
-        return (
-          <WordleConfig
-            {...commonWingoProps}
-            mode="limitless"
-            firstLetterProvided={gameOptionToggles.find((x) => x.page === "wingo/limitless")?.firstLetter || false}
-            showHint={gameOptionToggles.find((x) => x.page === "wingo/limitless")?.showHint || false}
-            timerConfig={
-              gameOptionToggles.find((x) => x.page === "wingo/limitless")?.timer
-                ? { isTimed: true, seconds: 30 }
-                : { isTimed: false }
-            }
-            defaultWordLength={wordLength_limitless}
-          />
-        );
+        return <WordleConfig {...commonWingoProps} mode="limitless" defaultWordLength={wordLength_limitless} />;
 
       case "wingo/puzzle":
         return (
           <WordleConfig
             {...commonWingoProps}
             mode="puzzle"
-            firstLetterProvided={gameOptionToggles.find((x) => x.page === "wingo/puzzle")?.firstLetter || false}
-            showHint={gameOptionToggles.find((x) => x.page === "wingo/puzzle")?.showHint || false}
-            timerConfig={
-              gameOptionToggles.find((x) => x.page === "wingo/puzzle")?.timer
-                ? { isTimed: true, seconds: 30 }
-                : { isTimed: false }
-            }
             defaultWordLength={wordLength_puzzle}
             defaultnumGuesses={numGuesses_puzzle}
           />
         );
 
       case "wingo/interlinked":
-        return (
-          <WordleConfig
-            {...commonWingoProps}
-            mode="interlinked"
-            firstLetterProvided={gameOptionToggles.find((x) => x.page === "wingo/interlinked")?.firstLetter || false}
-            showHint={gameOptionToggles.find((x) => x.page === "wingo/interlinked")?.showHint || false}
-            timerConfig={
-              gameOptionToggles.find((x) => x.page === "wingo/interlinked")?.timer
-                ? { isTimed: true, seconds: 30 }
-                : { isTimed: false }
-            }
-            defaultWordLength={wordLength}
-          />
-        );
+        return <WordleConfig {...commonWingoProps} mode="interlinked" />;
 
       case "wingo/crossword":
-        return (
-          <WordleConfig
-            {...commonWingoProps}
-            mode="crossword"
-            firstLetterProvided={gameOptionToggles.find((x) => x.page === "wingo/crossword")?.firstLetter || false}
-            showHint={gameOptionToggles.find((x) => x.page === "wingo/crossword")?.showHint || false}
-            timerConfig={
-              gameOptionToggles.find((x) => x.page === "wingo/crossword")?.timer
-                ? { isTimed: true, seconds: 30 }
-                : { isTimed: false }
-            }
-            defaultWordLength={wordLength}
-          />
-        );
+        return <WordleConfig {...commonWingoProps} mode="crossword" />;
 
       case "wingo/crossword/fit":
-        return (
-          <WordleConfig
-            {...commonWingoProps}
-            mode="crossword/fit"
-            firstLetterProvided={gameOptionToggles.find((x) => x.page === "wingo/crossword/fit")?.firstLetter || false}
-            showHint={gameOptionToggles.find((x) => x.page === "wingo/crossword/fit")?.showHint || false}
-            timerConfig={
-              gameOptionToggles.find((x) => x.page === "wingo/crossword/fit")?.timer
-                ? { isTimed: true, seconds: 30 }
-                : { isTimed: false }
-            }
-            defaultWordLength={wordLength}
-          />
-        );
+        return <WordleConfig {...commonWingoProps} mode="crossword/fit" />;
 
       case "wingo/crossword/weekly":
-        return (
-          <WordleConfig
-            {...commonWingoProps}
-            mode="crossword/weekly"
-            firstLetterProvided={gameOptionToggles.find((x) => x.page === "wingo/crossword")?.firstLetter || false}
-            showHint={gameOptionToggles.find((x) => x.page === "wingo/crossword")?.showHint || false}
-            timerConfig={
-              gameOptionToggles.find((x) => x.page === "wingo/crossword")?.timer
-                ? { isTimed: true, seconds: 30 }
-                : { isTimed: false }
-            }
-            defaultWordLength={wordLength}
-          />
-        );
+        return <WordleConfig {...commonWingoProps} mode="crossword/weekly" />;
 
       case "wingo/crossword/daily":
-        return (
-          <WordleConfig
-            {...commonWingoProps}
-            mode="crossword/daily"
-            firstLetterProvided={gameOptionToggles.find((x) => x.page === "wingo/crossword")?.firstLetter || false}
-            showHint={gameOptionToggles.find((x) => x.page === "wingo/crossword")?.showHint || false}
-            timerConfig={
-              gameOptionToggles.find((x) => x.page === "wingo/crossword")?.timer
-                ? { isTimed: true, seconds: 30 }
-                : { isTimed: false }
-            }
-            defaultWordLength={wordLength}
-          />
-        );
+        return <WordleConfig {...commonWingoProps} mode="crossword/daily" />;
 
       case "letters_categories":
         return (
           <LetterCategoriesConfig
             {...commonWingoProps}
-            timerConfig={
-              gameOptionToggles.find((x) => x.page === "letters_categories")?.timer
-                ? { isTimed: true, seconds: 30 }
-                : { isTimed: false }
-            }
             numCategories={5}
             theme={theme}
             enforceFullLengthGuesses={false}
@@ -934,11 +775,6 @@ export const App: React.FC = () => {
         return (
           <CountdownLettersConfig
             mode={"countdown_letters_casual"}
-            timerConfig={
-              gameOptionToggles.find((x) => x.page === "countdown/letters")?.timer
-                ? { isTimed: true, seconds: 30 }
-                : { isTimed: false }
-            }
             defaultWordLength={wordLength_countdown_letters}
             page={page}
             theme={Themes.GenericLetterCountdown}
@@ -954,11 +790,6 @@ export const App: React.FC = () => {
         return (
           <CountdownNumbersConfig
             mode={"countdown_numbers_casual"}
-            timerConfig={
-              gameOptionToggles.find((x) => x.page === "countdown/numbers")?.timer
-                ? { isTimed: true, seconds: 30 }
-                : { isTimed: false }
-            }
             defaultNumOperands={countdown_numbers_NumOperands}
             defaultExpressionLength={countdown_numbers_ExpressionLength}
             defaultNumGuesses={countdown_numbers_NumGuesses}
@@ -977,13 +808,6 @@ export const App: React.FC = () => {
           <WordleConfig
             {...commonWingoProps}
             mode="conundrum"
-            firstLetterProvided={gameOptionToggles.find((x) => x.page === "countdown/conundrum")?.firstLetter || false}
-            showHint={gameOptionToggles.find((x) => x.page === "countdown/conundrum")?.showHint || false}
-            timerConfig={
-              gameOptionToggles.find((x) => x.page === "countdown/conundrum")?.timer
-                ? { isTimed: true, seconds: 30 }
-                : { isTimed: false }
-            }
             defaultWordLength={wordLength_countdown_letters}
             defaultnumGuesses={numGuesses_puzzle}
           />
@@ -992,15 +816,11 @@ export const App: React.FC = () => {
       case "numbers/arithmetic_reveal":
         return (
           <ArithmeticReveal
+            isCampaignLevel={false}
             revealIntervalSeconds={3}
             numTiles={4}
             numCheckpoints={3}
             difficulty={"easy"}
-            timerConfig={
-              gameOptionToggles.find((x) => x.page === "numbers/arithmetic_reveal")?.timer
-                ? { isTimed: true, seconds: 10 }
-                : { isTimed: false }
-            }
             theme={theme}
             settings={settings}
             setPage={setPage}
@@ -1011,16 +831,12 @@ export const App: React.FC = () => {
       case "numbers/arithmetic_drag/order":
         return (
           <ArithmeticDrag
+            isCampaignLevel={false}
             mode="order"
             numGuesses={3}
             numTiles={6}
             numOperands={3}
             difficulty={"easy"}
-            timerConfig={
-              gameOptionToggles.find((x) => x.page === "numbers/arithmetic_drag/order")?.timer
-                ? { isTimed: true, seconds: 60 }
-                : { isTimed: false }
-            }
             theme={theme}
             settings={settings}
             setPage={setPage}
@@ -1031,16 +847,12 @@ export const App: React.FC = () => {
       case "numbers/arithmetic_drag/match":
         return (
           <ArithmeticDrag
+            isCampaignLevel={false}
             mode="match"
             numGuesses={3}
             numTiles={6}
             numOperands={3}
             difficulty={"easy"}
-            timerConfig={
-              gameOptionToggles.find((x) => x.page === "numbers/arithmetic_drag/match")?.timer
-                ? { isTimed: true, seconds: 60 }
-                : { isTimed: false }
-            }
             theme={theme}
             settings={settings}
             setPage={setPage}
@@ -1067,14 +879,10 @@ export const App: React.FC = () => {
       case "only_connect/wall":
         return (
           <GroupWall
+            isCampaignLevel={false}
             groupSize={4}
             numGroups={4}
             numGuesses={3}
-            timerConfig={
-              gameOptionToggles.find((x) => x.page === "only_connect/wall")?.timer
-                ? { isTimed: true, seconds: 100 }
-                : { isTimed: false }
-            }
             theme={theme}
             settings={settings}
             setPage={setPage}
@@ -1082,18 +890,14 @@ export const App: React.FC = () => {
           />
         );
 
-      case "verbal_reasoning/match":
+      case "verbal_reasoning/sameLetters":
         return (
           <SameLetterWords
+            isCampaignLevel={false}
             numMatchingWords={4}
             numTotalWords={16}
             wordLength={5}
             numGuesses={20}
-            timerConfig={
-              gameOptionToggles.find((x) => x.page === "verbal_reasoning/match")?.timer
-                ? { isTimed: true, seconds: 100 }
-                : { isTimed: false }
-            }
             theme={theme}
             settings={settings}
             setPage={setPage}
@@ -1104,11 +908,7 @@ export const App: React.FC = () => {
       case "verbal_reasoning/number_sets":
         return (
           <NumberSets
-            timerConfig={
-              gameOptionToggles.find((x) => x.page === "verbal_reasoning/number_sets")?.timer
-                ? { isTimed: true, seconds: 100 }
-                : { isTimed: false }
-            }
+            isCampaignLevel={false}
             theme={theme}
             settings={settings}
             setPage={setPage}
@@ -1119,11 +919,7 @@ export const App: React.FC = () => {
       case "verbal_reasoning/algebra":
         return (
           <Algebra
-            timerConfig={
-              gameOptionToggles.find((x) => x.page === "verbal_reasoning/algebra")?.timer
-                ? { isTimed: true, seconds: 100 }
-                : { isTimed: false }
-            }
+            isCampaignLevel={false}
             theme={theme}
             settings={settings}
             setPage={setPage}
@@ -1134,16 +930,12 @@ export const App: React.FC = () => {
       case "verbal_reasoning/word_codes":
         return (
           <WordCodes
+            isCampaignLevel={false}
             modeConfig={{ isMatch: false, numCodes: 3, numWordToCodeQuestions: 2, numCodeToWordQuestions: 1 }}
             numWords={4}
             wordLength={5}
             numAdditionalLetters={2}
             numGuesses={3}
-            timerConfig={
-              gameOptionToggles.find((x) => x.page === "verbal_reasoning/word_codes")?.timer
-                ? { isTimed: true, seconds: 100 }
-                : { isTimed: false }
-            }
             theme={theme}
             settings={settings}
             setPage={setPage}
@@ -1154,16 +946,12 @@ export const App: React.FC = () => {
       case "verbal_reasoning/word_codes/match":
         return (
           <WordCodes
+            isCampaignLevel={false}
             modeConfig={{ isMatch: true }}
             numWords={4}
             wordLength={5}
             numAdditionalLetters={2}
             numGuesses={3}
-            timerConfig={
-              gameOptionToggles.find((x) => x.page === "verbal_reasoning/word_codes/match")?.timer
-                ? { isTimed: true, seconds: 100 }
-                : { isTimed: false }
-            }
             theme={theme}
             settings={settings}
             setPage={setPage}

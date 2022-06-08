@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Page } from "../App";
 import { Button } from "../Button";
+import GamemodeSettingsMenu from "../GamemodeSettingsMenu";
 import { MessageNotification } from "../MessageNotification";
 import { shuffleArray } from "../NumbersArithmetic/ArithmeticDrag";
 import ProgressBar, { GreenToRedColorTransition } from "../ProgressBar";
@@ -10,14 +11,14 @@ import { Theme } from "../Themes";
 import { categoryMappings } from "../WordleConfig";
 
 interface Props {
+  isCampaignLevel: boolean;
   numGroups: number;
   groupSize: number;
   numGuesses: number;
-  timerConfig: { isTimed: false } | { isTimed: true; seconds: number };
   theme: Theme;
   settings: SettingsData;
   setPage: (page: Page) => void;
-  onComplete?:(wasCorrect: boolean) => void;
+  onComplete?: (wasCorrect: boolean) => void;
 }
 
 export function getPrettyWord(text: string): string {
@@ -49,7 +50,17 @@ const GroupWall: React.FC<Props> = (props) => {
   const [selectedWords, setSelectedWords] = useState<{ word: string; categoryName: string }[]>([]);
   const [numCompletedGroups, setNumCompletedGroups] = useState(0);
   const [remainingGuesses, setRemainingGuesses] = useState(props.numGuesses);
-  const [seconds, setSeconds] = useState(props.timerConfig.isTimed ? props.timerConfig.seconds : 0);
+
+  // Gamemode settings
+  const [isTimerEnabled, setIsTimerEnabled] = useState(true);
+  const DEFAULT_TIMER_VALUE = 60;
+  const [remainingSeconds, setRemainingSeconds] = useState(DEFAULT_TIMER_VALUE);
+  const [totalSeconds, setTotalSeconds] = useState(DEFAULT_TIMER_VALUE);
+
+  // Generate the elements to configure the gamemode settings
+  const gamemodeSettings = generateSettings();
+
+  // Sounds
   const [playCorrectChimeSoundEffect] = useCorrectChime(props.settings);
   const [playFailureChimeSoundEffect] = useFailureChime(props.settings);
   const [playLightPingSoundEffect] = useLightPingChime(props.settings);
@@ -57,13 +68,13 @@ const GroupWall: React.FC<Props> = (props) => {
 
   // (Guess) Timer Setup
   React.useEffect(() => {
-    if (!props.timerConfig.isTimed || !inProgress) {
+    if (!isTimerEnabled || !inProgress) {
       return;
     }
 
     const timerGuess = setInterval(() => {
-      if (seconds > 0) {
-        setSeconds(seconds - 1);
+      if (remainingSeconds > 0) {
+        setRemainingSeconds(remainingSeconds - 1);
       } else {
         playFailureChimeSoundEffect();
         setInProgress(false);
@@ -73,7 +84,7 @@ const GroupWall: React.FC<Props> = (props) => {
     return () => {
       clearInterval(timerGuess);
     };
-  }, [setSeconds, seconds, props.timerConfig.isTimed]);
+  }, [setRemainingSeconds, remainingSeconds, isTimerEnabled]);
 
   // Populate grid/wall
   React.useEffect(() => {
@@ -357,10 +368,47 @@ const GroupWall: React.FC<Props> = (props) => {
     setNumCompletedGroups(0);
     setRemainingGuesses(props.numGuesses);
 
-    if (props.timerConfig.isTimed) {
+    if (isTimerEnabled) {
       // Reset the timer if it is enabled in the game options
-      setSeconds(props.timerConfig.seconds);
+      setRemainingSeconds(totalSeconds);
     }
+  }
+
+  function generateSettings(): React.ReactNode {
+    let settings;
+
+    settings = (
+      <>
+        <label>
+          <input
+            checked={isTimerEnabled}
+            type="checkbox"
+            onChange={(e) => {
+              setIsTimerEnabled(!isTimerEnabled);
+            }}
+          ></input>
+          Timer
+        </label>
+        {isTimerEnabled && (
+          <label>
+            <input
+              type="number"
+              value={totalSeconds}
+              min={10}
+              max={120}
+              step={5}
+              onChange={(e) => {
+                setRemainingSeconds(e.target.valueAsNumber);
+                setTotalSeconds(e.target.valueAsNumber);
+              }}
+            ></input>
+            Seconds
+          </label>
+        )}
+      </>
+    );
+
+    return settings;
   }
 
   return (
@@ -368,16 +416,20 @@ const GroupWall: React.FC<Props> = (props) => {
       className="App only_connect_wall"
       style={{ backgroundImage: `url(${props.theme.backgroundImageSrc})`, backgroundSize: "100%" }}
     >
+      {!props.isCampaignLevel && (
+      <div className="gamemodeSettings">
+        <GamemodeSettingsMenu>{gamemodeSettings}</GamemodeSettingsMenu>
+      </div>)}
       {!inProgress && <div className="outcome">{displayOutcome()}</div>}
       {Boolean(inProgress && numCompletedGroups === props.numGroups - 2) && (
         <MessageNotification type="default">{`Guesses left: ${remainingGuesses}`}</MessageNotification>
       )}
       <div className="only_connect_wall">{displayGrid()}</div>
       <div>
-        {props.timerConfig.isTimed && (
+        {isTimerEnabled && (
           <ProgressBar
-            progress={seconds}
-            total={props.timerConfig.seconds}
+            progress={remainingSeconds}
+            total={totalSeconds}
             display={{ type: "transition", colorTransition: GreenToRedColorTransition }}
           ></ProgressBar>
         )}

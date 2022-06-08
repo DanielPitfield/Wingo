@@ -8,7 +8,6 @@ import { Theme } from "../Themes";
 
 interface Props {
   enforceFullLengthGuesses: boolean;
-  timerConfig: { isTimed: false } | { isTimed: true; seconds: number };
   numCategories: number;
   defaultnumGuesses: number;
   finishingButtonText?: string;
@@ -33,17 +32,25 @@ const LetterCategoriesConfig: React.FC<Props> = (props) => {
   const [categoryNames, setCategoryNames] = useState<string[]>([]);
   const [categoryWordTargets, setCategoryWordTargets] = useState<string[][]>([[]]);
   const [hasSubmitLetter, sethasSubmitLetter] = useState(false);
-  const [seconds, setSeconds] = useState(props.timerConfig.isTimed ? props.timerConfig.seconds : 0);
+
+  // Gamemode settings
+  const [isTimerEnabled, setIsTimerEnabled] = useState(true);
+  const DEFAULT_TIMER_VALUE = 30;
+  const [remainingSeconds, setRemainingSeconds] = useState(DEFAULT_TIMER_VALUE);
+  const [totalSeconds, setTotalSeconds] = useState(DEFAULT_TIMER_VALUE);
+
+  // Generate the elements to configure the gamemode settings
+  const gamemodeSettings = generateSettings();
 
   // Timer Setup
   React.useEffect(() => {
-    if (!props.timerConfig.isTimed) {
+    if (!isTimerEnabled) {
       return;
     }
 
     const timer = setInterval(() => {
-      if (seconds > 0) {
-        setSeconds(seconds - 1);
+      if (remainingSeconds > 0) {
+        setRemainingSeconds(remainingSeconds - 1);
       } else {
         setinProgress(false);
       }
@@ -51,7 +58,7 @@ const LetterCategoriesConfig: React.FC<Props> = (props) => {
     return () => {
       clearInterval(timer);
     };
-  }, [setSeconds, seconds, props.timerConfig.isTimed]);
+  }, [setRemainingSeconds, remainingSeconds, isTimerEnabled]);
 
   // targetWord generation
   React.useEffect(() => {
@@ -150,9 +157,9 @@ const LetterCategoriesConfig: React.FC<Props> = (props) => {
     setWordIndex(0);
     setinProgress(true);
     sethasSubmitLetter(false);
-    if (props.timerConfig.isTimed) {
+    if (isTimerEnabled) {
       // Reset the timer if it is enabled in the game options
-      setSeconds(props.timerConfig.seconds);
+      setRemainingSeconds(totalSeconds);
     }
   }
 
@@ -254,17 +261,56 @@ const LetterCategoriesConfig: React.FC<Props> = (props) => {
     }
   }
 
+  function generateSettings(): React.ReactNode {
+    let settings;
+
+    settings = (
+      <>
+        <label>
+          <input
+            checked={isTimerEnabled}
+            type="checkbox"
+            onChange={(e) => {
+              setIsTimerEnabled(!isTimerEnabled);
+            }}
+          ></input>
+          Timer
+        </label>
+        {isTimerEnabled && (
+          <label>
+            <input
+              type="number"
+              value={totalSeconds}
+              min={10}
+              max={120}
+              step={5}
+              onChange={(e) => {
+                setRemainingSeconds(e.target.valueAsNumber);
+                setTotalSeconds(e.target.valueAsNumber);
+              }}
+            ></input>
+            Seconds
+          </label>
+        )}
+      </>
+    );
+
+    return settings;
+  }
+
   return (
     <LetterCategories
+      isCampaignLevel={props.page === "campaign/area/level"}
       timerConfig={
-        props.timerConfig.isTimed
+        isTimerEnabled
           ? {
               isTimed: true,
-              elapsedSeconds: seconds,
-              totalSeconds: props.timerConfig.seconds,
+              remainingSeconds: remainingSeconds,
+              totalSeconds: totalSeconds,
             }
           : { isTimed: false }
       }
+      gamemodeSettings={gamemodeSettings}
       wordLength={wordLength}
       numGuesses={numGuesses}
       guesses={guesses}

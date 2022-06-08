@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Page } from "../../App";
 import { Button } from "../../Button";
+import GamemodeSettingsMenu from "../../GamemodeSettingsMenu";
 import { DEFAULT_ALPHABET, Keyboard } from "../../Keyboard";
 import LetterTile from "../../LetterTile";
 import { MessageNotification } from "../../MessageNotification";
@@ -24,8 +25,8 @@ export type QuestionTemplate = {
 };
 
 interface Props {
+  isCampaignLevel: boolean;
   defaultTemplate?: AlgebraConfigProps;
-  timerConfig: { isTimed: false } | { isTimed: true; seconds: number };
   theme: Theme;
   settings: SettingsData;
   setPage: (page: Page) => void;
@@ -57,7 +58,17 @@ const Algebra: React.FC<Props> = (props) => {
   const [algebraTemplate, setAlgebraTemplate] = useState<AlgebraConfigProps | undefined>(props.defaultTemplate);
   const [questionNumber, setQuestionNumber] = useState(0);
   const [numCorrectAnswers, setNumCorrectAnswers] = useState(0);
-  const [seconds, setSeconds] = useState(props.timerConfig.isTimed ? props.timerConfig.seconds : 0);
+
+  // Gamemode settings
+  const [isTimerEnabled, setIsTimerEnabled] = useState(true);
+  const DEFAULT_TIMER_VALUE = 100;
+  const [remainingSeconds, setRemainingSeconds] = useState(DEFAULT_TIMER_VALUE);
+  const [totalSeconds, setTotalSeconds] = useState(DEFAULT_TIMER_VALUE);
+
+  // Generate the elements to configure the gamemode settings
+  const gamemodeSettings = generateSettings();
+
+  // Sounds
   const [playCorrectChimeSoundEffect] = useCorrectChime(props.settings);
   const [playFailureChimeSoundEffect] = useFailureChime(props.settings);
   const [playLightPingSoundEffect] = useLightPingChime(props.settings);
@@ -65,13 +76,13 @@ const Algebra: React.FC<Props> = (props) => {
 
   // (Guess) Timer Setup
   React.useEffect(() => {
-    if (!props.timerConfig.isTimed || !inProgress) {
+    if (!isTimerEnabled || !inProgress) {
       return;
     }
 
     const timerGuess = setInterval(() => {
-      if (seconds > 0) {
-        setSeconds(seconds - 1);
+      if (remainingSeconds > 0) {
+        setRemainingSeconds(remainingSeconds - 1);
       } else {
         playFailureChimeSoundEffect();
         setInProgress(false);
@@ -81,7 +92,7 @@ const Algebra: React.FC<Props> = (props) => {
     return () => {
       clearInterval(timerGuess);
     };
-  }, [setSeconds, seconds, props.timerConfig.isTimed]);
+  }, [setRemainingSeconds, remainingSeconds, isTimerEnabled]);
 
   // Picks a random template if one was not passed in through the props
   React.useEffect(() => {
@@ -249,9 +260,9 @@ const Algebra: React.FC<Props> = (props) => {
     setQuestionNumber(0);
     setNumCorrectAnswers(0);
 
-    if (props.timerConfig.isTimed) {
+    if (isTimerEnabled) {
       // Reset the timer if it is enabled in the game options
-      setSeconds(props.timerConfig.seconds);
+      setRemainingSeconds(totalSeconds);
     }
   }
 
@@ -298,11 +309,52 @@ const Algebra: React.FC<Props> = (props) => {
     setGuess(`${guess}${number}`);
   }
 
+  function generateSettings(): React.ReactNode {
+    let settings;
+
+    settings = (
+      <>
+        <label>
+          <input
+            checked={isTimerEnabled}
+            type="checkbox"
+            onChange={(e) => {
+              setIsTimerEnabled(!isTimerEnabled);
+            }}
+          ></input>
+          Timer
+        </label>
+        {isTimerEnabled && (
+          <label>
+            <input
+              type="number"
+              value={totalSeconds}
+              min={10}
+              max={120}
+              step={5}
+              onChange={(e) => {
+                setRemainingSeconds(e.target.valueAsNumber);
+                setTotalSeconds(e.target.valueAsNumber);
+              }}
+            ></input>
+            Seconds
+          </label>
+        )}
+      </>
+    );
+
+    return settings;
+  }
+
   return (
     <div
       className="App algebra"
       style={{ backgroundImage: `url(${props.theme.backgroundImageSrc})`, backgroundSize: "100%" }}
     >
+      {!props.isCampaignLevel && (
+      <div className="gamemodeSettings">
+        <GamemodeSettingsMenu>{gamemodeSettings}</GamemodeSettingsMenu>
+      </div>)}
       <div className="outcome">{displayOutcome()}</div>
       {displayInputs()}
       {displayQuestion()}
@@ -347,10 +399,10 @@ const Algebra: React.FC<Props> = (props) => {
         />
       )}
       <div>
-        {props.timerConfig.isTimed && (
+        {isTimerEnabled && (
           <ProgressBar
-            progress={seconds}
-            total={props.timerConfig.seconds}
+            progress={remainingSeconds}
+            total={totalSeconds}
             display={{ type: "transition", colorTransition: GreenToRedColorTransition }}
           ></ProgressBar>
         )}

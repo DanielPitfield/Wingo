@@ -7,9 +7,12 @@ import { MessageNotification } from "../MessageNotification";
 import ProgressBar, { GreenToRedColorTransition } from "../ProgressBar";
 import { Theme } from "../Themes";
 import { SettingsData } from "../SaveData";
+import GamemodeSettingsMenu from "../GamemodeSettingsMenu";
 
 interface Props {
-  timerConfig: { isTimed: false } | { isTimed: true; totalSeconds: number; elapsedSeconds: number };
+  isCampaignLevel: boolean;
+  timerConfig: { isTimed: false } | { isTimed: true; remainingSeconds: number; totalSeconds: number };
+  gamemodeSettings: React.ReactNode;
   wordLength: number;
   numGuesses: number;
   guesses: string[];
@@ -152,6 +155,11 @@ const LetterCategories: React.FC<Props> = (props) => {
         )}
       </div>
 
+      {!props.isCampaignLevel && (
+      <div className="gamemodeSettings">
+        <GamemodeSettingsMenu>{props.gamemodeSettings}</GamemodeSettingsMenu>
+      </div>)}
+
       <div className="word_grid">{populateGrid(props.numGuesses, props.wordLength)}</div>
 
       <div className="keyboard">
@@ -173,7 +181,7 @@ const LetterCategories: React.FC<Props> = (props) => {
       <div>
         {props.timerConfig.isTimed && (
           <ProgressBar
-            progress={props.timerConfig.elapsedSeconds}
+            progress={props.timerConfig.remainingSeconds}
             total={props.timerConfig.totalSeconds}
             display={{ type: "transition", colorTransition: GreenToRedColorTransition }}
           ></ProgressBar>

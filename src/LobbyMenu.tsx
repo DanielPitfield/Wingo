@@ -100,7 +100,7 @@ export const LobbyMenu: React.FC<Props> = (props) => {
           <ul className="widgets">
             {renderGameModeTile("puzzle/sequence")}
             {renderGameModeTile("only_connect/wall")}
-            {renderGameModeTile("verbal_reasoning/match")}
+            {renderGameModeTile("verbal_reasoning/sameLetters")}
             {renderGameModeTile("verbal_reasoning/number_sets")}
             {renderGameModeTile("verbal_reasoning/algebra")}
             {renderGameModeTile("verbal_reasoning/word_codes")}

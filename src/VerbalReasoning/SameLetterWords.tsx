@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Page } from "../App";
 import { Button } from "../Button";
+import GamemodeSettingsMenu from "../GamemodeSettingsMenu";
 import { MessageNotification } from "../MessageNotification";
 import { shuffleArray } from "../NumbersArithmetic/ArithmeticDrag";
 import { getPrettyWord } from "../OnlyConnect/GroupWall";
@@ -11,15 +12,15 @@ import { Theme } from "../Themes";
 import { wordLengthMappingsTargets } from "../WordleConfig";
 
 interface Props {
+  isCampaignLevel: boolean;
   numMatchingWords: number;
   numTotalWords: number;
   wordLength: number;
   numGuesses: number;
-  timerConfig: { isTimed: false } | { isTimed: true; seconds: number };
   theme: Theme;
   settings: SettingsData;
   setPage: (page: Page) => void;
-  onComplete?:(wasCorrect: boolean) => void;
+  onComplete?: (wasCorrect: boolean) => void;
 }
 
 /** */
@@ -29,7 +30,17 @@ const SameLetterWords: React.FC<Props> = (props) => {
   const [validWords, setValidWords] = useState<string[]>([]);
   const [gridWords, setGridWords] = useState<string[]>([]);
   const [remainingGuesses, setRemainingGuesses] = useState(props.numGuesses);
-  const [seconds, setSeconds] = useState(props.timerConfig.isTimed ? props.timerConfig.seconds : 0);
+
+  // Gamemode settings
+  const [isTimerEnabled, setIsTimerEnabled] = useState(true);
+  const DEFAULT_TIMER_VALUE = 100;
+  const [remainingSeconds, setRemainingSeconds] = useState(DEFAULT_TIMER_VALUE);
+  const [totalSeconds, setTotalSeconds] = useState(DEFAULT_TIMER_VALUE);
+
+  // Generate the elements to configure the gamemode settings
+  const gamemodeSettings = generateSettings();
+
+  // Sounds
   const [playCorrectChimeSoundEffect] = useCorrectChime(props.settings);
   const [playFailureChimeSoundEffect] = useFailureChime(props.settings);
   const [playLightPingSoundEffect] = useLightPingChime(props.settings);
@@ -37,13 +48,13 @@ const SameLetterWords: React.FC<Props> = (props) => {
 
   // (Guess) Timer Setup
   React.useEffect(() => {
-    if (!props.timerConfig.isTimed || !inProgress) {
+    if (!isTimerEnabled || !inProgress) {
       return;
     }
 
     const timerGuess = setInterval(() => {
-      if (seconds > 0) {
-        setSeconds(seconds - 1);
+      if (remainingSeconds > 0) {
+        setRemainingSeconds(remainingSeconds - 1);
       } else {
         playFailureChimeSoundEffect();
         setInProgress(false);
@@ -53,7 +64,7 @@ const SameLetterWords: React.FC<Props> = (props) => {
     return () => {
       clearInterval(timerGuess);
     };
-  }, [setSeconds, seconds, props.timerConfig.isTimed]);
+  }, [setRemainingSeconds, remainingSeconds, isTimerEnabled]);
 
   // Populate grid/wall
   React.useEffect(() => {
@@ -235,7 +246,7 @@ const SameLetterWords: React.FC<Props> = (props) => {
     return (
       <div className="only-connect-row" key={rowNumber}>
         {Array.from({ length: props.numMatchingWords }).map((_, i) => {
-          const index = (rowNumber * props.numMatchingWords) + i;
+          const index = rowNumber * props.numMatchingWords + i;
           const word = gridWords[index];
 
           if (!word) {
@@ -267,7 +278,7 @@ const SameLetterWords: React.FC<Props> = (props) => {
 
   function displayGrid() {
     var Grid = [];
-    
+
     // The number of total words divided by the number of words that make up the correct selection (rounded up)
     const numRows = Math.ceil(props.numTotalWords / props.numMatchingWords);
 
@@ -326,10 +337,47 @@ const SameLetterWords: React.FC<Props> = (props) => {
     setGridWords(getGridWords());
     setRemainingGuesses(props.numGuesses);
 
-    if (props.timerConfig.isTimed) {
+    if (isTimerEnabled) {
       // Reset the timer if it is enabled in the game options
-      setSeconds(props.timerConfig.seconds);
+      setRemainingSeconds(totalSeconds);
     }
+  }
+
+  function generateSettings(): React.ReactNode {
+    let settings;
+
+    settings = (
+      <>
+        <label>
+          <input
+            checked={isTimerEnabled}
+            type="checkbox"
+            onChange={(e) => {
+              setIsTimerEnabled(!isTimerEnabled);
+            }}
+          ></input>
+          Timer
+        </label>
+        {isTimerEnabled && (
+          <label>
+            <input
+              type="number"
+              value={totalSeconds}
+              min={10}
+              max={120}
+              step={5}
+              onChange={(e) => {
+                setRemainingSeconds(e.target.valueAsNumber);
+                setTotalSeconds(e.target.valueAsNumber);
+              }}
+            ></input>
+            Seconds
+          </label>
+        )}
+      </>
+    );
+
+    return settings;
   }
 
   return (
@@ -337,6 +385,10 @@ const SameLetterWords: React.FC<Props> = (props) => {
       className="App same_letter_words"
       style={{ backgroundImage: `url(${props.theme.backgroundImageSrc})`, backgroundSize: "100%" }}
     >
+      {!props.isCampaignLevel && (
+      <div className="gamemodeSettings">
+        <GamemodeSettingsMenu>{gamemodeSettings}</GamemodeSettingsMenu>
+      </div>)}
       <div className="outcome">{displayOutcome()}</div>
       {inProgress && (
         <>
@@ -350,10 +402,10 @@ const SameLetterWords: React.FC<Props> = (props) => {
       )}
       <div className="grid">{displayGrid()}</div>
       <div>
-        {props.timerConfig.isTimed && (
+        {isTimerEnabled && (
           <ProgressBar
-            progress={seconds}
-            total={props.timerConfig.seconds}
+            progress={remainingSeconds}
+            total={totalSeconds}
             display={{ type: "transition", colorTransition: GreenToRedColorTransition }}
           ></ProgressBar>
         )}

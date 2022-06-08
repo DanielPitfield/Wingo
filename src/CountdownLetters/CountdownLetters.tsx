@@ -9,10 +9,13 @@ import { isWordValid } from "./CountdownLettersConfig";
 import { wordLengthMappingsGuessable } from "../WordleConfig";
 import { Theme } from "../Themes";
 import { SaveData, SettingsData } from "../SaveData";
+import GamemodeSettingsMenu from "../GamemodeSettingsMenu";
 
 interface Props {
+  isCampaignLevel: boolean;
   mode: "countdown_letters_casual" | "countdown_letters_realistic";
-  timerConfig: { isTimed: false } | { isTimed: true; totalSeconds: number; elapsedSeconds: number };
+  timerConfig: { isTimed: false } | { isTimed: true; remainingSeconds: number; totalSeconds: number };
+  gamemodeSettings: React.ReactNode;
   wordLength: number;
   guesses: string[];
   hasTimerEnded: boolean;
@@ -71,9 +74,6 @@ const CountdownLetters: React.FC<Props> = (props) => {
         countdownWord: props.countdownWord,
         guesses: props.guesses,
         mode: props.mode,
-        timerConfig: props.timerConfig.isTimed
-          ? { isTimed: true, seconds: props.timerConfig.totalSeconds }
-          : { isTimed: false },
         defaultWordLength: props.wordLength,
       },
     });
@@ -384,9 +384,6 @@ const CountdownLetters: React.FC<Props> = (props) => {
           countdownWord: props.countdownWord,
           guesses: props.guesses,
           mode: props.mode,
-          timerConfig: props.timerConfig.isTimed
-            ? { isTimed: true, seconds: props.timerConfig.totalSeconds }
-            : { isTimed: false },
           defaultWordLength: props.wordLength,
         },
       });
@@ -425,6 +422,12 @@ const CountdownLetters: React.FC<Props> = (props) => {
 
   return (
     <div className="App" style={{ backgroundImage: `url(${props.theme.backgroundImageSrc})`, backgroundSize: "100%" }}>
+      {!props.isCampaignLevel && !props.gameshowScore && (
+        <div className="gamemodeSettings">
+          <GamemodeSettingsMenu>{props.gamemodeSettings}</GamemodeSettingsMenu>
+        </div>
+      )}
+
       {props.gameshowScore !== undefined && <div className="gameshow-score">{displayGameshowScore()}</div>}
 
       <div>{displayOutcome()}</div>
@@ -475,7 +478,7 @@ const CountdownLetters: React.FC<Props> = (props) => {
       <div>
         {props.timerConfig.isTimed && (
           <ProgressBar
-            progress={props.timerConfig.elapsedSeconds}
+            progress={props.timerConfig.remainingSeconds}
             total={props.timerConfig.totalSeconds}
             display={{ type: "transition", colorTransition: GreenToRedColorTransition }}
           ></ProgressBar>
