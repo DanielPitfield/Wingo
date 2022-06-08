@@ -269,8 +269,6 @@ const WordleConfig: React.FC<Props> = (props) => {
   const [totalSeconds, setTotalSeconds] = useState(
     props.gamemodeSettings?.timer?.isTimed === true ? props.gamemodeSettings?.timer.seconds : DEFAULT_TIMER_VALUE
   );
-  
-  
 
   const [currentWord, setCurrentWord] = useState("");
   const [wordIndex, setWordIndex] = useState(0);
@@ -281,7 +279,7 @@ const WordleConfig: React.FC<Props> = (props) => {
     // Take highest of either defaultWordLength and targetWord length (if specified)
     Math.max.apply(
       undefined,
-      [props.gamemodeSettings?.wordLength!, props.targetWord?.length!].filter((x) => x)
+      [props.defaultWordLength!, props.gamemodeSettings?.wordLength!, props.targetWord?.length!].filter((x) => x)
     )
   );
   const [conundrum, setConundrum] = useState("");
@@ -334,7 +332,7 @@ const WordleConfig: React.FC<Props> = (props) => {
       status: "" | "contains" | "correct" | "not set" | "not in word";
     }[]
   >(defaultLetterStatuses);
-  
+
   // Generate the elements to configure the gamemode settings
   const gamemodeSettings = generateSettings();
 
@@ -426,8 +424,34 @@ const WordleConfig: React.FC<Props> = (props) => {
           return;
         }
 
+        // Choose a target word based on length
+        targetWordArray = wordLengthMappingsTargets
+          .find((x) => x.value === wordLength)
+          ?.array.map((x) => ({ word: x, hint: "" }))!;
+
+        // Choose random word
+        newTarget = targetWordArray[Math.round(Math.random() * (targetWordArray.length - 1))];
+
+        console.log(
+          `%cMode:%c ${props.mode}\n%cHint:%c ${newTarget.hint || "-"}\n%cWord:%c ${newTarget.word || "-"}`,
+          "font-weight: bold",
+          "font-weight: normal",
+          "font-weight: bold",
+          "font-weight: normal",
+          "font-weight: bold",
+          "font-weight: normal"
+        );
+
+        if (newTarget.word) {
+          setTargetWord(newTarget.word);
+        }
+
+        if (newTarget.hint) {
+          setTargetHint(newTarget.hint);
+        }
+
         // There is no array for the current wordLength
-        if (!targetWordArray) {
+        if (targetWordArray?.length <= 0) {
           // Just reset (reached the end)
           ResetGame();
           return;
@@ -439,6 +463,32 @@ const WordleConfig: React.FC<Props> = (props) => {
         // There is already a targetWord which is of the needed wordLength
         if (targetWord && targetWord.length === wordLength) {
           return;
+        }
+
+        // Choose a target word based on length
+        targetWordArray = wordLengthMappingsTargets
+          .find((x) => x.value === wordLength)
+          ?.array.map((x) => ({ word: x, hint: "" }))!;
+
+        // Choose random word
+        newTarget = targetWordArray[Math.round(Math.random() * (targetWordArray.length - 1))];
+
+        console.log(
+          `%cMode:%c ${props.mode}\n%cHint:%c ${newTarget.hint || "-"}\n%cWord:%c ${newTarget.word || "-"}`,
+          "font-weight: bold",
+          "font-weight: normal",
+          "font-weight: bold",
+          "font-weight: normal",
+          "font-weight: bold",
+          "font-weight: normal"
+        );
+
+        if (newTarget.word) {
+          setTargetWord(newTarget.word);
+        }
+
+        if (newTarget.hint) {
+          setTargetHint(newTarget.hint);
         }
 
         // There is no array for the current wordLength
@@ -477,30 +527,26 @@ const WordleConfig: React.FC<Props> = (props) => {
         targetWordArray = wordLengthMappingsTargets
           .find((x) => x.value === wordLength)
           ?.array.map((x) => ({ word: x, hint: "" }))!;
-    }
+        // Choose random word
+        newTarget = targetWordArray[Math.round(Math.random() * (targetWordArray.length - 1))];
 
-    // A new target word needs to be determined (not returned from function yet)
-    if (targetWordArray) {
-      newTarget = targetWordArray[Math.round(Math.random() * (targetWordArray.length - 1))];
+        console.log(
+          `%cMode:%c ${props.mode}\n%cHint:%c ${newTarget.hint || "-"}\n%cWord:%c ${newTarget.word || "-"}`,
+          "font-weight: bold",
+          "font-weight: normal",
+          "font-weight: bold",
+          "font-weight: normal",
+          "font-weight: bold",
+          "font-weight: normal"
+        );
 
-      // Log the current gamemode and the target word
-      console.log(
-        `%cMode:%c ${props.mode}\n%cHint:%c ${newTarget.hint || "-"}\n%cWord:%c ${newTarget.word || "-"}`,
-        "font-weight: bold",
-        "font-weight: normal",
-        "font-weight: bold",
-        "font-weight: normal",
-        "font-weight: bold",
-        "font-weight: normal"
-      );
+        if (newTarget.word) {
+          setTargetWord(newTarget.word);
+        }
 
-      if (newTarget.word) {
-        setTargetWord(newTarget.word);
-      }
-
-      if (newTarget.hint) {
-        setTargetHint(newTarget.hint);
-      }
+        if (newTarget.hint) {
+          setTargetHint(newTarget.hint);
+        }
     }
   }
 
@@ -721,6 +767,10 @@ const WordleConfig: React.FC<Props> = (props) => {
       return;
     }
 
+    if (!wordLength) {
+      return;
+    }
+
     generateTargetWord();
   }, [/* Short circuit boolean evaluation */ props.mode === "category" || wordLength, inProgress, props.mode]);
 
@@ -739,8 +789,8 @@ const WordleConfig: React.FC<Props> = (props) => {
           wordLength: wordLength,
           firstLetter: isFirstLetterProvided,
           showHint: isHintShown,
-          timer: isTimerEnabled ? {isTimed: true, seconds: remainingSeconds} : {isTimed: false},
-        },        
+          timer: isTimerEnabled ? { isTimed: true, seconds: remainingSeconds } : { isTimed: false },
+        },
         puzzleLeaveNumBlanks: props.puzzleLeaveNumBlanks,
         puzzleRevealMs: props.puzzleRevealMs,
         targetWord,
@@ -985,8 +1035,8 @@ const WordleConfig: React.FC<Props> = (props) => {
             wordLength: wordLength,
             firstLetter: isFirstLetterProvided,
             showHint: isHintShown,
-            timer: isTimerEnabled ? {isTimed: true, seconds: remainingSeconds} : {isTimed: false},
-          }, 
+            timer: isTimerEnabled ? { isTimed: true, seconds: remainingSeconds } : { isTimed: false },
+          },
           puzzleLeaveNumBlanks: props.puzzleLeaveNumBlanks,
           puzzleRevealMs: props.puzzleRevealMs,
           targetWord,
