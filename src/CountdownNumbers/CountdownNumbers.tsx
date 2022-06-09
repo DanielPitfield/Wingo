@@ -23,7 +23,7 @@ interface Props {
   wordIndex: number;
   guesses: Guess[];
   closestGuessSoFar: number | null;
-  defaultNumOperands: number;
+  numOperands: number;
   numGuesses: number;
   currentGuess: Guess;
   countdownStatuses: {
@@ -87,7 +87,7 @@ const CountdownNumbers: React.FC<Props> = (props) => {
      */
     function getSmallNumber(): number | null {
       // Already 6 picked numbers, don't add any more
-      if (hasNumberSelectionFinished(props.countdownStatuses)) {
+      if (hasNumberSelectionFinished(props.countdownStatuses, props.numOperands)) {
         return null;
       }
 
@@ -108,7 +108,7 @@ const CountdownNumbers: React.FC<Props> = (props) => {
      * @returns
      */
     function getBigNumber(): number | null {
-      if (hasNumberSelectionFinished(props.countdownStatuses)) {
+      if (hasNumberSelectionFinished(props.countdownStatuses, props.numOperands)) {
         return null;
       }
 
@@ -137,10 +137,9 @@ const CountdownNumbers: React.FC<Props> = (props) => {
      */
     function quickNumberSelection() {
       let newCountdownExpression = [];
-      const numCountdownNumbers = 6;
 
       // Build word by randomly adding small numbers or big numbers
-      for (let i = 0; i < numCountdownNumbers; i++) {
+      for (let i = 0; i < props.numOperands; i++) {
         let x = Math.floor(Math.random() * 3) === 0;
         // 66% chance small number, 33% chance big number
         if (x) {
@@ -156,7 +155,7 @@ const CountdownNumbers: React.FC<Props> = (props) => {
     var Grid = [];
 
     // Check if 6 numbers have been selected
-    const isSelectionFinished = hasNumberSelectionFinished(props.countdownStatuses);
+    const isSelectionFinished = hasNumberSelectionFinished(props.countdownStatuses, props.numOperands);
 
     /*
     Target Number
@@ -173,8 +172,7 @@ const CountdownNumbers: React.FC<Props> = (props) => {
           key={"number_selection"}
           disabled={!isSelectionFinished}
           onClick={props.onClick}
-          expression={props.countdownStatuses}
-          length={props.defaultNumOperands}
+          countdownStatuses={props.countdownStatuses}
         />
         <div className="add-number-buttons-wrapper">
           <Button

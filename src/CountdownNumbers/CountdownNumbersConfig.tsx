@@ -4,6 +4,7 @@ import CountdownNumbers from "./CountdownNumbers";
 import { calculateTotal } from "./NumberRow";
 import { Theme } from "../Themes";
 import { SettingsData } from "../SaveData";
+import { isPropertySignature } from "typescript";
 
 interface Props {
   page: Page;
@@ -64,9 +65,10 @@ export function hasNumberSelectionFinished(
     type: "original" | "intermediary";
     number: number | null;
     picked: boolean;
-  }[]
+  }[],
+  numOperands: number
 ): boolean {
-  return statuses.filter((x) => x.type === "original" && x.number).length === 6;
+  return statuses.filter((x) => x.type === "original" && x.number).length === numOperands;
 }
 
 export type Guess = { operand1: number | null; operand2: number | null; operator: typeof operators[0]["name"] };
@@ -83,6 +85,7 @@ const CountdownNumbersConfig: React.FC<Props> = (props) => {
   const [totalSeconds, setTotalSeconds] = useState(DEFAULT_TIMER_VALUE);
 
   const [hasScaryNumbers, setHasScaryNumbers] = useState(props.hasScaryNumbers ?? false);
+  const [numOperands, setNumOperands] = useState(props.defaultNumOperands ?? false);
 
   const defaultCountdownStatuses: (
     | {
@@ -134,7 +137,7 @@ const CountdownNumbersConfig: React.FC<Props> = (props) => {
       return;
     }
 
-    if (!hasNumberSelectionFinished(countdownStatuses)) {
+    if (!hasNumberSelectionFinished(countdownStatuses, numOperands)) {
       return;
     }
 
@@ -151,6 +154,28 @@ const CountdownNumbersConfig: React.FC<Props> = (props) => {
       clearInterval(timer);
     };
   }, [setRemainingSeconds, remainingSeconds, isTimerEnabled, countdownStatuses]);
+
+  React.useEffect(() => {
+    const newCountdownStatuses: (
+      | {
+          type: "original";
+          number: number | null;
+          picked: boolean;
+        }
+      | {
+          type: "intermediary";
+          wordIndex: number;
+          number: number | null;
+          picked: boolean;
+        }
+    )[] = Array.from({ length: numOperands }).map((_) => ({
+      type: "original",
+      number: null,
+      picked: false,
+    }));
+
+    setCountdownStatuses(newCountdownStatuses);
+  }, [numOperands]);
 
   React.useEffect(() => {
     const intermediaryNumbers: typeof countdownStatuses = currentGuesses.map((guess, index) => {
@@ -211,7 +236,7 @@ const CountdownNumbersConfig: React.FC<Props> = (props) => {
     }
 
     // The 6 numbers have not all been picked
-    if (!hasNumberSelectionFinished(countdownStatuses)) {
+    if (!hasNumberSelectionFinished(countdownStatuses, numOperands)) {
       return;
     }
 
@@ -229,7 +254,7 @@ const CountdownNumbersConfig: React.FC<Props> = (props) => {
     }
 
     // Still more numbers available to pick/choose
-    if (!hasNumberSelectionFinished(countdownStatuses) && inProgress) {
+    if (!hasNumberSelectionFinished(countdownStatuses, numOperands) && inProgress) {
       // Make a copy of current statuses
       const newCountdownStatuses = countdownStatuses.slice();
       // Find index of first object without a number
@@ -248,11 +273,13 @@ const CountdownNumbersConfig: React.FC<Props> = (props) => {
   }
 
   function onSubmitCountdownExpression(expression: number[]) {
-    // If no numbers have been picked (statuses as it was to begin with), and there are 6 numbers in the input array
+    // If required number of original numbers, countdown expression is of the correct length and there are no picked or intermediary values
     if (
-      countdownStatuses.filter((x) => x.type === "original").length === defaultCountdownStatuses.length &&
-      inProgress &&
-      expression.length === countdownStatuses.length
+      expression.length === countdownStatuses.length &&
+      countdownStatuses.filter((x) => x.type === "original").length === numOperands &&
+      countdownStatuses.filter((x) => x.picked === true).length === 0 &&
+      countdownStatuses.filter((x) => x.type === "intermediary").length === 0 &&
+      inProgress
     ) {
       // Make a copy of the current countdownStatuses
       const newCountdownStatuses = countdownStatuses.slice();
@@ -275,7 +302,7 @@ const CountdownNumbersConfig: React.FC<Props> = (props) => {
     if (
       currentGuess.operand1 !== null &&
       currentGuess.operand2 !== null &&
-      hasNumberSelectionFinished(countdownStatuses) &&
+      hasNumberSelectionFinished(countdownStatuses, numOperands) &&
       inProgress
     ) {
       // If operand1 has been populated, then set operand2
@@ -308,7 +335,7 @@ const CountdownNumbersConfig: React.FC<Props> = (props) => {
       return;
     }
 
-    if (!hasNumberSelectionFinished(countdownStatuses)) {
+    if (!hasNumberSelectionFinished(countdownStatuses, numOperands)) {
       return;
     }
 
@@ -475,12 +502,18 @@ const CountdownNumbersConfig: React.FC<Props> = (props) => {
 
     settings = (
       <>
-        {/* TODO: QOL: Configure number of numbers in available selection */}
         <label>
-          <input type="number" value={6} min={3} max={10} onChange={(e) => {}}></input>
+          <input
+            type="number"
+            value={numOperands}
+            min={3}
+            max={10}
+            onChange={(e) => {
+              setNumOperands(e.target.valueAsNumber);
+            }}
+          ></input>
           Numbers in selection
         </label>
-        )
         <label>
           <input
             checked={hasScaryNumbers}
@@ -544,7 +577,7 @@ const CountdownNumbersConfig: React.FC<Props> = (props) => {
       wordIndex={wordIndex}
       guesses={currentGuesses}
       closestGuessSoFar={closestGuessSoFar}
-      defaultNumOperands={props.defaultNumOperands}
+      numOperands={numOperands}
       numGuesses={numGuesses}
       currentGuess={currentGuess}
       countdownStatuses={countdownStatuses}
