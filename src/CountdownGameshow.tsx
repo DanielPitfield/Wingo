@@ -134,6 +134,7 @@ export const CountdownGameshow: React.FC<Props> = (props) => {
       return (
         <CountdownNumbersConfig
           mode={"countdown_numbers_casual"}
+          scoringMethod={"standard"}
           defaultNumOperands={6}
           defaultExpressionLength={5}
           defaultNumGuesses={5}

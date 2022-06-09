@@ -19,6 +19,7 @@ interface Props {
   timerConfig: { isTimed: false } | { isTimed: true; remainingSeconds: number; totalSeconds: number };
   gamemodeSettings: React.ReactNode;
   hasScaryNumbers: boolean;
+  scoringMethod: "standard" | "pointLostPerDifference";
   wordIndex: number;
   guesses: Guess[];
   closestGuessSoFar: number | null;
@@ -121,7 +122,7 @@ const CountdownNumbers: React.FC<Props> = (props) => {
           // Random number between 11 and 99
           const randomNumber = randomIntFromInterval(11, 99);
           // A multiple of 10 is too easy!
-          if ((randomNumber % 10) !== 0) {
+          if (randomNumber % 10 !== 0) {
             scaryNumber = randomNumber;
           }
         }
@@ -287,14 +288,48 @@ const CountdownNumbers: React.FC<Props> = (props) => {
       return null;
     }
 
+    // How far away was the result from the target number?
     const difference = determineDifference();
 
     if (difference === null) {
       return null;
     }
 
-    // Difference is 0, score is 10
-    const score = 10 - difference;
+    let score = 0;
+
+    /* 
+    Standard:
+    10 points for reaching it exactly
+    7 points for being 1–5 away
+    5 points for being 6–10 away
+    */
+
+    if (props.scoringMethod === "standard") {
+      const exactAnswer = difference === 0;
+      const sevenPointRange = difference >= 1 && difference <= 5;
+      const fivePointRange = difference >= 6 && difference <= 10;
+
+      if (exactAnswer) {
+        score = 10;
+      } else if (sevenPointRange) {
+        score = 7;
+      } else if (fivePointRange) {
+        score = 5;
+      } else {
+        score = 0;
+      }
+    } else if (props.scoringMethod === "pointLostPerDifference" && difference >= 0 && difference <= 10) {
+      // Award one point for being 10 away
+      if (difference === 10) {
+        score = 1;
+      }
+      // 10 points for exact answer (and one point is lost for each additional one difference after that)
+      else {
+        score = 10 - difference;
+      }
+    } else {
+      throw new Error("Unexpected CountdownNumbers scoring method");
+    }
 
     return score;
   }

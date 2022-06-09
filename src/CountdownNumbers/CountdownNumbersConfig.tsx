@@ -9,6 +9,7 @@ interface Props {
   page: Page;
   mode: "countdown_numbers_casual" | "countdown_numbers_realistic";
   hasScaryNumbers?: boolean;
+  scoringMethod: "standard" | "pointLostPerDifference";
   defaultNumOperands: number;
   defaultNumGuesses: number;
   defaultExpressionLength: number;
@@ -544,6 +545,7 @@ const CountdownNumbersConfig: React.FC<Props> = (props) => {
       }
       gamemodeSettings={gamemodeSettings}
       hasScaryNumbers={hasScaryNumbers}
+      scoringMethod={props.scoringMethod}
       expressionLength={expressionLength}
       wordIndex={wordIndex}
       guesses={currentGuesses}
