@@ -69,12 +69,14 @@ const CountdownNumbers: React.FC<Props> = (props) => {
       return;
     }
 
-    const inputNumbers = props.countdownStatuses.filter((x) => x.type === "original").map((x) => x.number!);
+    const inputNumbers = props.countdownStatuses.filter((x) => x.type === "original" && x.number).map((x) => x.number!);
 
-    if (inputNumbers.length !== 6) {
+    // The amount of numbers that can be selected does not match with the specified/requested number from props
+    if (inputNumbers.length !== props.numOperands) {
       return;
     }
 
+    // TODO: Slow to solve with 7 numbers, page unrensponsive with 8 numbers
     const puzzle = new NumberPuzzle(props.targetNumber, inputNumbers);
     setSolutions(puzzle.solve());
   }, [props.targetNumber]);
