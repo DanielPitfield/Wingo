@@ -85,8 +85,10 @@ const CountdownNumbersConfig: React.FC<Props> = (props) => {
   const [totalSeconds, setTotalSeconds] = useState(DEFAULT_TIMER_VALUE);
 
   const [hasScaryNumbers, setHasScaryNumbers] = useState(props.hasScaryNumbers ?? false);
-  const [numOperands, setNumOperands] = useState(props.defaultNumOperands ?? false);
+  const DEFAULT_NUM_OPERANDS = 6;
+  const [numOperands, setNumOperands] = useState(props.defaultNumOperands ?? DEFAULT_NUM_OPERANDS);
 
+  // Just numOperands number of original type numbers (all not yet picked)
   const defaultCountdownStatuses: (
     | {
         type: "original";
@@ -99,7 +101,7 @@ const CountdownNumbersConfig: React.FC<Props> = (props) => {
         number: number | null;
         picked: boolean;
       }
-  )[] = Array.from({ length: props.defaultNumOperands }).map((_) => ({
+  )[] = Array.from({ length: numOperands }).map((_) => ({
     type: "original",
     number: null,
     picked: false,
