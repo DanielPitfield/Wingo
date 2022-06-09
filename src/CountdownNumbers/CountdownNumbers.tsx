@@ -416,21 +416,23 @@ const CountdownNumbers: React.FC<Props> = (props) => {
         <>
           {displayOutcome()}
 
-          <div className="best-solution">
-            <MessageNotification type="default">
-              Best Solution:
-              <br />
-              <strong>
+          {determineDifference() !== 0 && (
+            <div className="best-solution">
+              <MessageNotification type="default">
+                Best Solution:
                 <br />
-                {solutions?.best.toListOfSteps().map((step) => (
-                  <>
-                    {step}
-                    <br />
-                  </>
-                ))}
-              </strong>
-            </MessageNotification>
-          </div>
+                <strong>
+                  <br />
+                  {solutions?.best.toListOfSteps().map((step) => (
+                    <>
+                      {step}
+                      <br />
+                    </>
+                  ))}
+                </strong>
+              </MessageNotification>
+            </div>
+          )}
 
           <Button
             mode={"accept"}
