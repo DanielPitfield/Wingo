@@ -11,7 +11,6 @@ interface Props {
   hasTimerEnded: boolean;
   expression: Guess;
   rowIndex: number;
-  length: number;
   targetNumber: number | null;
   hasSubmit: boolean;
   disabled: boolean;

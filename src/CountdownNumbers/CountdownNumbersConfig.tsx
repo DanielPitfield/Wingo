@@ -10,9 +10,9 @@ interface Props {
   mode: "countdown_numbers_casual" | "countdown_numbers_realistic";
   hasScaryNumbers?: boolean;
   scoringMethod: "standard" | "pointLostPerDifference";
+  // The number/amount of numbers (that make up the selection used to make the target number)
   defaultNumOperands: number;
   defaultNumGuesses: number;
-  defaultExpressionLength: number;
   theme: Theme;
   settings: SettingsData;
   setTheme: (theme: Theme) => void;
@@ -96,14 +96,11 @@ const CountdownNumbersConfig: React.FC<Props> = (props) => {
         number: number | null;
         picked: boolean;
       }
-  )[] = [
-    { type: "original", number: null, picked: false },
-    { type: "original", number: null, picked: false },
-    { type: "original", number: null, picked: false },
-    { type: "original", number: null, picked: false },
-    { type: "original", number: null, picked: false },
-    { type: "original", number: null, picked: false },
-  ];
+  )[] = Array.from({ length: props.defaultNumOperands }).map((_) => ({
+    type: "original",
+    number: null,
+    picked: false,
+  }));
 
   const [countdownStatuses, setCountdownStatuses] = useState<
     (
@@ -124,7 +121,6 @@ const CountdownNumbersConfig: React.FC<Props> = (props) => {
   const [currentGuess, setCurrentGuess] = useState<Guess>({ operand1: null, operand2: null, operator: "+" });
   const [inProgress, setinProgress] = useState(true);
   const [hasTimerEnded, sethasTimerEnded] = useState(false);
-  const [expressionLength, setExpressionLength] = useState(props.defaultExpressionLength);
   const [targetNumber, settargetNumber] = useState<number | null>(null);
   const [hasSubmitNumber, sethasSubmitNumber] = useState(false);
   const [wordIndex, setWordIndex] = useState(0);
@@ -196,7 +192,6 @@ const CountdownNumbersConfig: React.FC<Props> = (props) => {
     setWordIndex(0);
     setinProgress(true);
     sethasTimerEnded(false);
-    setExpressionLength(props.defaultExpressionLength);
     sethasSubmitNumber(false);
     setNumGuesses(props.defaultNumGuesses);
     if (isTimerEnabled) {
@@ -487,15 +482,15 @@ const CountdownNumbersConfig: React.FC<Props> = (props) => {
         </label>
         )
         <label>
-            <input
-              checked={hasScaryNumbers}
-              type="checkbox"
-              onChange={(e) => {
-                setHasScaryNumbers(!hasScaryNumbers);
-              }}
-            ></input>
-            Scary Big Numbers
-          </label>
+          <input
+            checked={hasScaryNumbers}
+            type="checkbox"
+            onChange={(e) => {
+              setHasScaryNumbers(!hasScaryNumbers);
+            }}
+          ></input>
+          Scary Big Numbers
+        </label>
         <>
           <label>
             <input
@@ -546,7 +541,6 @@ const CountdownNumbersConfig: React.FC<Props> = (props) => {
       gamemodeSettings={gamemodeSettings}
       hasScaryNumbers={hasScaryNumbers}
       scoringMethod={props.scoringMethod}
-      expressionLength={expressionLength}
       wordIndex={wordIndex}
       guesses={currentGuesses}
       closestGuessSoFar={closestGuessSoFar}

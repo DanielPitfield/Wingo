@@ -25,7 +25,6 @@ interface Props {
   closestGuessSoFar: number | null;
   defaultNumOperands: number;
   numGuesses: number;
-  expressionLength: number;
   currentGuess: Guess;
   countdownStatuses: {
     type: "original" | "intermediary";
@@ -81,7 +80,7 @@ const CountdownNumbers: React.FC<Props> = (props) => {
   }, [props.targetNumber]);
 
   // Create grid of rows (for guessing numbers)
-  function populateGrid(expressionLength: number) {
+  function populateGrid() {
     /**
      *
      * @returns
@@ -239,7 +238,6 @@ const CountdownNumbers: React.FC<Props> = (props) => {
             hasTimerEnded={props.hasTimerEnded}
             onClick={props.onClick}
             expression={guess}
-            length={expressionLength}
             targetNumber={props.targetNumber}
             hasSubmit={!props.inProgress}
             setOperator={props.setOperator}
@@ -403,7 +401,7 @@ const CountdownNumbers: React.FC<Props> = (props) => {
 
       {props.gameshowScore !== undefined && <div className="gameshow-score">{displayGameshowScore()}</div>}
 
-      <div className="countdown-numbers-grid">{populateGrid(props.expressionLength)}</div>
+      <div className="countdown-numbers-grid">{populateGrid()}</div>
 
       {props.inProgress && (
         <>
