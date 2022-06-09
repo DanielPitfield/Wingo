@@ -8,6 +8,7 @@ import { SettingsData } from "../SaveData";
 interface Props {
   page: Page;
   mode: "countdown_numbers_casual" | "countdown_numbers_realistic";
+  hasScaryNumbers?: boolean;
   defaultNumOperands: number;
   defaultNumGuesses: number;
   defaultExpressionLength: number;
@@ -79,6 +80,8 @@ const CountdownNumbersConfig: React.FC<Props> = (props) => {
   const DEFAULT_TIMER_VALUE = 30;
   const [remainingSeconds, setRemainingSeconds] = useState(DEFAULT_TIMER_VALUE);
   const [totalSeconds, setTotalSeconds] = useState(DEFAULT_TIMER_VALUE);
+
+  const [hasScaryNumbers, setHasScaryNumbers] = useState(props.hasScaryNumbers ?? false);
 
   const defaultCountdownStatuses: (
     | {
@@ -482,6 +485,16 @@ const CountdownNumbersConfig: React.FC<Props> = (props) => {
           Numbers in selection
         </label>
         )
+        <label>
+            <input
+              checked={hasScaryNumbers}
+              type="checkbox"
+              onChange={(e) => {
+                setHasScaryNumbers(!hasScaryNumbers);
+              }}
+            ></input>
+            Scary Big Numbers
+          </label>
         <>
           <label>
             <input
@@ -530,6 +543,7 @@ const CountdownNumbersConfig: React.FC<Props> = (props) => {
           : { isTimed: false }
       }
       gamemodeSettings={gamemodeSettings}
+      hasScaryNumbers={hasScaryNumbers}
       expressionLength={expressionLength}
       wordIndex={wordIndex}
       guesses={currentGuesses}

@@ -11,12 +11,14 @@ import { Theme } from "../Themes";
 import { NumberPuzzle, NumberPuzzleValue } from "./CountdownSolver";
 import { SettingsData } from "../SaveData";
 import GamemodeSettingsMenu from "../GamemodeSettingsMenu";
+import { randomIntFromInterval } from "../Nubble/Nubble";
 
 interface Props {
   isCampaignLevel: boolean;
   mode: "countdown_numbers_casual" | "countdown_numbers_realistic";
-  timerConfig: { isTimed: false } | { isTimed: true; remainingSeconds: number; totalSeconds: number; };
+  timerConfig: { isTimed: false } | { isTimed: true; remainingSeconds: number; totalSeconds: number };
   gamemodeSettings: React.ReactNode;
+  hasScaryNumbers: boolean;
   wordIndex: number;
   guesses: Guess[];
   closestGuessSoFar: number | null;
@@ -110,12 +112,24 @@ const CountdownNumbers: React.FC<Props> = (props) => {
         return null;
       }
 
+      // The four standard big numbers
       const bigNumbers = [25, 50, 75, 100];
 
-      const random_index = Math.round(Math.random() * (bigNumbers.length - 1));
-      const random_big_number = bigNumbers[random_index];
-
-      return random_big_number;
+      if (props.hasScaryNumbers) {
+        let scaryNumber;
+        while (scaryNumber === undefined) {
+          // Random number between 11 and 99
+          const randomNumber = randomIntFromInterval(11, 99);
+          // A multiple of 10 is too easy!
+          if ((randomNumber % 10) !== 0) {
+            scaryNumber = randomNumber;
+          }
+        }
+        return scaryNumber;
+      } else {
+        // Randomly select one of the four standard big numbers
+        return bigNumbers[Math.round(Math.random() * (bigNumbers.length - 1))];
+      }
     }
 
     /**
@@ -347,10 +361,11 @@ const CountdownNumbers: React.FC<Props> = (props) => {
   return (
     <div className="App" style={{ backgroundImage: `url(${props.theme.backgroundImageSrc})`, backgroundSize: "100%" }}>
       {!props.isCampaignLevel && !props.gameshowScore && (
-      <div className="gamemodeSettings">
-        <GamemodeSettingsMenu>{props.gamemodeSettings}</GamemodeSettingsMenu>
-      </div>)}
-      
+        <div className="gamemodeSettings">
+          <GamemodeSettingsMenu>{props.gamemodeSettings}</GamemodeSettingsMenu>
+        </div>
+      )}
+
       {props.gameshowScore !== undefined && <div className="gameshow-score">{displayGameshowScore()}</div>}
 
       <div className="countdown-numbers-grid">{populateGrid(props.expressionLength)}</div>
@@ -391,7 +406,7 @@ const CountdownNumbers: React.FC<Props> = (props) => {
             onClick={() =>
               props.resetGame(
                 // correct?
-                (determineScore !== null && determineScore()! > 0),
+                determineScore !== null && determineScore()! > 0,
                 // guess made
                 !determineBestGuess() ? "" : determineBestGuess()!.toString(),
                 // target answer
