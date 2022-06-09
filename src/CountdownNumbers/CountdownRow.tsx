@@ -21,15 +21,15 @@ export const CountdownRow: React.FC<Props> = (props) => {
    */
   function CreateRow() {
     const tileArray = [];
-    const rowLength = props.countdownStatuses.filter(x => x.type === "original").length;
+    const originalNumbers = props.countdownStatuses.filter(x => x.type === "original");
 
-    for (let i = 0; i < rowLength; i++) {
+    for (let i = 0; i < originalNumbers.length; i++) {
       tileArray.push(
         <NumberTile
           key={i}
-          number={props.countdownStatuses?.[i].number}
-          disabled={props.disabled || props.countdownStatuses?.[i].picked}
-          onClick={() => props.onClick(props.countdownStatuses?.[i].number, { type: "original", index: i })}
+          number={originalNumbers?.[i].number}
+          disabled={props.disabled || originalNumbers?.[i].picked}
+          onClick={() => props.onClick(originalNumbers?.[i].number, { type: "original", index: i })}
         />
       );
     }
