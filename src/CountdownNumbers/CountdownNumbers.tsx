@@ -16,14 +16,19 @@ import { randomIntFromInterval } from "../Nubble/Nubble";
 interface Props {
   isCampaignLevel: boolean;
   mode: "countdown_numbers_casual" | "countdown_numbers_realistic";
-  timerConfig: { isTimed: false } | { isTimed: true; remainingSeconds: number; totalSeconds: number };
-  gamemodeSettings: React.ReactNode;
-  hasScaryNumbers: boolean;
-  scoringMethod: "standard" | "pointLostPerDifference";
+
+  gamemodeSettings: {
+    hasScaryNumbers: boolean;
+    // The number/amount of numbers (that make up the selection used to make the target number)
+    numOperands: number;
+    scoringMethod: "standard" | "pointLostPerDifference";
+    // TODO: Move all other timerConfig props into their respective gamemodeSettings
+    timerConfig: { isTimed: true; remainingSeconds: number; totalSeconds: number } | { isTimed: false };
+  };
+
   wordIndex: number;
   guesses: Guess[];
   closestGuessSoFar: number | null;
-  numOperands: number;
   numGuesses: number;
   currentGuess: Guess;
   countdownStatuses: {
@@ -50,6 +55,14 @@ interface Props {
   onSubmitCountdownExpression: (numberExpression: number[]) => void;
   onSubmitNumber: (number: number) => void;
   onBackspace: () => void;
+
+  // Gamemode settings callbacks
+  updateScaryNumbers: () => void;
+  updateNumOperands: (newNumOperands: number) => void;
+  updateScoringMethod: (newScoringMethod: "standard" | "pointLostPerDifference") => void;
+  updateTimer: () => void;
+  updateTimerLength: (newSeconds: number) => void;
+
   resetGame: (wasCorrect: boolean, answer: string, targetAnswer: string, score: number | null) => void;
   setOperator: (operator: Guess["operator"]) => void;
   addGold: (gold: number) => void;
@@ -72,7 +85,7 @@ const CountdownNumbers: React.FC<Props> = (props) => {
     const inputNumbers = props.countdownStatuses.filter((x) => x.type === "original" && x.number).map((x) => x.number!);
 
     // The amount of numbers that can be selected does not match with the specified/requested number from props
-    if (inputNumbers.length !== props.numOperands) {
+    if (inputNumbers.length !== props.gamemodeSettings.numOperands) {
       return;
     }
 
@@ -89,7 +102,7 @@ const CountdownNumbers: React.FC<Props> = (props) => {
      */
     function getSmallNumber(): number | null {
       // Already 6 picked numbers, don't add any more
-      if (hasNumberSelectionFinished(props.countdownStatuses, props.numOperands)) {
+      if (hasNumberSelectionFinished(props.countdownStatuses, props.gamemodeSettings.numOperands)) {
         return null;
       }
 
@@ -110,14 +123,14 @@ const CountdownNumbers: React.FC<Props> = (props) => {
      * @returns
      */
     function getBigNumber(): number | null {
-      if (hasNumberSelectionFinished(props.countdownStatuses, props.numOperands)) {
+      if (hasNumberSelectionFinished(props.countdownStatuses, props.gamemodeSettings.numOperands)) {
         return null;
       }
 
       // The four standard big numbers
       const bigNumbers = [25, 50, 75, 100];
 
-      if (props.hasScaryNumbers) {
+      if (props.gamemodeSettings.hasScaryNumbers) {
         let scaryNumber;
         while (scaryNumber === undefined) {
           // Random number between 11 and 99
@@ -141,7 +154,7 @@ const CountdownNumbers: React.FC<Props> = (props) => {
       let newCountdownExpression = [];
 
       // Build word by randomly adding small numbers or big numbers
-      for (let i = 0; i < props.numOperands; i++) {
+      for (let i = 0; i < props.gamemodeSettings.numOperands; i++) {
         let x = Math.floor(Math.random() * 3) === 0;
         // 66% chance small number, 33% chance big number
         if (x) {
@@ -157,7 +170,7 @@ const CountdownNumbers: React.FC<Props> = (props) => {
     var Grid = [];
 
     // Check if 6 numbers have been selected
-    const isSelectionFinished = hasNumberSelectionFinished(props.countdownStatuses, props.numOperands);
+    const isSelectionFinished = hasNumberSelectionFinished(props.countdownStatuses, props.gamemodeSettings.numOperands);
 
     /*
     Target Number
@@ -252,6 +265,67 @@ const CountdownNumbers: React.FC<Props> = (props) => {
     return Grid;
   }
 
+  function generateSettingsOptions(): React.ReactNode {
+    let settings;
+
+    settings = (
+      <>
+        <label>
+          <input
+            type="number"
+            value={props.gamemodeSettings.numOperands}
+            min={3}
+            max={10}
+            onChange={(e) => {
+              props.updateNumOperands(e.target.valueAsNumber);
+            }}
+          ></input>
+          Numbers in selection
+        </label>
+        <label>
+          <input
+            checked={props.gamemodeSettings.hasScaryNumbers}
+            type="checkbox"
+            onChange={(e) => {
+              props.updateScaryNumbers();
+            }}
+          ></input>
+          Scary Big Numbers
+        </label>
+        <>
+          <label>
+            <input
+              checked={props.gamemodeSettings.timerConfig.isTimed}
+              type="checkbox"
+              onChange={(e) => {
+                props.updateTimer();
+              }}
+            ></input>
+            Timer
+          </label>
+          {props.gamemodeSettings.timerConfig.isTimed && (
+            <label>
+              <input
+                type="number"
+                value={props.gamemodeSettings.timerConfig.totalSeconds}
+                min={10}
+                max={120}
+                step={5}
+                onChange={(e) => {
+                  // TODO: Manually input value outside range
+                  props.updateTimerLength(e.target.valueAsNumber);
+                }}
+              ></input>
+              Seconds
+            </label>
+          )}
+        </>
+      </>
+    );
+
+    return settings;
+  }
+
   /**
    *
    * @returns
@@ -302,7 +376,7 @@ const CountdownNumbers: React.FC<Props> = (props) => {
     5 points for being 6–10 away
     */
 
-    if (props.scoringMethod === "standard") {
+    if (props.gamemodeSettings.scoringMethod === "standard") {
       const exactAnswer = difference === 0;
       const sevenPointRange = difference >= 1 && difference <= 5;
       const fivePointRange = difference >= 6 && difference <= 10;
@@ -316,7 +390,11 @@ const CountdownNumbers: React.FC<Props> = (props) => {
       } else {
         score = 0;
       }
-    } else if (props.scoringMethod === "pointLostPerDifference" && difference >= 0 && difference <= 10) {
+    } else if (
+      props.gamemodeSettings.scoringMethod === "pointLostPerDifference" &&
+      difference >= 0 &&
+      difference <= 10
+    ) {
       // Award one point for being 10 away
       if (difference === 10) {
         score = 1;
@@ -395,7 +473,7 @@ const CountdownNumbers: React.FC<Props> = (props) => {
     <div className="App" style={{ backgroundImage: `url(${props.theme.backgroundImageSrc})`, backgroundSize: "100%" }}>
       {!props.isCampaignLevel && !props.gameshowScore && (
         <div className="gamemodeSettings">
-          <GamemodeSettingsMenu>{props.gamemodeSettings}</GamemodeSettingsMenu>
+          <GamemodeSettingsMenu>{generateSettingsOptions()}</GamemodeSettingsMenu>
         </div>
       )}
 
@@ -458,10 +536,10 @@ const CountdownNumbers: React.FC<Props> = (props) => {
         </>
       )}
       <div>
-        {props.timerConfig.isTimed && (
+        {props.gamemodeSettings.timerConfig.isTimed && (
           <ProgressBar
-            progress={props.timerConfig.remainingSeconds}
-            total={props.timerConfig.totalSeconds}
+            progress={props.gamemodeSettings.timerConfig.remainingSeconds}
+            total={props.gamemodeSettings.timerConfig.totalSeconds}
             display={{ type: "transition", colorTransition: GreenToRedColorTransition }}
           ></ProgressBar>
         )}

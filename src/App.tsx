@@ -790,8 +790,6 @@ export const App: React.FC = () => {
         return (
           <CountdownNumbersConfig
             mode={"countdown_numbers_casual"}
-            scoringMethod={"standard"}
-            defaultNumOperands={countdown_numbers_NumOperands}
             defaultNumGuesses={countdown_numbers_NumGuesses}
             page={page}
             theme={Themes.GenericNumberCountdown}
