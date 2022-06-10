@@ -89,7 +89,30 @@ const CountdownNumbers: React.FC<Props> = (props) => {
       return;
     }
 
-    // TODO: Slow to solve with 7 numbers, page unrensponsive with 8 numbers
+    // TODO: Use WebWorkers for solving Countdown Numbers
+
+    /*
+    if (window.Worker) {
+      // Start Web Worker
+      var worker = new Worker("CountdownNumbersSolver.ts");
+      // Send data
+      worker.postMessage({
+        targetNumber: props.targetNumber,
+        inputNumbers: inputNumbers,
+      });
+      // Recieve solution
+      worker.onmessage = function (e) {
+        const solutions = e.data;
+        if (solutions) {
+          setSolutions(solutions.best);
+        }
+      };
+    } else {
+      throw new Error("Web Workers not supported");
+    }
+    */
+
+    // Slow to solve with 7 numbers, page unrensponsive with 8 numbers
     const puzzle = new NumberPuzzle(props.targetNumber, inputNumbers);
     setSolutions(puzzle.solve());
   }, [props.targetNumber]);
