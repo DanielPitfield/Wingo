@@ -333,9 +333,6 @@ const WordleConfig: React.FC<Props> = (props) => {
     }[]
   >(defaultLetterStatuses);
 
-  // Generate the elements to configure the gamemode settings
-  const gamemodeSettings = generateSettings();
-
   function generateTargetWord() {
     // Array of words to choose from
     let targetWordArray: { word: string; hint: string }[] = [];
@@ -1080,81 +1077,25 @@ const WordleConfig: React.FC<Props> = (props) => {
     }
   }
 
-  function generateSettings(): React.ReactNode {
-    let settings;
+  function updateWordLength(newWordLength: number) {
+    setWordLength(newWordLength);
+  }
 
-    settings = (
-      <>
-        {props.gamemodeSettings?.wordLength !== undefined && (
-          <label>
-            <input
-              type="number"
-              value={wordLength}
-              min={props.mode === "puzzle" ? 9 : 4}
-              max={11}
-              onChange={(e) => setWordLength(e.target.valueAsNumber)}
-            ></input>
-            Word Length
-          </label>
-        )}
-        {props.gamemodeSettings?.firstLetter !== undefined && (
-          <label>
-            <input
-              checked={isFirstLetterProvided}
-              type="checkbox"
-              onChange={(e) => {
-                setIsFirstLetterProvided(!isFirstLetterProvided);
-              }}
-            ></input>
-            First Letter Provided
-          </label>
-        )}
-        {props.gamemodeSettings?.showHint !== undefined && (
-          <label>
-            <input
-              checked={isHintShown}
-              type="checkbox"
-              onChange={(e) => {
-                setIsHintShown(!isHintShown);
-              }}
-            ></input>
-            Hints
-          </label>
-        )}
-        {props.gamemodeSettings?.timer !== undefined && (
-          <>
-            <label>
-              <input
-                checked={isTimerEnabled}
-                type="checkbox"
-                onChange={(e) => {
-                  setIsTimerEnabled(!isTimerEnabled);
-                }}
-              ></input>
-              Timer
-            </label>
-            {isTimerEnabled && (
-              <label>
-                <input
-                  type="number"
-                  value={totalSeconds}
-                  min={10}
-                  max={120}
-                  step={5}
-                  onChange={(e) => {
-                    setRemainingSeconds(e.target.valueAsNumber);
-                    setTotalSeconds(e.target.valueAsNumber);
-                  }}
-                ></input>
-                Seconds
-              </label>
-            )}
-          </>
-        )}
-      </>
-    );
+  function updateFirstLetterProvided() {
+    setIsFirstLetterProvided(!isFirstLetterProvided);
+  }
 
-    return settings;
+  function updateHintShown() {
+    setIsHintShown(!isHintShown);
+  }
+
+  function updateTimer() {
+    setIsTimerEnabled(!isTimerEnabled);
+  }
+
+  function updateTimerLength(newSeconds: number) {
+    setRemainingSeconds(newSeconds);
+    setTotalSeconds(newSeconds);
   }
 
   if (props.mode === "interlinked") {
@@ -1271,17 +1212,18 @@ const WordleConfig: React.FC<Props> = (props) => {
     <Wordle
       isCampaignLevel={props.page === "campaign/area/level"}
       mode={props.mode}
-      timerConfig={
-        isTimerEnabled
+      gamemodeSettings={{
+        wordLength: wordLength,
+        firstLetter: isFirstLetterProvided,
+        showHint: isHintShown,
+        timerConfig: isTimerEnabled
           ? {
               isTimed: true,
               remainingSeconds: remainingSeconds,
               totalSeconds: totalSeconds,
             }
-          : { isTimed: false }
-      }
-      gamemodeSettings={gamemodeSettings}
-      wordLength={wordLength}
+          : { isTimed: false },
+      }}
       numGuesses={numGuesses}
       guesses={guesses}
       currentWord={currentWord}
@@ -1305,6 +1247,11 @@ const WordleConfig: React.FC<Props> = (props) => {
       onSubmitLetter={onSubmitLetter}
       onSubmitTargetCategory={onSubmitTargetCategory}
       onBackspace={onBackspace}
+      updateWordLength={updateWordLength}
+      updateFirstLetterProvided={updateFirstLetterProvided}
+      updateHintShown={updateHintShown}
+      updateTimer={updateTimer}
+      updateTimerLength={updateTimerLength}
       ResetGame={ResetGame}
       ContinueGame={ContinueGame}
       setPage={props.setPage}

@@ -14,9 +14,12 @@ import GamemodeSettingsMenu from "./GamemodeSettingsMenu";
 interface Props {
   isCampaignLevel: boolean;
   mode: "daily" | "repeat" | "category" | "increasing" | "limitless" | "puzzle" | "conundrum";
-  timerConfig: { isTimed: false } | { isTimed: true; totalSeconds: number; remainingSeconds: number };
-  gamemodeSettings: React.ReactNode;
-  wordLength: number;
+  gamemodeSettings: {
+    wordLength: number;
+    firstLetter: boolean;
+    showHint: boolean;
+    timerConfig: { isTimed: true; remainingSeconds: number; totalSeconds: number } | { isTimed: false };
+  };
   numGuesses: number;
   guesses: string[];
   currentWord: string;
@@ -44,6 +47,14 @@ interface Props {
   onSubmitLetter: (letter: string) => void;
   onSubmitTargetCategory: (category: string) => void;
   onBackspace: () => void;
+
+  // Gamemode settings callbacks
+  updateWordLength: (newWordLength: number) => void;
+  updateFirstLetterProvided: () => void;
+  updateHintShown: () => void;
+  updateTimer: () => void;
+  updateTimerLength: (newSeconds: number) => void;
+
   ResetGame: () => void;
   ContinueGame: () => void;
   setTheme: (theme: Theme) => void;
@@ -158,6 +169,64 @@ const Wordle: React.FC<Props> = (props) => {
     }
 
     return Grid;
+  }
+
+  function generateSettingsOptions(): React.ReactNode {
+    let settings;
+
+    settings = (
+      <>
+        <label>
+          <input
+            type="number"
+            value={props.gamemodeSettings.wordLength}
+            min={props.mode === "puzzle" ? 9 : 4}
+            max={11}
+            onChange={(e) => props.updateWordLength(e.target.valueAsNumber)}
+          ></input>
+          Word Length
+        </label>
+        <label>
+          <input
+            checked={props.gamemodeSettings.firstLetter}
+            type="checkbox"
+            onChange={props.updateFirstLetterProvided}
+          ></input>
+          First Letter Provided
+        </label>
+        <label>
+          <input checked={props.gamemodeSettings.showHint} type="checkbox" onChange={props.updateHintShown}></input>
+          Hints
+        </label>
+        <>
+          <label>
+            <input
+              checked={props.gamemodeSettings.timerConfig.isTimed}
+              type="checkbox"
+              onChange={props.updateTimer}
+            ></input>
+            Timer
+          </label>
+          {props.gamemodeSettings.timerConfig.isTimed && (
+            <label>
+              <input
+                type="number"
+                value={props.gamemodeSettings.timerConfig.totalSeconds}
+                min={10}
+                max={120}
+                step={5}
+                onChange={(e) => {
+                  props.updateTimerLength(e.target.valueAsNumber);
+                }}
+              ></input>
+              Seconds
+            </label>
+          )}
+        </>
+      </>
+    );
+
+    return settings;
   }
 
   useEffect(() => {
@@ -398,13 +467,15 @@ const Wordle: React.FC<Props> = (props) => {
         )}
       </div>
 
-      {/* Not a campaign level or part of gameshow preset */ !props.isCampaignLevel && !props.gameshowScore && (
-        <div className="gamemodeSettings">
-          <GamemodeSettingsMenu>{props.gamemodeSettings}</GamemodeSettingsMenu>
-        </div>
-      )}
+      {
+        /* Not a campaign level or part of gameshow preset */ !props.isCampaignLevel && !props.gameshowScore && (
+          <div className="gamemodeSettings">
+            <GamemodeSettingsMenu>{generateSettingsOptions()}</GamemodeSettingsMenu>
+          </div>
+        )
+      }
 
-      <div className="word_grid">{populateGrid(props.numGuesses, props.wordLength)}</div>
+      <div className="word_grid">{populateGrid(props.numGuesses, props.gamemodeSettings.wordLength)}</div>
 
       <div className="keyboard">
         <Keyboard
@@ -427,10 +498,10 @@ const Wordle: React.FC<Props> = (props) => {
       </div>
 
       <div>
-        {props.timerConfig.isTimed && (
+        {props.gamemodeSettings.timerConfig.isTimed && (
           <ProgressBar
-            progress={props.timerConfig.remainingSeconds}
-            total={props.timerConfig.totalSeconds}
+            progress={props.gamemodeSettings.timerConfig.remainingSeconds}
+            total={props.gamemodeSettings.timerConfig.totalSeconds}
             display={{ type: "transition", colorTransition: GreenToRedColorTransition }}
           ></ProgressBar>
         )}
