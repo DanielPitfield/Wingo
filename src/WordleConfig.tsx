@@ -46,7 +46,7 @@ export interface WordleConfigProps {
     | "conundrum";
   gamemodeSettings?: {
     wordLength?: number;
-    firstLetter?: boolean;
+    firstLetterProvided?: boolean;
     showHint?: boolean;
     timer?: { isTimed: true; seconds: number } | { isTimed: false };
   };
@@ -258,7 +258,7 @@ const WordleConfig: React.FC<Props> = (props) => {
   const [gameId, setGameId] = useState<string | null>(null);
 
   // Gamemode settings
-  const [isFirstLetterProvided, setIsFirstLetterProvided] = useState(props.gamemodeSettings?.firstLetter ?? false);
+  const [isfirstLetterProvided, setIsfirstLetterProvided] = useState(props.gamemodeSettings?.firstLetterProvided ?? false);
   const [isHintShown, setIsHintShown] = useState(props.gamemodeSettings?.showHint ?? false);
 
   const [isTimerEnabled, setIsTimerEnabled] = useState(props.gamemodeSettings?.timer?.isTimed === true ?? false);
@@ -584,7 +584,7 @@ const WordleConfig: React.FC<Props> = (props) => {
     }
 
     // Show first letter of the target word (if enabled)
-    if (isFirstLetterProvided) {
+    if (isfirstLetterProvided) {
       setCurrentWord(targetWord.charAt(0));
     }
 
@@ -629,7 +629,7 @@ const WordleConfig: React.FC<Props> = (props) => {
       setRemainingSeconds(totalSeconds);
     }
 
-    if (isFirstLetterProvided) {
+    if (isfirstLetterProvided) {
       setCurrentWord(targetWord.charAt(0));
     }
     // firstLetterProvided now disabled (but first letter remains from when it was enabled)
@@ -643,17 +643,17 @@ const WordleConfig: React.FC<Props> = (props) => {
       return;
     }
 
-    const letterSubmittedFirstLetterEnabled = isFirstLetterProvided && guesses[0].length >= 2;
-    const letterSubmittedFirstLetterDisabled = !isFirstLetterProvided && guesses[0].length >= 1;
+    const letterSubmittedfirstLetterProvidedEnabled = isfirstLetterProvided && guesses[0].length >= 2;
+    const letterSubmittedfirstLetterProvidedDisabled = !isfirstLetterProvided && guesses[0].length >= 1;
 
     // User has starting making guesses
-    const letterSubmitted = letterSubmittedFirstLetterEnabled || letterSubmittedFirstLetterDisabled;
+    const letterSubmitted = letterSubmittedfirstLetterProvidedEnabled || letterSubmittedfirstLetterProvidedDisabled;
 
     // Reset game after change of settings (stops cheating by changing settings partway through a game)
     if (inProgress && letterSubmitted) {
       ResetGame();
     }
-  }, [/* TODO: Changing wordLength setting mid-game */ isFirstLetterProvided, isHintShown, isTimerEnabled]);
+  }, [/* TODO: Changing wordLength setting mid-game */ isfirstLetterProvided, isHintShown, isTimerEnabled]);
 
   // Update targetWord every time the targetCategory changes
   React.useEffect(() => {
@@ -784,7 +784,7 @@ const WordleConfig: React.FC<Props> = (props) => {
         mode: props.mode,
         gamemodeSettings: {
           wordLength: wordLength,
-          firstLetter: isFirstLetterProvided,
+          firstLetterProvided: isfirstLetterProvided,
           showHint: isHintShown,
           timer: isTimerEnabled ? { isTimed: true, seconds: remainingSeconds } : { isTimed: false },
         },
@@ -1005,7 +1005,7 @@ const WordleConfig: React.FC<Props> = (props) => {
         outcome = "failure";
       } else {
         // Not yet guessed
-        if (isFirstLetterProvided) {
+        if (isfirstLetterProvided) {
           setCurrentWord(targetWord?.charAt(0)!);
         } else {
           setCurrentWord(""); // Start new word as empty string
@@ -1030,7 +1030,7 @@ const WordleConfig: React.FC<Props> = (props) => {
           mode: props.mode,
           gamemodeSettings: {
             wordLength: wordLength,
-            firstLetter: isFirstLetterProvided,
+            firstLetterProvided: isfirstLetterProvided,
             showHint: isHintShown,
             timer: isTimerEnabled ? { isTimed: true, seconds: remainingSeconds } : { isTimed: false },
           },
@@ -1069,7 +1069,7 @@ const WordleConfig: React.FC<Props> = (props) => {
   function onBackspace() {
     if (currentWord.length > 0 && inProgress) {
       // If only the first letter and it was provided to begin with
-      if (currentWord.length === 1 && isFirstLetterProvided) {
+      if (currentWord.length === 1 && isfirstLetterProvided) {
         return; // Don't allow backspace
       }
       // If there is a letter to remove
@@ -1081,8 +1081,8 @@ const WordleConfig: React.FC<Props> = (props) => {
     setWordLength(newWordLength);
   }
 
-  function updateFirstLetterProvided() {
-    setIsFirstLetterProvided(!isFirstLetterProvided);
+  function updatefirstLetterProvided() {
+    setIsfirstLetterProvided(!isfirstLetterProvided);
   }
 
   function updateHintShown() {
@@ -1214,7 +1214,7 @@ const WordleConfig: React.FC<Props> = (props) => {
       mode={props.mode}
       gamemodeSettings={{
         wordLength: wordLength,
-        firstLetter: isFirstLetterProvided,
+        firstLetterProvided: isfirstLetterProvided,
         showHint: isHintShown,
         timerConfig: isTimerEnabled
           ? {
@@ -1248,7 +1248,7 @@ const WordleConfig: React.FC<Props> = (props) => {
       onSubmitTargetCategory={onSubmitTargetCategory}
       onBackspace={onBackspace}
       updateWordLength={updateWordLength}
-      updateFirstLetterProvided={updateFirstLetterProvided}
+      updatefirstLetterProvided={updatefirstLetterProvided}
       updateHintShown={updateHintShown}
       updateTimer={updateTimer}
       updateTimerLength={updateTimerLength}

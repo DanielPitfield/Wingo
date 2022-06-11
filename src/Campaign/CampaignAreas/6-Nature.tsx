@@ -16,7 +16,7 @@ export const area: AreaConfig = {
         defaultWordLength: 6,
         defaultnumGuesses: 6,
         gamemodeSettings: {
-          firstLetter: true,
+          firstLetterProvided: true,
           timer: { isTimed: false },
         },
         checkInDictionary: false,

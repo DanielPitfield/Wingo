@@ -16,7 +16,7 @@ interface Props {
   mode: "daily" | "repeat" | "category" | "increasing" | "limitless" | "puzzle" | "conundrum";
   gamemodeSettings: {
     wordLength: number;
-    firstLetter: boolean;
+    firstLetterProvided: boolean;
     showHint: boolean;
     timerConfig: { isTimed: true; remainingSeconds: number; totalSeconds: number } | { isTimed: false };
   };
@@ -50,7 +50,7 @@ interface Props {
 
   // Gamemode settings callbacks
   updateWordLength: (newWordLength: number) => void;
-  updateFirstLetterProvided: () => void;
+  updatefirstLetterProvided: () => void;
   updateHintShown: () => void;
   updateTimer: () => void;
   updateTimerLength: (newSeconds: number) => void;
@@ -188,9 +188,9 @@ const Wordle: React.FC<Props> = (props) => {
         </label>
         <label>
           <input
-            checked={props.gamemodeSettings.firstLetter}
+            checked={props.gamemodeSettings.firstLetterProvided}
             type="checkbox"
-            onChange={props.updateFirstLetterProvided}
+            onChange={props.updatefirstLetterProvided}
           ></input>
           First Letter Provided
         </label>

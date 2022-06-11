@@ -17,7 +17,7 @@ export const area: AreaConfig = {
         defaultWordLength: 5,
         defaultnumGuesses: 6,
         gamemodeSettings: {
-          firstLetter: false,
+          firstLetterProvided: false,
           timer: { isTimed: false },
         },
         checkInDictionary: false,
@@ -44,7 +44,7 @@ export const area: AreaConfig = {
           defaultWordLength: 5,
           defaultnumGuesses: 6,
           gamemodeSettings: {
-            firstLetter: true,
+            firstLetterProvided: true,
             timer: { isTimed: false },
           },
           puzzleLeaveNumBlanks: 0,
@@ -68,7 +68,7 @@ export const area: AreaConfig = {
           defaultWordLength: 4,
           defaultnumGuesses: 6,
           gamemodeSettings: {
-            firstLetter: false,
+            firstLetterProvided: false,
             timer: { isTimed: false },
           },
           puzzleLeaveNumBlanks: 0,
@@ -92,7 +92,7 @@ export const area: AreaConfig = {
           defaultWordLength: 5,
           defaultnumGuesses: 6,
           gamemodeSettings: {
-            firstLetter: true,
+            firstLetterProvided: true,
             timer: { isTimed: false },
           },
           puzzleLeaveNumBlanks: 0,
@@ -116,7 +116,7 @@ export const area: AreaConfig = {
           defaultWordLength: 5,
           defaultnumGuesses: 6,
           gamemodeSettings: {
-            firstLetter: false,
+            firstLetterProvided: false,
             timer: { isTimed: false },
           },
           puzzleLeaveNumBlanks: 0,
@@ -140,7 +140,7 @@ export const area: AreaConfig = {
           defaultWordLength: 7,
           defaultnumGuesses: 6,
           gamemodeSettings: {
-            firstLetter: false,
+            firstLetterProvided: false,
             timer: { isTimed: false },
           },
           puzzleLeaveNumBlanks: 0,
@@ -164,7 +164,7 @@ export const area: AreaConfig = {
           defaultWordLength: 7,
           defaultnumGuesses: 6,
           gamemodeSettings: {
-            firstLetter: true,
+            firstLetterProvided: true,
             timer: { isTimed: false },
           },
           puzzleLeaveNumBlanks: 4,
@@ -188,7 +188,7 @@ export const area: AreaConfig = {
           defaultWordLength: 7,
           defaultnumGuesses: 6,
           gamemodeSettings: {
-            firstLetter: true,
+            firstLetterProvided: true,
             timer: { isTimed: false },
           },
           puzzleLeaveNumBlanks: 0,
@@ -212,7 +212,7 @@ export const area: AreaConfig = {
           defaultWordLength: 6,
           defaultnumGuesses: 6,
           gamemodeSettings: {
-            firstLetter: true,
+            firstLetterProvided: true,
             timer: { isTimed: false },
           },
           puzzleLeaveNumBlanks: 0,
@@ -236,7 +236,7 @@ export const area: AreaConfig = {
           defaultWordLength: 7,
           defaultnumGuesses: 6,
           gamemodeSettings: {
-            firstLetter: false,
+            firstLetterProvided: false,
             timer: { isTimed: false },
           },
           puzzleLeaveNumBlanks: 0,
@@ -260,7 +260,7 @@ export const area: AreaConfig = {
           defaultWordLength: 5,
           defaultnumGuesses: 6,
           gamemodeSettings: {
-            firstLetter: false,
+            firstLetterProvided: false,
             timer: { isTimed: false },
           },
           puzzleLeaveNumBlanks: 3,
@@ -298,7 +298,7 @@ export const area: AreaConfig = {
           defaultWordLength: 6,
           defaultnumGuesses: 6,
           gamemodeSettings: {
-            firstLetter: false,
+            firstLetterProvided: false,
             timer: { isTimed: false },
           },
           puzzleLeaveNumBlanks: 0,
@@ -322,7 +322,7 @@ export const area: AreaConfig = {
           defaultWordLength: 6,
           defaultnumGuesses: 6,
           gamemodeSettings: {
-            firstLetter: false,
+            firstLetterProvided: false,
             timer: { isTimed: false },
           },
           puzzleLeaveNumBlanks: 3,
@@ -346,7 +346,7 @@ export const area: AreaConfig = {
           defaultWordLength: 6,
           defaultnumGuesses: 6,
           gamemodeSettings: {
-            firstLetter: false,
+            firstLetterProvided: false,
             timer: { isTimed: false },
           },
           puzzleLeaveNumBlanks: 0,
@@ -370,7 +370,7 @@ export const area: AreaConfig = {
           defaultWordLength: 6,
           defaultnumGuesses: 7,
           gamemodeSettings: {
-            firstLetter: true,
+            firstLetterProvided: true,
             timer: { isTimed: false },
           },
           puzzleLeaveNumBlanks: 3,

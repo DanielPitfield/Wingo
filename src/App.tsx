@@ -426,7 +426,7 @@ export const App: React.FC = () => {
     page: Page;
     settings: {
       wordLength?: number;
-      firstLetter?: boolean;
+      firstLetterProvided?: boolean;
       showHint?: boolean;
       timer?: { isTimed: true; seconds: number } | { isTimed: false };
     };
@@ -435,7 +435,7 @@ export const App: React.FC = () => {
       page: "wingo/repeat",
       settings: {
         wordLength: wordLength,
-        firstLetter: false,
+        firstLetterProvided: false,
         showHint: false,
         timer: { isTimed: false },
       },
@@ -443,7 +443,7 @@ export const App: React.FC = () => {
     {
       page: "wingo/category",
       settings: {
-        firstLetter: false,
+        firstLetterProvided: false,
         showHint: false,
         timer: { isTimed: false },
       },
@@ -451,7 +451,7 @@ export const App: React.FC = () => {
     {
       page: "wingo/increasing",
       settings: {
-        firstLetter: false,
+        firstLetterProvided: false,
         showHint: false,
         timer: { isTimed: false },
       },
@@ -459,7 +459,7 @@ export const App: React.FC = () => {
     {
       page: "wingo/limitless",
       settings: {
-        firstLetter: false,
+        firstLetterProvided: false,
         showHint: false,
         timer: { isTimed: false },
       },
@@ -474,7 +474,7 @@ export const App: React.FC = () => {
       page: "wingo/interlinked",
       settings: {
         wordLength: wordLength,
-        firstLetter: false,
+        firstLetterProvided: false,
         showHint: false,
         timer: { isTimed: false },
       },
@@ -483,7 +483,7 @@ export const App: React.FC = () => {
       page: "wingo/crossword",
       settings: {
         wordLength: wordLength,
-        firstLetter: false,
+        firstLetterProvided: false,
         showHint: true,
         timer: { isTimed: false },
       },
@@ -492,7 +492,7 @@ export const App: React.FC = () => {
       page: "wingo/crossword/fit",
       settings: {
         wordLength: wordLength,
-        firstLetter: false,
+        firstLetterProvided: false,
         showHint: true,
         timer: { isTimed: true, seconds: 30 },
       },
