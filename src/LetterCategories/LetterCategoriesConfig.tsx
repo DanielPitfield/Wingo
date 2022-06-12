@@ -108,7 +108,7 @@ const LetterCategoriesConfig: React.FC<Props> = (props) => {
           .filter((x) => x.charAt(0) === firstLetterProvided);
 
         // No words starting with firstLetterProvided
-        if (!words) {
+        if (!words || words.length <= 0) {
           failedSearchCount += 1;
           continue;
         }
@@ -219,8 +219,8 @@ const LetterCategoriesConfig: React.FC<Props> = (props) => {
       return;
     }
 
-    if (wordIndex >= numCategories) {
-      // Used all the available rows (out of guesses)
+    if (wordIndex >= categoryWordTargets.length) {
+      // Made a guess in each row
       return;
     }
 
@@ -238,7 +238,7 @@ const LetterCategoriesConfig: React.FC<Props> = (props) => {
 
     setGuesses(guesses.concat(currentWord)); // Always show guess
 
-    if (wordIndex + 1 === numCategories) {
+    if (wordIndex + 1 === categoryWordTargets.length) {
       // Out of guesses
       setinProgress(false);
 
