@@ -11,8 +11,12 @@ import GamemodeSettingsMenu from "../GamemodeSettingsMenu";
 
 interface Props {
   isCampaignLevel: boolean;
-  timerConfig: { isTimed: false } | { isTimed: true; remainingSeconds: number; totalSeconds: number };
-  gamemodeSettings: React.ReactNode;
+  
+  gamemodeSettings: {
+    numCategories: number;
+    timerConfig: { isTimed: true; remainingSeconds: number; totalSeconds: number } | { isTimed: false };
+  };
+
   wordLength: number;
   numGuesses: number;
   guesses: string[];
@@ -31,6 +35,12 @@ interface Props {
   onEnter: () => void;
   onSubmitLetter: (letter: string) => void;
   onBackspace: () => void;
+
+  // Gamemode settings callbacks
+  updateNumCategories: (newNumCategories: number) => void;
+  updateTimer: () => void;
+  updateTimerLength: (newSeconds: number) => void;
+
   ResetGame: () => void;
 }
 
@@ -106,6 +116,54 @@ const LetterCategories: React.FC<Props> = (props) => {
     return Grid;
   }
 
+  function generateSettingsOptions(): React.ReactNode {
+    let settings;
+
+    settings = (
+      <>
+        <label>
+          <input
+            type="number"
+            value={props.gamemodeSettings.numCategories}
+            min={3}
+            max={6}
+            onChange={(e) => {
+              props.updateNumCategories(e.target.valueAsNumber);
+            }}
+          ></input>
+          Numbers in selection
+        </label>
+        <>
+          <label>
+            <input
+              checked={props.gamemodeSettings.timerConfig.isTimed}
+              type="checkbox"
+              onChange={props.updateTimer}
+            ></input>
+            Timer
+          </label>
+          {props.gamemodeSettings.timerConfig.isTimed && (
+            <label>
+              <input
+                type="number"
+                value={props.gamemodeSettings.timerConfig.totalSeconds}
+                min={10}
+                max={120}
+                step={5}
+                onChange={(e) => {
+                  props.updateTimerLength(e.target.valueAsNumber);
+                }}
+              ></input>
+              Seconds
+            </label>
+          )}
+        </>
+      </>
+    );
+
+    return settings;
+  }
+
   function displayOutcome(): JSX.Element {
     // Game still in progress, don't display anything
     if (props.inProgress) {
@@ -157,7 +215,7 @@ const LetterCategories: React.FC<Props> = (props) => {
 
       {!props.isCampaignLevel && (
       <div className="gamemodeSettings">
-        <GamemodeSettingsMenu>{props.gamemodeSettings}</GamemodeSettingsMenu>
+        <GamemodeSettingsMenu>{generateSettingsOptions()}</GamemodeSettingsMenu>
       </div>)}
 
       <div className="word_grid">{populateGrid(props.numGuesses, props.wordLength)}</div>
@@ -179,10 +237,10 @@ const LetterCategories: React.FC<Props> = (props) => {
       </div>
 
       <div>
-        {props.timerConfig.isTimed && (
+        {props.gamemodeSettings.timerConfig.isTimed && (
           <ProgressBar
-            progress={props.timerConfig.remainingSeconds}
-            total={props.timerConfig.totalSeconds}
+            progress={props.gamemodeSettings.timerConfig.remainingSeconds}
+            total={props.gamemodeSettings.timerConfig.totalSeconds}
             display={{ type: "transition", colorTransition: GreenToRedColorTransition }}
           ></ProgressBar>
         )}

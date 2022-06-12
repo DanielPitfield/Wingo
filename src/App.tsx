@@ -780,7 +780,6 @@ export const App: React.FC = () => {
         return (
           <LetterCategoriesConfig
             {...commonWingoProps}
-            numCategories={5}
             theme={theme}
             enforceFullLengthGuesses={false}
           />
