@@ -38,6 +38,8 @@ interface Props {
 }
 
 export const CountdownGameshow: React.FC<Props> = (props) => {
+  const DEFAULT_NUM_GUESSES = 5;
+
   const [inProgress, setInProgress] = useState(true);
   const [roundOrder, setRoundOrder] = useState<("number" | "letter" | "conundrum")[]>([]);
   const [roundNumber, setRoundNumber] = useState(0);
@@ -119,7 +121,6 @@ export const CountdownGameshow: React.FC<Props> = (props) => {
       return (
         <CountdownLettersConfig
           mode={"countdown_letters_casual"}
-          defaultWordLength={9}
           page={"countdown/letters"}
           theme={props.themes[0]}
           settings={props.settings}
@@ -134,7 +135,7 @@ export const CountdownGameshow: React.FC<Props> = (props) => {
       return (
         <CountdownNumbersConfig
           mode={"countdown_numbers_casual"}
-          defaultNumGuesses={5}
+          defaultNumGuesses={DEFAULT_NUM_GUESSES}
           page={"countdown/numbers"}
           theme={props.themes[1]}
           settings={props.settings}

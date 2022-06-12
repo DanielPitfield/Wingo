@@ -309,9 +309,7 @@ const CountdownNumbers: React.FC<Props> = (props) => {
           <input
             checked={props.gamemodeSettings.hasScaryNumbers}
             type="checkbox"
-            onChange={(e) => {
-              props.updateScaryNumbers();
-            }}
+            onChange={props.updateScaryNumbers}
           ></input>
           Scary Big Numbers
         </label>
@@ -320,9 +318,7 @@ const CountdownNumbers: React.FC<Props> = (props) => {
             <input
               checked={props.gamemodeSettings.timerConfig.isTimed}
               type="checkbox"
-              onChange={(e) => {
-                props.updateTimer();
-              }}
+              onChange={props.updateTimer}
             ></input>
             Timer
           </label>
@@ -335,7 +331,7 @@ const CountdownNumbers: React.FC<Props> = (props) => {
                 max={120}
                 step={5}
                 onChange={(e) => {
-                  // TODO: Manually input value outside range
+                  // TODO: Still able to manually input value outside range
                   props.updateTimerLength(e.target.valueAsNumber);
                 }}
               ></input>

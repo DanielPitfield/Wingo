@@ -14,9 +14,12 @@ import GamemodeSettingsMenu from "../GamemodeSettingsMenu";
 interface Props {
   isCampaignLevel: boolean;
   mode: "countdown_letters_casual" | "countdown_letters_realistic";
-  timerConfig: { isTimed: false } | { isTimed: true; remainingSeconds: number; totalSeconds: number };
-  gamemodeSettings: React.ReactNode;
-  wordLength: number;
+
+  gamemodeSettings: {
+    numLetters: number;
+    timerConfig: { isTimed: true; remainingSeconds: number; totalSeconds: number } | { isTimed: false };
+  };
+
   guesses: string[];
   hasTimerEnded: boolean;
   countdownWord: string;
@@ -39,6 +42,12 @@ interface Props {
   onSubmitCountdownWord: (word: string) => void;
   onSubmitLetter: (letter: string) => void;
   onBackspace: () => void;
+
+  // Gamemode settings callbacks
+  updateNumLetters: (newNumLetters: number) => void;
+  updateTimer: () => void;
+  updateTimerLength: (newSeconds: number) => void;
+
   ResetGame: (wasCorrect: boolean, answer: string, targetAnswer: string, score: number | null) => void;
   ContinueGame: () => void;
   gameshowScore?: number;
@@ -74,7 +83,6 @@ const CountdownLetters: React.FC<Props> = (props) => {
         countdownWord: props.countdownWord,
         guesses: props.guesses,
         mode: props.mode,
-        defaultWordLength: props.wordLength,
       },
     });
 
@@ -262,6 +270,55 @@ const CountdownLetters: React.FC<Props> = (props) => {
     return Grid;
   }
 
+  function generateSettingsOptions(): React.ReactNode {
+    let settings;
+
+    settings = (
+      <>
+        <label>
+          <input
+            type="number"
+            value={props.gamemodeSettings.numLetters}
+            min={3}
+            max={15}
+            onChange={(e) => {
+              props.updateNumLetters(e.target.valueAsNumber);
+            }}
+          ></input>
+          Number of Letters
+        </label>
+
+        <>
+          <label>
+            <input
+              checked={props.gamemodeSettings.timerConfig.isTimed}
+              type="checkbox"
+              onChange={props.updateTimer}
+            ></input>
+            Timer
+          </label>
+          {props.gamemodeSettings.timerConfig.isTimed && (
+            <label>
+              <input
+                type="number"
+                value={props.gamemodeSettings.timerConfig.totalSeconds}
+                min={10}
+                max={120}
+                step={5}
+                onChange={(e) => {
+                  props.updateTimerLength(e.target.valueAsNumber);
+                }}
+              ></input>
+              Seconds
+            </label>
+          )}
+        </>
+      </>
+    );
+
+    return settings;
+  }
+
   // TODO: Add game to SaveData history
   // TODO: Calculate gold reward
   function getBestWords(countdownWord: string) {
@@ -384,7 +441,6 @@ const CountdownLetters: React.FC<Props> = (props) => {
           countdownWord: props.countdownWord,
           guesses: props.guesses,
           mode: props.mode,
-          defaultWordLength: props.wordLength,
         },
       });
     }
@@ -424,7 +480,7 @@ const CountdownLetters: React.FC<Props> = (props) => {
     <div className="App" style={{ backgroundImage: `url(${props.theme.backgroundImageSrc})`, backgroundSize: "100%" }}>
       {!props.isCampaignLevel && !props.gameshowScore && (
         <div className="gamemodeSettings">
-          <GamemodeSettingsMenu>{props.gamemodeSettings}</GamemodeSettingsMenu>
+          <GamemodeSettingsMenu>{generateSettingsOptions()}</GamemodeSettingsMenu>
         </div>
       )}
 
@@ -457,7 +513,7 @@ const CountdownLetters: React.FC<Props> = (props) => {
         )}
       </div>
 
-      <div className="countdown/word_grid">{populateGrid(props.wordLength)}</div>
+      <div className="countdown/word_grid">{populateGrid(props.gamemodeSettings.numLetters)}</div>
 
       <div className="keyboard">
         <Keyboard
@@ -476,10 +532,10 @@ const CountdownLetters: React.FC<Props> = (props) => {
       </div>
 
       <div>
-        {props.timerConfig.isTimed && (
+        {props.gamemodeSettings.timerConfig.isTimed && (
           <ProgressBar
-            progress={props.timerConfig.remainingSeconds}
-            total={props.timerConfig.totalSeconds}
+            progress={props.gamemodeSettings.timerConfig.remainingSeconds}
+            total={props.gamemodeSettings.timerConfig.totalSeconds}
             display={{ type: "transition", colorTransition: GreenToRedColorTransition }}
           ></ProgressBar>
         )}

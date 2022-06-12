@@ -34,21 +34,21 @@ import { FiArrowLeft, FiHelpCircle, FiSettings } from "react-icons/fi";
 import HelpInformation from "./HelpInformation";
 import { TitlePage } from "./TitlePage";
 
-const wordLength = 5;
-const numGuesses = 6;
+// WordLength values (for different modes)
+const DEFAULT_WORD_LENGTH = 5;
 
-const wordLength_increasing = 4;
-const wordLength_limitless = 4;
-const wordLength_puzzle = 10;
-const wordLength_countdown_letters = 9;
+const wordLengthIncreasing = 4;
+const wordLengthConundrum = 9;
+const wordLengthPuzzle = 10;
 
-const numGuesses_puzzle = 1;
+// numGuesses values (for different modes)
+const DEFAULT_NUM_GUESSES = 6;
+const numGuessesPuzzle = 1;
+const numGuessesCountdownNumbers = 5;
+
+// Additional values for puzzle mode
 const puzzleRevealMs = 2000;
 const puzzleLeaveNumBlanks = 3;
-
-const countdown_numbers_NumOperands = 6;
-const countdown_numbers_ExpressionLength = 5;
-const countdown_numbers_NumGuesses = 5;
 
 export type Page =
   | "splash-screen"
@@ -434,7 +434,7 @@ export const App: React.FC = () => {
     {
       page: "wingo/repeat",
       settings: {
-        wordLength: wordLength,
+        wordLength: DEFAULT_WORD_LENGTH,
         firstLetterProvided: false,
         showHint: false,
         timer: { isTimed: false },
@@ -467,13 +467,13 @@ export const App: React.FC = () => {
     {
       page: "wingo/puzzle",
       settings: {
-        wordLength: wordLength_puzzle,
+        wordLength: wordLengthPuzzle,
       },
     },
     {
       page: "wingo/interlinked",
       settings: {
-        wordLength: wordLength,
+        wordLength: DEFAULT_WORD_LENGTH,
         firstLetterProvided: false,
         showHint: false,
         timer: { isTimed: false },
@@ -482,7 +482,7 @@ export const App: React.FC = () => {
     {
       page: "wingo/crossword",
       settings: {
-        wordLength: wordLength,
+        wordLength: DEFAULT_WORD_LENGTH,
         firstLetterProvided: false,
         showHint: true,
         timer: { isTimed: false },
@@ -491,7 +491,7 @@ export const App: React.FC = () => {
     {
       page: "wingo/crossword/fit",
       settings: {
-        wordLength: wordLength,
+        wordLength: DEFAULT_WORD_LENGTH,
         firstLetterProvided: false,
         showHint: true,
         timer: { isTimed: true, seconds: 30 },
@@ -504,8 +504,6 @@ export const App: React.FC = () => {
         timer: { isTimed: true, seconds: 30 },
       },
     },
-
-    // TODO: Disable changing the settings for campaign levels!
 
     /*
     {
@@ -644,9 +642,9 @@ export const App: React.FC = () => {
   const pageComponent = (() => {
     const commonWingoProps = {
       gamemodeSettings: gamemodeSettings.find((x) => x.page === page)?.settings,
-      defaultWordLength: wordLength,
+      defaultWordLength: DEFAULT_WORD_LENGTH,
       saveData: saveData,
-      defaultnumGuesses: numGuesses,
+      defaultnumGuesses: DEFAULT_NUM_GUESSES,
       enforceFullLengthGuesses: true,
       puzzleRevealMs: puzzleRevealMs,
       puzzleLeaveNumBlanks: puzzleLeaveNumBlanks,
@@ -731,18 +729,18 @@ export const App: React.FC = () => {
         return <WordleConfig {...commonWingoProps} mode="category" enforceFullLengthGuesses={false} />;
 
       case "wingo/increasing":
-        return <WordleConfig {...commonWingoProps} mode="increasing" defaultWordLength={wordLength_increasing} />;
+        return <WordleConfig {...commonWingoProps} mode="increasing" defaultWordLength={wordLengthIncreasing} />;
 
       case "wingo/limitless":
-        return <WordleConfig {...commonWingoProps} mode="limitless" defaultWordLength={wordLength_limitless} />;
+        return <WordleConfig {...commonWingoProps} mode="limitless" defaultWordLength={wordLengthIncreasing} />;
 
       case "wingo/puzzle":
         return (
           <WordleConfig
             {...commonWingoProps}
             mode="puzzle"
-            defaultWordLength={wordLength_puzzle}
-            defaultnumGuesses={numGuesses_puzzle}
+            defaultWordLength={wordLengthPuzzle}
+            defaultnumGuesses={numGuessesPuzzle}
           />
         );
 
@@ -775,7 +773,6 @@ export const App: React.FC = () => {
         return (
           <CountdownLettersConfig
             mode={"countdown_letters_casual"}
-            defaultWordLength={wordLength_countdown_letters}
             page={page}
             theme={Themes.GenericLetterCountdown}
             settings={settings}
@@ -790,7 +787,7 @@ export const App: React.FC = () => {
         return (
           <CountdownNumbersConfig
             mode={"countdown_numbers_casual"}
-            defaultNumGuesses={countdown_numbers_NumGuesses}
+            defaultNumGuesses={numGuessesCountdownNumbers}
             page={page}
             theme={Themes.GenericNumberCountdown}
             settings={settings}
@@ -806,8 +803,8 @@ export const App: React.FC = () => {
           <WordleConfig
             {...commonWingoProps}
             mode="conundrum"
-            defaultWordLength={wordLength_countdown_letters}
-            defaultnumGuesses={numGuesses_puzzle}
+            defaultWordLength={wordLengthConundrum}
+            defaultnumGuesses={numGuessesPuzzle}
           />
         );
 
