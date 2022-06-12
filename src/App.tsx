@@ -405,8 +405,12 @@ export const App: React.FC = () => {
 
   const [loadingState, setLoadingState] = useState<"loading" | "loaded">("loading");
 
-  // TODO: Implement newEntryPage as initial value of this state
-  const [page, setPage] = useState<Page>(settings.gameplay.skipSplashscreen ? "title-page" : "splash-screen");
+  // Find the page that has the title of the option chosen in the settings menu (dropdown)
+  const entryPageSelection = pages.find((page) => page.title === settings.gameplay.entryPage)?.page;
+  // Determine entry page (precedence is splashscreen (if enabled), chosen entry page, title page)
+  const newEntryPage = !settings.gameplay.skipSplashscreen ? "splash-screen" : entryPageSelection ?? "title-page";
+
+  const [page, setPage] = useState<Page>(newEntryPage);
 
   // Modal explaining current gamemode is shown?
   const [isHelpInfoShown, setIsHelpInfoShown] = useState(false);
@@ -545,7 +549,7 @@ export const App: React.FC = () => {
     const newEntryPage = (pageFromUrl || entryPageSelection) ?? "title-page";
 
     if (settings.gameplay.skipSplashscreen) {
-      // CHange immediately
+      // Change immediately
       setPage(newEntryPage);
     } else {
       // Delay setting of new page (until after splashscreen)
