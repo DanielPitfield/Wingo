@@ -286,7 +286,7 @@ const LetterCategoriesConfig: React.FC<Props> = (props) => {
     <LetterCategories
       isCampaignLevel={props.page === "campaign/area/level"}
       gamemodeSettings={{
-        numCategories: numCategories,
+        numCategories: categoryWordTargets.length,
         timerConfig: isTimerEnabled
           ? {
               isTimed: true,
