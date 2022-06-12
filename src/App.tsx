@@ -405,12 +405,7 @@ export const App: React.FC = () => {
 
   const [loadingState, setLoadingState] = useState<"loading" | "loaded">("loading");
 
-  // Find the page that has the title of the option chosen in the settings menu (dropdown)
-  const entryPageSelection = pages.find((page) => page.title === settings.gameplay.entryPage)?.page;
-  // Determine entry page (precedence is splashscreen (if enabled), chosen entry page, title page)
-  const newEntryPage = !settings.gameplay.skipSplashscreen ? "splash-screen" : entryPageSelection ?? "title-page";
-
-  const [page, setPage] = useState<Page>(newEntryPage);
+  const [page, setPage] = useState<Page>(getNewEntryPage());
 
   // Modal explaining current gamemode is shown?
   const [isHelpInfoShown, setIsHelpInfoShown] = useState(false);
@@ -529,13 +524,7 @@ export const App: React.FC = () => {
     */
   ];
 
-  useEffect(() => {
-    const LOADING_TIMEOUT_MS = 2000;
-    const FADE_OUT_DURATION_MS = 500;
-
-    // TODO: Mask actual loading, rather than hard-coding seconds
-    window.setTimeout(() => setLoadingState("loaded"), LOADING_TIMEOUT_MS);
-
+  function getNewEntryPage(): Page {
     let pageFromUrl = getPageFromUrl();
 
     // Redirect to the campaign page if loaded from a level/area
@@ -545,8 +534,18 @@ export const App: React.FC = () => {
 
     // Find the page that has the title of the option chosen in the settings menu (dropdown)
     const entryPageSelection = pages.find((page) => page.title === settings.gameplay.entryPage)?.page;
-    // Try to find new entry page (in order of precedence, from left to right)
-    const newEntryPage = (pageFromUrl || entryPageSelection) ?? "title-page";
+    // The new entry page (in order of precedence, from left to right)
+    return (pageFromUrl || entryPageSelection) ?? "title-page";
+  }
+
+  useEffect(() => {
+    const LOADING_TIMEOUT_MS = 2000;
+    const FADE_OUT_DURATION_MS = 500;
+
+    // TODO: Mask actual loading, rather than hard-coding seconds
+    window.setTimeout(() => setLoadingState("loaded"), LOADING_TIMEOUT_MS);
+
+    const newEntryPage = getNewEntryPage();
 
     if (settings.gameplay.skipSplashscreen) {
       // Change immediately
