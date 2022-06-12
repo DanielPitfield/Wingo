@@ -20,6 +20,8 @@ export type SettingsData = {
   };
   gameplay: {
     keyboard: boolean;
+    skipSplashscreen: boolean;
+    entryPage: string | null;
   };
 };
 
@@ -92,14 +94,14 @@ export class SaveData {
   public static DISABLED_SETTINGS: SettingsData = {
     sound: { masterVolume: 0, effectsVolume: 0, backgroundVolume: 0 },
     graphics: { preferredTheme: null, animation: false },
-    gameplay: { keyboard: false },
+    gameplay: { keyboard: false, skipSplashscreen: true, entryPage: "Home" },
   };
 
   /** Default settings */
   public static DEFAULT_SETTINGS: SettingsData = {
     sound: { masterVolume: 0.5, effectsVolume: 0.5, backgroundVolume: 0.35 },
     graphics: { preferredTheme: null, animation: true },
-    gameplay: { keyboard: true },
+    gameplay: { keyboard: true, skipSplashscreen: false, entryPage: "Home" },
   };
 
   /**

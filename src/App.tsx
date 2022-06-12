@@ -99,8 +99,8 @@ export const pages: {
   helpInfo?: JSX.Element;
 }[] = [
   { page: "splash-screen", title: "Wingo", isPlayable: false },
-  { page: "title-page", title: "", isPlayable: false },
-  { page: "home", title: "", isPlayable: false },
+  { page: "title-page", title: "Home", isPlayable: false },
+  //{ page: "home", title: "", isPlayable: false },
   {
     page: "wingo/daily",
     title: "Daily Wingo",
@@ -401,9 +401,12 @@ export const App: React.FC = () => {
   }
 
   const saveData = window.localStorage;
+  const [settings, setSettings] = useState<SettingsData>(SaveData.getSettings());
 
   const [loadingState, setLoadingState] = useState<"loading" | "loaded">("loading");
-  const [page, setPage] = useState<Page>("splash-screen");
+
+  // TODO: Implement newEntryPage as initial value of this state
+  const [page, setPage] = useState<Page>(settings.gameplay.skipSplashscreen ? "title-page" : "splash-screen");
 
   // Modal explaining current gamemode is shown?
   const [isHelpInfoShown, setIsHelpInfoShown] = useState(false);
@@ -413,7 +416,7 @@ export const App: React.FC = () => {
 
   const [selectedCampaignArea, setSelectedCampaignArea] = useState<AreaConfig | null>(null);
   const [selectedCampaignLevel, setSelectedCampaignLevel] = useState<LevelConfig | null>(null);
-  const [settings, setSettings] = useState<SettingsData>(SaveData.getSettings());
+
   const [theme, setTheme] = useState<Theme>(
     getHighestCampaignArea()?.theme ||
       (settings.graphics.preferredTheme ? Themes[settings.graphics.preferredTheme] : Themes.GenericWingo)
@@ -536,8 +539,18 @@ export const App: React.FC = () => {
       pageFromUrl = "campaign";
     }
 
-    // Set title page after load
-    window.setTimeout(() => setPage(pageFromUrl || "title-page"), LOADING_TIMEOUT_MS + FADE_OUT_DURATION_MS);
+    // Find the page that has the title of the option chosen in the settings menu (dropdown)
+    const entryPageSelection = pages.find((page) => page.title === settings.gameplay.entryPage)?.page;
+    // Try to find new entry page (in order of precedence, from left to right)
+    const newEntryPage = (pageFromUrl || entryPageSelection) ?? "title-page";
+
+    if (settings.gameplay.skipSplashscreen) {
+      // CHange immediately
+      setPage(newEntryPage);
+    } else {
+      // Delay setting of new page (until after splashscreen)
+      window.setTimeout(() => setPage(newEntryPage), LOADING_TIMEOUT_MS + FADE_OUT_DURATION_MS);
+    }
   }, [saveData]);
 
   useEffect(() => {

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { IconType } from "react-icons";
 import { FiCompass, FiHeadphones, FiInfo, FiMonitor } from "react-icons/fi";
+import { Page, pages } from "./App";
 import { Button } from "./Button";
 import { SettingsData } from "./SaveData";
 import { StudioLogo } from "./StudioLogo";
@@ -30,6 +31,11 @@ type Setting =
 export const Settings: React.FC<Props> = (props) => {
   const [selectedSettingAreaName, setSelectedSettingAreaName] = useState<SettingArea>("Sound");
   const { settings } = props;
+
+  // The available choices for which page is loaded on launch
+  const entryPages: Page[] = ["title-page", "campaign", "wingo/daily"];
+  // More user friendly to use title values (for dropdown in settings)
+  const entryPageValues = pages.filter((page) => entryPages.includes(page.page))?.map((page) => page.title);
 
   // All the setting areas and their settings
   const SETTINGS: (
@@ -109,6 +115,19 @@ export const Settings: React.FC<Props> = (props) => {
           type: "boolean",
           value: props.settings.gameplay.keyboard,
           onChange: (keyboard) => ({ ...settings, gameplay: { ...settings.gameplay, keyboard } }),
+        },
+        {
+          name: "Skip splashscreen",
+          type: "boolean",
+          value: props.settings.gameplay.skipSplashscreen,
+          onChange: (skipSplashscreen) => ({ ...settings, gameplay: { ...settings.gameplay, skipSplashscreen } }),
+        },
+        {
+          name: "Entry page",
+          type: "option",
+          value: props.settings.gameplay.entryPage,
+          values: entryPageValues,
+          onChange: (entryPage) => ({ ...settings, gameplay: { ...settings.gameplay, entryPage } }),
         },
       ],
     },
