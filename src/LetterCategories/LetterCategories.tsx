@@ -18,7 +18,6 @@ interface Props {
   };
 
   wordLength: number;
-  numGuesses: number;
   guesses: string[];
   currentWord: string;
   wordIndex: number;
@@ -171,7 +170,7 @@ const LetterCategories: React.FC<Props> = (props) => {
     }
 
     // All correct
-    if (props.correctGuessesCount === props.numGuesses) {
+    if (props.correctGuessesCount === props.gamemodeSettings.numCategories) {
       return (
         <MessageNotification type="success">
           You guessed a correct word for <strong>all</strong> {props.correctGuessesCount} categories!
@@ -182,7 +181,7 @@ const LetterCategories: React.FC<Props> = (props) => {
     else if (props.correctGuessesCount === 0) {
       return (
         <MessageNotification type="error">
-          You didn't guess a correct word for <strong>any</strong> of the <strong>{props.numGuesses}</strong> categories
+          You didn't guess a correct word for <strong>any</strong> of the <strong>{props.gamemodeSettings.numCategories}</strong> categories
         </MessageNotification>
       );
     }
@@ -191,7 +190,7 @@ const LetterCategories: React.FC<Props> = (props) => {
       return (
         <MessageNotification type="default">
           You guessed a correct word for <strong>{props.correctGuessesCount}</strong> of the{" "}
-          <strong>{props.numGuesses}</strong> categories
+          <strong>{props.gamemodeSettings.numCategories}</strong> categories
         </MessageNotification>
       );
     }
@@ -218,7 +217,7 @@ const LetterCategories: React.FC<Props> = (props) => {
         <GamemodeSettingsMenu>{generateSettingsOptions()}</GamemodeSettingsMenu>
       </div>)}
 
-      <div className="word_grid">{populateGrid(props.numGuesses, props.wordLength)}</div>
+      <div className="word_grid">{populateGrid(props.gamemodeSettings.numCategories, props.wordLength)}</div>
 
       <div className="keyboard">
         <Keyboard

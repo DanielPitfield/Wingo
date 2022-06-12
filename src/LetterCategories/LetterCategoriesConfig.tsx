@@ -12,7 +12,6 @@ interface Props {
     defaultNumCategories?: number;
     timer?: { isTimed: true; seconds: number } | { isTimed: false };
   };
-  defaultnumGuesses: number;
   finishingButtonText?: string;
   theme: Theme;
   settings: SettingsData;
@@ -24,8 +23,6 @@ interface Props {
 
 const LetterCategoriesConfig: React.FC<Props> = (props) => {
   const [guesses, setGuesses] = useState<string[]>([]);
-  // TODO: Remove and just use number of categories?
-  const [numGuesses, setNumGuesses] = useState(props.defaultnumGuesses);
   const [gameId, setGameId] = useState<string | null>(null);
   const [currentWord, setCurrentWord] = useState("");
   const [wordIndex, setWordIndex] = useState(0);
@@ -141,9 +138,6 @@ const LetterCategoriesConfig: React.FC<Props> = (props) => {
 
       setCategoryWordTargets(categoryTargetWords);
 
-      // Number of rows needs to be the same as the number of categories
-      setNumGuesses(categoryTargetWords.length);
-
       // Start longestValidLength (at 4)
       let longestValidLength = wordLength;
 
@@ -225,7 +219,7 @@ const LetterCategoriesConfig: React.FC<Props> = (props) => {
       return;
     }
 
-    if (wordIndex >= props.defaultnumGuesses) {
+    if (wordIndex >= numCategories) {
       // Used all the available rows (out of guesses)
       return;
     }
@@ -244,7 +238,7 @@ const LetterCategoriesConfig: React.FC<Props> = (props) => {
 
     setGuesses(guesses.concat(currentWord)); // Always show guess
 
-    if (wordIndex + 1 === numGuesses) {
+    if (wordIndex + 1 === numCategories) {
       // Out of guesses
       setinProgress(false);
 
@@ -302,7 +296,6 @@ const LetterCategoriesConfig: React.FC<Props> = (props) => {
           : { isTimed: false },
       }}
       wordLength={wordLength}
-      numGuesses={numGuesses}
       guesses={guesses}
       currentWord={currentWord}
       wordIndex={wordIndex}
