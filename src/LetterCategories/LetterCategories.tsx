@@ -131,7 +131,7 @@ const LetterCategories: React.FC<Props> = (props) => {
               props.updateNumCategories(e.target.valueAsNumber);
             }}
           ></input>
-          Numbers in selection
+          Number of categories
         </label>
         <>
           <label>
