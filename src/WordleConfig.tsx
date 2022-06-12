@@ -258,7 +258,9 @@ const WordleConfig: React.FC<Props> = (props) => {
   const [gameId, setGameId] = useState<string | null>(null);
 
   // Gamemode settings
-  const [isfirstLetterProvided, setIsfirstLetterProvided] = useState(props.gamemodeSettings?.firstLetterProvided ?? false);
+  const [isfirstLetterProvided, setIsfirstLetterProvided] = useState(
+    props.gamemodeSettings?.firstLetterProvided ?? false
+  );
   const [isHintShown, setIsHintShown] = useState(props.gamemodeSettings?.showHint ?? false);
 
   const [isTimerEnabled, setIsTimerEnabled] = useState(props.gamemodeSettings?.timer?.isTimed === true ?? false);
@@ -341,6 +343,11 @@ const WordleConfig: React.FC<Props> = (props) => {
 
     switch (props.mode) {
       case "daily":
+        // Choose a target word based on length
+        targetWordArray = wordLengthMappingsTargets
+          .find((x) => x.value === wordLength)
+          ?.array.map((x) => ({ word: x, hint: "" }))!;
+
         newTarget = getDeterministicArrayItems({ seedType: "today" }, 1, targetWordArray)[0];
         console.log(
           `%cMode:%c ${props.mode}\n%cHint:%c ${newTarget.hint || "-"}\n%cWord:%c ${newTarget.word || "-"}`,
