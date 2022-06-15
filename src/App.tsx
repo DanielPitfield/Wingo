@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { SplashScreen } from "./SplashScreen";
 import { LobbyMenu } from "./LobbyMenu";
-import WordleConfig from "./WordleConfig";
+import WordleConfig, { categoryMappings, wordLengthMappingsTargets } from "./WordleConfig";
 import { Button } from "./Button";
 import NubbleConfig from "./Nubble/NubbleConfig";
 import GoldCoin from "./images/gold.png";
@@ -49,6 +49,14 @@ const numGuessesCountdownNumbers = 5;
 // Additional values for puzzle mode
 const puzzleRevealMs = 2000;
 const puzzleLeaveNumBlanks = 3;
+
+// The wordLengths of target word arrays that have at least one word
+const targetWordLengths = wordLengthMappingsTargets.filter(mapping => mapping.array.length > 0).map(mapping => mapping.value);
+export const MIN_TARGET_WORD_LENGTH = Math.min(...targetWordLengths);
+export const MAX_TARGET_WORD_LENGTH = Math.max(...targetWordLengths);
+
+// The number of categories with at least one word
+export const MAX_NUM_CATEGORIES = categoryMappings.filter(mapping => mapping.array.length > 0).length;
 
 export type Page =
   | "splash-screen"

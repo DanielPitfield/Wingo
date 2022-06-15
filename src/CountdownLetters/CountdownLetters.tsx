@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Keyboard } from "../Keyboard";
-import { Page } from "../App";
+import { MAX_TARGET_WORD_LENGTH, MIN_TARGET_WORD_LENGTH, Page } from "../App";
 import { WordRow } from "../WordRow";
 import { Button } from "../Button";
 import { MessageNotification } from "../MessageNotification";
@@ -279,8 +279,8 @@ const CountdownLetters: React.FC<Props> = (props) => {
           <input
             type="number"
             value={props.gamemodeSettings.numLetters}
-            min={3}
-            max={15}
+            min={MIN_TARGET_WORD_LENGTH}
+            max={MAX_TARGET_WORD_LENGTH}
             onChange={(e) => {
               props.updateNumLetters(e.target.valueAsNumber);
             }}

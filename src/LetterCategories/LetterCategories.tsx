@@ -1,6 +1,6 @@
 import React from "react";
 import { Keyboard } from "../Keyboard";
-import { Page } from "../App";
+import { MAX_NUM_CATEGORIES, Page } from "../App";
 import { WordRow } from "../WordRow";
 import { Button } from "../Button";
 import { MessageNotification } from "../MessageNotification";
@@ -124,8 +124,8 @@ const LetterCategories: React.FC<Props> = (props) => {
           <input
             type="number"
             value={props.gamemodeSettings.numCategories}
-            min={3}
-            max={6}
+            min={2}
+            max={MAX_NUM_CATEGORIES}
             onChange={(e) => {
               props.updateNumCategories(e.target.valueAsNumber);
             }}

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Keyboard } from "./Keyboard";
-import { Page } from "./App";
+import { MAX_TARGET_WORD_LENGTH, MIN_TARGET_WORD_LENGTH, Page } from "./App";
 import { WordRow } from "./WordRow";
 import { Button } from "./Button";
 import { MessageNotification } from "./MessageNotification";
@@ -180,8 +180,8 @@ const Wordle: React.FC<Props> = (props) => {
           <input
             type="number"
             value={props.gamemodeSettings.wordLength}
-            min={props.mode === "puzzle" ? 9 : 4}
-            max={11}
+            min={props.mode === "puzzle" ? 9 : MIN_TARGET_WORD_LENGTH}
+            max={MAX_TARGET_WORD_LENGTH}
             onChange={(e) => props.updateWordLength(e.target.valueAsNumber)}
           ></input>
           Word Length

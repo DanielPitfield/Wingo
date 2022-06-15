@@ -297,7 +297,7 @@ const CountdownNumbers: React.FC<Props> = (props) => {
           <input
             type="number"
             value={props.gamemodeSettings.numOperands}
-            min={3}
+            min={4}
             max={10}
             onChange={(e) => {
               props.updateNumOperands(e.target.valueAsNumber);
