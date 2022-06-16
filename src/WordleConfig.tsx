@@ -52,6 +52,7 @@ export interface WordleConfigProps {
   };
 
   defaultnumGuesses: number;
+  // TODO: All gets a bit confusing with gamemodeSettings wordLength, defaultWordLength, targetWordLength
   defaultWordLength?: number;
   enforceFullLengthGuesses: boolean;
 
@@ -269,12 +270,6 @@ const WordleConfig: React.FC<Props> = (props) => {
   const [gameId, setGameId] = useState<string | null>(null);
 
   // Gamemode settings
-  const [isfirstLetterProvided, setIsfirstLetterProvided] = useState(
-    props.gamemodeSettings?.firstLetterProvided ?? false
-  );
-  // Use gamemode setting value if specified, otherwise default to true for puzzle mode and false for other modes
-  const [isHintShown, setIsHintShown] = useState(props.gamemodeSettings?.showHint ?? props.mode === "puzzle" ? true : false);
-
   const [isTimerEnabled, setIsTimerEnabled] = useState(props.gamemodeSettings?.timer?.isTimed === true ?? false);
   const DEFAULT_TIMER_VALUE = 30;
   const [remainingSeconds, setRemainingSeconds] = useState(
@@ -284,18 +279,29 @@ const WordleConfig: React.FC<Props> = (props) => {
     props.gamemodeSettings?.timer?.isTimed === true ? props.gamemodeSettings?.timer.seconds : DEFAULT_TIMER_VALUE
   );
 
+  const DEFAULT_WORD_LENGTH = 5;
+  const [wordLength, setWordLength] = useState(
+    // Take highest of targetWord, gamemodeSettings value, defaultWordLength (or failing those, a default value)
+    Math.max.apply(
+      undefined,
+      [props.targetWord?.length!, props.gamemodeSettings?.wordLength!, props.defaultWordLength!].filter((x) => x)
+    ) ?? DEFAULT_WORD_LENGTH
+  );
+
+  const [isfirstLetterProvided, setIsfirstLetterProvided] = useState(
+    props.gamemodeSettings?.firstLetterProvided ?? false
+  );
+  // Use gamemode setting value if specified, otherwise default to true for puzzle mode and false for other modes
+  const [isHintShown, setIsHintShown] = useState(
+    props.gamemodeSettings?.showHint ?? props.mode === "puzzle" ? true : false
+  );
+
   const [currentWord, setCurrentWord] = useState("");
   const [wordIndex, setWordIndex] = useState(0);
   const [inProgress, setinProgress] = useState(true);
   const [inDictionary, setinDictionary] = useState(true);
   const [isIncompleteWord, setisIncompleteWord] = useState(false);
-  const [wordLength, setWordLength] = useState(
-    // Take highest of either defaultWordLength and targetWord length (if specified)
-    Math.max.apply(
-      undefined,
-      [props.defaultWordLength!, props.gamemodeSettings?.wordLength!, props.targetWord?.length!].filter((x) => x)
-    )
-  );
+
   const [conundrum, setConundrum] = useState("");
   const [targetWord, setTargetWord] = useState(props.targetWord ? props.targetWord : "");
   // The words which are valid to be used as guesses
