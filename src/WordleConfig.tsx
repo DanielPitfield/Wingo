@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Page } from "./App";
+import { MAX_TARGET_WORD_LENGTH, Page } from "./App";
 import Wordle from "./Wordle";
 import { words_three_guessable, words_three_targets } from "./WordArrays/Lengths/words_3";
 import { words_four_guessable, words_four_targets } from "./WordArrays/Lengths/words_4";
@@ -46,6 +46,7 @@ export interface WordleConfigProps {
     | "conundrum";
   gamemodeSettings?: {
     wordLength?: number;
+    wordLengthMaxLimit?: number;
     firstLetterProvided?: boolean;
     showHint?: boolean;
     timer?: { isTimed: true; seconds: number } | { isTimed: false };
@@ -64,9 +65,6 @@ export interface WordleConfigProps {
   // Puzzle mode
   puzzleRevealMs?: number;
   puzzleLeaveNumBlanks?: number;
-
-  // Increasing mode
-  increasingMaxWordLength?: number;
 
   // Previous guesses (for daily)
   guesses?: string[];
@@ -280,12 +278,17 @@ const WordleConfig: React.FC<Props> = (props) => {
   );
 
   const DEFAULT_WORD_LENGTH = 5;
-  const [wordLength, setWordLength] = useState(
-    // Take highest of targetWord, gamemodeSettings value, defaultWordLength (or failing those, a default value)
+  // Take highest of targetWord, gamemodeSettings value, defaultWordLength (or failing those, a default value)
+  const highestWordLength =
     Math.max.apply(
       undefined,
       [props.targetWord?.length!, props.gamemodeSettings?.wordLength!, props.defaultWordLength!].filter((x) => x)
-    ) ?? DEFAULT_WORD_LENGTH
+    ) ?? DEFAULT_WORD_LENGTH;
+  const [wordLength, setWordLength] = useState(highestWordLength);
+
+  // At what word length should increasing and limitless go up to?
+  const [wordLengthMaxLimit, setWordLengthMaxLimit] = useState(
+    props.gamemodeSettings?.wordLengthMaxLimit ?? MAX_TARGET_WORD_LENGTH
   );
 
   const [isfirstLetterProvided, setIsfirstLetterProvided] = useState(
@@ -451,6 +454,13 @@ const WordleConfig: React.FC<Props> = (props) => {
           .find((x) => x.value === wordLength)
           ?.array.map((x) => ({ word: x, hint: "" }))!;
 
+        // There is no array for the current wordLength
+        if (!targetWordArray || targetWordArray?.length <= 0) {
+          // Just reset (reached the end)
+          ResetGame();
+          return;
+        }
+
         // Choose random word
         newTarget = targetWordArray[Math.round(Math.random() * (targetWordArray.length - 1))];
 
@@ -470,13 +480,6 @@ const WordleConfig: React.FC<Props> = (props) => {
 
         if (newTarget.hint) {
           setTargetHint(newTarget.hint);
-        }
-
-        // There is no array for the current wordLength
-        if (targetWordArray?.length <= 0) {
-          // Just reset (reached the end)
-          ResetGame();
-          return;
         }
 
         break;
@@ -865,7 +868,7 @@ const WordleConfig: React.FC<Props> = (props) => {
       );
     }
     setisIncompleteWord(false);
-    generateTargetWord();
+    setWordLength(highestWordLength);
     setGuesses([]);
     setCurrentWord("");
     setWordIndex(0);
