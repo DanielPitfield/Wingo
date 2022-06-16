@@ -13,7 +13,7 @@ import { Theme } from "../Themes";
 import { DraggableItem } from "./DraggableItem";
 
 // TODO: Const Contexts: https://stackoverflow.com/questions/44497388/typescript-array-to-string-literal-type
-const numberSizeOptions = ['small', 'medium', 'large'] as const;
+const numberSizeOptions = ["small", "medium", "large"] as const;
 export type numberSizeOption = typeof numberSizeOptions[number];
 
 interface Props {
@@ -64,7 +64,7 @@ export function shuffleArray<T>(array: T[]): T[] {
 
 /** */
 const ArithmeticDrag: React.FC<Props> = (props) => {
-  const [inProgress, setInProgress] = useState(true);   
+  const [inProgress, setInProgress] = useState(true);
 
   const DEFAULT_NUM_GUESSES = 3;
   const [remainingGuesses, setRemainingGuesses] = useState(props.gamemodeSettings?.numGuesses ?? DEFAULT_NUM_GUESSES);
@@ -99,9 +99,52 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
   const DEFAULT_NUM_OPERANDS = 2;
   const [numOperands, setNumOperands] = useState(props.gamemodeSettings?.numOperands ?? DEFAULT_NUM_OPERANDS);
 
+  // What is the maximum number which should be used with the given operator (based on difficulty)?
+  function getOperandLimit(operator: string) {
+    switch (numberSize) {
+      case "small": {
+        switch (operator) {
+          case "÷":
+          case "×": {
+            return 4;
+          }
+          case "+":
+          case "-": {
+            return 20;
+          }
+        }
+        break;
+      }
+      case "medium": {
+        switch (operator) {
+          case "÷":
+          case "×": {
+            return 4;
+          }
+          case "+":
+          case "-": {
+            return 100;
+          }
+        }
+        break;
+      }
+      case "large": {
+        switch (operator) {
+          case "÷":
+          case "×": {
+            return 10;
+          }
+          case "+":
+          case "-": {
+            return 250;
+          }
+        }
+        break;
+      }
+    }
+  }
 
- 
-
+  // What is the maximum starting number which should be used (based on difficulty)?
   function getStartingNumberLimit(): number {
     switch (numberSize) {
       case "small": {
@@ -116,17 +159,117 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
     }
   }
 
-  React.useEffect(() => {
+  // How many operator symbols are there in the given expression string
+  function countOperators(expression: string): number {
+    let operatorCount = 0;
 
-  },[isTimerEnabled, totalSeconds, numTiles, numberSize, numOperands])
-
-  React.useEffect(() => {
-    // If all tiles have been initialised
-    if (expressionTiles.length > 0) {
-      return;
+    for (let i = 0; i < expression.length; i++) {
+      const character = expression.charAt(i);
+      if (operators_symbols.includes(character)) {
+        operatorCount = operatorCount + 1;
+      }
     }
 
-    // Expression tiles
+    return operatorCount;
+  }
+
+  /**
+   * Generates a new valid tile
+   * @returns Object of tile information (display string and evaluation result)
+   */
+  function generateTile(): { expression: string; total: number; status: "not set" } {
+    // First number of the tile expression
+    const starting_number = randomIntFromInterval(1, getStartingNumberLimit());
+
+    // Begin the expression and total as this value (as string and as number)
+    let expression = starting_number.toString();
+    let total = starting_number;
+
+    // Always one less operator than the number of operands in an expression
+    const numOperators = numOperands - 1;
+
+    // Until expression has the required number of operators (is correct length)
+    while (countOperators(expression) < numOperators) {
+      // Choose one of the four operators
+      let operator = operators[Math.round(Math.random() * (operators.length - 1))];
+      let operator_symbol = operator.name;
+      let operand: number | undefined = undefined;
+
+      switch (operator_symbol) {
+        case "÷": {
+          // Number of attempts to find a clean divisor
+          const max_limit = 10;
+          let fail_count = 0;
+
+          // Loop max_limit times in the attempt of finding a clean divisor
+          do {
+            const random_divisor = randomIntFromInterval(2, getOperandLimit(operator_symbol)!);
+            // Clean division (result would be integer)
+            if (total % random_divisor === 0 && total > 0) {
+              // Use that divisor as tile number
+              operand = random_divisor;
+            } else {
+              fail_count += 1;
+            }
+          } while (operand === undefined && fail_count < max_limit); // Stop once an operand has been determined or after max_limit number of attempts to find an operator
+          break;
+        }
+
+        case "×": {
+          // Lower threshold of 2 (no point multiplying by 1)
+          operand = randomIntFromInterval(2, getOperandLimit(operator_symbol)!);
+          break;
+        }
+
+        case "+": {
+          operand = randomIntFromInterval(1, getOperandLimit(operator_symbol)!);
+          break;
+        }
+
+        case "-": {
+          // The value 1 or 10% of the operator limit?
+          const MIN_VALUE_LIMIT = 1;
+          // The current targetNumber is too small to be suitable for subtraction
+          if (total <= MIN_VALUE_LIMIT) {
+            break;
+          }
+          // The target number is smaller than the maximum value which can be subtracted
+          else if (total < getOperandLimit(operator_symbol)!) {
+            // Only subtract a random value which is smaller than targetNumber
+            operand = randomIntFromInterval(1, total - 1);
+          } else {
+            // Proceed as normal
+            operand = randomIntFromInterval(1, getOperandLimit(operator_symbol)!);
+          }
+        }
+      }
+
+      // An operator and operand were determined in this iteration
+      if (operand !== undefined) {
+        // Add both to expression string
+        expression = expression + operator_symbol + operand.toString();
+
+        // Insert closing bracket after operand following the first operator (when there are 3 operands)
+        if (countOperators(expression) === 1 && numOperands === 3) {
+          expression = expression + ")";
+        }
+
+        // Calculate the new total
+        total = operator.function(total, operand);
+      }
+    }
+
+    // Insert starting bracket with three operands
+    if (numOperands === 3) {
+      expression = "(" + expression;
+    }
+
+    // Once expression is desired length, return
+    return { expression: expression, total: total, status: "not set" };
+  }
+
+  // Generate the numTiles number of tiles
+  function generateAllTiles() {
     const newExpressionTiles: { expression: string; total: number; status: "not set" }[] = [];
 
     for (let i = 0; i < numTiles; i++) {
@@ -136,7 +279,7 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
 
     setExpressionTiles(newExpressionTiles);
 
-    // Result tiles
+    // Result tiles (only needed in match mode)
     if (props.mode === "match") {
       let newResultTiles: { total: number; status: "not set" }[] = [];
 
@@ -148,164 +291,27 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
       newResultTiles = shuffled_totals.map((total) => ({ total: total, status: "not set" }));
       setResultTiles(newResultTiles);
     }
+  }
 
-    // What is the maximum number which should be used with the given operator (based on difficulty)?
-    function getOperandLimit(operator: string) {
-      switch (numberSize) {
-        case "small": {
-          switch (operator) {
-            case "÷":
-            case "×": {
-              return 4;
-            }
-            case "+":
-            case "-": {
-              return 20;
-            }
-          }
-          break;
-        }
-        case "medium": {
-          switch (operator) {
-            case "÷":
-            case "×": {
-              return 4;
-            }
-            case "+":
-            case "-": {
-              return 100;
-            }
-          }
-          break;
-        }
-        case "large": {
-          switch (operator) {
-            case "÷":
-            case "×": {
-              return 10;
-            }
-            case "+":
-            case "-": {
-              return 250;
-            }
-          }
-          break;
-        }
-      }
+  // Generate the tiles again if any of the game mode settings are changed
+  React.useEffect(() => {
+    generateAllTiles();
+
+    // Also, reset timer
+    if (isTimerEnabled) {
+      setRemainingSeconds(totalSeconds);
+    }
+  }, [isTimerEnabled, totalSeconds, numTiles, numberSize, numOperands, totalGuesses]);
+
+  React.useEffect(() => {
+    // If all tiles have been initialised
+    if (expressionTiles.length > 0) {
+      return;
     }
 
-    function countOperators(expression: string): number {
-      let operatorCount = 0;
-
-      for (let i = 0; i < expression.length; i++) {
-        const character = expression.charAt(i);
-        if (operators_symbols.includes(character)) {
-          operatorCount = operatorCount + 1;
-        }
-      }
-
-      return operatorCount;
-    }
-
-    /**
-     * Generates a new valid tile
-     * @returns Object of tile information (display string and evaluation result)
-     */
-    function generateTile(): { expression: string; total: number; status: "not set" } {
-      // First number of the tile expression
-      const starting_number = randomIntFromInterval(1, getStartingNumberLimit());
-
-      // Begin the expression and total as this value (as string and as number)
-      let expression = starting_number.toString();
-      let total = starting_number;
-
-      // Always one less operator than the number of operands in an expression
-      const numOperators = numOperands - 1;
-
-      // Until expression has the required number of operators (is correct length)
-      while (countOperators(expression) < numOperators) {
-        // Choose one of the four operators
-        let operator = operators[Math.round(Math.random() * (operators.length - 1))];
-        let operator_symbol = operator.name;
-        let operand: number | undefined = undefined;
-
-        switch (operator_symbol) {
-          case "÷": {
-            // Number of attempts to find a clean divisor
-            const max_limit = 10;
-            let fail_count = 0;
-
-            // Loop max_limit times in the attempt of finding a clean divisor
-            do {
-              const random_divisor = randomIntFromInterval(2, getOperandLimit(operator_symbol)!);
-              // Clean division (result would be integer)
-              if (total % random_divisor === 0 && total > 0) {
-                // Use that divisor as tile number
-                operand = random_divisor;
-              } else {
-                fail_count += 1;
-              }
-            } while (operand === undefined && fail_count < max_limit); // Stop once an operand has been determined or after max_limit number of attempts to find an operator
-            break;
-          }
-
-          case "×": {
-            // Lower threshold of 2 (no point multiplying by 1)
-            operand = randomIntFromInterval(2, getOperandLimit(operator_symbol)!);
-            break;
-          }
-
-          case "+": {
-            operand = randomIntFromInterval(1, getOperandLimit(operator_symbol)!);
-            break;
-          }
-
-          case "-": {
-            // The value 1 or 10% of the operator limit?
-            const MIN_VALUE_LIMIT = 1;
-            // The current targetNumber is too small to be suitable for subtraction
-            if (total <= MIN_VALUE_LIMIT) {
-              break;
-            }
-            // The target number is smaller than the maximum value which can be subtracted
-            else if (total < getOperandLimit(operator_symbol)!) {
-              // Only subtract a random value which is smaller than targetNumber
-              operand = randomIntFromInterval(1, total - 1);
-            } else {
-              // Proceed as normal
-              operand = randomIntFromInterval(1, getOperandLimit(operator_symbol)!);
-            }
-          }
-        }
-
-        // An operator and operand were determined in this iteration
-        if (operand !== undefined) {
-          // Add both to expression string
-          expression = expression + operator_symbol + operand.toString();
-
-          // Insert closing bracket after operand following the first operator (when there are 3 operands)
-          if (countOperators(expression) === 1 && numOperands === 3) {
-            expression = expression + ")";
-          }
-
-          // Calculate the new total
-          total = operator.function(total, operand);
-        }
-      }
-
-      // Insert starting bracket with three operands
-      if (numOperands === 3) {
-        expression = "(" + expression;
-      }
-
-      // Once expression is desired length, return
-      return { expression: expression, total: total, status: "not set" };
-    }
-  }, [
-    /* TODO: Dependency and set method (expressionTiles and setExpressionTiles loop) */ expressionTiles,
-    resultTiles,
-    numTiles,
-  ]);
+    /* TODO: Dependency and set method (expressionTiles and setExpressionTiles loop) */
+    generateAllTiles();
+  }, [expressionTiles, resultTiles, numTiles]);
 
   // (Guess) Timer Setup
   React.useEffect(() => {
@@ -482,7 +488,7 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
     const MAX_NUM_TILES = 10;
 
     const MIN_NUM_OPERANDS = 2;
-    const MAX_NUM_OPERANDS = 4;
+    const MAX_NUM_OPERANDS = 3;
 
     let settings;
 
@@ -513,19 +519,6 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
           Number of operands
         </label>
         <label>
-          <input
-            type="number"
-            value={numOperands}
-            min={MIN_NUM_OPERANDS}
-            max={MAX_NUM_OPERANDS}
-            onChange={(e) => {
-              setNumOperands(e.target.valueAsNumber);
-            }}
-          ></input>
-          Number of operands
-        </label>
-
-        <label>
           <select
             onChange={(e) => {
               setNumberSize(e.target.value as numberSizeOption);
@@ -542,11 +535,10 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
           </select>
           Number size
         </label>
-
         <label>
           <input
             type="number"
-            value={numOperands}
+            value={totalGuesses}
             min={1}
             max={10}
             onChange={(e) => {
