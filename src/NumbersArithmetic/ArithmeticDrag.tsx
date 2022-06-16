@@ -293,14 +293,9 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
     }
   }
 
-  // Generate the tiles again if any of the game mode settings are changed
+  // Any of the game mode settings are changed then reset the game
   React.useEffect(() => {
-    generateAllTiles();
-
-    // Also, reset timer
-    if (isTimerEnabled) {
-      setRemainingSeconds(totalSeconds);
-    }
+    ResetGame();
   }, [isTimerEnabled, totalSeconds, numTiles, numberSize, numOperands, totalGuesses]);
 
   React.useEffect(() => {
@@ -475,12 +470,12 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
   function ResetGame() {
     props.onComplete?.(true);
     setInProgress(true);
-    setExpressionTiles([]);
     setRemainingGuesses(totalGuesses);
     if (isTimerEnabled) {
       // Reset the timer if it is enabled in the game options
       setRemainingSeconds(totalSeconds);
     }
+    generateAllTiles();
   }
 
   function generateSettingsOptions(): React.ReactNode {
