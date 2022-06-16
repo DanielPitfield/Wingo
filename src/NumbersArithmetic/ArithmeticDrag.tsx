@@ -13,7 +13,7 @@ import { Theme } from "../Themes";
 import { DraggableItem } from "./DraggableItem";
 
 // TODO: Const Contexts: https://stackoverflow.com/questions/44497388/typescript-array-to-string-literal-type
-const numberSizeOptions = ["small", "medium", "large"] as const;
+export const numberSizeOptions = ["small", "medium", "large"] as const;
 export type numberSizeOption = typeof numberSizeOptions[number];
 
 interface Props {
@@ -22,7 +22,15 @@ interface Props {
   mode: "order" | "match";
 
   gamemodeSettings?: {
-    // TODO: All these settings control the difficulty for this mode, maybe offer Easy, Normal, Hard, Custom presets of these settings?
+    /* TODO: Difficulty presets
+    All these settings control the difficulty for this mode
+
+    Maybe offer difficulty dropdown/select with Easy, Normal, Hard presets 
+    (i.e predetermined configurations of these settings)
+
+    But then also offer a Custom option, where the user can fine tune these settings themselves
+    (when the Custom option is selected, the inputs for the settings appear)
+    */
 
     timer?: { isTimed: true; seconds: number } | { isTimed: false };
     // How many expressions (to match or order)?
@@ -98,6 +106,21 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
 
   const DEFAULT_NUM_OPERANDS = 2;
   const [numOperands, setNumOperands] = useState(props.gamemodeSettings?.numOperands ?? DEFAULT_NUM_OPERANDS);
+  
+  // What is the maximum starting number which should be used (based on difficulty)?
+  function getStartingNumberLimit(): number {
+    switch (numberSize) {
+      case "small": {
+        return 100;
+      }
+      case "medium": {
+        return 250;
+      }
+      case "large": {
+        return 1000;
+      }
+    }
+  }
 
   // What is the maximum number which should be used with the given operator (based on difficulty)?
   function getOperandLimit(operator: string) {
@@ -144,22 +167,7 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
     }
   }
 
-  // What is the maximum starting number which should be used (based on difficulty)?
-  function getStartingNumberLimit(): number {
-    switch (numberSize) {
-      case "small": {
-        return 100;
-      }
-      case "medium": {
-        return 250;
-      }
-      case "large": {
-        return 1000;
-      }
-    }
-  }
-
-  // How many operator symbols are there in the given expression string
+  // How many operator symbols are there in the given expression string?
   function countOperators(expression: string): number {
     let operatorCount = 0;
 
@@ -268,7 +276,7 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
     return { expression: expression, total: total, status: "not set" };
   }
 
-  // Generate the numTiles number of tiles
+  // Generate (all/numTiles number) of tiles
   function generateAllTiles() {
     const newExpressionTiles: { expression: string; total: number; status: "not set" }[] = [];
 
@@ -293,10 +301,13 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
     }
   }
 
+  // TODO: Handling mid-game changes - apply this to other modes
+
   // Any of the game mode settings are changed then reset the game
   React.useEffect(() => {
     ResetGame();
   }, [isTimerEnabled, totalSeconds, numTiles, numberSize, numOperands, totalGuesses]);
+  // TODO: Probably best these settings are part of a single object
 
   React.useEffect(() => {
     // If all tiles have been initialised

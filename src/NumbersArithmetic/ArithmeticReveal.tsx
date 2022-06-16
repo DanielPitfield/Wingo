@@ -10,13 +10,32 @@ import { operators } from "../CountdownNumbers/CountdownNumbersConfig";
 import { Theme } from "../Themes";
 import { SettingsData } from "../SaveData";
 import GamemodeSettingsMenu from "../GamemodeSettingsMenu";
+import { numberSizeOption, numberSizeOptions } from "./ArithmeticDrag";
 
 interface Props {
   isCampaignLevel: boolean;
-  revealIntervalSeconds: number;
-  numTiles: number;
-  numCheckpoints: number;
-  difficulty: "easy" | "normal" | "hard";
+
+  gamemodeSettings?: {
+    /* TODO: Difficulty presets
+    All these settings control the difficulty for this mode
+
+    Maybe offer difficulty dropdown/select with Easy, Normal, Hard presets 
+    (i.e predetermined configurations of these settings)
+
+    But then also offer a Custom option, where the user can fine tune these settings themselves
+    (when the Custom option is selected, the inputs for the settings appear)
+    */
+
+    timer?: { isTimed: true; seconds: number } | { isTimed: false };
+    numCheckpoints?: number;
+    // How many tiles appear EACH checkpoint?
+    numTiles?: number;
+    // How big/difficult are the numbers used in these expressions?
+    numberSize?: numberSizeOption;
+    // The time between tiles appearing
+    revealIntervalSeconds: number;
+  };
+
   theme: Theme;
   settings: SettingsData;
   setPage: (page: Page) => void;
@@ -39,52 +58,200 @@ const ArithmeticReveal: React.FC<Props> = (props) => {
   const [targetTransitioned, setTargetTransitioned] = useState(false);
 
   // Gamemode settings
-  const [isTimerEnabled, setIsTimerEnabled] = useState(true);
+
+  // Timer enabled by default, unless otherwise stated
+  const [isTimerEnabled, setIsTimerEnabled] = useState(props.gamemodeSettings?.timer?.isTimed ?? true);
   const DEFAULT_TIMER_VALUE = 10;
-  const [remainingSeconds, setRemainingSeconds] = useState(DEFAULT_TIMER_VALUE);
-  const [totalSeconds, setTotalSeconds] = useState(DEFAULT_TIMER_VALUE);
+  const [remainingSeconds, setRemainingSeconds] = useState(
+    props.gamemodeSettings?.timer?.isTimed === true ? props.gamemodeSettings?.timer.seconds : DEFAULT_TIMER_VALUE
+  );
+  const [totalSeconds, setTotalSeconds] = useState(
+    props.gamemodeSettings?.timer?.isTimed === true ? props.gamemodeSettings?.timer.seconds : DEFAULT_TIMER_VALUE
+  );
 
-  // Generate the elements to configure the gamemode settings
-  const gamemodeSettings = generateSettings();
+  const DEFAULT_NUM_CHECKPOINTS = 1;
+  const [numCheckpoints, setNumCheckpoints] = useState(
+    props.gamemodeSettings?.numCheckpoints ?? DEFAULT_NUM_CHECKPOINTS
+  );
 
+  const DEFAULT_NUM_TILES = 5;
+  const [numTiles, setNumTiles] = useState(props.gamemodeSettings?.numTiles ?? DEFAULT_NUM_TILES);
+
+  const DEFAULT_NUMBERSIZE = "medium";
+  const [numberSize, setNumberSize] = useState<"small" | "medium" | "large">(
+    props.gamemodeSettings?.numberSize ?? DEFAULT_NUMBERSIZE
+  );
+
+  const DEFAULT_REVEAL_INTERVAL = 3;
+  /* TODO: Sync Flip animation with reveal animation
+  The CSS to apply the flip tile animation assumes the reveal interval is always 3 seconds
+  Perhaps use animationDelay to control when the animation happens
+  */
+
+  const [revealIntervalSeconds, setRevealIntervalSeconds] = useState(
+    props.gamemodeSettings?.revealIntervalSeconds ?? DEFAULT_REVEAL_INTERVAL
+  );
+
+  // What is the maximum starting number which should be used (based on difficulty)?
   function getStartingNumberLimit(): number {
-    switch (props.difficulty) {
-      case "easy": {
+    switch (numberSize) {
+      case "small": {
         return 100;
       }
-      case "normal": {
+      case "medium": {
         return 250;
       }
-      case "hard": {
+      case "large": {
         return 1000;
       }
     }
   }
 
-  React.useEffect(() => {
-    // If all tiles have been initialised
-    if (tiles.length > 0) {
-      return;
+  // What is the maximum number which should be used with the given operator (based on difficulty)?
+  function getOperandLimit(operator: string) {
+    switch (numberSize) {
+      case "small": {
+        switch (operator) {
+          case "÷":
+          case "×": {
+            return 4;
+          }
+          case "+":
+          case "-": {
+            return 20;
+          }
+        }
+        break;
+      }
+      case "medium": {
+        switch (operator) {
+          case "÷":
+          case "×": {
+            return 4;
+          }
+          case "+":
+          case "-": {
+            return 100;
+          }
+        }
+        break;
+      }
+      case "large": {
+        switch (operator) {
+          case "÷":
+          case "×": {
+            return 10;
+          }
+          case "+":
+          case "-": {
+            return 250;
+          }
+        }
+        break;
+      }
+    }
+  }
+
+  /**
+   * Generates a new valid tile from the existing running total (so that the generated tile does not result in a decimal).
+   * @param targetNumber Existing running total.
+   * @returns New running total and a tile.
+   */
+  function generateTile(targetNumber: number): { tile: string; newRunningTotal: number } {
+    let foundTileNumber = false;
+
+    while (!foundTileNumber) {
+      // One of the four operators
+      let tile_operator = operators[Math.round(Math.random() * (operators.length - 1))];
+      let operator_symbol = tile_operator.name;
+      let tile_number: number | undefined = undefined;
+
+      switch (operator_symbol) {
+        case "÷": {
+          // Number of attempts to find a clean divisor
+          const max_limit = 10;
+          let fail_count = 0;
+
+          // Loop max_limit times in the attempt of finding a clean divisor
+          do {
+            const random_divisor = randomIntFromInterval(2, getOperandLimit(operator_symbol)!);
+            // Clean division (result would be integer)
+            if (targetNumber % random_divisor === 0 && targetNumber > 0) {
+              // Use that divisor as tile number
+              tile_number = random_divisor;
+            } else {
+              fail_count += 1;
+            }
+          } while (tile_number === undefined && fail_count < max_limit); // Stop once a tile number has been determined or after max_limit number of attempts to find a tile number
+          break;
+        }
+
+        case "×": {
+          // Lower threshold of 2 (no point multiplying by 1)
+          tile_number = randomIntFromInterval(2, getOperandLimit(operator_symbol)!);
+          break;
+        }
+
+        case "+": {
+          tile_number = randomIntFromInterval(1, getOperandLimit(operator_symbol)!);
+          break;
+        }
+
+        case "-": {
+          // The value 1 or 10% of the operator limit?
+          const MIN_VALUE_LIMIT = 1;
+          // The current targetNumber is too small to be suitable for subtraction
+          if (targetNumber <= MIN_VALUE_LIMIT) {
+            break;
+          }
+          // The target number is smaller than the maximum value which can be subtracted
+          else if (targetNumber < getOperandLimit(operator_symbol)!) {
+            // Only subtract a random value which is smaller than targetNumber
+            tile_number = randomIntFromInterval(1, targetNumber - 1);
+          } else {
+            // Proceed as normal
+            tile_number = randomIntFromInterval(1, getOperandLimit(operator_symbol)!);
+          }
+        }
+      }
+
+      // The target number was determined in this iteration
+      if (tile_number !== undefined) {
+        // Set flag to stop while loop
+        foundTileNumber = true;
+        // Apply operation shown on current tile and update target number
+        const newTargetNumber = tile_operator.function(targetNumber, tile_number);
+        // String of the combination of operator and value
+        return {
+          tile: operator_symbol + tile_number.toString(),
+          newRunningTotal: newTargetNumber,
+        };
+      }
     }
 
+    throw new Error("Unexpected number");
+  }
+
+  // Generate (all/numTiles number) of tiles
+  function generateAllTiles() {
+    // Array of array of tile display values (e.g +89) for each checkpoint
     const newTiles: string[][] = [];
+    // Target number after each checkpoint
     const newTargetNumbers: number[] = [];
 
-    // Determine the starting number
-    const starting_number = randomIntFromInterval(1, getStartingNumberLimit());
-
-    for (let i = 0; i < props.numCheckpoints; i++) {
-      // Use the randomly generated number or carry on from previous checkpoint target
-      const checkpoint_starting_number = i === 0 ? starting_number : newTargetNumbers[i - 1];
+    for (let i = 0; i < numCheckpoints; i++) {
+      const firstCheckpoint = i === 0;
+      // Use the randomly generated number for first checkpoint otherwise use/carry on from previous checkpoint target
+      const checkpointStartingNumber = firstCheckpoint ? randomIntFromInterval(1, getStartingNumberLimit()) : newTargetNumbers[i - 1];
 
       // Start a tiles array, starting with the number
-      const checkpointTiles: string[] = [checkpoint_starting_number.toString()];
+      const checkpointTiles: string[] = [checkpointStartingNumber.toString()];
 
       // Keep a running target number
-      let runningTotal = checkpoint_starting_number;
+      let runningTotal = checkpointStartingNumber;
 
       // For each tile in the checkpoint
-      for (let i = 0; i < props.numTiles; i++) {
+      for (let i = 0; i < numTiles; i++) {
         // Generate a new tile from the existing target number
         const { tile, newRunningTotal } = generateTile(runningTotal);
 
@@ -112,131 +279,24 @@ const ArithmeticReveal: React.FC<Props> = (props) => {
 
     setTiles(newTiles);
     setTargetNumbers(newTargetNumbers);
+  }
 
-    function getOperatorLimit(operator: string) {
-      switch (props.difficulty) {
-        case "easy": {
-          switch (operator) {
-            case "÷":
-            case "×": {
-              return 4;
-            }
-            case "+":
-            case "-": {
-              return 20;
-            }
-          }
-          break;
-        }
-        case "normal": {
-          switch (operator) {
-            case "÷":
-            case "×": {
-              return 4;
-            }
-            case "+":
-            case "-": {
-              return 100;
-            }
-          }
-          break;
-        }
-        case "hard": {
-          switch (operator) {
-            case "÷":
-            case "×": {
-              return 10;
-            }
-            case "+":
-            case "-": {
-              return 250;
-            }
-          }
-          break;
-        }
-      }
+  // TODO: Handling mid-game changes - apply this to other modes
+
+  // Any of the game mode settings are changed then reset the game
+  React.useEffect(() => {
+    ResetGame();
+  }, [isTimerEnabled, totalSeconds, numTiles, numberSize, numCheckpoints, revealIntervalSeconds]);
+  // TODO: Probably best these settings are part of a single object
+
+  React.useEffect(() => {
+    // If all tiles have been initialised
+    if (tiles.length > 0) {
+      return;
     }
 
-    /**
-     * Generates a new valid tile from the existing running total (so that the generated tile does not result in a decimal).
-     * @param targetNumber Existing running total.
-     * @returns New running total and a tile.
-     */
-    function generateTile(targetNumber: number): { tile: string; newRunningTotal: number } {
-      let foundTileNumber = false;
-
-      while (!foundTileNumber) {
-        // One of the four operators
-        let tile_operator = operators[Math.round(Math.random() * (operators.length - 1))];
-        let operator_symbol = tile_operator.name;
-        let tile_number: number | undefined = undefined;
-
-        switch (operator_symbol) {
-          case "÷": {
-            // Number of attempts to find a clean divisor
-            const max_limit = 10;
-            let fail_count = 0;
-
-            // Loop max_limit times in the attempt of finding a clean divisor
-            do {
-              const random_divisor = randomIntFromInterval(2, getOperatorLimit(operator_symbol)!);
-              // Clean division (result would be integer)
-              if (targetNumber % random_divisor === 0 && targetNumber > 0) {
-                // Use that divisor as tile number
-                tile_number = random_divisor;
-              } else {
-                fail_count += 1;
-              }
-            } while (tile_number === undefined && fail_count < max_limit); // Stop once a tile number has been determined or after max_limit number of attempts to find a tile number
-            break;
-          }
-
-          case "×": {
-            // Lower threshold of 2 (no point multiplying by 1)
-            tile_number = randomIntFromInterval(2, getOperatorLimit(operator_symbol)!);
-            break;
-          }
-
-          case "+": {
-            tile_number = randomIntFromInterval(1, getOperatorLimit(operator_symbol)!);
-            break;
-          }
-
-          case "-": {
-            // The value 1 or 10% of the operator limit?
-            const MIN_VALUE_LIMIT = 1;
-            // The current targetNumber is too small to be suitable for subtraction
-            if (targetNumber <= MIN_VALUE_LIMIT) {
-              break;
-            }
-            // The target number is smaller than the maximum value which can be subtracted
-            else if (targetNumber < getOperatorLimit(operator_symbol)!) {
-              // Only subtract a random value which is smaller than targetNumber
-              tile_number = randomIntFromInterval(1, targetNumber - 1);
-            } else {
-              // Proceed as normal
-              tile_number = randomIntFromInterval(1, getOperatorLimit(operator_symbol)!);
-            }
-          }
-        }
-
-        // The target number was determined in this iteration
-        if (tile_number !== undefined) {
-          // Set flag to stop while loop
-          foundTileNumber = true;
-          // Apply operation shown on current tile and update target number
-          const newTargetNumber = tile_operator.function(targetNumber, tile_number);
-          // String of the combination of operator and value
-          return {
-            tile: operator_symbol + tile_number.toString(),
-            newRunningTotal: newTargetNumber,
-          };
-        }
-      }
-
-      throw new Error("Unexpected number");
-    }
-  }, [tiles, props.numTiles]);
+    generateAllTiles();
+  }, [tiles, numTiles]);
 
   React.useEffect(() => {
     setInProgress(true);
@@ -256,7 +316,7 @@ const ArithmeticReveal: React.FC<Props> = (props) => {
       const numRevealedTiles = revealState.type === "in-progress" ? revealState.revealedTiles + 1 : 1;
 
       // If all tiles have been revealed
-      if (numRevealedTiles > props.numTiles) {
+      if (numRevealedTiles > numTiles) {
         setRevealState({ type: "finished" });
         clearInterval(timer);
       } else {
@@ -266,10 +326,10 @@ const ArithmeticReveal: React.FC<Props> = (props) => {
         });
         setTargetTransitioned(true);
       }
-    }, props.revealIntervalSeconds * 1000);
+    }, revealIntervalSeconds * 1000);
 
     return () => clearInterval(timer);
-  }, [props.numTiles, props.revealIntervalSeconds, revealState]);
+  }, [numTiles, revealIntervalSeconds, revealState]);
 
   // (Guess) Timer Setup
   React.useEffect(() => {
@@ -307,7 +367,7 @@ const ArithmeticReveal: React.FC<Props> = (props) => {
     // Guess is the correct end of checkpoint value
     const successCondition = guess === targetNumbers[currentCheckpoint].toString();
     // Last checkpoint
-    const lastCheckpoint = currentCheckpoint === props.numCheckpoints - 1;
+    const lastCheckpoint = currentCheckpoint === numCheckpoints - 1;
 
     let message_notification;
 
@@ -318,7 +378,7 @@ const ArithmeticReveal: React.FC<Props> = (props) => {
           <MessageNotification type="success">
             <strong>Correct!</strong>
             <br></br>
-            <span>{`${currentCheckpoint + 1} / ${props.numCheckpoints} checkpoints completed`}</span>
+            <span>{`${currentCheckpoint + 1} / ${numCheckpoints} checkpoints completed`}</span>
           </MessageNotification>
 
           <br></br>
@@ -341,7 +401,7 @@ const ArithmeticReveal: React.FC<Props> = (props) => {
           <MessageNotification type="success">
             <strong>Correct!</strong>
             <br></br>
-            <span>{`Completed all ${props.numCheckpoints} checkpoints!`}</span>
+            <span>{`Completed all ${numCheckpoints} checkpoints!`}</span>
           </MessageNotification>
 
           <br></br>
@@ -394,12 +454,11 @@ const ArithmeticReveal: React.FC<Props> = (props) => {
     setGuess("");
     setCurrentCheckpoint(0);
     setRevealState({ type: "in-progress", revealedTiles: 0 });
-    setTargetNumbers([]);
-    setTiles([]);
     if (isTimerEnabled) {
       // Reset the timer if it is enabled in the game options
       setRemainingSeconds(totalSeconds);
     }
+    generateAllTiles();
   }
 
   function onBackspace() {
@@ -422,22 +481,80 @@ const ArithmeticReveal: React.FC<Props> = (props) => {
     setTargetTransitioned(false);
   }, [targetTransitioned]);
 
-  function generateSettings(): React.ReactNode {
+  function generateSettingsOptions(): React.ReactNode {
+    const MIN_NUM_TILES = 2;
+    const MAX_NUM_TILES = 10;
+
+    const MIN_NUM_CHECKPOINTS = 1;
+    const MAX_NUM_CHECKPOINTS = 10;
+
+    const MIN_REVEAL_INTERVAL = 1;
+    const MAX_REVEAL_INTERVAL = 5;
+
+    // TODO: Why declare undefined variable, why not just return JSX below?
     let settings;
 
     settings = (
       <>
-        {/* TODO: QOL: Configure speed, difficulty, number of checkpoints */}
         <label>
-          <input type="number" value={3} min={1} max={10} onChange={(e) => {}}></input>
-          Number of Checkpoints
+          <input
+            type="number"
+            value={numTiles}
+            min={MIN_NUM_TILES}
+            max={MAX_NUM_TILES}
+            onChange={(e) => {
+              setNumTiles(e.target.valueAsNumber);
+            }}
+          ></input>
+          Number of tiles
+        </label>
+        <label>
+          <input
+            type="number"
+            value={numCheckpoints}
+            min={MIN_NUM_CHECKPOINTS}
+            max={MAX_NUM_CHECKPOINTS}
+            onChange={(e) => {
+              setNumCheckpoints(e.target.valueAsNumber);
+            }}
+          ></input>
+          Number of checkpoints
+        </label>
+        <label>
+          <select
+            onChange={(e) => {
+              setNumberSize(e.target.value as numberSizeOption);
+            }}
+            className="numberSize_input"
+            name="numberSize"
+            value={numberSize}
+          >
+            {numberSizeOptions.map((sizeOption) => (
+              <option key={sizeOption} value={sizeOption}>
+                {sizeOption}
+              </option>
+            ))}
+          </select>
+          Number size
+        </label>
+        <label>
+          <input
+            type="number"
+            value={revealIntervalSeconds}
+            min={MIN_REVEAL_INTERVAL}
+            max={MAX_REVEAL_INTERVAL}
+            onChange={(e) => {
+              setRevealIntervalSeconds(e.target.valueAsNumber);
+            }}
+          ></input>
+          Reveal interval
         </label>
         <>
           <label>
             <input
               checked={isTimerEnabled}
               type="checkbox"
-              onChange={(e) => {
+              onChange={() => {
                 setIsTimerEnabled(!isTimerEnabled);
               }}
             ></input>
@@ -472,9 +589,10 @@ const ArithmeticReveal: React.FC<Props> = (props) => {
       style={{ backgroundImage: `url(${props.theme.backgroundImageSrc})`, backgroundSize: "100%" }}
     >
       {!props.isCampaignLevel && (
-      <div className="gamemodeSettings">
-        <GamemodeSettingsMenu>{gamemodeSettings}</GamemodeSettingsMenu>
-      </div>)}
+        <div className="gamemodeSettings">
+          <GamemodeSettingsMenu>{generateSettingsOptions()}</GamemodeSettingsMenu>
+        </div>
+      )}
       <div className="outcome">{displayOutcome()}</div>
       {inProgress && (
         <div className="target">

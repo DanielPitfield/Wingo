@@ -13,7 +13,7 @@ import { Area, AreaConfig } from "./Campaign/Area";
 import { getId, Level, LevelConfig } from "./Campaign/Level";
 import LetterCategoriesConfig from "./LetterCategories/LetterCategoriesConfig";
 import ArithmeticReveal from "./NumbersArithmetic/ArithmeticReveal";
-import ArithmeticDrag, { numberSizeOption } from "./NumbersArithmetic/ArithmeticDrag";
+import ArithmeticDrag, { numberSizeOption, numberSizeOptions } from "./NumbersArithmetic/ArithmeticDrag";
 import { PuzzleConfig } from "./Puzzles/PuzzleConfig";
 import { Theme, Themes } from "./Themes";
 import { AllCampaignAreas } from "./Campaign/AllCampaignAreas";
@@ -847,10 +847,13 @@ export const App: React.FC = () => {
         return (
           <ArithmeticReveal
             isCampaignLevel={false}
-            revealIntervalSeconds={3}
-            numTiles={4}
-            numCheckpoints={3}
-            difficulty={"easy"}
+            gamemodeSettings={{
+              numTiles: 4,
+              numCheckpoints: 3,
+              numberSize: "easy" as numberSizeOption,
+              revealIntervalSeconds: 3,
+              timer: { isTimed: true, seconds: 100 },
+            }}
             theme={theme}
             settings={settings}
             setPage={setPage}
