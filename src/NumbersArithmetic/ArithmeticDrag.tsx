@@ -12,13 +12,29 @@ import { SettingsData } from "../SaveData";
 import { Theme } from "../Themes";
 import { DraggableItem } from "./DraggableItem";
 
+// TODO: Const Contexts: https://stackoverflow.com/questions/44497388/typescript-array-to-string-literal-type
+const numberSizeOptions = ['small', 'medium', 'large'] as const;
+export type numberSizeOption = typeof numberSizeOptions[number];
+
 interface Props {
   isCampaignLevel: boolean;
+  // TODO: Should this be in gamemodeSettings?
   mode: "order" | "match";
-  numTiles: number;
-  numOperands: 2 | 3;
-  numGuesses: number;
-  difficulty: "easy" | "normal" | "hard";
+
+  gamemodeSettings?: {
+    // TODO: All these settings control the difficulty for this mode, maybe offer Easy, Normal, Hard, Custom presets of these settings?
+
+    timer?: { isTimed: true; seconds: number } | { isTimed: false };
+    // How many expressions (to match or order)?
+    numTiles?: number;
+    // How big/difficult are the numbers used in these expressions?
+    numberSize?: numberSizeOption;
+    // How many operands/numbers in these expressions?
+    numOperands?: number;
+    // How many times can you check your attempts?
+    numGuesses?: number;
+  };
+
   theme: Theme;
   settings: SettingsData;
   setPage: (page: Page) => void;
@@ -48,8 +64,12 @@ export function shuffleArray<T>(array: T[]): T[] {
 
 /** */
 const ArithmeticDrag: React.FC<Props> = (props) => {
-  const [inProgress, setInProgress] = useState(true);
-  const [remainingGuesses, setRemainingGuesses] = useState(props.numGuesses);
+  const [inProgress, setInProgress] = useState(true);   
+
+  const DEFAULT_NUM_GUESSES = 3;
+  const [remainingGuesses, setRemainingGuesses] = useState(props.gamemodeSettings?.numGuesses ?? DEFAULT_NUM_GUESSES);
+  const [totalGuesses, setTotalGuesses] = useState(props.gamemodeSettings?.numGuesses ?? DEFAULT_NUM_GUESSES);
+
   const [expressionTiles, setExpressionTiles] = useState<
     { expression: string; total: number; status: "incorrect" | "correct" | "not set" }[]
   >([]);
@@ -57,27 +77,48 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
   const [resultTiles, setResultTiles] = useState<{ total: number; status: "incorrect" | "correct" | "not set" }[]>([]);
 
   // Gamemode settings
-  const [isTimerEnabled, setIsTimerEnabled] = useState(true);
-  const DEFAULT_TIMER_VALUE = 100;
-  const [remainingSeconds, setRemainingSeconds] = useState(DEFAULT_TIMER_VALUE);
-  const [totalSeconds, setTotalSeconds] = useState(DEFAULT_TIMER_VALUE);
 
-  // Generate the elements to configure the gamemode settings
-  const gamemodeSettings = generateSettings();
+  // Timer enabled by default, unless otherwise stated
+  const [isTimerEnabled, setIsTimerEnabled] = useState(props.gamemodeSettings?.timer?.isTimed ?? true);
+  const DEFAULT_TIMER_VALUE = 100;
+  const [remainingSeconds, setRemainingSeconds] = useState(
+    props.gamemodeSettings?.timer?.isTimed === true ? props.gamemodeSettings?.timer.seconds : DEFAULT_TIMER_VALUE
+  );
+  const [totalSeconds, setTotalSeconds] = useState(
+    props.gamemodeSettings?.timer?.isTimed === true ? props.gamemodeSettings?.timer.seconds : DEFAULT_TIMER_VALUE
+  );
+
+  const DEFAULT_NUM_TILES = 6;
+  const [numTiles, setNumTiles] = useState(props.gamemodeSettings?.numTiles ?? DEFAULT_NUM_TILES);
+
+  const DEFAULT_NUMBERSIZE = "medium";
+  const [numberSize, setNumberSize] = useState<"small" | "medium" | "large">(
+    props.gamemodeSettings?.numberSize ?? DEFAULT_NUMBERSIZE
+  );
+
+  const DEFAULT_NUM_OPERANDS = 2;
+  const [numOperands, setNumOperands] = useState(props.gamemodeSettings?.numOperands ?? DEFAULT_NUM_OPERANDS);
+
+
+ 
 
   function getStartingNumberLimit(): number {
-    switch (props.difficulty) {
-      case "easy": {
+    switch (numberSize) {
+      case "small": {
         return 100;
       }
-      case "normal": {
+      case "medium": {
         return 250;
       }
-      case "hard": {
+      case "large": {
         return 1000;
       }
     }
   }
+
+  React.useEffect(() => {
+
+  },[isTimerEnabled, totalSeconds, numTiles, numberSize, numOperands])
 
   React.useEffect(() => {
     // If all tiles have been initialised
@@ -88,7 +129,7 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
     // Expression tiles
     const newExpressionTiles: { expression: string; total: number; status: "not set" }[] = [];
 
-    for (let i = 0; i < props.numTiles; i++) {
+    for (let i = 0; i < numTiles; i++) {
       const tile = generateTile();
       newExpressionTiles.push(tile);
     }
@@ -108,9 +149,10 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
       setResultTiles(newResultTiles);
     }
 
-    function getOperatorLimit(operator: string) {
-      switch (props.difficulty) {
-        case "easy": {
+    // What is the maximum number which should be used with the given operator (based on difficulty)?
+    function getOperandLimit(operator: string) {
+      switch (numberSize) {
+        case "small": {
           switch (operator) {
             case "÷":
             case "×": {
@@ -123,7 +165,7 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
           }
           break;
         }
-        case "normal": {
+        case "medium": {
           switch (operator) {
             case "÷":
             case "×": {
@@ -136,7 +178,7 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
           }
           break;
         }
-        case "hard": {
+        case "large": {
           switch (operator) {
             case "÷":
             case "×": {
@@ -177,7 +219,8 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
       let expression = starting_number.toString();
       let total = starting_number;
 
-      const numOperators = props.numOperands - 1;
+      // Always one less operator than the number of operands in an expression
+      const numOperators = numOperands - 1;
 
       // Until expression has the required number of operators (is correct length)
       while (countOperators(expression) < numOperators) {
@@ -194,7 +237,7 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
 
             // Loop max_limit times in the attempt of finding a clean divisor
             do {
-              const random_divisor = randomIntFromInterval(2, getOperatorLimit(operator_symbol)!);
+              const random_divisor = randomIntFromInterval(2, getOperandLimit(operator_symbol)!);
               // Clean division (result would be integer)
               if (total % random_divisor === 0 && total > 0) {
                 // Use that divisor as tile number
@@ -208,12 +251,12 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
 
           case "×": {
             // Lower threshold of 2 (no point multiplying by 1)
-            operand = randomIntFromInterval(2, getOperatorLimit(operator_symbol)!);
+            operand = randomIntFromInterval(2, getOperandLimit(operator_symbol)!);
             break;
           }
 
           case "+": {
-            operand = randomIntFromInterval(1, getOperatorLimit(operator_symbol)!);
+            operand = randomIntFromInterval(1, getOperandLimit(operator_symbol)!);
             break;
           }
 
@@ -225,12 +268,12 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
               break;
             }
             // The target number is smaller than the maximum value which can be subtracted
-            else if (total < getOperatorLimit(operator_symbol)!) {
+            else if (total < getOperandLimit(operator_symbol)!) {
               // Only subtract a random value which is smaller than targetNumber
               operand = randomIntFromInterval(1, total - 1);
             } else {
               // Proceed as normal
-              operand = randomIntFromInterval(1, getOperatorLimit(operator_symbol)!);
+              operand = randomIntFromInterval(1, getOperandLimit(operator_symbol)!);
             }
           }
         }
@@ -241,7 +284,7 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
           expression = expression + operator_symbol + operand.toString();
 
           // Insert closing bracket after operand following the first operator (when there are 3 operands)
-          if (countOperators(expression) === 1 && props.numOperands === 3) {
+          if (countOperators(expression) === 1 && numOperands === 3) {
             expression = expression + ")";
           }
 
@@ -251,7 +294,7 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
       }
 
       // Insert starting bracket with three operands
-      if (props.numOperands === 3) {
+      if (numOperands === 3) {
         expression = "(" + expression;
       }
 
@@ -261,7 +304,7 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
   }, [
     /* TODO: Dependency and set method (expressionTiles and setExpressionTiles loop) */ expressionTiles,
     resultTiles,
-    props.numTiles,
+    numTiles,
   ]);
 
   // (Guess) Timer Setup
@@ -427,29 +470,98 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
     props.onComplete?.(true);
     setInProgress(true);
     setExpressionTiles([]);
-    setRemainingGuesses(props.numGuesses);
+    setRemainingGuesses(totalGuesses);
     if (isTimerEnabled) {
       // Reset the timer if it is enabled in the game options
       setRemainingSeconds(totalSeconds);
     }
   }
 
-  function generateSettings(): React.ReactNode {
+  function generateSettingsOptions(): React.ReactNode {
+    const MIN_NUM_TILES = 2;
+    const MAX_NUM_TILES = 10;
+
+    const MIN_NUM_OPERANDS = 2;
+    const MAX_NUM_OPERANDS = 4;
+
     let settings;
 
     settings = (
       <>
-        {/* TODO: QOL: Configure number of arithmetic expression to order/match */}
         <label>
-          <input type="number" value={6} min={2} max={10} onChange={(e) => {}}></input>
+          <input
+            type="number"
+            value={numTiles}
+            min={MIN_NUM_TILES}
+            max={MAX_NUM_TILES}
+            onChange={(e) => {
+              setNumTiles(e.target.valueAsNumber);
+            }}
+          ></input>
           Number of expressions
+        </label>
+        <label>
+          <input
+            type="number"
+            value={numOperands}
+            min={MIN_NUM_OPERANDS}
+            max={MAX_NUM_OPERANDS}
+            onChange={(e) => {
+              setNumOperands(e.target.valueAsNumber);
+            }}
+          ></input>
+          Number of operands
+        </label>
+        <label>
+          <input
+            type="number"
+            value={numOperands}
+            min={MIN_NUM_OPERANDS}
+            max={MAX_NUM_OPERANDS}
+            onChange={(e) => {
+              setNumOperands(e.target.valueAsNumber);
+            }}
+          ></input>
+          Number of operands
+        </label>
+
+        <label>
+          <select
+            onChange={(e) => {
+              setNumberSize(e.target.value as numberSizeOption);
+            }}
+            className="numberSize_input"
+            name="numberSize"
+            value={numberSize}
+          >
+            {numberSizeOptions.map((sizeOption) => (
+              <option key={sizeOption} value={sizeOption}>
+                {sizeOption}
+              </option>
+            ))}
+          </select>
+          Number size
+        </label>
+
+        <label>
+          <input
+            type="number"
+            value={numOperands}
+            min={1}
+            max={10}
+            onChange={(e) => {
+              setRemainingGuesses(e.target.valueAsNumber);
+              setTotalGuesses(e.target.valueAsNumber);
+            }}
+          ></input>
+          Number of guesses
         </label>
         <>
           <label>
             <input
               checked={isTimerEnabled}
               type="checkbox"
-              onChange={(e) => {
+              onChange={() => {
                 setIsTimerEnabled(!isTimerEnabled);
               }}
             ></input>
@@ -485,7 +597,7 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
     >
       {!props.isCampaignLevel && (
         <div className="gamemodeSettings">
-          <GamemodeSettingsMenu>{gamemodeSettings}</GamemodeSettingsMenu>
+          <GamemodeSettingsMenu>{generateSettingsOptions()}</GamemodeSettingsMenu>
         </div>
       )}
 

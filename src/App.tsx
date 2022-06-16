@@ -13,7 +13,7 @@ import { Area, AreaConfig } from "./Campaign/Area";
 import { getId, Level, LevelConfig } from "./Campaign/Level";
 import LetterCategoriesConfig from "./LetterCategories/LetterCategoriesConfig";
 import ArithmeticReveal from "./NumbersArithmetic/ArithmeticReveal";
-import ArithmeticDrag from "./NumbersArithmetic/ArithmeticDrag";
+import ArithmeticDrag, { numberSizeOption } from "./NumbersArithmetic/ArithmeticDrag";
 import { PuzzleConfig } from "./Puzzles/PuzzleConfig";
 import { Theme, Themes } from "./Themes";
 import { AllCampaignAreas } from "./Campaign/AllCampaignAreas";
@@ -51,12 +51,14 @@ const puzzleRevealMs = 2000;
 const puzzleLeaveNumBlanks = 3;
 
 // The wordLengths of target word arrays that have at least one word
-const targetWordLengths = wordLengthMappingsTargets.filter(mapping => mapping.array.length > 0).map(mapping => mapping.value);
+const targetWordLengths = wordLengthMappingsTargets
+  .filter((mapping) => mapping.array.length > 0)
+  .map((mapping) => mapping.value);
 export const MIN_TARGET_WORD_LENGTH = Math.min(...targetWordLengths);
 export const MAX_TARGET_WORD_LENGTH = Math.max(...targetWordLengths);
 
 // The number of categories with at least one word
-export const MAX_NUM_CATEGORIES = categoryMappings.filter(mapping => mapping.array.length > 0).length;
+export const MAX_NUM_CATEGORIES = categoryMappings.filter((mapping) => mapping.array.length > 0).length;
 
 export type Page =
   | "splash-screen"
@@ -681,6 +683,22 @@ export const App: React.FC = () => {
       onComplete: onComplete,
     };
 
+    const commonArithmeticDragProps = {
+      isCampaignLevel: false,
+      gamemodeSettings: {
+        timer: { isTimed: true, seconds: 100 },
+        numTiles: 6,
+        // TODO: https://stackoverflow.com/questions/37978528/typescript-type-string-is-not-assignable-to-type
+        numberSize: "small" as numberSizeOption,
+        numGuesses: 3,
+        numOperands: 3,
+      },
+      theme: theme,
+      settings: settings,
+      setPage: setPage,
+      onComplete: onComplete,
+    };
+
     switch (page) {
       case "splash-screen":
         return <SplashScreen loadingState={loadingState} settings={settings} />;
@@ -784,13 +802,7 @@ export const App: React.FC = () => {
         return <WordleConfig {...commonWingoProps} mode="crossword/daily" />;
 
       case "letters_categories":
-        return (
-          <LetterCategoriesConfig
-            {...commonWingoProps}
-            theme={theme}
-            enforceFullLengthGuesses={false}
-          />
-        );
+        return <LetterCategoriesConfig {...commonWingoProps} theme={theme} enforceFullLengthGuesses={false} />;
 
       case "countdown/letters":
         return (
@@ -847,36 +859,10 @@ export const App: React.FC = () => {
         );
 
       case "numbers/arithmetic_drag/order":
-        return (
-          <ArithmeticDrag
-            isCampaignLevel={false}
-            mode="order"
-            numGuesses={3}
-            numTiles={6}
-            numOperands={3}
-            difficulty={"easy"}
-            theme={theme}
-            settings={settings}
-            setPage={setPage}
-            onComplete={commonWingoProps.onComplete}
-          />
-        );
+        return <ArithmeticDrag {...commonArithmeticDragProps} mode="order" />;
 
       case "numbers/arithmetic_drag/match":
-        return (
-          <ArithmeticDrag
-            isCampaignLevel={false}
-            mode="match"
-            numGuesses={3}
-            numTiles={6}
-            numOperands={3}
-            difficulty={"easy"}
-            theme={theme}
-            settings={settings}
-            setPage={setPage}
-            onComplete={commonWingoProps.onComplete}
-          />
-        );
+        return <ArithmeticDrag {...commonArithmeticDragProps} mode="match" />;
 
       case "nubble":
         return (
