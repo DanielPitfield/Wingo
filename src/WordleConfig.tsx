@@ -272,7 +272,8 @@ const WordleConfig: React.FC<Props> = (props) => {
   const [isfirstLetterProvided, setIsfirstLetterProvided] = useState(
     props.gamemodeSettings?.firstLetterProvided ?? false
   );
-  const [isHintShown, setIsHintShown] = useState(props.gamemodeSettings?.showHint ?? false);
+  // Use gamemode setting value if specified, otherwise default to true for puzzle mode and false for other modes
+  const [isHintShown, setIsHintShown] = useState(props.gamemodeSettings?.showHint ?? props.mode === "puzzle" ? true : false);
 
   const [isTimerEnabled, setIsTimerEnabled] = useState(props.gamemodeSettings?.timer?.isTimed === true ?? false);
   const DEFAULT_TIMER_VALUE = 30;
