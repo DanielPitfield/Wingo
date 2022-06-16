@@ -498,10 +498,15 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
         return word;
       }
 
-      // If the entered word is longer than the target word
+      // If the entered word is already of full length
       if (word.length >= gridConfig.words[currentWordIndex].word.length) {
-        // Don't accept any more characters
-        return word;
+        // Overwrite (clear word and add letter)
+        return letter;
+
+        // TODO: Maybe add condition that word is checked before overwriting?
+        
+        // If not checked and full length, don't accept any more characters
+        // return word;
       }
 
       // Add the letter to the word
