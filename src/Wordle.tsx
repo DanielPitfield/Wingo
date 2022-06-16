@@ -468,7 +468,7 @@ const Wordle: React.FC<Props> = (props) => {
       </div>
 
       {
-        /* Not a campaign level or part of gameshow preset */ !props.isCampaignLevel && !props.gameshowScore && (
+        /* Not daily mode, a campaign level or part of gameshow preset */ props.mode !== "daily" && !props.isCampaignLevel && !props.gameshowScore && (
           <div className="gamemodeSettings">
             <GamemodeSettingsMenu>{generateSettingsOptions()}</GamemodeSettingsMenu>
           </div>
