@@ -234,15 +234,14 @@ const ArithmeticReveal: React.FC<Props> = (props) => {
 
   // Generate (all/numTiles number) of tiles
   function generateAllTiles() {
-    // Array of array of tile display values (e.g +89) for each checkpoint
+    // Array of arrays of tile display values (e.g +89) for each checkpoint
     const newTiles: string[][] = [];
     // Target number after each checkpoint
     const newTargetNumbers: number[] = [];
 
     for (let i = 0; i < numCheckpoints; i++) {
-      const firstCheckpoint = i === 0;
-      // Use the randomly generated number for first checkpoint otherwise use/carry on from previous checkpoint target
-      const checkpointStartingNumber = firstCheckpoint ? randomIntFromInterval(1, getStartingNumberLimit()) : newTargetNumbers[i - 1];
+      // Use/carry on from previous checkpoint target (unless first checkpoint which uses a random number)
+      const checkpointStartingNumber = newTargetNumbers[i - 1] ?? randomIntFromInterval(1, getStartingNumberLimit());
 
       // Start a tiles array, starting with the number
       const checkpointTiles: string[] = [checkpointStartingNumber.toString()];
@@ -255,7 +254,7 @@ const ArithmeticReveal: React.FC<Props> = (props) => {
         // Generate a new tile from the existing target number
         const { tile, newRunningTotal } = generateTile(runningTotal);
 
-        // Add the tile string
+        // Add the tile string (display value) to array for this checkpoint
         checkpointTiles.push(tile);
 
         // Update the running target number
@@ -265,7 +264,7 @@ const ArithmeticReveal: React.FC<Props> = (props) => {
       // Push this checkpoint's tiles to larger array
       newTiles.push(checkpointTiles);
 
-      // The running total now become the target number
+      // The running total now becomes the target number
       newTargetNumbers.push(runningTotal);
 
       console.log(

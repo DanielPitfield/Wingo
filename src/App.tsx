@@ -850,9 +850,9 @@ export const App: React.FC = () => {
             gamemodeSettings={{
               numTiles: 4,
               numCheckpoints: 3,
-              numberSize: "easy" as numberSizeOption,
+              numberSize: "small" as numberSizeOption,
               revealIntervalSeconds: 3,
-              timer: { isTimed: true, seconds: 100 },
+              timer: { isTimed: true, seconds: 10 },
             }}
             theme={theme}
             settings={settings}
