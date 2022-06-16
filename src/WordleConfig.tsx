@@ -279,12 +279,12 @@ const WordleConfig: React.FC<Props> = (props) => {
 
   const DEFAULT_WORD_LENGTH = 5;
   // Take highest of targetWord, gamemodeSettings value, defaultWordLength (or failing those, a default value)
-  const highestWordLength =
+  const defaultWordLength =
     Math.max.apply(
       undefined,
       [props.targetWord?.length!, props.gamemodeSettings?.wordLength!, props.defaultWordLength!].filter((x) => x)
     ) ?? DEFAULT_WORD_LENGTH;
-  const [wordLength, setWordLength] = useState(highestWordLength);
+  const [wordLength, setWordLength] = useState(defaultWordLength);
 
   // At what word length should increasing and limitless go up to?
   const [wordLengthMaxLimit, setWordLengthMaxLimit] = useState(
@@ -495,6 +495,16 @@ const WordleConfig: React.FC<Props> = (props) => {
           .find((x) => x.value === wordLength)
           ?.array.map((x) => ({ word: x, hint: "" }))!;
 
+        // There is no array for the current wordLength
+        if (!targetWordArray || targetWordArray.length <= 0) {
+          // Don't reset otherwise the number of lives would be lost, just go back to starting wordLength
+          // TODO: The value specified as the lower limit for wordLength, otherwise 4
+          setWordLength(defaultWordLength);
+          targetWordArray = wordLengthMappingsTargets
+            .find((x) => x.value === defaultWordLength)
+            ?.array.map((x) => ({ word: x, hint: "" }))!;
+        }
+
         // Choose random word
         newTarget = targetWordArray[Math.round(Math.random() * (targetWordArray.length - 1))];
 
@@ -514,15 +524,6 @@ const WordleConfig: React.FC<Props> = (props) => {
 
         if (newTarget.hint) {
           setTargetHint(newTarget.hint);
-        }
-
-        // There is no array for the current wordLength
-        if (!targetWordArray) {
-          // Don't reset otherwise the number of lives would be lost, just go back to 4 letter words
-          setWordLength(4);
-          targetWordArray = wordLengthMappingsTargets
-            .find((x) => x.value === 4)
-            ?.array.map((x) => ({ word: x, hint: "" }))!;
         }
 
         break;
@@ -868,7 +869,7 @@ const WordleConfig: React.FC<Props> = (props) => {
       );
     }
     setisIncompleteWord(false);
-    setWordLength(highestWordLength);
+    setWordLength(defaultWordLength);
     setGuesses([]);
     setCurrentWord("");
     setWordIndex(0);
@@ -1111,6 +1112,10 @@ const WordleConfig: React.FC<Props> = (props) => {
     setWordLength(newWordLength);
   }
 
+  function updateWordLengthMaxLimit(newWordLengthMaxLimit: number) {
+    setWordLengthMaxLimit(newWordLengthMaxLimit);
+  }
+
   function updatefirstLetterProvided() {
     setIsfirstLetterProvided(!isfirstLetterProvided);
   }
@@ -1244,6 +1249,7 @@ const WordleConfig: React.FC<Props> = (props) => {
       mode={props.mode}
       gamemodeSettings={{
         wordLength: wordLength,
+        wordLengthMaxLimit: wordLengthMaxLimit,
         firstLetterProvided: isfirstLetterProvided,
         showHint: isHintShown,
         timerConfig: isTimerEnabled
@@ -1278,6 +1284,7 @@ const WordleConfig: React.FC<Props> = (props) => {
       onSubmitTargetCategory={onSubmitTargetCategory}
       onBackspace={onBackspace}
       updateWordLength={updateWordLength}
+      updateWordLengthMaxLimit={updateWordLengthMaxLimit}
       updatefirstLetterProvided={updatefirstLetterProvided}
       updateHintShown={updateHintShown}
       updateTimer={updateTimer}

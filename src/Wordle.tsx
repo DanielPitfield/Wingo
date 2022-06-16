@@ -16,6 +16,7 @@ interface Props {
   mode: "daily" | "repeat" | "category" | "increasing" | "limitless" | "puzzle" | "conundrum";
   gamemodeSettings: {
     wordLength: number;
+    wordLengthMaxLimit: number;
     firstLetterProvided: boolean;
     showHint: boolean;
     timerConfig: { isTimed: true; remainingSeconds: number; totalSeconds: number } | { isTimed: false };
@@ -50,6 +51,7 @@ interface Props {
 
   // Gamemode settings callbacks
   updateWordLength: (newWordLength: number) => void;
+  updateWordLengthMaxLimit: (newWordLengthMaxLimit: number) => void;
   updatefirstLetterProvided: () => void;
   updateHintShown: () => void;
   updateTimer: () => void;
@@ -174,6 +176,13 @@ const Wordle: React.FC<Props> = (props) => {
   function generateSettingsOptions(): React.ReactNode {
     let settings;
 
+    // These modes can be continued and aren't always just reset
+    const continuationMode = props.mode === "increasing" || props.mode === "limitless";
+    const MIN_WORD_LENGTH_LABEL = continuationMode ? "Starting Word Length" : "Word Length";
+    // Must start atleast one below end limit
+    const MIN_WORD_LENGTH_MAX_BOUNDARY =
+      props.mode === "increasing" ? MAX_TARGET_WORD_LENGTH - 1 : MAX_TARGET_WORD_LENGTH;
+
     settings = (
       <>
         <label>
@@ -181,11 +190,24 @@ const Wordle: React.FC<Props> = (props) => {
             type="number"
             value={props.gamemodeSettings.wordLength}
             min={props.mode === "puzzle" ? 9 : MIN_TARGET_WORD_LENGTH}
-            max={MAX_TARGET_WORD_LENGTH}
+            max={MIN_WORD_LENGTH_MAX_BOUNDARY}
             onChange={(e) => props.updateWordLength(e.target.valueAsNumber)}
           ></input>
-          Word Length
+          {MIN_WORD_LENGTH_LABEL}
         </label>
+        {continuationMode && (
+          <label>
+            <input
+              type="number"
+              value={props.gamemodeSettings.wordLengthMaxLimit}
+              min={props.gamemodeSettings.wordLength + 1}
+              max={MAX_TARGET_WORD_LENGTH}
+              onChange={(e) => props.updateWordLengthMaxLimit(e.target.valueAsNumber)}
+            ></input>
+            Ending Word Length
+          </label>
+        )}
+
         <label>
           <input
             checked={props.gamemodeSettings.firstLetterProvided}
@@ -347,10 +369,18 @@ const Wordle: React.FC<Props> = (props) => {
 
   function isOutcomeContinue(): boolean {
     const correctAnswer = props.targetWord.toUpperCase() === props.currentWord.toUpperCase();
-    // There are still rows to use or correct answer on only row left
-    const LimitlessContinue =
-      (props.mode === "limitless" && props.numGuesses > 1) || (props.numGuesses === 1 && correctAnswer);
-    const IncreasingContinue = props.mode === "increasing" && correctAnswer;
+
+    // Correct answer with only row left
+    const lastRowCorrectAnswer = props.numGuesses === 1 && correctAnswer;
+
+    // Limitless - lives left or correct answer with last remaining life
+    const LimitlessContinue = props.mode === "limitless" && (props.numGuesses > 1 || lastRowCorrectAnswer);
+
+    // Increasing - correct and next wordLength does not exceed limit
+    const IncreasingContinue =
+      props.mode === "increasing" &&
+      correctAnswer &&
+      props.gamemodeSettings.wordLength < props.gamemodeSettings.wordLengthMaxLimit;
 
     if (LimitlessContinue || IncreasingContinue) {
       return true;
@@ -426,12 +456,7 @@ const Wordle: React.FC<Props> = (props) => {
           <Button
             mode={"accept"}
             settings={props.settings}
-            onClick={() =>
-              (props.mode === "increasing" || props.mode === "limitless") &&
-              props.targetWord.toUpperCase() === props.currentWord.toUpperCase()
-                ? props.ContinueGame()
-                : props.ResetGame()
-            }
+            onClick={() => (isOutcomeContinue() ? props.ContinueGame() : props.ResetGame())}
             additionalProps={{ autoFocus: true }}
           >
             {props.gameshowScore !== undefined
@@ -468,11 +493,13 @@ const Wordle: React.FC<Props> = (props) => {
       </div>
 
       {
-        /* Not daily mode, a campaign level or part of gameshow preset */ props.mode !== "daily" && !props.isCampaignLevel && !props.gameshowScore && (
-          <div className="gamemodeSettings">
-            <GamemodeSettingsMenu>{generateSettingsOptions()}</GamemodeSettingsMenu>
-          </div>
-        )
+        /* Not daily mode, a campaign level or part of gameshow preset */ props.mode !== "daily" &&
+          !props.isCampaignLevel &&
+          !props.gameshowScore && (
+            <div className="gamemodeSettings">
+              <GamemodeSettingsMenu>{generateSettingsOptions()}</GamemodeSettingsMenu>
+            </div>
+          )
       }
 
       <div className="word_grid">{populateGrid(props.numGuesses, props.gamemodeSettings.wordLength)}</div>
