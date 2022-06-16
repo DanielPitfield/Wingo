@@ -672,8 +672,6 @@ export const App: React.FC = () => {
       saveData: saveData,
       defaultnumGuesses: DEFAULT_NUM_GUESSES,
       enforceFullLengthGuesses: true,
-      puzzleRevealMs: puzzleRevealMs,
-      puzzleLeaveNumBlanks: puzzleLeaveNumBlanks,
       page: page,
       theme: theme,
       setPage: setPage,
@@ -783,6 +781,8 @@ export const App: React.FC = () => {
             mode="puzzle"
             defaultWordLength={wordLengthPuzzle}
             defaultnumGuesses={numGuessesPuzzle}
+            puzzleRevealMs={puzzleRevealMs}
+            puzzleLeaveNumBlanks={puzzleLeaveNumBlanks}
           />
         );
 
@@ -988,6 +988,7 @@ export const App: React.FC = () => {
       case "countdown/gameshow":
         return (
           <CountdownGameshow
+            commonWingoProps={commonWingoProps}
             settings={settings}
             setPage={setPage}
             page={page}
@@ -999,18 +1000,17 @@ export const App: React.FC = () => {
             numNumberRoundsPerSet={1}
             numConundrumRoundsPerSet={0}
             hasFinishingConundrum={true}
-            commonWingoProps={commonWingoProps}
           />
         );
 
       case "lingo/gameshow":
         return (
           <LingoGameshow
+            commonWingoProps={commonWingoProps}
             firstRoundConfig={{ numLingos: 4, numPuzzles: 1 }}
             secondRoundConfig={{ numLingos: 3, numPuzzles: 1 }}
             thirdRoundConfig={{ numFourLengthLingos: 2, numPuzzles: 1, numFiveLengthLingos: 2, numberPuzzles: 1 }}
             hasFinalRound={true}
-            commonWingoProps={commonWingoProps}
           />
         );
     }

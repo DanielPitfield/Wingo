@@ -25,8 +25,6 @@ interface Props {
   commonWingoProps: {
     saveData: Storage;
     defaultnumGuesses: number;
-    puzzleRevealMs: number;
-    puzzleLeaveNumBlanks: number;
     page: Page;
     theme: Theme;
     setPage: (page: Page) => void;

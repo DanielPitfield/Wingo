@@ -50,15 +50,26 @@ export interface WordleConfigProps {
     showHint?: boolean;
     timer?: { isTimed: true; seconds: number } | { isTimed: false };
   };
+
+  defaultnumGuesses: number;
+  defaultWordLength?: number;
+  enforceFullLengthGuesses: boolean;
+
+  // Word to guess specified in some way?
   conundrum?: string;
   targetWord?: string;
   wordArray?: string[];
-  enforceFullLengthGuesses: boolean;
-  defaultWordLength?: number;
-  puzzleRevealMs: number;
-  puzzleLeaveNumBlanks: number;
-  defaultnumGuesses: number;
+
+  // Puzzle mode
+  puzzleRevealMs?: number;
+  puzzleLeaveNumBlanks?: number;
+
+  // Increasing mode
+  increasingMaxWordLength?: number;
+
+  // Previous guesses (for daily)
   guesses?: string[];
+
   checkInDictionary?: boolean;
   finishingButtonText?: string;
   onComplete?: (wasCorrect: boolean, answer: string, targetAnswer: string, score: number | null) => void;
@@ -725,10 +736,12 @@ const WordleConfig: React.FC<Props> = (props) => {
           return;
         }
 
+        // TODO: Change to configurable game mode setting (use state)
+        const DEFAULT_NUM_PUZZLE_BLANKS = 3;
         if (
           // Stop revealing letters when there is only (props.puzzleLeaveNumBlanks) left to reveal
           revealedLetterIndexes.length >=
-          targetWord!.length - props.puzzleLeaveNumBlanks
+          targetWord!.length - (props.puzzleLeaveNumBlanks ?? DEFAULT_NUM_PUZZLE_BLANKS)
         ) {
           return;
         }
