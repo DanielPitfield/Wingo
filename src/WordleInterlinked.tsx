@@ -221,6 +221,16 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
     return wordHints;
   }
 
+  // TODO: Handling mid-game changes - apply this to other modes
+
+  // TODO: Can't be reseting game each time remainingWordGuesses or remainingGridGuesses changes! Look at totalGuesses within ArithmeticDrag
+
+  // Any of the game mode settings are changed then reset the game
+  React.useEffect(() => {
+    ResetGame();
+  }, [isTimerEnabled, totalSeconds, numWords, minWordLength, maxWordLength, remainingWordGuesses, remainingGridGuesses, isfirstLetterProvided, isHintShown]);
+  // TODO: Probably best these settings are part of a single object
+
   // Each time a word is highlighted/picked
   React.useEffect(() => {
     if (!inProgress) {
