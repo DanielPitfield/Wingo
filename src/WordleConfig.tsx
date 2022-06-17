@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { MAX_TARGET_WORD_LENGTH, Page } from "./App";
+import { MAX_TARGET_WORD_LENGTH, MIN_TARGET_WORD_LENGTH, Page } from "./App";
 import Wordle from "./Wordle";
 import { words_three_guessable, words_three_targets } from "./WordArrays/Lengths/words_3";
 import { words_four_guessable, words_four_targets } from "./WordArrays/Lengths/words_4";
@@ -1133,16 +1133,23 @@ const WordleConfig: React.FC<Props> = (props) => {
     setTotalSeconds(newSeconds);
   }
 
+  const DEFAULT_CROSSWORD_MAX_LENGTH = 8;
+
   if (props.mode === "interlinked") {
     return (
       <WordleInterlinked
+        isCampaignLevel={props.page === "campaign/area/level"}
         wordArrayConfig={{ type: "length" }}
-        displayHints={false}
+        gamemodeSettings={{
+          numWords: 2,
+          minWordLength: DEFAULT_WORD_LENGTH,
+          maxWordLength: DEFAULT_WORD_LENGTH,
+          showHint: false,
+          numWordGuesses: 0,
+          numGridGuesses: 6,
+          timer: { isTimed: true, seconds: 60 },
+        }}
         provideWords={false}
-        numWords={2}
-        minWordLength={props.defaultWordLength ? props.defaultWordLength : 5}
-        maxWordLength={props.defaultWordLength ? props.defaultWordLength : 5}
-        numGridGuesses={6}
         theme={props.theme}
         settings={props.settings}
         onComplete={props.onComplete}
@@ -1153,14 +1160,18 @@ const WordleConfig: React.FC<Props> = (props) => {
   if (props.mode === "crossword") {
     return (
       <WordleInterlinked
+        isCampaignLevel={props.page === "campaign/area/level"}
         wordArrayConfig={{ type: "category" }}
-        displayHints={true}
+        gamemodeSettings={{
+          numWords: 6,
+          minWordLength: MIN_TARGET_WORD_LENGTH,
+          maxWordLength: DEFAULT_CROSSWORD_MAX_LENGTH,
+          showHint: true,
+          numWordGuesses: 10,
+          numGridGuesses: 2,
+          timer: { isTimed: true, seconds: 180 },
+        }}
         provideWords={false}
-        numWords={6}
-        minWordLength={props.defaultWordLength ? props.defaultWordLength - 3 : 2}
-        maxWordLength={props.defaultWordLength ? props.defaultWordLength + 3 : 8}
-        numWordGuesses={10}
-        numGridGuesses={6}
         theme={props.theme}
         settings={props.settings}
       />
@@ -1170,6 +1181,7 @@ const WordleConfig: React.FC<Props> = (props) => {
   if (props.mode === "crossword/daily") {
     return (
       <WordleInterlinked
+        isCampaignLevel={props.page === "campaign/area/level"}
         wordArrayConfig={{
           type: "custom",
           array: getDeterministicArrayItems(
@@ -1182,13 +1194,16 @@ const WordleConfig: React.FC<Props> = (props) => {
         }}
         onSave={SaveData.setDailyCrossWordGuesses}
         initialConfig={SaveData.getDailyCrossWordGuesses() || undefined}
-        displayHints={true}
+        gamemodeSettings={{
+          numWords: 6,
+          minWordLength: MIN_TARGET_WORD_LENGTH,
+          maxWordLength: DEFAULT_CROSSWORD_MAX_LENGTH,
+          showHint: true,
+          numWordGuesses: 10,
+          numGridGuesses: 2,
+          timer: { isTimed: false },
+        }}
         provideWords={false}
-        numWords={6}
-        minWordLength={props.defaultWordLength ? props.defaultWordLength - 3 : 2}
-        maxWordLength={props.defaultWordLength ? props.defaultWordLength + 3 : 8}
-        numWordGuesses={10}
-        numGridGuesses={6}
         theme={props.theme}
         settings={props.settings}
       />
@@ -1198,6 +1213,7 @@ const WordleConfig: React.FC<Props> = (props) => {
   if (props.mode === "crossword/weekly") {
     return (
       <WordleInterlinked
+        isCampaignLevel={props.page === "campaign/area/level"}
         wordArrayConfig={{
           type: "custom",
           array: getDeterministicArrayItems(
@@ -1210,13 +1226,16 @@ const WordleConfig: React.FC<Props> = (props) => {
         }}
         onSave={SaveData.setWeeklyCrossWordGuesses}
         initialConfig={SaveData.getWeeklyCrossWordGuesses() || undefined}
-        displayHints={true}
+        gamemodeSettings={{
+          numWords: 10,
+          minWordLength: MIN_TARGET_WORD_LENGTH,
+          maxWordLength: DEFAULT_CROSSWORD_MAX_LENGTH,
+          showHint: true,
+          numWordGuesses: 10,
+          numGridGuesses: 2,
+          timer: { isTimed: false },
+        }}
         provideWords={false}
-        numWords={6}
-        minWordLength={props.defaultWordLength ? props.defaultWordLength - 3 : 2}
-        maxWordLength={props.defaultWordLength ? props.defaultWordLength + 3 : 8}
-        numWordGuesses={10}
-        numGridGuesses={6}
         theme={props.theme}
         settings={props.settings}
         onComplete={props.onComplete}
@@ -1227,15 +1246,19 @@ const WordleConfig: React.FC<Props> = (props) => {
   if (props.mode === "crossword/fit") {
     return (
       <WordleInterlinked
+        isCampaignLevel={props.page === "campaign/area/level"}
         wordArrayConfig={{ type: "length" }}
-        displayHints={false}
+        gamemodeSettings={{
+          numWords: 6,
+          minWordLength: DEFAULT_WORD_LENGTH,
+          maxWordLength: DEFAULT_WORD_LENGTH,
+          showHint: false,
+          numWordGuesses: 0,
+          numGridGuesses: 1,
+          timer: { isTimed: true, seconds: 60 },
+        }}
         provideWords={true}
         fitRestriction={0}
-        numWords={6}
-        minWordLength={6}
-        maxWordLength={6}
-        numWordGuesses={0}
-        numGridGuesses={1}
         theme={props.theme}
         settings={props.settings}
         onComplete={props.onComplete}

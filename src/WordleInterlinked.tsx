@@ -9,6 +9,8 @@ import { Button } from "./Button";
 import React from "react";
 import { MessageNotification } from "./MessageNotification";
 import { CrosswordGenerationResult, crosswordGenerator as crossWordGenerator } from "./CrossWordGenerator";
+import GamemodeSettingsMenu from "./GamemodeSettingsMenu";
+import { MAX_TARGET_WORD_LENGTH, MIN_TARGET_WORD_LENGTH } from "./App";
 
 type Orientation = "vertical" | "horizontal";
 
@@ -25,19 +27,33 @@ export type TileStatus = {
 };
 
 interface Props {
+  isCampaignLevel: boolean;
+  // TODO: Add as a gamemode setting?
   wordArrayConfig:
     | { type: "custom"; array: string[]; useExact: boolean; canRestart: boolean }
     | { type: "category" }
     | { type: "length" };
-  displayHints: boolean;
+  // The words of the crossword are given to the player (for crossword fit mode)
   provideWords: boolean;
-  // Additional units allowed in grid height or width (in addition to maxWordLength)
+
+  gamemodeSettings?: {
+    numWords?: number;
+    minWordLength?: number;
+    maxWordLength?: number;
+    numWordGuesses?: number;
+    numGridGuesses?: number;
+    firstLetterProvided?: boolean;
+    showHint?: boolean;
+    timer?: { isTimed: true; seconds: number } | { isTimed: false };
+  };
+
+  /*
+  When not specified, the crossword's height and width is not restricted
+  When is specified, the value is the additional units allowed in grid height or width (in addition to maxWordLength)
+  */
+  // TODO: Add as gamemode setting?
   fitRestriction?: number;
-  numWords: number;
-  minWordLength: number;
-  maxWordLength: number;
-  numWordGuesses?: number;
-  numGridGuesses: number;
+
   settings: SettingsData;
   initialConfig?: {
     words: string[];
@@ -64,12 +80,57 @@ interface Props {
 export const WordleInterlinked: React.FC<Props> = (props) => {
   const [inProgress, setInProgress] = useState(props.initialConfig?.inProgress ?? true);
   const [allowSpaces, setAllowSpaces] = useState(false);
-  const [remainingWordGuesses, setRemainingWordGuesses] = useState(
-    props.initialConfig?.remainingWordGuesses ?? props.numWordGuesses
+  
+  // Gamemode settings
+  const [isTimerEnabled, setIsTimerEnabled] = useState(props.gamemodeSettings?.timer?.isTimed === true ?? false);
+  const DEFAULT_TIMER_VALUE = 30;
+  const [remainingSeconds, setRemainingSeconds] = useState(
+    props.gamemodeSettings?.timer?.isTimed === true ? props.gamemodeSettings?.timer.seconds : DEFAULT_TIMER_VALUE
   );
-  const [remainingGridGuesses, setRemainingGridGuesses] = useState(
-    props.initialConfig?.remainingGridGuesses ?? props.numGridGuesses
+  const [totalSeconds, setTotalSeconds] = useState(
+    props.gamemodeSettings?.timer?.isTimed === true ? props.gamemodeSettings?.timer.seconds : DEFAULT_TIMER_VALUE
   );
+
+  const DEFAULT_WORD_LENGTH = 5;
+  const [minWordLength, setMinWordLength] = useState(props.gamemodeSettings?.minWordLength ?? DEFAULT_WORD_LENGTH);
+  const [maxWordLength, setMaxWordLength] = useState(props.gamemodeSettings?.maxWordLength ?? DEFAULT_WORD_LENGTH);
+
+  const DEFAULT_NUM_WORDS = 2;
+  const [numWords, setNumWords] = useState(props.gamemodeSettings?.numWords ?? DEFAULT_NUM_WORDS);
+
+  const [isfirstLetterProvided, setIsfirstLetterProvided] = useState(
+    props.gamemodeSettings?.firstLetterProvided ?? false
+  );
+  // Use gamemode setting value if specified, otherwise default to true for large crosswords (more than 2 words)
+  const [isHintShown, setIsHintShown] = useState(props.gamemodeSettings?.showHint ?? numWords > 2 ? true : false);
+
+  // Specified amount of grid guesses (either from initial config or gamemode settings), otherwise zero
+  const STARTING_NUM_GRID_GUESSES =
+    props.initialConfig?.remainingGridGuesses ?? props.gamemodeSettings?.numGridGuesses ?? 0;
+  const [remainingGridGuesses, setRemainingGridGuesses] = useState(STARTING_NUM_GRID_GUESSES);
+
+  // TODO: Balancing
+  const DEFAULT_NUM_WORD_GUESSES = numWords * 3;
+
+  /*
+    Specified amount of word guesses (either from initial config or gamemode settings),
+    Otherwise if also no grid guesses, use default value
+    Otherwise zero
+  */
+ 
+  // TODO: Fix this to not always use the default value
+  const STARTING_NUM_WORD_GUESSES =
+    props.initialConfig?.remainingWordGuesses ?? props.gamemodeSettings?.numWordGuesses ?? STARTING_NUM_GRID_GUESSES === 0
+      ? DEFAULT_NUM_WORD_GUESSES
+      : 0;
+
+  const [remainingWordGuesses, setRemainingWordGuesses] = useState(STARTING_NUM_WORD_GUESSES);
+
+  // The entered words of the crossword
+  const [currentWords, setCurrentWords] = useState<string[]>(
+    props.initialConfig?.currentWords ?? Array.from({ length: numWords }).map((x) => "")
+  );
+
   // Crossword configuration generated when provided with an array of words
   const [gridConfig, setGridConfig] = useState<GridConfig>(generateGridConfig(getTargetWordArray()));
   const [correctGrid, setCorrectGrid] = useState<{ x: number; y: number; letter: string; wordIndex?: number }[]>(
@@ -82,10 +143,8 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
         return { x: position.x, y: position.y, status: "not set" };
       })
   );
-  const [currentWords, setCurrentWords] = useState<string[]>(
-    props.initialConfig?.currentWords ?? Array.from({ length: props.numWords }).map((x) => "")
-  );
-  const [currentWordIndex, setCurrentWordIndex] = useState<number>(props.initialConfig?.currentWordIndex ?? 0);
+
+  const [currentWordIndex, setCurrentWordIndex] = useState<number>(props.initialConfig?.currentWordIndex ?? 0);  
 
   // Save gameplay progress
   React.useEffect(() => {
@@ -120,7 +179,7 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
           // Combine all categories (just the words)
           .flatMap((categoryMappings) => categoryMappings.array.map((mapping) => mapping.word))
           // Return words between minimum and maximum length
-          .filter((word) => word.length >= props.minWordLength && word.length <= props.maxWordLength);
+          .filter((word) => word.length >= minWordLength && word.length <= maxWordLength);
 
         break;
       }
@@ -128,7 +187,7 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
       case "length": {
         // Combine all length word arrays between minimum and maximum length
         targetWordArray = wordLengthMappingsTargets
-          .filter((mapping) => mapping.value >= props.minWordLength && mapping.value <= props.maxWordLength)
+          .filter((mapping) => mapping.value >= minWordLength && mapping.value <= maxWordLength)
           .flatMap((lengthMappings) => lengthMappings.array);
 
         break;
@@ -152,11 +211,12 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
   }
 
   function getWordHints() {
-    if (props.wordArrayConfig.type !== "category") {
+    if (!isHintShown) {
       return;
     }
 
-    if (!props.displayHints) {
+    // Don't show hints when words aren't from a category
+    if (props.wordArrayConfig.type !== "category") {
       return;
     }
 
@@ -164,7 +224,7 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
       // Combine all categories
       .flatMap((categoryMappings) => categoryMappings.array)
       // Return words between minimum and maximum length
-      .filter(({ word }) => word.length >= props.minWordLength && word.length <= props.maxWordLength);
+      .filter(({ word }) => word.length >= minWordLength && word.length <= maxWordLength);
 
     return wordHints;
   }
@@ -236,7 +296,7 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
    * @returns Generated grid config.
    */
   function generateGridConfig(targetWordArray: string[]): GridConfig {
-    let targetWordArraySliced = shuffleArray(targetWordArray).slice(0, props.numWords);
+    let targetWordArraySliced = shuffleArray(targetWordArray).slice(0, numWords);
     let result: CrosswordGenerationResult | null = null;
 
     if (props.wordArrayConfig.type === "custom" && props.wordArrayConfig.useExact) {
@@ -248,7 +308,7 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
     } else if (props.fitRestriction !== undefined) {
       // Crossword fit
       // Height and width can't exceed this value (to begin with)
-      const DEFAULT_MAX_GRID_DIMENSION = props.maxWordLength + props.fitRestriction;
+      const DEFAULT_MAX_GRID_DIMENSION = maxWordLength + props.fitRestriction;
 
       // Start with DEFAULT_MAX_GRID_DIMENSION and slowly increment until a result is found
       for (
@@ -270,7 +330,7 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
           }
 
           // Try another random slice of the array
-          targetWordArraySliced = shuffleArray(targetWordArray).slice(0, props.numWords);
+          targetWordArraySliced = shuffleArray(targetWordArray).slice(0, numWords);
         }
 
         // Break out of outer loop too
@@ -283,7 +343,7 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
         result = crossWordGenerator(targetWordArraySliced);
 
         if (!result) {
-          targetWordArraySliced = shuffleArray(targetWordArray).slice(0, props.numWords);
+          targetWordArraySliced = shuffleArray(targetWordArray).slice(0, numWords);
         }
       } while (!result);
     }
@@ -401,31 +461,24 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
       return;
     }
 
-    if (wordsToCheck === "current" && props.numWordGuesses) {
-      // Still a 'Check current word' guess left
-      if (remainingWordGuesses! >= 1) {
-        setRemainingWordGuesses(remainingWordGuesses! - 1);
-        // Check current word
-        checkTileStatuses(currentWords, wordsToCheck);
-      }
+    // Still a 'Check current word' guess left
+    if (wordsToCheck === "current" && remainingWordGuesses >= 1) {
+      setRemainingWordGuesses(remainingWordGuesses - 1);
+      // Check current word
+      checkTileStatuses(currentWords, wordsToCheck);
 
       // Used last current word guess and also no grid guesses left
-      if (remainingWordGuesses! <= 1 && remainingGridGuesses <= 0) {
+      if (remainingWordGuesses <= 1 && remainingGridGuesses <= 0) {
         setInProgress(false);
       }
-    } else if (wordsToCheck === "all") {
+    } else if (wordsToCheck === "all" && remainingGridGuesses >= 1) {
       // Still a 'Check Crossword' guess left
-      if (remainingGridGuesses! >= 1) {
-        setRemainingGridGuesses(remainingGridGuesses! - 1);
-        // Check entire crossword
-        checkTileStatuses(currentWords, wordsToCheck);
-      }
-
-      // Word guesses were not enabled or were but just used last one
-      const noWordGuessesLeft = !props.numWordGuesses || (props.numWordGuesses && remainingWordGuesses! <= 1);
+      setRemainingGridGuesses(remainingGridGuesses - 1);
+      // Check entire crossword
+      checkTileStatuses(currentWords, wordsToCheck);
 
       // Used last grid guess and also no word guesses left
-      if (remainingGridGuesses <= 1 && noWordGuessesLeft) {
+      if (remainingGridGuesses <= 1 && remainingWordGuesses === 0) {
         setInProgress(false);
       }
     }
@@ -502,14 +555,11 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
 
       // If the entered word is already of full length
       if (word.length >= correctWordInfo.word.length) {
-        const startingTileStatus = tileStatuses
-          .find(
-            (tileStatus) =>
-              tileStatus.x === correctWordInfo.startingXPos && tileStatus.y === correctWordInfo.startingYPos
-          )
-          ?.status;
+        const startingTileStatus = tileStatuses.find(
+          (tileStatus) => tileStatus.x === correctWordInfo.startingXPos && tileStatus.y === correctWordInfo.startingYPos
+        )?.status;
 
-          console.log(startingTileStatus);
+        console.log(startingTileStatus);
 
         if (startingTileStatus !== "not set") {
           // Word has been checked, Overwrite (clear word and add letter)
@@ -658,6 +708,110 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
     return grid;
   }
 
+  function generateSettingsOptions(): React.ReactNode {
+    let settings;
+
+    /*
+    numWordGuesses?: number;
+    numGridGuesses?: number;
+    */
+
+    settings = (
+      <>
+        <label>
+          <input
+            type="number"
+            value={numWords}
+            min={2}
+            max={10}
+            onChange={(e) => setNumWords(e.target.valueAsNumber)}
+          ></input>
+          Number of words
+        </label>
+        <label>
+          <input
+            type="number"
+            value={minWordLength}
+            min={MIN_TARGET_WORD_LENGTH}
+            // Can't go above maximum word length
+            max={Math.min(maxWordLength, MAX_TARGET_WORD_LENGTH)}
+            onChange={(e) => setMinWordLength(e.target.valueAsNumber)}
+          ></input>
+          Minimum Word Length
+        </label>
+        <label>
+          <input
+            type="number"
+            value={maxWordLength}
+            // Can't go below the minimum word length
+            min={Math.max(minWordLength, MIN_TARGET_WORD_LENGTH)}
+            max={MAX_TARGET_WORD_LENGTH}
+            onChange={(e) => setMaxWordLength(e.target.valueAsNumber)}
+          ></input>
+          Maximum Word Length
+        </label>
+
+        <label>
+          <input
+            checked={isfirstLetterProvided}
+            type="checkbox"
+            onChange={() => setIsfirstLetterProvided(!isfirstLetterProvided)}
+          ></input>
+          First Letter Provided
+        </label>
+        <label>
+          <input checked={isHintShown} type="checkbox" onChange={() => setIsHintShown(!isHintShown)}></input>
+          Hints
+        </label>
+        <label>
+          <input
+            type="number"
+            // TODO: This will decrease as the game is played (guesses are made), explained in other TODO
+            value={remainingWordGuesses}
+            min={0}
+            max={100}
+            onChange={(e) => setRemainingWordGuesses(e.target.valueAsNumber)}
+          ></input>
+          Number of word guesses
+        </label>
+        <label>
+          <input
+            type="number"
+            value={remainingGridGuesses}
+            min={0}
+            max={20}
+            onChange={(e) => setRemainingGridGuesses(e.target.valueAsNumber)}
+          ></input>
+          Number of grid guesses
+        </label>
+        <>
+          <label>
+            <input checked={isTimerEnabled} type="checkbox" onChange={() => setIsTimerEnabled(!isTimerEnabled)}></input>
+            Timer
+          </label>
+          {isTimerEnabled && (
+            <label>
+              <input
+                type="number"
+                value={totalSeconds}
+                min={10}
+                max={120}
+                step={5}
+                onChange={(e) => {
+                  setRemainingSeconds(e.target.valueAsNumber);
+                  setTotalSeconds(e.target.valueAsNumber);
+                }}
+              ></input>
+              Seconds
+            </label>
+          )}
+        </>
+      </>
+    );
+
+    return settings;
+  }
+
   function displayOutcome(): React.ReactNode {
     // Game still in progress, don't display anything
     if (inProgress) {
@@ -708,14 +862,25 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
     props.onComplete?.(gridCompleted, currentWords.join(""), gridConfig.words.map((x) => x.word).join(""), 10);
     setInProgress(true);
     setCurrentWordIndex(0);
-    setRemainingWordGuesses(props.numWordGuesses ? props.numWordGuesses : undefined);
-    setRemainingGridGuesses(props.numGridGuesses);
+    /* TODO: Reset user-changed value
+    This has also been a problem elsewhere, if the gamemode setting was changed, these should be reset to those values
+    But these values are lost because the state becomes initialised to those value and then changes (decreases) through the game
+
+    Explanation:
+    Default numWordGuesses for WordleInterlinked is 10
+    The user decreases this to 5 with gamemode settings
+    The game is played, with the guesses being used and decreasing one by one
+    When the game is finished and reset, the numWordGuesses is 1
+    The state should be reset to the value 5, not 10
+    */
+    setRemainingWordGuesses(STARTING_NUM_WORD_GUESSES);
+    setRemainingGridGuesses(STARTING_NUM_GRID_GUESSES);
     setTileStatuses(
       getCorrectLetterGrid().map((position) => {
         return { x: position.x, y: position.y, status: "not set" };
       })
     );
-    setCurrentWords(Array.from({ length: props.numWords }).map((x) => ""));
+    setCurrentWords(Array.from({ length: numWords }).map((x) => ""));
     setGridConfig(generateGridConfig(getTargetWordArray()));
     setCorrectGrid(getCorrectLetterGrid());
   }
@@ -727,6 +892,12 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
       className="App wordle_interlinked"
       style={{ backgroundImage: props.theme && `url(${props.theme.backgroundImageSrc})` }}
     >
+      {!props.isCampaignLevel && (
+        <div className="gamemodeSettings">
+          <GamemodeSettingsMenu>{generateSettingsOptions()}</GamemodeSettingsMenu>
+        </div>
+      )}
+
       {!inProgress && <div className="outcome">{displayOutcome()}</div>}
       {Boolean(inProgress && props.provideWords) && (
         <MessageNotification type="info">
@@ -738,7 +909,7 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
       {inProgress && (
         <MessageNotification type="default">
           Grid guesses left: <strong>{remainingGridGuesses}</strong>
-          {Boolean(props.numWordGuesses) && (
+          {STARTING_NUM_GRID_GUESSES > 0 && (
             <>
               <br />
               Current word guesses left: <strong>{remainingWordGuesses}</strong>
@@ -746,16 +917,16 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
           )}
         </MessageNotification>
       )}
-      {Boolean(inProgress && props.displayHints && hint) && (
+      {Boolean(inProgress && isHintShown && hint) && (
         <MessageNotification type="info">
           <strong>Hint:</strong> {hint}
         </MessageNotification>
       )}
       <div className="word_grid">{populateGrid()}</div>
-      {Boolean(inProgress && props.numWordGuesses) && (
+      {Boolean(inProgress && STARTING_NUM_WORD_GUESSES > 0) && (
         <Button
           mode="accept"
-          disabled={remainingWordGuesses! <= 0}
+          disabled={remainingWordGuesses <= 0}
           settings={props.settings}
           onClick={() => checkInput("current")}
         >
@@ -765,7 +936,7 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
       {inProgress && (
         <Button
           mode="accept"
-          disabled={remainingGridGuesses! <= 0}
+          disabled={remainingGridGuesses <= 0}
           settings={props.settings}
           onClick={() => checkInput("all")}
         >
