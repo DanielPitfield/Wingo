@@ -111,19 +111,11 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
 
   // TODO: Balancing
   const DEFAULT_NUM_WORD_GUESSES = numWords * 3;
-
-  /*
-    Specified amount of word guesses (either from initial config or gamemode settings),
-    Otherwise if also no grid guesses, use default value
-    Otherwise zero
-  */
- 
-  // TODO: Fix this to not always use the default value
-  const STARTING_NUM_WORD_GUESSES =
-    props.initialConfig?.remainingWordGuesses ?? props.gamemodeSettings?.numWordGuesses ?? STARTING_NUM_GRID_GUESSES === 0
-      ? DEFAULT_NUM_WORD_GUESSES
-      : 0;
-
+  // Specified amount of word guesses (either from initial config or gamemode settings)?
+  const specifiedValue = props.initialConfig?.remainingWordGuesses ?? props.gamemodeSettings?.numWordGuesses ?? undefined;
+  // In case of no specified value, if also no grid guesses, use default value, otherwise zero
+  const fallbackValue = (STARTING_NUM_GRID_GUESSES === 0) ? DEFAULT_NUM_WORD_GUESSES : 0
+  const STARTING_NUM_WORD_GUESSES = specifiedValue ?? fallbackValue;
   const [remainingWordGuesses, setRemainingWordGuesses] = useState(STARTING_NUM_WORD_GUESSES);
 
   // The entered words of the crossword
