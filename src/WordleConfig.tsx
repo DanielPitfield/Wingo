@@ -666,37 +666,9 @@ const WordleConfig: React.FC<Props> = (props) => {
     setWordArray(wordArray);
   }, [targetWord]);
 
-  // Update gamemode with new gamemode settings
+  // Reset game after change of settings (stops cheating by changing settings partway through a game)
   React.useEffect(() => {
-    if (gamemodeSettings.timerConfig.isTimed) {
-      // Reset time left
-      setRemainingSeconds(gamemodeSettings.timerConfig.seconds);
-    }
-
-    if (gamemodeSettings.isFirstLetterProvided) {
-      setCurrentWord(targetWord.charAt(0));
-    }
-    // isFirstLetterProvided now disabled (but first letter remains from when it was enabled)
-    else if (currentWord.length > 0) {
-      ResetGame();
-      return;
-    }
-
-    // If guesses can't be found
-    if (!guesses || !guesses[0]) {
-      return;
-    }
-
-    const letterSubmittedisFirstLetterProvidedEnabled = gamemodeSettings.isFirstLetterProvided && guesses[0].length >= 2;
-    const letterSubmittedisFirstLetterProvidedDisabled = !gamemodeSettings.isFirstLetterProvided && guesses[0].length >= 1;
-
-    // User has starting making guesses
-    const letterSubmitted = letterSubmittedisFirstLetterProvidedEnabled || letterSubmittedisFirstLetterProvidedDisabled;
-
-    // Reset game after change of settings (stops cheating by changing settings partway through a game)
-    if (inProgress && letterSubmitted) {
-      ResetGame();
-    }
+    ResetGame();
   }, [gamemodeSettings]);
 
   // Update targetWord every time the targetCategory changes
@@ -891,8 +863,10 @@ const WordleConfig: React.FC<Props> = (props) => {
     };
     setGamemodeSettings(newGamemodeSettings);
 
-    setGuesses([]);
-    setCurrentWord("");
+    const newCurrentWord = gamemodeSettings.isFirstLetterProvided ? targetWord.charAt(0) : "";
+    setCurrentWord(newCurrentWord);
+
+    setGuesses([]);    
     setWordIndex(0);
     setinProgress(true);
     setinDictionary(true);
@@ -900,10 +874,7 @@ const WordleConfig: React.FC<Props> = (props) => {
     setConundrum("");
     setRevealedLetterIndexes([]);
     setletterStatuses(defaultLetterStatuses);
-    if (gamemodeSettings.timerConfig.isTimed) {
-      // Reset the timer if it is enabled in the game options
-      setRemainingSeconds(gamemodeSettings.timerConfig.seconds);
-    }
+    setRemainingSeconds(gamemodeSettings.timerConfig.isTimed ? gamemodeSettings.timerConfig.seconds : mostRecentTotalSeconds);
     if (props.mode !== "limitless" || numGuesses <= 1) {
       // Ending of any game mode
       setNumGuesses(props.defaultnumGuesses);
@@ -921,8 +892,10 @@ const WordleConfig: React.FC<Props> = (props) => {
   }
 
   function ContinueGame() {
-    setGuesses([]);
-    setCurrentWord("");
+    const newCurrentWord = gamemodeSettings.isFirstLetterProvided ? targetWord.charAt(0) : "";
+    setCurrentWord(newCurrentWord);
+
+    setGuesses([]);    
     setWordIndex(0);
     setinProgress(true);
     setinDictionary(true);
@@ -937,9 +910,7 @@ const WordleConfig: React.FC<Props> = (props) => {
     setRevealedLetterIndexes([]);
     setletterStatuses(defaultLetterStatuses);
 
-    if (gamemodeSettings.timerConfig.isTimed) {
-      setRemainingSeconds(gamemodeSettings.timerConfig.seconds);
-    }
+    setRemainingSeconds(gamemodeSettings.timerConfig.isTimed ? gamemodeSettings.timerConfig.seconds : mostRecentTotalSeconds);
 
     if (props.mode === "limitless") {
       const newLives = getNewLives(numGuesses, wordIndex);

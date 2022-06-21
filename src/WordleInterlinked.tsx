@@ -256,24 +256,9 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
   // TODO: Handling mid-game changes - apply this to other modes
   // TODO: Seems to be using previous values, e.g increase numWords to 7 but creates only 6 words
 
-  // Update gamemode with new gamemode settings
+  // Reset game after change of settings (stops cheating by changing settings partway through a game)
   React.useEffect(() => {
-    // TODO: Move most of this logic to ResetGame()
-    if (gamemodeSettings.timerConfig.isTimed) {
-      // Reset time left
-      setRemainingSeconds(gamemodeSettings.timerConfig.seconds);
-    }
-
-    // All words are the first letter of their respective correct word
-    const firstLetterWords = Array.from({ length: gamemodeSettings.numWords }).map((value, index) => gridConfig.words[index].word.charAt(0));
-    // All words are empty
-    const emptyWords = Array.from({ length: gamemodeSettings.numWords }).map((x) => "");
-    const newCurrentWords = gamemodeSettings.isFirstLetterProvided ? firstLetterWords : emptyWords;
-
-    // Reset game after change of settings (stops cheating by changing settings partway through a game)
-    if (inProgress) {
-      ResetGame();
-    }
+    ResetGame();
   }, [gamemodeSettings]);
 
   // Each time a word is highlighted/picked
@@ -965,8 +950,9 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
 
     // TODO: Scoring method instead of 10 value
     props.onComplete?.(gridCompleted, currentWords.join(""), gridConfig.words.map((x) => x.word).join(""), 10);
-    
-    setCurrentWords(Array.from({ length: gamemodeSettings.numWords }).map((x) => ""));
+
+    setRemainingSeconds(gamemodeSettings.timerConfig.isTimed ? gamemodeSettings.timerConfig.seconds : mostRecentTotalSeconds);
+
     setTileStatuses(
       getCorrectLetterGrid().map((position) => {
         return { x: position.x, y: position.y, status: "not set" };
@@ -975,11 +961,16 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
     setGridConfig(generateGridConfig(getTargetWordArray()));
     setCorrectGrid(getCorrectLetterGrid());
     
+    // All words are the first letter of their respective correct word
+    const firstLetterWords = Array.from({ length: gamemodeSettings.numWords }).map((value, index) => gridConfig.words[index].word.charAt(0));
+    // All words are empty
+    const emptyWords = Array.from({ length: gamemodeSettings.numWords }).map((x) => "");
+    const newCurrentWords = gamemodeSettings.isFirstLetterProvided ? firstLetterWords : emptyWords;
+    setCurrentWords(newCurrentWords);
+    
     setRemainingWordGuesses(gamemodeSettings.numWordGuesses);
     setRemainingGridGuesses(gamemodeSettings.numGridGuesses);
     setCurrentWordIndex(0);
-
-    setRemainingSeconds(gamemodeSettings.timerConfig.isTimed ? gamemodeSettings.timerConfig.seconds : DEFAULT_TIMER_VALUE);
 
     setInProgress(true);
   }
