@@ -17,10 +17,11 @@ interface Props {
   gamemodeSettings: {
     wordLength: number;
     wordLengthMaxLimit: number;
-    firstLetterProvided: boolean;
-    showHint: boolean;
-    timerConfig: { isTimed: true; remainingSeconds: number; totalSeconds: number } | { isTimed: false };
+    isFirstLetterProvided: boolean;
+    isHintShown: boolean;
+    timerConfig: { isTimed: true; seconds: number } | { isTimed: false };
   };
+  remainingSeconds: number;
   numGuesses: number;
   guesses: string[];
   currentWord: string;
@@ -49,13 +50,14 @@ interface Props {
   onSubmitTargetCategory: (category: string) => void;
   onBackspace: () => void;
 
-  // Gamemode settings callbacks
-  updateWordLength: (newWordLength: number) => void;
-  updateWordLengthMaxLimit: (newWordLengthMaxLimit: number) => void;
-  updatefirstLetterProvided: () => void;
-  updateHintShown: () => void;
-  updateTimer: () => void;
-  updateTimerLength: (newSeconds: number) => void;
+  // Gamemode settings callback
+  updateGamemodeSettings: (newGamemodeSettings: {
+    wordLength: number;
+    wordLengthMaxLimit: number;
+    isFirstLetterProvided: boolean;
+    isHintShown: boolean;
+    timerConfig: { isTimed: true; seconds: number } | { isTimed: false };
+  }) => void;
 
   ResetGame: () => void;
   ContinueGame: () => void;
@@ -68,6 +70,18 @@ const Wordle: React.FC<Props> = (props) => {
   const [playCorrectChimeSoundEffect] = useCorrectChime(props.settings);
   const [playFailureChimeSoundEffect] = useFailureChime(props.settings);
   const [playLightPingSoundEffect] = useLightPingChime(props.settings);
+
+  /*
+  Keep track of the most recent value for the timer
+  So that the value can be used as the default value for the total seconds input element
+  (even after the timer is enabled/disabled)
+  */
+  const DEFAULT_TIMER_VALUE = 30;
+  const [mostRecentTotalSeconds, setMostRecentTotalSeconds] = useState(
+    props.gamemodeSettings?.timerConfig?.isTimed === true
+      ? props.gamemodeSettings?.timerConfig.seconds
+      : DEFAULT_TIMER_VALUE
+  );
 
   // Create grid of rows (for guessing words)
   function populateGrid(rowNumber: number, wordLength: number) {
@@ -191,7 +205,13 @@ const Wordle: React.FC<Props> = (props) => {
             value={props.gamemodeSettings.wordLength}
             min={props.mode === "puzzle" ? 9 : MIN_TARGET_WORD_LENGTH}
             max={MIN_WORD_LENGTH_MAX_BOUNDARY}
-            onChange={(e) => props.updateWordLength(e.target.valueAsNumber)}
+            onChange={(e) => {
+              const newGamemodeSettings = {
+                ...props.gamemodeSettings,
+                wordLength: e.target.valueAsNumber,
+              };
+              props.updateGamemodeSettings(newGamemodeSettings);
+            }}
           ></input>
           {MIN_WORD_LENGTH_LABEL}
         </label>
@@ -202,7 +222,13 @@ const Wordle: React.FC<Props> = (props) => {
               value={props.gamemodeSettings.wordLengthMaxLimit}
               min={props.gamemodeSettings.wordLength + 1}
               max={MAX_TARGET_WORD_LENGTH}
-              onChange={(e) => props.updateWordLengthMaxLimit(e.target.valueAsNumber)}
+              onChange={(e) => {
+                const newGamemodeSettings = {
+                  ...props.gamemodeSettings,
+                  wordLengthMaxLimit: e.target.valueAsNumber,
+                };
+                props.updateGamemodeSettings(newGamemodeSettings);
+              }}
             ></input>
             Ending Word Length
           </label>
@@ -210,14 +236,30 @@ const Wordle: React.FC<Props> = (props) => {
 
         <label>
           <input
-            checked={props.gamemodeSettings.firstLetterProvided}
+            checked={props.gamemodeSettings.isFirstLetterProvided}
             type="checkbox"
-            onChange={props.updatefirstLetterProvided}
+            onChange={() => {
+              const newGamemodeSettings = {
+                ...props.gamemodeSettings,
+                isFirstLetterProvided: !props.gamemodeSettings.isFirstLetterProvided,
+              };
+              props.updateGamemodeSettings(newGamemodeSettings);
+            }}
           ></input>
           First Letter Provided
         </label>
         <label>
-          <input checked={props.gamemodeSettings.showHint} type="checkbox" onChange={props.updateHintShown}></input>
+          <input
+            checked={props.gamemodeSettings.isHintShown}
+            type="checkbox"
+            onChange={() => {
+              const newGamemodeSettings = {
+                ...props.gamemodeSettings,
+                isHintShown: !props.gamemodeSettings.isHintShown,
+              };
+              props.updateGamemodeSettings(newGamemodeSettings);
+            }}
+          ></input>
           Hints
         </label>
         <>
@@ -225,7 +267,14 @@ const Wordle: React.FC<Props> = (props) => {
             <input
               checked={props.gamemodeSettings.timerConfig.isTimed}
               type="checkbox"
-              onChange={props.updateTimer}
+              onChange={() => {
+                // If currently timed, on change, make the game not timed and vice versa
+                const newTimer = props.gamemodeSettings.timerConfig.isTimed
+                  ? { isTimed: false }
+                  : { isTimed: true, seconds: mostRecentTotalSeconds };
+                const newGamemodeSettings = { ...props.gamemodeSettings, timer: newTimer };
+                props.updateGamemodeSettings(newGamemodeSettings);
+              }}
             ></input>
             Timer
           </label>
@@ -233,12 +282,17 @@ const Wordle: React.FC<Props> = (props) => {
             <label>
               <input
                 type="number"
-                value={props.gamemodeSettings.timerConfig.totalSeconds}
+                value={props.gamemodeSettings.timerConfig.seconds}
                 min={10}
                 max={120}
                 step={5}
                 onChange={(e) => {
-                  props.updateTimerLength(e.target.valueAsNumber);
+                  setMostRecentTotalSeconds(e.target.valueAsNumber);
+                  const newGamemodeSettings = {
+                    ...props.gamemodeSettings,
+                    timer: { isTimed: true, seconds: e.target.valueAsNumber },
+                  };
+                  props.updateGamemodeSettings(newGamemodeSettings);
                 }}
               ></input>
               Seconds
@@ -527,8 +581,8 @@ const Wordle: React.FC<Props> = (props) => {
       <div>
         {props.gamemodeSettings.timerConfig.isTimed && (
           <ProgressBar
-            progress={props.gamemodeSettings.timerConfig.remainingSeconds}
-            total={props.gamemodeSettings.timerConfig.totalSeconds}
+            progress={props.remainingSeconds}
+            total={props.gamemodeSettings.timerConfig.seconds}
             display={{ type: "transition", colorTransition: GreenToRedColorTransition }}
           ></ProgressBar>
         )}

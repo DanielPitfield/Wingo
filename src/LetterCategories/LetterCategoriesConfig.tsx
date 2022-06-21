@@ -73,13 +73,13 @@ const LetterCategoriesConfig: React.FC<Props> = (props) => {
   React.useEffect(() => {
     if (inProgress) {
       // Get a random letter from the Alphabet
-      const firstLetterProvided = DEFAULT_ALPHABET[Math.round(Math.random() * (DEFAULT_ALPHABET.length - 1))];
+      const isFirstLetterProvided = DEFAULT_ALPHABET[Math.round(Math.random() * (DEFAULT_ALPHABET.length - 1))];
       // Set this letter as the letter that all words must begin with
-      setCategoryRequiredStartingLetter(firstLetterProvided);
+      setCategoryRequiredStartingLetter(isFirstLetterProvided);
       // Provide this letter as the start of guesses/words
-      setCurrentWord(firstLetterProvided);
+      setCurrentWord(isFirstLetterProvided);
 
-      console.log(`%cStart Letter:%c ${firstLetterProvided}`, "font-weight: bold", "font-weight: normal");
+      console.log(`%cStart Letter:%c ${isFirstLetterProvided}`, "font-weight: bold", "font-weight: normal");
 
       // The names of the categories in play
       let categoryNames: string[] = [];
@@ -102,12 +102,12 @@ const LetterCategoriesConfig: React.FC<Props> = (props) => {
           continue;
         }
 
-        // Get all the words in the category starting with firstLetterProvided
+        // Get all the words in the category starting with isFirstLetterProvided
         const words = categoryMappings[newIndex].array
           .map((x) => x.word)
-          .filter((x) => x.charAt(0) === firstLetterProvided);
+          .filter((x) => x.charAt(0) === isFirstLetterProvided);
 
-        // No words starting with firstLetterProvided
+        // No words starting with isFirstLetterProvided
         if (!words || words.length <= 0) {
           failedSearchCount += 1;
           continue;

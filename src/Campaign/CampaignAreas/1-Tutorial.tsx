@@ -24,8 +24,8 @@ export const area: AreaConfig = {
         defaultWordLength: 5,
         defaultnumGuesses: 6,
         gamemodeSettings: {
-          firstLetterProvided: true,
-          timer: { isTimed: false },
+          isFirstLetterProvided: true,
+          timerConfig: { isTimed: false },
         },
         checkInDictionary: false,
         puzzleLeaveNumBlanks: 0,
@@ -53,11 +53,11 @@ export const area: AreaConfig = {
           These settings with their default values will be used for the campaign level
           Normally, declaring settings like this would mean they are configurable
           But in this case, they won't be able to be configured as the collapsible (to change them) is conditionally rendered
-          The available settings are: wordLength, firstLetterProvided, showHint, timer
+          The available settings are: wordLength, isFirstLetterProvided, showHint, timerConfig
           */
           gamemodeSettings: {
-            firstLetterProvided: true,
-            timer: { isTimed: false },
+            isFirstLetterProvided: true,
+            timerConfig: { isTimed: false },
           },
           checkInDictionary: false,
           puzzleLeaveNumBlanks: 0,

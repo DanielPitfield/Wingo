@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { MAX_TARGET_WORD_LENGTH, MIN_TARGET_WORD_LENGTH, Page } from "./App";
+import { DEFAULT_WORD_LENGTH, MAX_TARGET_WORD_LENGTH, MIN_TARGET_WORD_LENGTH, Page } from "./App";
 import Wordle from "./Wordle";
 import { words_three_guessable, words_three_targets } from "./WordArrays/Lengths/words_3";
 import { words_four_guessable, words_four_targets } from "./WordArrays/Lengths/words_4";
@@ -47,9 +47,9 @@ export interface WordleConfigProps {
   gamemodeSettings?: {
     wordLength?: number;
     wordLengthMaxLimit?: number;
-    firstLetterProvided?: boolean;
-    showHint?: boolean;
-    timer?: { isTimed: true; seconds: number } | { isTimed: false };
+    isFirstLetterProvided?: boolean;
+    isHintShown?: boolean;
+    timerConfig?: { isTimed: true; seconds: number } | { isTimed: false };
   };
 
   defaultnumGuesses: number;
@@ -267,36 +267,43 @@ const WordleConfig: React.FC<Props> = (props) => {
   const [numGuesses, setNumGuesses] = useState(props.defaultnumGuesses);
   const [gameId, setGameId] = useState<string | null>(null);
 
-  // Gamemode settings
-  const [isTimerEnabled, setIsTimerEnabled] = useState(props.gamemodeSettings?.timer?.isTimed === true ?? false);
-  const DEFAULT_TIMER_VALUE = 30;
-  const [remainingSeconds, setRemainingSeconds] = useState(
-    props.gamemodeSettings?.timer?.isTimed === true ? props.gamemodeSettings?.timer.seconds : DEFAULT_TIMER_VALUE
-  );
-  const [totalSeconds, setTotalSeconds] = useState(
-    props.gamemodeSettings?.timer?.isTimed === true ? props.gamemodeSettings?.timer.seconds : DEFAULT_TIMER_VALUE
-  );
-
-  const DEFAULT_WORD_LENGTH = 5;
   // Take highest of targetWord, gamemodeSettings value, defaultWordLength (or failing those, a default value)
   const defaultWordLength =
     Math.max.apply(
       undefined,
       [props.targetWord?.length!, props.gamemodeSettings?.wordLength!, props.defaultWordLength!].filter((x) => x)
     ) ?? DEFAULT_WORD_LENGTH;
-  const [wordLength, setWordLength] = useState(defaultWordLength);
 
-  // At what word length should increasing and limitless go up to?
-  const [wordLengthMaxLimit, setWordLengthMaxLimit] = useState(
-    props.gamemodeSettings?.wordLengthMaxLimit ?? MAX_TARGET_WORD_LENGTH
+  const defaultGamemodeSettings = {
+    wordLength: defaultWordLength,
+    // At what word length should increasing and limitless go up to?
+    wordLengthMaxLimit: props.gamemodeSettings?.wordLengthMaxLimit ?? MAX_TARGET_WORD_LENGTH,
+    isFirstLetterProvided: props.gamemodeSettings?.isHintShown ?? false,
+    // Use gamemode setting value if specified, otherwise default to true for puzzle mode and false for other modes
+    isHintShown: props.gamemodeSettings?.isHintShown ?? props.mode === "puzzle" ? true : false,
+    timerConfig: props.gamemodeSettings?.timerConfig ?? { isTimed: false },
+  };
+
+  const [gamemodeSettings, setGamemodeSettings] = useState<{
+    wordLength: number;
+    wordLengthMaxLimit: number;
+    isFirstLetterProvided: boolean;
+    isHintShown: boolean;
+    timerConfig: { isTimed: true; seconds: number } | { isTimed: false };
+  }>(defaultGamemodeSettings);
+
+  const DEFAULT_TIMER_VALUE = 30;
+  const [remainingSeconds, setRemainingSeconds] = useState(
+    props.gamemodeSettings?.timerConfig?.isTimed === true ? props.gamemodeSettings?.timerConfig.seconds : DEFAULT_TIMER_VALUE
   );
 
-  const [isfirstLetterProvided, setIsfirstLetterProvided] = useState(
-    props.gamemodeSettings?.firstLetterProvided ?? false
-  );
-  // Use gamemode setting value if specified, otherwise default to true for puzzle mode and false for other modes
-  const [isHintShown, setIsHintShown] = useState(
-    props.gamemodeSettings?.showHint ?? props.mode === "puzzle" ? true : false
+  /*
+  Keep track of the most recent value for the timer
+  So that the value can be used as the default value for the total seconds input element
+  (even after the timer is enabled/disabled)
+  */
+  const [mostRecentTotalSeconds, setMostRecentTotalSeconds] = useState(
+    props.gamemodeSettings?.timerConfig?.isTimed === true ? props.gamemodeSettings?.timerConfig.seconds : DEFAULT_TIMER_VALUE
   );
 
   const [currentWord, setCurrentWord] = useState("");
@@ -366,7 +373,7 @@ const WordleConfig: React.FC<Props> = (props) => {
       case "daily":
         // Choose a target word based on length
         targetWordArray = wordLengthMappingsTargets
-          .find((x) => x.value === wordLength)
+          .find((x) => x.value === gamemodeSettings.wordLength)
           ?.array.map((x) => ({ word: x, hint: "" }))!;
 
         newTarget = getDeterministicArrayItems({ seedType: "today" }, 1, targetWordArray)[0];
@@ -384,7 +391,7 @@ const WordleConfig: React.FC<Props> = (props) => {
           setTargetWord(newTarget.word);
         }
 
-        if (isHintShown && newTarget.hint) {
+        if (gamemodeSettings.isHintShown && newTarget.hint) {
           setTargetHint(newTarget.hint);
         }
 
@@ -423,7 +430,7 @@ const WordleConfig: React.FC<Props> = (props) => {
           setTargetWord(puzzle.word);
         }
 
-        if (isHintShown && puzzle.hint) {
+        if (gamemodeSettings.isHintShown && puzzle.hint) {
           setTargetHint(puzzle.hint);
         }
 
@@ -445,13 +452,13 @@ const WordleConfig: React.FC<Props> = (props) => {
 
       case "increasing":
         // There is already a targetWord which is of the needed wordLength
-        if (targetWord && targetWord.length === wordLength) {
+        if (targetWord && targetWord.length === gamemodeSettings.wordLength) {
           return;
         }
 
         // Choose a target word based on length
         targetWordArray = wordLengthMappingsTargets
-          .find((x) => x.value === wordLength)
+          .find((x) => x.value === gamemodeSettings.wordLength)
           ?.array.map((x) => ({ word: x, hint: "" }))!;
 
         // There is no array for the current wordLength
@@ -486,20 +493,24 @@ const WordleConfig: React.FC<Props> = (props) => {
 
       case "limitless":
         // There is already a targetWord which is of the needed wordLength
-        if (targetWord && targetWord.length === wordLength) {
+        if (targetWord && targetWord.length === gamemodeSettings.wordLength) {
           return;
         }
 
         // Choose a target word based on length
         targetWordArray = wordLengthMappingsTargets
-          .find((x) => x.value === wordLength)
+          .find((x) => x.value === gamemodeSettings.wordLength)
           ?.array.map((x) => ({ word: x, hint: "" }))!;
 
         // There is no array for the current wordLength
         if (!targetWordArray || targetWordArray.length <= 0) {
           // Don't reset otherwise the number of lives would be lost, just go back to starting wordLength
-          // TODO: The value specified as the lower limit for wordLength, otherwise 4
-          setWordLength(defaultWordLength);
+          const newGamemodeSettings = {
+            ...gamemodeSettings,
+            wordLength: defaultWordLength,
+          };
+          setGamemodeSettings(newGamemodeSettings);
+
           targetWordArray = wordLengthMappingsTargets
             .find((x) => x.value === defaultWordLength)
             ?.array.map((x) => ({ word: x, hint: "" }))!;
@@ -551,7 +562,7 @@ const WordleConfig: React.FC<Props> = (props) => {
       default:
         // Other modes choose a target word based on length
         targetWordArray = wordLengthMappingsTargets
-          .find((x) => x.value === wordLength)
+          .find((x) => x.value === gamemodeSettings.wordLength)
           ?.array.map((x) => ({ word: x, hint: "" }))!;
         // Choose random word
         newTarget = targetWordArray[Math.round(Math.random() * (targetWordArray.length - 1))];
@@ -578,7 +589,7 @@ const WordleConfig: React.FC<Props> = (props) => {
 
   // Timer Setup
   React.useEffect(() => {
-    if (!isTimerEnabled) {
+    if (!gamemodeSettings.timerConfig.isTimed) {
       return;
     }
 
@@ -593,7 +604,7 @@ const WordleConfig: React.FC<Props> = (props) => {
     return () => {
       clearInterval(timer);
     };
-  }, [setRemainingSeconds, remainingSeconds, isTimerEnabled]);
+  }, [setRemainingSeconds, remainingSeconds, gamemodeSettings.timerConfig.isTimed]);
 
   // Save gameplay progress of daily wingo
   React.useEffect(() => {
@@ -609,11 +620,15 @@ const WordleConfig: React.FC<Props> = (props) => {
 
     // Update word length every time the target word changes
     if (targetWord) {
-      setWordLength(targetWord.length);
+      const newGamemodeSettings = {
+        ...gamemodeSettings,
+        wordLength: targetWord.length,
+      };
+      setGamemodeSettings(newGamemodeSettings);
     }
 
     // Show first letter of the target word (if enabled)
-    if (isfirstLetterProvided) {
+    if (gamemodeSettings.isFirstLetterProvided) {
       setCurrentWord(targetWord.charAt(0));
     }
 
@@ -632,7 +647,7 @@ const WordleConfig: React.FC<Props> = (props) => {
     // Find the valid array using wordLength
     else {
       // All arrays containing words of length up to and including the wordLength combined together (full and partial length guesses)
-      for (let i = 3; i <= wordLength; i++) {
+      for (let i = 3; i <= gamemodeSettings.wordLength; i++) {
         // Find array containing words of i length
         const currentLengthWordArray = wordLengthMappingsGuessable.find((x) => x.value === i)?.array!;
         if (currentLengthWordArray) {
@@ -644,7 +659,7 @@ const WordleConfig: React.FC<Props> = (props) => {
 
     // When full length guesses is enforced, to be a valid guess, the guess must be of the current wordLength
     if (props.enforceFullLengthGuesses) {
-      wordArray = wordArray.filter((word) => word.length === wordLength);
+      wordArray = wordArray.filter((word) => word.length === gamemodeSettings.wordLength);
     }
 
     // Update the currently valid guesses which can be made
@@ -653,15 +668,15 @@ const WordleConfig: React.FC<Props> = (props) => {
 
   // Update gamemode with new gamemode settings
   React.useEffect(() => {
-    if (isTimerEnabled) {
+    if (gamemodeSettings.timerConfig.isTimed) {
       // Reset time left
-      setRemainingSeconds(totalSeconds);
+      setRemainingSeconds(gamemodeSettings.timerConfig.seconds);
     }
 
-    if (isfirstLetterProvided) {
+    if (gamemodeSettings.isFirstLetterProvided) {
       setCurrentWord(targetWord.charAt(0));
     }
-    // firstLetterProvided now disabled (but first letter remains from when it was enabled)
+    // isFirstLetterProvided now disabled (but first letter remains from when it was enabled)
     else if (currentWord.length > 0) {
       ResetGame();
       return;
@@ -672,17 +687,17 @@ const WordleConfig: React.FC<Props> = (props) => {
       return;
     }
 
-    const letterSubmittedfirstLetterProvidedEnabled = isfirstLetterProvided && guesses[0].length >= 2;
-    const letterSubmittedfirstLetterProvidedDisabled = !isfirstLetterProvided && guesses[0].length >= 1;
+    const letterSubmittedisFirstLetterProvidedEnabled = gamemodeSettings.isFirstLetterProvided && guesses[0].length >= 2;
+    const letterSubmittedisFirstLetterProvidedDisabled = !gamemodeSettings.isFirstLetterProvided && guesses[0].length >= 1;
 
     // User has starting making guesses
-    const letterSubmitted = letterSubmittedfirstLetterProvidedEnabled || letterSubmittedfirstLetterProvidedDisabled;
+    const letterSubmitted = letterSubmittedisFirstLetterProvidedEnabled || letterSubmittedisFirstLetterProvidedDisabled;
 
     // Reset game after change of settings (stops cheating by changing settings partway through a game)
     if (inProgress && letterSubmitted) {
       ResetGame();
     }
-  }, [/* TODO: Changing wordLength setting mid-game */ isfirstLetterProvided, isHintShown, isTimerEnabled]);
+  }, [gamemodeSettings]);
 
   // Update targetWord every time the targetCategory changes
   React.useEffect(() => {
@@ -795,12 +810,12 @@ const WordleConfig: React.FC<Props> = (props) => {
       return;
     }
 
-    if (!wordLength) {
+    if (!gamemodeSettings.wordLength) {
       return;
     }
 
     generateTargetWord();
-  }, [/* Short circuit boolean evaluation */ props.mode === "category" || wordLength, inProgress, props.mode]);
+  }, [/* Short circuit boolean evaluation */ props.mode === "category" || gamemodeSettings.wordLength, inProgress, props.mode]);
 
   // Save the game
   React.useEffect(() => {
@@ -814,10 +829,10 @@ const WordleConfig: React.FC<Props> = (props) => {
       levelProps: {
         mode: props.mode,
         gamemodeSettings: {
-          wordLength: wordLength,
-          firstLetterProvided: isfirstLetterProvided,
-          showHint: isHintShown,
-          timer: isTimerEnabled ? { isTimed: true, seconds: remainingSeconds } : { isTimed: false },
+          wordLength: gamemodeSettings.wordLength,
+          isFirstLetterProvided: gamemodeSettings.isFirstLetterProvided,
+          isHintShown: gamemodeSettings.isHintShown,
+          timerConfig: gamemodeSettings.timerConfig.isTimed ? { isTimed: true, seconds: remainingSeconds } : { isTimed: false },
         },
         puzzleLeaveNumBlanks: props.puzzleLeaveNumBlanks,
         puzzleRevealMs: props.puzzleRevealMs,
@@ -869,7 +884,13 @@ const WordleConfig: React.FC<Props> = (props) => {
       );
     }
     setisIncompleteWord(false);
-    setWordLength(defaultWordLength);
+
+    const newGamemodeSettings = {
+      ...gamemodeSettings,
+      wordLength: defaultWordLength,
+    };
+    setGamemodeSettings(newGamemodeSettings);
+
     setGuesses([]);
     setCurrentWord("");
     setWordIndex(0);
@@ -879,15 +900,19 @@ const WordleConfig: React.FC<Props> = (props) => {
     setConundrum("");
     setRevealedLetterIndexes([]);
     setletterStatuses(defaultLetterStatuses);
-    if (isTimerEnabled) {
+    if (gamemodeSettings.timerConfig.isTimed) {
       // Reset the timer if it is enabled in the game options
-      setRemainingSeconds(totalSeconds);
+      setRemainingSeconds(gamemodeSettings.timerConfig.seconds);
     }
     if (props.mode !== "limitless" || numGuesses <= 1) {
       // Ending of any game mode
       setNumGuesses(props.defaultnumGuesses);
       if (props.mode !== "category") {
-        setWordLength(props.defaultWordLength || targetWord.length);
+        const newGamemodeSettings = {
+          ...gamemodeSettings,
+          wordLength: props.defaultWordLength || targetWord.length,
+        };
+        setGamemodeSettings(newGamemodeSettings);
       }
     } else {
       // Game mode is limitless and there are still rows
@@ -901,13 +926,19 @@ const WordleConfig: React.FC<Props> = (props) => {
     setWordIndex(0);
     setinProgress(true);
     setinDictionary(true);
-    setWordLength(wordLength + 1);
+
+    const newGamemodeSettings = {
+      ...gamemodeSettings,
+      wordLength: gamemodeSettings.wordLength + 1,
+    };
+    setGamemodeSettings(newGamemodeSettings);
+
     sethasSubmitLetter(false);
     setRevealedLetterIndexes([]);
     setletterStatuses(defaultLetterStatuses);
 
-    if (isTimerEnabled) {
-      setRemainingSeconds(totalSeconds);
+    if (gamemodeSettings.timerConfig.isTimed) {
+      setRemainingSeconds(gamemodeSettings.timerConfig.seconds);
     }
 
     if (props.mode === "limitless") {
@@ -998,7 +1029,7 @@ const WordleConfig: React.FC<Props> = (props) => {
     }
 
     // Don't allow incomplete words (if specified in props)
-    if (props.enforceFullLengthGuesses && currentWord.length !== wordLength) {
+    if (props.enforceFullLengthGuesses && currentWord.length !== gamemodeSettings.wordLength) {
       setisIncompleteWord(true);
       return;
     }
@@ -1036,7 +1067,7 @@ const WordleConfig: React.FC<Props> = (props) => {
         outcome = "failure";
       } else {
         // Not yet guessed
-        if (isfirstLetterProvided) {
+        if (gamemodeSettings.isFirstLetterProvided) {
           setCurrentWord(targetWord?.charAt(0)!);
         } else {
           setCurrentWord(""); // Start new word as empty string
@@ -1060,10 +1091,10 @@ const WordleConfig: React.FC<Props> = (props) => {
         levelProps: {
           mode: props.mode,
           gamemodeSettings: {
-            wordLength: wordLength,
-            firstLetterProvided: isfirstLetterProvided,
-            showHint: isHintShown,
-            timer: isTimerEnabled ? { isTimed: true, seconds: remainingSeconds } : { isTimed: false },
+            wordLength: gamemodeSettings.wordLength,
+            isFirstLetterProvided: gamemodeSettings.isFirstLetterProvided,
+            isHintShown: gamemodeSettings.isHintShown,
+            timerConfig: gamemodeSettings.timerConfig.isTimed ? { isTimed: true, seconds: remainingSeconds } : { isTimed: false },
           },
           puzzleLeaveNumBlanks: props.puzzleLeaveNumBlanks,
           puzzleRevealMs: props.puzzleRevealMs,
@@ -1078,13 +1109,13 @@ const WordleConfig: React.FC<Props> = (props) => {
       });
     }
 
-    if (isTimerEnabled) {
-      setRemainingSeconds(totalSeconds);
+    if (gamemodeSettings.timerConfig.isTimed) {
+      setRemainingSeconds(gamemodeSettings.timerConfig.seconds);
     }
   }
 
   function onSubmitLetter(letter: string) {
-    if (currentWord.length < wordLength && inProgress) {
+    if (currentWord.length < gamemodeSettings.wordLength && inProgress) {
       setCurrentWord(currentWord + letter);
       sethasSubmitLetter(true);
     }
@@ -1100,7 +1131,7 @@ const WordleConfig: React.FC<Props> = (props) => {
   function onBackspace() {
     if (currentWord.length > 0 && inProgress) {
       // If only the first letter and it was provided to begin with
-      if (currentWord.length === 1 && isfirstLetterProvided) {
+      if (currentWord.length === 1 && gamemodeSettings.isFirstLetterProvided) {
         return; // Don't allow backspace
       }
       // If there is a letter to remove
@@ -1108,29 +1139,14 @@ const WordleConfig: React.FC<Props> = (props) => {
     }
   }
 
-  function updateWordLength(newWordLength: number) {
-    setWordLength(newWordLength);
-  }
-
-  function updateWordLengthMaxLimit(newWordLengthMaxLimit: number) {
-    setWordLengthMaxLimit(newWordLengthMaxLimit);
-  }
-
-  function updatefirstLetterProvided() {
-    setIsfirstLetterProvided(!isfirstLetterProvided);
-  }
-
-  function updateHintShown() {
-    setIsHintShown(!isHintShown);
-  }
-
-  function updateTimer() {
-    setIsTimerEnabled(!isTimerEnabled);
-  }
-
-  function updateTimerLength(newSeconds: number) {
-    setRemainingSeconds(newSeconds);
-    setTotalSeconds(newSeconds);
+  function updateGamemodeSettings(newGamemodeSettings: {
+    wordLength: number;
+    wordLengthMaxLimit: number;
+    isFirstLetterProvided: boolean;
+    isHintShown: boolean;
+    timerConfig: { isTimed: true; seconds: number } | { isTimed: false };
+  }) {
+    setGamemodeSettings(newGamemodeSettings);
   }
 
   const DEFAULT_CROSSWORD_MAX_LENGTH = 8;
@@ -1147,7 +1163,7 @@ const WordleConfig: React.FC<Props> = (props) => {
           showHint: false,
           numWordGuesses: 0,
           numGridGuesses: 6,
-          timer: { isTimed: true, seconds: 60 },
+          timerConfig: { isTimed: true, seconds: 60 },
         }}
         provideWords={false}
         theme={props.theme}
@@ -1169,7 +1185,7 @@ const WordleConfig: React.FC<Props> = (props) => {
           showHint: true,
           numWordGuesses: 10,
           numGridGuesses: 2,
-          timer: { isTimed: true, seconds: 180 },
+          timerConfig: { isTimed: true, seconds: 180 },
         }}
         provideWords={false}
         theme={props.theme}
@@ -1201,7 +1217,7 @@ const WordleConfig: React.FC<Props> = (props) => {
           showHint: true,
           numWordGuesses: 10,
           numGridGuesses: 2,
-          timer: { isTimed: false },
+          timerConfig: { isTimed: false },
         }}
         provideWords={false}
         theme={props.theme}
@@ -1233,7 +1249,7 @@ const WordleConfig: React.FC<Props> = (props) => {
           showHint: true,
           numWordGuesses: 10,
           numGridGuesses: 2,
-          timer: { isTimed: false },
+          timerConfig: { isTimed: false },
         }}
         provideWords={false}
         theme={props.theme}
@@ -1255,7 +1271,7 @@ const WordleConfig: React.FC<Props> = (props) => {
           showHint: false,
           numWordGuesses: 0,
           numGridGuesses: 1,
-          timer: { isTimed: true, seconds: 60 },
+          timerConfig: { isTimed: true, seconds: 60 },
         }}
         provideWords={true}
         fitRestriction={0}
@@ -1271,18 +1287,18 @@ const WordleConfig: React.FC<Props> = (props) => {
       isCampaignLevel={props.page === "campaign/area/level"}
       mode={props.mode}
       gamemodeSettings={{
-        wordLength: wordLength,
-        wordLengthMaxLimit: wordLengthMaxLimit,
-        firstLetterProvided: isfirstLetterProvided,
-        showHint: isHintShown,
-        timerConfig: isTimerEnabled
+        wordLength: gamemodeSettings.wordLength,
+        wordLengthMaxLimit: gamemodeSettings.wordLengthMaxLimit,
+        isFirstLetterProvided: gamemodeSettings.isFirstLetterProvided,
+        isHintShown: gamemodeSettings.isHintShown,
+        timerConfig: gamemodeSettings.timerConfig.isTimed
           ? {
               isTimed: true,
-              remainingSeconds: remainingSeconds,
-              totalSeconds: totalSeconds,
+              seconds: gamemodeSettings.timerConfig.seconds,
             }
           : { isTimed: false },
       }}
+      remainingSeconds={remainingSeconds}
       numGuesses={numGuesses}
       guesses={guesses}
       currentWord={currentWord}
@@ -1293,7 +1309,7 @@ const WordleConfig: React.FC<Props> = (props) => {
       hasSubmitLetter={hasSubmitLetter}
       conundrum={conundrum || ""}
       targetWord={targetWord || ""}
-      targetHint={isHintShown ? targetHint : ""}
+      targetHint={gamemodeSettings.isHintShown ? targetHint : ""}
       targetCategory={targetCategory || ""}
       puzzleRevealMs={props.puzzleRevealMs}
       puzzleLeaveNumBlanks={props.puzzleLeaveNumBlanks}
@@ -1306,12 +1322,7 @@ const WordleConfig: React.FC<Props> = (props) => {
       onSubmitLetter={onSubmitLetter}
       onSubmitTargetCategory={onSubmitTargetCategory}
       onBackspace={onBackspace}
-      updateWordLength={updateWordLength}
-      updateWordLengthMaxLimit={updateWordLengthMaxLimit}
-      updatefirstLetterProvided={updatefirstLetterProvided}
-      updateHintShown={updateHintShown}
-      updateTimer={updateTimer}
-      updateTimerLength={updateTimerLength}
+      updateGamemodeSettings={updateGamemodeSettings}
       ResetGame={ResetGame}
       ContinueGame={ContinueGame}
       setPage={props.setPage}

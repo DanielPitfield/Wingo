@@ -35,7 +35,7 @@ import HelpInformation from "./HelpInformation";
 import { TitlePage } from "./TitlePage";
 
 // WordLength values (for different modes)
-const DEFAULT_WORD_LENGTH = 5;
+export const DEFAULT_WORD_LENGTH = 5;
 
 const wordLengthIncreasing = 4;
 const wordLengthConundrum = 9;
@@ -438,7 +438,7 @@ export const App: React.FC = () => {
     page: Page;
     settings: {
       wordLength?: number;
-      firstLetterProvided?: boolean;
+      isFirstLetterProvided?: boolean;
       showHint?: boolean;
       timer?: { isTimed: true; seconds: number } | { isTimed: false };
     };
@@ -447,7 +447,7 @@ export const App: React.FC = () => {
       page: "wingo/repeat",
       settings: {
         wordLength: DEFAULT_WORD_LENGTH,
-        firstLetterProvided: false,
+        isFirstLetterProvided: false,
         showHint: false,
         timer: { isTimed: false },
       },
@@ -455,7 +455,7 @@ export const App: React.FC = () => {
     {
       page: "wingo/category",
       settings: {
-        firstLetterProvided: false,
+        isFirstLetterProvided: false,
         showHint: false,
         timer: { isTimed: false },
       },
@@ -463,7 +463,7 @@ export const App: React.FC = () => {
     {
       page: "wingo/increasing",
       settings: {
-        firstLetterProvided: false,
+        isFirstLetterProvided: false,
         showHint: false,
         timer: { isTimed: false },
       },
@@ -471,7 +471,7 @@ export const App: React.FC = () => {
     {
       page: "wingo/limitless",
       settings: {
-        firstLetterProvided: false,
+        isFirstLetterProvided: false,
         showHint: false,
         timer: { isTimed: false },
       },
@@ -486,7 +486,7 @@ export const App: React.FC = () => {
       page: "wingo/interlinked",
       settings: {
         wordLength: DEFAULT_WORD_LENGTH,
-        firstLetterProvided: false,
+        isFirstLetterProvided: false,
         showHint: false,
         timer: { isTimed: false },
       },
@@ -495,7 +495,7 @@ export const App: React.FC = () => {
       page: "wingo/crossword",
       settings: {
         wordLength: DEFAULT_WORD_LENGTH,
-        firstLetterProvided: false,
+        isFirstLetterProvided: false,
         showHint: true,
         timer: { isTimed: false },
       },
@@ -504,7 +504,7 @@ export const App: React.FC = () => {
       page: "wingo/crossword/fit",
       settings: {
         wordLength: DEFAULT_WORD_LENGTH,
-        firstLetterProvided: false,
+        isFirstLetterProvided: false,
         showHint: true,
         timer: { isTimed: true, seconds: 30 },
       },

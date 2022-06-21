@@ -10,7 +10,7 @@ import React from "react";
 import { MessageNotification } from "./MessageNotification";
 import { CrosswordGenerationResult, crosswordGenerator as crossWordGenerator } from "./CrossWordGenerator";
 import GamemodeSettingsMenu from "./GamemodeSettingsMenu";
-import { MAX_TARGET_WORD_LENGTH, MIN_TARGET_WORD_LENGTH } from "./App";
+import { DEFAULT_WORD_LENGTH, MAX_TARGET_WORD_LENGTH, MIN_TARGET_WORD_LENGTH } from "./App";
 import ProgressBar, { GreenToRedColorTransition } from "./ProgressBar";
 
 type Orientation = "vertical" | "horizontal";
@@ -43,9 +43,9 @@ interface Props {
     maxWordLength?: number;
     numWordGuesses?: number;
     numGridGuesses?: number;
-    firstLetterProvided?: boolean;
+    isFirstLetterProvided?: boolean;
     showHint?: boolean;
-    timer?: { isTimed: true; seconds: number } | { isTimed: false };
+    timerConfig?: { isTimed: true; seconds: number } | { isTimed: false };
   };
 
   /*
@@ -82,8 +82,6 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
   const [inProgress, setInProgress] = useState(props.initialConfig?.inProgress ?? true);
   const [allowSpaces, setAllowSpaces] = useState(false);
 
-  const DEFAULT_WORD_LENGTH = 5;
-
   const DEFAULT_NUM_WORDS = 2;
   const STARTING_NUM_WORDS = props.gamemodeSettings?.numWords ?? DEFAULT_NUM_WORDS;
 
@@ -110,11 +108,11 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
     numGridGuesses: STARTING_NUM_GRID_GUESSES,
     numWordGuesses: STARTING_NUM_WORD_GUESSES,
 
-    isFirstLetterProvided: props.gamemodeSettings?.firstLetterProvided ?? false,
+    isFirstLetterProvided: props.gamemodeSettings?.isFirstLetterProvided ?? false,
     // Use gamemode setting value if specified, otherwise default to true for large crosswords (more than 2 words)
     isHintShown: props.gamemodeSettings?.showHint ?? STARTING_NUM_WORDS > 2 ? true : false,
 
-    timerConfig: props.gamemodeSettings?.timer ?? { isTimed: false },
+    timerConfig: props.gamemodeSettings?.timerConfig ?? { isTimed: false },
   };
 
   const [gamemodeSettings, setGamemodeSettings] = useState<{
@@ -130,7 +128,7 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
 
   const DEFAULT_TIMER_VALUE = 30;
   const [remainingSeconds, setRemainingSeconds] = useState(
-    props.gamemodeSettings?.timer?.isTimed === true ? props.gamemodeSettings?.timer.seconds : DEFAULT_TIMER_VALUE
+    props.gamemodeSettings?.timerConfig?.isTimed === true ? props.gamemodeSettings?.timerConfig.seconds : DEFAULT_TIMER_VALUE
   );
 
   /*
@@ -139,7 +137,7 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
   (even after the timer is enabled/disabled)
   */
   const [mostRecentTotalSeconds, setMostRecentTotalSeconds] = useState(
-    props.gamemodeSettings?.timer?.isTimed === true ? props.gamemodeSettings?.timer.seconds : DEFAULT_TIMER_VALUE
+    props.gamemodeSettings?.timerConfig?.isTimed === true ? props.gamemodeSettings?.timerConfig.seconds : DEFAULT_TIMER_VALUE
   );
 
   const [remainingGridGuesses, setRemainingGridGuesses] = useState(STARTING_NUM_GRID_GUESSES);
@@ -258,9 +256,24 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
   // TODO: Handling mid-game changes - apply this to other modes
   // TODO: Seems to be using previous values, e.g increase numWords to 7 but creates only 6 words
 
-  // Any of the game mode settings are changed then reset the game
+  // Update gamemode with new gamemode settings
   React.useEffect(() => {
-    ResetGame();
+    // TODO: Move most of this logic to ResetGame()
+    if (gamemodeSettings.timerConfig.isTimed) {
+      // Reset time left
+      setRemainingSeconds(gamemodeSettings.timerConfig.seconds);
+    }
+
+    // All words are the first letter of their respective correct word
+    const firstLetterWords = Array.from({ length: gamemodeSettings.numWords }).map((value, index) => gridConfig.words[index].word.charAt(0));
+    // All words are empty
+    const emptyWords = Array.from({ length: gamemodeSettings.numWords }).map((x) => "");
+    const newCurrentWords = gamemodeSettings.isFirstLetterProvided ? firstLetterWords : emptyWords;
+
+    // Reset game after change of settings (stops cheating by changing settings partway through a game)
+    if (inProgress) {
+      ResetGame();
+    }
   }, [gamemodeSettings]);
 
   // Each time a word is highlighted/picked
