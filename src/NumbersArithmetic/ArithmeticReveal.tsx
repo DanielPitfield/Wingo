@@ -11,6 +11,7 @@ import { Theme } from "../Themes";
 import { SettingsData } from "../SaveData";
 import GamemodeSettingsMenu from "../GamemodeSettingsMenu";
 import { numberSizeOption, numberSizeOptions } from "./ArithmeticDrag";
+import { pickRandomElementFrom } from "../WordleConfig";
 
 interface Props {
   isCampaignLevel: boolean;
@@ -165,38 +166,38 @@ const ArithmeticReveal: React.FC<Props> = (props) => {
 
     while (!foundTileNumber) {
       // One of the four operators
-      let tile_operator = operators[Math.round(Math.random() * (operators.length - 1))];
-      let operator_symbol = tile_operator.name;
-      let tile_number: number | undefined = undefined;
+      let tileOperator = pickRandomElementFrom(operators);
+      let operatorSymbol = tileOperator.name;
+      let tileNumber: number | undefined = undefined;
 
-      switch (operator_symbol) {
+      switch (operatorSymbol) {
         case "÷": {
           // Number of attempts to find a clean divisor
-          const max_limit = 10;
-          let fail_count = 0;
+          const maxLimit = 10;
+          let failCount = 0;
 
           // Loop max_limit times in the attempt of finding a clean divisor
           do {
-            const random_divisor = randomIntFromInterval(2, getOperandLimit(operator_symbol)!);
+            const randomDivisor = randomIntFromInterval(2, getOperandLimit(operatorSymbol)!);
             // Clean division (result would be integer)
-            if (targetNumber % random_divisor === 0 && targetNumber > 0) {
+            if (targetNumber % randomDivisor === 0 && targetNumber > 0) {
               // Use that divisor as tile number
-              tile_number = random_divisor;
+              tileNumber = randomDivisor;
             } else {
-              fail_count += 1;
+              failCount += 1;
             }
-          } while (tile_number === undefined && fail_count < max_limit); // Stop once a tile number has been determined or after max_limit number of attempts to find a tile number
+          } while (tileNumber === undefined && failCount < maxLimit); // Stop once a tile number has been determined or after max_limit number of attempts to find a tile number
           break;
         }
 
         case "×": {
           // Lower threshold of 2 (no point multiplying by 1)
-          tile_number = randomIntFromInterval(2, getOperandLimit(operator_symbol)!);
+          tileNumber = randomIntFromInterval(2, getOperandLimit(operatorSymbol)!);
           break;
         }
 
         case "+": {
-          tile_number = randomIntFromInterval(1, getOperandLimit(operator_symbol)!);
+          tileNumber = randomIntFromInterval(1, getOperandLimit(operatorSymbol)!);
           break;
         }
 
@@ -208,25 +209,25 @@ const ArithmeticReveal: React.FC<Props> = (props) => {
             break;
           }
           // The target number is smaller than the maximum value which can be subtracted
-          else if (targetNumber < getOperandLimit(operator_symbol)!) {
+          else if (targetNumber < getOperandLimit(operatorSymbol)!) {
             // Only subtract a random value which is smaller than targetNumber
-            tile_number = randomIntFromInterval(1, targetNumber - 1);
+            tileNumber = randomIntFromInterval(1, targetNumber - 1);
           } else {
             // Proceed as normal
-            tile_number = randomIntFromInterval(1, getOperandLimit(operator_symbol)!);
+            tileNumber = randomIntFromInterval(1, getOperandLimit(operatorSymbol)!);
           }
         }
       }
 
       // The target number was determined in this iteration
-      if (tile_number !== undefined) {
+      if (tileNumber !== undefined) {
         // Set flag to stop while loop
         foundTileNumber = true;
         // Apply operation shown on current tile and update target number
-        const newTargetNumber = tile_operator.function(targetNumber, tile_number);
+        const newTargetNumber = tileOperator.function(targetNumber, tileNumber);
         // String of the combination of operator and value
         return {
-          tile: operator_symbol + tile_number.toString(),
+          tile: operatorSymbol + tileNumber.toString(),
           newRunningTotal: newTargetNumber,
         };
       }

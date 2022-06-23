@@ -3,7 +3,7 @@ import { Page } from "../App";
 import LetterCategories from "./LetterCategories";
 import { SettingsData } from "../SaveData";
 import { DEFAULT_ALPHABET } from "../Keyboard";
-import { categoryMappings } from "../WordleConfig";
+import { categoryMappings, pickRandomElementFrom } from "../WordleConfig";
 import { Theme } from "../Themes";
 
 interface Props {
@@ -75,7 +75,7 @@ const LetterCategoriesConfig: React.FC<Props> = (props) => {
   React.useEffect(() => {
     if (inProgress) {
       // Get a random letter from the Alphabet
-      const isFirstLetterProvided = DEFAULT_ALPHABET[Math.round(Math.random() * (DEFAULT_ALPHABET.length - 1))];
+      const isFirstLetterProvided = pickRandomElementFrom(DEFAULT_ALPHABET);
       // Set this letter as the letter that all words must begin with
       setCategoryRequiredStartingLetter(isFirstLetterProvided);
       // Provide this letter as the start of guesses/words

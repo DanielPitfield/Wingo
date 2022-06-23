@@ -6,7 +6,7 @@ import { Button } from "../Button";
 import { MessageNotification } from "../MessageNotification";
 import ProgressBar, { GreenToRedColorTransition } from "../ProgressBar";
 import { isWordValid } from "./CountdownLettersConfig";
-import { wordLengthMappingsGuessable } from "../WordleConfig";
+import { pickRandomElementFrom, wordLengthMappingsGuessable } from "../WordleConfig";
 import { Theme } from "../Themes";
 import { SaveData, SettingsData } from "../SaveData";
 import GamemodeSettingsMenu from "../GamemodeSettingsMenu";
@@ -97,19 +97,19 @@ const CountdownLetters: React.FC<Props> = (props) => {
   // Create grid of rows (for guessing words)
   function populateGrid(wordLength: number) {
     function getWeightedLetter(letter_weightings: { letter: string; weighting: number }[]) {
-      var weighted_array: string[] = [];
+      var weightedArray: string[] = [];
 
       // For each object in input array
       for (let i = 0; i < letter_weightings.length; i++) {
         // For the 'weighting' value number of times
         for (var j = 0; j < letter_weightings[i].weighting; j++) {
           // Push the related letter to the array
-          weighted_array.push(letter_weightings[i].letter);
+          weightedArray.push(letter_weightings[i].letter);
         }
       }
 
       // Select a random value from this array
-      return weighted_array[Math.round(Math.random() * (weighted_array.length - 1))];
+      return pickRandomElementFrom(weightedArray);
     }
 
     function getVowel(): string {

@@ -10,6 +10,7 @@ import { randomIntFromInterval } from "../Nubble/Nubble";
 import ProgressBar, { GreenToRedColorTransition } from "../ProgressBar";
 import { SettingsData } from "../SaveData";
 import { Theme } from "../Themes";
+import { pickRandomElementFrom } from "../WordleConfig";
 import { DraggableItem } from "./DraggableItem";
 
 // TODO: Const Contexts: https://stackoverflow.com/questions/44497388/typescript-array-to-string-literal-type
@@ -210,7 +211,7 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
     // Until expression has the required number of operators (is correct length)
     while (countOperators(expression) < numOperators) {
       // Choose one of the four operators
-      let operator = operators[Math.round(Math.random() * (operators.length - 1))];
+      let operator = pickRandomElementFrom(operators);
       let operator_symbol = operator.name;
       let operand: number | undefined = undefined;
 

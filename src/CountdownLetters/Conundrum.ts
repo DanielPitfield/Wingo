@@ -1,5 +1,5 @@
 import { words_nine_targets } from "../WordArrays/Lengths/words_9";
-import { wordLengthMappingsTargets } from "../WordleConfig";
+import { pickRandomElementFrom, wordLengthMappingsTargets } from "../WordleConfig";
 
 export function checkAnagram(constructedWord: string, targetWord: string) {
   var constructedWordLetters = constructedWord.split("").sort().join("");
@@ -24,7 +24,7 @@ export function generateConundrum() {
     [3, 2, 4],
   ];
   // Get a random word length combination
-  let wordLengthCombination = wordLengthCombinations[Math.round(Math.random() * (wordLengthCombinations.length - 1))];
+  let wordLengthCombination = pickRandomElementFrom(wordLengthCombinations);
 
   let conundrum;
 
@@ -42,7 +42,7 @@ export function generateConundrum() {
       }
 
       // Find a word of the wordLength
-      const word = wordArray[Math.round(Math.random() * (wordArray.length - 1))];
+      const word = pickRandomElementFrom(wordArray);
       if (!word) {
         break;
       }
@@ -63,7 +63,7 @@ export function generateConundrum() {
       failCount += 1;
       if (failCount === MAX_FAIL_COUNT) {
         // Try a different wordLengthCombination
-        wordLengthCombination = wordLengthCombinations[Math.round(Math.random() * (wordLengthCombinations.length - 1))];
+        wordLengthCombination = pickRandomElementFrom(wordLengthCombinations);
         failCount = 0;
       }
     }

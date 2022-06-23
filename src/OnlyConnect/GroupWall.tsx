@@ -8,7 +8,7 @@ import ProgressBar, { GreenToRedColorTransition } from "../ProgressBar";
 import { SettingsData } from "../SaveData";
 import { useClickChime, useCorrectChime, useFailureChime, useLightPingChime } from "../Sounds";
 import { Theme } from "../Themes";
-import { categoryMappings } from "../WordleConfig";
+import { categoryMappings, pickRandomElementFrom } from "../WordleConfig";
 
 interface Props {
   isCampaignLevel: boolean;
@@ -272,23 +272,19 @@ const GroupWall: React.FC<Props> = (props) => {
     rowNumber: number | null;
   }[] {
     // Names of the groups/categories that must be found in the wall
-    let category_names: string[] = [];
+    let categoryNames: string[] = [];
 
     // Array to hold all the words for the grid (along with their categories)
-    let grid_words: { word: string; categoryName: string; inCompleteGroup: boolean; rowNumber: number | null }[] = [];
+    let gridWords: { word: string; categoryName: string; inCompleteGroup: boolean; rowNumber: number | null }[] = [];
 
     // Use the specified number of groups but never exceed the number of category word lists
     const numCategories = Math.min(gamemodeSettings.numGroups, categoryMappings.length);
 
-    while (category_names.length < numCategories) {
-      // Get a random index of categoryMappings
-      const newIndex = Math.round(Math.random() * (categoryMappings.length - 1));
-
-      // Get a random category by using this index
-      const randomCategory = categoryMappings[newIndex];
+    while (categoryNames.length < numCategories) {
+      const randomCategory = pickRandomElementFrom(categoryMappings);
 
       // If the category has not already been used and there are enough words in the word list
-      if (!category_names.includes(randomCategory.name) && randomCategory.array.length >= gamemodeSettings.groupSize) {
+      if (!categoryNames.includes(randomCategory.name) && randomCategory.array.length >= gamemodeSettings.groupSize) {
         const wordList = randomCategory.array;
 
         // Array to hold the group of words from this category
@@ -296,8 +292,7 @@ const GroupWall: React.FC<Props> = (props) => {
 
         // Until a full group of words has been determined from the category
         while (wordSubset.length < gamemodeSettings.groupSize) {
-          const newIndex = Math.round(Math.random() * (wordList.length - 1));
-          const randomWord = wordList[newIndex].word;
+          const randomWord = pickRandomElementFrom(wordList).word;
 
           // Word has not already been selected (avoids duplicates)
           if (randomWord && !wordSubset.includes(randomWord)) {
@@ -314,15 +309,15 @@ const GroupWall: React.FC<Props> = (props) => {
         }));
 
         // Add group of words
-        grid_words = grid_words.concat(categorySubset);
+        gridWords = gridWords.concat(categorySubset);
 
         // Keep track this category has been used
-        category_names.push(categoryMappings[newIndex].name);
+        categoryNames.push(randomCategory.name);
       }
     }
 
-    grid_words = shuffleArray(grid_words);
-    return grid_words;
+    gridWords = shuffleArray(gridWords);
+    return gridWords;
   }
 
   function populateRow(rowNumber: number) {

@@ -12,6 +12,7 @@ import { NumberPuzzle, NumberPuzzleValue } from "./CountdownSolver";
 import { SettingsData } from "../SaveData";
 import GamemodeSettingsMenu from "../GamemodeSettingsMenu";
 import { randomIntFromInterval } from "../Nubble/Nubble";
+import { pickRandomElementFrom } from "../WordleConfig";
 
 interface Props {
   isCampaignLevel: boolean;
@@ -144,10 +145,7 @@ const CountdownNumbers: React.FC<Props> = (props) => {
         smallNumbers.push(i);
       }
 
-      const random_index = Math.round(Math.random() * (smallNumbers.length - 1));
-      const random_small_number = smallNumbers[random_index];
-
-      return random_small_number;
+      return pickRandomElementFrom(smallNumbers);
     }
 
     /**
@@ -175,7 +173,7 @@ const CountdownNumbers: React.FC<Props> = (props) => {
         return scaryNumber;
       } else {
         // Randomly select one of the four standard big numbers
-        return bigNumbers[Math.round(Math.random() * (bigNumbers.length - 1))];
+        return pickRandomElementFrom(bigNumbers);
       }
     }
 

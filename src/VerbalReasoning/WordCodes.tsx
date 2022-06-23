@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { shuffleArray } from "../NumbersArithmetic/ArithmeticDrag";
-import { wordLengthMappingsTargets } from "../WordleConfig";
+import { pickRandomElementFrom, wordLengthMappingsTargets } from "../WordleConfig";
 import { Page } from "../App";
 import { Button } from "../Button";
 import { DEFAULT_ALPHABET, Keyboard } from "../Keyboard";
@@ -271,7 +271,7 @@ const WordCodes: React.FC<Props> = (props) => {
     }
 
     // Choose a random word from this array
-    const originalWord = targetWordArray[Math.round(Math.random() * (targetWordArray.length - 1))];
+    const originalWord = pickRandomElementFrom(targetWordArray);
     // The letters of this original word
     let validLetters = originalWord.split("");
     // How many valid letters at this point?
@@ -279,7 +279,7 @@ const WordCodes: React.FC<Props> = (props) => {
 
     // Add some additional letters the  other words will be able to be made from (more letters should make the game harder)
     while (validLetters.length < originalWordLength + gamemodeSettings.numAdditionalLetters) {
-      const randomLetter = DEFAULT_ALPHABET[Math.round(Math.random() * (DEFAULT_ALPHABET.length - 1))];
+      const randomLetter = pickRandomElementFrom(DEFAULT_ALPHABET);
 
       if (!validLetters.includes(randomLetter)) {
         validLetters.push(randomLetter);
@@ -287,8 +287,8 @@ const WordCodes: React.FC<Props> = (props) => {
     }
 
     // Add a number code to each of the valid letters
-    let letterCodes = validLetters.map((letter, i) => {
-      return { letter: letter, code: i };
+    let letterCodes = validLetters.map((letter: string, index: number) => {
+      return { letter: letter, code: index };
     });
 
     // Get only the words that can be made from these valid letters
@@ -301,7 +301,7 @@ const WordCodes: React.FC<Props> = (props) => {
     let failCount = 0;
 
     while (wordSubset.length < subsetSize && failCount < 100) {
-      const randomWord = originalMatches[Math.round(Math.random() * (originalMatches.length - 1))];
+      const randomWord = pickRandomElementFrom(originalMatches);
 
       if (!wordSubset.includes(randomWord)) {
         wordSubset.push(randomWord);
@@ -319,7 +319,9 @@ const WordCodes: React.FC<Props> = (props) => {
         // Current letter of word
         const letter = wordLetters[i];
         // Find code from lookup table
-        const letterCode = letterCodes.find((x) => x.letter === letter)?.code.toString();
+        const letterCode = letterCodes
+          .find((letterCodeCombination: { letter: string; code: number }) => letterCodeCombination.letter === letter)
+          ?.code.toString();
         // Append to code string for entire word
         codeString += letterCode;
       }
@@ -340,7 +342,7 @@ const WordCodes: React.FC<Props> = (props) => {
 
       // Add one of the displayed words as a question (convert some of the provided information instead of new information)
       if (gamemodeSettings.numWordToCodeQuestions > 0) {
-        const randomWord = wordSubset[Math.round(Math.random() * (wordSubset.length - 1))];
+        const randomWord = pickRandomElementFrom(wordSubset);
         questionWordSubset.push(randomWord);
       }
 
@@ -350,7 +352,7 @@ const WordCodes: React.FC<Props> = (props) => {
       let failCount = 0;
 
       while (questionWordSubset.length < numQuestions && failCount < 100) {
-        const randomWord = originalMatches[Math.round(Math.random() * (originalMatches.length - 1))];
+        const randomWord = pickRandomElementFrom(originalMatches);
 
         // Not a word used already (either for the information provided or already used for questions)
         if (!questionWordSubset.includes(randomWord) && !wordSubset.includes(randomWord)) {

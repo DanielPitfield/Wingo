@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { SplashScreen } from "./SplashScreen";
 import { LobbyMenu } from "./LobbyMenu";
-import WordleConfig, { categoryMappings, wordLengthMappingsTargets } from "./WordleConfig";
+import WordleConfig, { categoryMappings, pickRandomElementFrom, wordLengthMappingsTargets } from "./WordleConfig";
 import { Button } from "./Button";
 import NubbleConfig from "./Nubble/NubbleConfig";
 import GoldCoin from "./images/gold.png";
@@ -570,7 +570,7 @@ export const App: React.FC = () => {
     // Set the page to any playable page
     if (page === "random") {
       const playablePages = pages.filter((page) => page.isPlayable);
-      const newPage = playablePages[Math.round(Math.random() * (playablePages.length - 1))]?.page;
+      const newPage = pickRandomElementFrom(playablePages)?.page;
       setPage(newPage);
       setIsRandomSession(true);
     }

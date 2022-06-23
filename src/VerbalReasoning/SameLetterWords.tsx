@@ -9,7 +9,7 @@ import ProgressBar, { GreenToRedColorTransition } from "../ProgressBar";
 import { SettingsData } from "../SaveData";
 import { useClickChime, useCorrectChime, useFailureChime, useLightPingChime } from "../Sounds";
 import { Theme } from "../Themes";
-import { wordLengthMappingsTargets } from "../WordleConfig";
+import { pickRandomElementFrom, wordLengthMappingsTargets } from "../WordleConfig";
 
 interface Props {
   isCampaignLevel: boolean;
@@ -238,10 +238,10 @@ const SameLetterWords: React.FC<Props> = (props) => {
         targetWordArray = wordLengthMappingsTargets.find((x) => x.value === gamemodeSettings.wordLength)?.array!;
 
         // Choose a random word from this array
-        const originalWord = targetWordArray[Math.round(Math.random() * (targetWordArray.length - 1))];
+        const originalWord = pickRandomElementFrom(targetWordArray);
 
         // The letters a word must have to match the original word (in alphabetical order)
-        validLetters = originalWord.split("").sort((a, b) => a.localeCompare(b));
+        validLetters = originalWord.split("").sort((a: string, b: string) => a.localeCompare(b));
 
         // Matching words
         const original_matches = targetWordArray.filter((word) => isWordValid(validLetters, word));
@@ -272,7 +272,7 @@ const SameLetterWords: React.FC<Props> = (props) => {
 
     while (grid_words.length < gamemodeSettings.numTotalWords && fail_count < 100) {
       // Choose a random word from target array
-      const randomWord = targetWordArray[Math.round(Math.random() * (targetWordArray.length - 1))];
+      const randomWord = pickRandomElementFrom(targetWordArray);
       // Not already in array and is NOT a matching word
       if (!grid_words.includes(randomWord) && !isWordValid(validLetters, randomWord)) {
         grid_words.push(randomWord);
