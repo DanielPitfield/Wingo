@@ -931,11 +931,6 @@ export const App: React.FC = () => {
         return (
           <WordCodes
             isCampaignLevel={false}
-            modeConfig={{ isMatch: false, numCodes: 3, numWordToCodeQuestions: 2, numCodeToWordQuestions: 1 }}
-            numWords={4}
-            wordLength={5}
-            numAdditionalLetters={2}
-            numGuesses={3}
             theme={theme}
             settings={settings}
             setPage={setPage}
@@ -947,11 +942,7 @@ export const App: React.FC = () => {
         return (
           <WordCodes
             isCampaignLevel={false}
-            modeConfig={{ isMatch: true }}
-            numWords={4}
-            wordLength={5}
-            numAdditionalLetters={2}
-            numGuesses={3}
+            gamemodeSettings={{ mode: "match", numCodesToMatch: 4 }}
             theme={theme}
             settings={settings}
             setPage={setPage}
