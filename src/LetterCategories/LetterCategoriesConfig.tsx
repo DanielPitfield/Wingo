@@ -93,10 +93,9 @@ const LetterCategoriesConfig: React.FC<Props> = (props) => {
       const MAX_NUM_FAILED_SEARCHES = 50;
 
       do {
-        // Get a random index of categoryMappings
-        const newIndex = Math.round(Math.random() * (categoryMappings.length - 1));
-        // Is the category (randomly selected with the index) a category which has not been used yet?
-        const isNewCategory = !categoryNames.includes(categoryMappings[newIndex].name);
+        const randomCategory = pickRandomElementFrom(categoryMappings);
+        // Is the random category, a category which has not been used yet?
+        const isNewCategory = !categoryNames.includes(randomCategory.name);
 
         // Already used this category, so loop around again
         if (!isNewCategory) {
@@ -105,9 +104,9 @@ const LetterCategoriesConfig: React.FC<Props> = (props) => {
         }
 
         // Get all the words in the category starting with isFirstLetterProvided
-        const words = categoryMappings[newIndex].array
-          .map((x) => x.word)
-          .filter((x) => x.charAt(0) === isFirstLetterProvided);
+        const words = randomCategory.array
+          .map((wordHintCombination: { word: string, hint: string}) => wordHintCombination.word)
+          .filter((word: string) => word.charAt(0) === isFirstLetterProvided);
 
         // No words starting with isFirstLetterProvided
         if (!words || words.length <= 0) {
@@ -118,7 +117,7 @@ const LetterCategoriesConfig: React.FC<Props> = (props) => {
         // Push these words as an array
         categoryTargetWords.push(words);
         // Keep track this category has been used
-        categoryNames.push(categoryMappings[newIndex].name);
+        categoryNames.push(randomCategory.name);
       } while (
         // Until there are the specified number of categories (or MAX_NUM_FAILED_SEARCHES attempts were made at finding categories)
         categoryNames.length < gamemodeSettings.numCategories &&
