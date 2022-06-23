@@ -4,11 +4,12 @@ import { MessageNotification } from "../MessageNotification";
 import { Puzzles } from "./Puzzles";
 import { Theme, ThemeIcons } from "../Themes";
 import { SettingsData } from "../SaveData";
+import { difficultyOption } from "../VerbalReasoning/Algebra/Algebra";
 
 /** Config for a specific puzzle (exported for config from campaign) */
 export type PuzzleConfigProps = {
   mode: "sequence";
-  difficulty: "novice" | "easy" | "medium" | "hard" | "expert";
+  difficulty: difficultyOption;
   correctAnswerDescription: string;
   sequence: {
     hint: SequencePuzzleStyling[];
