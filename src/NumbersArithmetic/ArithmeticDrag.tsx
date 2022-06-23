@@ -506,9 +506,7 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
     const MIN_NUM_OPERANDS = 2;
     const MAX_NUM_OPERANDS = 3;
 
-    let settings;
-
-    settings = (
+    return (
       <>
         <label>
           <input
@@ -621,8 +619,6 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
         </>
       </>
     );
-
-    return settings;
   }
 
   return (

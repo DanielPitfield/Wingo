@@ -388,9 +388,7 @@ const SameLetterWords: React.FC<Props> = (props) => {
   }
 
   function generateSettingsOptions(): React.ReactNode {
-    let settings;
-
-    settings = (
+    return (
       <>
         <label>
           <input
@@ -480,8 +478,6 @@ const SameLetterWords: React.FC<Props> = (props) => {
         )}
       </>
     );
-
-    return settings;
   }
 
   return (

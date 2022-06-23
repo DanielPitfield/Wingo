@@ -410,9 +410,7 @@ const GroupWall: React.FC<Props> = (props) => {
     const MIN_GROUP_SIZE = 2;
     const MAX_GROUP_SIZE = 10;
 
-    let settings;
-
-    settings = (
+    return (
       <>
       <label>
           <input
@@ -501,8 +499,6 @@ const GroupWall: React.FC<Props> = (props) => {
         )}
       </>
     );
-
-    return settings;
   }
 
   return (

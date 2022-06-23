@@ -763,9 +763,7 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
   }
 
   function generateSettingsOptions(): React.ReactNode {
-    let settings;
-
-    settings = (
+    return (
       <>
         {IS_CROSSWORD && (
           <label>
@@ -903,8 +901,6 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
         </>
       </>
     );
-
-    return settings;
   }
 
   function displayOutcome(): React.ReactNode {

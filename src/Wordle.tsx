@@ -187,8 +187,6 @@ const Wordle: React.FC<Props> = (props) => {
   }
 
   function generateSettingsOptions(): React.ReactNode {
-    let settings;
-
     // These modes can be continued and aren't always just reset
     const continuationMode = props.mode === "increasing" || props.mode === "limitless";
     const MIN_WORD_LENGTH_LABEL = continuationMode ? "Starting Word Length" : "Word Length";
@@ -196,7 +194,7 @@ const Wordle: React.FC<Props> = (props) => {
     const MIN_WORD_LENGTH_MAX_BOUNDARY =
       props.mode === "increasing" ? MAX_TARGET_WORD_LENGTH - 1 : MAX_TARGET_WORD_LENGTH;
 
-    settings = (
+    return (
       <>
         <label>
           <input
@@ -301,8 +299,6 @@ const Wordle: React.FC<Props> = (props) => {
         </>
       </>
     );
-
-    return settings;
   }
 
   useEffect(() => {

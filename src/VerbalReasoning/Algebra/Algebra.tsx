@@ -335,9 +335,7 @@ const Algebra: React.FC<Props> = (props) => {
   }
 
   function generateSettingsOptions(): React.ReactNode {
-    let settings;
-
-    settings = (
+    return (
       <>
       <label>
           <select
@@ -400,8 +398,6 @@ const Algebra: React.FC<Props> = (props) => {
         )}
       </>
     );
-
-    return settings;
   }
 
   return (

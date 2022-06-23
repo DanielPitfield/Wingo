@@ -494,10 +494,7 @@ const ArithmeticReveal: React.FC<Props> = (props) => {
     const MIN_REVEAL_INTERVAL = 1;
     const MAX_REVEAL_INTERVAL = 5;
 
-    // TODO: Why declare undefined variable, why not just return JSX below?
-    let settings;
-
-    settings = (
+    return (
       <>
         <label>
           <input
@@ -609,8 +606,6 @@ const ArithmeticReveal: React.FC<Props> = (props) => {
         </>
       </>
     );
-
-    return settings;
   }
 
   return (

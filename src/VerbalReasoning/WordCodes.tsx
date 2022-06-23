@@ -733,9 +733,7 @@ const WordCodes: React.FC<Props> = (props) => {
     const MIN_NUMBER_DISPLAY_CODES = 2;
     const MAX_NUM_DISPLAY_CODES = gamemodeSettings.numDisplayWords - 1;
 
-    let settings;
-
-    settings = (
+    return (
       <>
         <label>
           <select
@@ -946,8 +944,6 @@ const WordCodes: React.FC<Props> = (props) => {
         )}
       </>
     );
-
-    return settings;
   }
 
   return (

@@ -276,9 +276,7 @@ const CountdownLetters: React.FC<Props> = (props) => {
   }
 
   function generateSettingsOptions(): React.ReactNode {
-    let settings;
-
-    settings = (
+    return (
       <>
         <label>
           <input
@@ -338,8 +336,6 @@ const CountdownLetters: React.FC<Props> = (props) => {
         </>
       </>
     );
-
-    return settings;
   }
 
   // TODO: Add game to SaveData history

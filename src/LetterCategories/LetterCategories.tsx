@@ -125,9 +125,7 @@ const LetterCategories: React.FC<Props> = (props) => {
   }
 
   function generateSettingsOptions(): React.ReactNode {
-    let settings;
-
-    settings = (
+    return (
       <>
         <label>
           <input
@@ -186,8 +184,6 @@ const LetterCategories: React.FC<Props> = (props) => {
         </>
       </>
     );
-
-    return settings;
   }
 
   function displayOutcome(): JSX.Element {

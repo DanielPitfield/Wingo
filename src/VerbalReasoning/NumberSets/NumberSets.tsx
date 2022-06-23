@@ -255,9 +255,7 @@ const NumberSets: React.FC<Props> = (props) => {
   }
 
   function generateSettingsOptions(): React.ReactNode {
-    let settings;
-
-    settings = (
+    return (
       <>
         <label>
           <select
@@ -320,8 +318,6 @@ const NumberSets: React.FC<Props> = (props) => {
         )}
       </>
     );
-
-    return settings;
   }
 
   return (
