@@ -16,10 +16,13 @@ import { DraggableItem } from "./DraggableItem";
 export const numberSizeOptions = ["small", "medium", "large"] as const;
 export type numberSizeOption = typeof numberSizeOptions[number];
 
+const arithmeticModes = ["order", "match"] as const;
+type arithmeticMode = typeof arithmeticModes[number];
+
 interface Props {
   isCampaignLevel: boolean;
   // TODO: Should this be in gamemodeSettings?
-  mode: "order" | "match";
+  mode: arithmeticMode;
 
   gamemodeSettings?: {
     /* TODO: Difficulty presets

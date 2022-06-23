@@ -16,8 +16,8 @@ import { DraggableItem } from "../NumbersArithmetic/DraggableItem";
 import { getQuestionSetOutcome } from "./Algebra/Algebra";
 import GamemodeSettingsMenu from "../GamemodeSettingsMenu";
 
-export const wordCodesModes = ["match", "question"] as const;
-export type wordCodesMode = typeof wordCodesModes[number];
+const wordCodesModes = ["match", "question"] as const;
+type wordCodesMode = typeof wordCodesModes[number];
 
 interface Props {
   isCampaignLevel: boolean;

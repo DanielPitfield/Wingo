@@ -12,8 +12,12 @@ import { useClickChime, useCorrectChime, useFailureChime, useLightPingChime } fr
 import { Theme } from "../../Themes";
 import { AlgebraTemplates } from "./AlgebraTemplates";
 
+export const difficultyOptions = ["novice","easy","medium","hard","expert"] as const;
+export type difficultyOption = typeof difficultyOptions[number];  
+export const DEFAULT_DIFFICULTY: difficultyOption = "easy";
+
 export type AlgebraConfigProps = {
-  difficulty: "novice" | "easy" | "medium" | "hard" | "expert";
+  difficulty: difficultyOption;
   inputs: number[];
   questions: QuestionTemplate[];
 };
@@ -27,6 +31,12 @@ export type QuestionTemplate = {
 interface Props {
   isCampaignLevel: boolean;
   defaultTemplate?: AlgebraConfigProps;
+
+  gamemodeSettings?: {
+    difficulty?: difficultyOption;
+    timerConfig?: { isTimed: true; seconds: number } | { isTimed: false };
+  }
+
   theme: Theme;
   settings: SettingsData;
   setPage: (page: Page) => void;
@@ -59,14 +69,28 @@ const Algebra: React.FC<Props> = (props) => {
   const [questionNumber, setQuestionNumber] = useState(0);
   const [numCorrectAnswers, setNumCorrectAnswers] = useState(0);
 
-  // Gamemode settings
-  const [isTimerEnabled, setIsTimerEnabled] = useState(true);
-  const DEFAULT_TIMER_VALUE = 100;
-  const [remainingSeconds, setRemainingSeconds] = useState(DEFAULT_TIMER_VALUE);
-  const [totalSeconds, setTotalSeconds] = useState(DEFAULT_TIMER_VALUE);
+  const defaultGamemodeSettings = {
+    difficulty: props.gamemodeSettings?.difficulty ?? DEFAULT_DIFFICULTY,
+    timerConfig: props.gamemodeSettings?.timerConfig ?? { isTimed: false },
+  };
 
-  // Generate the elements to configure the gamemode settings
-  const gamemodeSettings = generateSettings();
+  const [gamemodeSettings, setGamemodeSettings] = useState<{
+    difficulty: difficultyOption;
+    timerConfig: { isTimed: true; seconds: number } | { isTimed: false };
+  }>(defaultGamemodeSettings);
+
+  const DEFAULT_TIMER_VALUE = 100;
+  const [remainingSeconds, setRemainingSeconds] = useState(
+    props.gamemodeSettings?.timerConfig?.isTimed === true
+      ? props.gamemodeSettings?.timerConfig.seconds
+      : DEFAULT_TIMER_VALUE
+  );
+
+  const [mostRecentTotalSeconds, setMostRecentTotalSeconds] = useState(
+    props.gamemodeSettings?.timerConfig?.isTimed === true
+      ? props.gamemodeSettings?.timerConfig.seconds
+      : DEFAULT_TIMER_VALUE
+  );
 
   // Sounds
   const [playCorrectChimeSoundEffect] = useCorrectChime(props.settings);
@@ -76,7 +100,7 @@ const Algebra: React.FC<Props> = (props) => {
 
   // (Guess) Timer Setup
   React.useEffect(() => {
-    if (!isTimerEnabled || !inProgress) {
+    if (!gamemodeSettings.timerConfig.isTimed || !inProgress) {
       return;
     }
 
@@ -92,10 +116,11 @@ const Algebra: React.FC<Props> = (props) => {
     return () => {
       clearInterval(timerGuess);
     };
-  }, [setRemainingSeconds, remainingSeconds, isTimerEnabled]);
+  }, [setRemainingSeconds, remainingSeconds, gamemodeSettings.timerConfig.isTimed]);
 
   // Picks a random template if one was not passed in through the props
   React.useEffect(() => {
+    // TODO: Pick a random template which has the currently set difficulty
     const template = props.defaultTemplate || {
       ...Object.values(AlgebraTemplates)[Math.round(Math.random() * (Object.values(AlgebraTemplates).length - 1))],
     };
@@ -260,9 +285,9 @@ const Algebra: React.FC<Props> = (props) => {
     setQuestionNumber(0);
     setNumCorrectAnswers(0);
 
-    if (isTimerEnabled) {
+    if (gamemodeSettings.timerConfig.isTimed) {
       // Reset the timer if it is enabled in the game options
-      setRemainingSeconds(totalSeconds);
+      setRemainingSeconds(gamemodeSettings.timerConfig.seconds);
     }
   }
 
@@ -309,32 +334,65 @@ const Algebra: React.FC<Props> = (props) => {
     setGuess(`${guess}${number}`);
   }
 
-  function generateSettings(): React.ReactNode {
+  function generateSettingsOptions(): React.ReactNode {
     let settings;
 
     settings = (
       <>
+      <label>
+          <select
+            onChange={(e) => {
+              const newGamemodeSettings = {
+                ...gamemodeSettings,
+                difficulty: e.target.value as difficultyOption,
+              };
+              setGamemodeSettings(newGamemodeSettings);
+            }}
+            className="difficulty_input"
+            name="difficulty"
+            value={gamemodeSettings.difficulty}
+          >
+            {difficultyOptions.map((difficultyOption) => (
+              <option key={difficultyOption} value={difficultyOption}>
+                {difficultyOption}
+              </option>
+            ))}
+          </select>
+          Difficulty
+        </label>
+
         <label>
           <input
-            checked={isTimerEnabled}
+            checked={gamemodeSettings.timerConfig.isTimed}
             type="checkbox"
-            onChange={(e) => {
-              setIsTimerEnabled(!isTimerEnabled);
+            onChange={() => {
+              // If currently timed, on change, make the game not timed and vice versa
+              const newTimer: { isTimed: true; seconds: number } | { isTimed: false } = gamemodeSettings.timerConfig
+                .isTimed
+                ? { isTimed: false }
+                : { isTimed: true, seconds: mostRecentTotalSeconds };
+              const newGamemodeSettings = { ...gamemodeSettings, timerConfig: newTimer };
+              setGamemodeSettings(newGamemodeSettings);
             }}
           ></input>
           Timer
         </label>
-        {isTimerEnabled && (
+        {gamemodeSettings.timerConfig.isTimed && (
           <label>
             <input
               type="number"
-              value={totalSeconds}
+              value={gamemodeSettings.timerConfig.seconds}
               min={10}
               max={120}
               step={5}
               onChange={(e) => {
                 setRemainingSeconds(e.target.valueAsNumber);
-                setTotalSeconds(e.target.valueAsNumber);
+                setMostRecentTotalSeconds(e.target.valueAsNumber);
+                const newGamemodeSettings = {
+                  ...gamemodeSettings,
+                  timerConfig: { isTimed: true, seconds: e.target.valueAsNumber },
+                };
+                setGamemodeSettings(newGamemodeSettings);
               }}
             ></input>
             Seconds
@@ -353,7 +411,7 @@ const Algebra: React.FC<Props> = (props) => {
     >
       {!props.isCampaignLevel && (
       <div className="gamemodeSettings">
-        <GamemodeSettingsMenu>{gamemodeSettings}</GamemodeSettingsMenu>
+        <GamemodeSettingsMenu>{generateSettingsOptions()}</GamemodeSettingsMenu>
       </div>)}
       <div className="outcome">{displayOutcome()}</div>
       {displayInputs()}
@@ -399,10 +457,10 @@ const Algebra: React.FC<Props> = (props) => {
         />
       )}
       <div>
-        {isTimerEnabled && (
+        {gamemodeSettings.timerConfig.isTimed && (
           <ProgressBar
             progress={remainingSeconds}
-            total={totalSeconds}
+            total={gamemodeSettings.timerConfig.seconds}
             display={{ type: "transition", colorTransition: GreenToRedColorTransition }}
           ></ProgressBar>
         )}

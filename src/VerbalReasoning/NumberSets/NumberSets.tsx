@@ -9,11 +9,12 @@ import ProgressBar, { GreenToRedColorTransition } from "../../ProgressBar";
 import { SettingsData } from "../../SaveData";
 import { useClickChime, useCorrectChime, useFailureChime, useLightPingChime } from "../../Sounds";
 import { Theme } from "../../Themes";
+import { DEFAULT_DIFFICULTY, difficultyOption, difficultyOptions } from "../Algebra/Algebra";
 import { generateSet } from "./Sets";
 
 /** Config for a specific number set (exported for config from campaign) */
 export type NumberSetConfigProps = {
-  difficulty: "novice" | "easy" | "medium" | "hard" | "expert";
+  difficulty: difficultyOption;
   correctAnswerDescription: string;
   examples: NumberSetTemplate[];
   question: NumberSetTemplate;
@@ -29,6 +30,12 @@ export type NumberSetTemplate = {
 interface Props {
   isCampaignLevel: boolean;
   defaultSet?: NumberSetConfigProps;
+
+  gamemodeSettings?: {
+    difficulty?: difficultyOption;
+    timerConfig?: { isTimed: true; seconds: number } | { isTimed: false };
+  };
+
   theme: Theme;
   settings: SettingsData;
   setPage: (page: Page) => void;
@@ -44,14 +51,28 @@ const NumberSets: React.FC<Props> = (props) => {
   const [guess, setGuess] = useState("");
   const [numberSet, setNumberSet] = useState<NumberSetConfigProps | undefined>(props.defaultSet);
 
-  // Gamemode settings
-  const [isTimerEnabled, setIsTimerEnabled] = useState(true);
-  const DEFAULT_TIMER_VALUE = 100;
-  const [remainingSeconds, setRemainingSeconds] = useState(DEFAULT_TIMER_VALUE);
-  const [totalSeconds, setTotalSeconds] = useState(DEFAULT_TIMER_VALUE);
+  const defaultGamemodeSettings = {
+    difficulty: props.gamemodeSettings?.difficulty ?? DEFAULT_DIFFICULTY,
+    timerConfig: props.gamemodeSettings?.timerConfig ?? { isTimed: false },
+  };
 
-  // Generate the elements to configure the gamemode settings
-  const gamemodeSettings = generateSettings();
+  const [gamemodeSettings, setGamemodeSettings] = useState<{
+    difficulty: difficultyOption;
+    timerConfig: { isTimed: true; seconds: number } | { isTimed: false };
+  }>(defaultGamemodeSettings);
+
+  const DEFAULT_TIMER_VALUE = 100;
+  const [remainingSeconds, setRemainingSeconds] = useState(
+    props.gamemodeSettings?.timerConfig?.isTimed === true
+      ? props.gamemodeSettings?.timerConfig.seconds
+      : DEFAULT_TIMER_VALUE
+  );
+
+  const [mostRecentTotalSeconds, setMostRecentTotalSeconds] = useState(
+    props.gamemodeSettings?.timerConfig?.isTimed === true
+      ? props.gamemodeSettings?.timerConfig.seconds
+      : DEFAULT_TIMER_VALUE
+  );
 
   // Sounds
   const [playCorrectChimeSoundEffect] = useCorrectChime(props.settings);
@@ -72,7 +93,7 @@ const NumberSets: React.FC<Props> = (props) => {
   }, [guess, inProgress]);
   // (Guess) Timer Setup
   React.useEffect(() => {
-    if (!isTimerEnabled || !inProgress) {
+    if (!gamemodeSettings.timerConfig.isTimed || !inProgress) {
       return;
     }
 
@@ -88,13 +109,14 @@ const NumberSets: React.FC<Props> = (props) => {
     return () => {
       clearInterval(timerGuess);
     };
-  }, [setRemainingSeconds, remainingSeconds, isTimerEnabled]);
+  }, [setRemainingSeconds, remainingSeconds, gamemodeSettings.timerConfig.isTimed]);
 
   // Picks a random set if one was not passed in through the props
   React.useEffect(() => {
     if (props.defaultSet) {
       setNumberSet(props.defaultSet);
     } else {
+      // TODO: Choose set of currently set difficulty
       const numberSet = generateSet();
       setNumberSet(numberSet);
       console.log(numberSet);
@@ -202,9 +224,9 @@ const NumberSets: React.FC<Props> = (props) => {
     setNumberSet(numberSet);
     console.log(numberSet);
 
-    if (isTimerEnabled) {
+    if (gamemodeSettings.timerConfig.isTimed) {
       // Reset the timer if it is enabled in the game options
-      setRemainingSeconds(totalSeconds);
+      setRemainingSeconds(gamemodeSettings.timerConfig.seconds);
     }
   }
 
@@ -232,32 +254,65 @@ const NumberSets: React.FC<Props> = (props) => {
     setGuess(`${guess}${number}`);
   }
 
-  function generateSettings(): React.ReactNode {
+  function generateSettingsOptions(): React.ReactNode {
     let settings;
 
     settings = (
       <>
         <label>
-          <input
-            checked={isTimerEnabled}
-            type="checkbox"
+          <select
             onChange={(e) => {
-              setIsTimerEnabled(!isTimerEnabled);
+              const newGamemodeSettings = {
+                ...gamemodeSettings,
+                difficulty: e.target.value as difficultyOption,
+              };
+              setGamemodeSettings(newGamemodeSettings);
+            }}
+            className="difficulty_input"
+            name="difficulty"
+            value={gamemodeSettings.difficulty}
+          >
+            {difficultyOptions.map((difficultyOption) => (
+              <option key={difficultyOption} value={difficultyOption}>
+                {difficultyOption}
+              </option>
+            ))}
+          </select>
+          Difficulty
+        </label>
+
+        <label>
+          <input
+            checked={gamemodeSettings.timerConfig.isTimed}
+            type="checkbox"
+            onChange={() => {
+              // If currently timed, on change, make the game not timed and vice versa
+              const newTimer: { isTimed: true; seconds: number } | { isTimed: false } = gamemodeSettings.timerConfig
+                .isTimed
+                ? { isTimed: false }
+                : { isTimed: true, seconds: mostRecentTotalSeconds };
+              const newGamemodeSettings = { ...gamemodeSettings, timerConfig: newTimer };
+              setGamemodeSettings(newGamemodeSettings);
             }}
           ></input>
           Timer
         </label>
-        {isTimerEnabled && (
+        {gamemodeSettings.timerConfig.isTimed && (
           <label>
             <input
               type="number"
-              value={totalSeconds}
+              value={gamemodeSettings.timerConfig.seconds}
               min={10}
               max={120}
               step={5}
               onChange={(e) => {
                 setRemainingSeconds(e.target.valueAsNumber);
-                setTotalSeconds(e.target.valueAsNumber);
+                setMostRecentTotalSeconds(e.target.valueAsNumber);
+                const newGamemodeSettings = {
+                  ...gamemodeSettings,
+                  timerConfig: { isTimed: true, seconds: e.target.valueAsNumber },
+                };
+                setGamemodeSettings(newGamemodeSettings);
               }}
             ></input>
             Seconds
@@ -275,9 +330,10 @@ const NumberSets: React.FC<Props> = (props) => {
       style={{ backgroundImage: `url(${props.theme.backgroundImageSrc})`, backgroundSize: "100%" }}
     >
       {!props.isCampaignLevel && (
-      <div className="gamemodeSettings">
-        <GamemodeSettingsMenu>{gamemodeSettings}</GamemodeSettingsMenu>
-      </div>)}
+        <div className="gamemodeSettings">
+          <GamemodeSettingsMenu>{generateSettingsOptions()}</GamemodeSettingsMenu>
+        </div>
+      )}
       <div className="outcome">{displayOutcome()}</div>
       {displayExamples()}
       {displayQuestion()}
@@ -299,10 +355,10 @@ const NumberSets: React.FC<Props> = (props) => {
         showKeyboard={props.settings.gameplay.keyboard}
       />
       <div>
-        {isTimerEnabled && (
+        {gamemodeSettings.timerConfig.isTimed && (
           <ProgressBar
             progress={remainingSeconds}
-            total={totalSeconds}
+            total={gamemodeSettings.timerConfig.seconds}
             display={{ type: "transition", colorTransition: GreenToRedColorTransition }}
           ></ProgressBar>
         )}
