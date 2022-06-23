@@ -17,11 +17,11 @@ interface Props {
 
   gamemodeSettings: {
     numLetters: number;
-    timerConfig: { isTimed: true; remainingSeconds: number; totalSeconds: number } | { isTimed: false };
+    timerConfig: { isTimed: true; seconds: number } | { isTimed: false };
   };
 
+  remainingSeconds: number;
   guesses: string[];
-  hasTimerEnded: boolean;
   countdownWord: string;
   currentWord: string;
   inProgress: boolean;
@@ -43,10 +43,12 @@ interface Props {
   onSubmitLetter: (letter: string) => void;
   onBackspace: () => void;
 
-  // Gamemode settings callbacks
-  updateNumLetters: (newNumLetters: number) => void;
-  updateTimer: () => void;
-  updateTimerLength: (newSeconds: number) => void;
+  updateGamemodeSettings: (newGamemodeSettings: {
+    numLetters: number;
+    timerConfig: { isTimed: true; seconds: number } | { isTimed: false };
+  }) => void;
+
+  updateRemainingSeconds: (newSeconds: number) => void;
 
   ResetGame: (wasCorrect: boolean, answer: string, targetAnswer: string, score: number | null) => void;
   ContinueGame: () => void;
@@ -56,19 +58,22 @@ interface Props {
 const CountdownLetters: React.FC<Props> = (props) => {
   // Currently selected guess, to be used as the final guess when time runs out
   const [selectedFinalGuess, setSelectedFinalGuess] = useState("");
-
   // Stores whether a manual selection has been made (to stop us overwriting that manual decision)
   const [manualGuessSelectionMade, setManualGuessSelectionMade] = useState(false);
-
   const [gameId, setGameId] = useState<string | null>(null);
+  // Check if letter selection has finished
+  const IS_SELECTION_FINISHED = props.countdownWord.length === props.gamemodeSettings.numLetters;
 
-  // Check if 9 letters have been selected
-  const isSelectionFinished = props.countdownWord.length === 9;
+  const DEFAULT_TIMER_VALUE = 30;
+  const [mostRecentTotalSeconds, setMostRecentTotalSeconds] = useState(
+    props.gamemodeSettings?.timerConfig?.isTimed === true
+      ? props.gamemodeSettings?.timerConfig.seconds
+      : DEFAULT_TIMER_VALUE
+  );
 
   // TODO: Save CountdownLetters game
-
   React.useEffect(() => {
-    if (!isSelectionFinished) {
+    if (!IS_SELECTION_FINISHED) {
       return;
     }
 
@@ -87,7 +92,7 @@ const CountdownLetters: React.FC<Props> = (props) => {
     });
 
     setGameId(gameId);
-  }, [props.mode, props.targetWord, isSelectionFinished]);
+  }, [props.mode, props.targetWord, IS_SELECTION_FINISHED]);
 
   // Create grid of rows (for guessing words)
   function populateGrid(wordLength: number) {
@@ -223,7 +228,7 @@ const CountdownLetters: React.FC<Props> = (props) => {
         <div className="add-letter-buttons-wrapper">
           <Button
             mode={"default"}
-            disabled={isSelectionFinished}
+            disabled={IS_SELECTION_FINISHED}
             settings={props.settings}
             onClick={() => props.onSubmitCountdownLetter(getVowel())}
           >
@@ -231,7 +236,7 @@ const CountdownLetters: React.FC<Props> = (props) => {
           </Button>
           <Button
             mode={"default"}
-            disabled={isSelectionFinished}
+            disabled={IS_SELECTION_FINISHED}
             settings={props.settings}
             onClick={() => props.onSubmitCountdownLetter(getConsonant())}
           >
@@ -239,7 +244,7 @@ const CountdownLetters: React.FC<Props> = (props) => {
           </Button>
           <Button
             mode={"default"}
-            disabled={props.countdownWord.length !== 0 || isSelectionFinished}
+            disabled={props.countdownWord.length !== 0 || IS_SELECTION_FINISHED}
             settings={props.settings}
             onClick={quickLetterSelection}
           >
@@ -282,7 +287,11 @@ const CountdownLetters: React.FC<Props> = (props) => {
             min={MIN_TARGET_WORD_LENGTH}
             max={MAX_TARGET_WORD_LENGTH}
             onChange={(e) => {
-              props.updateNumLetters(e.target.valueAsNumber);
+              const newGamemodeSettings = {
+                ...props.gamemodeSettings,
+                numLetters: e.target.valueAsNumber,
+              };
+              props.updateGamemodeSettings(newGamemodeSettings);
             }}
           ></input>
           Number of Letters
@@ -293,7 +302,15 @@ const CountdownLetters: React.FC<Props> = (props) => {
             <input
               checked={props.gamemodeSettings.timerConfig.isTimed}
               type="checkbox"
-              onChange={props.updateTimer}
+              onChange={() => {
+                // If currently timed, on change, make the game not timed and vice versa
+                const newTimer: { isTimed: true; seconds: number } | { isTimed: false } = props.gamemodeSettings
+                  .timerConfig.isTimed
+                  ? { isTimed: false }
+                  : { isTimed: true, seconds: mostRecentTotalSeconds };
+                const newGamemodeSettings = { ...props.gamemodeSettings, timerConfig: newTimer };
+                props.updateGamemodeSettings(newGamemodeSettings);
+              }}
             ></input>
             Timer
           </label>
@@ -301,12 +318,18 @@ const CountdownLetters: React.FC<Props> = (props) => {
             <label>
               <input
                 type="number"
-                value={props.gamemodeSettings.timerConfig.totalSeconds}
+                value={props.gamemodeSettings.timerConfig.seconds}
                 min={10}
                 max={120}
                 step={5}
                 onChange={(e) => {
-                  props.updateTimerLength(e.target.valueAsNumber);
+                  props.updateRemainingSeconds(e.target.valueAsNumber);
+                  setMostRecentTotalSeconds(e.target.valueAsNumber);
+                  const newGamemodeSettings = {
+                    ...props.gamemodeSettings,
+                    timerConfig: { isTimed: true, seconds: e.target.valueAsNumber },
+                  };
+                  props.updateGamemodeSettings(newGamemodeSettings);
                 }}
               ></input>
               Seconds
@@ -354,6 +377,11 @@ const CountdownLetters: React.FC<Props> = (props) => {
   }
 
   function displayOutcome() {
+    // Game has not yet ended (currently only when when timer runs out)
+    if (props.inProgress) {
+      return;
+    }
+
     // Create a list of the longest words that can be made with the available letters
     const bestWords = getBestWords(props.countdownWord);
     const bestWordsList = (
@@ -367,72 +395,70 @@ const CountdownLetters: React.FC<Props> = (props) => {
     let outcome: "success" | "failure" | "in-progress" = "in-progress";
     const GOLD_PER_LETTER = 30;
 
-    // When timer runs out and if a guess has been made
-    if (!props.inProgress && props.hasTimerEnded) {
-      if (!selectedFinalGuess) {
-        // finalGuess is empty (no guess was made), no points
-        outcome = "failure";
-        return (
-          <>
-            <MessageNotification type="error">
-              <strong>No guess was made</strong>
-              <br />
-              <strong>0 points</strong>
-            </MessageNotification>
-            {bestWordsList}
-          </>
-        );
-      }
-      if (props.mode === "countdown_letters_casual") {
-        // Already evaluated that guess is valid, so just display result
-        outcome = "success";
-        // Reward gold based on how long the selected guess is
-        props.addGold(selectedFinalGuess.length * GOLD_PER_LETTER);
-        return (
-          <>
-            <MessageNotification type="success">
-              <strong>{selectedFinalGuess.toUpperCase()}</strong>
-              <br />
-              <strong>{selectedFinalGuess.length} points</strong>
-            </MessageNotification>
-            {bestWordsList}
-          </>
-        );
-      } else {
-        // Realistic mode, guess (has not yet and so) needs to be evaluated
-        if (props.inDictionary && isWordValid(props.countdownWord, selectedFinalGuess)) {
-          outcome = "success";
-          props.addGold(selectedFinalGuess.length * GOLD_PER_LETTER);
-          return (
-            <>
-              <MessageNotification type="success">
-                <strong>{selectedFinalGuess.toUpperCase()}</strong>
-                <br />
-                <strong>{selectedFinalGuess.length} points</strong>
-              </MessageNotification>
-              {bestWordsList}
-            </>
-          );
-        } else {
-          // Invalid word
-          outcome = "failure";
-          return (
-            <>
-              <MessageNotification type="error">
-                <strong>{selectedFinalGuess.toUpperCase()} is an invalid word</strong>
-                <br />
-                <strong>0 points</strong>
-              </MessageNotification>
-              {bestWordsList}
-            </>
-          );
-        }
-      }
+    let outcomeNoticiation;
+
+    if (!selectedFinalGuess) {
+      // finalGuess is empty (no guess was made), no points
+      outcome = "failure";
+      outcomeNoticiation = (
+        <>
+          <MessageNotification type="error">
+            <strong>No guess was made</strong>
+            <br />
+            <strong>0 points</strong>
+          </MessageNotification>
+          {bestWordsList}
+        </>
+      );
+    }
+
+    if (props.mode === "countdown_letters_casual") {
+      // Already evaluated that guess is valid, so just display result
+      outcome = "success";
+      // Reward gold based on how long the selected guess is
+      props.addGold(selectedFinalGuess.length * GOLD_PER_LETTER);
+      outcomeNoticiation = (
+        <>
+          <MessageNotification type="success">
+            <strong>{selectedFinalGuess.toUpperCase()}</strong>
+            <br />
+            <strong>{selectedFinalGuess.length} points</strong>
+          </MessageNotification>
+          {bestWordsList}
+        </>
+      );
+    }
+    // Realistic mode, guess (has not yet and so) needs to be evaluated
+    else if (props.inDictionary && isWordValid(props.countdownWord, selectedFinalGuess)) {
+      outcome = "success";
+      props.addGold(selectedFinalGuess.length * GOLD_PER_LETTER);
+      outcomeNoticiation = (
+        <>
+          <MessageNotification type="success">
+            <strong>{selectedFinalGuess.toUpperCase()}</strong>
+            <br />
+            <strong>{selectedFinalGuess.length} points</strong>
+          </MessageNotification>
+          {bestWordsList}
+        </>
+      );
+    } else {
+      // Invalid word
+      outcome = "failure";
+      outcomeNoticiation = (
+        <>
+          <MessageNotification type="error">
+            <strong>{selectedFinalGuess.toUpperCase()} is an invalid word</strong>
+            <br />
+            <strong>0 points</strong>
+          </MessageNotification>
+          {bestWordsList}
+        </>
+      );
     }
 
     // TODO: Save CountdownLetters round
-
-    if (outcome !== "in-progress" && gameId) {
+    if (gameId) {
       SaveData.addCompletedRoundToGameHistory(gameId, {
         timestamp: new Date().toISOString(),
         gameCategory: "wingo",
@@ -444,6 +470,8 @@ const CountdownLetters: React.FC<Props> = (props) => {
         },
       });
     }
+
+    return outcomeNoticiation;
   }
 
   // Set the selected final guess to the longest word (as long as `manualGuessSelectionMade` is false)
@@ -489,7 +517,7 @@ const CountdownLetters: React.FC<Props> = (props) => {
       <div>{displayOutcome()}</div>
 
       <div>
-        {props.hasTimerEnded && !props.inProgress && (
+        {!props.inProgress && (
           <Button
             mode={"accept"}
             settings={props.settings}
@@ -534,8 +562,8 @@ const CountdownLetters: React.FC<Props> = (props) => {
       <div>
         {props.gamemodeSettings.timerConfig.isTimed && (
           <ProgressBar
-            progress={props.gamemodeSettings.timerConfig.remainingSeconds}
-            total={props.gamemodeSettings.timerConfig.totalSeconds}
+            progress={props.remainingSeconds}
+            total={props.gamemodeSettings.timerConfig.seconds}
             display={{ type: "transition", colorTransition: GreenToRedColorTransition }}
           ></ProgressBar>
         )}

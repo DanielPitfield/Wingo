@@ -16,7 +16,7 @@ interface Props extends CountdownLettersConfigProps {
   gamemodeSettings?: {
     // The number of letters (that make up the selection used to make a word)
     defaultNumLetters?: number;
-    timer?: { isTimed: true; seconds: number } | { isTimed: false };
+    timerConfig?: { isTimed: true; seconds: number } | { isTimed: false };
   };
   theme: Theme;
   settings: SettingsData;
@@ -50,29 +50,32 @@ export function isWordValid(countdownWord: string, guessedWord: string) {
 }
 
 const CountdownLettersConfig: React.FC<Props> = (props) => {
+  const DEFAULT_NUM_LETTERS = 9;
+
   const [guesses, setGuesses] = useState<string[]>([]);
   const [countdownWord, setCountdownWord] = useState("");
   const [currentWord, setCurrentWord] = useState("");
   const [inProgress, setinProgress] = useState(true);
-  const [hasTimerEnded, sethasTimerEnded] = useState(false);
   const [inDictionary, setinDictionary] = useState(true);
   const [targetWord, settargetWord] = useState<string>();
   const [hasSubmitLetter, sethasSubmitLetter] = useState(false);
 
-  // Gamemode settings
+  const defaultGamemodeSettings = {
+    numLetters: props.gamemodeSettings?.defaultNumLetters ?? DEFAULT_NUM_LETTERS,
+    timerConfig: props.gamemodeSettings?.timerConfig ?? { isTimed: false },
+  };
 
-  // Timer enabled by default, unless otherwise stated
-  const [isTimerEnabled, setIsTimerEnabled] = useState(props.gamemodeSettings?.timer?.isTimed ?? true);
+  const [gamemodeSettings, setGamemodeSettings] = useState<{
+    numLetters: number;
+    timerConfig: { isTimed: true; seconds: number } | { isTimed: false };
+  }>(defaultGamemodeSettings);
+
   const DEFAULT_TIMER_VALUE = 30;
   const [remainingSeconds, setRemainingSeconds] = useState(
-    props.gamemodeSettings?.timer?.isTimed === true ? props.gamemodeSettings?.timer.seconds : DEFAULT_TIMER_VALUE
+    props.gamemodeSettings?.timerConfig?.isTimed === true
+      ? props.gamemodeSettings?.timerConfig.seconds
+      : DEFAULT_TIMER_VALUE
   );
-  const [totalSeconds, setTotalSeconds] = useState(
-    props.gamemodeSettings?.timer?.isTimed === true ? props.gamemodeSettings?.timer.seconds : DEFAULT_TIMER_VALUE
-  );
-
-  const DEFAULT_NUM_LETTERS = 9;
-  const [numLetters, setNumLetters] = useState(props.gamemodeSettings?.defaultNumLetters ?? DEFAULT_NUM_LETTERS);
 
   const defaultLetterStatuses: {
     letter: string;
@@ -115,11 +118,11 @@ const CountdownLettersConfig: React.FC<Props> = (props) => {
 
   // Timer Setup
   React.useEffect(() => {
-    if (!isTimerEnabled) {
+    if (gamemodeSettings.timerConfig.isTimed) {
       return;
     }
 
-    if (countdownWord.length !== numLetters) {
+    if (countdownWord.length !== gamemodeSettings.numLetters) {
       return;
     }
 
@@ -127,14 +130,13 @@ const CountdownLettersConfig: React.FC<Props> = (props) => {
       if (remainingSeconds > 0) {
         setRemainingSeconds(remainingSeconds - 1);
       } else {
-        sethasTimerEnded(true);
         setinProgress(false);
       }
     }, 1000);
     return () => {
       clearInterval(timer);
     };
-  }, [setRemainingSeconds, remainingSeconds, isTimerEnabled, countdownWord]);
+  }, [setRemainingSeconds, remainingSeconds, gamemodeSettings.timerConfig.isTimed, countdownWord]);
 
   function ResetGame(wasCorrect: boolean, answer: string, targetAnswer: string, score: number | null) {
     // Callback of the score achieved (used for Countdown Gameshow)
@@ -144,13 +146,12 @@ const CountdownLettersConfig: React.FC<Props> = (props) => {
     setCurrentWord("");
     settargetWord("");
     setinProgress(true);
-    sethasTimerEnded(false);
     setinDictionary(true);
     sethasSubmitLetter(false);
     setletterStatuses(defaultLetterStatuses);
-    if (isTimerEnabled) {
+    if (gamemodeSettings.timerConfig.isTimed) {
       // Reset the timer if it is enabled in the game options
-      setRemainingSeconds(totalSeconds);
+      setRemainingSeconds(gamemodeSettings.timerConfig.seconds);
     }
   }
 
@@ -168,7 +169,7 @@ const CountdownLettersConfig: React.FC<Props> = (props) => {
     }
 
     // The vowels and consonants available have not all been picked
-    if (countdownWord.length !== numLetters) {
+    if (countdownWord.length !== gamemodeSettings.numLetters) {
       return;
     }
 
@@ -214,7 +215,7 @@ const CountdownLettersConfig: React.FC<Props> = (props) => {
   }
 
   function onSubmitCountdownLetter(letter: string) {
-    if (countdownWord.length < numLetters && inProgress) {
+    if (countdownWord.length < gamemodeSettings.numLetters && inProgress) {
       setCountdownWord(countdownWord + letter); // Append chosen letter to countdownWord
     }
   }
@@ -227,7 +228,11 @@ const CountdownLettersConfig: React.FC<Props> = (props) => {
 
   function onSubmitLetter(letter: string) {
     // Additional condition of all letters having been selected
-    if (currentWord.length < numLetters && countdownWord.length === numLetters && inProgress) {
+    if (
+      currentWord.length < gamemodeSettings.numLetters &&
+      countdownWord.length === gamemodeSettings.numLetters &&
+      inProgress
+    ) {
       setCurrentWord(currentWord + letter); // Append chosen letter to currentWord
       sethasSubmitLetter(true);
     }
@@ -240,38 +245,27 @@ const CountdownLettersConfig: React.FC<Props> = (props) => {
     }
   }
 
-  function updateNumLetters(newNumLetters: number) {
-    setNumLetters(newNumLetters);
-  }
-
-  function updateTimer() {
-    setIsTimerEnabled(!isTimerEnabled);
-  }
-
-  function updateTimerLength(newSeconds: number) {
+  function updateGamemodeSettings(newGamemodeSettings: {
+    numLetters: number;
+    timerConfig: { isTimed: true; seconds: number } | { isTimed: false };
+  }) {
+    setGamemodeSettings(newGamemodeSettings);
+  }  
+  
+  function updateRemainingSeconds(newSeconds: number) {
     setRemainingSeconds(newSeconds);
-    setTotalSeconds(newSeconds);
   }
 
   return (
     <CountdownLetters
       isCampaignLevel={props.page === "campaign/area/level"}
       mode={props.mode}
-      gamemodeSettings={{
-        numLetters: numLetters,
-        timerConfig: isTimerEnabled
-          ? {
-              isTimed: true,
-              remainingSeconds: remainingSeconds,
-              totalSeconds: totalSeconds,
-            }
-          : { isTimed: false },
-      }}
+      gamemodeSettings={gamemodeSettings}
+      remainingSeconds={remainingSeconds}
       guesses={guesses}
       currentWord={currentWord}
       countdownWord={countdownWord}
       inProgress={inProgress}
-      hasTimerEnded={hasTimerEnded}
       inDictionary={inDictionary}
       hasSubmitLetter={hasSubmitLetter}
       targetWord={targetWord || ""}
@@ -284,9 +278,8 @@ const CountdownLettersConfig: React.FC<Props> = (props) => {
       onSubmitCountdownWord={onSubmitCountdownWord}
       onSubmitLetter={onSubmitLetter}
       onBackspace={onBackspace}
-      updateNumLetters={updateNumLetters}
-      updateTimer={updateTimer}
-      updateTimerLength={updateTimerLength}
+      updateGamemodeSettings={updateGamemodeSettings}
+      updateRemainingSeconds={updateRemainingSeconds}
       ResetGame={ResetGame}
       ContinueGame={ContinueGame}
       setPage={props.setPage}

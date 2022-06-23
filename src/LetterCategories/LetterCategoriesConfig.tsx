@@ -10,7 +10,7 @@ interface Props {
   enforceFullLengthGuesses: boolean;
   gamemodeSettings?: {
     defaultNumCategories?: number;
-    timer?: { isTimed: true; seconds: number } | { isTimed: false };
+    timerConfig?: { isTimed: true; seconds: number } | { isTimed: false };
   };
   finishingButtonText?: string;
   theme: Theme;
@@ -22,6 +22,8 @@ interface Props {
 }
 
 const LetterCategoriesConfig: React.FC<Props> = (props) => {
+  const DEFAULT_NUM_CATEGORIES = 5;
+
   const [guesses, setGuesses] = useState<string[]>([]);
   const [gameId, setGameId] = useState<string | null>(null);
   const [currentWord, setCurrentWord] = useState("");
@@ -34,26 +36,26 @@ const LetterCategoriesConfig: React.FC<Props> = (props) => {
   const [categoryWordTargets, setCategoryWordTargets] = useState<string[][]>([[]]);
   const [hasSubmitLetter, sethasSubmitLetter] = useState(false);
 
-  // Gamemode settings
+  const defaultGamemodeSettings = {
+    numCategories: props.gamemodeSettings?.defaultNumCategories ?? DEFAULT_NUM_CATEGORIES,
+    timerConfig: props.gamemodeSettings?.timerConfig ?? { isTimed: false },
+  };
 
-  // Timer enabled by default, unless otherwise stated
-  const [isTimerEnabled, setIsTimerEnabled] = useState(props.gamemodeSettings?.timer?.isTimed ?? true);
+  const [gamemodeSettings, setGamemodeSettings] = useState<{
+    numCategories: number;
+    timerConfig: { isTimed: true; seconds: number } | { isTimed: false };
+  }>(defaultGamemodeSettings);
+
   const DEFAULT_TIMER_VALUE = 30;
   const [remainingSeconds, setRemainingSeconds] = useState(
-    props.gamemodeSettings?.timer?.isTimed === true ? props.gamemodeSettings?.timer.seconds : DEFAULT_TIMER_VALUE
-  );
-  const [totalSeconds, setTotalSeconds] = useState(
-    props.gamemodeSettings?.timer?.isTimed === true ? props.gamemodeSettings?.timer.seconds : DEFAULT_TIMER_VALUE
-  );
-
-  const DEFAULT_NUM_CATEGORIES = 5;
-  const [numCategories, setNumCategories] = useState(
-    props.gamemodeSettings?.defaultNumCategories ?? DEFAULT_NUM_CATEGORIES
+    props.gamemodeSettings?.timerConfig?.isTimed === true
+      ? props.gamemodeSettings?.timerConfig.seconds
+      : DEFAULT_TIMER_VALUE
   );
 
   // Timer Setup
   React.useEffect(() => {
-    if (!isTimerEnabled) {
+    if (!gamemodeSettings.timerConfig.isTimed) {
       return;
     }
 
@@ -67,7 +69,7 @@ const LetterCategoriesConfig: React.FC<Props> = (props) => {
     return () => {
       clearInterval(timer);
     };
-  }, [setRemainingSeconds, remainingSeconds, isTimerEnabled]);
+  }, [setRemainingSeconds, remainingSeconds, gamemodeSettings.timerConfig.isTimed]);
 
   // targetWord generation
   React.useEffect(() => {
@@ -119,7 +121,7 @@ const LetterCategoriesConfig: React.FC<Props> = (props) => {
         categoryNames.push(categoryMappings[newIndex].name);
       } while (
         // Until there are the specified number of categories (or MAX_NUM_FAILED_SEARCHES attempts were made at finding categories)
-        categoryNames.length < numCategories &&
+        categoryNames.length < gamemodeSettings.numCategories &&
         failedSearchCount <= MAX_NUM_FAILED_SEARCHES
       );
 
@@ -165,9 +167,9 @@ const LetterCategoriesConfig: React.FC<Props> = (props) => {
     setWordIndex(0);
     setinProgress(true);
     sethasSubmitLetter(false);
-    if (isTimerEnabled) {
+    if (gamemodeSettings.timerConfig.isTimed) {
       // Reset the timer if it is enabled in the game options
-      setRemainingSeconds(totalSeconds);
+      setRemainingSeconds(gamemodeSettings.timerConfig.seconds);
     }
   }
 
@@ -269,32 +271,22 @@ const LetterCategoriesConfig: React.FC<Props> = (props) => {
     }
   }
 
-  function updateNumCategories(newNumCategories: number) {
-    setNumCategories(newNumCategories);
+  function updateGamemodeSettings(newGamemodeSettings: {
+    numCategories: number;
+    timerConfig: { isTimed: true; seconds: number } | { isTimed: false };
+  }) {
+    setGamemodeSettings(newGamemodeSettings);
   }
 
-  function updateTimer() {
-    setIsTimerEnabled(!isTimerEnabled);
-  }
-
-  function updateTimerLength(newSeconds: number) {
+  function updateRemainingSeconds(newSeconds: number) {
     setRemainingSeconds(newSeconds);
-    setTotalSeconds(newSeconds);
   }
 
   return (
     <LetterCategories
       isCampaignLevel={props.page === "campaign/area/level"}
-      gamemodeSettings={{
-        numCategories: categoryWordTargets.length,
-        timerConfig: isTimerEnabled
-          ? {
-              isTimed: true,
-              remainingSeconds: remainingSeconds,
-              totalSeconds: totalSeconds,
-            }
-          : { isTimed: false },
-      }}
+      gamemodeSettings={gamemodeSettings}
+      remainingSeconds={remainingSeconds}
       wordLength={wordLength}
       guesses={guesses}
       currentWord={currentWord}
@@ -311,9 +303,8 @@ const LetterCategoriesConfig: React.FC<Props> = (props) => {
       onEnter={onEnter}
       onSubmitLetter={onSubmitLetter}
       onBackspace={onBackspace}
-      updateNumCategories={updateNumCategories}
-      updateTimer={updateTimer}
-      updateTimerLength={updateTimerLength}
+      updateGamemodeSettings={updateGamemodeSettings}
+      updateRemainingSeconds={updateRemainingSeconds}
       ResetGame={ResetGame}
       setPage={props.setPage}
     />

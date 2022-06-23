@@ -666,6 +666,16 @@ export const App: React.FC = () => {
   }
 
   const pageComponent = (() => {
+    const commonProps = {
+      page: page,
+      theme: theme,
+      setPage: setPage,
+      setTheme: setThemeIfNoPreferredSet,
+      addGold: addGold,
+      settings: settings,
+      onComplete: onComplete,
+    };
+
     const commonWingoProps = {
       gamemodeSettings: gamemodeSettings.find((x) => x.page === page)?.settings,
       defaultWordLength: DEFAULT_WORD_LENGTH,
@@ -802,34 +812,24 @@ export const App: React.FC = () => {
         return <WordleConfig {...commonWingoProps} mode="crossword/daily" />;
 
       case "letters_categories":
-        return <LetterCategoriesConfig {...commonWingoProps} theme={theme} enforceFullLengthGuesses={false} />;
+        return <LetterCategoriesConfig {...commonProps} enforceFullLengthGuesses={false} />;
 
       case "countdown/letters":
         return (
           <CountdownLettersConfig
+            {...commonProps}
             mode={"countdown_letters_casual"}
-            page={page}
             theme={Themes.GenericLetterCountdown}
-            settings={settings}
-            setTheme={setThemeIfNoPreferredSet}
-            setPage={setPage}
-            addGold={addGold}
-            onComplete={commonWingoProps.onComplete}
           />
         );
 
       case "countdown/numbers":
         return (
           <CountdownNumbersConfig
+            {...commonProps}
             mode={"countdown_numbers_casual"}
             defaultNumGuesses={numGuessesCountdownNumbers}
-            page={page}
             theme={Themes.GenericNumberCountdown}
-            settings={settings}
-            setTheme={setThemeIfNoPreferredSet}
-            setPage={setPage}
-            addGold={addGold}
-            onComplete={commonWingoProps.onComplete}
           />
         );
 

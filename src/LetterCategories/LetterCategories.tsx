@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Keyboard } from "../Keyboard";
 import { MAX_NUM_CATEGORIES, Page } from "../App";
 import { WordRow } from "../WordRow";
@@ -11,12 +11,13 @@ import GamemodeSettingsMenu from "../GamemodeSettingsMenu";
 
 interface Props {
   isCampaignLevel: boolean;
-  
+
   gamemodeSettings: {
     numCategories: number;
-    timerConfig: { isTimed: true; remainingSeconds: number; totalSeconds: number } | { isTimed: false };
+    timerConfig: { isTimed: true; seconds: number } | { isTimed: false };
   };
 
+  remainingSeconds: number;
   wordLength: number;
   guesses: string[];
   currentWord: string;
@@ -35,15 +36,23 @@ interface Props {
   onSubmitLetter: (letter: string) => void;
   onBackspace: () => void;
 
-  // Gamemode settings callbacks
-  updateNumCategories: (newNumCategories: number) => void;
-  updateTimer: () => void;
-  updateTimerLength: (newSeconds: number) => void;
+  updateGamemodeSettings: (newGamemodeSettings: {
+    numCategories: number;
+    timerConfig: { isTimed: true; seconds: number } | { isTimed: false };
+  }) => void;
+  updateRemainingSeconds: (newSeconds: number) => void;
 
   ResetGame: () => void;
 }
 
 const LetterCategories: React.FC<Props> = (props) => {
+  const DEFAULT_TIMER_VALUE = 30;
+  const [mostRecentTotalSeconds, setMostRecentTotalSeconds] = useState(
+    props.gamemodeSettings?.timerConfig?.isTimed === true
+      ? props.gamemodeSettings?.timerConfig.seconds
+      : DEFAULT_TIMER_VALUE
+  );
+
   // Create grid of rows (for guessing words)
   function populateGrid(rowNumber: number, wordLength: number) {
     var Grid = [];
@@ -127,7 +136,11 @@ const LetterCategories: React.FC<Props> = (props) => {
             min={2}
             max={MAX_NUM_CATEGORIES}
             onChange={(e) => {
-              props.updateNumCategories(e.target.valueAsNumber);
+              const newGamemodeSettings = {
+                ...props.gamemodeSettings,
+                numCategories: e.target.valueAsNumber,
+              };
+              props.updateGamemodeSettings(newGamemodeSettings);
             }}
           ></input>
           Number of categories
@@ -137,7 +150,15 @@ const LetterCategories: React.FC<Props> = (props) => {
             <input
               checked={props.gamemodeSettings.timerConfig.isTimed}
               type="checkbox"
-              onChange={props.updateTimer}
+              onChange={() => {
+                // If currently timed, on change, make the game not timed and vice versa
+                const newTimer: { isTimed: true; seconds: number } | { isTimed: false } = props.gamemodeSettings
+                  .timerConfig.isTimed
+                  ? { isTimed: false }
+                  : { isTimed: true, seconds: mostRecentTotalSeconds };
+                const newGamemodeSettings = { ...props.gamemodeSettings, timerConfig: newTimer };
+                props.updateGamemodeSettings(newGamemodeSettings);
+              }}
             ></input>
             Timer
           </label>
@@ -145,12 +166,18 @@ const LetterCategories: React.FC<Props> = (props) => {
             <label>
               <input
                 type="number"
-                value={props.gamemodeSettings.timerConfig.totalSeconds}
+                value={props.gamemodeSettings.timerConfig.seconds}
                 min={10}
                 max={120}
                 step={5}
                 onChange={(e) => {
-                  props.updateTimerLength(e.target.valueAsNumber);
+                  props.updateRemainingSeconds(e.target.valueAsNumber);
+                  setMostRecentTotalSeconds(e.target.valueAsNumber);
+                  const newGamemodeSettings = {
+                    ...props.gamemodeSettings,
+                    timer: { isTimed: true, seconds: e.target.valueAsNumber },
+                  };
+                  props.updateGamemodeSettings(newGamemodeSettings);
                 }}
               ></input>
               Seconds
@@ -181,7 +208,8 @@ const LetterCategories: React.FC<Props> = (props) => {
     else if (props.correctGuessesCount === 0) {
       return (
         <MessageNotification type="error">
-          You didn't guess a correct word for <strong>any</strong> of the <strong>{props.gamemodeSettings.numCategories}</strong> categories
+          You didn't guess a correct word for <strong>any</strong> of the{" "}
+          <strong>{props.gamemodeSettings.numCategories}</strong> categories
         </MessageNotification>
       );
     }
@@ -213,9 +241,10 @@ const LetterCategories: React.FC<Props> = (props) => {
       </div>
 
       {!props.isCampaignLevel && (
-      <div className="gamemodeSettings">
-        <GamemodeSettingsMenu>{generateSettingsOptions()}</GamemodeSettingsMenu>
-      </div>)}
+        <div className="gamemodeSettings">
+          <GamemodeSettingsMenu>{generateSettingsOptions()}</GamemodeSettingsMenu>
+        </div>
+      )}
 
       <div className="word_grid">{populateGrid(props.gamemodeSettings.numCategories, props.wordLength)}</div>
 
@@ -238,8 +267,8 @@ const LetterCategories: React.FC<Props> = (props) => {
       <div>
         {props.gamemodeSettings.timerConfig.isTimed && (
           <ProgressBar
-            progress={props.gamemodeSettings.timerConfig.remainingSeconds}
-            total={props.gamemodeSettings.timerConfig.totalSeconds}
+            progress={props.remainingSeconds}
+            total={props.gamemodeSettings.timerConfig.seconds}
             display={{ type: "transition", colorTransition: GreenToRedColorTransition }}
           ></ProgressBar>
         )}

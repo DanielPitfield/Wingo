@@ -13,7 +13,7 @@ interface Props {
     scoringMethod?: "standard" | "pointLostPerDifference";
     // The number/amount of numbers (that make up the selection used to make the target number)
     defaultNumOperands?: number;
-    timer?: { isTimed: true; seconds: number } | { isTimed: false };
+    timerConfig?: { isTimed: true; seconds: number } | { isTimed: false };
   };
   defaultNumGuesses: number;
   theme: Theme;
@@ -76,29 +76,31 @@ export function hasNumberSelectionFinished(
 export type Guess = { operand1: number | null; operand2: number | null; operator: typeof operators[0]["name"] };
 
 const CountdownNumbersConfig: React.FC<Props> = (props) => {
+  const DEFAULT_NUM_OPERANDS = 6;
+
   const [closestGuessSoFar, setClosestGuessSoFar] = useState<number | null>(null);
   const [currentGuesses, setCurrentGuesses] = useState<Guess[]>([]);
   const [numGuesses, setNumGuesses] = useState(props.defaultNumGuesses);
 
-  // Gamemode settings
+  const defaultGamemodeSettings = {
+    hasScaryNumbers: props.gamemodeSettings?.hasScaryNumbers ?? false,
+    scoringMethod: props.gamemodeSettings?.scoringMethod ?? "standard",
+    numOperands: props.gamemodeSettings?.defaultNumOperands ?? DEFAULT_NUM_OPERANDS,
+    timerConfig: props.gamemodeSettings?.timerConfig ?? { isTimed: false },
+  };
 
-  // Timer enabled by default, unless otherwise stated
-  const [isTimerEnabled, setIsTimerEnabled] = useState(props.gamemodeSettings?.timer?.isTimed ?? true);
+  const [gamemodeSettings, setGamemodeSettings] = useState<{
+    hasScaryNumbers: boolean,
+    scoringMethod: "standard" | "pointLostPerDifference",
+    numOperands: number;
+    timerConfig: { isTimed: true; seconds: number } | { isTimed: false };
+  }>(defaultGamemodeSettings);
+
   const DEFAULT_TIMER_VALUE = 30;
   const [remainingSeconds, setRemainingSeconds] = useState(
-    props.gamemodeSettings?.timer?.isTimed === true ? props.gamemodeSettings?.timer.seconds : DEFAULT_TIMER_VALUE
-  );
-  const [totalSeconds, setTotalSeconds] = useState(
-    props.gamemodeSettings?.timer?.isTimed === true ? props.gamemodeSettings?.timer.seconds : DEFAULT_TIMER_VALUE
-  );
-
-  const [hasScaryNumbers, setHasScaryNumbers] = useState(props.gamemodeSettings?.hasScaryNumbers ?? false);
-
-  const DEFAULT_NUM_OPERANDS = 6;
-  const [numOperands, setNumOperands] = useState(props.gamemodeSettings?.defaultNumOperands ?? DEFAULT_NUM_OPERANDS);
-
-  const [scoringMethod, setScoringMethod] = useState<"standard" | "pointLostPerDifference">(
-    props.gamemodeSettings?.scoringMethod ?? "standard"
+    props.gamemodeSettings?.timerConfig?.isTimed === true
+      ? props.gamemodeSettings?.timerConfig.seconds
+      : DEFAULT_TIMER_VALUE
   );
 
   // Just numOperands number of original type numbers (all not yet picked)
@@ -114,7 +116,7 @@ const CountdownNumbersConfig: React.FC<Props> = (props) => {
         number: number | null;
         picked: boolean;
       }
-  )[] = Array.from({ length: numOperands }).map((_) => ({
+  )[] = Array.from({ length: gamemodeSettings.numOperands }).map((_) => ({
     type: "original",
     number: null,
     picked: false,
@@ -145,11 +147,11 @@ const CountdownNumbersConfig: React.FC<Props> = (props) => {
 
   // Timer Setup
   React.useEffect(() => {
-    if (!isTimerEnabled) {
+    if (!gamemodeSettings.timerConfig.isTimed) {
       return;
     }
 
-    if (!hasNumberSelectionFinished(countdownStatuses, numOperands)) {
+    if (!hasNumberSelectionFinished(countdownStatuses, gamemodeSettings.numOperands)) {
       return;
     }
 
@@ -165,7 +167,7 @@ const CountdownNumbersConfig: React.FC<Props> = (props) => {
     return () => {
       clearInterval(timer);
     };
-  }, [setRemainingSeconds, remainingSeconds, isTimerEnabled, countdownStatuses]);
+  }, [setRemainingSeconds, remainingSeconds, gamemodeSettings.timerConfig.isTimed, countdownStatuses]);
 
   React.useEffect(() => {
     const newCountdownStatuses: (
@@ -180,14 +182,14 @@ const CountdownNumbersConfig: React.FC<Props> = (props) => {
           number: number | null;
           picked: boolean;
         }
-    )[] = Array.from({ length: numOperands }).map((_) => ({
+    )[] = Array.from({ length: gamemodeSettings.numOperands }).map((_) => ({
       type: "original",
       number: null,
       picked: false,
     }));
 
     setCountdownStatuses(newCountdownStatuses);
-  }, [numOperands]);
+  }, [gamemodeSettings.numOperands]);
 
   React.useEffect(() => {
     const intermediaryNumbers: typeof countdownStatuses = currentGuesses.map((guess, index) => {
@@ -231,9 +233,9 @@ const CountdownNumbersConfig: React.FC<Props> = (props) => {
     sethasTimerEnded(false);
     sethasSubmitNumber(false);
     setNumGuesses(props.defaultNumGuesses);
-    if (isTimerEnabled) {
+    if (gamemodeSettings.timerConfig.isTimed) {
       // Reset the timer if it is enabled in the game options
-      setRemainingSeconds(totalSeconds);
+      setRemainingSeconds(gamemodeSettings.timerConfig.seconds);
     }
   }
 
@@ -248,7 +250,7 @@ const CountdownNumbersConfig: React.FC<Props> = (props) => {
     }
 
     // The 6 numbers have not all been picked
-    if (!hasNumberSelectionFinished(countdownStatuses, numOperands)) {
+    if (!hasNumberSelectionFinished(countdownStatuses, gamemodeSettings.numOperands)) {
       return;
     }
 
@@ -266,7 +268,7 @@ const CountdownNumbersConfig: React.FC<Props> = (props) => {
     }
 
     // Still more numbers available to pick/choose
-    if (!hasNumberSelectionFinished(countdownStatuses, numOperands) && inProgress) {
+    if (!hasNumberSelectionFinished(countdownStatuses, gamemodeSettings.numOperands) && inProgress) {
       // Make a copy of current statuses
       const newCountdownStatuses = countdownStatuses.slice();
       // Find index of first object without a number
@@ -288,7 +290,7 @@ const CountdownNumbersConfig: React.FC<Props> = (props) => {
     // If required number of original numbers, countdown expression is of the correct length and there are no picked or intermediary values
     if (
       expression.length === countdownStatuses.length &&
-      countdownStatuses.filter((x) => x.type === "original").length === numOperands &&
+      countdownStatuses.filter((x) => x.type === "original").length === gamemodeSettings.numOperands &&
       countdownStatuses.filter((x) => x.picked === true).length === 0 &&
       countdownStatuses.filter((x) => x.type === "intermediary").length === 0 &&
       inProgress
@@ -314,7 +316,7 @@ const CountdownNumbersConfig: React.FC<Props> = (props) => {
     if (
       currentGuess.operand1 !== null &&
       currentGuess.operand2 !== null &&
-      hasNumberSelectionFinished(countdownStatuses, numOperands) &&
+      hasNumberSelectionFinished(countdownStatuses, gamemodeSettings.numOperands) &&
       inProgress
     ) {
       // If operand1 has been populated, then set operand2
@@ -329,25 +331,17 @@ const CountdownNumbersConfig: React.FC<Props> = (props) => {
     }
   }
 
-  function updateScaryNumbers() {
-    setHasScaryNumbers(!hasScaryNumbers);
+  function updateGamemodeSettings(newGamemodeSettings: {
+    hasScaryNumbers: boolean;
+    scoringMethod: "standard" | "pointLostPerDifference";
+    numOperands: number;
+    timerConfig: { isTimed: true; seconds: number } | { isTimed: false };
+  }) {
+    setGamemodeSettings(newGamemodeSettings);
   }
 
-  function updateScoringMethod(newScoringMethod: "standard" | "pointLostPerDifference") {
-    setScoringMethod(newScoringMethod);
-  }
-
-  function updateNumOperands(newNumOperands: number) {
-    setNumOperands(newNumOperands);
-  }
-
-  function updateTimer() {
-    setIsTimerEnabled(!isTimerEnabled);
-  }
-
-  function updateTimerLength(newSeconds: number) {
+  function updateRemainingSeconds(newSeconds: number) {
     setRemainingSeconds(newSeconds);
-    setTotalSeconds(newSeconds);
   }
 
   // TODO: QOL: Countdown Numbers - undo
@@ -368,7 +362,7 @@ const CountdownNumbersConfig: React.FC<Props> = (props) => {
       return;
     }
 
-    if (!hasNumberSelectionFinished(countdownStatuses, numOperands)) {
+    if (!hasNumberSelectionFinished(countdownStatuses, gamemodeSettings.numOperands)) {
       return;
     }
 
@@ -533,18 +527,8 @@ const CountdownNumbersConfig: React.FC<Props> = (props) => {
     <CountdownNumbers
       isCampaignLevel={props.page === "campaign/area/level"}
       mode={props.mode}
-      gamemodeSettings={{
-        hasScaryNumbers: hasScaryNumbers,
-        numOperands: numOperands,
-        scoringMethod: scoringMethod,
-        timerConfig: isTimerEnabled
-          ? {
-              isTimed: true,
-              remainingSeconds: remainingSeconds,
-              totalSeconds: totalSeconds,
-            }
-          : { isTimed: false },
-      }}
+      gamemodeSettings={gamemodeSettings}
+      remainingSeconds={remainingSeconds}
       wordIndex={wordIndex}
       guesses={currentGuesses}
       closestGuessSoFar={closestGuessSoFar}
@@ -564,11 +548,8 @@ const CountdownNumbersConfig: React.FC<Props> = (props) => {
       onSubmitCountdownExpression={onSubmitCountdownExpression}
       onSubmitNumber={onSubmitNumber}
       onBackspace={onBackspace}
-      updateScaryNumbers={updateScaryNumbers}
-      updateNumOperands={updateNumOperands}
-      updateScoringMethod={updateScoringMethod}
-      updateTimer={updateTimer}
-      updateTimerLength={updateTimerLength}
+      updateGamemodeSettings={updateGamemodeSettings}
+      updateRemainingSeconds={updateRemainingSeconds}
       resetGame={ResetGame}
       clearGrid={clearGrid}
       submitBestGuess={submitBestGuess}

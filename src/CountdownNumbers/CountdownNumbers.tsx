@@ -23,9 +23,10 @@ interface Props {
     numOperands: number;
     scoringMethod: "standard" | "pointLostPerDifference";
     // TODO: Move all other timerConfig props into their respective gamemodeSettings
-    timerConfig: { isTimed: true; remainingSeconds: number; totalSeconds: number } | { isTimed: false };
+    timerConfig: { isTimed: true; seconds: number } | { isTimed: false };
   };
 
+  remainingSeconds: number;
   wordIndex: number;
   guesses: Guess[];
   closestGuessSoFar: number | null;
@@ -56,12 +57,13 @@ interface Props {
   onSubmitNumber: (number: number) => void;
   onBackspace: () => void;
 
-  // Gamemode settings callbacks
-  updateScaryNumbers: () => void;
-  updateNumOperands: (newNumOperands: number) => void;
-  updateScoringMethod: (newScoringMethod: "standard" | "pointLostPerDifference") => void;
-  updateTimer: () => void;
-  updateTimerLength: (newSeconds: number) => void;
+  updateGamemodeSettings: (newGamemodeSettings: {
+    hasScaryNumbers: boolean;
+    scoringMethod: "standard" | "pointLostPerDifference";
+    numOperands: number;
+    timerConfig: { isTimed: true; seconds: number } | { isTimed: false };
+  }) => void;
+  updateRemainingSeconds: (newSeconds: number) => void;
 
   resetGame: (wasCorrect: boolean, answer: string, targetAnswer: string, score: number | null) => void;
   setOperator: (operator: Guess["operator"]) => void;
@@ -76,6 +78,13 @@ interface Props {
  */
 const CountdownNumbers: React.FC<Props> = (props) => {
   const [solutions, setSolutions] = useState<{ best: NumberPuzzleValue; all: NumberPuzzleValue[] } | null>(null);
+
+  const DEFAULT_TIMER_VALUE = 30;
+  const [mostRecentTotalSeconds, setMostRecentTotalSeconds] = useState(
+    props.gamemodeSettings?.timerConfig?.isTimed === true
+      ? props.gamemodeSettings?.timerConfig.seconds
+      : DEFAULT_TIMER_VALUE
+  );
 
   React.useEffect(() => {
     if (!props.targetNumber) {
@@ -300,7 +309,11 @@ const CountdownNumbers: React.FC<Props> = (props) => {
             min={4}
             max={10}
             onChange={(e) => {
-              props.updateNumOperands(e.target.valueAsNumber);
+              const newGamemodeSettings = {
+                ...props.gamemodeSettings,
+                numOperands: e.target.valueAsNumber,
+              };
+              props.updateGamemodeSettings(newGamemodeSettings);
             }}
           ></input>
           Numbers in selection
@@ -309,7 +322,13 @@ const CountdownNumbers: React.FC<Props> = (props) => {
           <input
             checked={props.gamemodeSettings.hasScaryNumbers}
             type="checkbox"
-            onChange={props.updateScaryNumbers}
+            onChange={(e) => {
+              const newGamemodeSettings = {
+                ...props.gamemodeSettings,
+                hasScaryNumbers: !props.gamemodeSettings.hasScaryNumbers,
+              };
+              props.updateGamemodeSettings(newGamemodeSettings);
+            }}
           ></input>
           Scary Big Numbers
         </label>
@@ -318,7 +337,15 @@ const CountdownNumbers: React.FC<Props> = (props) => {
             <input
               checked={props.gamemodeSettings.timerConfig.isTimed}
               type="checkbox"
-              onChange={props.updateTimer}
+              onChange={() => {
+                // If currently timed, on change, make the game not timed and vice versa
+                const newTimer: { isTimed: true; seconds: number } | { isTimed: false } = props.gamemodeSettings
+                  .timerConfig.isTimed
+                  ? { isTimed: false }
+                  : { isTimed: true, seconds: mostRecentTotalSeconds };
+                const newGamemodeSettings = { ...props.gamemodeSettings, timerConfig: newTimer };
+                props.updateGamemodeSettings(newGamemodeSettings);
+              }}
             ></input>
             Timer
           </label>
@@ -326,13 +353,18 @@ const CountdownNumbers: React.FC<Props> = (props) => {
             <label>
               <input
                 type="number"
-                value={props.gamemodeSettings.timerConfig.totalSeconds}
+                value={props.gamemodeSettings.timerConfig.seconds}
                 min={10}
                 max={120}
                 step={5}
                 onChange={(e) => {
-                  // TODO: Still able to manually input value outside range
-                  props.updateTimerLength(e.target.valueAsNumber);
+                  props.updateRemainingSeconds(e.target.valueAsNumber);
+                  setMostRecentTotalSeconds(e.target.valueAsNumber);
+                  const newGamemodeSettings = {
+                    ...props.gamemodeSettings,
+                    timer: { isTimed: true, seconds: e.target.valueAsNumber },
+                  };
+                  props.updateGamemodeSettings(newGamemodeSettings);
                 }}
               ></input>
               Seconds
@@ -557,8 +589,8 @@ const CountdownNumbers: React.FC<Props> = (props) => {
       <div>
         {props.gamemodeSettings.timerConfig.isTimed && (
           <ProgressBar
-            progress={props.gamemodeSettings.timerConfig.remainingSeconds}
-            total={props.gamemodeSettings.timerConfig.totalSeconds}
+            progress={props.remainingSeconds}
+            total={props.gamemodeSettings.timerConfig.seconds}
             display={{ type: "transition", colorTransition: GreenToRedColorTransition }}
           ></ProgressBar>
         )}

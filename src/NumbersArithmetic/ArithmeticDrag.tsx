@@ -32,7 +32,7 @@ interface Props {
     (when the Custom option is selected, the inputs for the settings appear)
     */
 
-    timer?: { isTimed: true; seconds: number } | { isTimed: false };
+    timerConfig?: { isTimed: true; seconds: number } | { isTimed: false };
     // How many expressions (to match or order)?
     numTiles?: number;
     // How big/difficult are the numbers used in these expressions?
@@ -72,11 +72,13 @@ export function shuffleArray<T>(array: T[]): T[] {
 
 /** */
 const ArithmeticDrag: React.FC<Props> = (props) => {
-  const [inProgress, setInProgress] = useState(true);
-
+  const DEFAULT_NUM_TILES = 6;
   const DEFAULT_NUM_GUESSES = 3;
+  const DEFAULT_NUM_OPERANDS = 2;
+  const DEFAULT_NUMBERSIZE = "medium";
+
+  const [inProgress, setInProgress] = useState(true);
   const [remainingGuesses, setRemainingGuesses] = useState(props.gamemodeSettings?.numGuesses ?? DEFAULT_NUM_GUESSES);
-  const [totalGuesses, setTotalGuesses] = useState(props.gamemodeSettings?.numGuesses ?? DEFAULT_NUM_GUESSES);
 
   const [expressionTiles, setExpressionTiles] = useState<
     { expression: string; total: number; status: "incorrect" | "correct" | "not set" }[]
@@ -84,32 +86,38 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
   // For the match game mode type
   const [resultTiles, setResultTiles] = useState<{ total: number; status: "incorrect" | "correct" | "not set" }[]>([]);
 
-  // Gamemode settings
+  const defaultGamemodeSettings = {
+    numTiles: props.gamemodeSettings?.numTiles ?? DEFAULT_NUM_TILES,
+    numberSize: props.gamemodeSettings?.numberSize ?? DEFAULT_NUMBERSIZE,
+    numOperands: props.gamemodeSettings?.numOperands ?? DEFAULT_NUM_OPERANDS,
+    numGuesses: props.gamemodeSettings?.numGuesses ?? DEFAULT_NUM_GUESSES,
+    timerConfig: props.gamemodeSettings?.timerConfig ?? { isTimed: false },
+  };
 
-  // Timer enabled by default, unless otherwise stated
-  const [isTimerEnabled, setIsTimerEnabled] = useState(props.gamemodeSettings?.timer?.isTimed ?? true);
+  const [gamemodeSettings, setGamemodeSettings] = useState<{
+    numTiles: number;
+    numberSize: "small" | "medium" | "large";
+    numOperands: number;
+    numGuesses: number;
+    timerConfig: { isTimed: true; seconds: number } | { isTimed: false };
+  }>(defaultGamemodeSettings);
+
   const DEFAULT_TIMER_VALUE = 100;
   const [remainingSeconds, setRemainingSeconds] = useState(
-    props.gamemodeSettings?.timer?.isTimed === true ? props.gamemodeSettings?.timer.seconds : DEFAULT_TIMER_VALUE
-  );
-  const [totalSeconds, setTotalSeconds] = useState(
-    props.gamemodeSettings?.timer?.isTimed === true ? props.gamemodeSettings?.timer.seconds : DEFAULT_TIMER_VALUE
-  );
-
-  const DEFAULT_NUM_TILES = 6;
-  const [numTiles, setNumTiles] = useState(props.gamemodeSettings?.numTiles ?? DEFAULT_NUM_TILES);
-
-  const DEFAULT_NUMBERSIZE = "medium";
-  const [numberSize, setNumberSize] = useState<"small" | "medium" | "large">(
-    props.gamemodeSettings?.numberSize ?? DEFAULT_NUMBERSIZE
+    props.gamemodeSettings?.timerConfig?.isTimed === true
+      ? props.gamemodeSettings?.timerConfig.seconds
+      : DEFAULT_TIMER_VALUE
   );
 
-  const DEFAULT_NUM_OPERANDS = 2;
-  const [numOperands, setNumOperands] = useState(props.gamemodeSettings?.numOperands ?? DEFAULT_NUM_OPERANDS);
-  
+  const [mostRecentTotalSeconds, setMostRecentTotalSeconds] = useState(
+    props.gamemodeSettings?.timerConfig?.isTimed === true
+      ? props.gamemodeSettings?.timerConfig.seconds
+      : DEFAULT_TIMER_VALUE
+  );
+
   // What is the maximum starting number which should be used (based on difficulty)?
   function getStartingNumberLimit(): number {
-    switch (numberSize) {
+    switch (gamemodeSettings.numberSize) {
       case "small": {
         return 100;
       }
@@ -124,7 +132,7 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
 
   // What is the maximum number which should be used with the given operator (based on difficulty)?
   function getOperandLimit(operator: string) {
-    switch (numberSize) {
+    switch (gamemodeSettings.numberSize) {
       case "small": {
         switch (operator) {
           case "÷":
@@ -194,7 +202,7 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
     let total = starting_number;
 
     // Always one less operator than the number of operands in an expression
-    const numOperators = numOperands - 1;
+    const numOperators = gamemodeSettings.numOperands - 1;
 
     // Until expression has the required number of operators (is correct length)
     while (countOperators(expression) < numOperators) {
@@ -258,7 +266,7 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
         expression = expression + operator_symbol + operand.toString();
 
         // Insert closing bracket after operand following the first operator (when there are 3 operands)
-        if (countOperators(expression) === 1 && numOperands === 3) {
+        if (countOperators(expression) === 1 && gamemodeSettings.numOperands === 3) {
           expression = expression + ")";
         }
 
@@ -268,7 +276,7 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
     }
 
     // Insert starting bracket with three operands
-    if (numOperands === 3) {
+    if (gamemodeSettings.numOperands === 3) {
       expression = "(" + expression;
     }
 
@@ -280,7 +288,7 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
   function generateAllTiles() {
     const newExpressionTiles: { expression: string; total: number; status: "not set" }[] = [];
 
-    for (let i = 0; i < numTiles; i++) {
+    for (let i = 0; i < gamemodeSettings.numTiles; i++) {
       const tile = generateTile();
       newExpressionTiles.push(tile);
     }
@@ -306,8 +314,7 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
   // Any of the game mode settings are changed then reset the game
   React.useEffect(() => {
     ResetGame();
-  }, [isTimerEnabled, totalSeconds, numTiles, numberSize, numOperands, totalGuesses]);
-  // TODO: Probably best these settings are part of a single object
+  }, [gamemodeSettings]);
 
   React.useEffect(() => {
     // If all tiles have been initialised
@@ -317,11 +324,11 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
 
     /* TODO: Dependency and set method (expressionTiles and setExpressionTiles loop) */
     generateAllTiles();
-  }, [expressionTiles, resultTiles, numTiles]);
+  }, [expressionTiles, resultTiles, gamemodeSettings.numTiles]);
 
   // (Guess) Timer Setup
   React.useEffect(() => {
-    if (!isTimerEnabled || !inProgress) {
+    if (!gamemodeSettings.timerConfig.isTimed || !inProgress) {
       return;
     }
 
@@ -335,7 +342,7 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
     return () => {
       clearInterval(timerGuess);
     };
-  }, [setRemainingSeconds, remainingSeconds, isTimerEnabled]);
+  }, [setRemainingSeconds, remainingSeconds, gamemodeSettings.timerConfig.isTimed]);
 
   /**
    * LetterTile Debug: letter={`R: ${tile.total}`}
@@ -481,10 +488,10 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
   function ResetGame() {
     props.onComplete?.(true);
     setInProgress(true);
-    setRemainingGuesses(totalGuesses);
-    if (isTimerEnabled) {
+    setRemainingGuesses(gamemodeSettings.numGuesses);
+    if (gamemodeSettings.timerConfig.isTimed) {
       // Reset the timer if it is enabled in the game options
-      setRemainingSeconds(totalSeconds);
+      setRemainingSeconds(gamemodeSettings.timerConfig.seconds);
     }
     generateAllTiles();
   }
@@ -503,11 +510,15 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
         <label>
           <input
             type="number"
-            value={numTiles}
+            value={gamemodeSettings.numTiles}
             min={MIN_NUM_TILES}
             max={MAX_NUM_TILES}
             onChange={(e) => {
-              setNumTiles(e.target.valueAsNumber);
+              const newGamemodeSettings = {
+                ...gamemodeSettings,
+                numTiles: e.target.valueAsNumber,
+              };
+              setGamemodeSettings(newGamemodeSettings);
             }}
           ></input>
           Number of expressions
@@ -515,11 +526,15 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
         <label>
           <input
             type="number"
-            value={numOperands}
+            value={gamemodeSettings.numOperands}
             min={MIN_NUM_OPERANDS}
             max={MAX_NUM_OPERANDS}
             onChange={(e) => {
-              setNumOperands(e.target.valueAsNumber);
+              const newGamemodeSettings = {
+                ...gamemodeSettings,
+                numOperands: e.target.valueAsNumber,
+              };
+              setGamemodeSettings(newGamemodeSettings);
             }}
           ></input>
           Number of operands
@@ -527,11 +542,15 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
         <label>
           <select
             onChange={(e) => {
-              setNumberSize(e.target.value as numberSizeOption);
+              const newGamemodeSettings = {
+                ...gamemodeSettings,
+                numberSize: e.target.value as numberSizeOption,
+              };
+              setGamemodeSettings(newGamemodeSettings);
             }}
             className="numberSize_input"
             name="numberSize"
-            value={numberSize}
+            value={gamemodeSettings.numberSize}
           >
             {numberSizeOptions.map((sizeOption) => (
               <option key={sizeOption} value={sizeOption}>
@@ -544,12 +563,16 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
         <label>
           <input
             type="number"
-            value={totalGuesses}
+            value={gamemodeSettings.numGuesses}
             min={1}
             max={10}
             onChange={(e) => {
               setRemainingGuesses(e.target.valueAsNumber);
-              setTotalGuesses(e.target.valueAsNumber);
+              const newGamemodeSettings = {
+                ...gamemodeSettings,
+                numGuesses: e.target.valueAsNumber,
+              };
+              setGamemodeSettings(newGamemodeSettings);
             }}
           ></input>
           Number of guesses
@@ -557,25 +580,36 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
         <>
           <label>
             <input
-              checked={isTimerEnabled}
+              checked={gamemodeSettings.timerConfig.isTimed}
               type="checkbox"
               onChange={() => {
-                setIsTimerEnabled(!isTimerEnabled);
+                // If currently timed, on change, make the game not timed and vice versa
+                const newTimer: { isTimed: true; seconds: number } | { isTimed: false } = gamemodeSettings.timerConfig
+                  .isTimed
+                  ? { isTimed: false }
+                  : { isTimed: true, seconds: mostRecentTotalSeconds };
+                const newGamemodeSettings = { ...gamemodeSettings, timerConfig: newTimer };
+                setGamemodeSettings(newGamemodeSettings);
               }}
             ></input>
             Timer
           </label>
-          {isTimerEnabled && (
+          {gamemodeSettings.timerConfig.isTimed && (
             <label>
               <input
                 type="number"
-                value={totalSeconds}
+                value={gamemodeSettings.timerConfig.seconds}
                 min={10}
                 max={120}
                 step={5}
                 onChange={(e) => {
                   setRemainingSeconds(e.target.valueAsNumber);
-                  setTotalSeconds(e.target.valueAsNumber);
+                  setMostRecentTotalSeconds(e.target.valueAsNumber);
+                  const newGamemodeSettings = {
+                    ...gamemodeSettings,
+                    timerConfig: { isTimed: true, seconds: e.target.valueAsNumber },
+                  };
+                  setGamemodeSettings(newGamemodeSettings);
                 }}
               ></input>
               Seconds
@@ -612,10 +646,10 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
         </Button>
       )}
       <div>
-        {isTimerEnabled && (
+        {gamemodeSettings.timerConfig.isTimed && (
           <ProgressBar
             progress={remainingSeconds}
-            total={totalSeconds}
+            total={gamemodeSettings.timerConfig.seconds}
             display={{ type: "transition", colorTransition: GreenToRedColorTransition }}
           ></ProgressBar>
         )}

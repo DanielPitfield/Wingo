@@ -50,7 +50,6 @@ interface Props {
   onSubmitTargetCategory: (category: string) => void;
   onBackspace: () => void;
 
-  // Gamemode settings callback
   updateGamemodeSettings: (newGamemodeSettings: {
     wordLength: number;
     wordLengthMaxLimit: number;
@@ -269,10 +268,11 @@ const Wordle: React.FC<Props> = (props) => {
               type="checkbox"
               onChange={() => {
                 // If currently timed, on change, make the game not timed and vice versa
-                const newTimer = props.gamemodeSettings.timerConfig.isTimed
+                const newTimer: { isTimed: true; seconds: number } | { isTimed: false } = props.gamemodeSettings
+                  .timerConfig.isTimed
                   ? { isTimed: false }
                   : { isTimed: true, seconds: mostRecentTotalSeconds };
-                const newGamemodeSettings = { ...props.gamemodeSettings, timer: newTimer };
+                const newGamemodeSettings = { ...props.gamemodeSettings, timerConfig: newTimer };
                 props.updateGamemodeSettings(newGamemodeSettings);
               }}
             ></input>

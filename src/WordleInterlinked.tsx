@@ -79,9 +79,6 @@ interface Props {
 }
 
 export const WordleInterlinked: React.FC<Props> = (props) => {
-  const [inProgress, setInProgress] = useState(props.initialConfig?.inProgress ?? true);
-  const [allowSpaces, setAllowSpaces] = useState(false);
-
   const DEFAULT_NUM_WORDS = 2;
   const STARTING_NUM_WORDS = props.gamemodeSettings?.numWords ?? DEFAULT_NUM_WORDS;
 
@@ -115,6 +112,9 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
     timerConfig: props.gamemodeSettings?.timerConfig ?? { isTimed: false },
   };
 
+  const [inProgress, setInProgress] = useState(props.initialConfig?.inProgress ?? true);
+  const [allowSpaces, setAllowSpaces] = useState(false);
+
   const [gamemodeSettings, setGamemodeSettings] = useState<{
     numWords: number;
     minWordLength: number;
@@ -128,7 +128,9 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
 
   const DEFAULT_TIMER_VALUE = 30;
   const [remainingSeconds, setRemainingSeconds] = useState(
-    props.gamemodeSettings?.timerConfig?.isTimed === true ? props.gamemodeSettings?.timerConfig.seconds : DEFAULT_TIMER_VALUE
+    props.gamemodeSettings?.timerConfig?.isTimed === true
+      ? props.gamemodeSettings?.timerConfig.seconds
+      : DEFAULT_TIMER_VALUE
   );
 
   /*
@@ -137,7 +139,9 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
   (even after the timer is enabled/disabled)
   */
   const [mostRecentTotalSeconds, setMostRecentTotalSeconds] = useState(
-    props.gamemodeSettings?.timerConfig?.isTimed === true ? props.gamemodeSettings?.timerConfig.seconds : DEFAULT_TIMER_VALUE
+    props.gamemodeSettings?.timerConfig?.isTimed === true
+      ? props.gamemodeSettings?.timerConfig.seconds
+      : DEFAULT_TIMER_VALUE
   );
 
   const [remainingGridGuesses, setRemainingGridGuesses] = useState(STARTING_NUM_GRID_GUESSES);
@@ -865,10 +869,11 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
               type="checkbox"
               onChange={() => {
                 // If currently timed, on change, make the game not timed and vice versa
-                const newTimer = gamemodeSettings.timerConfig.isTimed
+                const newTimer: { isTimed: true; seconds: number } | { isTimed: false } = gamemodeSettings.timerConfig
+                  .isTimed
                   ? { isTimed: false }
                   : { isTimed: true, seconds: mostRecentTotalSeconds };
-                const newGamemodeSettings = { ...gamemodeSettings, timer: newTimer };
+                const newGamemodeSettings = { ...gamemodeSettings, timerConfig: newTimer };
                 setGamemodeSettings(newGamemodeSettings);
               }}
             ></input>
@@ -951,7 +956,9 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
     // TODO: Scoring method instead of 10 value
     props.onComplete?.(gridCompleted, currentWords.join(""), gridConfig.words.map((x) => x.word).join(""), 10);
 
-    setRemainingSeconds(gamemodeSettings.timerConfig.isTimed ? gamemodeSettings.timerConfig.seconds : mostRecentTotalSeconds);
+    setRemainingSeconds(
+      gamemodeSettings.timerConfig.isTimed ? gamemodeSettings.timerConfig.seconds : mostRecentTotalSeconds
+    );
 
     setTileStatuses(
       getCorrectLetterGrid().map((position) => {
@@ -960,14 +967,16 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
     );
     setGridConfig(generateGridConfig(getTargetWordArray()));
     setCorrectGrid(getCorrectLetterGrid());
-    
+
     // All words are the first letter of their respective correct word
-    const firstLetterWords = Array.from({ length: gamemodeSettings.numWords }).map((value, index) => gridConfig.words[index].word.charAt(0));
+    const firstLetterWords = Array.from({ length: gamemodeSettings.numWords }).map((value, index) =>
+      gridConfig.words[index].word.charAt(0)
+    );
     // All words are empty
     const emptyWords = Array.from({ length: gamemodeSettings.numWords }).map((x) => "");
     const newCurrentWords = gamemodeSettings.isFirstLetterProvided ? firstLetterWords : emptyWords;
     setCurrentWords(newCurrentWords);
-    
+
     setRemainingWordGuesses(gamemodeSettings.numWordGuesses);
     setRemainingGridGuesses(gamemodeSettings.numGridGuesses);
     setCurrentWordIndex(0);
