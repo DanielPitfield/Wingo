@@ -852,7 +852,7 @@ export const App: React.FC = () => {
               numCheckpoints: 3,
               numberSize: "small" as numberSizeOption,
               revealIntervalSeconds: 3,
-              timer: { isTimed: true, seconds: 10 },
+              timerConfig: { isTimed: true, seconds: 10 },
             }}
             theme={theme}
             settings={settings}
@@ -887,9 +887,6 @@ export const App: React.FC = () => {
         return (
           <GroupWall
             isCampaignLevel={false}
-            groupSize={4}
-            numGroups={4}
-            numGuesses={3}
             theme={theme}
             settings={settings}
             setPage={setPage}
@@ -901,10 +898,6 @@ export const App: React.FC = () => {
         return (
           <SameLetterWords
             isCampaignLevel={false}
-            numMatchingWords={4}
-            numTotalWords={16}
-            wordLength={5}
-            numGuesses={20}
             theme={theme}
             settings={settings}
             setPage={setPage}

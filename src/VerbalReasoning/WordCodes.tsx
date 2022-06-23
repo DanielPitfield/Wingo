@@ -38,7 +38,8 @@ const WordCodes: React.FC<Props> = (props) => {
 
   const [inProgress, setInProgress] = useState(true);
   const [guess, setGuess] = useState("");
-  const [remainingGuesses, setRemainingGuesses] = useState(props.numGuesses);
+  
+  const [remainingGuesses, setRemainingGuesses] = useState(gamemodeSettings.numGuesses);
 
   // Generated words along with their respective codes
   const [wordCodes, setWordCodes] = useState<{ word: string; code: string }[]>([]);

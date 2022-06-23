@@ -78,8 +78,6 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
   const DEFAULT_NUMBERSIZE = "medium";
 
   const [inProgress, setInProgress] = useState(true);
-  const [remainingGuesses, setRemainingGuesses] = useState(props.gamemodeSettings?.numGuesses ?? DEFAULT_NUM_GUESSES);
-
   const [expressionTiles, setExpressionTiles] = useState<
     { expression: string; total: number; status: "incorrect" | "correct" | "not set" }[]
   >([]);
@@ -96,11 +94,13 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
 
   const [gamemodeSettings, setGamemodeSettings] = useState<{
     numTiles: number;
-    numberSize: "small" | "medium" | "large";
+    numberSize: numberSizeOption;
     numOperands: number;
     numGuesses: number;
     timerConfig: { isTimed: true; seconds: number } | { isTimed: false };
   }>(defaultGamemodeSettings);
+
+  const [remainingGuesses, setRemainingGuesses] = useState(gamemodeSettings.numGuesses);
 
   const DEFAULT_TIMER_VALUE = 100;
   const [remainingSeconds, setRemainingSeconds] = useState(

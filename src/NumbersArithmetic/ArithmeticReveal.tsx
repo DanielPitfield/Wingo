@@ -26,7 +26,7 @@ interface Props {
     (when the Custom option is selected, the inputs for the settings appear)
     */
 
-    timer?: { isTimed: true; seconds: number } | { isTimed: false };
+    timerConfig?: { isTimed: true; seconds: number } | { isTimed: false };
     numCheckpoints?: number;
     // How many tiles appear EACH checkpoint?
     numTiles?: number;
@@ -44,6 +44,11 @@ interface Props {
 
 /** */
 const ArithmeticReveal: React.FC<Props> = (props) => {
+  const DEFAULT_NUM_CHECKPOINTS = 1;
+  const DEFAULT_NUM_TILES = 5;
+  const DEFAULT_NUMBERSIZE = "medium";
+  const DEFAULT_REVEAL_INTERVAL = 3;
+
   // Max number of characters permitted in a guess
   const MAX_LENGTH = 6;
 
@@ -57,44 +62,42 @@ const ArithmeticReveal: React.FC<Props> = (props) => {
   const [tiles, setTiles] = useState<string[][]>([]);
   const [targetTransitioned, setTargetTransitioned] = useState(false);
 
-  // Gamemode settings
+  const defaultGamemodeSettings = {
+    numCheckpoints: props.gamemodeSettings?.numCheckpoints ?? DEFAULT_NUM_CHECKPOINTS,
+    numTiles: props.gamemodeSettings?.numTiles ?? DEFAULT_NUM_TILES,
+    numberSize: props.gamemodeSettings?.numberSize ?? DEFAULT_NUMBERSIZE,
+    /* TODO: Sync Flip animation with reveal animation
+      The CSS to apply the flip tile animation assumes the reveal interval is always 3 seconds
+      Perhaps use animationDelay to control when the animation happens
+    */
+    revealIntervalSeconds: props.gamemodeSettings?.revealIntervalSeconds ?? DEFAULT_REVEAL_INTERVAL,
+    timerConfig: props.gamemodeSettings?.timerConfig ?? { isTimed: false },
+  };
 
-  // Timer enabled by default, unless otherwise stated
-  const [isTimerEnabled, setIsTimerEnabled] = useState(props.gamemodeSettings?.timer?.isTimed ?? true);
+  const [gamemodeSettings, setGamemodeSettings] = useState<{
+    numCheckpoints: number;
+    numTiles: number;
+    numberSize: numberSizeOption;
+    revealIntervalSeconds: number;
+    timerConfig: { isTimed: true; seconds: number } | { isTimed: false };
+  }>(defaultGamemodeSettings);
+
   const DEFAULT_TIMER_VALUE = 10;
   const [remainingSeconds, setRemainingSeconds] = useState(
-    props.gamemodeSettings?.timer?.isTimed === true ? props.gamemodeSettings?.timer.seconds : DEFAULT_TIMER_VALUE
-  );
-  const [totalSeconds, setTotalSeconds] = useState(
-    props.gamemodeSettings?.timer?.isTimed === true ? props.gamemodeSettings?.timer.seconds : DEFAULT_TIMER_VALUE
-  );
-
-  const DEFAULT_NUM_CHECKPOINTS = 1;
-  const [numCheckpoints, setNumCheckpoints] = useState(
-    props.gamemodeSettings?.numCheckpoints ?? DEFAULT_NUM_CHECKPOINTS
+    props.gamemodeSettings?.timerConfig?.isTimed === true
+      ? props.gamemodeSettings?.timerConfig.seconds
+      : DEFAULT_TIMER_VALUE
   );
 
-  const DEFAULT_NUM_TILES = 5;
-  const [numTiles, setNumTiles] = useState(props.gamemodeSettings?.numTiles ?? DEFAULT_NUM_TILES);
-
-  const DEFAULT_NUMBERSIZE = "medium";
-  const [numberSize, setNumberSize] = useState<"small" | "medium" | "large">(
-    props.gamemodeSettings?.numberSize ?? DEFAULT_NUMBERSIZE
-  );
-
-  const DEFAULT_REVEAL_INTERVAL = 3;
-  /* TODO: Sync Flip animation with reveal animation
-  The CSS to apply the flip tile animation assumes the reveal interval is always 3 seconds
-  Perhaps use animationDelay to control when the animation happens
-  */
-
-  const [revealIntervalSeconds, setRevealIntervalSeconds] = useState(
-    props.gamemodeSettings?.revealIntervalSeconds ?? DEFAULT_REVEAL_INTERVAL
+  const [mostRecentTotalSeconds, setMostRecentTotalSeconds] = useState(
+    props.gamemodeSettings?.timerConfig?.isTimed === true
+      ? props.gamemodeSettings?.timerConfig.seconds
+      : DEFAULT_TIMER_VALUE
   );
 
   // What is the maximum starting number which should be used (based on difficulty)?
   function getStartingNumberLimit(): number {
-    switch (numberSize) {
+    switch (gamemodeSettings.numberSize) {
       case "small": {
         return 100;
       }
@@ -109,7 +112,7 @@ const ArithmeticReveal: React.FC<Props> = (props) => {
 
   // What is the maximum number which should be used with the given operator (based on difficulty)?
   function getOperandLimit(operator: string) {
-    switch (numberSize) {
+    switch (gamemodeSettings.numberSize) {
       case "small": {
         switch (operator) {
           case "÷":
@@ -239,7 +242,7 @@ const ArithmeticReveal: React.FC<Props> = (props) => {
     // Target number after each checkpoint
     const newTargetNumbers: number[] = [];
 
-    for (let i = 0; i < numCheckpoints; i++) {
+    for (let i = 0; i < gamemodeSettings.numCheckpoints; i++) {
       // Use/carry on from previous checkpoint target (unless first checkpoint which uses a random number)
       const checkpointStartingNumber = newTargetNumbers[i - 1] ?? randomIntFromInterval(1, getStartingNumberLimit());
 
@@ -250,7 +253,7 @@ const ArithmeticReveal: React.FC<Props> = (props) => {
       let runningTotal = checkpointStartingNumber;
 
       // For each tile in the checkpoint
-      for (let i = 0; i < numTiles; i++) {
+      for (let i = 0; i < gamemodeSettings.numTiles; i++) {
         // Generate a new tile from the existing target number
         const { tile, newRunningTotal } = generateTile(runningTotal);
 
@@ -285,8 +288,7 @@ const ArithmeticReveal: React.FC<Props> = (props) => {
   // Any of the game mode settings are changed then reset the game
   React.useEffect(() => {
     ResetGame();
-  }, [isTimerEnabled, totalSeconds, numTiles, numberSize, numCheckpoints, revealIntervalSeconds]);
-  // TODO: Probably best these settings are part of a single object
+  }, [gamemodeSettings]);
 
   React.useEffect(() => {
     // If all tiles have been initialised
@@ -295,13 +297,15 @@ const ArithmeticReveal: React.FC<Props> = (props) => {
     }
 
     generateAllTiles();
-  }, [tiles, numTiles]);
+  }, [tiles, gamemodeSettings.numTiles]);
 
   React.useEffect(() => {
     setInProgress(true);
     setRevealState({ type: "in-progress", revealedTiles: 0 });
     setGuess("");
-    setRemainingSeconds(totalSeconds);
+    if (gamemodeSettings.timerConfig.isTimed) {
+      setRemainingSeconds(gamemodeSettings.timerConfig.seconds);
+    }
   }, [currentCheckpoint]);
 
   React.useEffect(() => {
@@ -315,7 +319,7 @@ const ArithmeticReveal: React.FC<Props> = (props) => {
       const numRevealedTiles = revealState.type === "in-progress" ? revealState.revealedTiles + 1 : 1;
 
       // If all tiles have been revealed
-      if (numRevealedTiles > numTiles) {
+      if (numRevealedTiles > gamemodeSettings.numTiles) {
         setRevealState({ type: "finished" });
         clearInterval(timer);
       } else {
@@ -325,14 +329,14 @@ const ArithmeticReveal: React.FC<Props> = (props) => {
         });
         setTargetTransitioned(true);
       }
-    }, revealIntervalSeconds * 1000);
+    }, gamemodeSettings.revealIntervalSeconds * 1000);
 
     return () => clearInterval(timer);
-  }, [numTiles, revealIntervalSeconds, revealState]);
+  }, [gamemodeSettings.numTiles, gamemodeSettings.revealIntervalSeconds, revealState]);
 
   // (Guess) Timer Setup
   React.useEffect(() => {
-    if (!isTimerEnabled || !inProgress) {
+    if (!gamemodeSettings.timerConfig.isTimed || !inProgress) {
       return;
     }
 
@@ -351,7 +355,7 @@ const ArithmeticReveal: React.FC<Props> = (props) => {
     }, 1000);
 
     return () => clearInterval(timerGuess);
-  }, [setRemainingSeconds, remainingSeconds, isTimerEnabled, revealState, inProgress]);
+  }, [setRemainingSeconds, remainingSeconds, gamemodeSettings.timerConfig.isTimed, revealState, inProgress]);
 
   /**
    *
@@ -366,7 +370,7 @@ const ArithmeticReveal: React.FC<Props> = (props) => {
     // Guess is the correct end of checkpoint value
     const successCondition = guess === targetNumbers[currentCheckpoint].toString();
     // Last checkpoint
-    const lastCheckpoint = currentCheckpoint === numCheckpoints - 1;
+    const lastCheckpoint = currentCheckpoint === gamemodeSettings.numCheckpoints - 1;
 
     let message_notification;
 
@@ -377,7 +381,7 @@ const ArithmeticReveal: React.FC<Props> = (props) => {
           <MessageNotification type="success">
             <strong>Correct!</strong>
             <br></br>
-            <span>{`${currentCheckpoint + 1} / ${numCheckpoints} checkpoints completed`}</span>
+            <span>{`${currentCheckpoint + 1} / ${gamemodeSettings.numCheckpoints} checkpoints completed`}</span>
           </MessageNotification>
 
           <br></br>
@@ -400,7 +404,7 @@ const ArithmeticReveal: React.FC<Props> = (props) => {
           <MessageNotification type="success">
             <strong>Correct!</strong>
             <br></br>
-            <span>{`Completed all ${numCheckpoints} checkpoints!`}</span>
+            <span>{`Completed all ${gamemodeSettings.numCheckpoints} checkpoints!`}</span>
           </MessageNotification>
 
           <br></br>
@@ -453,9 +457,9 @@ const ArithmeticReveal: React.FC<Props> = (props) => {
     setGuess("");
     setCurrentCheckpoint(0);
     setRevealState({ type: "in-progress", revealedTiles: 0 });
-    if (isTimerEnabled) {
+    if (gamemodeSettings.timerConfig.isTimed) {
       // Reset the timer if it is enabled in the game options
-      setRemainingSeconds(totalSeconds);
+      setRemainingSeconds(gamemodeSettings.timerConfig.seconds);
     }
     generateAllTiles();
   }
@@ -498,11 +502,15 @@ const ArithmeticReveal: React.FC<Props> = (props) => {
         <label>
           <input
             type="number"
-            value={numTiles}
+            value={gamemodeSettings.numTiles}
             min={MIN_NUM_TILES}
             max={MAX_NUM_TILES}
             onChange={(e) => {
-              setNumTiles(e.target.valueAsNumber);
+              const newGamemodeSettings = {
+                ...gamemodeSettings,
+                numTiles: e.target.valueAsNumber,
+              };
+              setGamemodeSettings(newGamemodeSettings);
             }}
           ></input>
           Number of tiles
@@ -510,11 +518,15 @@ const ArithmeticReveal: React.FC<Props> = (props) => {
         <label>
           <input
             type="number"
-            value={numCheckpoints}
+            value={gamemodeSettings.numCheckpoints}
             min={MIN_NUM_CHECKPOINTS}
             max={MAX_NUM_CHECKPOINTS}
             onChange={(e) => {
-              setNumCheckpoints(e.target.valueAsNumber);
+              const newGamemodeSettings = {
+                ...gamemodeSettings,
+                numCheckpoints: e.target.valueAsNumber,
+              };
+              setGamemodeSettings(newGamemodeSettings);
             }}
           ></input>
           Number of checkpoints
@@ -522,11 +534,15 @@ const ArithmeticReveal: React.FC<Props> = (props) => {
         <label>
           <select
             onChange={(e) => {
-              setNumberSize(e.target.value as numberSizeOption);
+              const newGamemodeSettings = {
+                ...gamemodeSettings,
+                numberSize: e.target.value as numberSizeOption,
+              };
+              setGamemodeSettings(newGamemodeSettings);
             }}
             className="numberSize_input"
             name="numberSize"
-            value={numberSize}
+            value={gamemodeSettings.numberSize}
           >
             {numberSizeOptions.map((sizeOption) => (
               <option key={sizeOption} value={sizeOption}>
@@ -539,11 +555,15 @@ const ArithmeticReveal: React.FC<Props> = (props) => {
         <label>
           <input
             type="number"
-            value={revealIntervalSeconds}
+            value={gamemodeSettings.revealIntervalSeconds}
             min={MIN_REVEAL_INTERVAL}
             max={MAX_REVEAL_INTERVAL}
             onChange={(e) => {
-              setRevealIntervalSeconds(e.target.valueAsNumber);
+              const newGamemodeSettings = {
+                ...gamemodeSettings,
+                revealIntervalSeconds: e.target.valueAsNumber,
+              };
+              setGamemodeSettings(newGamemodeSettings);
             }}
           ></input>
           Reveal interval
@@ -551,25 +571,36 @@ const ArithmeticReveal: React.FC<Props> = (props) => {
         <>
           <label>
             <input
-              checked={isTimerEnabled}
+              checked={gamemodeSettings.timerConfig.isTimed}
               type="checkbox"
               onChange={() => {
-                setIsTimerEnabled(!isTimerEnabled);
+                // If currently timed, on change, make the game not timed and vice versa
+                const newTimer: { isTimed: true; seconds: number } | { isTimed: false } = gamemodeSettings.timerConfig
+                  .isTimed
+                  ? { isTimed: false }
+                  : { isTimed: true, seconds: mostRecentTotalSeconds };
+                const newGamemodeSettings = { ...gamemodeSettings, timerConfig: newTimer };
+                setGamemodeSettings(newGamemodeSettings);
               }}
             ></input>
             Timer
           </label>
-          {isTimerEnabled && (
+          {gamemodeSettings.timerConfig.isTimed && (
             <label>
               <input
                 type="number"
-                value={totalSeconds}
+                value={gamemodeSettings.timerConfig.seconds}
                 min={10}
                 max={120}
                 step={5}
                 onChange={(e) => {
                   setRemainingSeconds(e.target.valueAsNumber);
-                  setTotalSeconds(e.target.valueAsNumber);
+                  setMostRecentTotalSeconds(e.target.valueAsNumber);
+                  const newGamemodeSettings = {
+                    ...gamemodeSettings,
+                    timerConfig: { isTimed: true, seconds: e.target.valueAsNumber },
+                  };
+                  setGamemodeSettings(newGamemodeSettings);
                 }}
               ></input>
               Seconds
@@ -625,10 +656,10 @@ const ArithmeticReveal: React.FC<Props> = (props) => {
       )}
       {revealState.type === "finished" && (
         <div>
-          {isTimerEnabled && (
+          {gamemodeSettings.timerConfig.isTimed && (
             <ProgressBar
               progress={remainingSeconds}
-              total={totalSeconds}
+              total={gamemodeSettings.timerConfig.seconds}
               display={{ type: "transition", colorTransition: GreenToRedColorTransition }}
             ></ProgressBar>
           )}

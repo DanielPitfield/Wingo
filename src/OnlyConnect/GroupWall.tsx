@@ -12,9 +12,15 @@ import { categoryMappings } from "../WordleConfig";
 
 interface Props {
   isCampaignLevel: boolean;
-  numGroups: number;
-  groupSize: number;
-  numGuesses: number;
+
+  gamemodeSettings?: {
+    timerConfig?: { isTimed: true; seconds: number } | { isTimed: false };
+    numGroups?: number;
+    groupSize?: number;
+    // How many times can you check your attempts, once there are only two groups remaining?
+    numGuesses?: number;
+  };
+
   theme: Theme;
   settings: SettingsData;
   setPage: (page: Page) => void;
@@ -43,22 +49,45 @@ export function getPrettyWord(text: string): string {
 
 /** */
 const GroupWall: React.FC<Props> = (props) => {
+  const DEFAULT_NUM_GROUPS = 4;
+  const DEFAULT_GROUP_SIZE = 4;
+  const DEFAULT_NUM_GUESSES = 3;
+
   const [inProgress, setInProgress] = useState(true);
   const [gridWords, setGridWords] = useState<
     { word: string; categoryName: string; inCompleteGroup: boolean; rowNumber: number | null }[]
   >([]);
   const [selectedWords, setSelectedWords] = useState<{ word: string; categoryName: string }[]>([]);
   const [numCompletedGroups, setNumCompletedGroups] = useState(0);
-  const [remainingGuesses, setRemainingGuesses] = useState(props.numGuesses);
 
-  // Gamemode settings
-  const [isTimerEnabled, setIsTimerEnabled] = useState(true);
+  const defaultGamemodeSettings = {
+    numGroups: props.gamemodeSettings?.numGroups ?? DEFAULT_NUM_GROUPS,
+    groupSize: props.gamemodeSettings?.groupSize ?? DEFAULT_GROUP_SIZE,
+    numGuesses: props.gamemodeSettings?.numGuesses ?? DEFAULT_NUM_GUESSES,
+    timerConfig: props.gamemodeSettings?.timerConfig ?? { isTimed: false },
+  };
+
+  const [gamemodeSettings, setGamemodeSettings] = useState<{
+    numGroups: number;
+    groupSize: number;
+    numGuesses: number;
+    timerConfig: { isTimed: true; seconds: number } | { isTimed: false };
+  }>(defaultGamemodeSettings);
+
+  const [remainingGuesses, setRemainingGuesses] = useState(gamemodeSettings.numGuesses);
+
   const DEFAULT_TIMER_VALUE = 60;
-  const [remainingSeconds, setRemainingSeconds] = useState(DEFAULT_TIMER_VALUE);
-  const [totalSeconds, setTotalSeconds] = useState(DEFAULT_TIMER_VALUE);
+  const [remainingSeconds, setRemainingSeconds] = useState(
+    props.gamemodeSettings?.timerConfig?.isTimed === true
+      ? props.gamemodeSettings?.timerConfig.seconds
+      : DEFAULT_TIMER_VALUE
+  );
 
-  // Generate the elements to configure the gamemode settings
-  const gamemodeSettings = generateSettings();
+  const [mostRecentTotalSeconds, setMostRecentTotalSeconds] = useState(
+    props.gamemodeSettings?.timerConfig?.isTimed === true
+      ? props.gamemodeSettings?.timerConfig.seconds
+      : DEFAULT_TIMER_VALUE
+  );
 
   // Sounds
   const [playCorrectChimeSoundEffect] = useCorrectChime(props.settings);
@@ -68,7 +97,7 @@ const GroupWall: React.FC<Props> = (props) => {
 
   // (Guess) Timer Setup
   React.useEffect(() => {
-    if (!isTimerEnabled || !inProgress) {
+    if (!gamemodeSettings.timerConfig.isTimed || !inProgress) {
       return;
     }
 
@@ -84,7 +113,7 @@ const GroupWall: React.FC<Props> = (props) => {
     return () => {
       clearInterval(timerGuess);
     };
-  }, [setRemainingSeconds, remainingSeconds, isTimerEnabled]);
+  }, [setRemainingSeconds, remainingSeconds, gamemodeSettings.timerConfig.isTimed]);
 
   // Populate grid/wall
   React.useEffect(() => {
@@ -104,7 +133,7 @@ const GroupWall: React.FC<Props> = (props) => {
     }
 
     // Not full selection
-    if (selectedWords.length !== props.groupSize) {
+    if (selectedWords.length !== gamemodeSettings.groupSize) {
       return;
     }
 
@@ -117,7 +146,7 @@ const GroupWall: React.FC<Props> = (props) => {
     // If not all of the selected words are from the same category
     if (numCorrectWords !== selectedWords.length) {
       // There are only 2 groups left
-      if (numCompletedGroups === props.numGroups - 2) {
+      if (numCompletedGroups === gamemodeSettings.numGroups - 2) {
         // Decrease number of guesses
         setRemainingGuesses(remainingGuesses - 1);
         // If just used last guess
@@ -138,7 +167,7 @@ const GroupWall: React.FC<Props> = (props) => {
     }
 
     // Count the number of groups BEFORE checking each grid word
-    const completedGroupCountPre = gridWords.filter((x) => x.inCompleteGroup).length / props.groupSize;
+    const completedGroupCountPre = gridWords.filter((x) => x.inCompleteGroup).length / gamemodeSettings.groupSize;
 
     const newGridWords = gridWords
       .map((x, index) => {
@@ -170,12 +199,12 @@ const GroupWall: React.FC<Props> = (props) => {
       });
 
     // Count the number of groups AFTER checking each grid word
-    const completedGroupCountPost = newGridWords.filter((x) => x.inCompleteGroup).length / props.groupSize;
+    const completedGroupCountPost = newGridWords.filter((x) => x.inCompleteGroup).length / gamemodeSettings.groupSize;
 
     // If there is a new completed group (i.e. the group count has incremented by 1)
     if (completedGroupCountPost > completedGroupCountPre) {
       // If there is only 1 group left
-      if (completedGroupCountPost === props.numGroups - 1) {
+      if (completedGroupCountPost === gamemodeSettings.numGroups - 1) {
         // Auto-complete the last group
         setGridWords(
           newGridWords.map((gridWord) => ({
@@ -224,7 +253,7 @@ const GroupWall: React.FC<Props> = (props) => {
       newSelectedWords = newSelectedWords.filter((x) => x !== gridItem);
     }
     // Room for word to be added to selection
-    else if (selectedWords.length < props.groupSize) {
+    else if (selectedWords.length < gamemodeSettings.groupSize) {
       newSelectedWords.push(gridItem);
     }
     // Selection is already full
@@ -249,7 +278,7 @@ const GroupWall: React.FC<Props> = (props) => {
     let grid_words: { word: string; categoryName: string; inCompleteGroup: boolean; rowNumber: number | null }[] = [];
 
     // Use the specified number of groups but never exceed the number of category word lists
-    const numCategories = Math.min(props.numGroups, categoryMappings.length);
+    const numCategories = Math.min(gamemodeSettings.numGroups, categoryMappings.length);
 
     while (category_names.length < numCategories) {
       // Get a random index of categoryMappings
@@ -259,14 +288,14 @@ const GroupWall: React.FC<Props> = (props) => {
       const randomCategory = categoryMappings[newIndex];
 
       // If the category has not already been used and there are enough words in the word list
-      if (!category_names.includes(randomCategory.name) && randomCategory.array.length >= props.groupSize) {
+      if (!category_names.includes(randomCategory.name) && randomCategory.array.length >= gamemodeSettings.groupSize) {
         const wordList = randomCategory.array;
 
         // Array to hold the group of words from this category
         let wordSubset: string[] = [];
 
         // Until a full group of words has been determined from the category
-        while (wordSubset.length < props.groupSize) {
+        while (wordSubset.length < gamemodeSettings.groupSize) {
           const newIndex = Math.round(Math.random() * (wordList.length - 1));
           const randomWord = wordList[newIndex].word;
 
@@ -299,8 +328,8 @@ const GroupWall: React.FC<Props> = (props) => {
   function populateRow(rowNumber: number) {
     return (
       <div className="only-connect-row" key={rowNumber}>
-        {Array.from({ length: props.groupSize }).map((_, i) => {
-          const index = rowNumber * props.groupSize + i;
+        {Array.from({ length: gamemodeSettings.groupSize }).map((_, i) => {
+          const index = rowNumber * gamemodeSettings.groupSize + i;
           const gridItem = gridWords[index];
 
           return (
@@ -326,7 +355,7 @@ const GroupWall: React.FC<Props> = (props) => {
   function displayGrid() {
     var Grid = [];
 
-    for (let i = 0; i < props.numGroups; i++) {
+    for (let i = 0; i < gamemodeSettings.numGroups; i++) {
       Grid.push(populateRow(i));
     }
 
@@ -345,9 +374,9 @@ const GroupWall: React.FC<Props> = (props) => {
 
     return (
       <>
-        <MessageNotification type={numCompletedGroups === props.numGroups ? "success" : "error"}>
+        <MessageNotification type={numCompletedGroups === gamemodeSettings.numGroups ? "success" : "error"}>
           <strong>
-            {numCompletedGroups === props.numGroups ? "All groups found!" : `${numCompletedGroups} groups found`}
+            {numCompletedGroups === gamemodeSettings.numGroups ? "All groups found!" : `${numCompletedGroups} groups found`}
           </strong>
         </MessageNotification>
 
@@ -366,40 +395,105 @@ const GroupWall: React.FC<Props> = (props) => {
     setGridWords(getGridWords());
     setSelectedWords([]);
     setNumCompletedGroups(0);
-    setRemainingGuesses(props.numGuesses);
+    setRemainingGuesses(gamemodeSettings.numGuesses);
 
-    if (isTimerEnabled) {
+    if (gamemodeSettings.timerConfig.isTimed) {
       // Reset the timer if it is enabled in the game options
-      setRemainingSeconds(totalSeconds);
+      setRemainingSeconds(gamemodeSettings.timerConfig.seconds);
     }
   }
 
-  function generateSettings(): React.ReactNode {
+  function generateSettingsOptions(): React.ReactNode {
+    const MIN_NUM_GROUPS = 2;
+    const MAX_NUM_GROUPS = 10;
+
+    const MIN_GROUP_SIZE = 2;
+    const MAX_GROUP_SIZE = 10;
+
     let settings;
 
     settings = (
       <>
+      <label>
+          <input
+            type="number"
+            value={gamemodeSettings.numGroups}
+            min={MIN_NUM_GROUPS}
+            max={MAX_NUM_GROUPS}
+            onChange={(e) => {
+              const newGamemodeSettings = {
+                ...gamemodeSettings,
+                numGroups: e.target.valueAsNumber,
+              };
+              setGamemodeSettings(newGamemodeSettings);
+            }}
+          ></input>
+          Number of groups
+        </label>
         <label>
           <input
-            checked={isTimerEnabled}
-            type="checkbox"
+            type="number"
+            value={gamemodeSettings.groupSize}
+            min={MIN_GROUP_SIZE}
+            max={MAX_GROUP_SIZE}
             onChange={(e) => {
-              setIsTimerEnabled(!isTimerEnabled);
+              const newGamemodeSettings = {
+                ...gamemodeSettings,
+                groupSize: e.target.valueAsNumber,
+              };
+              setGamemodeSettings(newGamemodeSettings);
+            }}
+          ></input>
+          Group size
+        </label>
+        <label>
+          <input
+            type="number"
+            value={gamemodeSettings.numGuesses}
+            min={1}
+            max={10}
+            onChange={(e) => {
+              const newGamemodeSettings = {
+                ...gamemodeSettings,
+                numGuesses: e.target.valueAsNumber,
+              };
+              setGamemodeSettings(newGamemodeSettings);
+            }}
+          ></input>
+          Number of guesses
+        </label>
+        <label>
+          <input
+            checked={gamemodeSettings.timerConfig.isTimed}
+            type="checkbox"
+            onChange={() => {
+              // If currently timed, on change, make the game not timed and vice versa
+              const newTimer: { isTimed: true; seconds: number } | { isTimed: false } = gamemodeSettings.timerConfig
+                .isTimed
+                ? { isTimed: false }
+                : { isTimed: true, seconds: mostRecentTotalSeconds };
+              const newGamemodeSettings = { ...gamemodeSettings, timerConfig: newTimer };
+              setGamemodeSettings(newGamemodeSettings);
             }}
           ></input>
           Timer
         </label>
-        {isTimerEnabled && (
+        {gamemodeSettings.timerConfig.isTimed && (
           <label>
             <input
               type="number"
-              value={totalSeconds}
+              value={gamemodeSettings.timerConfig.seconds}
               min={10}
               max={120}
               step={5}
               onChange={(e) => {
                 setRemainingSeconds(e.target.valueAsNumber);
-                setTotalSeconds(e.target.valueAsNumber);
+                setMostRecentTotalSeconds(e.target.valueAsNumber);
+                const newGamemodeSettings = {
+                  ...gamemodeSettings,
+                  timerConfig: { isTimed: true, seconds: e.target.valueAsNumber },
+                };
+                setGamemodeSettings(newGamemodeSettings);
               }}
             ></input>
             Seconds
@@ -417,19 +511,20 @@ const GroupWall: React.FC<Props> = (props) => {
       style={{ backgroundImage: `url(${props.theme.backgroundImageSrc})`, backgroundSize: "100%" }}
     >
       {!props.isCampaignLevel && (
-      <div className="gamemodeSettings">
-        <GamemodeSettingsMenu>{gamemodeSettings}</GamemodeSettingsMenu>
-      </div>)}
+        <div className="gamemodeSettings">
+          <GamemodeSettingsMenu>{generateSettingsOptions()}</GamemodeSettingsMenu>
+        </div>
+      )}
       {!inProgress && <div className="outcome">{displayOutcome()}</div>}
-      {Boolean(inProgress && numCompletedGroups === props.numGroups - 2) && (
+      {Boolean(inProgress && numCompletedGroups === gamemodeSettings.numGroups - 2) && (
         <MessageNotification type="default">{`Guesses left: ${remainingGuesses}`}</MessageNotification>
       )}
       <div className="only_connect_wall">{displayGrid()}</div>
       <div>
-        {isTimerEnabled && (
+        {gamemodeSettings.timerConfig.isTimed && (
           <ProgressBar
             progress={remainingSeconds}
-            total={totalSeconds}
+            total={gamemodeSettings.timerConfig.seconds}
             display={{ type: "transition", colorTransition: GreenToRedColorTransition }}
           ></ProgressBar>
         )}

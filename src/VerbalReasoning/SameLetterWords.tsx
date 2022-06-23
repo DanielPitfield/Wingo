@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Page } from "../App";
+import { DEFAULT_WORD_LENGTH, Page } from "../App";
 import { Button } from "../Button";
 import GamemodeSettingsMenu from "../GamemodeSettingsMenu";
 import { MessageNotification } from "../MessageNotification";
@@ -13,10 +13,16 @@ import { wordLengthMappingsTargets } from "../WordleConfig";
 
 interface Props {
   isCampaignLevel: boolean;
-  numMatchingWords: number;
-  numTotalWords: number;
-  wordLength: number;
-  numGuesses: number;
+
+  gamemodeSettings?: {
+    wordLength?: number;
+    numMatchingWords?: number;
+    numTotalWords?: number;
+    timerConfig?: { isTimed: true; seconds: number } | { isTimed: false };
+    // How many times can you check your attempts?
+    numGuesses?: number;
+  };
+
   theme: Theme;
   settings: SettingsData;
   setPage: (page: Page) => void;
@@ -25,20 +31,59 @@ interface Props {
 
 /** */
 const SameLetterWords: React.FC<Props> = (props) => {
+  const DEFAULT_NUM_MATCHING_WORDS = 4;
+  const DEFAULT_NUM_TOTAL_WORDS = 16;
+  const DEFAULT_NUM_GUESSES = 20;
+
+  const MIN_NUM_MATCHING_WORDS = 2;
+  const MAX_NUM_MATCHING_WORDS = 10;
+
+  const MIN_NUM_TOTAL_WORDS = 4;
+  const MAX_NUM_TOTAL_WORDS = 20;
+
+  const MIN_NUM_GUESSES = 1;
+  const MAX_NUM_GUESSES = 100;
+
   const [inProgress, setInProgress] = useState(true);
   const [selectedWords, setSelectedWords] = useState<string[]>([]);
   const [validWords, setValidWords] = useState<string[]>([]);
   const [gridWords, setGridWords] = useState<string[]>([]);
-  const [remainingGuesses, setRemainingGuesses] = useState(props.numGuesses);
 
-  // Gamemode settings
-  const [isTimerEnabled, setIsTimerEnabled] = useState(true);
+  // TODO: Handling unexpected gamemodeSettings (that have been provided)
+  const STARTING_NUM_TOTAL_WORDS = Math.max(MIN_NUM_TOTAL_WORDS, props.gamemodeSettings?.numTotalWords ?? DEFAULT_NUM_TOTAL_WORDS);
+
+  const numMatchingWordsFloor = Math.max(MIN_NUM_MATCHING_WORDS, props.gamemodeSettings?.numMatchingWords ?? DEFAULT_NUM_MATCHING_WORDS);
+  // Number of words to match can't be more than the total number of words
+  const STARTING_NUM_MATCHING_WORDS = numMatchingWordsFloor < STARTING_NUM_TOTAL_WORDS ? numMatchingWordsFloor : STARTING_NUM_TOTAL_WORDS - 1;
+
+  const defaultGamemodeSettings = {
+    wordLength: props.gamemodeSettings?.wordLength ?? DEFAULT_WORD_LENGTH,
+    numMatchingWords: STARTING_NUM_MATCHING_WORDS,
+    numTotalWords: STARTING_NUM_TOTAL_WORDS,
+    numGuesses: props.gamemodeSettings?.numGuesses ?? DEFAULT_NUM_GUESSES,
+    timerConfig: props.gamemodeSettings?.timerConfig ?? { isTimed: false },
+  };
+
+  const [gamemodeSettings, setGamemodeSettings] = useState<{
+    wordLength: number;
+    numMatchingWords: number;
+    numTotalWords: number;
+    numGuesses: number;
+    timerConfig: { isTimed: true; seconds: number } | { isTimed: false };
+  }>(defaultGamemodeSettings);
+
   const DEFAULT_TIMER_VALUE = 100;
-  const [remainingSeconds, setRemainingSeconds] = useState(DEFAULT_TIMER_VALUE);
-  const [totalSeconds, setTotalSeconds] = useState(DEFAULT_TIMER_VALUE);
-
-  // Generate the elements to configure the gamemode settings
-  const gamemodeSettings = generateSettings();
+  const [remainingSeconds, setRemainingSeconds] = useState(
+    props.gamemodeSettings?.timerConfig?.isTimed === true
+      ? props.gamemodeSettings?.timerConfig.seconds
+      : DEFAULT_TIMER_VALUE
+  );
+  const [remainingGuesses, setRemainingGuesses] = useState(gamemodeSettings.numGuesses);
+  const [mostRecentTotalSeconds, setMostRecentTotalSeconds] = useState(
+    props.gamemodeSettings?.timerConfig?.isTimed === true
+      ? props.gamemodeSettings?.timerConfig.seconds
+      : DEFAULT_TIMER_VALUE
+  );
 
   // Sounds
   const [playCorrectChimeSoundEffect] = useCorrectChime(props.settings);
@@ -48,7 +93,7 @@ const SameLetterWords: React.FC<Props> = (props) => {
 
   // (Guess) Timer Setup
   React.useEffect(() => {
-    if (!isTimerEnabled || !inProgress) {
+    if (!gamemodeSettings.timerConfig.isTimed || !inProgress) {
       return;
     }
 
@@ -64,7 +109,7 @@ const SameLetterWords: React.FC<Props> = (props) => {
     return () => {
       clearInterval(timerGuess);
     };
-  }, [setRemainingSeconds, remainingSeconds, isTimerEnabled]);
+  }, [setRemainingSeconds, remainingSeconds, gamemodeSettings.timerConfig.isTimed]);
 
   // Populate grid/wall
   React.useEffect(() => {
@@ -181,7 +226,7 @@ const SameLetterWords: React.FC<Props> = (props) => {
     }
 
     // Start from prop.numMatchingWords, and decrement down (if we could not find that number of matching words in targetWordArray)
-    for (let numMatchingWords = props.numMatchingWords; numMatchingWords >= 1; numMatchingWords--) {
+    for (let numMatchingWords = gamemodeSettings.numMatchingWords; numMatchingWords >= 1; numMatchingWords--) {
       console.log(`Trying to find ${numMatchingWords} matching words in array`);
 
       // Determine the maximum number of times to find the props.numMatchingWords in the targetArray, before just continuing
@@ -190,7 +235,7 @@ const SameLetterWords: React.FC<Props> = (props) => {
       // For a sensible number of attempts for this numMatchingWords
       for (let attemptNo = 1; attemptNo <= MAX_ATTEMPTS_BEFORE_TRYING_LOWER_NUM; attemptNo++) {
         // The word array containing all the words of the specified length
-        targetWordArray = wordLengthMappingsTargets.find((x) => x.value === props.wordLength)?.array!;
+        targetWordArray = wordLengthMappingsTargets.find((x) => x.value === gamemodeSettings.wordLength)?.array!;
 
         // Choose a random word from this array
         const originalWord = targetWordArray[Math.round(Math.random() * (targetWordArray.length - 1))];
@@ -203,7 +248,7 @@ const SameLetterWords: React.FC<Props> = (props) => {
 
         // Otherwise, select a subset of the matching words (shuffle and slice)
         const shuffled_matches = shuffleArray(original_matches);
-        grid_words = shuffled_matches.slice(0, props.numMatchingWords);
+        grid_words = shuffled_matches.slice(0, gamemodeSettings.numMatchingWords);
 
         // If a suitable number of grid words was found
         if (grid_words.length >= numMatchingWords) {
@@ -225,7 +270,7 @@ const SameLetterWords: React.FC<Props> = (props) => {
     // Non-matching words
     let fail_count = 0;
 
-    while (grid_words.length < props.numTotalWords && fail_count < 100) {
+    while (grid_words.length < gamemodeSettings.numTotalWords && fail_count < 100) {
       // Choose a random word from target array
       const randomWord = targetWordArray[Math.round(Math.random() * (targetWordArray.length - 1))];
       // Not already in array and is NOT a matching word
@@ -245,8 +290,8 @@ const SameLetterWords: React.FC<Props> = (props) => {
   function populateRow(rowNumber: number) {
     return (
       <div className="only-connect-row" key={rowNumber}>
-        {Array.from({ length: props.numMatchingWords }).map((_, i) => {
-          const index = rowNumber * props.numMatchingWords + i;
+        {Array.from({ length: gamemodeSettings.numMatchingWords }).map((_, i) => {
+          const index = rowNumber * gamemodeSettings.numMatchingWords + i;
           const word = gridWords[index];
 
           if (!word) {
@@ -280,7 +325,7 @@ const SameLetterWords: React.FC<Props> = (props) => {
     var Grid = [];
 
     // The number of total words divided by the number of words that make up the correct selection (rounded up)
-    const numRows = Math.ceil(props.numTotalWords / props.numMatchingWords);
+    const numRows = Math.ceil(gamemodeSettings.numTotalWords / gamemodeSettings.numMatchingWords);
 
     for (let i = 0; i < numRows; i++) {
       Grid.push(populateRow(i));
@@ -335,40 +380,99 @@ const SameLetterWords: React.FC<Props> = (props) => {
     setSelectedWords([]);
     setValidWords([]);
     setGridWords(getGridWords());
-    setRemainingGuesses(props.numGuesses);
-
-    if (isTimerEnabled) {
+    setRemainingGuesses(gamemodeSettings.numGuesses);
+    if (gamemodeSettings.timerConfig.isTimed) {
       // Reset the timer if it is enabled in the game options
-      setRemainingSeconds(totalSeconds);
+      setRemainingSeconds(gamemodeSettings.timerConfig.seconds);
     }
   }
 
-  function generateSettings(): React.ReactNode {
+  function generateSettingsOptions(): React.ReactNode {
     let settings;
 
     settings = (
       <>
         <label>
           <input
-            checked={isTimerEnabled}
-            type="checkbox"
+            type="number"
+            value={gamemodeSettings.numMatchingWords}
+            min={MIN_NUM_MATCHING_WORDS}
+            max={Math.min(MAX_NUM_MATCHING_WORDS, gamemodeSettings.numTotalWords - 1)}
             onChange={(e) => {
-              setIsTimerEnabled(!isTimerEnabled);
+              const newGamemodeSettings = {
+                ...gamemodeSettings,
+                numMatchingWords: e.target.valueAsNumber,
+              };
+              setGamemodeSettings(newGamemodeSettings);
+            }}
+          ></input>
+          Number of matching words
+        </label>
+        <label>
+          <input
+            type="number"
+            value={gamemodeSettings.numTotalWords}
+            min={Math.max(MIN_NUM_TOTAL_WORDS, gamemodeSettings.numMatchingWords + 1)}
+            max={MAX_NUM_TOTAL_WORDS}
+            onChange={(e) => {
+              const newGamemodeSettings = {
+                ...gamemodeSettings,
+                numTotalWords: e.target.valueAsNumber,
+              };
+              setGamemodeSettings(newGamemodeSettings);
+            }}
+          ></input>
+          Number of total words
+        </label>
+        <label>
+          <input
+            type="number"
+            value={gamemodeSettings.numGuesses}
+            min={MIN_NUM_GUESSES}
+            max={MAX_NUM_GUESSES}
+            onChange={(e) => {
+              setRemainingGuesses(e.target.valueAsNumber);
+              const newGamemodeSettings = {
+                ...gamemodeSettings,
+                numGuesses: e.target.valueAsNumber,
+              };
+              setGamemodeSettings(newGamemodeSettings);
+            }}
+          ></input>
+          Number of guesses
+        </label>
+        <label>
+          <input
+            checked={gamemodeSettings.timerConfig.isTimed}
+            type="checkbox"
+            onChange={() => {
+              // If currently timed, on change, make the game not timed and vice versa
+              const newTimer: { isTimed: true; seconds: number } | { isTimed: false } = gamemodeSettings.timerConfig
+                .isTimed
+                ? { isTimed: false }
+                : { isTimed: true, seconds: mostRecentTotalSeconds };
+              const newGamemodeSettings = { ...gamemodeSettings, timerConfig: newTimer };
+              setGamemodeSettings(newGamemodeSettings);
             }}
           ></input>
           Timer
         </label>
-        {isTimerEnabled && (
+        {gamemodeSettings.timerConfig.isTimed && (
           <label>
             <input
               type="number"
-              value={totalSeconds}
+              value={gamemodeSettings.timerConfig.seconds}
               min={10}
               max={120}
               step={5}
               onChange={(e) => {
                 setRemainingSeconds(e.target.valueAsNumber);
-                setTotalSeconds(e.target.valueAsNumber);
+                setMostRecentTotalSeconds(e.target.valueAsNumber);
+                const newGamemodeSettings = {
+                  ...gamemodeSettings,
+                  timerConfig: { isTimed: true, seconds: e.target.valueAsNumber },
+                };
+                setGamemodeSettings(newGamemodeSettings);
               }}
             ></input>
             Seconds
@@ -386,9 +490,10 @@ const SameLetterWords: React.FC<Props> = (props) => {
       style={{ backgroundImage: `url(${props.theme.backgroundImageSrc})`, backgroundSize: "100%" }}
     >
       {!props.isCampaignLevel && (
-      <div className="gamemodeSettings">
-        <GamemodeSettingsMenu>{gamemodeSettings}</GamemodeSettingsMenu>
-      </div>)}
+        <div className="gamemodeSettings">
+          <GamemodeSettingsMenu>{generateSettingsOptions()}</GamemodeSettingsMenu>
+        </div>
+      )}
       <div className="outcome">{displayOutcome()}</div>
       {inProgress && (
         <>
@@ -402,10 +507,10 @@ const SameLetterWords: React.FC<Props> = (props) => {
       )}
       <div className="grid">{displayGrid()}</div>
       <div>
-        {isTimerEnabled && (
+        {gamemodeSettings.timerConfig.isTimed && (
           <ProgressBar
             progress={remainingSeconds}
-            total={totalSeconds}
+            total={gamemodeSettings.timerConfig.seconds}
             display={{ type: "transition", colorTransition: GreenToRedColorTransition }}
           ></ProgressBar>
         )}
