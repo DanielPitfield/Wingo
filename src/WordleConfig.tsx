@@ -49,6 +49,9 @@ export interface WordleConfigProps {
     wordLengthMaxLimit?: number;
     isFirstLetterProvided?: boolean;
     isHintShown?: boolean;
+    // Puzzle mode
+    puzzleRevealMs?: number;
+    puzzleLeaveNumBlanks?: number;
     timerConfig?: { isTimed: true; seconds: number } | { isTimed: false };
   };
 
@@ -61,10 +64,6 @@ export interface WordleConfigProps {
   conundrum?: string;
   targetWord?: string;
   wordArray?: string[];
-
-  // Puzzle mode
-  puzzleRevealMs?: number;
-  puzzleLeaveNumBlanks?: number;
 
   // Previous guesses (for daily)
   guesses?: string[];
@@ -203,6 +202,7 @@ export function getLetterStatus(
   return status;
 }
 
+// TODO: Gamemode setting option
 export function getNewLives(numGuesses: number, wordIndex: number): number {
   // Calculate the number of rows not used
   const extraRows = numGuesses - (wordIndex + 1);
@@ -283,6 +283,9 @@ const WordleConfig: React.FC<Props> = (props) => {
       [props.targetWord?.length!, props.gamemodeSettings?.wordLength!, props.defaultWordLength!].filter((x) => x)
     ) ?? DEFAULT_WORD_LENGTH;
 
+  const DEFAULT_PUZZLE_REVEAL_MS = 2000;
+  const DEFAULT_PUZZLE_LEAVE_NUM_BLANKS = 3;
+
   const defaultGamemodeSettings = {
     wordLength: defaultWordLength,
     // At what word length should increasing and limitless go up to?
@@ -290,6 +293,8 @@ const WordleConfig: React.FC<Props> = (props) => {
     isFirstLetterProvided: props.gamemodeSettings?.isHintShown ?? false,
     // Use gamemode setting value if specified, otherwise default to true for puzzle mode and false for other modes
     isHintShown: props.gamemodeSettings?.isHintShown ?? props.mode === "puzzle" ? true : false,
+    puzzleRevealMs: props.gamemodeSettings?.puzzleRevealMs ?? DEFAULT_PUZZLE_REVEAL_MS,
+    puzzleLeaveNumBlanks: props.gamemodeSettings?.puzzleLeaveNumBlanks ?? DEFAULT_PUZZLE_LEAVE_NUM_BLANKS,
     timerConfig: props.gamemodeSettings?.timerConfig ?? { isTimed: false },
   };
 
@@ -298,6 +303,8 @@ const WordleConfig: React.FC<Props> = (props) => {
     wordLengthMaxLimit: number;
     isFirstLetterProvided: boolean;
     isHintShown: boolean;
+    puzzleRevealMs: number;
+    puzzleLeaveNumBlanks: number;
     timerConfig: { isTimed: true; seconds: number } | { isTimed: false };
   }>(defaultGamemodeSettings);
 
@@ -747,12 +754,10 @@ const WordleConfig: React.FC<Props> = (props) => {
           return;
         }
 
-        // TODO: Change to configurable game mode setting (use state)
-        const DEFAULT_NUM_PUZZLE_BLANKS = 3;
         if (
-          // Stop revealing letters when there is only (props.puzzleLeaveNumBlanks) left to reveal
+          // Stop revealing letters when there is only puzzleLeaveNumBlanks left to reveal
           revealedLetterIndexes.length >=
-          targetWord!.length - (props.puzzleLeaveNumBlanks ?? DEFAULT_NUM_PUZZLE_BLANKS)
+          targetWord!.length - (gamemodeSettings.puzzleLeaveNumBlanks ?? gamemodeSettings.puzzleLeaveNumBlanks)
         ) {
           return;
         }
@@ -780,7 +785,7 @@ const WordleConfig: React.FC<Props> = (props) => {
           }
         }
         setRevealedLetterIndexes(newrevealedLetterIndexes);
-      }, props.puzzleRevealMs);
+      }, gamemodeSettings.puzzleRevealMs);
     }
 
     return () => {
@@ -821,12 +826,12 @@ const WordleConfig: React.FC<Props> = (props) => {
           wordLength: gamemodeSettings.wordLength,
           isFirstLetterProvided: gamemodeSettings.isFirstLetterProvided,
           isHintShown: gamemodeSettings.isHintShown,
+          puzzleRevealMs: gamemodeSettings.puzzleRevealMs,
+          puzzleLeaveNumBlanks: gamemodeSettings.puzzleLeaveNumBlanks,
           timerConfig: gamemodeSettings.timerConfig.isTimed
             ? { isTimed: true, seconds: remainingSeconds }
             : { isTimed: false },
         },
-        puzzleLeaveNumBlanks: props.puzzleLeaveNumBlanks,
-        puzzleRevealMs: props.puzzleRevealMs,
         targetWord,
         defaultWordLength: props.defaultWordLength,
         defaultnumGuesses: props.defaultnumGuesses,
@@ -1088,12 +1093,12 @@ const WordleConfig: React.FC<Props> = (props) => {
             wordLength: gamemodeSettings.wordLength,
             isFirstLetterProvided: gamemodeSettings.isFirstLetterProvided,
             isHintShown: gamemodeSettings.isHintShown,
+            puzzleRevealMs: gamemodeSettings.puzzleRevealMs,
+            puzzleLeaveNumBlanks: gamemodeSettings.puzzleLeaveNumBlanks,
             timerConfig: gamemodeSettings.timerConfig.isTimed
               ? { isTimed: true, seconds: remainingSeconds }
               : { isTimed: false },
           },
-          puzzleLeaveNumBlanks: props.puzzleLeaveNumBlanks,
-          puzzleRevealMs: props.puzzleRevealMs,
           targetWord,
           defaultWordLength: props.defaultWordLength,
           defaultnumGuesses: props.defaultnumGuesses,
@@ -1140,6 +1145,8 @@ const WordleConfig: React.FC<Props> = (props) => {
     wordLengthMaxLimit: number;
     isFirstLetterProvided: boolean;
     isHintShown: boolean;
+    puzzleRevealMs: number;
+    puzzleLeaveNumBlanks: number;
     timerConfig: { isTimed: true; seconds: number } | { isTimed: false };
   }) {
     setGamemodeSettings(newGamemodeSettings);
@@ -1287,6 +1294,8 @@ const WordleConfig: React.FC<Props> = (props) => {
         wordLengthMaxLimit: gamemodeSettings.wordLengthMaxLimit,
         isFirstLetterProvided: gamemodeSettings.isFirstLetterProvided,
         isHintShown: gamemodeSettings.isHintShown,
+        puzzleRevealMs: gamemodeSettings.puzzleRevealMs,
+        puzzleLeaveNumBlanks: gamemodeSettings.puzzleLeaveNumBlanks,
         timerConfig: gamemodeSettings.timerConfig.isTimed
           ? {
               isTimed: true,
@@ -1307,8 +1316,6 @@ const WordleConfig: React.FC<Props> = (props) => {
       targetWord={targetWord || ""}
       targetHint={gamemodeSettings.isHintShown ? targetHint : ""}
       targetCategory={targetCategory || ""}
-      puzzleRevealMs={props.puzzleRevealMs}
-      puzzleLeaveNumBlanks={props.puzzleLeaveNumBlanks}
       revealedLetterIndexes={revealedLetterIndexes}
       letterStatuses={letterStatuses}
       finishingButtonText={props.finishingButtonText}

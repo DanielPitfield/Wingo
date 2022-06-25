@@ -78,7 +78,7 @@ export const PuzzleConfig: React.FC<Props> = (props) => {
     }
 
     // Set the correct answer option index to be randomly among the incorrect answers
-    setCorrectAnswerIndex(Math.round(Math.random() * puzzle.sequence.incorrectAnswers.length));
+    setCorrectAnswerIndex(Math.floor(Math.random() * puzzle.sequence.incorrectAnswers.length));
 
     // Get a random array order of 1-5
     const randomOrder = [1, 2, 3, 4, 5].sort((_) => (Math.random() > 0.5 ? 1 : -1));

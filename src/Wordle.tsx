@@ -19,6 +19,8 @@ interface Props {
     wordLengthMaxLimit: number;
     isFirstLetterProvided: boolean;
     isHintShown: boolean;
+    puzzleRevealMs: number;
+    puzzleLeaveNumBlanks: number;
     timerConfig: { isTimed: true; seconds: number } | { isTimed: false };
   };
   remainingSeconds: number;
@@ -34,8 +36,6 @@ interface Props {
   targetWord: string;
   targetHint?: string;
   targetCategory?: string;
-  puzzleRevealMs?: number;
-  puzzleLeaveNumBlanks?: number;
   letterStatuses: {
     letter: string;
     status: "" | "contains" | "correct" | "not set" | "not in word";
@@ -55,6 +55,8 @@ interface Props {
     wordLengthMaxLimit: number;
     isFirstLetterProvided: boolean;
     isHintShown: boolean;
+    puzzleRevealMs: number;
+    puzzleLeaveNumBlanks: number;
     timerConfig: { isTimed: true; seconds: number } | { isTimed: false };
   }) => void;
 
@@ -187,118 +189,198 @@ const Wordle: React.FC<Props> = (props) => {
   }
 
   function generateSettingsOptions(): React.ReactNode {
+    // TODO: PuzzleWordMappings? There are currently only 10 length puzzle words
+    const MIN_PUZZLE_WORD_LENGTH = 9;
+    const MAX_PUZZLE_WORD_LENGTH = 11;
+
+    const MIN_PUZZLE_REVEAL_INTERVAL_SECONDS = 1;
+    const MAX_PUZZLE_REVEAL_INTERVAL_SECONDS = 10;
+
+    // Leave atleast 1 letter blank (otherwise entire word is revealed)
+    const MIN_PUZZLE_LEAVE_NUM_BLANKS = 1;
+    // Show atleast 1 letter (can't all be blank!)
+    const MAX_PUZZLE_LEAVE_NUM_BLANKS = props.targetWord.length - 1;
+
     // These modes can be continued and aren't always just reset
     const continuationMode = props.mode === "increasing" || props.mode === "limitless";
     const MIN_WORD_LENGTH_LABEL = continuationMode ? "Starting Word Length" : "Word Length";
-    // Must start atleast one below end limit
+
+    // The starting word length must be atleast one below the maximum target word length (for continuation modes)
     const MIN_WORD_LENGTH_MAX_BOUNDARY =
       props.mode === "increasing" ? MAX_TARGET_WORD_LENGTH - 1 : MAX_TARGET_WORD_LENGTH;
 
-    return (
-      <>
-        <label>
-          <input
-            type="number"
-            value={props.gamemodeSettings.wordLength}
-            min={props.mode === "puzzle" ? 9 : MIN_TARGET_WORD_LENGTH}
-            max={MIN_WORD_LENGTH_MAX_BOUNDARY}
-            onChange={(e) => {
-              const newGamemodeSettings = {
-                ...props.gamemodeSettings,
-                wordLength: e.target.valueAsNumber,
-              };
-              props.updateGamemodeSettings(newGamemodeSettings);
-            }}
-          ></input>
-          {MIN_WORD_LENGTH_LABEL}
-        </label>
-        {continuationMode && (
+    let settings;
+
+    // TODO: Timer that appears after all letters have been revealed (or player intervenes to guess early), which can also be configured in these gamemode settings options
+    if (props.mode === "puzzle") {
+      settings = (
+        <>
           <label>
             <input
               type="number"
-              value={props.gamemodeSettings.wordLengthMaxLimit}
-              min={props.gamemodeSettings.wordLength + 1}
-              max={MAX_TARGET_WORD_LENGTH}
+              value={props.gamemodeSettings.wordLength}
+              min={MIN_PUZZLE_WORD_LENGTH}
+              max={MAX_PUZZLE_WORD_LENGTH}
               onChange={(e) => {
                 const newGamemodeSettings = {
                   ...props.gamemodeSettings,
-                  wordLengthMaxLimit: e.target.valueAsNumber,
+                  wordLength: e.target.valueAsNumber,
                 };
                 props.updateGamemodeSettings(newGamemodeSettings);
               }}
             ></input>
-            Ending Word Length
+            Word Length
           </label>
-        )}
 
-        <label>
-          <input
-            checked={props.gamemodeSettings.isFirstLetterProvided}
-            type="checkbox"
-            onChange={() => {
-              const newGamemodeSettings = {
-                ...props.gamemodeSettings,
-                isFirstLetterProvided: !props.gamemodeSettings.isFirstLetterProvided,
-              };
-              props.updateGamemodeSettings(newGamemodeSettings);
-            }}
-          ></input>
-          First Letter Provided
-        </label>
-        <label>
-          <input
-            checked={props.gamemodeSettings.isHintShown}
-            type="checkbox"
-            onChange={() => {
-              const newGamemodeSettings = {
-                ...props.gamemodeSettings,
-                isHintShown: !props.gamemodeSettings.isHintShown,
-              };
-              props.updateGamemodeSettings(newGamemodeSettings);
-            }}
-          ></input>
-          Hints
-        </label>
-        <>
           <label>
             <input
-              checked={props.gamemodeSettings.timerConfig.isTimed}
-              type="checkbox"
-              onChange={() => {
-                // If currently timed, on change, make the game not timed and vice versa
-                const newTimer: { isTimed: true; seconds: number } | { isTimed: false } = props.gamemodeSettings
-                  .timerConfig.isTimed
-                  ? { isTimed: false }
-                  : { isTimed: true, seconds: mostRecentTotalSeconds };
-                const newGamemodeSettings = { ...props.gamemodeSettings, timerConfig: newTimer };
+              type="number"
+              // Show value in seconds (divide by 1000)
+              value={props.gamemodeSettings.puzzleRevealMs / 1000}
+              min={MIN_PUZZLE_REVEAL_INTERVAL_SECONDS}
+              max={MAX_PUZZLE_REVEAL_INTERVAL_SECONDS}
+              onChange={(e) => {
+                const newGamemodeSettings = {
+                  ...props.gamemodeSettings,
+                  // Update gamemode settings with milliseconds (multiply by 1000)
+                  puzzleRevealMs: e.target.valueAsNumber * 1000,
+                };
                 props.updateGamemodeSettings(newGamemodeSettings);
               }}
             ></input>
-            Timer
+            Reveal Interval (seconds)
           </label>
-          {props.gamemodeSettings.timerConfig.isTimed && (
+
+          <label>
+            <input
+              type="number"
+              value={props.gamemodeSettings.puzzleLeaveNumBlanks}
+              min={MIN_PUZZLE_LEAVE_NUM_BLANKS}
+              max={MAX_PUZZLE_LEAVE_NUM_BLANKS}
+              onChange={(e) => {
+                const newGamemodeSettings = {
+                  ...props.gamemodeSettings,
+                  puzzleLeaveNumBlanks: e.target.valueAsNumber,
+                };
+                props.updateGamemodeSettings(newGamemodeSettings);
+              }}
+            ></input>
+            Number of letters left blank
+          </label>
+        </>
+      );
+    } else {
+      settings = (
+        <>
+          <label>
+            <input
+              type="number"
+              value={props.gamemodeSettings.wordLength}
+              min={MIN_TARGET_WORD_LENGTH}
+              max={MIN_WORD_LENGTH_MAX_BOUNDARY}
+              onChange={(e) => {
+                const newGamemodeSettings = {
+                  ...props.gamemodeSettings,
+                  wordLength: e.target.valueAsNumber,
+                };
+                props.updateGamemodeSettings(newGamemodeSettings);
+              }}
+            ></input>
+            {MIN_WORD_LENGTH_LABEL}
+          </label>
+
+          {continuationMode && (
             <label>
               <input
                 type="number"
-                value={props.gamemodeSettings.timerConfig.seconds}
-                min={10}
-                max={120}
-                step={5}
+                value={props.gamemodeSettings.wordLengthMaxLimit}
+                min={props.gamemodeSettings.wordLength + 1}
+                max={MAX_TARGET_WORD_LENGTH}
                 onChange={(e) => {
-                  setMostRecentTotalSeconds(e.target.valueAsNumber);
                   const newGamemodeSettings = {
                     ...props.gamemodeSettings,
-                    timer: { isTimed: true, seconds: e.target.valueAsNumber },
+                    wordLengthMaxLimit: e.target.valueAsNumber,
                   };
                   props.updateGamemodeSettings(newGamemodeSettings);
                 }}
               ></input>
-              Seconds
+              Ending Word Length
             </label>
           )}
+
+          <label>
+            <input
+              checked={props.gamemodeSettings.isFirstLetterProvided}
+              type="checkbox"
+              onChange={() => {
+                const newGamemodeSettings = {
+                  ...props.gamemodeSettings,
+                  isFirstLetterProvided: !props.gamemodeSettings.isFirstLetterProvided,
+                };
+                props.updateGamemodeSettings(newGamemodeSettings);
+              }}
+            ></input>
+            First Letter Provided
+          </label>
+
+          <label>
+            <input
+              checked={props.gamemodeSettings.isHintShown}
+              type="checkbox"
+              onChange={() => {
+                const newGamemodeSettings = {
+                  ...props.gamemodeSettings,
+                  isHintShown: !props.gamemodeSettings.isHintShown,
+                };
+                props.updateGamemodeSettings(newGamemodeSettings);
+              }}
+            ></input>
+            Hints
+          </label>
+
+          <>
+            <label>
+              <input
+                checked={props.gamemodeSettings.timerConfig.isTimed}
+                type="checkbox"
+                onChange={() => {
+                  // If currently timed, on change, make the game not timed and vice versa
+                  const newTimer: { isTimed: true; seconds: number } | { isTimed: false } = props.gamemodeSettings
+                    .timerConfig.isTimed
+                    ? { isTimed: false }
+                    : { isTimed: true, seconds: mostRecentTotalSeconds };
+                  const newGamemodeSettings = { ...props.gamemodeSettings, timerConfig: newTimer };
+                  props.updateGamemodeSettings(newGamemodeSettings);
+                }}
+              ></input>
+              Timer
+            </label>
+            {props.gamemodeSettings.timerConfig.isTimed && (
+              <label>
+                <input
+                  type="number"
+                  value={props.gamemodeSettings.timerConfig.seconds}
+                  min={10}
+                  max={120}
+                  step={5}
+                  onChange={(e) => {
+                    setMostRecentTotalSeconds(e.target.valueAsNumber);
+                    const newGamemodeSettings = {
+                      ...props.gamemodeSettings,
+                      timer: { isTimed: true, seconds: e.target.valueAsNumber },
+                    };
+                    props.updateGamemodeSettings(newGamemodeSettings);
+                  }}
+                ></input>
+                Seconds
+              </label>
+            )}
+          </>
         </>
-      </>
-    );
+      );
+    }
+
+    return settings;
   }
 
   useEffect(() => {
