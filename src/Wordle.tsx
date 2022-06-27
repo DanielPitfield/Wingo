@@ -310,6 +310,25 @@ const Wordle: React.FC<Props> = (props) => {
             </label>
           )}
 
+          {props.mode === "limitless" && (
+            <label>
+              <input
+                type="number"
+                value={props.gamemodeSettings.maxNumLives}
+                min={0}
+                max={50}
+                onChange={(e) => {
+                  const newGamemodeSettings = {
+                    ...props.gamemodeSettings,
+                    maxNumLives: e.target.valueAsNumber,
+                  };
+                  props.updateGamemodeSettings(newGamemodeSettings);
+                }}
+              ></input>
+              Max number of extra lives gained
+            </label>
+          )}
+
           <label>
             <input
               checked={props.gamemodeSettings.isFirstLetterProvided}
@@ -392,7 +411,9 @@ const Wordle: React.FC<Props> = (props) => {
 
     // Determine whethe the game ended in failure or success
     const wasFailure =
-      !props.inDictionary || (props.mode === "limitless" && getNewLives(props.numGuesses, props.wordIndex, props.gamemodeSettings.maxNumLives) <= 0);
+      !props.inDictionary ||
+      (props.mode === "limitless" &&
+        getNewLives(props.numGuesses, props.wordIndex, props.gamemodeSettings.maxNumLives) <= 0);
 
     if (wasFailure) {
       playFailureChimeSoundEffect();
