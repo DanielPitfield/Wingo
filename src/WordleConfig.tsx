@@ -52,6 +52,8 @@ export interface WordleConfigProps {
     // Puzzle mode
     puzzleRevealMs?: number;
     puzzleLeaveNumBlanks?: number;
+    // Limitless mode
+    maxNumLives?: number;
     timerConfig?: { isTimed: true; seconds: number } | { isTimed: false };
   };
 
@@ -202,14 +204,11 @@ export function getLetterStatus(
   return status;
 }
 
-// TODO: Gamemode setting option
-export function getNewLives(numGuesses: number, wordIndex: number): number {
+export function getNewLives(numGuesses: number, wordIndex: number, maxNumLives: number): number {
   // Calculate the number of rows not used
   const extraRows = numGuesses - (wordIndex + 1);
-  // TODO: A game option toggle could change this value (e.g extraRows would remove cap on new lives)
-  const MAX_NEW_LIVES = 5;
   // The number of new lives is the number of extra rows (capped at a max of above variable)
-  const newLives = Math.min(extraRows, MAX_NEW_LIVES);
+  const newLives = Math.min(extraRows, maxNumLives);
   return newLives;
 }
 
@@ -285,6 +284,7 @@ const WordleConfig: React.FC<Props> = (props) => {
 
   const DEFAULT_PUZZLE_REVEAL_MS = 2000;
   const DEFAULT_PUZZLE_LEAVE_NUM_BLANKS = 3;
+  const DEFAULT_MAX_NUM_LIVES = 5;
 
   const defaultGamemodeSettings = {
     wordLength: defaultWordLength,
@@ -295,6 +295,7 @@ const WordleConfig: React.FC<Props> = (props) => {
     isHintShown: props.gamemodeSettings?.isHintShown ?? props.mode === "puzzle" ? true : false,
     puzzleRevealMs: props.gamemodeSettings?.puzzleRevealMs ?? DEFAULT_PUZZLE_REVEAL_MS,
     puzzleLeaveNumBlanks: props.gamemodeSettings?.puzzleLeaveNumBlanks ?? DEFAULT_PUZZLE_LEAVE_NUM_BLANKS,
+    maxNumLives: props.gamemodeSettings?.maxNumLives ?? DEFAULT_MAX_NUM_LIVES,
     timerConfig: props.gamemodeSettings?.timerConfig ?? { isTimed: false },
   };
 
@@ -305,6 +306,7 @@ const WordleConfig: React.FC<Props> = (props) => {
     isHintShown: boolean;
     puzzleRevealMs: number;
     puzzleLeaveNumBlanks: number;
+    maxNumLives: number;
     timerConfig: { isTimed: true; seconds: number } | { isTimed: false };
   }>(defaultGamemodeSettings);
 
@@ -881,12 +883,6 @@ const WordleConfig: React.FC<Props> = (props) => {
     }
     setisIncompleteWord(false);
 
-    const newGamemodeSettings = {
-      ...gamemodeSettings,
-      wordLength: defaultWordLength,
-    };
-    setGamemodeSettings(newGamemodeSettings);
-
     const newCurrentWord = gamemodeSettings.isFirstLetterProvided ? targetWord.charAt(0) : "";
     setCurrentWord(newCurrentWord);
 
@@ -901,13 +897,15 @@ const WordleConfig: React.FC<Props> = (props) => {
     setRemainingSeconds(
       gamemodeSettings.timerConfig.isTimed ? gamemodeSettings.timerConfig.seconds : mostRecentTotalSeconds
     );
+
+    // Ending of any game mode
     if (props.mode !== "limitless" || numGuesses <= 1) {
-      // Ending of any game mode
       setNumGuesses(props.defaultnumGuesses);
+      
       if (props.mode !== "category") {
         const newGamemodeSettings = {
           ...gamemodeSettings,
-          wordLength: props.defaultWordLength || targetWord.length,
+          wordLength: props.defaultWordLength || defaultWordLength || targetWord.length,
         };
         setGamemodeSettings(newGamemodeSettings);
       }
@@ -941,7 +939,7 @@ const WordleConfig: React.FC<Props> = (props) => {
     );
 
     if (props.mode === "limitless") {
-      const newLives = getNewLives(numGuesses, wordIndex);
+      const newLives = getNewLives(numGuesses, wordIndex, gamemodeSettings.maxNumLives);
       setNumGuesses(numGuesses + newLives);
     }
   }
@@ -1147,6 +1145,7 @@ const WordleConfig: React.FC<Props> = (props) => {
     isHintShown: boolean;
     puzzleRevealMs: number;
     puzzleLeaveNumBlanks: number;
+    maxNumLives: number;
     timerConfig: { isTimed: true; seconds: number } | { isTimed: false };
   }) {
     setGamemodeSettings(newGamemodeSettings);
@@ -1289,20 +1288,7 @@ const WordleConfig: React.FC<Props> = (props) => {
     <Wordle
       isCampaignLevel={props.page === "campaign/area/level"}
       mode={props.mode}
-      gamemodeSettings={{
-        wordLength: gamemodeSettings.wordLength,
-        wordLengthMaxLimit: gamemodeSettings.wordLengthMaxLimit,
-        isFirstLetterProvided: gamemodeSettings.isFirstLetterProvided,
-        isHintShown: gamemodeSettings.isHintShown,
-        puzzleRevealMs: gamemodeSettings.puzzleRevealMs,
-        puzzleLeaveNumBlanks: gamemodeSettings.puzzleLeaveNumBlanks,
-        timerConfig: gamemodeSettings.timerConfig.isTimed
-          ? {
-              isTimed: true,
-              seconds: gamemodeSettings.timerConfig.seconds,
-            }
-          : { isTimed: false },
-      }}
+      gamemodeSettings={gamemodeSettings}
       remainingSeconds={remainingSeconds}
       numGuesses={numGuesses}
       guesses={guesses}

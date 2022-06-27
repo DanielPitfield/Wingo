@@ -21,6 +21,7 @@ interface Props {
     isHintShown: boolean;
     puzzleRevealMs: number;
     puzzleLeaveNumBlanks: number;
+    maxNumLives: number;
     timerConfig: { isTimed: true; seconds: number } | { isTimed: false };
   };
   remainingSeconds: number;
@@ -57,6 +58,7 @@ interface Props {
     isHintShown: boolean;
     puzzleRevealMs: number;
     puzzleLeaveNumBlanks: number;
+    maxNumLives: number;
     timerConfig: { isTimed: true; seconds: number } | { isTimed: false };
   }) => void;
 
@@ -390,7 +392,7 @@ const Wordle: React.FC<Props> = (props) => {
 
     // Determine whethe the game ended in failure or success
     const wasFailure =
-      !props.inDictionary || (props.mode === "limitless" && getNewLives(props.numGuesses, props.wordIndex) <= 0);
+      !props.inDictionary || (props.mode === "limitless" && getNewLives(props.numGuesses, props.wordIndex, props.gamemodeSettings.maxNumLives) <= 0);
 
     if (wasFailure) {
       playFailureChimeSoundEffect();
@@ -437,7 +439,7 @@ const Wordle: React.FC<Props> = (props) => {
     }
 
     // The number of rows not used in guessing word
-    const newLives = getNewLives(props.numGuesses, props.wordIndex);
+    const newLives = getNewLives(props.numGuesses, props.wordIndex, props.gamemodeSettings.maxNumLives);
 
     if (props.mode === "limitless") {
       // Word guessed with rows to spare

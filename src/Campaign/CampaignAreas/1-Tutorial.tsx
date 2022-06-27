@@ -23,13 +23,14 @@ export const area: AreaConfig = {
         enforceFullLengthGuesses: true,
         defaultWordLength: 5,
         defaultnumGuesses: 6,
+        
         gamemodeSettings: {
           isFirstLetterProvided: true,
+          puzzleLeaveNumBlanks: 0,
+          puzzleRevealMs: 0,
           timerConfig: { isTimed: false },
         },
-        checkInDictionary: false,
-        puzzleLeaveNumBlanks: 0,
-        puzzleRevealMs: 0,
+        checkInDictionary: false, 
       },
     },
   },
@@ -57,11 +58,11 @@ export const area: AreaConfig = {
           */
           gamemodeSettings: {
             isFirstLetterProvided: true,
+            puzzleLeaveNumBlanks: 0,
+            puzzleRevealMs: 0,
             timerConfig: { isTimed: false },
           },
           checkInDictionary: false,
-          puzzleLeaveNumBlanks: 0,
-          puzzleRevealMs: 0,
         },
       },
     },

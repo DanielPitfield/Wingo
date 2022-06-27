@@ -17,11 +17,11 @@ export const area: AreaConfig = {
         defaultnumGuesses: 6,
         gamemodeSettings: {
           isFirstLetterProvided: true,
+          puzzleLeaveNumBlanks: 0,
+          puzzleRevealMs: 0,
           timerConfig: { isTimed: false },
         },
         checkInDictionary: false,
-        puzzleLeaveNumBlanks: 0,
-        puzzleRevealMs: 0,
       },
     },
   },
