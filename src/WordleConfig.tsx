@@ -744,8 +744,12 @@ const WordleConfig: React.FC<Props> = (props) => {
   React.useEffect(() => {
     let intervalId: number;
 
-    if (props.mode === "puzzle" && !hasSubmitLetter) {
-      // Not tried entering a letter/word yet
+    if (props.mode !== "puzzle") {
+      return;
+    }
+
+    // Not tried entering a letter/word yet
+    if (!hasSubmitLetter) {
       intervalId = window.setInterval(() => {
         // This return is needed to prevent a letter being revealed after trying to enter a word (because an interval was queued)
         if (hasSubmitLetter) {
@@ -898,20 +902,12 @@ const WordleConfig: React.FC<Props> = (props) => {
       gamemodeSettings.timerConfig.isTimed ? gamemodeSettings.timerConfig.seconds : mostRecentTotalSeconds
     );
 
-    // Ending of any game mode
-    if (props.mode !== "limitless" || numGuesses <= 1) {
-      setNumGuesses(props.defaultnumGuesses);
-      
-      if (props.mode !== "category") {
-        const newGamemodeSettings = {
-          ...gamemodeSettings,
-          wordLength: props.defaultWordLength || defaultWordLength || targetWord.length,
-        };
-        setGamemodeSettings(newGamemodeSettings);
-      }
-    } else {
-      // Game mode is limitless and there are still rows
+    // Failing during limitless mode calls ResetGame(), to remove a row, but the game isn't really reset
+    if (props.mode === "limitless" && numGuesses > 1) {
+      // TODO: Fix how when you change settings, a row gets removed every time
       setNumGuesses(numGuesses - 1); // Remove a row
+    } else {
+      setNumGuesses(props.defaultnumGuesses);
     }
   }
 
