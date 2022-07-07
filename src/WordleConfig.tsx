@@ -902,13 +902,12 @@ const WordleConfig: React.FC<Props> = (props) => {
       gamemodeSettings.timerConfig.isTimed ? gamemodeSettings.timerConfig.seconds : mostRecentTotalSeconds
     );
 
-    // Failing during limitless mode calls ResetGame(), to remove a row, but the game isn't really reset
+    // Don't reset to defaultNumGuesses when there are lives remaining in limitless mode
     if (props.mode === "limitless" && numGuesses > 1) {
-      // TODO: Fix how when you change settings, a row gets removed every time
-      setNumGuesses(numGuesses - 1); // Remove a row
-    } else {
-      setNumGuesses(props.defaultnumGuesses);
+      return;
     }
+
+    setNumGuesses(props.defaultnumGuesses);
   }
 
   function ContinueGame() {
@@ -920,12 +919,6 @@ const WordleConfig: React.FC<Props> = (props) => {
     setinProgress(true);
     setinDictionary(true);
 
-    const newGamemodeSettings = {
-      ...gamemodeSettings,
-      wordLength: gamemodeSettings.wordLength + 1,
-    };
-    setGamemodeSettings(newGamemodeSettings);
-
     sethasSubmitLetter(false);
     setRevealedLetterIndexes([]);
     setletterStatuses(defaultLetterStatuses);
@@ -934,9 +927,27 @@ const WordleConfig: React.FC<Props> = (props) => {
       gamemodeSettings.timerConfig.isTimed ? gamemodeSettings.timerConfig.seconds : mostRecentTotalSeconds
     );
 
-    if (props.mode === "limitless") {
+    const isCorrectAnswer = currentWord.toLowerCase() === targetWord.toLowerCase() && currentWord.length > 0;
+
+    // Add new rows for success in limitless mode
+    if (props.mode === "limitless" && isCorrectAnswer) {
       const newLives = getNewLives(numGuesses, wordIndex, gamemodeSettings.maxNumLives);
       setNumGuesses(numGuesses + newLives);
+    }
+
+    // Remove row for failiure in limitless mode
+    if (props.mode === "limitless" && numGuesses > 1 && !isCorrectAnswer) {
+      // TODO: Fix how when you change settings, a row gets removed every time
+      setNumGuesses(numGuesses - 1); // Remove a row
+    }
+
+    // Increment word length (only on success) for these modes
+    if ((props.mode === "limitless" || props.mode === "increasing") && isCorrectAnswer) {
+      const newGamemodeSettings = {
+        ...gamemodeSettings,
+        wordLength: gamemodeSettings.wordLength + 1,
+      };
+      setGamemodeSettings(newGamemodeSettings);
     }
   }
 
