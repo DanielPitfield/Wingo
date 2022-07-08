@@ -60,9 +60,11 @@ const CountdownLettersConfig: React.FC<Props> = (props) => {
   const [targetWord, settargetWord] = useState<string>();
   const [hasSubmitLetter, sethasSubmitLetter] = useState(false);
 
+  const DEFAULT_TIMER_VALUE = 30;
+
   const defaultGamemodeSettings = {
     numLetters: props.gamemodeSettings?.defaultNumLetters ?? DEFAULT_NUM_LETTERS,
-    timerConfig: props.gamemodeSettings?.timerConfig ?? { isTimed: false },
+    timerConfig: props.gamemodeSettings?.timerConfig ?? { isTimed: true, seconds: DEFAULT_TIMER_VALUE },
   };
 
   const [gamemodeSettings, setGamemodeSettings] = useState<{
@@ -70,7 +72,6 @@ const CountdownLettersConfig: React.FC<Props> = (props) => {
     timerConfig: { isTimed: true; seconds: number } | { isTimed: false };
   }>(defaultGamemodeSettings);
 
-  const DEFAULT_TIMER_VALUE = 30;
   const [remainingSeconds, setRemainingSeconds] = useState(
     props.gamemodeSettings?.timerConfig?.isTimed === true
       ? props.gamemodeSettings?.timerConfig.seconds
@@ -118,7 +119,7 @@ const CountdownLettersConfig: React.FC<Props> = (props) => {
 
   // Timer Setup
   React.useEffect(() => {
-    if (gamemodeSettings.timerConfig.isTimed) {
+    if (!gamemodeSettings.timerConfig.isTimed) {
       return;
     }
 
@@ -250,8 +251,8 @@ const CountdownLettersConfig: React.FC<Props> = (props) => {
     timerConfig: { isTimed: true; seconds: number } | { isTimed: false };
   }) {
     setGamemodeSettings(newGamemodeSettings);
-  }  
-  
+  }
+
   function updateRemainingSeconds(newSeconds: number) {
     setRemainingSeconds(newSeconds);
   }
