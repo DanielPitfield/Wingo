@@ -806,9 +806,15 @@ const WordleConfig: React.FC<Props> = (props) => {
     }
 
     generateTargetWord();
-  }, [props.mode === "category" || gamemodeSettings.wordLength,
+  }, [
+    // Always when category mode (short circuit) or when word length is changed
+    props.mode === "category" || gamemodeSettings.wordLength,
+    // Puzzle settings are changed
+    gamemodeSettings.puzzleLeaveNumBlanks,
+    gamemodeSettings.puzzleRevealMs,
+    // Game ends or mode is changed
     inProgress,
-    props.mode
+    props.mode,
   ]);
 
   // Save the game
@@ -894,7 +900,9 @@ const WordleConfig: React.FC<Props> = (props) => {
     setRevealedLetterIndexes([]);
     setletterStatuses(defaultLetterStatuses);
 
-    const newRemainingSeconds = gamemodeSettings.timerConfig.isTimed ? gamemodeSettings.timerConfig.seconds : mostRecentTotalSeconds;
+    const newRemainingSeconds = gamemodeSettings.timerConfig.isTimed
+      ? gamemodeSettings.timerConfig.seconds
+      : mostRecentTotalSeconds;
     setMostRecentTotalSeconds(newRemainingSeconds);
     setRemainingSeconds(newRemainingSeconds);
 
@@ -920,7 +928,9 @@ const WordleConfig: React.FC<Props> = (props) => {
     setRevealedLetterIndexes([]);
     setletterStatuses(defaultLetterStatuses);
 
-    const newRemainingSeconds = gamemodeSettings.timerConfig.isTimed ? gamemodeSettings.timerConfig.seconds : mostRecentTotalSeconds;
+    const newRemainingSeconds = gamemodeSettings.timerConfig.isTimed
+      ? gamemodeSettings.timerConfig.seconds
+      : mostRecentTotalSeconds;
     setMostRecentTotalSeconds(newRemainingSeconds);
     setRemainingSeconds(newRemainingSeconds);
 
