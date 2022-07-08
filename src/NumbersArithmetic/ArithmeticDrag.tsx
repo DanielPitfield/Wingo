@@ -13,7 +13,7 @@ import { Theme } from "../Themes";
 import { pickRandomElementFrom } from "../WordleConfig";
 import { DraggableItem } from "./DraggableItem";
 
-// TODO: Const Contexts: https://stackoverflow.com/questions/44497388/typescript-array-to-string-literal-type
+// Const Contexts: https://stackoverflow.com/questions/44497388/typescript-array-to-string-literal-type
 export const numberSizeOptions = ["small", "medium", "large"] as const;
 export type numberSizeOption = typeof numberSizeOptions[number];
 

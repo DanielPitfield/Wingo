@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "./index.scss";
 import { SettingsData } from "./SaveData";
-import { Page } from "./App";
+import { countdownMode, Page } from "./App";
 import CountdownLettersConfig from "./CountdownLetters/CountdownLettersConfig";
 import CountdownNumbersConfig from "./CountdownNumbers/CountdownNumbersConfig";
 import { Theme } from "./Themes";
@@ -118,7 +118,7 @@ export const CountdownGameshow: React.FC<Props> = (props) => {
     if (roundType === "letter") {
       return (
         <CountdownLettersConfig
-          mode={"countdown_letters_casual"}
+          mode={"casual" as countdownMode}
           page={"countdown/letters"}
           theme={props.themes[0]}
           settings={props.settings}
@@ -132,7 +132,7 @@ export const CountdownGameshow: React.FC<Props> = (props) => {
     } else if (roundType === "number") {
       return (
         <CountdownNumbersConfig
-          mode={"countdown_numbers_casual"}
+          mode={"casual" as countdownMode}
           defaultNumGuesses={DEFAULT_NUM_GUESSES}
           page={"countdown/numbers"}
           theme={props.themes[1]}

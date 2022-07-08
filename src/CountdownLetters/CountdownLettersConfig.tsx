@@ -1,12 +1,12 @@
 import React, { useState } from "react";
-import { Page } from "../App";
+import { countdownMode, Page } from "../App";
 import CountdownLetters from "./CountdownLetters";
 import { wordLengthMappingsGuessable } from "../WordleConfig";
 import { Theme } from "../Themes";
 import { SettingsData } from "../SaveData";
 
 export interface CountdownLettersConfigProps {
-  mode: "countdown_letters_casual" | "countdown_letters_realistic";
+  mode: countdownMode;
   guesses?: string[];
   countdownWord?: string;
 }
@@ -178,7 +178,7 @@ const CountdownLettersConfig: React.FC<Props> = (props) => {
       return;
     }
 
-    if (props.mode === "countdown_letters_realistic") {
+    if (props.mode === "realistic") {
       // Don't need to do any evaluation of the guess and just add to guesses regardless
       setGuesses(guesses.concat(currentWord));
       ContinueGame();

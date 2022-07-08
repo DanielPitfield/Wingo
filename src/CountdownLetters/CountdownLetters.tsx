@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Keyboard } from "../Keyboard";
-import { MAX_TARGET_WORD_LENGTH, MIN_TARGET_WORD_LENGTH, Page } from "../App";
+import { countdownMode, MAX_TARGET_WORD_LENGTH, MIN_TARGET_WORD_LENGTH, Page } from "../App";
 import { WordRow } from "../WordRow";
 import { Button } from "../Button";
 import { MessageNotification } from "../MessageNotification";
@@ -13,7 +13,7 @@ import GamemodeSettingsMenu from "../GamemodeSettingsMenu";
 
 interface Props {
   isCampaignLevel: boolean;
-  mode: "countdown_letters_casual" | "countdown_letters_realistic";
+  mode: countdownMode;
 
   gamemodeSettings: {
     numLetters: number;
@@ -408,7 +408,7 @@ const CountdownLetters: React.FC<Props> = (props) => {
       );
     }
 
-    if (props.mode === "countdown_letters_casual") {
+    if (props.mode === "casual") {
       // Already evaluated that guess is valid, so just display result
       outcome = "success";
       // Reward gold based on how long the selected guess is

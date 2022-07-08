@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Page } from "../App";
+import { countdownMode, Page } from "../App";
 import CountdownNumbers from "./CountdownNumbers";
 import { calculateTotal } from "./NumberRow";
 import { Theme } from "../Themes";
@@ -7,7 +7,7 @@ import { SettingsData } from "../SaveData";
 
 interface Props {
   page: Page;
-  mode: "countdown_numbers_casual" | "countdown_numbers_realistic";
+  mode: countdownMode;
   gamemodeSettings?: {
     hasScaryNumbers?: boolean;
     scoringMethod?: "standard" | "pointLostPerDifference";
@@ -245,18 +245,18 @@ const CountdownNumbersConfig: React.FC<Props> = (props) => {
       return;
     }
 
-    // TODO: Realistic: ask for result of calculation
-    if (props.mode !== "countdown_numbers_realistic") {
-      return;
-    }
-
-    // The 6 numbers have not all been picked
+    // The selection numbers have not all been picked
     if (!hasNumberSelectionFinished(countdownStatuses, gamemodeSettings.numOperands)) {
       return;
     }
-
+    
     // Nothing entered yet
     if (!hasSubmitNumber) {
+      return;
+    }
+
+    if (props.mode === "realistic") {
+      // TODO: Realistic mode: ask for result of intemediary calculations
       return;
     }
 

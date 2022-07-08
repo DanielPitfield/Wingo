@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Page } from "../App";
+import { countdownMode, Page } from "../App";
 import { Button } from "../Button";
 import { MessageNotification } from "../MessageNotification";
 import ProgressBar, { GreenToRedColorTransition } from "../ProgressBar";
@@ -16,14 +16,13 @@ import { pickRandomElementFrom } from "../WordleConfig";
 
 interface Props {
   isCampaignLevel: boolean;
-  mode: "countdown_numbers_casual" | "countdown_numbers_realistic";
+  mode: countdownMode;
 
   gamemodeSettings: {
     hasScaryNumbers: boolean;
-    // The number/amount of numbers (that make up the selection used to make the target number)
+    // The quantity of numbers (that make up the selection which can be chosen from to make the target number)
     numOperands: number;
     scoringMethod: "standard" | "pointLostPerDifference";
-    // TODO: Move all other timerConfig props into their respective gamemodeSettings
     timerConfig: { isTimed: true; seconds: number } | { isTimed: false };
   };
 

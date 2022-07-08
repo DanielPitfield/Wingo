@@ -56,6 +56,9 @@ export const MAX_TARGET_WORD_LENGTH = Math.max(...targetWordLengths);
 // The number of categories with at least one word
 export const MAX_NUM_CATEGORIES = categoryMappings.filter((mapping) => mapping.array.length > 0).length;
 
+const countdownModes = ["casual", "realistic"] as const;
+export type countdownMode = typeof countdownModes[number];
+
 export type Page =
   | "splash-screen"
   | "title-page"
@@ -812,7 +815,7 @@ export const App: React.FC = () => {
         return (
           <CountdownLettersConfig
             {...commonProps}
-            mode={"countdown_letters_casual"}
+            mode={"casual" as countdownMode}
             theme={Themes.GenericLetterCountdown}
           />
         );
@@ -821,7 +824,7 @@ export const App: React.FC = () => {
         return (
           <CountdownNumbersConfig
             {...commonProps}
-            mode={"countdown_numbers_casual"}
+            mode={"casual" as countdownMode}
             defaultNumGuesses={DEFAULT_NUM_GUESSES_COUNTDOWN_NUMBERS}
             theme={Themes.GenericNumberCountdown}
           />
