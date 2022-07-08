@@ -258,12 +258,34 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
   }
 
   // TODO: Handling mid-game changes - apply this to other modes
-  // TODO: Seems to be using previous values, e.g increase numWords to 7 but creates only 6 words
 
   // Reset game after change of settings (stops cheating by changing settings partway through a game)
   React.useEffect(() => {
     ResetGame();
   }, [gamemodeSettings]);
+
+  React.useEffect(() => {
+    // Update information about which letters should be at which grid positions
+    const correctLetterGrid = getCorrectLetterGrid();
+    setCorrectGrid(correctLetterGrid);
+
+    // Reset all tile statuses to not set
+    setTileStatuses(
+      correctLetterGrid.map((position) => {
+        return { x: position.x, y: position.y, status: "not set" };
+      })
+    );
+
+    if (gamemodeSettings.isFirstLetterProvided) {
+      // All words become the first letter of their respective correct word
+      const firstLetterOfWords = gridConfig.words.map((wordInfo) => wordInfo.word.charAt(0));
+      setCurrentWords(firstLetterOfWords);
+    } else {
+      // Nothing is provided (all words start empty)
+      const emptyWords = gridConfig.words.map((wordInfo) => "");
+      setCurrentWords(emptyWords);
+    }
+  }, [gridConfig]);
 
   // Each time a word is highlighted/picked
   React.useEffect(() => {
@@ -956,22 +978,7 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
       gamemodeSettings.timerConfig.isTimed ? gamemodeSettings.timerConfig.seconds : mostRecentTotalSeconds
     );
 
-    setTileStatuses(
-      getCorrectLetterGrid().map((position) => {
-        return { x: position.x, y: position.y, status: "not set" };
-      })
-    );
     setGridConfig(generateGridConfig(getTargetWordArray()));
-    setCorrectGrid(getCorrectLetterGrid());
-
-    // All words are the first letter of their respective correct word
-    const firstLetterWords = Array.from({ length: gamemodeSettings.numWords }).map((value, index) =>
-      gridConfig.words[index].word.charAt(0)
-    );
-    // All words are empty
-    const emptyWords = Array.from({ length: gamemodeSettings.numWords }).map((x) => "");
-    const newCurrentWords = gamemodeSettings.isFirstLetterProvided ? firstLetterWords : emptyWords;
-    setCurrentWords(newCurrentWords);
 
     setRemainingWordGuesses(gamemodeSettings.numWordGuesses);
     setRemainingGridGuesses(gamemodeSettings.numGridGuesses);
