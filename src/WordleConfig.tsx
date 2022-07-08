@@ -906,12 +906,12 @@ const WordleConfig: React.FC<Props> = (props) => {
     setMostRecentTotalSeconds(newRemainingSeconds);
     setRemainingSeconds(newRemainingSeconds);
 
-    // Don't reset to defaultNumGuesses when there are lives remaining in limitless mode
-    if (props.mode === "limitless" && numGuesses > 1) {
-      return;
-    }
+    const limitlessAndLivesRemaining = props.mode === "limitless" && numGuesses > 1;
 
-    setNumGuesses(props.defaultnumGuesses);
+    // Don't reset to defaultNumGuesses when there are lives remaining in limitless mode
+    if (!limitlessAndLivesRemaining) {
+      setNumGuesses(props.defaultnumGuesses);
+    }
   }
 
   function ContinueGame() {
