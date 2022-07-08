@@ -514,11 +514,6 @@ const WordleConfig: React.FC<Props> = (props) => {
         break;
 
       case "limitless":
-        // There is already a targetWord which is of the needed wordLength
-        if (targetWord && targetWord.length === gamemodeSettings.wordLength) {
-          return;
-        }
-
         // Choose a target word based on length
         targetWordArray = wordLengthMappingsTargets
           .find((x) => x.value === gamemodeSettings.wordLength)
@@ -811,10 +806,9 @@ const WordleConfig: React.FC<Props> = (props) => {
     }
 
     generateTargetWord();
-  }, [
-    /* Short circuit boolean evaluation */ props.mode === "category" || gamemodeSettings.wordLength,
+  }, [props.mode === "category" || gamemodeSettings.wordLength,
     inProgress,
-    props.mode,
+    props.mode
   ]);
 
   // Save the game
@@ -887,6 +881,7 @@ const WordleConfig: React.FC<Props> = (props) => {
     }
     setisIncompleteWord(false);
 
+    // Update word (when first letter provided setting is changed)
     const newCurrentWord = gamemodeSettings.isFirstLetterProvided ? targetWord.charAt(0) : "";
     setCurrentWord(newCurrentWord);
 
@@ -911,6 +906,7 @@ const WordleConfig: React.FC<Props> = (props) => {
   }
 
   function ContinueGame() {
+    // Update word (when first letter provided setting is changed)
     const newCurrentWord = gamemodeSettings.isFirstLetterProvided ? targetWord.charAt(0) : "";
     setCurrentWord(newCurrentWord);
 
