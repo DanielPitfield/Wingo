@@ -1283,14 +1283,14 @@ const WordleConfig: React.FC<Props> = (props) => {
         gamemodeSettings={{
           numWords: 6,
           minWordLength: DEFAULT_WORD_LENGTH,
-          maxWordLength: DEFAULT_WORD_LENGTH,
+          maxWordLength: DEFAULT_WORD_LENGTH,        
+          fitRestrictionConfig: { isRestricted: true, fitRestriction: 0 },
           showHint: false,
           numWordGuesses: 0,
           numGridGuesses: 1,
           timerConfig: { isTimed: true, seconds: 60 },
         }}
         provideWords={true}
-        fitRestriction={0}
         theme={props.theme}
         settings={props.settings}
         onComplete={props.onComplete}

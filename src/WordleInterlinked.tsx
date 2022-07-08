@@ -34,26 +34,27 @@ interface Props {
     | { type: "custom"; array: string[]; useExact: boolean; canRestart: boolean }
     | { type: "category" }
     | { type: "length" };
-  // The words of the crossword are given to the player (for crossword fit mode)
+  // Are the words of the crossword given to the player (in other words, is this crossword fit mode?)
   provideWords: boolean;
 
   gamemodeSettings?: {
     numWords?: number;
     minWordLength?: number;
     maxWordLength?: number;
+
+    /*
+    Fit Restriction
+    Not specified - the crossword's height and width is not restricted
+    Value specified - the value is the additional units allowed in grid height or width (in addition to maxWordLength)
+    */
+    fitRestrictionConfig?: { isRestricted: true; fitRestriction: number } | { isRestricted: false };
+
     numWordGuesses?: number;
     numGridGuesses?: number;
     isFirstLetterProvided?: boolean;
     showHint?: boolean;
     timerConfig?: { isTimed: true; seconds: number } | { isTimed: false };
   };
-
-  /*
-  When not specified, the crossword's height and width is not restricted
-  When is specified, the value is the additional units allowed in grid height or width (in addition to maxWordLength)
-  */
-  // TODO: Add as gamemode setting?
-  fitRestriction?: number;
 
   settings: SettingsData;
   initialConfig?: {
@@ -100,6 +101,7 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
     numWords: STARTING_NUM_WORDS,
     minWordLength: props.gamemodeSettings?.minWordLength ?? DEFAULT_WORD_LENGTH,
     maxWordLength: props.gamemodeSettings?.maxWordLength ?? DEFAULT_WORD_LENGTH,
+    fitRestrictionConfig: props.gamemodeSettings?.fitRestrictionConfig ?? { isRestricted: false },
 
     // Specified amount of grid guesses (either from initial config or gamemode settings), otherwise zero
     numGridGuesses: STARTING_NUM_GRID_GUESSES,
@@ -119,6 +121,7 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
     numWords: number;
     minWordLength: number;
     maxWordLength: number;
+    fitRestrictionConfig: { isRestricted: true; fitRestriction: number } | { isRestricted: false };
     numGridGuesses: number;
     numWordGuesses: number;
     isFirstLetterProvided: boolean;
@@ -142,6 +145,13 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
     props.gamemodeSettings?.timerConfig?.isTimed === true
       ? props.gamemodeSettings?.timerConfig.seconds
       : DEFAULT_TIMER_VALUE
+  );
+
+  const DEFAULT_FIT_RESTRICTION = 0;
+  const [mostRecentFitRestriction, setMostRecentFitRestriction] = useState(
+    props.gamemodeSettings?.fitRestrictionConfig?.isRestricted === true
+      ? props.gamemodeSettings?.fitRestrictionConfig.fitRestriction
+      : DEFAULT_FIT_RESTRICTION
   );
 
   const [remainingGridGuesses, setRemainingGridGuesses] = useState(STARTING_NUM_GRID_GUESSES);
@@ -381,18 +391,20 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
       if (!result) {
         throw new Error("The specified targetWordArray could not generate a crossword");
       }
-    } else if (props.fitRestriction !== undefined) {
-      // Crossword fit
+    } else if (gamemodeSettings.fitRestrictionConfig.isRestricted) {
       // Height and width can't exceed this value (to begin with)
-      const DEFAULT_MAX_GRID_DIMENSION = gamemodeSettings.maxWordLength + props.fitRestriction;
+      const DEFAULT_MAX_GRID_DIMENSION =
+        gamemodeSettings.maxWordLength + gamemodeSettings.fitRestrictionConfig.fitRestriction;
+      // Try to find smallest fit restriction possible but allow additional leeway up to this amount
+      const MAX_LEEWAY_INCREMENT = 10;
 
       // Start with DEFAULT_MAX_GRID_DIMENSION and slowly increment until a result is found
       for (
         let maxGridDimension = DEFAULT_MAX_GRID_DIMENSION;
-        maxGridDimension < DEFAULT_MAX_GRID_DIMENSION + 10;
+        maxGridDimension < DEFAULT_MAX_GRID_DIMENSION + MAX_LEEWAY_INCREMENT;
         maxGridDimension++
       ) {
-        // Determine the maximum number of times to find the a result with current maxGridDimension
+        // Define the maximum number of times to find a gridConfig result with the current maxGridDimension
         const MAX_ATTEMPTS_BEFORE_TRYING_LOWER_NUM = 15;
 
         // For this number of max attempts
@@ -808,6 +820,7 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
             value={gamemodeSettings.minWordLength}
             min={MIN_TARGET_WORD_LENGTH}
             // Can't go above maximum word length
+            // TODO: Should all words be the same length for crossword fit mode?
             max={Math.min(gamemodeSettings.maxWordLength, MAX_TARGET_WORD_LENGTH)}
             onChange={(e) => {
               const newGamemodeSettings = { ...gamemodeSettings, minWordLength: e.target.valueAsNumber };
@@ -816,6 +829,7 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
           ></input>
           Minimum Word Length
         </label>
+
         <label>
           <input
             type="number"
@@ -831,6 +845,47 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
           Maximum Word Length
         </label>
 
+        {!props.provideWords && (
+          <>
+            <label>
+              <input
+                checked={gamemodeSettings.fitRestrictionConfig.isRestricted}
+                type="checkbox"
+                onChange={() => {
+                  // If currently restricted, on change, make the game not restricted and vice versa
+                  const newRestrictionConfig: { isRestricted: true; fitRestriction: number } | { isRestricted: false } =
+                    gamemodeSettings.fitRestrictionConfig.isRestricted
+                      ? { isRestricted: false }
+                      : { isRestricted: true, fitRestriction: mostRecentFitRestriction };
+                  const newGamemodeSettings = { ...gamemodeSettings, fitRestrictionConfig: newRestrictionConfig };
+                  setGamemodeSettings(newGamemodeSettings);
+                }}
+              ></input>
+              Fit Restriction
+            </label>
+
+            {gamemodeSettings.fitRestrictionConfig.isRestricted && (
+              <label>
+                <input
+                  type="number"
+                  value={gamemodeSettings.fitRestrictionConfig.fitRestriction}
+                  min={0}
+                  max={50}
+                  onChange={(e) => {
+                    setMostRecentFitRestriction(e.target.valueAsNumber);
+                    const newGamemodeSettings = {
+                      ...gamemodeSettings,
+                      fitRestrictionConfig: { isRestricted: true, fitRestriction: e.target.valueAsNumber },
+                    };
+                    setGamemodeSettings(newGamemodeSettings);
+                  }}
+                ></input>
+                Fit Restriction Amount
+              </label>
+            )}
+          </>
+        )}
+
         <label>
           <input
             checked={gamemodeSettings.isFirstLetterProvided}
@@ -845,6 +900,7 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
           ></input>
           First Letter Provided
         </label>
+
         <label>
           <input
             checked={gamemodeSettings.isHintShown}
@@ -856,6 +912,7 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
           ></input>
           Hints
         </label>
+
         <label>
           <input
             type="number"
@@ -869,6 +926,7 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
           ></input>
           Number of word guesses
         </label>
+
         <label>
           <input
             type="number"
@@ -882,6 +940,7 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
           ></input>
           Number of grid guesses
         </label>
+
         <>
           <label>
             <input
@@ -889,11 +948,11 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
               type="checkbox"
               onChange={() => {
                 // If currently timed, on change, make the game not timed and vice versa
-                const newTimer: { isTimed: true; seconds: number } | { isTimed: false } = gamemodeSettings.timerConfig
-                  .isTimed
+                const newTimerConfig: { isTimed: true; seconds: number } | { isTimed: false } = gamemodeSettings
+                  .timerConfig.isTimed
                   ? { isTimed: false }
                   : { isTimed: true, seconds: mostRecentTotalSeconds };
-                const newGamemodeSettings = { ...gamemodeSettings, timerConfig: newTimer };
+                const newGamemodeSettings = { ...gamemodeSettings, timerConfig: newTimerConfig };
                 setGamemodeSettings(newGamemodeSettings);
               }}
             ></input>
@@ -912,7 +971,7 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
                   setMostRecentTotalSeconds(e.target.valueAsNumber);
                   const newGamemodeSettings = {
                     ...gamemodeSettings,
-                    timer: { isTimed: true, seconds: e.target.valueAsNumber },
+                    timerConfig: { isTimed: true, seconds: e.target.valueAsNumber },
                   };
                   setGamemodeSettings(newGamemodeSettings);
                 }}
