@@ -77,6 +77,7 @@ export type Guess = { operand1: number | null; operand2: number | null; operator
 
 const CountdownNumbersConfig: React.FC<Props> = (props) => {
   const DEFAULT_NUM_OPERANDS = 6;
+  const DEFAULT_TIMER_VALUE = 30;
 
   const [closestGuessSoFar, setClosestGuessSoFar] = useState<number | null>(null);
   const [currentGuesses, setCurrentGuesses] = useState<Guess[]>([]);
@@ -86,7 +87,7 @@ const CountdownNumbersConfig: React.FC<Props> = (props) => {
     hasScaryNumbers: props.gamemodeSettings?.hasScaryNumbers ?? false,
     scoringMethod: props.gamemodeSettings?.scoringMethod ?? "standard",
     numOperands: props.gamemodeSettings?.defaultNumOperands ?? DEFAULT_NUM_OPERANDS,
-    timerConfig: props.gamemodeSettings?.timerConfig ?? { isTimed: false },
+    timerConfig: props.gamemodeSettings?.timerConfig ?? { isTimed: true, seconds: DEFAULT_TIMER_VALUE },
   };
 
   const [gamemodeSettings, setGamemodeSettings] = useState<{
@@ -96,7 +97,7 @@ const CountdownNumbersConfig: React.FC<Props> = (props) => {
     timerConfig: { isTimed: true; seconds: number } | { isTimed: false };
   }>(defaultGamemodeSettings);
 
-  const DEFAULT_TIMER_VALUE = 30;
+  
   const [remainingSeconds, setRemainingSeconds] = useState(
     props.gamemodeSettings?.timerConfig?.isTimed === true
       ? props.gamemodeSettings?.timerConfig.seconds

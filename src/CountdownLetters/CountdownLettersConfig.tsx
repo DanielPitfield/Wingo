@@ -51,6 +51,7 @@ export function isWordValid(countdownWord: string, guessedWord: string) {
 
 const CountdownLettersConfig: React.FC<Props> = (props) => {
   const DEFAULT_NUM_LETTERS = 9;
+  const DEFAULT_TIMER_VALUE = 30;
 
   const [guesses, setGuesses] = useState<string[]>([]);
   const [countdownWord, setCountdownWord] = useState("");
@@ -59,8 +60,6 @@ const CountdownLettersConfig: React.FC<Props> = (props) => {
   const [inDictionary, setinDictionary] = useState(true);
   const [targetWord, settargetWord] = useState<string>();
   const [hasSubmitLetter, sethasSubmitLetter] = useState(false);
-
-  const DEFAULT_TIMER_VALUE = 30;
 
   const defaultGamemodeSettings = {
     numLetters: props.gamemodeSettings?.defaultNumLetters ?? DEFAULT_NUM_LETTERS,
