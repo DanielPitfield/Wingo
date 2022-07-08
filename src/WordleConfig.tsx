@@ -893,9 +893,10 @@ const WordleConfig: React.FC<Props> = (props) => {
     setConundrum("");
     setRevealedLetterIndexes([]);
     setletterStatuses(defaultLetterStatuses);
-    setRemainingSeconds(
-      gamemodeSettings.timerConfig.isTimed ? gamemodeSettings.timerConfig.seconds : mostRecentTotalSeconds
-    );
+
+    const newRemainingSeconds = gamemodeSettings.timerConfig.isTimed ? gamemodeSettings.timerConfig.seconds : mostRecentTotalSeconds;
+    setMostRecentTotalSeconds(newRemainingSeconds);
+    setRemainingSeconds(newRemainingSeconds);
 
     // Don't reset to defaultNumGuesses when there are lives remaining in limitless mode
     if (props.mode === "limitless" && numGuesses > 1) {
@@ -919,9 +920,9 @@ const WordleConfig: React.FC<Props> = (props) => {
     setRevealedLetterIndexes([]);
     setletterStatuses(defaultLetterStatuses);
 
-    setRemainingSeconds(
-      gamemodeSettings.timerConfig.isTimed ? gamemodeSettings.timerConfig.seconds : mostRecentTotalSeconds
-    );
+    const newRemainingSeconds = gamemodeSettings.timerConfig.isTimed ? gamemodeSettings.timerConfig.seconds : mostRecentTotalSeconds;
+    setMostRecentTotalSeconds(newRemainingSeconds);
+    setRemainingSeconds(newRemainingSeconds);
 
     const isCorrectAnswer = currentWord.toLowerCase() === targetWord.toLowerCase() && currentWord.length > 0;
 
