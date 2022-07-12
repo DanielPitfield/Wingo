@@ -868,14 +868,6 @@ export const App: React.FC = () => {
         return (
           <NubbleConfig
             theme={theme}
-            numDice={4}
-            diceMin={1}
-            diceMax={6}
-            gridSize={100}
-            gridShape={"hexagon"}
-            numTeams={2}
-            timeLengthMins={5}
-            gameOverOnIncorrectPick={false}
             settings={settings}
           />
         );

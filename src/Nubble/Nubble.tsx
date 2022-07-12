@@ -9,11 +9,32 @@ import { HexagonPinAdjacency } from "./NubbleConfig";
 
 interface Props {
   theme: Theme;
-  numDice: number;
-  diceMin: number;
-  diceMax: number;
-  gridSize: 25 | 64 | 100;
-  gridShape: "square" | "hexagon";
+
+  gamemodeSettings: {
+    numDice: number;
+    diceMin: number;
+    diceMax: number;
+    gridShape: "square" | "hexagon";
+    gridSize: 25 | 64 | 100;
+    numTeams: number;
+    isGameOverOnIncorrectPick?: boolean;
+    timerConfig?: { isTimed: true; seconds: number } | { isTimed: false };
+  };
+
+  remainingSeconds: number;
+
+  updateGamemodeSettings: (newGamemodeSettings: {
+    numDice: number;
+    diceMin: number;
+    diceMax: number;
+    gridShape: "square" | "hexagon";
+    gridSize: 25 | 64 | 100;
+    numTeams: number;
+    isGameOverOnIncorrectPick?: boolean;
+    timerConfig: { isTimed: true; seconds: number } | { isTimed: false };
+  }) => void;
+  updateRemainingSeconds: (newSeconds: number) => void;
+
   determineHexagonRowValues: () => { rowNumber: number; values: number[] }[];
   determinePoints: (value: number) => number;
   determinePointColourMappings: () => { points: number; colour: string }[];
@@ -25,10 +46,8 @@ interface Props {
     pin: number;
     adjacent_pins: HexagonPinAdjacency;
   }[];
-  numTeams: number;
-  timeLengthMins: number;
+
   settings: SettingsData;
-  gameOverOnIncorrectPick?: boolean;
 }
 
 export function randomIntFromInterval(min: number, max: number) {
@@ -41,10 +60,10 @@ const Nubble: React.FC<Props> = (props) => {
     "dice-rolling" | "dice-rolled-awaiting-pick" | "picked-awaiting-dice-roll" | "game-over-incorrect-tile"
   >("picked-awaiting-dice-roll");
   const [diceValues, setdiceValues] = useState<number[]>(
-    Array.from({ length: props.numDice }).map((x) => randomDiceNumber())
+    Array.from({ length: props.gamemodeSettings.numDice }).map((x) => randomDiceNumber())
   );
   const [pickedPins, setPickedPins] = useState<number[]>([]);
-  const gridPoints = Array.from({ length: props.gridSize }).map((_, i) => ({
+  const gridPoints = Array.from({ length: props.gamemodeSettings.gridSize }).map((_, i) => ({
     number: i + 1,
     points: props.determinePoints(i + 1),
   }));
@@ -60,7 +79,7 @@ const Nubble: React.FC<Props> = (props) => {
    * @returns
    */
   function randomDiceNumber() {
-    return randomIntFromInterval(props.diceMin, props.diceMax);
+    return randomIntFromInterval(props.gamemodeSettings.diceMin, props.gamemodeSettings.diceMax);
   }
 
   /**
@@ -77,7 +96,7 @@ const Nubble: React.FC<Props> = (props) => {
     setStatus("dice-rolling");
 
     // Determine random dice values for all the dice
-    setdiceValues(Array.from({ length: props.numDice }).map((x) => randomDiceNumber()));
+    setdiceValues(Array.from({ length: props.gamemodeSettings.numDice }).map((x) => randomDiceNumber()));
   }
 
   /**
@@ -114,7 +133,7 @@ const Nubble: React.FC<Props> = (props) => {
    * @returns
    */
   function isAdjacentBonus(pinNumber: number): boolean {
-    if (props.gridShape === "square") {
+    if (props.gamemodeSettings.gridShape === "square") {
       // Pin adjacency information
       const adjacentMappings = props.determineSquareAdjacentMappings();
       // Adjacent pins of the clicked pin
@@ -133,7 +152,7 @@ const Nubble: React.FC<Props> = (props) => {
       } else {
         return false;
       }
-    } else if (props.gridShape === "hexagon") {
+    } else if (props.gamemodeSettings.gridShape === "hexagon") {
       // Pin adjacency information
       const adjacentMappings = props.determineHexagonAdjacentMappings();
       // Adjacent pins of the clicked pin
@@ -222,7 +241,7 @@ const Nubble: React.FC<Props> = (props) => {
     // There are no solutions (ways of making the selected number)
     if (solutions.length < 1) {
       // End game if game setting is enabled
-      if (props.gameOverOnIncorrectPick) {
+      if (props.gamemodeSettings.isGameOverOnIncorrectPick) {
         setStatus("game-over-incorrect-tile");
       }
 
@@ -261,7 +280,7 @@ const Nubble: React.FC<Props> = (props) => {
   // Array (length of rowLength) of buttons
   function populateRow(rowLength: number, rowNumber: number) {
     // Calculate the middle row
-    const middle = Math.sqrt(props.gridSize) / 2;
+    const middle = Math.sqrt(props.gamemodeSettings.gridSize) / 2;
 
     // Calculate the offset from the middle row (negative offset applied to rows below middle)
     const offset = (middle - rowNumber) * -1;
@@ -281,13 +300,13 @@ const Nubble: React.FC<Props> = (props) => {
         className="nubble-grid-row"
         style={{
           transform:
-            props.gridShape === "hexagon"
+          props.gamemodeSettings.gridShape === "hexagon"
               ? `translate(${offset * 10 * X_SLANT}px, ${offset * 10 * Y_SLANT}px)`
               : undefined,
         }}
       >
         {Array.from({ length: rowLength }).map((_, i) => {
-          if (props.gridShape === "square") {
+          if (props.gamemodeSettings.gridShape === "square") {
             // What was the highest value included in the previous row?
             const prevRowEndingValue = (rowNumber - 1) * rowLength;
             // Start from that value and add the index to it (index is zero based, so add an additional one)
@@ -302,7 +321,7 @@ const Nubble: React.FC<Props> = (props) => {
                 key={i}
                 className="nubble-button"
                 data-prime={isPrime(value)}
-                data-shape={props.gridShape}
+                data-shape={props.gamemodeSettings.gridShape}
                 data-picked={isPicked}
                 data-colour={colour}
                 onClick={() => onClick(value)}
@@ -311,7 +330,7 @@ const Nubble: React.FC<Props> = (props) => {
                 {value}
               </button>
             );
-          } else if (props.gridShape === "hexagon") {
+          } else if (props.gamemodeSettings.gridShape === "hexagon") {
             const value = rowInformation?.values[i];
 
             if (!value) {
@@ -326,7 +345,7 @@ const Nubble: React.FC<Props> = (props) => {
                 key={i}
                 className="nubble-button"
                 data-prime={isPrime(value)}
-                data-shape={props.gridShape}
+                data-shape={props.gamemodeSettings.gridShape}
                 data-picked={isPicked}
                 data-colour={colour}
                 onClick={() => onClick(value)}
@@ -350,7 +369,7 @@ const Nubble: React.FC<Props> = (props) => {
   function populateGrid() {
     var Grid = [];
 
-    const rowLength = Math.sqrt(props.gridSize);
+    const rowLength = Math.sqrt(props.gamemodeSettings.gridSize);
 
     // Start with higher value rows (so that they are rendered first, at the top of the grid)
     for (let i = rowLength; i >= 1; i--) {
@@ -428,7 +447,7 @@ const Nubble: React.FC<Props> = (props) => {
           ? "Pick a nibble"
           : "Game over"}
       </DiceGrid>
-      <div className="nubble-grid" data-shape={props.gridShape}>
+      <div className="nubble-grid" data-shape={props.gamemodeSettings.gridShape}>
         {populateGrid()}
       </div>
       <div className="nubble-score-wrapper">

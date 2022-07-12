@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import "../index.scss";
 import { SettingsData } from "../SaveData";
 import { Theme } from "../Themes";
@@ -7,15 +7,22 @@ import { hexagon_100, hexagon_64, hexagon_25, square_100, square_64, square_25 }
 
 interface Props {
   theme: Theme;
-  numDice: number;
-  diceMin: number;
-  diceMax: number;
-  gridSize: 25 | 64 | 100;
-  gridShape: "square" | "hexagon";
-  numTeams: number;
-  timeLengthMins: number;
+
+  gamemodeSettings?: {
+    numDice: number;
+    // The lowest value which can be the number shown on a dice
+    diceMin: number;
+    diceMax: number;
+    gridShape: "square" | "hexagon";
+    gridSize: 25 | 64 | 100;
+    numTeams: number;
+    // When a number which can't be made with the dice numbers is picked, does the game end?
+    isGameOverOnIncorrectPick?: boolean;
+    timerConfig: { isTimed: true; seconds: number } | { isTimed: false };
+  };
+
   settings: SettingsData;
-  gameOverOnIncorrectPick?: boolean;
+  
 }
 
 export type HexagonPinAdjacency = {
@@ -28,9 +35,80 @@ export type HexagonPinAdjacency = {
 };
 
 const NubbleConfig: React.FC<Props> = (props) => {
+  const DEFAULT_NUM_DICE = 4;
+  const DEFAULT_DICE_MIN = 1;
+  const DEFAULT_DICE_MAX = 6;
+  const DEFAULT_GRID_SHAPE = "hexagon";
+  const DEFAULT_GRID_SIZE = 100;
+  const DEFAULT_NUM_TEAMS = 1;
+  const DEFAULT_TIMER_VALUE = 600;
+
+  const defaultGamemodeSettings = {
+    numDice: props.gamemodeSettings?.numDice ?? DEFAULT_NUM_DICE,
+    diceMin: props.gamemodeSettings?.diceMin ?? DEFAULT_DICE_MIN,
+    diceMax: props.gamemodeSettings?.diceMax ?? DEFAULT_DICE_MAX,
+    gridShape: props.gamemodeSettings?.gridShape ?? DEFAULT_GRID_SHAPE,
+    gridSize: props.gamemodeSettings?.gridSize ?? DEFAULT_GRID_SIZE,
+    numTeams: props.gamemodeSettings?.numTeams ?? DEFAULT_NUM_TEAMS,
+    isGameOverOnIncorrectPick: props.gamemodeSettings?.isGameOverOnIncorrectPick ?? false,
+    timerConfig: props.gamemodeSettings?.timerConfig ?? { isTimed: false },
+  };
+
+  const [gamemodeSettings, setGamemodeSettings] = useState<{
+    numDice: number;
+    diceMin: number;
+    diceMax: number;
+    gridShape: "square" | "hexagon";
+    gridSize: 25 | 64 | 100;
+    numTeams: number;
+    isGameOverOnIncorrectPick?: boolean;
+    timerConfig: { isTimed: true; seconds: number } | { isTimed: false };
+  }>(defaultGamemodeSettings);
+
+  const [remainingSeconds, setRemainingSeconds] = useState(
+    props.gamemodeSettings?.timerConfig?.isTimed === true
+      ? props.gamemodeSettings?.timerConfig.seconds
+      : DEFAULT_TIMER_VALUE
+  );
+
+  // Timer Setup
+  React.useEffect(() => {
+    if (!gamemodeSettings.timerConfig.isTimed) {
+      return;
+    }
+
+    const timer = setInterval(() => {
+      if (remainingSeconds > 0) {
+        setRemainingSeconds(remainingSeconds - 1);
+      } else {
+        // TODO: Set status (callback) instead of setinProgress(false);
+      }
+    }, 1000);
+    return () => {
+      clearInterval(timer);
+    };
+  }, [setRemainingSeconds, remainingSeconds, gamemodeSettings.timerConfig.isTimed]);
+
+  function updateGamemodeSettings(newGamemodeSettings: {
+    numDice: number;
+    diceMin: number;
+    diceMax: number;
+    gridShape: "square" | "hexagon";
+    gridSize: 25 | 64 | 100;
+    numTeams: number;
+    isGameOverOnIncorrectPick?: boolean;
+    timerConfig: { isTimed: true; seconds: number } | { isTimed: false };
+  }) {
+    setGamemodeSettings(newGamemodeSettings);
+  }
+
+  function updateRemainingSeconds(newSeconds: number) {
+    setRemainingSeconds(newSeconds);
+  }
+
   // Returns which pin values are on which rows for hexagon grid shape
   function determineHexagonRowValues() {
-    switch (props.gridSize) {
+    switch (gamemodeSettings.gridSize) {
       case 25: {
         return [
           { rowNumber: 1, values: [1, 3, 6, 10, 15] },
@@ -71,9 +149,9 @@ const NubbleConfig: React.FC<Props> = (props) => {
 
   // Returns the number of points awarded for each colour of pin (imported from pointColourMappings.ts)
   function determinePointColourMappings(): { points: number; colour: string }[] {
-    switch (props.gridShape) {
+    switch (gamemodeSettings.gridShape) {
       case "hexagon": {
-        switch (props.gridSize) {
+        switch (gamemodeSettings.gridSize) {
           case 100: {
             return hexagon_100;
           }
@@ -86,7 +164,7 @@ const NubbleConfig: React.FC<Props> = (props) => {
         }
       }
       case "square": {
-        switch (props.gridSize) {
+        switch (gamemodeSettings.gridSize) {
           case 100: {
             return square_100;
           }
@@ -103,9 +181,9 @@ const NubbleConfig: React.FC<Props> = (props) => {
 
   // Returns the number of points awarded for a selected pin
   function determinePoints(number: number): number {
-    switch (props.gridShape) {
+    switch (gamemodeSettings.gridShape) {
       case "hexagon": {
-        switch (props.gridSize) {
+        switch (gamemodeSettings.gridSize) {
           case 25: {
             if (number >= 1 && number <= 6) {
               return 20;
@@ -194,7 +272,7 @@ const NubbleConfig: React.FC<Props> = (props) => {
         break;
       }
       case "square": {
-        switch (props.gridSize) {
+        switch (gamemodeSettings.gridSize) {
           case 25: {
             if (number >= 1 && number <= 5) {
               return 50;
@@ -299,11 +377,11 @@ const NubbleConfig: React.FC<Props> = (props) => {
       }
     }
 
-    throw new Error(`Unexpected number for grid size: ${props.gridSize} Number:  ${number}`);
+    throw new Error(`Unexpected number for grid size: ${gamemodeSettings.gridSize} Number:  ${number}`);
   }
 
   const rowValues = determineHexagonRowValues();
-  
+
   // Gets the adjacent pins of an individual pin (for hexagon grid shape)
   function getHexagonAdjacentPins(pin: number): HexagonPinAdjacency {
     // Information about the entire row (of the pin)
@@ -423,9 +501,7 @@ const NubbleConfig: React.FC<Props> = (props) => {
     }
 
     // Safety check, remove any non-integers or values outside grid range
-    adjacentPins = adjacentPins.filter(
-      (x) => x > 0 && x <= gridSize && Math.round(x) === x && x !== undefined
-    );
+    adjacentPins = adjacentPins.filter((x) => x > 0 && x <= gridSize && Math.round(x) === x && x !== undefined);
 
     return adjacentPins;
   }
@@ -435,9 +511,9 @@ const NubbleConfig: React.FC<Props> = (props) => {
     pin: number;
     adjacent_pins: number[];
   }[] {
-    return Array.from({ length: props.gridSize }).map((_, i) => ({
+    return Array.from({ length: gamemodeSettings.gridSize }).map((_, i) => ({
       pin: i + 1,
-      adjacent_pins: getSquareAdjacentPins(i + 1, props.gridSize),
+      adjacent_pins: getSquareAdjacentPins(i + 1, gamemodeSettings.gridSize),
     }));
   }
 
@@ -446,7 +522,7 @@ const NubbleConfig: React.FC<Props> = (props) => {
     pin: number;
     adjacent_pins: HexagonPinAdjacency;
   }[] {
-    return Array.from({ length: props.gridSize }).map((_, i) => ({
+    return Array.from({ length: gamemodeSettings.gridSize }).map((_, i) => ({
       pin: i + 1,
       adjacent_pins: getHexagonAdjacentPins(i + 1),
     }));
@@ -455,19 +531,15 @@ const NubbleConfig: React.FC<Props> = (props) => {
   return (
     <Nubble
       theme={props.theme}
-      numDice={props.numDice}
-      diceMin={props.diceMin}
-      diceMax={props.diceMax}
-      gridSize={props.gridSize}
-      gridShape={props.gridShape}
+      gamemodeSettings={gamemodeSettings}
+      remainingSeconds={remainingSeconds}
+      updateGamemodeSettings={updateGamemodeSettings}
+      updateRemainingSeconds={updateRemainingSeconds}
       determineHexagonRowValues={determineHexagonRowValues}
       determinePoints={determinePoints}
       determinePointColourMappings={determinePointColourMappings}
       determineSquareAdjacentMappings={determineSquareAdjacentMappings}
       determineHexagonAdjacentMappings={determineHexagonAdjacentMappings}
-      numTeams={props.numTeams}
-      timeLengthMins={props.timeLengthMins}
-      gameOverOnIncorrectPick={props.gameOverOnIncorrectPick}
       settings={props.settings}
     ></Nubble>
   );
