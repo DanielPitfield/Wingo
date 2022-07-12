@@ -93,6 +93,7 @@ const Nubble: React.FC<Props> = (props) => {
     setStatus("dice-rolled-awaiting-pick");
   }, [diceValues]);
 
+  // Game over when timer runs out
   React.useEffect(() => {
     // TODO: Move status to NubbleConfig and set within timer useEffect()?
     if (!props.gamemodeSettings.timerConfig.isTimed) {
@@ -103,6 +104,11 @@ const Nubble: React.FC<Props> = (props) => {
       setStatus("game-over-timer-ended");
     }
   }, [props.gamemodeSettings.timerConfig.isTimed, props.remainingSeconds]);
+
+  // Reset game when any settings are changed
+  React.useEffect(() => {
+    ResetGame();
+  }, [props.gamemodeSettings]);
 
   /**
    *
@@ -117,11 +123,6 @@ const Nubble: React.FC<Props> = (props) => {
    * @returns
    */
   function rollDice() {
-    // If dice is not available to be rolled
-    if (status !== "picked-awaiting-dice-roll") {
-      return;
-    }
-
     // Dice is now being rolled
     setStatus("dice-rolling");
 
@@ -453,6 +454,19 @@ const Nubble: React.FC<Props> = (props) => {
     );
 
     return pinScores;
+  }
+
+  function ResetGame() {
+    // Reset timer back to full
+    if (props.gamemodeSettings.timerConfig.isTimed) {
+      const newRemainingSeconds = props.gamemodeSettings.timerConfig.seconds ?? mostRecentTotalSeconds;
+      props.updateRemainingSeconds(newRemainingSeconds)
+    }
+    // Clear any game progress
+    setPickedPins([]);
+    setTotalPoints(0);
+    // The quanity of dice (numDice) only updates after rolling
+    rollDice();
   }
 
   function generateSettingsOptions(): React.ReactNode {
