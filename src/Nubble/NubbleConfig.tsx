@@ -62,6 +62,10 @@ const NubbleConfig: React.FC<Props> = (props) => {
     gridSize: 25 | 64 | 100;
     numTeams: number;
     isGameOverOnIncorrectPick?: boolean;
+
+    // TODO: Guess timer (how long after dice has finished rolling until a guess must be made?)
+
+    // How long overall until the game ends?
     timerConfig: { isTimed: true; seconds: number } | { isTimed: false };
   }>(defaultGamemodeSettings);
 
@@ -80,8 +84,6 @@ const NubbleConfig: React.FC<Props> = (props) => {
     const timer = setInterval(() => {
       if (remainingSeconds > 0) {
         setRemainingSeconds(remainingSeconds - 1);
-      } else {
-        // TODO: Set status (callback) instead of setinProgress(false);
       }
     }, 1000);
     return () => {

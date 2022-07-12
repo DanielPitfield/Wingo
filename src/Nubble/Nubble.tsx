@@ -57,7 +57,11 @@ export function randomIntFromInterval(min: number, max: number) {
 
 const Nubble: React.FC<Props> = (props) => {
   const [status, setStatus] = useState<
-    "dice-rolling" | "dice-rolled-awaiting-pick" | "picked-awaiting-dice-roll" | "game-over-incorrect-tile"
+    | "dice-rolling"
+    | "dice-rolled-awaiting-pick"
+    | "picked-awaiting-dice-roll"
+    | "game-over-incorrect-tile"
+    | "game-over-timer-ended"
   >("picked-awaiting-dice-roll");
   const [diceValues, setdiceValues] = useState<number[]>(
     Array.from({ length: props.gamemodeSettings.numDice }).map((x) => randomDiceNumber())
@@ -73,6 +77,14 @@ const Nubble: React.FC<Props> = (props) => {
   React.useEffect(() => {
     setStatus("dice-rolled-awaiting-pick");
   }, [diceValues]);
+
+  // End game when timer runs out
+  const hasTimerEnded = props.remainingSeconds <= 0;
+
+  React.useEffect(() => {
+    // TODO: Move status to NubbleConfig and set within timer useEffect()?
+    setStatus("game-over-timer-ended");
+  }, [hasTimerEnded]);
 
   /**
    *
@@ -213,8 +225,7 @@ const Nubble: React.FC<Props> = (props) => {
       } else {
         return false;
       }
-    }
-    else {
+    } else {
       // Unexpected grid shape
       return false;
     }
@@ -288,10 +299,10 @@ const Nubble: React.FC<Props> = (props) => {
     // How much to slant the parallelogram
     const X_SLANT = 2.45;
     const Y_SLANT = 1.8;
-    
+
     // Information regarding which pin values are on the current row (for hexagon grid shape)
     const rowInformation = props.determineHexagonRowValues().find((row) => rowNumber === row.rowNumber);
-    
+
     // Information regarding what colour the rows are and how many points are awarded for each row
     const pointColourInformation = props.determinePointColourMappings();
 
@@ -300,7 +311,7 @@ const Nubble: React.FC<Props> = (props) => {
         className="nubble-grid-row"
         style={{
           transform:
-          props.gamemodeSettings.gridShape === "hexagon"
+            props.gamemodeSettings.gridShape === "hexagon"
               ? `translate(${offset * 10 * X_SLANT}px, ${offset * 10 * Y_SLANT}px)`
               : undefined,
         }}
@@ -395,14 +406,16 @@ const Nubble: React.FC<Props> = (props) => {
           data-prime={false}
           data-picked={false}
           data-colour={row.colour}
-          onClick={() => {/* Do nothing */}}
+          onClick={() => {
+            /* Do nothing */
+          }}
           disabled={false}
         >
           {row.points}
         </button>
       );
     }
-    
+
     // Use the last/highest row colour to show prime nubble pin
     const lastPointColourMapping = pointColourMappings[pointColourMappings.length - 1];
 
