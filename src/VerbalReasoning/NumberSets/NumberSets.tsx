@@ -9,12 +9,12 @@ import ProgressBar, { GreenToRedColorTransition } from "../../ProgressBar";
 import { SettingsData } from "../../SaveData";
 import { useClickChime, useCorrectChime, useFailureChime, useLightPingChime } from "../../Sounds";
 import { Theme } from "../../Themes";
-import { DEFAULT_DIFFICULTY, difficultyOption, difficultyOptions } from "../Algebra/Algebra";
+import { DEFAULT_DIFFICULTY, algebraDifficulty, algebraDifficulties } from "../Algebra/Algebra";
 import { generateSet } from "./Sets";
 
 /** Config for a specific number set (exported for config from campaign) */
 export type NumberSetConfigProps = {
-  difficulty: difficultyOption;
+  difficulty: algebraDifficulty;
   correctAnswerDescription: string;
   examples: NumberSetTemplate[];
   question: NumberSetTemplate;
@@ -32,7 +32,7 @@ interface Props {
   defaultSet?: NumberSetConfigProps;
 
   gamemodeSettings?: {
-    difficulty?: difficultyOption;
+    difficulty?: algebraDifficulty;
     timerConfig?: { isTimed: true; seconds: number } | { isTimed: false };
   };
 
@@ -57,7 +57,7 @@ const NumberSets: React.FC<Props> = (props) => {
   };
 
   const [gamemodeSettings, setGamemodeSettings] = useState<{
-    difficulty: difficultyOption;
+    difficulty: algebraDifficulty;
     timerConfig: { isTimed: true; seconds: number } | { isTimed: false };
   }>(defaultGamemodeSettings);
 
@@ -262,7 +262,7 @@ const NumberSets: React.FC<Props> = (props) => {
             onChange={(e) => {
               const newGamemodeSettings = {
                 ...gamemodeSettings,
-                difficulty: e.target.value as difficultyOption,
+                difficulty: e.target.value as algebraDifficulty,
               };
               setGamemodeSettings(newGamemodeSettings);
             }}
@@ -270,7 +270,7 @@ const NumberSets: React.FC<Props> = (props) => {
             name="difficulty"
             value={gamemodeSettings.difficulty}
           >
-            {difficultyOptions.map((difficultyOption) => (
+            {algebraDifficulties.map((difficultyOption) => (
               <option key={difficultyOption} value={difficultyOption}>
                 {difficultyOption}
               </option>

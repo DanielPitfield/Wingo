@@ -10,7 +10,7 @@ import { operators } from "../CountdownNumbers/CountdownNumbersConfig";
 import { Theme } from "../Themes";
 import { SettingsData } from "../SaveData";
 import GamemodeSettingsMenu from "../GamemodeSettingsMenu";
-import { numberSizeOption, numberSizeOptions } from "./ArithmeticDrag";
+import { arithmeticNumberSize, arithmeticNumberSizes } from "./ArithmeticDrag";
 import { pickRandomElementFrom } from "../WordleConfig";
 
 interface Props {
@@ -32,7 +32,7 @@ interface Props {
     // How many tiles appear EACH checkpoint?
     numTiles?: number;
     // How big/difficult are the numbers used in these expressions?
-    numberSize?: numberSizeOption;
+    numberSize?: arithmeticNumberSize;
     // The time between tiles appearing
     revealIntervalSeconds: number;
   };
@@ -78,7 +78,7 @@ const ArithmeticReveal: React.FC<Props> = (props) => {
   const [gamemodeSettings, setGamemodeSettings] = useState<{
     numCheckpoints: number;
     numTiles: number;
-    numberSize: numberSizeOption;
+    numberSize: arithmeticNumberSize;
     revealIntervalSeconds: number;
     timerConfig: { isTimed: true; seconds: number } | { isTimed: false };
   }>(defaultGamemodeSettings);
@@ -534,7 +534,7 @@ const ArithmeticReveal: React.FC<Props> = (props) => {
             onChange={(e) => {
               const newGamemodeSettings = {
                 ...gamemodeSettings,
-                numberSize: e.target.value as numberSizeOption,
+                numberSize: e.target.value as arithmeticNumberSize,
               };
               setGamemodeSettings(newGamemodeSettings);
             }}
@@ -542,7 +542,7 @@ const ArithmeticReveal: React.FC<Props> = (props) => {
             name="numberSize"
             value={gamemodeSettings.numberSize}
           >
-            {numberSizeOptions.map((sizeOption) => (
+            {arithmeticNumberSizes.map((sizeOption) => (
               <option key={sizeOption} value={sizeOption}>
                 {sizeOption}
               </option>

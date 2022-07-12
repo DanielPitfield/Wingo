@@ -1,24 +1,26 @@
 import React, { useState } from "react";
 import { NumberPuzzle } from "../CountdownNumbers/CountdownSolver";
+import GamemodeSettingsMenu from "../GamemodeSettingsMenu";
 import "../index.scss";
 import { MessageNotification } from "../MessageNotification";
 import { SettingsData } from "../SaveData";
 import { Theme } from "../Themes";
 import DiceGrid from "./DiceGrid";
-import { HexagonPinAdjacency } from "./NubbleConfig";
+import { HexagonPinAdjacency, nubbleGridShape, nubbleGridShapes, nubbleGridSize, nubbleGridSizes } from "./NubbleConfig";
 
 interface Props {
+  isCampaignLevel: boolean;
   theme: Theme;
 
   gamemodeSettings: {
     numDice: number;
     diceMin: number;
     diceMax: number;
-    gridShape: "square" | "hexagon";
-    gridSize: 25 | 64 | 100;
+    gridShape: nubbleGridShape;
+    gridSize: nubbleGridSize;
     numTeams: number;
-    isGameOverOnIncorrectPick?: boolean;
-    timerConfig?: { isTimed: true; seconds: number } | { isTimed: false };
+    isGameOverOnIncorrectPick: boolean;
+    timerConfig: { isTimed: true; seconds: number } | { isTimed: false };
   };
 
   remainingSeconds: number;
@@ -27,10 +29,10 @@ interface Props {
     numDice: number;
     diceMin: number;
     diceMax: number;
-    gridShape: "square" | "hexagon";
-    gridSize: 25 | 64 | 100;
+    gridShape: nubbleGridShape;
+    gridSize: nubbleGridSize;
     numTeams: number;
-    isGameOverOnIncorrectPick?: boolean;
+    isGameOverOnIncorrectPick: boolean;
     timerConfig: { isTimed: true; seconds: number } | { isTimed: false };
   }) => void;
   updateRemainingSeconds: (newSeconds: number) => void;
@@ -72,6 +74,13 @@ const Nubble: React.FC<Props> = (props) => {
     points: props.determinePoints(i + 1),
   }));
   const [totalPoints, setTotalPoints] = useState(0);
+
+  const DEFAULT_TIMER_VALUE = 600;
+  const [mostRecentTotalSeconds, setMostRecentTotalSeconds] = useState(
+    props.gamemodeSettings?.timerConfig?.isTimed === true
+      ? props.gamemodeSettings?.timerConfig.seconds
+      : DEFAULT_TIMER_VALUE
+  );
 
   // Determine valid results on update of diceValues (at start and on roll of dice)
   React.useEffect(() => {
@@ -164,7 +173,7 @@ const Nubble: React.FC<Props> = (props) => {
       } else {
         return false;
       }
-    } else if (props.gamemodeSettings.gridShape === "hexagon") {
+    } else if (props.gamemodeSettings.gridShape === "hexagon" as nubbleGridShape) {
       // Pin adjacency information
       const adjacentMappings = props.determineHexagonAdjacentMappings();
       // Adjacent pins of the clicked pin
@@ -311,7 +320,7 @@ const Nubble: React.FC<Props> = (props) => {
         className="nubble-grid-row"
         style={{
           transform:
-            props.gamemodeSettings.gridShape === "hexagon"
+            props.gamemodeSettings.gridShape === "hexagon" as nubbleGridShape
               ? `translate(${offset * 10 * X_SLANT}px, ${offset * 10 * Y_SLANT}px)`
               : undefined,
         }}
@@ -341,7 +350,7 @@ const Nubble: React.FC<Props> = (props) => {
                 {value}
               </button>
             );
-          } else if (props.gamemodeSettings.gridShape === "hexagon") {
+          } else if (props.gamemodeSettings.gridShape === "hexagon" as nubbleGridShape) {
             const value = rowInformation?.values[i];
 
             if (!value) {
@@ -437,8 +446,187 @@ const Nubble: React.FC<Props> = (props) => {
     return pinScores;
   }
 
+  function generateSettingsOptions(): React.ReactNode {
+    return (
+      <>
+        <label>
+          <input
+            type="number"
+            value={props.gamemodeSettings.numDice}
+            min={2}
+            max={6}
+            onChange={(e) => {
+              const newGamemodeSettings = {
+                ...props.gamemodeSettings,
+                numDice: e.target.valueAsNumber,
+              };
+              props.updateGamemodeSettings(newGamemodeSettings);
+            }}
+          ></input>
+          Number of dice
+        </label>
+
+        <label>
+          <input
+            type="number"
+            value={props.gamemodeSettings.diceMin}
+            min={1}
+            max={props.gamemodeSettings.diceMax}
+            onChange={(e) => {
+              const newGamemodeSettings = {
+                ...props.gamemodeSettings,
+                diceMin: e.target.valueAsNumber,
+              };
+              props.updateGamemodeSettings(newGamemodeSettings);
+            }}
+          ></input>
+          Minimum dice value
+        </label>
+
+        <label>
+          <input
+            type="number"
+            value={props.gamemodeSettings.diceMax}
+            min={props.gamemodeSettings.diceMin}
+            max={100}
+            onChange={(e) => {
+              const newGamemodeSettings = {
+                ...props.gamemodeSettings,
+                diceMax: e.target.valueAsNumber,
+              };
+              props.updateGamemodeSettings(newGamemodeSettings);
+            }}
+          ></input>
+          Maximum dice value
+        </label>
+
+        <label>
+          <select
+            onChange={(e) => {
+              const newGamemodeSettings = {
+                ...props.gamemodeSettings,
+                gridShape: e.target.value as nubbleGridShape,
+              };
+              props.updateGamemodeSettings(newGamemodeSettings);
+            }}
+            className="nubbleGridShape_input"
+            name="nubbleGridShape"
+            value={props.gamemodeSettings.gridShape as nubbleGridShape}
+          >
+            {nubbleGridShapes.map((nubbleGridShape) => (
+              <option key={nubbleGridShape} value={nubbleGridShape}>
+                {nubbleGridShape}
+              </option>
+            ))}
+          </select>
+          Grid Shape
+        </label>
+
+        <label>
+          <select
+            onChange={(e) => {
+              const newGamemodeSettings = {
+                ...props.gamemodeSettings,
+                gridSize: parseInt(e.target.value) as nubbleGridSize,
+              };
+              props.updateGamemodeSettings(newGamemodeSettings);
+            }}
+            className="nubbleGridSize_input"
+            name="nubbleGridSize"
+            value={props.gamemodeSettings.gridSize as nubbleGridSize}
+          >
+            {nubbleGridSizes.map((nubbleGridSize) => (
+              <option key={nubbleGridSize} value={nubbleGridSize}>
+                {nubbleGridSize}
+              </option>
+            ))}
+          </select>
+          Grid Size
+        </label>
+
+        <label>
+          <input
+            type="number"
+            value={props.gamemodeSettings.numTeams}
+            min={1}
+            max={4}
+            onChange={(e) => {
+              const newGamemodeSettings = {
+                ...props.gamemodeSettings,
+                numTeams: e.target.valueAsNumber,
+              };
+              props.updateGamemodeSettings(newGamemodeSettings);
+            }}
+          ></input>
+          Number of teams
+        </label>
+
+        <label>
+          <input
+            checked={props.gamemodeSettings.isGameOverOnIncorrectPick}
+            type="checkbox"
+            onChange={(e) => {
+              const newGamemodeSettings = {
+                ...props.gamemodeSettings,
+                isGameOverOnIncorrectPick: !props.gamemodeSettings.isGameOverOnIncorrectPick,
+              };
+              props.updateGamemodeSettings(newGamemodeSettings);
+            }}
+          ></input>
+          Incorrect pick ends game
+        </label>
+
+        <>
+          <label>
+            <input
+              checked={props.gamemodeSettings.timerConfig.isTimed}
+              type="checkbox"
+              onChange={() => {
+                // If currently timed, on change, make the game not timed and vice versa
+                const newTimer: { isTimed: true; seconds: number } | { isTimed: false } = props.gamemodeSettings
+                  .timerConfig.isTimed
+                  ? { isTimed: false }
+                  : { isTimed: true, seconds: mostRecentTotalSeconds };
+                const newGamemodeSettings = { ...props.gamemodeSettings, timerConfig: newTimer };
+                props.updateGamemodeSettings(newGamemodeSettings);
+              }}
+            ></input>
+            Timer
+          </label>
+          {props.gamemodeSettings.timerConfig.isTimed && (
+            <label>
+              <input
+                type="number"
+                value={props.gamemodeSettings.timerConfig.seconds}
+                min={10}
+                max={120}
+                step={5}
+                onChange={(e) => {
+                  props.updateRemainingSeconds(e.target.valueAsNumber);
+                  setMostRecentTotalSeconds(e.target.valueAsNumber);
+                  const newGamemodeSettings = {
+                    ...props.gamemodeSettings,
+                    timer: { isTimed: true, seconds: e.target.valueAsNumber },
+                  };
+                  props.updateGamemodeSettings(newGamemodeSettings);
+                }}
+              ></input>
+              Seconds
+            </label>
+          )}
+        </>
+      </>
+    );
+  }
+
   return (
     <div className="App" style={{ backgroundImage: `url(${props.theme.backgroundImageSrc})`, backgroundSize: "100%" }}>
+      {!props.isCampaignLevel && (
+        <div className="gamemodeSettings">
+          <GamemodeSettingsMenu>{generateSettingsOptions()}</GamemodeSettingsMenu>
+        </div>
+      )}
+      
       {status === "game-over-incorrect-tile" && (
         <MessageNotification type="error">
           Incorrect tile picked

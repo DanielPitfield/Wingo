@@ -12,12 +12,12 @@ import { useClickChime, useCorrectChime, useFailureChime, useLightPingChime } fr
 import { Theme } from "../../Themes";
 import { AlgebraTemplates } from "./AlgebraTemplates";
 
-export const difficultyOptions = ["novice","easy","medium","hard","expert"] as const;
-export type difficultyOption = typeof difficultyOptions[number];  
-export const DEFAULT_DIFFICULTY: difficultyOption = "easy";
+export const algebraDifficulties = ["novice","easy","medium","hard","expert"] as const;
+export type algebraDifficulty = typeof algebraDifficulties[number];  
+export const DEFAULT_DIFFICULTY: algebraDifficulty = "easy";
 
 export type AlgebraConfigProps = {
-  difficulty: difficultyOption;
+  difficulty: algebraDifficulty;
   inputs: number[];
   questions: QuestionTemplate[];
 };
@@ -33,7 +33,7 @@ interface Props {
   defaultTemplate?: AlgebraConfigProps;
 
   gamemodeSettings?: {
-    difficulty?: difficultyOption;
+    difficulty?: algebraDifficulty;
     timerConfig?: { isTimed: true; seconds: number } | { isTimed: false };
   }
 
@@ -75,7 +75,7 @@ const Algebra: React.FC<Props> = (props) => {
   };
 
   const [gamemodeSettings, setGamemodeSettings] = useState<{
-    difficulty: difficultyOption;
+    difficulty: algebraDifficulty;
     timerConfig: { isTimed: true; seconds: number } | { isTimed: false };
   }>(defaultGamemodeSettings);
 
@@ -342,7 +342,7 @@ const Algebra: React.FC<Props> = (props) => {
             onChange={(e) => {
               const newGamemodeSettings = {
                 ...gamemodeSettings,
-                difficulty: e.target.value as difficultyOption,
+                difficulty: e.target.value as algebraDifficulty,
               };
               setGamemodeSettings(newGamemodeSettings);
             }}
@@ -350,7 +350,7 @@ const Algebra: React.FC<Props> = (props) => {
             name="difficulty"
             value={gamemodeSettings.difficulty}
           >
-            {difficultyOptions.map((difficultyOption) => (
+            {algebraDifficulties.map((difficultyOption) => (
               <option key={difficultyOption} value={difficultyOption}>
                 {difficultyOption}
               </option>

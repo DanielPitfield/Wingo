@@ -14,8 +14,8 @@ import { pickRandomElementFrom } from "../WordleConfig";
 import { DraggableItem } from "./DraggableItem";
 
 // Const Contexts: https://stackoverflow.com/questions/44497388/typescript-array-to-string-literal-type
-export const numberSizeOptions = ["small", "medium", "large"] as const;
-export type numberSizeOption = typeof numberSizeOptions[number];
+export const arithmeticNumberSizes = ["small", "medium", "large"] as const;
+export type arithmeticNumberSize = typeof arithmeticNumberSizes[number];
 
 const arithmeticModes = ["order", "match"] as const;
 type arithmeticMode = typeof arithmeticModes[number];
@@ -40,7 +40,7 @@ interface Props {
     // How many expressions (to match or order)?
     numTiles?: number;
     // How big/difficult are the numbers used in these expressions?
-    numberSize?: numberSizeOption;
+    numberSize?: arithmeticNumberSize;
     // How many operands/numbers in these expressions?
     numOperands?: number;
     // How many times can you check your attempts?
@@ -98,7 +98,7 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
 
   const [gamemodeSettings, setGamemodeSettings] = useState<{
     numTiles: number;
-    numberSize: numberSizeOption;
+    numberSize: arithmeticNumberSize;
     numOperands: number;
     numGuesses: number;
     timerConfig: { isTimed: true; seconds: number } | { isTimed: false };
@@ -546,7 +546,7 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
             onChange={(e) => {
               const newGamemodeSettings = {
                 ...gamemodeSettings,
-                numberSize: e.target.value as numberSizeOption,
+                numberSize: e.target.value as arithmeticNumberSize,
               };
               setGamemodeSettings(newGamemodeSettings);
             }}
@@ -554,7 +554,7 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
             name="numberSize"
             value={gamemodeSettings.numberSize}
           >
-            {numberSizeOptions.map((sizeOption) => (
+            {arithmeticNumberSizes.map((sizeOption) => (
               <option key={sizeOption} value={sizeOption}>
                 {sizeOption}
               </option>

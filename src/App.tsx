@@ -13,7 +13,7 @@ import { Area, AreaConfig } from "./Campaign/Area";
 import { getId, Level, LevelConfig } from "./Campaign/Level";
 import LetterCategoriesConfig from "./LetterCategories/LetterCategoriesConfig";
 import ArithmeticReveal from "./NumbersArithmetic/ArithmeticReveal";
-import ArithmeticDrag, { numberSizeOption, numberSizeOptions } from "./NumbersArithmetic/ArithmeticDrag";
+import ArithmeticDrag, { arithmeticNumberSize, arithmeticNumberSizes } from "./NumbersArithmetic/ArithmeticDrag";
 import { PuzzleConfig } from "./Puzzles/PuzzleConfig";
 import { Theme, Themes } from "./Themes";
 import { AllCampaignAreas } from "./Campaign/AllCampaignAreas";
@@ -696,7 +696,7 @@ export const App: React.FC = () => {
         timer: { isTimed: true, seconds: 100 },
         numTiles: 6,
         // TODO: https://stackoverflow.com/questions/37978528/typescript-type-string-is-not-assignable-to-type
-        numberSize: "small" as numberSizeOption,
+        numberSize: "small" as arithmeticNumberSize,
         numGuesses: 3,
         numOperands: 3,
       },
@@ -778,10 +778,14 @@ export const App: React.FC = () => {
         return <WordleConfig {...commonWingoProps} mode="category" enforceFullLengthGuesses={false} />;
 
       case "wingo/increasing":
-        return <WordleConfig {...commonWingoProps} mode="increasing" defaultWordLength={DEFAULT_WORD_LENGTH_INCREASING} />;
+        return (
+          <WordleConfig {...commonWingoProps} mode="increasing" defaultWordLength={DEFAULT_WORD_LENGTH_INCREASING} />
+        );
 
       case "wingo/limitless":
-        return <WordleConfig {...commonWingoProps} mode="limitless" defaultWordLength={DEFAULT_WORD_LENGTH_INCREASING} />;
+        return (
+          <WordleConfig {...commonWingoProps} mode="limitless" defaultWordLength={DEFAULT_WORD_LENGTH_INCREASING} />
+        );
 
       case "wingo/puzzle":
         return (
@@ -847,7 +851,7 @@ export const App: React.FC = () => {
             gamemodeSettings={{
               numTiles: 4,
               numCheckpoints: 3,
-              numberSize: "small" as numberSizeOption,
+              numberSize: "small" as arithmeticNumberSize,
               revealIntervalSeconds: 3,
               timerConfig: { isTimed: true, seconds: 10 },
             }}
@@ -865,12 +869,7 @@ export const App: React.FC = () => {
         return <ArithmeticDrag {...commonArithmeticDragProps} mode="match" />;
 
       case "nubble":
-        return (
-          <NubbleConfig
-            theme={theme}
-            settings={settings}
-          />
-        );
+        return <NubbleConfig page={page} theme={theme} settings={settings} />;
 
       case "only_connect/wall":
         return (

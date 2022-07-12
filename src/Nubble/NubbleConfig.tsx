@@ -1,11 +1,19 @@
 import React, { useState } from "react";
+import { Page } from "../App";
 import "../index.scss";
 import { SettingsData } from "../SaveData";
 import { Theme } from "../Themes";
 import Nubble from "./Nubble";
 import { hexagon_100, hexagon_64, hexagon_25, square_100, square_64, square_25 } from "./pointColourMappings";
 
+export const nubbleGridShapes = ["square", "hexagon"] as const;
+export type nubbleGridShape = typeof nubbleGridShapes[number];
+
+export const nubbleGridSizes = [25, 64, 100] as const;
+export type nubbleGridSize = typeof nubbleGridSizes[number];
+
 interface Props {
+  page: Page;
   theme: Theme;
 
   gamemodeSettings?: {
@@ -13,11 +21,11 @@ interface Props {
     // The lowest value which can be the number shown on a dice
     diceMin: number;
     diceMax: number;
-    gridShape: "square" | "hexagon";
-    gridSize: 25 | 64 | 100;
+    gridShape: nubbleGridShape;
+    gridSize: nubbleGridSize;
     numTeams: number;
     // When a number which can't be made with the dice numbers is picked, does the game end?
-    isGameOverOnIncorrectPick?: boolean;
+    isGameOverOnIncorrectPick: boolean;
     timerConfig: { isTimed: true; seconds: number } | { isTimed: false };
   };
 
@@ -38,7 +46,7 @@ const NubbleConfig: React.FC<Props> = (props) => {
   const DEFAULT_NUM_DICE = 4;
   const DEFAULT_DICE_MIN = 1;
   const DEFAULT_DICE_MAX = 6;
-  const DEFAULT_GRID_SHAPE = "hexagon";
+  const DEFAULT_GRID_SHAPE = "hexagon" as nubbleGridShape;
   const DEFAULT_GRID_SIZE = 100;
   const DEFAULT_NUM_TEAMS = 1;
   const DEFAULT_TIMER_VALUE = 600;
@@ -58,10 +66,10 @@ const NubbleConfig: React.FC<Props> = (props) => {
     numDice: number;
     diceMin: number;
     diceMax: number;
-    gridShape: "square" | "hexagon";
-    gridSize: 25 | 64 | 100;
+    gridShape: nubbleGridShape;
+    gridSize: nubbleGridSize;
     numTeams: number;
-    isGameOverOnIncorrectPick?: boolean;
+    isGameOverOnIncorrectPick: boolean;
 
     // TODO: Guess timer (how long after dice has finished rolling until a guess must be made?)
 
@@ -98,7 +106,7 @@ const NubbleConfig: React.FC<Props> = (props) => {
     gridShape: "square" | "hexagon";
     gridSize: 25 | 64 | 100;
     numTeams: number;
-    isGameOverOnIncorrectPick?: boolean;
+    isGameOverOnIncorrectPick: boolean;
     timerConfig: { isTimed: true; seconds: number } | { isTimed: false };
   }) {
     setGamemodeSettings(newGamemodeSettings);
@@ -532,6 +540,7 @@ const NubbleConfig: React.FC<Props> = (props) => {
 
   return (
     <Nubble
+    isCampaignLevel={props.page === "campaign/area/level"}
       theme={props.theme}
       gamemodeSettings={gamemodeSettings}
       remainingSeconds={remainingSeconds}
