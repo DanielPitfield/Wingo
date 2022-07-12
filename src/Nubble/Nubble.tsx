@@ -6,7 +6,13 @@ import { MessageNotification } from "../MessageNotification";
 import { SettingsData } from "../SaveData";
 import { Theme } from "../Themes";
 import DiceGrid from "./DiceGrid";
-import { HexagonPinAdjacency, nubbleGridShape, nubbleGridShapes, nubbleGridSize, nubbleGridSizes } from "./NubbleConfig";
+import {
+  HexagonPinAdjacency,
+  nubbleGridShape,
+  nubbleGridShapes,
+  nubbleGridSize,
+  nubbleGridSizes,
+} from "./NubbleConfig";
 
 interface Props {
   isCampaignLevel: boolean;
@@ -87,13 +93,16 @@ const Nubble: React.FC<Props> = (props) => {
     setStatus("dice-rolled-awaiting-pick");
   }, [diceValues]);
 
-  // End game when timer runs out
-  const hasTimerEnded = props.remainingSeconds <= 0;
-
   React.useEffect(() => {
     // TODO: Move status to NubbleConfig and set within timer useEffect()?
-    setStatus("game-over-timer-ended");
-  }, [hasTimerEnded]);
+    if (!props.gamemodeSettings.timerConfig.isTimed) {
+      return;
+    }
+
+    if (props.remainingSeconds <= 0) {
+      setStatus("game-over-timer-ended");
+    }
+  }, [props.gamemodeSettings.timerConfig.isTimed, props.remainingSeconds]);
 
   /**
    *
@@ -173,7 +182,7 @@ const Nubble: React.FC<Props> = (props) => {
       } else {
         return false;
       }
-    } else if (props.gamemodeSettings.gridShape === "hexagon" as nubbleGridShape) {
+    } else if (props.gamemodeSettings.gridShape === ("hexagon" as nubbleGridShape)) {
       // Pin adjacency information
       const adjacentMappings = props.determineHexagonAdjacentMappings();
       // Adjacent pins of the clicked pin
@@ -320,7 +329,7 @@ const Nubble: React.FC<Props> = (props) => {
         className="nubble-grid-row"
         style={{
           transform:
-            props.gamemodeSettings.gridShape === "hexagon" as nubbleGridShape
+            props.gamemodeSettings.gridShape === ("hexagon" as nubbleGridShape)
               ? `translate(${offset * 10 * X_SLANT}px, ${offset * 10 * Y_SLANT}px)`
               : undefined,
         }}
@@ -350,7 +359,7 @@ const Nubble: React.FC<Props> = (props) => {
                 {value}
               </button>
             );
-          } else if (props.gamemodeSettings.gridShape === "hexagon" as nubbleGridShape) {
+          } else if (props.gamemodeSettings.gridShape === ("hexagon" as nubbleGridShape)) {
             const value = rowInformation?.values[i];
 
             if (!value) {
@@ -626,7 +635,7 @@ const Nubble: React.FC<Props> = (props) => {
           <GamemodeSettingsMenu>{generateSettingsOptions()}</GamemodeSettingsMenu>
         </div>
       )}
-      
+
       {status === "game-over-incorrect-tile" && (
         <MessageNotification type="error">
           Incorrect tile picked
