@@ -1300,14 +1300,32 @@ $data-statuses: (
   background-color: #fff8;
   padding: 0.4em;
   min-width: 55em;
-  .nubble-score {
-    align-self: center;
-    margin-top: 0.3em;
-    margin-bottom: 0.3em;
-    padding: 0.5em 2em;
-    border: 2px solid #888;
-    color: #444;
-    background-color: #fff8;
+  .team-points-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    .team-points {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      margin: 0.5em;
+      opacity: 0.8;
+      &[data-selected="true"] {
+        font-weight: bold;
+        opacity: 1;
+      }
+      .nubble-score {
+        align-self: center;
+        margin-top: 0.3em;
+        margin-bottom: 0.3em;
+        padding: 0.5em 2em;
+        min-width: 2.5em;
+        border: 2px solid #888;
+        color: #444;
+        background-color: #fff8;
+      }
+    }
   }
   .nubble-pin-scores {
     .nubble-button-display {

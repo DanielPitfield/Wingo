@@ -615,6 +615,7 @@ const NubbleConfig: React.FC<Props> = (props) => {
       theme={props.theme}
       gamemodeSettings={gamemodeSettings}
       currentTeamNumber={currentTeamNumber}
+      setCurrentTeamNumber={setCurrentTeamNumber}
       updateGamemodeSettings={updateGamemodeSettings}
       remainingGuessTimerSeconds={remainingGuessTimerSeconds}
       updateRemainingGuessTimerSeconds={updateRemainingGuessTimerSeconds}

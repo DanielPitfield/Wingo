@@ -21,7 +21,7 @@ interface Props {
   isCampaignLevel: boolean;
   theme: Theme;
   currentTeamNumber: number;
-
+  setCurrentTeamNumber: (teamNumber: number) => void;
   gamemodeSettings: {
     numDice: number;
     diceMin: number;
@@ -395,6 +395,11 @@ const Nubble: React.FC<Props> = (props) => {
 
     setStatus("picked-awaiting-dice-roll");
 
+    // Increment the team number (zero indexed), unless that was the final team, in which case, go back to 0
+    props.setCurrentTeamNumber(
+      props.currentTeamNumber === props.gamemodeSettings.numTeams - 1 ? 0 : props.currentTeamNumber + 1
+    );
+
     // Keep track that the pin has now been correctly picked
     const newPickedPins = pickedPins.slice();
     newPickedPins.push(pinNumber);
@@ -417,11 +422,12 @@ const Nubble: React.FC<Props> = (props) => {
 
     // Add points to total points
     if (pinScore) {
+      debugger;
       const currentScore = totalPoints.find(
         (totalPointsInfo) => totalPointsInfo.teamNumber === props.currentTeamNumber
       )?.total;
 
-      if (!currentScore) {
+      if (currentScore === undefined) {
         return;
       }
 
@@ -945,7 +951,23 @@ const Nubble: React.FC<Props> = (props) => {
       </div>
 
       <div className="nubble-score-wrapper">
-        <div className="nubble-score">{totalPoints.find((x) => x.teamNumber === props.currentTeamNumber)?.total}</div>
+        <div className="team-points-wrapper">
+          {totalPoints.map((teamPoints) => (
+            <div
+              className="team-points"
+              data-team-number={teamPoints.teamNumber}
+              data-selected={teamPoints.teamNumber === props.currentTeamNumber}
+              key={teamPoints.teamNumber}
+            >
+              {props.gamemodeSettings.numTeams > 1 && (
+                <div className="nubble-team">Team {teamPoints.teamNumber + 1}</div>
+              )}
+              <div className="nubble-score">
+                {totalPoints.find((x) => x.teamNumber === teamPoints.teamNumber)?.total}
+              </div>
+            </div>
+          ))}
+        </div>
         <div className="nubble-pin-scores">{displayPinScores()}</div>
       </div>
 
