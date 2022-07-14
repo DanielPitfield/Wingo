@@ -92,6 +92,9 @@ const NubbleConfig: React.FC<Props> = (props) => {
     timerConfig: { isTimed: true; seconds: number } | { isTimed: false };
   }>(defaultGamemodeSettings);
 
+  // The team number of the team that is choosing a pin next
+  const [currentTeamNumber, setCurrentTeamNumber] = useState(0);
+
   // Guess Timer
   const [remainingGuessTimerSeconds, setRemainingGuessTimerSeconds] = useState(
     props.gamemodeSettings?.guessTimerConfig.isTimed === true
@@ -119,11 +122,17 @@ const NubbleConfig: React.FC<Props> = (props) => {
   }
 
   // Game Timer
-  const [remainingSeconds, setRemainingSeconds] = useState(
+  const INITIAL_TIMER_VALUE =
     props.gamemodeSettings?.timerConfig?.isTimed === true
       ? props.gamemodeSettings?.timerConfig.seconds
-      : DEFAULT_NUBBLE_TIMER_VALUE
-  );
+      : DEFAULT_NUBBLE_TIMER_VALUE;
+  // Each team starts with the same initial amount of time
+  const initialTeamTimers = Array.from({ length: gamemodeSettings.numTeams }).map((_, i) => ({
+    teamNumber: i,
+    remainingSeconds: INITIAL_TIMER_VALUE,
+    totalSeconds: INITIAL_TIMER_VALUE,
+  }));
+  const [teamTimers, setTeamTimers] = useState(initialTeamTimers);
 
   React.useEffect(() => {
     if (!gamemodeSettings.timerConfig.isTimed) {
@@ -131,17 +140,31 @@ const NubbleConfig: React.FC<Props> = (props) => {
     }
 
     const timer = setInterval(() => {
-      if (remainingSeconds > 0) {
-        setRemainingSeconds(remainingSeconds - 1);
+      // The team to play next has time left
+      if (teamTimers[currentTeamNumber].remainingSeconds > 0) {
+        // Start decrementing their remaining time
+        const newTeamTimers = teamTimers.map((teamTimerInfo) => {
+          if (teamTimerInfo.teamNumber === currentTeamNumber) {
+            return { ...teamTimerInfo, remainingSeconds: teamTimerInfo.remainingSeconds - 1 };
+          }
+          return teamTimerInfo;
+        });
+        setTeamTimers(newTeamTimers);
       }
     }, 1000);
     return () => {
       clearInterval(timer);
     };
-  }, [setRemainingSeconds, remainingSeconds, gamemodeSettings.timerConfig.isTimed]);
-  
-  function updateRemainingSeconds(newSeconds: number) {
-    setRemainingSeconds(newSeconds);
+  }, [setTeamTimers, teamTimers, gamemodeSettings.timerConfig.isTimed]);
+
+  function updateTeamTimers(
+    newTeamTimers: {
+      teamNumber: number;
+      remainingSeconds: number;
+      totalSeconds: number;
+    }[]
+  ) {
+    setTeamTimers(newTeamTimers);
   }
 
   function updateGamemodeSettings(newGamemodeSettings: {
@@ -591,11 +614,12 @@ const NubbleConfig: React.FC<Props> = (props) => {
       isCampaignLevel={props.page === "campaign/area/level"}
       theme={props.theme}
       gamemodeSettings={gamemodeSettings}
+      currentTeamNumber={currentTeamNumber}
       updateGamemodeSettings={updateGamemodeSettings}
       remainingGuessTimerSeconds={remainingGuessTimerSeconds}
       updateRemainingGuessTimerSeconds={updateRemainingGuessTimerSeconds}
-      remainingSeconds={remainingSeconds}
-      updateRemainingSeconds={updateRemainingSeconds}
+      teamTimers={teamTimers}
+      updateTeamTimers={updateTeamTimers}
       determineHexagonRowValues={determineHexagonRowValues}
       determinePoints={determinePoints}
       determinePointColourMappings={determinePointColourMappings}
