@@ -945,7 +945,7 @@ const Nubble: React.FC<Props> = (props) => {
       </div>
 
       <div className="nubble-score-wrapper">
-        <div className="nubble-score">{totalPoints}</div>
+        <div className="nubble-score">{totalPoints.find((x) => x.teamNumber === props.currentTeamNumber)?.total}</div>
         <div className="nubble-pin-scores">{displayPinScores()}</div>
       </div>
 

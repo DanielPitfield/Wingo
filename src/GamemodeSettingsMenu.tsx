@@ -12,8 +12,8 @@ const GamemodeSettingsMenu: React.FC<Props> = (props) => {
     <Collapsible
       className="gamemode-settings-wrapper"
       trigger="Settings"
-      triggerOpenedClassName="settings-button"
-      triggerClassName="settings-button"
+      triggerOpenedClassName="gamemode-settings-button"
+      triggerClassName="gamemode-settings-button"
     >
       <MessageNotification type="default">
         <div className="gamemode-settings-body">{props.children}</div>
