@@ -3,7 +3,7 @@ import { SplashScreen } from "./SplashScreen";
 import { LobbyMenu } from "./LobbyMenu";
 import WordleConfig, { categoryMappings, pickRandomElementFrom, wordLengthMappingsTargets } from "./WordleConfig";
 import { Button } from "./Button";
-import NubbleConfig from "./Nubble/NubbleConfig";
+import NubbleConfig, { NubbleConfigProps } from "./Nubble/NubbleConfig";
 import GoldCoin from "./images/gold.png";
 import { SaveData, SettingsData } from "./SaveData";
 import CountdownLettersConfig from "./CountdownLetters/CountdownLettersConfig";
@@ -695,6 +695,10 @@ export const App: React.FC = () => {
         case "wingo/crossword/daily":
           // Use the saved Wingo Config gamesettings, or the default setitngs if no previous save was found
           return SaveData.getWordleConfigGamemodeSettings() || defaultSettings;
+
+        case "nubble":
+          // Use the saved Nubble Config gamesettings, or the default setitngs if no previous save was found
+          return SaveData.getNubbleConfigGamemodeSettings() || defaultSettings;
       }
 
       // Else; return the default settings
@@ -895,7 +899,14 @@ export const App: React.FC = () => {
         return <ArithmeticDrag {...commonArithmeticDragProps} mode="match" />;
 
       case "nubble":
-        return <NubbleConfig page={page} theme={theme} settings={settings} />;
+        return (
+          <NubbleConfig
+            page={page}
+            theme={theme}
+            settings={settings}
+            gamemodeSettings={pageGamemodeSettings as NubbleConfigProps["gamemodeSettings"]}
+          />
+        );
 
       case "only_connect/wall":
         return (

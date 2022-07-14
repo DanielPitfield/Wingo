@@ -1,6 +1,7 @@
 import { Page } from "./App";
 import { LevelConfig } from "./Campaign/Level";
 import { BaseChallenge } from "./Challenges/BaseChallenge";
+import { NubbleConfigProps } from "./Nubble/NubbleConfig";
 import { Themes } from "./Themes";
 import { WordleConfigProps } from "./WordleConfig";
 import { TileStatus } from "./WordleInterlinked";
@@ -391,6 +392,30 @@ export class SaveData {
     // If saved gamemode settings were found
     if (wordleConfigGamemodeSettings) {
       return JSON.parse(wordleConfigGamemodeSettings) as WordleConfigProps["gamemodeSettings"];
+    }
+
+    // Else if not found; return null
+    return null;
+  }
+
+  /**
+   * Saves the gamemode settings for Nubble Config.
+   * @param gameSettings The latest gamemode settings for Nubble Config to save.
+   */
+  public static setNubbleConfigGamemodeSettings(gameSettings: NubbleConfigProps["gamemodeSettings"]) {
+    localStorage.setItem("nubbleConfigGamemodeSettings", JSON.stringify(gameSettings));
+  }
+
+  /**
+   * Gets the saved gamemode settings for Nubble Config, or null if no saved gamemode settings were found.
+   * @returns The saved gamemode settings for Nubble Config to save.
+   */
+  public static getNubbleConfigGamemodeSettings(): NubbleConfigProps["gamemodeSettings"] | null {
+    const nubbleConfigGamemodeSettings = localStorage.getItem("nubbleConfigGamemodeSettings");
+
+    // If saved gamemode settings were found
+    if (nubbleConfigGamemodeSettings) {
+      return JSON.parse(nubbleConfigGamemodeSettings) as NubbleConfigProps["gamemodeSettings"];
     }
 
     // Else if not found; return null

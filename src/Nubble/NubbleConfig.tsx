@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Page } from "../App";
 import "../index.scss";
-import { SettingsData } from "../SaveData";
+import { SaveData, SettingsData } from "../SaveData";
 import { Theme } from "../Themes";
 import Nubble from "./Nubble";
 import { hexagon_100, hexagon_64, hexagon_25, square_100, square_64, square_25 } from "./pointColourMappings";
@@ -15,7 +15,7 @@ export type nubbleGridSize = typeof nubbleGridSizes[number];
 export const DEFAULT_NUBBLE_GUESS_TIMER_VALUE = 20;
 export const DEFAULT_NUBBLE_TIMER_VALUE = 600;
 
-interface Props {
+export interface NubbleConfigProps {
   page: Page;
   theme: Theme;
 
@@ -54,7 +54,7 @@ export type HexagonPinAdjacency = {
   right: number | null;
 };
 
-const NubbleConfig: React.FC<Props> = (props) => {
+const NubbleConfig: React.FC<NubbleConfigProps> = (props) => {
   const DEFAULT_NUM_DICE = 4;
   const DEFAULT_DICE_MIN = 1;
   const DEFAULT_DICE_MAX = 6;
@@ -156,6 +156,11 @@ const NubbleConfig: React.FC<Props> = (props) => {
       clearInterval(timer);
     };
   }, [setTeamTimers, teamTimers, gamemodeSettings.timerConfig.isTimed]);
+
+  React.useEffect(() => {
+    // Save the latest gamemode settings
+    SaveData.setNubbleConfigGamemodeSettings(gamemodeSettings);
+  }, [gamemodeSettings]);
 
   function updateTeamTimers(
     newTeamTimers: {
