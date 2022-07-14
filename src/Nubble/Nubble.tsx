@@ -117,17 +117,40 @@ const Nubble: React.FC<Props> = (props) => {
     setStatus("dice-rolled-awaiting-pick");
   }, [diceValues]);
 
-  // Game over when timer runs out
+  // Game timer handling
   React.useEffect(() => {
     // TODO: Move status to NubbleConfig and set within timer useEffect()?
     if (!props.gamemodeSettings.timerConfig.isTimed) {
       return;
     }
 
-    if (props.remainingSeconds <= 0) {
-      setStatus("game-over-timer-ended");
+    if (props.remainingSeconds > 0) {
+      return;
     }
+
+    // Game over when timer has run out
+    setStatus("game-over-timer-ended");
   }, [props.gamemodeSettings.timerConfig.isTimed, props.remainingSeconds]);
+
+  // Guess timer handling
+  React.useEffect(() => {
+    if (!props.gamemodeSettings.guessTimerConfig.isTimed) {
+      return;
+    }
+
+    if (props.remainingGuessTimerSeconds > 0) {
+      return;
+    }
+
+    if (props.gamemodeSettings.guessTimerConfig.timerBehaviour.isGameOverWhenNoTimeLeft) {
+      setStatus("game-over-timer-ended");
+    } else {
+      // Subtract specified peanlty from total score
+      const penalty = props.gamemodeSettings.guessTimerConfig.timerBehaviour.pointsLost;
+      const newTotalPoints = Math.max(0, totalPoints - penalty);
+      setTotalPoints(newTotalPoints);
+    }
+  }, [props.gamemodeSettings.guessTimerConfig.isTimed, props.remainingGuessTimerSeconds]);
 
   // Reset game when any settings are changed
   React.useEffect(() => {
@@ -149,6 +172,11 @@ const Nubble: React.FC<Props> = (props) => {
   function rollDice() {
     // Dice is now being rolled
     setStatus("dice-rolling");
+
+    // Reset guess timer back to full
+    if (props.gamemodeSettings.guessTimerConfig.isTimed) {
+      props.updateRemainingGuessTimerSeconds(mostRecentGuessTimerTotalSeconds);
+    }
 
     // Determine random dice values for all the dice
     setdiceValues(Array.from({ length: props.gamemodeSettings.numDice }).map((x) => randomDiceNumber()));
