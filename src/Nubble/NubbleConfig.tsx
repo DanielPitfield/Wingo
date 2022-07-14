@@ -12,6 +12,9 @@ export type nubbleGridShape = typeof nubbleGridShapes[number];
 export const nubbleGridSizes = [25, 64, 100] as const;
 export type nubbleGridSize = typeof nubbleGridSizes[number];
 
+export const DEFAULT_NUBBLE_GUESS_TIMER_VALUE = 20;
+export const DEFAULT_NUBBLE_TIMER_VALUE = 600;
+
 interface Props {
   page: Page;
   theme: Theme;
@@ -26,11 +29,20 @@ interface Props {
     numTeams: number;
     // When a number which can't be made with the dice numbers is picked, does the game end?
     isGameOverOnIncorrectPick: boolean;
+    // How long to make a guess after the dice have been rolled?
+    guessTimerConfig:
+      | {
+          isTimed: true;
+          seconds: number;
+          // Can specify whether game ends when this guess timer runs out or if just some points are lost
+          timerBehaviour: { isGameOverWhenNoTimeLeft: true } | { isGameOverWhenNoTimeLeft: false; pointsLost: number };
+        }
+      | { isTimed: false };
+    // How long overall until the game ends?
     timerConfig: { isTimed: true; seconds: number } | { isTimed: false };
   };
 
   settings: SettingsData;
-  
 }
 
 export type HexagonPinAdjacency = {
@@ -49,7 +61,6 @@ const NubbleConfig: React.FC<Props> = (props) => {
   const DEFAULT_GRID_SHAPE = "hexagon" as nubbleGridShape;
   const DEFAULT_GRID_SIZE = 100;
   const DEFAULT_NUM_TEAMS = 1;
-  const DEFAULT_TIMER_VALUE = 600;
 
   const defaultGamemodeSettings = {
     numDice: props.gamemodeSettings?.numDice ?? DEFAULT_NUM_DICE,
@@ -59,6 +70,7 @@ const NubbleConfig: React.FC<Props> = (props) => {
     gridSize: props.gamemodeSettings?.gridSize ?? DEFAULT_GRID_SIZE,
     numTeams: props.gamemodeSettings?.numTeams ?? DEFAULT_NUM_TEAMS,
     isGameOverOnIncorrectPick: props.gamemodeSettings?.isGameOverOnIncorrectPick ?? false,
+    guessTimerConfig: props.gamemodeSettings?.guessTimerConfig ?? { isTimed: false },
     timerConfig: props.gamemodeSettings?.timerConfig ?? { isTimed: false },
   };
 
@@ -70,20 +82,49 @@ const NubbleConfig: React.FC<Props> = (props) => {
     gridSize: nubbleGridSize;
     numTeams: number;
     isGameOverOnIncorrectPick: boolean;
-
-    // TODO: Guess timer (how long after dice has finished rolling until a guess must be made?)
-
-    // How long overall until the game ends?
+    guessTimerConfig:
+      | {
+          isTimed: true;
+          seconds: number;
+          timerBehaviour: { isGameOverWhenNoTimeLeft: true } | { isGameOverWhenNoTimeLeft: false; pointsLost: number };
+        }
+      | { isTimed: false };
     timerConfig: { isTimed: true; seconds: number } | { isTimed: false };
   }>(defaultGamemodeSettings);
 
+  // Guess Timer
+  const [remainingGuessTimerSeconds, setRemainingGuessTimerSeconds] = useState(
+    props.gamemodeSettings?.guessTimerConfig.isTimed === true
+      ? props.gamemodeSettings?.guessTimerConfig.seconds
+      : DEFAULT_NUBBLE_GUESS_TIMER_VALUE
+  );
+
+  React.useEffect(() => {
+    if (!gamemodeSettings.guessTimerConfig.isTimed) {
+      return;
+    }
+
+    const guessTimer = setInterval(() => {
+      if (remainingGuessTimerSeconds > 0) {
+        setRemainingGuessTimerSeconds(remainingGuessTimerSeconds - 1);
+      }
+    }, 1000);
+    return () => {
+      clearInterval(guessTimer);
+    };
+  }, [setRemainingGuessTimerSeconds, remainingGuessTimerSeconds, gamemodeSettings.guessTimerConfig.isTimed]);
+
+  function updateRemainingGuessTimerSeconds(newGuessTimerSeconds: number) {
+    setRemainingGuessTimerSeconds(newGuessTimerSeconds);
+  }
+
+  // Game Timer
   const [remainingSeconds, setRemainingSeconds] = useState(
     props.gamemodeSettings?.timerConfig?.isTimed === true
       ? props.gamemodeSettings?.timerConfig.seconds
-      : DEFAULT_TIMER_VALUE
+      : DEFAULT_NUBBLE_TIMER_VALUE
   );
 
-  // Timer Setup
   React.useEffect(() => {
     if (!gamemodeSettings.timerConfig.isTimed) {
       return;
@@ -98,6 +139,10 @@ const NubbleConfig: React.FC<Props> = (props) => {
       clearInterval(timer);
     };
   }, [setRemainingSeconds, remainingSeconds, gamemodeSettings.timerConfig.isTimed]);
+  
+  function updateRemainingSeconds(newSeconds: number) {
+    setRemainingSeconds(newSeconds);
+  }
 
   function updateGamemodeSettings(newGamemodeSettings: {
     numDice: number;
@@ -107,13 +152,16 @@ const NubbleConfig: React.FC<Props> = (props) => {
     gridSize: 25 | 64 | 100;
     numTeams: number;
     isGameOverOnIncorrectPick: boolean;
+    guessTimerConfig:
+      | {
+          isTimed: true;
+          seconds: number;
+          timerBehaviour: { isGameOverWhenNoTimeLeft: true } | { isGameOverWhenNoTimeLeft: false; pointsLost: number };
+        }
+      | { isTimed: false };
     timerConfig: { isTimed: true; seconds: number } | { isTimed: false };
   }) {
     setGamemodeSettings(newGamemodeSettings);
-  }
-
-  function updateRemainingSeconds(newSeconds: number) {
-    setRemainingSeconds(newSeconds);
   }
 
   // Returns which pin values are on which rows for hexagon grid shape
@@ -540,11 +588,13 @@ const NubbleConfig: React.FC<Props> = (props) => {
 
   return (
     <Nubble
-    isCampaignLevel={props.page === "campaign/area/level"}
+      isCampaignLevel={props.page === "campaign/area/level"}
       theme={props.theme}
       gamemodeSettings={gamemodeSettings}
-      remainingSeconds={remainingSeconds}
       updateGamemodeSettings={updateGamemodeSettings}
+      remainingGuessTimerSeconds={remainingGuessTimerSeconds}
+      updateRemainingGuessTimerSeconds={updateRemainingGuessTimerSeconds}
+      remainingSeconds={remainingSeconds}
       updateRemainingSeconds={updateRemainingSeconds}
       determineHexagonRowValues={determineHexagonRowValues}
       determinePoints={determinePoints}

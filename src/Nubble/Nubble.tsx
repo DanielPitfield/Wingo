@@ -3,10 +3,13 @@ import { NumberPuzzle } from "../CountdownNumbers/CountdownSolver";
 import GamemodeSettingsMenu from "../GamemodeSettingsMenu";
 import "../index.scss";
 import { MessageNotification } from "../MessageNotification";
+import ProgressBar, { GreenToRedColorTransition } from "../ProgressBar";
 import { SettingsData } from "../SaveData";
 import { Theme } from "../Themes";
 import DiceGrid from "./DiceGrid";
 import {
+  DEFAULT_NUBBLE_GUESS_TIMER_VALUE,
+  DEFAULT_NUBBLE_TIMER_VALUE,
   HexagonPinAdjacency,
   nubbleGridShape,
   nubbleGridShapes,
@@ -26,10 +29,20 @@ interface Props {
     gridSize: nubbleGridSize;
     numTeams: number;
     isGameOverOnIncorrectPick: boolean;
+    guessTimerConfig:
+      | {
+          isTimed: true;
+          seconds: number;
+          timerBehaviour: { isGameOverWhenNoTimeLeft: true } | { isGameOverWhenNoTimeLeft: false; pointsLost: number };
+        }
+      | { isTimed: false };
     timerConfig: { isTimed: true; seconds: number } | { isTimed: false };
   };
 
+  remainingGuessTimerSeconds: number;
+  updateRemainingGuessTimerSeconds: (newGuessTimerSeconds: number) => void;
   remainingSeconds: number;
+  updateRemainingSeconds: (newSeconds: number) => void;
 
   updateGamemodeSettings: (newGamemodeSettings: {
     numDice: number;
@@ -39,9 +52,15 @@ interface Props {
     gridSize: nubbleGridSize;
     numTeams: number;
     isGameOverOnIncorrectPick: boolean;
+    guessTimerConfig:
+      | {
+          isTimed: true;
+          seconds: number;
+          timerBehaviour: { isGameOverWhenNoTimeLeft: true } | { isGameOverWhenNoTimeLeft: false; pointsLost: number };
+        }
+      | { isTimed: false };
     timerConfig: { isTimed: true; seconds: number } | { isTimed: false };
   }) => void;
-  updateRemainingSeconds: (newSeconds: number) => void;
 
   determineHexagonRowValues: () => { rowNumber: number; values: number[] }[];
   determinePoints: (value: number) => number;
@@ -81,11 +100,16 @@ const Nubble: React.FC<Props> = (props) => {
   }));
   const [totalPoints, setTotalPoints] = useState(0);
 
-  const DEFAULT_TIMER_VALUE = 600;
+  const [mostRecentGuessTimerTotalSeconds, setMostRecentGuessTimerTotalSeconds] = useState(
+    props.gamemodeSettings?.guessTimerConfig?.isTimed === true
+      ? props.gamemodeSettings?.guessTimerConfig.seconds
+      : DEFAULT_NUBBLE_GUESS_TIMER_VALUE
+  );
+
   const [mostRecentTotalSeconds, setMostRecentTotalSeconds] = useState(
     props.gamemodeSettings?.timerConfig?.isTimed === true
       ? props.gamemodeSettings?.timerConfig.seconds
-      : DEFAULT_TIMER_VALUE
+      : DEFAULT_NUBBLE_TIMER_VALUE
   );
 
   // Determine valid results on update of diceValues (at start and on roll of dice)
@@ -460,7 +484,7 @@ const Nubble: React.FC<Props> = (props) => {
     // Reset timer back to full
     if (props.gamemodeSettings.timerConfig.isTimed) {
       const newRemainingSeconds = props.gamemodeSettings.timerConfig.seconds ?? mostRecentTotalSeconds;
-      props.updateRemainingSeconds(newRemainingSeconds)
+      props.updateRemainingSeconds(newRemainingSeconds);
     }
     // Clear any game progress
     setPickedPins([]);
@@ -602,6 +626,115 @@ const Nubble: React.FC<Props> = (props) => {
         <>
           <label>
             <input
+              checked={props.gamemodeSettings.guessTimerConfig.isTimed}
+              type="checkbox"
+              onChange={() => {
+                const newGuessTimer:
+                  | {
+                      isTimed: true;
+                      seconds: number;
+                      timerBehaviour:
+                        | { isGameOverWhenNoTimeLeft: true }
+                        | { isGameOverWhenNoTimeLeft: false; pointsLost: number };
+                    }
+                  | { isTimed: false } =
+                  // If currently timed, make the game not timed and vice versa
+                  props.gamemodeSettings.guessTimerConfig.isTimed
+                    ? { isTimed: false }
+                    : {
+                        isTimed: true,
+                        seconds: mostRecentGuessTimerTotalSeconds,
+                        timerBehaviour: { isGameOverWhenNoTimeLeft: false, pointsLost: 0 },
+                      };
+                const newGamemodeSettings = { ...props.gamemodeSettings, guessTimerConfig: newGuessTimer };
+                props.updateGamemodeSettings(newGamemodeSettings);
+              }}
+            ></input>
+            Guess Timer
+          </label>
+          {props.gamemodeSettings.guessTimerConfig.isTimed && (
+            <>
+              <label>
+                <input
+                  type="number"
+                  value={props.gamemodeSettings.guessTimerConfig.seconds}
+                  min={5}
+                  max={120}
+                  step={5}
+                  onChange={(e) => {
+                    props.updateRemainingGuessTimerSeconds(e.target.valueAsNumber);
+                    setMostRecentGuessTimerTotalSeconds(e.target.valueAsNumber);
+                    const newGuessTimer = {
+                      ...props.gamemodeSettings.guessTimerConfig,
+                      seconds: e.target.valueAsNumber,
+                    };
+                    const newGamemodeSettings = {
+                      ...props.gamemodeSettings,
+                      guessTimerConfig: newGuessTimer,
+                    };
+                    props.updateGamemodeSettings(newGamemodeSettings);
+                  }}
+                ></input>
+                Seconds
+              </label>
+
+              <label>
+                <input
+                  checked={props.gamemodeSettings.guessTimerConfig.timerBehaviour.isGameOverWhenNoTimeLeft}
+                  type="checkbox"
+                  onChange={(e) => {
+                    const newTimerBehaviour:
+                      | { isGameOverWhenNoTimeLeft: true }
+                      | { isGameOverWhenNoTimeLeft: false; pointsLost: number } =
+                      // If game currently ends when uses timer runs out, make it not and vice versa
+                      props.gamemodeSettings.guessTimerConfig.isTimed &&
+                      props.gamemodeSettings.guessTimerConfig.timerBehaviour.isGameOverWhenNoTimeLeft
+                        ? { isGameOverWhenNoTimeLeft: false, pointsLost: 0 }
+                        : { isGameOverWhenNoTimeLeft: true };
+                    const newGuessTimer = {
+                      ...props.gamemodeSettings.guessTimerConfig,
+                      timerBehaviour: newTimerBehaviour,
+                    };
+                    const newGamemodeSettings = {
+                      ...props.gamemodeSettings,
+                      guessTimerConfig: newGuessTimer,
+                    };
+                    props.updateGamemodeSettings(newGamemodeSettings);
+                  }}
+                ></input>
+                Guess timer ends game
+              </label>
+
+              {!props.gamemodeSettings.guessTimerConfig.timerBehaviour.isGameOverWhenNoTimeLeft && (
+                <label>
+                  <input
+                    type="number"
+                    value={props.gamemodeSettings.guessTimerConfig.timerBehaviour.pointsLost}
+                    min={0}
+                    max={100}
+                    step={5}
+                    onChange={(e) => {
+                      const newGuessTimer = {
+                        ...props.gamemodeSettings.guessTimerConfig,
+                        timerBehaviour: { isGameOverWhenNoTimeLeft: false, pointsLost: e.target.valueAsNumber },
+                      };
+                      const newGamemodeSettings = {
+                        ...props.gamemodeSettings,
+                        guessTimerConfig: newGuessTimer,
+                      };
+                      props.updateGamemodeSettings(newGamemodeSettings);
+                    }}
+                  ></input>
+                  Points lost
+                </label>
+              )}
+            </>
+          )}
+        </>
+
+        <>
+          <label>
+            <input
               checked={props.gamemodeSettings.timerConfig.isTimed}
               type="checkbox"
               onChange={() => {
@@ -621,15 +754,15 @@ const Nubble: React.FC<Props> = (props) => {
               <input
                 type="number"
                 value={props.gamemodeSettings.timerConfig.seconds}
-                min={10}
-                max={120}
-                step={5}
+                min={30}
+                max={1200}
+                step={10}
                 onChange={(e) => {
                   props.updateRemainingSeconds(e.target.valueAsNumber);
                   setMostRecentTotalSeconds(e.target.valueAsNumber);
                   const newGamemodeSettings = {
                     ...props.gamemodeSettings,
-                    timer: { isTimed: true, seconds: e.target.valueAsNumber },
+                    timerConfig: { isTimed: true, seconds: e.target.valueAsNumber },
                   };
                   props.updateGamemodeSettings(newGamemodeSettings);
                 }}
@@ -657,6 +790,7 @@ const Nubble: React.FC<Props> = (props) => {
           Your score was <strong>{totalPoints}</strong>
         </MessageNotification>
       )}
+
       <DiceGrid
         diceValues={diceValues}
         rollDice={rollDice}
@@ -671,12 +805,34 @@ const Nubble: React.FC<Props> = (props) => {
           ? "Pick a nibble"
           : "Game over"}
       </DiceGrid>
+
+      <div>
+        {props.gamemodeSettings.guessTimerConfig.isTimed && (
+          <ProgressBar
+            progress={props.remainingGuessTimerSeconds}
+            total={props.gamemodeSettings.guessTimerConfig.seconds}
+            display={{ type: "transition", colorTransition: GreenToRedColorTransition }}
+          ></ProgressBar>
+        )}
+      </div>
+
       <div className="nubble-grid" data-shape={props.gamemodeSettings.gridShape}>
         {populateGrid()}
       </div>
+
       <div className="nubble-score-wrapper">
         <div className="nubble-score">{totalPoints}</div>
         <div className="nubble-pin-scores">{displayPinScores()}</div>
+      </div>
+
+      <div>
+        {props.gamemodeSettings.timerConfig.isTimed && (
+          <ProgressBar
+            progress={props.remainingSeconds}
+            total={props.gamemodeSettings.timerConfig.seconds}
+            display={{ type: "transition", colorTransition: GreenToRedColorTransition }}
+          ></ProgressBar>
+        )}
       </div>
     </div>
   );
