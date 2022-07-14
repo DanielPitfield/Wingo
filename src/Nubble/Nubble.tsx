@@ -20,6 +20,7 @@ import {
 interface Props {
   isCampaignLevel: boolean;
   theme: Theme;
+  currentTeamNumber: number;
 
   gamemodeSettings: {
     numDice: number;
@@ -41,8 +42,19 @@ interface Props {
 
   remainingGuessTimerSeconds: number;
   updateRemainingGuessTimerSeconds: (newGuessTimerSeconds: number) => void;
-  remainingSeconds: number;
-  updateRemainingSeconds: (newSeconds: number) => void;
+
+  teamTimers: {
+    teamNumber: number;
+    remainingSeconds: number;
+    totalSeconds: number;
+  }[];
+  updateTeamTimers: (
+    newTeamTimers: {
+      teamNumber: number;
+      remainingSeconds: number;
+      totalSeconds: number;
+    }[]
+  ) => void;
 
   updateGamemodeSettings: (newGamemodeSettings: {
     numDice: number;
@@ -98,7 +110,13 @@ const Nubble: React.FC<Props> = (props) => {
     number: i + 1,
     points: props.determinePoints(i + 1),
   }));
-  const [totalPoints, setTotalPoints] = useState(0);
+
+  const initialScores = Array.from({ length: props.gamemodeSettings.numTeams }).map((_, i) => ({
+    teamNumber: i,
+    total: 0,
+  }));
+
+  const [totalPoints, setTotalPoints] = useState(initialScores);
 
   const [mostRecentGuessTimerTotalSeconds, setMostRecentGuessTimerTotalSeconds] = useState(
     props.gamemodeSettings?.guessTimerConfig?.isTimed === true
@@ -124,13 +142,20 @@ const Nubble: React.FC<Props> = (props) => {
       return;
     }
 
-    if (props.remainingSeconds > 0) {
+    if (!props.teamTimers || props.teamTimers.length <= 0) {
       return;
     }
 
-    // Game over when timer has run out
-    setStatus("game-over-timer-ended");
-  }, [props.gamemodeSettings.timerConfig.isTimed, props.remainingSeconds]);
+    // Have all teams used all their time?
+    const isGameOver = !props.teamTimers
+      .map((teamTimer) => teamTimer.remainingSeconds)
+      .some((teamTimer) => teamTimer > 0);
+
+    // Game over when all timers have run out
+    if (isGameOver) {
+      setStatus("game-over-timer-ended");
+    }
+  }, [props.gamemodeSettings.timerConfig.isTimed, props.teamTimers]);
 
   // Guess timer handling
   React.useEffect(() => {
@@ -142,12 +167,38 @@ const Nubble: React.FC<Props> = (props) => {
       return;
     }
 
+    if (!props.teamTimers || props.teamTimers.length <= 0) {
+      return;
+    }
+
     if (props.gamemodeSettings.guessTimerConfig.timerBehaviour.isGameOverWhenNoTimeLeft) {
-      setStatus("game-over-timer-ended");
+      // Set current team's remaining time to zero
+      const newTeamTimers = props.teamTimers.map((teamTimerInfo) => {
+        if (teamTimerInfo.teamNumber === props.currentTeamNumber) {
+          return { ...teamTimerInfo, remainingSeconds: 0 };
+        }
+        return teamTimerInfo;
+      });
+      props.updateTeamTimers(newTeamTimers);
     } else {
-      // Subtract specified peanlty from total score
+      // Subtract specified penalty from total score of current team
+      const currentPoints = totalPoints.find(
+        (totalPointsInfo) => totalPointsInfo.teamNumber === props.currentTeamNumber
+      )?.total;
+
+      if (!currentPoints) {
+        return;
+      }
+
       const penalty = props.gamemodeSettings.guessTimerConfig.timerBehaviour.pointsLost;
-      const newTotalPoints = Math.max(0, totalPoints - penalty);
+      const newScore = Math.max(0, currentPoints - penalty);
+
+      const newTotalPoints = totalPoints.map((totalPointsInfo) => {
+        if (totalPointsInfo.teamNumber === props.currentTeamNumber) {
+          return { ...totalPointsInfo, total: newScore };
+        }
+        return totalPointsInfo;
+      });
       setTotalPoints(newTotalPoints);
     }
   }, [props.gamemodeSettings.guessTimerConfig.isTimed, props.remainingGuessTimerSeconds]);
@@ -322,13 +373,24 @@ const Nubble: React.FC<Props> = (props) => {
 
     // There are no solutions (ways of making the selected number)
     if (solutions.length < 1) {
-      // End game if game setting is enabled
       if (props.gamemodeSettings.isGameOverOnIncorrectPick) {
-        setStatus("game-over-incorrect-tile");
+        // Singleplayer
+        if (props.gamemodeSettings.numTeams === 1) {
+          // End game if game setting is enabled
+          setStatus("game-over-incorrect-tile");
+          // Return early
+          return;
+        } else {
+          // Set current team's remaining time to zero
+          const newTeamTimers = props.teamTimers.map((teamTimerInfo) => {
+            if (teamTimerInfo.teamNumber === props.currentTeamNumber) {
+              return { ...teamTimerInfo, remainingSeconds: 0 };
+            }
+            return teamTimerInfo;
+          });
+          props.updateTeamTimers(newTeamTimers);
+        }
       }
-
-      // Return early
-      return;
     }
 
     setStatus("picked-awaiting-dice-roll");
@@ -355,7 +417,23 @@ const Nubble: React.FC<Props> = (props) => {
 
     // Add points to total points
     if (pinScore) {
-      setTotalPoints(totalPoints + pinScore);
+      const currentScore = totalPoints.find(
+        (totalPointsInfo) => totalPointsInfo.teamNumber === props.currentTeamNumber
+      )?.total;
+
+      if (!currentScore) {
+        return;
+      }
+
+      const newScore = currentScore + pinScore;
+      const newTotalPoints = totalPoints.map((totalPointsInfo) => {
+        if (totalPointsInfo.teamNumber === props.currentTeamNumber) {
+          return { ...totalPointsInfo, total: newScore };
+        }
+        return totalPointsInfo;
+      });
+
+      setTotalPoints(newTotalPoints);
     }
   }
 
@@ -512,11 +590,19 @@ const Nubble: React.FC<Props> = (props) => {
     // Reset timer back to full
     if (props.gamemodeSettings.timerConfig.isTimed) {
       const newRemainingSeconds = props.gamemodeSettings.timerConfig.seconds ?? mostRecentTotalSeconds;
-      props.updateRemainingSeconds(newRemainingSeconds);
+      // Reset all teams' times back to full
+      const newTeamTimers = props.teamTimers.map((teamTimerInfo) => {
+        return {
+          ...teamTimerInfo,
+          remainingSeconds: newRemainingSeconds,
+          totalSeconds: newRemainingSeconds,
+        };
+      });
+      props.updateTeamTimers(newTeamTimers);
     }
     // Clear any game progress
     setPickedPins([]);
-    setTotalPoints(0);
+    setTotalPoints(initialScores);
     // The quanity of dice (numDice) only updates after rolling
     rollDice();
   }
@@ -640,7 +726,7 @@ const Nubble: React.FC<Props> = (props) => {
           <input
             checked={props.gamemodeSettings.isGameOverOnIncorrectPick}
             type="checkbox"
-            onChange={(e) => {
+            onChange={() => {
               const newGamemodeSettings = {
                 ...props.gamemodeSettings,
                 isGameOverOnIncorrectPick: !props.gamemodeSettings.isGameOverOnIncorrectPick,
@@ -710,7 +796,7 @@ const Nubble: React.FC<Props> = (props) => {
                 <input
                   checked={props.gamemodeSettings.guessTimerConfig.timerBehaviour.isGameOverWhenNoTimeLeft}
                   type="checkbox"
-                  onChange={(e) => {
+                  onChange={() => {
                     const newTimerBehaviour:
                       | { isGameOverWhenNoTimeLeft: true }
                       | { isGameOverWhenNoTimeLeft: false; pointsLost: number } =
@@ -786,8 +872,18 @@ const Nubble: React.FC<Props> = (props) => {
                 max={1200}
                 step={10}
                 onChange={(e) => {
-                  props.updateRemainingSeconds(e.target.valueAsNumber);
+                  // Set all teams' remaining and total time left to this new value
+                  const newTeamTimers = props.teamTimers.map((teamTimerInfo) => {
+                    return {
+                      ...teamTimerInfo,
+                      remainingSeconds: e.target.valueAsNumber,
+                      totalSeconds: e.target.valueAsNumber,
+                    };
+                  });
+                  props.updateTeamTimers(newTeamTimers);
+
                   setMostRecentTotalSeconds(e.target.valueAsNumber);
+
                   const newGamemodeSettings = {
                     ...props.gamemodeSettings,
                     timerConfig: { isTimed: true, seconds: e.target.valueAsNumber },
@@ -854,13 +950,14 @@ const Nubble: React.FC<Props> = (props) => {
       </div>
 
       <div>
-        {props.gamemodeSettings.timerConfig.isTimed && (
-          <ProgressBar
-            progress={props.remainingSeconds}
-            total={props.gamemodeSettings.timerConfig.seconds}
-            display={{ type: "transition", colorTransition: GreenToRedColorTransition }}
-          ></ProgressBar>
-        )}
+        {props.gamemodeSettings.timerConfig.isTimed &&
+          props.teamTimers.map((teamTimer) => (
+            <ProgressBar
+              progress={teamTimer.remainingSeconds}
+              total={teamTimer.totalSeconds}
+              display={{ type: "transition", colorTransition: GreenToRedColorTransition }}
+            ></ProgressBar>
+          ))}
       </div>
     </div>
   );
