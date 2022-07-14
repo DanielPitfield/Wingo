@@ -1097,18 +1097,37 @@ $data-statuses: (
   }
 }
 
-.gamemode-settings-wrapper {
-  
-
+.settings-button {
+  display: inline-block;
+  cursor: pointer;
+  background-color: white;
+  color: #444;
+  text-decoration: underline;
+  border: 2px solid #676767;
+  padding: 0.5em;
+  margin: 0.2em;
+  &:hover {
+    background-color: #e0e0e0;
+  }
+}
 
 .gamemode-settings-body {
-  padding: 0.8em;
-  background-color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   margin: 0.2em;
+  & > label {
+    display: flex;
+    align-items: center;
+    margin: 0.2em;
+    & > input {
+      margin-right: 0.4em;
+      &[type="checkbox"] {
+        cursor: pointer;
+      }
+    }
+  }
 }
-}
-
-
 
 .modal {
   display: flex;
@@ -1186,7 +1205,8 @@ $data-statuses: (
   }
 }
 
-.error-fallback-display-wrapper, .error-fallback-action-wrapper {
+.error-fallback-display-wrapper,
+.error-fallback-action-wrapper {
   display: flex;
 }
 
@@ -1199,11 +1219,9 @@ $data-statuses: (
 }
 
 .error-fallback-reset {
-  
 }
 
 .error-fallback-send {
-  
 }
 
 .category_label {

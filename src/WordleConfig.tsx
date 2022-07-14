@@ -686,6 +686,9 @@ const WordleConfig: React.FC<Props> = (props) => {
   // Reset game after change of settings (stops cheating by changing settings partway through a game)
   React.useEffect(() => {
     ResetGame();
+
+    // Save the latest gamemode settings
+    SaveData.setWordleConfigGamemodeSettings(gamemodeSettings);
   }, [gamemodeSettings]);
 
   // Update targetWord every time the targetCategory changes
@@ -1283,7 +1286,7 @@ const WordleConfig: React.FC<Props> = (props) => {
         gamemodeSettings={{
           numWords: 6,
           minWordLength: DEFAULT_WORD_LENGTH,
-          maxWordLength: DEFAULT_WORD_LENGTH,        
+          maxWordLength: DEFAULT_WORD_LENGTH,
           fitRestrictionConfig: { isRestricted: true, fitRestriction: 0 },
           showHint: false,
           numWordGuesses: 0,

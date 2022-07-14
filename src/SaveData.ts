@@ -2,6 +2,7 @@ import { Page } from "./App";
 import { LevelConfig } from "./Campaign/Level";
 import { BaseChallenge } from "./Challenges/BaseChallenge";
 import { Themes } from "./Themes";
+import { WordleConfigProps } from "./WordleConfig";
 import { TileStatus } from "./WordleInterlinked";
 
 export type CampaignSaveData = {
@@ -370,6 +371,30 @@ export class SaveData {
     });
 
     localStorage.setItem("redeemedChallenges", JSON.stringify(redeemedChallenges));
+  }
+
+  /**
+   * Saves the gamemode settings for Wordle Config.
+   * @param gameSettings The latest gamemode settings for Wordle Config to save.
+   */
+  public static setWordleConfigGamemodeSettings(gameSettings: WordleConfigProps["gamemodeSettings"]) {
+    localStorage.setItem("wordleConfigGamemodeSettings", JSON.stringify(gameSettings));
+  }
+
+  /**
+   * Gets the saved gamemode settings for Wordle Config, or null if no saved gamemode settings were found.
+   * @returns The saved gamemode settings for Wordle Config to save.
+   */
+  public static getWordleConfigGamemodeSettings(): WordleConfigProps["gamemodeSettings"] | null {
+    const wordleConfigGamemodeSettings = localStorage.getItem("wordleConfigGamemodeSettings");
+
+    // If saved gamemode settings were found
+    if (wordleConfigGamemodeSettings) {
+      return JSON.parse(wordleConfigGamemodeSettings) as WordleConfigProps["gamemodeSettings"];
+    }
+
+    // Else if not found; return null
+    return null;
   }
 
   /**

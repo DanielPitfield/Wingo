@@ -675,8 +675,34 @@ export const App: React.FC = () => {
       onComplete: onComplete,
     };
 
+    // Get the gamemode settings for this specific page
+    const pageGamemodeSettings = (() => {
+      // Get the default settings for this page (to be returned if no saved gamesettings were found)
+      const defaultSettings = gamemodeSettings.find((x) => x.page === page)?.settings;
+
+      switch (page) {
+        // For any Wingo gamemode
+        case "wingo/daily":
+        case "wingo/repeat":
+        case "wingo/category":
+        case "wingo/increasing":
+        case "wingo/limitless":
+        case "wingo/puzzle":
+        case "wingo/interlinked":
+        case "wingo/crossword":
+        case "wingo/crossword/fit":
+        case "wingo/crossword/weekly":
+        case "wingo/crossword/daily":
+          // Use the saved Wingo Config gamesettings, or the default setitngs if no previous save was found
+          return SaveData.getWordleConfigGamemodeSettings() || defaultSettings;
+      }
+
+      // Else; return the default settings
+      return defaultSettings;
+    })();
+
     const commonWingoProps = {
-      gamemodeSettings: gamemodeSettings.find((x) => x.page === page)?.settings,
+      gamemodeSettings: pageGamemodeSettings,
       defaultWordLength: DEFAULT_WORD_LENGTH,
       saveData: saveData,
       defaultnumGuesses: DEFAULT_NUM_GUESSES,
