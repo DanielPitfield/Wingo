@@ -95,6 +95,14 @@ const NubbleConfig: React.FC<NubbleConfigProps> = (props) => {
   // The team number of the team that is choosing a pin next
   const [currentTeamNumber, setCurrentTeamNumber] = useState(0);
 
+  const [status, setStatus] = useState<
+    | "dice-rolling"
+    | "dice-rolled-awaiting-pick"
+    | "picked-awaiting-dice-roll"
+    | "game-over-incorrect-tile"
+    | "game-over-timer-ended"
+  >("dice-rolled-awaiting-pick");
+
   // Guess Timer
   const [remainingGuessTimerSeconds, setRemainingGuessTimerSeconds] = useState(
     props.gamemodeSettings?.guessTimerConfig.isTimed === true
@@ -139,6 +147,11 @@ const NubbleConfig: React.FC<NubbleConfigProps> = (props) => {
       return;
     }
 
+    // Only decrease time when dice have been rolled and a pick must be made
+    if (status !== "dice-rolled-awaiting-pick") {
+      return;
+    }
+
     const timer = setInterval(() => {
       // The team to play next has time left
       if (teamTimers[currentTeamNumber].remainingSeconds > 0) {
@@ -155,7 +168,7 @@ const NubbleConfig: React.FC<NubbleConfigProps> = (props) => {
     return () => {
       clearInterval(timer);
     };
-  }, [setTeamTimers, teamTimers, gamemodeSettings.timerConfig.isTimed]);
+  }, [setTeamTimers, teamTimers, gamemodeSettings.timerConfig.isTimed, status]);
 
   React.useEffect(() => {
     // Save the latest gamemode settings
@@ -619,6 +632,8 @@ const NubbleConfig: React.FC<NubbleConfigProps> = (props) => {
       isCampaignLevel={props.page === "campaign/area/level"}
       theme={props.theme}
       gamemodeSettings={gamemodeSettings}
+      status={status}
+      setStatus={setStatus}
       currentTeamNumber={currentTeamNumber}
       setCurrentTeamNumber={setCurrentTeamNumber}
       updateGamemodeSettings={updateGamemodeSettings}

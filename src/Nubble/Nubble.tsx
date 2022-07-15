@@ -20,6 +20,20 @@ import {
 interface Props {
   isCampaignLevel: boolean;
   theme: Theme;
+  status:
+    | "dice-rolling"
+    | "dice-rolled-awaiting-pick"
+    | "picked-awaiting-dice-roll"
+    | "game-over-incorrect-tile"
+    | "game-over-timer-ended";
+  setStatus: (
+    newStatus:
+      | "dice-rolling"
+      | "dice-rolled-awaiting-pick"
+      | "picked-awaiting-dice-roll"
+      | "game-over-incorrect-tile"
+      | "game-over-timer-ended"
+  ) => void;
   currentTeamNumber: number;
   setCurrentTeamNumber: (teamNumber: number) => void;
   gamemodeSettings: {
@@ -95,13 +109,6 @@ export function randomIntFromInterval(min: number, max: number) {
 }
 
 const Nubble: React.FC<Props> = (props) => {
-  const [status, setStatus] = useState<
-    | "dice-rolling"
-    | "dice-rolled-awaiting-pick"
-    | "picked-awaiting-dice-roll"
-    | "game-over-incorrect-tile"
-    | "game-over-timer-ended"
-  >("picked-awaiting-dice-roll");
   const [diceValues, setdiceValues] = useState<number[]>(
     Array.from({ length: props.gamemodeSettings.numDice }).map((x) => randomDiceNumber())
   );
@@ -132,7 +139,7 @@ const Nubble: React.FC<Props> = (props) => {
 
   // Determine valid results on update of diceValues (at start and on roll of dice)
   React.useEffect(() => {
-    setStatus("dice-rolled-awaiting-pick");
+    props.setStatus("dice-rolled-awaiting-pick");
   }, [diceValues]);
 
   // Game timer handling
@@ -153,7 +160,7 @@ const Nubble: React.FC<Props> = (props) => {
 
     // Game over when all timers have run out
     if (isGameOver) {
-      setStatus("game-over-timer-ended");
+      props.setStatus("game-over-timer-ended");
     }
   }, [props.gamemodeSettings.timerConfig.isTimed, props.teamTimers]);
 
@@ -222,7 +229,7 @@ const Nubble: React.FC<Props> = (props) => {
    */
   function rollDice() {
     // Dice is now being rolled
-    setStatus("dice-rolling");
+    props.setStatus("dice-rolling");
 
     // Reset guess timer back to full
     if (props.gamemodeSettings.guessTimerConfig.isTimed) {
@@ -359,7 +366,7 @@ const Nubble: React.FC<Props> = (props) => {
    * @returns
    */
   function onClick(pinNumber: number) {
-    if (status === "dice-rolling") {
+    if (props.status === "dice-rolling") {
       return;
     }
 
@@ -377,7 +384,7 @@ const Nubble: React.FC<Props> = (props) => {
         // Singleplayer
         if (props.gamemodeSettings.numTeams === 1) {
           // End game if game setting is enabled
-          setStatus("game-over-incorrect-tile");
+          props.setStatus("game-over-incorrect-tile");
           // Return early
           return;
         } else {
@@ -393,7 +400,7 @@ const Nubble: React.FC<Props> = (props) => {
       }
     }
 
-    setStatus("picked-awaiting-dice-roll");
+    props.setStatus("picked-awaiting-dice-roll");
 
     // The team numbers of teams which have time left (are still playing)
     const teamNumbersOrder = props.teamTimers
@@ -431,7 +438,6 @@ const Nubble: React.FC<Props> = (props) => {
 
     // Add points to total points
     if (pinScore) {
-      debugger;
       const currentScore = totalPoints.find(
         (totalPointsInfo) => totalPointsInfo.teamNumber === props.currentTeamNumber
       )?.total;
@@ -500,7 +506,7 @@ const Nubble: React.FC<Props> = (props) => {
                 data-picked={isPicked}
                 data-colour={colour}
                 onClick={() => onClick(value)}
-                disabled={isPicked || status !== "dice-rolled-awaiting-pick"}
+                disabled={isPicked || props.status !== "dice-rolled-awaiting-pick"}
               >
                 {value}
               </button>
@@ -524,7 +530,7 @@ const Nubble: React.FC<Props> = (props) => {
                 data-picked={isPicked}
                 data-colour={colour}
                 onClick={() => onClick(value)}
-                disabled={isPicked || status !== "dice-rolled-awaiting-pick"}
+                disabled={isPicked || props.status !== "dice-rolled-awaiting-pick"}
               >
                 <span className="top"></span>
                 <span className="middle">{value}</span>
@@ -618,6 +624,8 @@ const Nubble: React.FC<Props> = (props) => {
     // Clear any game progress
     setPickedPins([]);
     setTotalPoints(initialScores);
+    // First team is next to play
+    props.setCurrentTeamNumber(0);
     // The quanity of dice (numDice) only updates after rolling
     rollDice();
   }
@@ -922,7 +930,7 @@ const Nubble: React.FC<Props> = (props) => {
         </div>
       )}
 
-      {status === "game-over-incorrect-tile" && (
+      {props.status === "game-over-incorrect-tile" && (
         <MessageNotification type="error">
           Incorrect tile picked
           <br />
@@ -934,13 +942,13 @@ const Nubble: React.FC<Props> = (props) => {
         diceValues={diceValues}
         rollDice={rollDice}
         settings={props.settings}
-        disabled={status !== "picked-awaiting-dice-roll"}
+        disabled={props.status !== "picked-awaiting-dice-roll"}
       >
-        {status === "dice-rolling"
+        {props.status === "dice-rolling"
           ? "Rolling..."
-          : status === "picked-awaiting-dice-roll"
+          : props.status === "picked-awaiting-dice-roll"
           ? "Roll Dice"
-          : status === "dice-rolled-awaiting-pick"
+          : props.status === "dice-rolled-awaiting-pick"
           ? "Pick a nibble"
           : "Game over"}
       </DiceGrid>
