@@ -395,10 +395,19 @@ const Nubble: React.FC<Props> = (props) => {
 
     setStatus("picked-awaiting-dice-roll");
 
-    // Increment the team number (zero indexed), unless that was the final team, in which case, go back to 0
-    props.setCurrentTeamNumber(
-      props.currentTeamNumber === props.gamemodeSettings.numTeams - 1 ? 0 : props.currentTeamNumber + 1
-    );
+    // The team numbers of teams which have time left (are still playing)
+    const teamNumbersOrder = props.teamTimers
+      .filter((teamTimerInfo) => teamTimerInfo.remainingSeconds > 0)
+      .map((teamTimerInfo) => teamTimerInfo.teamNumber);
+    // At what index is the current team number in the queue/order of all team numbers?
+    const currentTeamPosition = teamNumbersOrder.findIndex((teamNumber) => teamNumber === props.currentTeamNumber);
+
+    // Is the current team the last in the queue/order?
+    const isFinalTeam = currentTeamPosition === teamNumbersOrder.length - 1;
+    // Choose next team number in queue/order (after final team, it goes back to start again)
+    const newCurrentTeamNumber = isFinalTeam ? teamNumbersOrder[0] : teamNumbersOrder[currentTeamPosition + 1];
+
+    props.setCurrentTeamNumber(newCurrentTeamNumber);
 
     // Keep track that the pin has now been correctly picked
     const newPickedPins = pickedPins.slice();
