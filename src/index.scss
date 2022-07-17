@@ -1300,11 +1300,11 @@ $data-statuses: (
   background-color: #fff8;
   padding: 0.4em;
   min-width: 55em;
-  .team-points-wrapper {
+  .teams-info-wrapper {
     display: flex;
     align-items: center;
     justify-content: center;
-    .team-points {
+    .team-info {
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -1315,7 +1315,7 @@ $data-statuses: (
         font-weight: bold;
         opacity: 1;
       }
-      .nubble-score {
+      .nubble-score, .nubble-timer {
         align-self: center;
         margin-top: 0.3em;
         margin-bottom: 0.3em;
@@ -1330,14 +1330,16 @@ $data-statuses: (
   .nubble-pin-scores {
     .nubble-button-display {
       color: white;
-      font-weight: bold;
+      font-size: 1.2em;
+      //font-weight: bold;
       text-align: center;
       align-items: center;
       justify-content: center;
-      padding: 1em;
-      min-height: 4em;
-      margin: 1px;
-      width: 5em;
+      border-radius: 50%;
+      width: 3em;
+      height: 3em;
+      padding: 0.2em;
+      margin: 0.1em;
     }
   }
 }
@@ -1348,6 +1350,8 @@ $data-statuses: (
   text-align: center;
   align-items: center;
   justify-content: center;
+  font-size: 1.2em;
+  //font-weight: bold;
   &[data-shape="square"] {
     padding: 1em;
     min-width: 4em;

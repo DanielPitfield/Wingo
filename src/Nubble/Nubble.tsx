@@ -137,6 +137,13 @@ const Nubble: React.FC<Props> = (props) => {
       : DEFAULT_NUBBLE_TIMER_VALUE
   );
 
+  const teamNumberColourMappings = [
+    { teamNumber: 0, colour: "Blue" },
+    { teamNumber: 1, colour: "Red" },
+    { teamNumber: 2, colour: "Green" },
+    { teamNumber: 3, colour: "Yellow" },
+  ];
+
   // Determine valid results on update of diceValues (at start and on roll of dice)
   React.useEffect(() => {
     props.setStatus("dice-rolled-awaiting-pick");
@@ -278,17 +285,17 @@ const Nubble: React.FC<Props> = (props) => {
       // Pin adjacency information
       const adjacentMappings = props.determineSquareAdjacentMappings();
       // Adjacent pins of the clicked pin
-      const adjacent_pins = adjacentMappings.find((x) => x.pin === pinNumber)?.adjacent_pins;
+      const adjacentPins = adjacentMappings.find((x) => x.pin === pinNumber)?.adjacent_pins;
 
-      if (!adjacent_pins) {
+      if (!adjacentPins) {
         return false;
       }
 
       // All the adjacent pins which have also previously been picked
-      const picked_adjacent_pins = pickedPins.filter((x) => adjacent_pins?.includes(x));
+      const pickedAdjacentPins = pickedPins.filter((x) => adjacentPins?.includes(x));
 
       // The pin and the 3 adjacent pins to make a 2x2 square
-      if (picked_adjacent_pins.length >= 3) {
+      if (pickedAdjacentPins.length >= 3) {
         return true;
       } else {
         return false;
@@ -297,9 +304,9 @@ const Nubble: React.FC<Props> = (props) => {
       // Pin adjacency information
       const adjacentMappings = props.determineHexagonAdjacentMappings();
       // Adjacent pins of the clicked pin
-      const adjacent_pins = adjacentMappings.find((x) => x.pin === pinNumber)?.adjacent_pins;
+      const adjacentPins = adjacentMappings.find((x) => x.pin === pinNumber)?.adjacent_pins;
 
-      if (!adjacent_pins) {
+      if (!adjacentPins) {
         return false;
       }
 
@@ -307,40 +314,40 @@ const Nubble: React.FC<Props> = (props) => {
 
       // In a clockwise direction...
       const topTriangle =
-        adjacent_pins.leftAbove !== null &&
-        pickedPins.includes(adjacent_pins.leftAbove) &&
-        adjacent_pins.rightAbove !== null &&
-        pickedPins.includes(adjacent_pins.rightAbove);
+        adjacentPins.leftAbove !== null &&
+        pickedPins.includes(adjacentPins.leftAbove) &&
+        adjacentPins.rightAbove !== null &&
+        pickedPins.includes(adjacentPins.rightAbove);
 
       const topRightTriangle =
-        adjacent_pins.rightAbove !== null &&
-        pickedPins.includes(adjacent_pins.rightAbove) &&
-        adjacent_pins.right !== null &&
-        pickedPins.includes(adjacent_pins.right);
+        adjacentPins.rightAbove !== null &&
+        pickedPins.includes(adjacentPins.rightAbove) &&
+        adjacentPins.right !== null &&
+        pickedPins.includes(adjacentPins.right);
 
       const bottomRightTriangle =
-        adjacent_pins.rightBelow !== null &&
-        pickedPins.includes(adjacent_pins.rightBelow) &&
-        adjacent_pins.right !== null &&
-        pickedPins.includes(adjacent_pins.right);
+        adjacentPins.rightBelow !== null &&
+        pickedPins.includes(adjacentPins.rightBelow) &&
+        adjacentPins.right !== null &&
+        pickedPins.includes(adjacentPins.right);
 
       const bottomTriangle =
-        adjacent_pins.leftBelow !== null &&
-        pickedPins.includes(adjacent_pins.leftBelow) &&
-        adjacent_pins.rightBelow !== null &&
-        pickedPins.includes(adjacent_pins.rightBelow);
+        adjacentPins.leftBelow !== null &&
+        pickedPins.includes(adjacentPins.leftBelow) &&
+        adjacentPins.rightBelow !== null &&
+        pickedPins.includes(adjacentPins.rightBelow);
 
       const bottomLeftTriangle =
-        adjacent_pins.leftBelow !== null &&
-        pickedPins.includes(adjacent_pins.leftBelow) &&
-        adjacent_pins.left !== null &&
-        pickedPins.includes(adjacent_pins.left);
+        adjacentPins.leftBelow !== null &&
+        pickedPins.includes(adjacentPins.leftBelow) &&
+        adjacentPins.left !== null &&
+        pickedPins.includes(adjacentPins.left);
 
       const topLeftTriangle =
-        adjacent_pins.leftAbove !== null &&
-        pickedPins.includes(adjacent_pins.leftAbove) &&
-        adjacent_pins.left !== null &&
-        pickedPins.includes(adjacent_pins.left);
+        adjacentPins.leftAbove !== null &&
+        pickedPins.includes(adjacentPins.leftAbove) &&
+        adjacentPins.left !== null &&
+        pickedPins.includes(adjacentPins.left);
 
       if (
         topTriangle ||
@@ -576,9 +583,6 @@ const Nubble: React.FC<Props> = (props) => {
           data-prime={false}
           data-picked={false}
           data-colour={row.colour}
-          onClick={() => {
-            /* Do nothing */
-          }}
           disabled={false}
         >
           {row.points}
@@ -597,7 +601,6 @@ const Nubble: React.FC<Props> = (props) => {
         data-prime={true}
         data-picked={false}
         data-colour={lastPointColourMapping.colour}
-        onClick={() => {}}
         disabled={false}
       >
         {lastPointColourMapping.points * 2}
@@ -968,35 +971,27 @@ const Nubble: React.FC<Props> = (props) => {
       </div>
 
       <div className="nubble-score-wrapper">
-        <div className="team-points-wrapper">
+        <div className="teams-info-wrapper">
           {totalPoints.map((teamPoints) => (
             <div
-              className="team-points"
+              className="team-info"
               data-team-number={teamPoints.teamNumber}
               data-selected={teamPoints.teamNumber === props.currentTeamNumber}
               key={teamPoints.teamNumber}
             >
               {props.gamemodeSettings.numTeams > 1 && (
-                <div className="nubble-team">Team {teamPoints.teamNumber + 1}</div>
+                <div className="nubble-team-label">{teamNumberColourMappings.find(x => x.teamNumber === teamPoints.teamNumber)?.colour}</div>
               )}
               <div className="nubble-score">
                 {totalPoints.find((x) => x.teamNumber === teamPoints.teamNumber)?.total}
+              </div>
+              <div className="nubble-timer">
+                {props.teamTimers.find((x) => x.teamNumber === teamPoints.teamNumber)?.remainingSeconds}
               </div>
             </div>
           ))}
         </div>
         <div className="nubble-pin-scores">{displayPinScores()}</div>
-      </div>
-
-      <div>
-        {props.gamemodeSettings.timerConfig.isTimed &&
-          props.teamTimers.map((teamTimer) => (
-            <ProgressBar
-              progress={teamTimer.remainingSeconds}
-              total={teamTimer.totalSeconds}
-              display={{ type: "transition", colorTransition: GreenToRedColorTransition }}
-            ></ProgressBar>
-          ))}
       </div>
     </div>
   );

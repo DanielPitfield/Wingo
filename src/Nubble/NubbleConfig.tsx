@@ -61,6 +61,7 @@ const NubbleConfig: React.FC<NubbleConfigProps> = (props) => {
   const DEFAULT_GRID_SHAPE = "hexagon" as nubbleGridShape;
   const DEFAULT_GRID_SIZE = 100;
   const DEFAULT_NUM_TEAMS = 1;
+  const MAX_NUM_TEAMS = 4;
 
   const defaultGamemodeSettings = {
     numDice: props.gamemodeSettings?.numDice ?? DEFAULT_NUM_DICE,
@@ -68,7 +69,8 @@ const NubbleConfig: React.FC<NubbleConfigProps> = (props) => {
     diceMax: props.gamemodeSettings?.diceMax ?? DEFAULT_DICE_MAX,
     gridShape: props.gamemodeSettings?.gridShape ?? DEFAULT_GRID_SHAPE,
     gridSize: props.gamemodeSettings?.gridSize ?? DEFAULT_GRID_SIZE,
-    numTeams: props.gamemodeSettings?.numTeams ?? DEFAULT_NUM_TEAMS,
+    // TODO: Maximum of 4 teams, even if more specified
+    numTeams: Math.min(MAX_NUM_TEAMS, props.gamemodeSettings?.numTeams ?? DEFAULT_NUM_TEAMS),
     isGameOverOnIncorrectPick: props.gamemodeSettings?.isGameOverOnIncorrectPick ?? false,
     guessTimerConfig: props.gamemodeSettings?.guessTimerConfig ?? { isTimed: false },
     timerConfig: props.gamemodeSettings?.timerConfig ?? { isTimed: false },
