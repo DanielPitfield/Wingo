@@ -576,9 +576,6 @@ const Nubble: React.FC<Props> = (props) => {
           data-prime={false}
           data-picked={false}
           data-colour={row.colour}
-          onClick={() => {
-            /* Do nothing */
-          }}
           disabled={false}
         >
           {row.points}
@@ -597,7 +594,6 @@ const Nubble: React.FC<Props> = (props) => {
         data-prime={true}
         data-picked={false}
         data-colour={lastPointColourMapping.colour}
-        onClick={() => {}}
         disabled={false}
       >
         {lastPointColourMapping.points * 2}

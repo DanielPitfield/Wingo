@@ -1334,10 +1334,11 @@ $data-statuses: (
       text-align: center;
       align-items: center;
       justify-content: center;
-      padding: 1em;
-      min-height: 4em;
-      margin: 1px;
-      width: 5em;
+      border-radius: 50%;
+      width: 4em;
+      height: 4em;
+      padding: 0.5em;
+      margin: 0.1em;
     }
   }
 }
