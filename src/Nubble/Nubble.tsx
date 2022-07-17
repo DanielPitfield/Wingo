@@ -137,6 +137,13 @@ const Nubble: React.FC<Props> = (props) => {
       : DEFAULT_NUBBLE_TIMER_VALUE
   );
 
+  const teamNumberColourMappings = [
+    { teamNumber: 0, colour: "Blue" },
+    { teamNumber: 1, colour: "Red" },
+    { teamNumber: 2, colour: "Green" },
+    { teamNumber: 3, colour: "Yellow" },
+  ];
+
   // Determine valid results on update of diceValues (at start and on roll of dice)
   React.useEffect(() => {
     props.setStatus("dice-rolled-awaiting-pick");
@@ -278,17 +285,17 @@ const Nubble: React.FC<Props> = (props) => {
       // Pin adjacency information
       const adjacentMappings = props.determineSquareAdjacentMappings();
       // Adjacent pins of the clicked pin
-      const adjacent_pins = adjacentMappings.find((x) => x.pin === pinNumber)?.adjacent_pins;
+      const adjacentPins = adjacentMappings.find((x) => x.pin === pinNumber)?.adjacent_pins;
 
-      if (!adjacent_pins) {
+      if (!adjacentPins) {
         return false;
       }
 
       // All the adjacent pins which have also previously been picked
-      const picked_adjacent_pins = pickedPins.filter((x) => adjacent_pins?.includes(x));
+      const pickedAdjacentPins = pickedPins.filter((x) => adjacentPins?.includes(x));
 
       // The pin and the 3 adjacent pins to make a 2x2 square
-      if (picked_adjacent_pins.length >= 3) {
+      if (pickedAdjacentPins.length >= 3) {
         return true;
       } else {
         return false;
@@ -964,30 +971,22 @@ const Nubble: React.FC<Props> = (props) => {
       </div>
 
       <div className="nubble-score-wrapper">
-        <div className="team-info-wrapper">
+        <div className="teams-info-wrapper">
           {totalPoints.map((teamPoints) => (
             <div
-              className="team-points"
+              className="team-info"
               data-team-number={teamPoints.teamNumber}
               data-selected={teamPoints.teamNumber === props.currentTeamNumber}
               key={teamPoints.teamNumber}
             >
               {props.gamemodeSettings.numTeams > 1 && (
-                <div className="nubble-team">Team {teamPoints.teamNumber + 1}</div>
+                <div className="nubble-team-label">Team {teamPoints.teamNumber + 1}</div>
               )}
               <div className="nubble-score">
                 {totalPoints.find((x) => x.teamNumber === teamPoints.teamNumber)?.total}
               </div>
-
-              <div
-                className="team-timer"
-                data-team-number={teamPoints.teamNumber}
-                data-selected={teamPoints.teamNumber === props.currentTeamNumber}
-                key={teamPoints.teamNumber}
-              >
-                <div className="nubble-timer">
-                  {props.teamTimers.find((x) => x.teamNumber === teamPoints.teamNumber)?.remainingSeconds}
-                </div>
+              <div className="nubble-timer">
+                {props.teamTimers.find((x) => x.teamNumber === teamPoints.teamNumber)?.remainingSeconds}
               </div>
             </div>
           ))}
