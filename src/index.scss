@@ -1294,57 +1294,6 @@ $data-statuses: (
   z-index: 99999;
 }
 
-.nubble-score-wrapper {
-  display: flex;
-  flex-direction: column;
-  background-color: #fff8;
-  padding: 0.4em;
-  min-width: 55em;
-  .teams-info-wrapper {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    .team-info {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      margin: 0.5em;
-      opacity: 0.8;
-      &[data-selected="true"] {
-        font-weight: bold;
-        opacity: 1;
-      }
-      .nubble-score,
-      .nubble-timer {
-        align-self: center;
-        margin-top: 0.3em;
-        margin-bottom: 0.3em;
-        padding: 0.5em 2em;
-        min-width: 2.5em;
-        border: 2px solid #888;
-        color: #444;
-        background-color: #fff8;
-      }
-    }
-  }
-  .nubble-pin-scores {
-    .nubble-button-display {
-      color: white;
-      font-size: 1.2em;
-      //font-weight: bold;
-      text-align: center;
-      align-items: center;
-      justify-content: center;
-      border-radius: 50%;
-      width: 3em;
-      height: 3em;
-      padding: 0.2em;
-      margin: 0.1em;
-    }
-  }
-}
-
 $orange: #aa5208bb;
 $orange-border: #aa5208;
 $light-blue: #00a59bbb;
@@ -1378,6 +1327,90 @@ $nubble-colors-names: (
   dark-orange: $dark-orange,
   red: $red,
 );
+
+.nubble-score-wrapper {
+  display: flex;
+  flex-direction: column;
+  background-color: #fff8;
+  padding: 0.4em;
+  min-width: 55em;
+  .teams-info-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    .team-info {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      margin: 0.5em;
+      opacity: 0.8;
+      &[data-selected="true"] {
+        font-weight: bold;
+        opacity: 1;
+      }
+      .nubble-team-label {
+        display: flex;
+        align-items: center;
+        &::before {
+          content: " ";
+          display: block;
+          width: 1.25em;
+          height: 1.25em;
+          border-radius: 1.25em;
+          background-color: #bbb;
+          margin-right: 0.25em;
+        }
+      }
+      &[data-team-number="0"] {
+        .nubble-team-label::before {
+          background-color: $blue-gray-border;
+        }
+      }
+      &[data-team-number="1"] {
+        .nubble-team-label::before {
+          background-color: $red-border;
+        }
+      }
+      &[data-team-number="2"] {
+        .nubble-team-label::before {
+          background-color: $green-border;
+        }
+      }
+      &[data-team-number="3"] {
+        .nubble-team-label::before {
+          background-color: $yellow-border;
+        }
+      }
+      .nubble-score,
+      .nubble-timer {
+        align-self: center;
+        margin-top: 0.3em;
+        margin-bottom: 0.3em;
+        padding: 0.5em 2em;
+        min-width: 2.5em;
+        border: 2px solid #888;
+        color: #444;
+        background-color: #fff8;
+      }
+    }
+  }
+  .nubble-pin-scores {
+    .nubble-button-display {
+      color: white;
+      font-size: 1.2em;
+      //font-weight: bold;
+      text-align: center;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      width: 3em;
+      height: 3em;
+      padding: 0.2em;
+      margin: 0.1em;
+    }
+  }
+}
 
 .nubble-button {
   cursor: pointer;
