@@ -1421,10 +1421,43 @@ $nubble-colors-names: (
   font-size: 1.2em;
   //font-weight: bold;
   &[data-shape="square"] {
-    padding: 1em;
-    min-width: 4em;
-    min-height: 4em;
-    margin: 1px;
+    padding: 0.3em;
+    min-width: 3.4em;
+    min-height: 3.4em;
+    margin: 0.1em;
+    &[data-team-number] {
+      position: relative;
+      &::after {
+        content: " ";
+        position: absolute;
+        top: 0.3em;
+        left: 0.3em;
+        right: 0.3em;
+        bottom: 0.3em;
+        background-color: #bbb;
+        border-radius: 2em;
+      }
+      &[data-team-number="0"] {
+        &::after {
+          background-color: $blue-gray-border;
+        }
+      }
+      &[data-team-number="1"] {
+        &::after {
+          background-color: $red-border;
+        }
+      }
+      &[data-team-number="2"] {
+        &::after {
+          background-color: $green-border;
+        }
+      }
+      &[data-team-number="3"] {
+        &::after {
+          background-color: $yellow-border;
+        }
+      }
+    }
   }
   &[data-shape="hexagon"] {
     margin: 0.15em 0.02em;
