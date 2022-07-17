@@ -112,7 +112,7 @@ const Nubble: React.FC<Props> = (props) => {
   const [diceValues, setdiceValues] = useState<number[]>(
     Array.from({ length: props.gamemodeSettings.numDice }).map((x) => randomDiceNumber())
   );
-  const [pickedPins, setPickedPins] = useState<{pinNumber: number, teamNumber: number}[]>([]);
+  const [pickedPins, setPickedPins] = useState<{ pinNumber: number; teamNumber: number }[]>([]);
   const gridPoints = Array.from({ length: props.gamemodeSettings.gridSize }).map((_, i) => ({
     number: i + 1,
     points: props.determinePoints(i + 1),
@@ -138,10 +138,10 @@ const Nubble: React.FC<Props> = (props) => {
   );
 
   const teamNumberColourMappings = [
-    { teamNumber: 0, teamName: "Blue", hexCode: "#006dac" },
-    { teamNumber: 1, teamName: "Red", hexCode: "#b10503" },
-    { teamNumber: 2, teamName: "Green", hexCode: "#05ab00" },
-    { teamNumber: 3, teamName: "Yellow", hexCode: "#a5a803" },
+    { teamNumber: 0, teamName: "Blue" },
+    { teamNumber: 1, teamName: "Red" },
+    { teamNumber: 2, teamName: "Green" },
+    { teamNumber: 3, teamName: "Yellow" },
   ];
 
   // Determine valid results on update of diceValues (at start and on roll of dice)
@@ -310,7 +310,7 @@ const Nubble: React.FC<Props> = (props) => {
         return false;
       }
 
-      const pickedPinNumbers = pickedPins.map(x => x.pinNumber);
+      const pickedPinNumbers = pickedPins.map((x) => x.pinNumber);
 
       // The pin and two adjacent pins forming a triangle can happen in six ways
 
@@ -427,7 +427,7 @@ const Nubble: React.FC<Props> = (props) => {
 
     // Keep track that the pin has now been correctly picked
     const newPickedPins = pickedPins.slice();
-    newPickedPins.push({pinNumber, teamNumber: props.currentTeamNumber});
+    newPickedPins.push({ pinNumber, teamNumber: props.currentTeamNumber });
     setPickedPins(newPickedPins);
 
     // Find out how many base points the pin is worth
@@ -502,7 +502,7 @@ const Nubble: React.FC<Props> = (props) => {
             // Start from that value and add the index to it (index is zero based, so add an additional one)
             const value = prevRowEndingValue + i + 1;
             // Has the pin already been picked?
-            const isPicked = pickedPins.map(x => x.pinNumber).includes(value);
+            const isPicked = pickedPins.map((x) => x.pinNumber).includes(value);
             // What colour should the pin be?
             const colour = pointColourInformation.find((x) => x.points === props.determinePoints(value))?.colour;
 
@@ -513,7 +513,7 @@ const Nubble: React.FC<Props> = (props) => {
                 data-prime={isPrime(value)}
                 data-shape={props.gamemodeSettings.gridShape}
                 data-picked={isPicked}
-                data-team-colour={teamNumberColourMappings.find(x => x.teamNumber === pickedPins.find(x => x.pinNumber === value)?.teamNumber)?.hexCode}
+                data-team-number={pickedPins.find((x) => x.pinNumber === value)?.teamNumber}
                 data-colour={colour}
                 onClick={() => onClick(value)}
                 disabled={isPicked || props.status !== "dice-rolled-awaiting-pick"}
@@ -528,7 +528,7 @@ const Nubble: React.FC<Props> = (props) => {
               return;
             }
 
-            const isPicked = pickedPins.map(x => x.pinNumber).includes(value);
+            const isPicked = pickedPins.map((x) => x.pinNumber).includes(value);
             const colour = pointColourInformation.find((x) => x.points === props.determinePoints(value))?.colour;
 
             return (
@@ -538,7 +538,7 @@ const Nubble: React.FC<Props> = (props) => {
                 data-prime={isPrime(value)}
                 data-shape={props.gamemodeSettings.gridShape}
                 data-picked={isPicked}
-                data-team-number={pickedPins.find(x => x.pinNumber === value)?.teamNumber}
+                data-team-number={pickedPins.find((x) => x.pinNumber === value)?.teamNumber}
                 data-colour={colour}
                 onClick={() => onClick(value)}
                 disabled={isPicked || props.status !== "dice-rolled-awaiting-pick"}
@@ -979,12 +979,14 @@ const Nubble: React.FC<Props> = (props) => {
           {totalPoints.map((teamPoints) => (
             <div
               className="team-info"
-              data-team-colour={teamNumberColourMappings.find(x => x.teamNumber === teamPoints.teamNumber)?.teamName}
+              data-team-number={teamPoints.teamNumber}
               data-selected={teamPoints.teamNumber === props.currentTeamNumber}
               key={teamPoints.teamNumber}
             >
               {props.gamemodeSettings.numTeams > 1 && (
-                <div className="nubble-team-label">{teamNumberColourMappings.find(x => x.teamNumber === teamPoints.teamNumber)?.teamName}</div>
+                <div className="nubble-team-label">
+                  {teamNumberColourMappings.find((x) => x.teamNumber === teamPoints.teamNumber)?.teamName}
+                </div>
               )}
               <div className="nubble-score">
                 {totalPoints.find((x) => x.teamNumber === teamPoints.teamNumber)?.total}

@@ -1315,7 +1315,8 @@ $data-statuses: (
         font-weight: bold;
         opacity: 1;
       }
-      .nubble-score, .nubble-timer {
+      .nubble-score,
+      .nubble-timer {
         align-self: center;
         margin-top: 0.3em;
         margin-bottom: 0.3em;
@@ -1343,6 +1344,40 @@ $data-statuses: (
     }
   }
 }
+
+$orange: #aa5208bb;
+$orange-border: #aa5208;
+$light-blue: #00a59bbb;
+$light-blue-border: #00a59b;
+$yellow: #a5a803bb;
+$yellow-border: #a5a803;
+$dark-blue: #006dacbb;
+$dark-blue-border: #006dac;
+$pink: #e757b7bb;
+$pink-border: #e757b7;
+$green: #05ab00bb;
+$green-border: #05ab00;
+$blue-gray: #6699cc;
+$blue-gray-border: #5f95cc;
+$purple: #b801b5bb;
+$purple-border: #b801b5;
+$dark-orange: #e27e0bbb;
+$dark-orange-border: #e27e0b;
+$red: #b10503bb;
+$red-border: #b10503;
+
+$nubble-colors-names: (
+  orange: $orange,
+  light-blue: $light-blue,
+  yellow: $yellow,
+  dark-blue: $dark-blue,
+  pink: $pink,
+  green: $green,
+  blue-gray: $blue-gray,
+  purple: $purple,
+  dark-orange: $dark-orange,
+  red: $red,
+);
 
 .nubble-button {
   cursor: pointer;
@@ -1384,6 +1419,41 @@ $data-statuses: (
       border-left: 26px solid transparent;
       border-right: 26px solid transparent;
     }
+    &[data-team-number] {
+      .middle {
+        position: relative;
+        &::after {
+          content: " ";
+          position: absolute;
+          top: -0.3em;
+          left: 0.3em;
+          right: 0.3em;
+          bottom: -0.3em;
+          background-color: #bbb;
+          border-radius: 2em;
+        }
+      }
+      &[data-team-number="0"] {
+        .middle::after {
+          background-color: $blue-gray-border;
+        }
+      }
+      &[data-team-number="1"] {
+        .middle::after {
+          background-color: $red-border;
+        }
+      }
+      &[data-team-number="2"] {
+        .middle::after {
+          background-color: $green-border;
+        }
+      }
+      &[data-team-number="3"] {
+        .middle::after {
+          background-color: $yellow-border;
+        }
+      }
+    }
   }
 }
 
@@ -1395,40 +1465,6 @@ $data-statuses: (
 .nubble-button-display[data-prime="true"] {
   border: 4px solid #3d3d3d !important;
 }
-
-$orange: #aa5208bb;
-$orange-border: #aa5208;
-$light-blue: #00a59bbb;
-$light-blue-border: #00a59b;
-$yellow: #a5a803bb;
-$yellow-border: #a5a803;
-$dark-blue: #006dacbb;
-$dark-blue-border: #006dac;
-$pink: #e757b7bb;
-$pink-border: #e757b7;
-$green: #05ab00bb;
-$green-border: #05ab00;
-$blue-gray: #6699cc;
-$blue-gray-border: #5f95cc;
-$purple: #b801b5bb;
-$purple-border: #b801b5;
-$dark-orange: #e27e0bbb;
-$dark-orange-border: #e27e0b;
-$red: #b10503bb;
-$red-border: #b10503;
-
-$nubble-colors-names: (
-  orange: $orange,
-  light-blue: $light-blue,
-  yellow: $yellow,
-  dark-blue: $dark-blue,
-  pink: $pink,
-  green: $green,
-  blue-gray: $blue-gray,
-  purple: $purple,
-  dark-orange: $dark-orange,
-  red: $red,
-);
 
 // Sets background, border and on hover colours for nubble pins
 @each $colourName, $color in $nubble-colors-names {
