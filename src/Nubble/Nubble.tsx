@@ -5,6 +5,7 @@ import "../index.scss";
 import { MessageNotification } from "../MessageNotification";
 import ProgressBar, { GreenToRedColorTransition } from "../ProgressBar";
 import { SettingsData } from "../SaveData";
+import { SettingInfo } from "../Setting";
 import { Theme } from "../Themes";
 import DiceGrid from "./DiceGrid";
 import {
@@ -630,303 +631,259 @@ const Nubble: React.FC<Props> = (props) => {
     rollDice();
   }
 
-  function generateSettingsOptions(): React.ReactNode {
-    return (
-      <>
-        <label>
-          <input
-            type="number"
-            value={props.gamemodeSettings.numDice}
-            min={2}
-            max={6}
-            onChange={(e) => {
-              const newGamemodeSettings = {
-                ...props.gamemodeSettings,
-                numDice: e.target.valueAsNumber,
-              };
-              props.updateGamemodeSettings(newGamemodeSettings);
-            }}
-          ></input>
-          Number of dice
-        </label>
+  function generateSettingsOptions(): SettingInfo[] {
+    return [
+      // 'Number of dice' setting
+      {
+        name: "Number of dice",
+        type: "integer",
+        min: 2,
+        max: 6,
+        value: props.gamemodeSettings.numDice,
+        onChange: (numDice) =>
+          props.updateGamemodeSettings({
+            ...props.gamemodeSettings,
+            numDice,
+          }),
+      },
 
-        <label>
-          <input
-            type="number"
-            value={props.gamemodeSettings.diceMin}
-            min={1}
-            max={props.gamemodeSettings.diceMax}
-            onChange={(e) => {
-              const newGamemodeSettings = {
-                ...props.gamemodeSettings,
-                diceMin: e.target.valueAsNumber,
-              };
-              props.updateGamemodeSettings(newGamemodeSettings);
-            }}
-          ></input>
-          Minimum dice value
-        </label>
+      // 'Minimum dice value' setting
+      {
+        name: "Minimum dice value",
+        type: "integer",
+        min: 1,
+        max: props.gamemodeSettings.diceMax,
+        value: props.gamemodeSettings.diceMin,
+        onChange: (diceMin) =>
+          props.updateGamemodeSettings({
+            ...props.gamemodeSettings,
+            diceMin,
+          }),
+      },
 
-        <label>
-          <input
-            type="number"
-            value={props.gamemodeSettings.diceMax}
-            min={props.gamemodeSettings.diceMin}
-            max={100}
-            onChange={(e) => {
-              const newGamemodeSettings = {
-                ...props.gamemodeSettings,
-                diceMax: e.target.valueAsNumber,
-              };
-              props.updateGamemodeSettings(newGamemodeSettings);
-            }}
-          ></input>
-          Maximum dice value
-        </label>
+      // 'Maximum dice value' setting
+      {
+        name: "Maximum dice value",
+        type: "integer",
+        min: props.gamemodeSettings.diceMin,
+        max: 100,
+        value: props.gamemodeSettings.diceMax,
+        onChange: (diceMax) =>
+          props.updateGamemodeSettings({
+            ...props.gamemodeSettings,
+            diceMax,
+          }),
+      },
 
-        <label>
-          <select
-            onChange={(e) => {
-              const newGamemodeSettings = {
-                ...props.gamemodeSettings,
-                gridShape: e.target.value as nubbleGridShape,
-              };
-              props.updateGamemodeSettings(newGamemodeSettings);
-            }}
-            className="nubbleGridShape_input"
-            name="nubbleGridShape"
-            value={props.gamemodeSettings.gridShape as nubbleGridShape}
-          >
-            {nubbleGridShapes.map((nubbleGridShape) => (
-              <option key={nubbleGridShape} value={nubbleGridShape}>
-                {nubbleGridShape}
-              </option>
-            ))}
-          </select>
-          Grid Shape
-        </label>
+      // 'Grid Shape' setting
+      {
+        name: "Grid Shape",
+        type: "option",
+        values: Array.from(nubbleGridShapes),
+        value: props.gamemodeSettings.gridShape,
+        onChange: (gridShape) =>
+          props.updateGamemodeSettings({
+            ...props.gamemodeSettings,
+            gridShape: (gridShape || nubbleGridShapes[0]) as "square" | "hexagon",
+          }),
+      },
 
-        <label>
-          <select
-            onChange={(e) => {
-              const newGamemodeSettings = {
-                ...props.gamemodeSettings,
-                gridSize: parseInt(e.target.value) as nubbleGridSize,
-              };
-              props.updateGamemodeSettings(newGamemodeSettings);
-            }}
-            className="nubbleGridSize_input"
-            name="nubbleGridSize"
-            value={props.gamemodeSettings.gridSize as nubbleGridSize}
-          >
-            {nubbleGridSizes.map((nubbleGridSize) => (
-              <option key={nubbleGridSize} value={nubbleGridSize}>
-                {nubbleGridSize}
-              </option>
-            ))}
-          </select>
-          Grid Size
-        </label>
+      // 'Grid Size' setting
+      {
+        name: "Grid Size",
+        type: "option",
+        values: Array.from(nubbleGridSizes).map((x) => x.toString()),
+        value: props.gamemodeSettings.gridSize.toString(),
+        onChange: (gridSize) =>
+          props.updateGamemodeSettings({
+            ...props.gamemodeSettings,
+            gridSize: parseInt(gridSize || nubbleGridSizes[2].toString()) as 25 | 64 | 100,
+          }),
+      },
 
-        <label>
-          <input
-            type="number"
-            value={props.gamemodeSettings.numTeams}
-            min={1}
-            max={4}
-            onChange={(e) => {
-              const newGamemodeSettings = {
-                ...props.gamemodeSettings,
-                numTeams: e.target.valueAsNumber,
-              };
-              props.updateGamemodeSettings(newGamemodeSettings);
-            }}
-          ></input>
-          Number of teams
-        </label>
+      // 'Number of teams' setting
+      {
+        name: "Number of teams",
+        type: "integer",
+        min: 1,
+        max: 4,
+        value: props.gamemodeSettings.numTeams,
+        onChange: (numTeams) =>
+          props.updateGamemodeSettings({
+            ...props.gamemodeSettings,
+            numTeams,
+          }),
+      },
 
-        <label>
-          <input
-            checked={props.gamemodeSettings.isGameOverOnIncorrectPick}
-            type="checkbox"
-            onChange={() => {
-              const newGamemodeSettings = {
-                ...props.gamemodeSettings,
-                isGameOverOnIncorrectPick: !props.gamemodeSettings.isGameOverOnIncorrectPick,
-              };
-              props.updateGamemodeSettings(newGamemodeSettings);
-            }}
-          ></input>
-          Incorrect pick ends game
-        </label>
+      // 'Incorrect pick ends game' setting
+      {
+        name: "Incorrect pick ends game",
+        type: "boolean",
+        value: props.gamemodeSettings.isGameOverOnIncorrectPick,
+        onChange: (isGameOverOnIncorrectPick) =>
+          props.updateGamemodeSettings({
+            ...props.gamemodeSettings,
+            isGameOverOnIncorrectPick,
+          }),
+      },
 
-        <>
-          <label>
-            <input
-              checked={props.gamemodeSettings.guessTimerConfig.isTimed}
-              type="checkbox"
-              onChange={() => {
-                const newGuessTimer:
-                  | {
-                      isTimed: true;
-                      seconds: number;
-                      timerBehaviour:
-                        | { isGameOverWhenNoTimeLeft: true }
-                        | { isGameOverWhenNoTimeLeft: false; pointsLost: number };
-                    }
-                  | { isTimed: false } =
-                  // If currently timed, make the game not timed and vice versa
-                  props.gamemodeSettings.guessTimerConfig.isTimed
-                    ? { isTimed: false }
-                    : {
-                        isTimed: true,
-                        seconds: mostRecentGuessTimerTotalSeconds,
-                        timerBehaviour: { isGameOverWhenNoTimeLeft: false, pointsLost: 0 },
-                      };
-                const newGamemodeSettings = { ...props.gamemodeSettings, guessTimerConfig: newGuessTimer };
-                props.updateGamemodeSettings(newGamemodeSettings);
-              }}
-            ></input>
-            Guess Timer
-          </label>
-          {props.gamemodeSettings.guessTimerConfig.isTimed && (
-            <>
-              <label>
-                <input
-                  type="number"
-                  value={props.gamemodeSettings.guessTimerConfig.seconds}
-                  min={5}
-                  max={120}
-                  step={5}
-                  onChange={(e) => {
-                    props.updateRemainingGuessTimerSeconds(e.target.valueAsNumber);
-                    setMostRecentGuessTimerTotalSeconds(e.target.valueAsNumber);
-                    const newGuessTimer = {
-                      ...props.gamemodeSettings.guessTimerConfig,
-                      seconds: e.target.valueAsNumber,
-                    };
-                    const newGamemodeSettings = {
-                      ...props.gamemodeSettings,
-                      guessTimerConfig: newGuessTimer,
-                    };
-                    props.updateGamemodeSettings(newGamemodeSettings);
-                  }}
-                ></input>
-                Seconds
-              </label>
+      // 'Guess Timer' setting
+      {
+        name: "Guess Timer",
+        type: "boolean",
+        value: props.gamemodeSettings.guessTimerConfig.isTimed,
+        onChange: (isTimed) =>
+          props.updateGamemodeSettings({
+            ...props.gamemodeSettings,
+            guessTimerConfig: props.gamemodeSettings.guessTimerConfig.isTimed
+              ? { isTimed: false }
+              : {
+                  isTimed: true,
+                  seconds: mostRecentGuessTimerTotalSeconds,
+                  timerBehaviour: { isGameOverWhenNoTimeLeft: false, pointsLost: 0 },
+                },
+          }),
+      },
 
-              <label>
-                <input
-                  checked={props.gamemodeSettings.guessTimerConfig.timerBehaviour.isGameOverWhenNoTimeLeft}
-                  type="checkbox"
-                  onChange={() => {
-                    const newTimerBehaviour:
-                      | { isGameOverWhenNoTimeLeft: true }
-                      | { isGameOverWhenNoTimeLeft: false; pointsLost: number } =
-                      // If game currently ends when uses timer runs out, make it not and vice versa
-                      props.gamemodeSettings.guessTimerConfig.isTimed &&
-                      props.gamemodeSettings.guessTimerConfig.timerBehaviour.isGameOverWhenNoTimeLeft
-                        ? { isGameOverWhenNoTimeLeft: false, pointsLost: 0 }
-                        : { isGameOverWhenNoTimeLeft: true };
-                    const newGuessTimer = {
-                      ...props.gamemodeSettings.guessTimerConfig,
-                      timerBehaviour: newTimerBehaviour,
-                    };
-                    const newGamemodeSettings = {
-                      ...props.gamemodeSettings,
-                      guessTimerConfig: newGuessTimer,
-                    };
-                    props.updateGamemodeSettings(newGamemodeSettings);
-                  }}
-                ></input>
-                Guess timer ends game
-              </label>
+      // 'Seconds' setting
+      ...(props.gamemodeSettings.guessTimerConfig.isTimed
+        ? [
+            {
+              name: "Seconds",
+              type: "integer",
+              min: 5,
+              max: 120,
+              step: 5,
+              value: props.gamemodeSettings.guessTimerConfig.seconds,
+              onChange: (seconds) => {
+                props.updateRemainingGuessTimerSeconds(seconds);
+                setMostRecentGuessTimerTotalSeconds(seconds);
 
-              {!props.gamemodeSettings.guessTimerConfig.timerBehaviour.isGameOverWhenNoTimeLeft && (
-                <label>
-                  <input
-                    type="number"
-                    value={props.gamemodeSettings.guessTimerConfig.timerBehaviour.pointsLost}
-                    min={0}
-                    max={100}
-                    step={5}
-                    onChange={(e) => {
-                      const newGuessTimer = {
-                        ...props.gamemodeSettings.guessTimerConfig,
-                        timerBehaviour: { isGameOverWhenNoTimeLeft: false, pointsLost: e.target.valueAsNumber },
-                      };
-                      const newGamemodeSettings = {
-                        ...props.gamemodeSettings,
-                        guessTimerConfig: newGuessTimer,
-                      };
-                      props.updateGamemodeSettings(newGamemodeSettings);
-                    }}
-                  ></input>
-                  Points lost
-                </label>
-              )}
-            </>
-          )}
-        </>
+                if (!props.gamemodeSettings.guessTimerConfig.isTimed) {
+                  throw new Error("Expected guessTimerConfig.isTimed to be true");
+                }
 
-        <>
-          <label>
-            <input
-              checked={props.gamemodeSettings.timerConfig.isTimed}
-              type="checkbox"
-              onChange={() => {
-                // If currently timed, on change, make the game not timed and vice versa
-                const newTimer: { isTimed: true; seconds: number } | { isTimed: false } = props.gamemodeSettings
-                  .timerConfig.isTimed
-                  ? { isTimed: false }
-                  : { isTimed: true, seconds: mostRecentTotalSeconds };
-                const newGamemodeSettings = { ...props.gamemodeSettings, timerConfig: newTimer };
-                props.updateGamemodeSettings(newGamemodeSettings);
-              }}
-            ></input>
-            Timer
-          </label>
-          {props.gamemodeSettings.timerConfig.isTimed && (
-            <label>
-              <input
-                type="number"
-                value={props.gamemodeSettings.timerConfig.seconds}
-                min={30}
-                max={1200}
-                step={10}
-                onChange={(e) => {
-                  // Set all teams' remaining and total time left to this new value
-                  const newTeamTimers = props.teamTimers.map((teamTimerInfo) => {
-                    return {
-                      ...teamTimerInfo,
-                      remainingSeconds: e.target.valueAsNumber,
-                      totalSeconds: e.target.valueAsNumber,
-                    };
-                  });
-                  props.updateTeamTimers(newTeamTimers);
+                props.updateGamemodeSettings({
+                  ...props.gamemodeSettings,
+                  guessTimerConfig: {
+                    ...props.gamemodeSettings.guessTimerConfig,
+                    seconds,
+                  },
+                });
+              },
+            } as SettingInfo,
+          ]
+        : []),
+    ];
 
-                  setMostRecentTotalSeconds(e.target.valueAsNumber);
-
-                  const newGamemodeSettings = {
-                    ...props.gamemodeSettings,
-                    timerConfig: { isTimed: true, seconds: e.target.valueAsNumber },
-                  };
-                  props.updateGamemodeSettings(newGamemodeSettings);
-                }}
-              ></input>
-              Seconds
-            </label>
-          )}
-        </>
-      </>
-    );
+    //             <label>
+    //               <input
+    //                 checked={props.gamemodeSettings.guessTimerConfig.timerBehaviour.isGameOverWhenNoTimeLeft}
+    //                 type="checkbox"
+    //                 onChange={() => {
+    //                   const newTimerBehaviour:
+    //                     | { isGameOverWhenNoTimeLeft: true }
+    //                     | { isGameOverWhenNoTimeLeft: false; pointsLost: number } =
+    //                     // If game currently ends when uses timer runs out, make it not and vice versa
+    //                     props.gamemodeSettings.guessTimerConfig.isTimed &&
+    //                     props.gamemodeSettings.guessTimerConfig.timerBehaviour.isGameOverWhenNoTimeLeft
+    //                       ? { isGameOverWhenNoTimeLeft: false, pointsLost: 0 }
+    //                       : { isGameOverWhenNoTimeLeft: true };
+    //                   const newGuessTimer = {
+    //                     ...props.gamemodeSettings.guessTimerConfig,
+    //                     timerBehaviour: newTimerBehaviour,
+    //                   };
+    //                   const newGamemodeSettings = {
+    //                     ...props.gamemodeSettings,
+    //                     guessTimerConfig: newGuessTimer,
+    //                   };
+    //                   props.updateGamemodeSettings(newGamemodeSettings);
+    //                 }}
+    //               ></input>
+    //               Guess timer ends game
+    //             </label>
+    //             {!props.gamemodeSettings.guessTimerConfig.timerBehaviour.isGameOverWhenNoTimeLeft && (
+    //               <label>
+    //                 <input
+    //                   type="number"
+    //                   value={props.gamemodeSettings.guessTimerConfig.timerBehaviour.pointsLost}
+    //                   min={0}
+    //                   max={100}
+    //                   step={5}
+    //                   onChange={(e) => {
+    //                     const newGuessTimer = {
+    //                       ...props.gamemodeSettings.guessTimerConfig,
+    //                       timerBehaviour: { isGameOverWhenNoTimeLeft: false, pointsLost: e.target.valueAsNumber },
+    //                     };
+    //                     const newGamemodeSettings = {
+    //                       ...props.gamemodeSettings,
+    //                       guessTimerConfig: newGuessTimer,
+    //                     };
+    //                     props.updateGamemodeSettings(newGamemodeSettings);
+    //                   }}
+    //                 ></input>
+    //                 Points lost
+    //               </label>
+    //             )}
+    //           </>
+    //         )}
+    //       </>
+    //       <>
+    //         <label>
+    //           <input
+    //             checked={props.gamemodeSettings.timerConfig.isTimed}
+    //             type="checkbox"
+    //             onChange={() => {
+    //               // If currently timed, on change, make the game not timed and vice versa
+    //               const newTimer: { isTimed: true; seconds: number } | { isTimed: false } = props.gamemodeSettings
+    //                 .timerConfig.isTimed
+    //                 ? { isTimed: false }
+    //                 : { isTimed: true, seconds: mostRecentTotalSeconds };
+    //               const newGamemodeSettings = { ...props.gamemodeSettings, timerConfig: newTimer };
+    //               props.updateGamemodeSettings(newGamemodeSettings);
+    //             }}
+    //           ></input>
+    //           Timer
+    //         </label>
+    //         {props.gamemodeSettings.timerConfig.isTimed && (
+    //           <label>
+    //             <input
+    //               type="number"
+    //               value={props.gamemodeSettings.timerConfig.seconds}
+    //               min={30}
+    //               max={1200}
+    //               step={10}
+    //               onChange={(e) => {
+    //                 // Set all teams' remaining and total time left to this new value
+    //                 const newTeamTimers = props.teamTimers.map((teamTimerInfo) => {
+    //                   return {
+    //                     ...teamTimerInfo,
+    //                     remainingSeconds: e.target.valueAsNumber,
+    //                     totalSeconds: e.target.valueAsNumber,
+    //                   };
+    //                 });
+    //                 props.updateTeamTimers(newTeamTimers);
+    //                 setMostRecentTotalSeconds(e.target.valueAsNumber);
+    //                 const newGamemodeSettings = {
+    //                   ...props.gamemodeSettings,
+    //                   timerConfig: { isTimed: true, seconds: e.target.valueAsNumber },
+    //                 };
+    //                 props.updateGamemodeSettings(newGamemodeSettings);
+    //               }}
+    //             ></input>
+    //             Seconds
+    //           </label>
+    //         )}
+    //       </>
+    //     </>
+    //   );
   }
 
   return (
     <div className="App" style={{ backgroundImage: `url(${props.theme.backgroundImageSrc})`, backgroundSize: "100%" }}>
       {!props.isCampaignLevel && (
         <div className="gamemodeSettings">
-          <GamemodeSettingsMenu>{generateSettingsOptions()}</GamemodeSettingsMenu>
+          {/* <GamemodeSettingsMenu>{generateSettingsOptions()}</GamemodeSettingsMenu> */}
         </div>
       )}
 

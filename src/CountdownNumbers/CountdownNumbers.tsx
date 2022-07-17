@@ -13,6 +13,7 @@ import { SettingsData } from "../SaveData";
 import GamemodeSettingsMenu from "../GamemodeSettingsMenu";
 import { randomIntFromInterval } from "../Nubble/Nubble";
 import { pickRandomElementFrom } from "../WordleConfig";
+import { SettingInfo } from "../Setting";
 
 interface Props {
   isCampaignLevel: boolean;
@@ -294,80 +295,70 @@ const CountdownNumbers: React.FC<Props> = (props) => {
     return Grid;
   }
 
-  function generateSettingsOptions(): React.ReactNode {
-    return (
-      <>
-        <label>
-          <input
-            type="number"
-            value={props.gamemodeSettings.numOperands}
-            min={4}
-            max={10}
-            onChange={(e) => {
-              const newGamemodeSettings = {
-                ...props.gamemodeSettings,
-                numOperands: e.target.valueAsNumber,
-              };
-              props.updateGamemodeSettings(newGamemodeSettings);
-            }}
-          ></input>
-          Numbers in selection
-        </label>
-        <label>
-          <input
-            checked={props.gamemodeSettings.hasScaryNumbers}
-            type="checkbox"
-            onChange={(e) => {
-              const newGamemodeSettings = {
-                ...props.gamemodeSettings,
-                hasScaryNumbers: !props.gamemodeSettings.hasScaryNumbers,
-              };
-              props.updateGamemodeSettings(newGamemodeSettings);
-            }}
-          ></input>
-          Scary Big Numbers
-        </label>
-        <>
-          <label>
-            <input
-              checked={props.gamemodeSettings.timerConfig.isTimed}
-              type="checkbox"
-              onChange={() => {
-                // If currently timed, on change, make the game not timed and vice versa
-                const newTimer: { isTimed: true; seconds: number } | { isTimed: false } = props.gamemodeSettings
-                  .timerConfig.isTimed
-                  ? { isTimed: false }
-                  : { isTimed: true, seconds: mostRecentTotalSeconds };
-                const newGamemodeSettings = { ...props.gamemodeSettings, timerConfig: newTimer };
-                props.updateGamemodeSettings(newGamemodeSettings);
-              }}
-            ></input>
-            Timer
-          </label>
-          {props.gamemodeSettings.timerConfig.isTimed && (
-            <label>
-              <input
-                type="number"
-                value={props.gamemodeSettings.timerConfig.seconds}
-                min={10}
-                max={120}
-                step={5}
-                onChange={(e) => {
-                  props.updateRemainingSeconds(e.target.valueAsNumber);
-                  setMostRecentTotalSeconds(e.target.valueAsNumber);
-                  const newGamemodeSettings = {
-                    ...props.gamemodeSettings,
-                    timer: { isTimed: true, seconds: e.target.valueAsNumber },
-                  };
-                  props.updateGamemodeSettings(newGamemodeSettings);
-                }}
-              ></input>
-              Seconds
-            </label>
-          )}
-        </>
-      </>
-    );
+  function generateSettingsOptions(): SettingInfo[] {
+    return [
+      // 'Numbers in selection' setting
+      {
+        name: "Numbers in selection",
+        type: "integer",
+        min: 4,
+        max: 10,
+        value: props.gamemodeSettings.numOperands,
+        onChange: (numOperands) =>
+          props.updateGamemodeSettings({
+            ...props.gamemodeSettings,
+            numOperands,
+          }),
+      },
+
+      // 'Scary Big Numbers' setting
+      {
+        name: "Scary Big Numbers",
+        type: "boolean",
+        value: props.gamemodeSettings.hasScaryNumbers,
+        onChange: (hasScaryNumbers) =>
+          props.updateGamemodeSettings({
+            ...props.gamemodeSettings,
+            hasScaryNumbers,
+          }),
+      },
+
+      // 'Timer' setting
+      {
+        name: "Timer",
+        type: "boolean",
+        value: props.gamemodeSettings.timerConfig.isTimed,
+        onChange: (isTimed) => {
+          // If currently timed, on change, make the game not timed and vice versa
+          props.updateGamemodeSettings({
+            ...props.gamemodeSettings,
+            timerConfig: !isTimed ? { isTimed: false } : { isTimed: true, seconds: mostRecentTotalSeconds },
+          });
+        },
+      },
+
+      // 'Timer Seconds' setting (only shown if 'Timer' is set true)
+      ...(props.gamemodeSettings.timerConfig.isTimed
+        ? [
+            {
+              name: "Seconds",
+              type: "integer",
+              value: props.gamemodeSettings.timerConfig.seconds,
+              min: 10,
+              max: 120,
+              step: 5,
+              onChange: (seconds) => {
+                setMostRecentTotalSeconds(seconds);
+
+                props.updateGamemodeSettings({
+                  ...props.gamemodeSettings,
+                  timerConfig: { isTimed: true, seconds },
+                });
+              },
+            } as SettingInfo,
+          ]
+        : []),
+    ];
   }
 
   /**
@@ -517,7 +508,7 @@ const CountdownNumbers: React.FC<Props> = (props) => {
     <div className="App" style={{ backgroundImage: `url(${props.theme.backgroundImageSrc})`, backgroundSize: "100%" }}>
       {!props.isCampaignLevel && !props.gameshowScore && (
         <div className="gamemodeSettings">
-          <GamemodeSettingsMenu>{generateSettingsOptions()}</GamemodeSettingsMenu>
+          <GamemodeSettingsMenu settings={generateSettingsOptions()} />
         </div>
       )}
 

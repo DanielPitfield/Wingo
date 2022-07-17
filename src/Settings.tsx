@@ -4,6 +4,7 @@ import { FiCompass, FiHeadphones, FiInfo, FiMonitor } from "react-icons/fi";
 import { Page, pages } from "./App";
 import { Button } from "./Button";
 import { SettingsData } from "./SaveData";
+import { Setting, SettingInfo } from "./Setting";
 import { StudioLogo } from "./StudioLogo";
 import { Themes } from "./Themes";
 import { VERSION } from "./version";
@@ -15,18 +16,6 @@ interface Props {
 
 // All the possible setting areas
 type SettingArea = "Sound" | "Video" | "Gameplay" | "About";
-
-// Individual setting
-type Setting =
-  | {
-      type: "option";
-      name: string;
-      value: string | null;
-      values: string[];
-      onChange: (value: string | null) => SettingsData;
-    }
-  | { type: "decimal"; name: string; value: number; onChange: (value: number) => SettingsData }
-  | { type: "boolean"; name: string; value: boolean; onChange: (value: boolean) => SettingsData };
 
 export const Settings: React.FC<Props> = (props) => {
   const [selectedSettingAreaName, setSelectedSettingAreaName] = useState<SettingArea>("Sound");
@@ -43,7 +32,7 @@ export const Settings: React.FC<Props> = (props) => {
         type: "settings";
         name: SettingArea;
         icon: IconType;
-        settings: Setting[];
+        settings: SettingInfo[];
       }
     | {
         type: "custom";
@@ -146,63 +135,6 @@ export const Settings: React.FC<Props> = (props) => {
     },
   ];
 
-  /**
-   * Renders a setting control.
-   * @param setting Setting to render.
-   * @returns Element to render.
-   */
-  function renderSettingControl(setting: Setting): React.ReactNode {
-    switch (setting.type) {
-      // Option control
-      case "option": {
-        return (
-          <select
-            onChange={(e) =>
-              props.onSettingsChange(
-                setting.onChange(
-                  e.target.selectedOptions[0]?.value === "null" ? null : e.target.selectedOptions[0]?.value ?? null
-                )
-              )
-            }
-            value={setting.value || "null"}
-          >
-            <option value="null">No preference (default)</option>
-            {setting.values.map((option) => (
-              <option key={option}>{option}</option>
-            ))}
-          </select>
-        );
-      }
-
-      // Slider 0.0 to 1.0 control
-      case "decimal": {
-        const MAX = 100;
-        const MIN = 0;
-
-        return (
-          <input
-            type="range"
-            min={MIN}
-            max={MAX}
-            onChange={(e) => props.onSettingsChange(setting.onChange(Math.min(MAX, e.target.valueAsNumber / MAX)))}
-            value={Math.min(MAX, setting.value * 100)}
-          />
-        );
-      }
-
-      // Checkbox Yes/No control
-      case "boolean": {
-        return (
-          <input
-            type="checkbox"
-            onChange={(e) => props.onSettingsChange(setting.onChange(e.target.checked))}
-            checked={setting.value}
-          />
-        );
-      }
-    }
-  }
-
   const selectedSettingArea = SETTINGS.find((x) => x.name === selectedSettingAreaName)!;
 
   return (
@@ -229,12 +161,7 @@ export const Settings: React.FC<Props> = (props) => {
         <div className="selected-setting">
           {selectedSettingArea.type === "custom"
             ? selectedSettingArea.component
-            : selectedSettingArea.settings.map((setting) => (
-                <label key={setting.name} className="setting">
-                  <span className="setting-name">{setting.name}</span>
-                  <div className="setting-control">{renderSettingControl(setting)}</div>
-                </label>
-              ))}
+            : selectedSettingArea.settings.map((setting) => <Setting key={setting.name} setting={setting} />)}
         </div>
       </section>
     </div>

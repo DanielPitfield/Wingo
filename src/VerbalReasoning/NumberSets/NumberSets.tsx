@@ -254,71 +254,71 @@ const NumberSets: React.FC<Props> = (props) => {
     setGuess(`${guess}${number}`);
   }
 
-  function generateSettingsOptions(): React.ReactNode {
-    return (
-      <>
-        <label>
-          <select
-            onChange={(e) => {
-              const newGamemodeSettings = {
-                ...gamemodeSettings,
-                difficulty: e.target.value as algebraDifficulty,
-              };
-              setGamemodeSettings(newGamemodeSettings);
-            }}
-            className="difficulty_input"
-            name="difficulty"
-            value={gamemodeSettings.difficulty}
-          >
-            {algebraDifficulties.map((difficultyOption) => (
-              <option key={difficultyOption} value={difficultyOption}>
-                {difficultyOption}
-              </option>
-            ))}
-          </select>
-          Difficulty
-        </label>
+  // function generateSettingsOptions(): SettingInfo[] {
+  //   return (
+  //     <>
+  //       <label>
+  //         <select
+  //           onChange={(e) => {
+  //             const newGamemodeSettings = {
+  //               ...gamemodeSettings,
+  //               difficulty: e.target.value as algebraDifficulty,
+  //             };
+  //             setGamemodeSettings(newGamemodeSettings);
+  //           }}
+  //           className="difficulty_input"
+  //           name="difficulty"
+  //           value={gamemodeSettings.difficulty}
+  //         >
+  //           {algebraDifficulties.map((difficultyOption) => (
+  //             <option key={difficultyOption} value={difficultyOption}>
+  //               {difficultyOption}
+  //             </option>
+  //           ))}
+  //         </select>
+  //         Difficulty
+  //       </label>
 
-        <label>
-          <input
-            checked={gamemodeSettings.timerConfig.isTimed}
-            type="checkbox"
-            onChange={() => {
-              // If currently timed, on change, make the game not timed and vice versa
-              const newTimer: { isTimed: true; seconds: number } | { isTimed: false } = gamemodeSettings.timerConfig
-                .isTimed
-                ? { isTimed: false }
-                : { isTimed: true, seconds: mostRecentTotalSeconds };
-              const newGamemodeSettings = { ...gamemodeSettings, timerConfig: newTimer };
-              setGamemodeSettings(newGamemodeSettings);
-            }}
-          ></input>
-          Timer
-        </label>
-        {gamemodeSettings.timerConfig.isTimed && (
-          <label>
-            <input
-              type="number"
-              value={gamemodeSettings.timerConfig.seconds}
-              min={10}
-              max={120}
-              step={5}
-              onChange={(e) => {
-                setRemainingSeconds(e.target.valueAsNumber);
-                setMostRecentTotalSeconds(e.target.valueAsNumber);
-                const newGamemodeSettings = {
-                  ...gamemodeSettings,
-                  timerConfig: { isTimed: true, seconds: e.target.valueAsNumber },
-                };
-                setGamemodeSettings(newGamemodeSettings);
-              }}
-            ></input>
-            Seconds
-          </label>
-        )}
-      </>
-    );
-  }
+  //       <label>
+  //         <input
+  //           checked={gamemodeSettings.timerConfig.isTimed}
+  //           type="checkbox"
+  //           onChange={() => {
+  //             // If currently timed, on change, make the game not timed and vice versa
+  //             const newTimer: { isTimed: true; seconds: number } | { isTimed: false } = gamemodeSettings.timerConfig
+  //               .isTimed
+  //               ? { isTimed: false }
+  //               : { isTimed: true, seconds: mostRecentTotalSeconds };
+  //             const newGamemodeSettings = { ...gamemodeSettings, timerConfig: newTimer };
+  //             setGamemodeSettings(newGamemodeSettings);
+  //           }}
+  //         ></input>
+  //         Timer
+  //       </label>
+  //       {gamemodeSettings.timerConfig.isTimed && (
+  //         <label>
+  //           <input
+  //             type="number"
+  //             value={gamemodeSettings.timerConfig.seconds}
+  //             min={10}
+  //             max={120}
+  //             step={5}
+  //             onChange={(e) => {
+  //               setRemainingSeconds(e.target.valueAsNumber);
+  //               setMostRecentTotalSeconds(e.target.valueAsNumber);
+  //               const newGamemodeSettings = {
+  //                 ...gamemodeSettings,
+  //                 timerConfig: { isTimed: true, seconds: e.target.valueAsNumber },
+  //               };
+  //               setGamemodeSettings(newGamemodeSettings);
+  //             }}
+  //           ></input>
+  //           Seconds
+  //         </label>
+  //       )}
+  //     </>
+  //   );
+  // }
 
   return (
     <div
@@ -327,7 +327,7 @@ const NumberSets: React.FC<Props> = (props) => {
     >
       {!props.isCampaignLevel && (
         <div className="gamemodeSettings">
-          <GamemodeSettingsMenu>{generateSettingsOptions()}</GamemodeSettingsMenu>
+          {/* <GamemodeSettingsMenu>{generateSettingsOptions()}</GamemodeSettingsMenu> */}
         </div>
       )}
       <div className="outcome">{displayOutcome()}</div>

@@ -34,7 +34,7 @@ interface Props {
 }
 
 const ProgressBar: React.FC<Props> = (props) => {
-  const percentage = (props.progress / props.total) * 100;
+  const percentage = Math.min(100, (props.progress / props.total) * 100);
 
   const backgroundColor =
     props.display.type === "solid" ? props.display.color : getColor(props.display.colorTransition, percentage);

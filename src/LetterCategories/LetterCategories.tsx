@@ -8,6 +8,7 @@ import ProgressBar, { GreenToRedColorTransition } from "../ProgressBar";
 import { Theme } from "../Themes";
 import { SettingsData } from "../SaveData";
 import GamemodeSettingsMenu from "../GamemodeSettingsMenu";
+import { SettingInfo } from "../Setting";
 
 interface Props {
   isCampaignLevel: boolean;
@@ -124,66 +125,58 @@ const LetterCategories: React.FC<Props> = (props) => {
     return Grid;
   }
 
-  function generateSettingsOptions(): React.ReactNode {
-    return (
-      <>
-        <label>
-          <input
-            type="number"
-            value={props.gamemodeSettings.numCategories}
-            min={2}
-            max={MAX_NUM_CATEGORIES}
-            onChange={(e) => {
-              const newGamemodeSettings = {
-                ...props.gamemodeSettings,
-                numCategories: e.target.valueAsNumber,
-              };
-              props.updateGamemodeSettings(newGamemodeSettings);
-            }}
-          ></input>
-          Number of categories
-        </label>
-        <>
-          <label>
-            <input
-              checked={props.gamemodeSettings.timerConfig.isTimed}
-              type="checkbox"
-              onChange={() => {
-                // If currently timed, on change, make the game not timed and vice versa
-                const newTimer: { isTimed: true; seconds: number } | { isTimed: false } = props.gamemodeSettings
-                  .timerConfig.isTimed
-                  ? { isTimed: false }
-                  : { isTimed: true, seconds: mostRecentTotalSeconds };
-                const newGamemodeSettings = { ...props.gamemodeSettings, timerConfig: newTimer };
-                props.updateGamemodeSettings(newGamemodeSettings);
-              }}
-            ></input>
-            Timer
-          </label>
-          {props.gamemodeSettings.timerConfig.isTimed && (
-            <label>
-              <input
-                type="number"
-                value={props.gamemodeSettings.timerConfig.seconds}
-                min={10}
-                max={120}
-                step={5}
-                onChange={(e) => {
-                  props.updateRemainingSeconds(e.target.valueAsNumber);
-                  setMostRecentTotalSeconds(e.target.valueAsNumber);
-                  const newGamemodeSettings = {
-                    ...props.gamemodeSettings,
-                    timer: { isTimed: true, seconds: e.target.valueAsNumber },
-                  };
-                  props.updateGamemodeSettings(newGamemodeSettings);
-                }}
-              ></input>
-              Seconds
-            </label>
-          )}
-        </>
-      </>
-    );
+  function generateSettingsOptions(): SettingInfo[] {
+    return [
+      // 'Number of Categories' setting
+      {
+        name: "Number of Categories",
+        type: "integer",
+        min: 2,
+        max: MAX_NUM_CATEGORIES,
+        value: props.gamemodeSettings.numCategories,
+        onChange: (numCategories) =>
+          props.updateGamemodeSettings({
+            ...props.gamemodeSettings,
+            numCategories,
+          }),
+      },
+
+      // 'Timer' setting
+      {
+        name: "Timer",
+        type: "boolean",
+        value: props.gamemodeSettings.timerConfig.isTimed,
+        onChange: (isTimed) => {
+          // If currently timed, on change, make the game not timed and vice versa
+          props.updateGamemodeSettings({
+            ...props.gamemodeSettings,
+            timerConfig: !isTimed ? { isTimed: false } : { isTimed: true, seconds: mostRecentTotalSeconds },
+          });
+        },
+      },
+
+      // 'Timer Seconds' setting (only shown if 'Timer' is set true)
+      ...(props.gamemodeSettings.timerConfig.isTimed
+        ? [
+            {
+              name: "Seconds",
+              type: "integer",
+              value: props.gamemodeSettings.timerConfig.seconds,
+              min: 10,
+              max: 120,
+              step: 5,
+              onChange: (seconds) => {
+                setMostRecentTotalSeconds(seconds);
+
+                props.updateGamemodeSettings({
+                  ...props.gamemodeSettings,
+                  timerConfig: { isTimed: true, seconds },
+                });
+              },
+            } as SettingInfo,
+          ]
+        : []),
+    ];
   }
 
   function displayOutcome(): JSX.Element {
@@ -238,7 +231,7 @@ const LetterCategories: React.FC<Props> = (props) => {
 
       {!props.isCampaignLevel && (
         <div className="gamemodeSettings">
-          <GamemodeSettingsMenu>{generateSettingsOptions()}</GamemodeSettingsMenu>
+          <GamemodeSettingsMenu settings={generateSettingsOptions()} />
         </div>
       )}
 

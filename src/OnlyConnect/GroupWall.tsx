@@ -371,7 +371,9 @@ const GroupWall: React.FC<Props> = (props) => {
       <>
         <MessageNotification type={numCompletedGroups === gamemodeSettings.numGroups ? "success" : "error"}>
           <strong>
-            {numCompletedGroups === gamemodeSettings.numGroups ? "All groups found!" : `${numCompletedGroups} groups found`}
+            {numCompletedGroups === gamemodeSettings.numGroups
+              ? "All groups found!"
+              : `${numCompletedGroups} groups found`}
           </strong>
         </MessageNotification>
 
@@ -398,103 +400,103 @@ const GroupWall: React.FC<Props> = (props) => {
     }
   }
 
-  function generateSettingsOptions(): React.ReactNode {
-    const MIN_NUM_GROUPS = 2;
-    const MAX_NUM_GROUPS = 10;
+  // function generateSettingsOptions(): SettingInfo[] {
+  //   const MIN_NUM_GROUPS = 2;
+  //   const MAX_NUM_GROUPS = 10;
 
-    const MIN_GROUP_SIZE = 2;
-    const MAX_GROUP_SIZE = 10;
+  //   const MIN_GROUP_SIZE = 2;
+  //   const MAX_GROUP_SIZE = 10;
 
-    return (
-      <>
-      <label>
-          <input
-            type="number"
-            value={gamemodeSettings.numGroups}
-            min={MIN_NUM_GROUPS}
-            max={MAX_NUM_GROUPS}
-            onChange={(e) => {
-              const newGamemodeSettings = {
-                ...gamemodeSettings,
-                numGroups: e.target.valueAsNumber,
-              };
-              setGamemodeSettings(newGamemodeSettings);
-            }}
-          ></input>
-          Number of groups
-        </label>
-        <label>
-          <input
-            type="number"
-            value={gamemodeSettings.groupSize}
-            min={MIN_GROUP_SIZE}
-            max={MAX_GROUP_SIZE}
-            onChange={(e) => {
-              const newGamemodeSettings = {
-                ...gamemodeSettings,
-                groupSize: e.target.valueAsNumber,
-              };
-              setGamemodeSettings(newGamemodeSettings);
-            }}
-          ></input>
-          Group size
-        </label>
-        <label>
-          <input
-            type="number"
-            value={gamemodeSettings.numGuesses}
-            min={1}
-            max={10}
-            onChange={(e) => {
-              const newGamemodeSettings = {
-                ...gamemodeSettings,
-                numGuesses: e.target.valueAsNumber,
-              };
-              setGamemodeSettings(newGamemodeSettings);
-            }}
-          ></input>
-          Number of guesses
-        </label>
-        <label>
-          <input
-            checked={gamemodeSettings.timerConfig.isTimed}
-            type="checkbox"
-            onChange={() => {
-              // If currently timed, on change, make the game not timed and vice versa
-              const newTimer: { isTimed: true; seconds: number } | { isTimed: false } = gamemodeSettings.timerConfig
-                .isTimed
-                ? { isTimed: false }
-                : { isTimed: true, seconds: mostRecentTotalSeconds };
-              const newGamemodeSettings = { ...gamemodeSettings, timerConfig: newTimer };
-              setGamemodeSettings(newGamemodeSettings);
-            }}
-          ></input>
-          Timer
-        </label>
-        {gamemodeSettings.timerConfig.isTimed && (
-          <label>
-            <input
-              type="number"
-              value={gamemodeSettings.timerConfig.seconds}
-              min={10}
-              max={120}
-              step={5}
-              onChange={(e) => {
-                setRemainingSeconds(e.target.valueAsNumber);
-                setMostRecentTotalSeconds(e.target.valueAsNumber);
-                const newGamemodeSettings = {
-                  ...gamemodeSettings,
-                  timerConfig: { isTimed: true, seconds: e.target.valueAsNumber },
-                };
-                setGamemodeSettings(newGamemodeSettings);
-              }}
-            ></input>
-            Seconds
-          </label>
-        )}
-      </>
-    );
-  }
+  //   return (
+  //     <>
+  //       <label>
+  //         <input
+  //           type="number"
+  //           value={gamemodeSettings.numGroups}
+  //           min={MIN_NUM_GROUPS}
+  //           max={MAX_NUM_GROUPS}
+  //           onChange={(e) => {
+  //             const newGamemodeSettings = {
+  //               ...gamemodeSettings,
+  //               numGroups: e.target.valueAsNumber,
+  //             };
+  //             setGamemodeSettings(newGamemodeSettings);
+  //           }}
+  //         ></input>
+  //         Number of groups
+  //       </label>
+  //       <label>
+  //         <input
+  //           type="number"
+  //           value={gamemodeSettings.groupSize}
+  //           min={MIN_GROUP_SIZE}
+  //           max={MAX_GROUP_SIZE}
+  //           onChange={(e) => {
+  //             const newGamemodeSettings = {
+  //               ...gamemodeSettings,
+  //               groupSize: e.target.valueAsNumber,
+  //             };
+  //             setGamemodeSettings(newGamemodeSettings);
+  //           }}
+  //         ></input>
+  //         Group size
+  //       </label>
+  //       <label>
+  //         <input
+  //           type="number"
+  //           value={gamemodeSettings.numGuesses}
+  //           min={1}
+  //           max={10}
+  //           onChange={(e) => {
+  //             const newGamemodeSettings = {
+  //               ...gamemodeSettings,
+  //               numGuesses: e.target.valueAsNumber,
+  //             };
+  //             setGamemodeSettings(newGamemodeSettings);
+  //           }}
+  //         ></input>
+  //         Number of guesses
+  //       </label>
+  //       <label>
+  //         <input
+  //           checked={gamemodeSettings.timerConfig.isTimed}
+  //           type="checkbox"
+  //           onChange={() => {
+  //             // If currently timed, on change, make the game not timed and vice versa
+  //             const newTimer: { isTimed: true; seconds: number } | { isTimed: false } = gamemodeSettings.timerConfig
+  //               .isTimed
+  //               ? { isTimed: false }
+  //               : { isTimed: true, seconds: mostRecentTotalSeconds };
+  //             const newGamemodeSettings = { ...gamemodeSettings, timerConfig: newTimer };
+  //             setGamemodeSettings(newGamemodeSettings);
+  //           }}
+  //         ></input>
+  //         Timer
+  //       </label>
+  //       {gamemodeSettings.timerConfig.isTimed && (
+  //         <label>
+  //           <input
+  //             type="number"
+  //             value={gamemodeSettings.timerConfig.seconds}
+  //             min={10}
+  //             max={120}
+  //             step={5}
+  //             onChange={(e) => {
+  //               setRemainingSeconds(e.target.valueAsNumber);
+  //               setMostRecentTotalSeconds(e.target.valueAsNumber);
+  //               const newGamemodeSettings = {
+  //                 ...gamemodeSettings,
+  //                 timerConfig: { isTimed: true, seconds: e.target.valueAsNumber },
+  //               };
+  //               setGamemodeSettings(newGamemodeSettings);
+  //             }}
+  //           ></input>
+  //           Seconds
+  //         </label>
+  //       )}
+  //     </>
+  //   );
+  // }
 
   return (
     <div
@@ -503,7 +505,7 @@ const GroupWall: React.FC<Props> = (props) => {
     >
       {!props.isCampaignLevel && (
         <div className="gamemodeSettings">
-          <GamemodeSettingsMenu>{generateSettingsOptions()}</GamemodeSettingsMenu>
+          {/* <GamemodeSettingsMenu>{generateSettingsOptions()}</GamemodeSettingsMenu> */}
         </div>
       )}
       {!inProgress && <div className="outcome">{displayOutcome()}</div>}

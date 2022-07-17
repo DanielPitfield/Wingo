@@ -1,24 +1,29 @@
-import React from "react";
-import "./index.scss";
-import Collapsible from "react-collapsible";
-import { MessageNotification } from "./MessageNotification";
+import React, { useState } from "react";
+import { Button } from "./Button";
+import { Modal } from "./Modal";
+import { FiSettings } from "react-icons/fi";
+import { Setting, SettingInfo } from "./Setting";
 
 interface Props {
-  //onClick?: () => void;
+  settings: SettingInfo[];
 }
 
 const GamemodeSettingsMenu: React.FC<Props> = (props) => {
+  const [showModal, setShowModal] = useState(false);
   return (
-    <Collapsible
-      className="gamemode-settings-wrapper"
-      trigger="Settings"
-      triggerOpenedClassName="gamemode-settings-button"
-      triggerClassName="gamemode-settings-button"
-    >
-      <MessageNotification type="default">
-        <div className="gamemode-settings-body">{props.children}</div>
-      </MessageNotification>
-    </Collapsible>
+    <>
+      <Button mode="default" className="gamemode-settings-button" onClick={() => setShowModal(true)}>
+        <FiSettings />
+        Game Settings
+      </Button>
+      {showModal && (
+        <Modal mode="default" name="Gamemode Settings" onClose={() => setShowModal(false)} title="Gamemode Settings">
+          {props.settings.map((setting) => (
+            <Setting key={setting.name} setting={setting} />
+          ))}
+        </Modal>
+      )}
+    </>
   );
 };
 

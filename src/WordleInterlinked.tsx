@@ -12,6 +12,7 @@ import { CrosswordGenerationResult, crosswordGenerator as crossWordGenerator } f
 import GamemodeSettingsMenu from "./GamemodeSettingsMenu";
 import { DEFAULT_WORD_LENGTH, MAX_TARGET_WORD_LENGTH, MIN_TARGET_WORD_LENGTH } from "./App";
 import ProgressBar, { GreenToRedColorTransition } from "./ProgressBar";
+import { SettingInfo } from "./Setting";
 
 type Orientation = "vertical" | "horizontal";
 
@@ -796,192 +797,158 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
     return grid;
   }
 
-  function generateSettingsOptions(): React.ReactNode {
-    return (
-      <>
-        {IS_CROSSWORD && (
-          <label>
-            <input
-              type="number"
-              value={gamemodeSettings.numWords}
-              min={2}
-              max={10}
-              onChange={(e) => {
-                const newGamemodeSettings = { ...gamemodeSettings, numWords: e.target.valueAsNumber };
-                setGamemodeSettings(newGamemodeSettings);
-              }}
-            ></input>
-            Number of words
-          </label>
-        )}
-        <label>
-          <input
-            type="number"
-            value={gamemodeSettings.minWordLength}
-            min={MIN_TARGET_WORD_LENGTH}
-            // Can't go above maximum word length
-            // TODO: Should all words be the same length for crossword fit mode?
-            max={Math.min(gamemodeSettings.maxWordLength, MAX_TARGET_WORD_LENGTH)}
-            onChange={(e) => {
-              const newGamemodeSettings = { ...gamemodeSettings, minWordLength: e.target.valueAsNumber };
-              setGamemodeSettings(newGamemodeSettings);
-            }}
-          ></input>
-          Minimum Word Length
-        </label>
+  function generateSettingsOptions(): SettingInfo[] {
+    return [
+      // 'Number of words' setting (only shown if Crossword)
+      ...(IS_CROSSWORD
+        ? [
+            {
+              name: "Number of words",
+              type: "integer",
+              min: 2,
+              max: 10,
+              value: gamemodeSettings.numWords,
+              onChange: (numWords) => setGamemodeSettings({ ...gamemodeSettings, numWords }),
+            } as SettingInfo,
+          ]
+        : []),
 
-        <label>
-          <input
-            type="number"
-            value={gamemodeSettings.maxWordLength}
-            // Can't go below the minimum word length
-            min={Math.max(gamemodeSettings.minWordLength, MIN_TARGET_WORD_LENGTH)}
-            max={MAX_TARGET_WORD_LENGTH}
-            onChange={(e) => {
-              const newGamemodeSettings = { ...gamemodeSettings, maxWordLength: e.target.valueAsNumber };
-              setGamemodeSettings(newGamemodeSettings);
-            }}
-          ></input>
-          Maximum Word Length
-        </label>
+      // 'Minimum Word Length' setting
+      {
+        name: "Minimum Word Length",
+        type: "integer",
+        min: MIN_TARGET_WORD_LENGTH,
+        // Can't go above maximum word length
+        // TODO: Should all words be the same length for crossword fit mode?
+        max: Math.min(gamemodeSettings.maxWordLength, MAX_TARGET_WORD_LENGTH),
+        value: gamemodeSettings.minWordLength,
+        onChange: (minWordLength) => setGamemodeSettings({ ...gamemodeSettings, minWordLength }),
+      },
 
-        {!props.provideWords && (
-          <>
-            <label>
-              <input
-                checked={gamemodeSettings.fitRestrictionConfig.isRestricted}
-                type="checkbox"
-                onChange={() => {
-                  // If currently restricted, on change, make the game not restricted and vice versa
-                  const newRestrictionConfig: { isRestricted: true; fitRestriction: number } | { isRestricted: false } =
-                    gamemodeSettings.fitRestrictionConfig.isRestricted
-                      ? { isRestricted: false }
-                      : { isRestricted: true, fitRestriction: mostRecentFitRestriction };
-                  const newGamemodeSettings = { ...gamemodeSettings, fitRestrictionConfig: newRestrictionConfig };
-                  setGamemodeSettings(newGamemodeSettings);
-                }}
-              ></input>
-              Fit Restriction
-            </label>
+      // 'Maximum Word Length' setting
+      {
+        name: "Maximum Word Length",
+        type: "integer",
+        //         // Can't go below the minimum word length
+        min: Math.max(gamemodeSettings.minWordLength, MIN_TARGET_WORD_LENGTH),
+        max: MAX_TARGET_WORD_LENGTH,
+        value: gamemodeSettings.maxWordLength,
+        onChange: (maxWordLength) => setGamemodeSettings({ ...gamemodeSettings, maxWordLength }),
+      },
 
-            {gamemodeSettings.fitRestrictionConfig.isRestricted && (
-              <label>
-                <input
-                  type="number"
-                  value={gamemodeSettings.fitRestrictionConfig.fitRestriction}
-                  min={0}
-                  max={50}
-                  onChange={(e) => {
-                    setMostRecentFitRestriction(e.target.valueAsNumber);
-                    const newGamemodeSettings = {
-                      ...gamemodeSettings,
-                      fitRestrictionConfig: { isRestricted: true, fitRestriction: e.target.valueAsNumber },
-                    };
-                    setGamemodeSettings(newGamemodeSettings);
-                  }}
-                ></input>
-                Fit Restriction Amount
-              </label>
-            )}
-          </>
-        )}
+      // 'Fit Restriction' setting (only shown if words not provided)
+      ...(!props.provideWords
+        ? [
+            {
+              name: "Fit Restriction",
+              type: "boolean",
+              value: gamemodeSettings.fitRestrictionConfig.isRestricted,
+              onChange: (isRestricted) => {
+                // If currently restricted, on change, make the game not restricted and vice versa
+                setGamemodeSettings({
+                  ...gamemodeSettings,
+                  fitRestrictionConfig: gamemodeSettings.fitRestrictionConfig.isRestricted
+                    ? { isRestricted: false }
+                    : { isRestricted: true, fitRestriction: mostRecentFitRestriction },
+                });
+              },
+            } as SettingInfo,
+          ]
+        : []),
 
-        <label>
-          <input
-            checked={gamemodeSettings.isFirstLetterProvided}
-            type="checkbox"
-            onChange={() => {
-              const newGamemodeSettings = {
-                ...gamemodeSettings,
-                isFirstLetterProvided: !gamemodeSettings.isFirstLetterProvided,
-              };
-              setGamemodeSettings(newGamemodeSettings);
-            }}
-          ></input>
-          First Letter Provided
-        </label>
+      // 'Fit Restriction Amount' setting (only shown if restricted)
+      ...(gamemodeSettings.fitRestrictionConfig.isRestricted
+        ? [
+            {
+              name: "Fit Restriction Amount",
+              type: "integer",
+              min: 0,
+              max: 50,
+              value: gamemodeSettings.fitRestrictionConfig.fitRestriction,
+              onChange: (fitRestriction) => {
+                setMostRecentFitRestriction(fitRestriction);
 
-        <label>
-          <input
-            checked={gamemodeSettings.isHintShown}
-            type="checkbox"
-            onChange={() => {
-              const newGamemodeSettings = { ...gamemodeSettings, isHintShown: !gamemodeSettings.isHintShown };
-              setGamemodeSettings(newGamemodeSettings);
-            }}
-          ></input>
-          Hints
-        </label>
+                // If currently restricted, on change, make the game not restricted and vice versa
+                setGamemodeSettings({
+                  ...gamemodeSettings,
+                  fitRestrictionConfig: gamemodeSettings.fitRestrictionConfig.isRestricted
+                    ? { isRestricted: false }
+                    : { isRestricted: true, fitRestriction: mostRecentFitRestriction },
+                });
+              },
+            } as SettingInfo,
+          ]
+        : []),
 
-        <label>
-          <input
-            type="number"
-            value={gamemodeSettings.numWordGuesses}
-            min={0}
-            max={100}
-            onChange={(e) => {
-              const newGamemodeSettings = { ...gamemodeSettings, numWordGuesses: e.target.valueAsNumber };
-              setGamemodeSettings(newGamemodeSettings);
-            }}
-          ></input>
-          Number of word guesses
-        </label>
+      // 'First Letter Provided' setting
+      {
+        name: "First Letter Provided",
+        type: "boolean",
+        value: gamemodeSettings.isFirstLetterProvided,
+        onChange: (isFirstLetterProvided) => setGamemodeSettings({ ...gamemodeSettings, isFirstLetterProvided }),
+      },
 
-        <label>
-          <input
-            type="number"
-            value={gamemodeSettings.numGridGuesses}
-            min={0}
-            max={20}
-            onChange={(e) => {
-              const newGamemodeSettings = { ...gamemodeSettings, numGridGuesses: e.target.valueAsNumber };
-              setGamemodeSettings(newGamemodeSettings);
-            }}
-          ></input>
-          Number of grid guesses
-        </label>
+      // 'Hints' setting
+      {
+        name: "Hints",
+        type: "boolean",
+        value: gamemodeSettings.isHintShown,
+        onChange: (isHintShown) => setGamemodeSettings({ ...gamemodeSettings, isHintShown }),
+      },
 
-        <>
-          <label>
-            <input
-              checked={gamemodeSettings.timerConfig.isTimed}
-              type="checkbox"
-              onChange={() => {
-                // If currently timed, on change, make the game not timed and vice versa
-                const newTimerConfig: { isTimed: true; seconds: number } | { isTimed: false } = gamemodeSettings
-                  .timerConfig.isTimed
-                  ? { isTimed: false }
-                  : { isTimed: true, seconds: mostRecentTotalSeconds };
-                const newGamemodeSettings = { ...gamemodeSettings, timerConfig: newTimerConfig };
-                setGamemodeSettings(newGamemodeSettings);
-              }}
-            ></input>
-            Timer
-          </label>
-          {gamemodeSettings.timerConfig.isTimed && (
-            <label>
-              <input
-                type="number"
-                value={gamemodeSettings.timerConfig.seconds}
-                min={10}
-                max={120}
-                step={5}
-                onChange={(e) => {
-                  setRemainingSeconds(e.target.valueAsNumber);
-                  setMostRecentTotalSeconds(e.target.valueAsNumber);
-                  const newGamemodeSettings = {
-                    ...gamemodeSettings,
-                    timerConfig: { isTimed: true, seconds: e.target.valueAsNumber },
-                  };
-                  setGamemodeSettings(newGamemodeSettings);
-                }}
-              ></input>
-              Seconds
-            </label>
-          )}
-        </>
-      </>
-    );
+      // 'Number of word guesses' setting
+      {
+        name: "Number of word guesses",
+        type: "integer",
+        min: 0,
+        max: 100,
+        value: gamemodeSettings.numWordGuesses,
+        onChange: (numWordGuesses) => setGamemodeSettings({ ...gamemodeSettings, numWordGuesses }),
+      },
+
+      // 'Number of grid guesses' setting
+      {
+        name: "Number of grid guesses",
+        type: "integer",
+        min: 0,
+        max: 20,
+        value: gamemodeSettings.numGridGuesses,
+        onChange: (numGridGuesses) => setGamemodeSettings({ ...gamemodeSettings, numGridGuesses }),
+      },
+
+      // 'Timer' setting
+      {
+        name: "Timer",
+        type: "boolean",
+        value: gamemodeSettings.timerConfig.isTimed,
+        onChange: (isTimed) => {
+          // If currently timed, on change, make the game not timed and vice versa
+          setGamemodeSettings({
+            ...gamemodeSettings,
+            timerConfig: !isTimed ? { isTimed: false } : { isTimed: true, seconds: mostRecentTotalSeconds },
+          });
+        },
+      },
+
+      // 'Timer Seconds' setting (only shown if 'Timer' is set true)
+      ...(gamemodeSettings.timerConfig.isTimed
+        ? [
+            {
+              name: "Seconds",
+              type: "integer",
+              value: gamemodeSettings.timerConfig.seconds,
+              min: 10,
+              max: 120,
+              step: 5,
+              onChange: (seconds) => {
+                setMostRecentTotalSeconds(seconds);
+
+                setGamemodeSettings({ ...gamemodeSettings, timerConfig: { isTimed: true, seconds } });
+              },
+            } as SettingInfo,
+          ]
+        : []),
+    ];
   }
 
   function displayOutcome(): React.ReactNode {
@@ -1055,7 +1022,7 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
     >
       {!props.isCampaignLevel && (
         <div className="gamemodeSettings">
-          <GamemodeSettingsMenu>{generateSettingsOptions()}</GamemodeSettingsMenu>
+          <GamemodeSettingsMenu settings={generateSettingsOptions()} />
         </div>
       )}
 

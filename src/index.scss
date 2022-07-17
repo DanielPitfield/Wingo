@@ -538,23 +538,32 @@ $data-statuses: (
       display: flex;
       flex-direction: column;
       padding: 0.7em;
-      .setting {
-        display: flex;
-        flex-direction: column;
-        padding: 0.8em;
-        &:hover {
-          background-color: #e8e8e8;
-        }
-        .setting-name {
-          padding-bottom: 0.3em;
-        }
-        .setting-control {
-          input[type="range"],
-          select {
-            min-width: 15em;
-          }
-        }
-      }
+    }
+  }
+}
+
+.setting {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  padding: 0.8em;
+  &:hover {
+    background-color: #e8e8e8;
+  }
+  .setting-name {
+    padding-bottom: 0.3em;
+  }
+  .setting-control {
+    input[type="range"],
+    select {
+      min-width: 15em;
+    }
+    input[type="number"] {
+      min-width: 5em;
+    }
+    input[type="number"],
+    select {
+      border: 1px solid #555;
     }
   }
 }
@@ -1097,40 +1106,6 @@ $data-statuses: (
   }
 }
 
-.gamemode-settings-button {
-  display: inline-block;
-  cursor: pointer;
-  background-color: white;
-  color: #444;
-  text-decoration: underline;
-  border: 2px solid #676767;
-  padding: 0.5em;
-  margin: 0.2em;
-  &:hover {
-    background-color: #e0e0e0;
-  }
-}
-
-.gamemode-settings-body {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  margin: 0.2em;
-  & > label {
-    display: flex;
-    align-items: center;
-    margin: 0.2em;
-    & > input,
-    & > select {
-      margin-right: 0.4em;
-      text-transform: capitalize;
-      &[type="checkbox"] {
-        cursor: pointer;
-      }
-    }
-  }
-}
-
 .modal {
   display: flex;
   align-items: center;
@@ -1183,7 +1158,7 @@ $data-statuses: (
       }
     }
     .modal-body {
-      padding: 1em;
+      padding: 0.8em;
       & > p {
         margin-top: 0;
       }
@@ -1193,6 +1168,11 @@ $data-statuses: (
         padding: 0.1em;
         color: #333;
         margin: 0.1em;
+        &.setting {
+          align-items: flex-start;
+          justify-content: flex-start;
+          padding: 0.8em;
+        }
         input[type="checkbox"] {
           margin-right: 0.3em;
         }
