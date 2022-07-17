@@ -304,9 +304,9 @@ const Nubble: React.FC<Props> = (props) => {
       // Pin adjacency information
       const adjacentMappings = props.determineHexagonAdjacentMappings();
       // Adjacent pins of the clicked pin
-      const adjacent_pins = adjacentMappings.find((x) => x.pin === pinNumber)?.adjacent_pins;
+      const adjacentPins = adjacentMappings.find((x) => x.pin === pinNumber)?.adjacent_pins;
 
-      if (!adjacent_pins) {
+      if (!adjacentPins) {
         return false;
       }
 
@@ -314,40 +314,40 @@ const Nubble: React.FC<Props> = (props) => {
 
       // In a clockwise direction...
       const topTriangle =
-        adjacent_pins.leftAbove !== null &&
-        pickedPins.includes(adjacent_pins.leftAbove) &&
-        adjacent_pins.rightAbove !== null &&
-        pickedPins.includes(adjacent_pins.rightAbove);
+        adjacentPins.leftAbove !== null &&
+        pickedPins.includes(adjacentPins.leftAbove) &&
+        adjacentPins.rightAbove !== null &&
+        pickedPins.includes(adjacentPins.rightAbove);
 
       const topRightTriangle =
-        adjacent_pins.rightAbove !== null &&
-        pickedPins.includes(adjacent_pins.rightAbove) &&
-        adjacent_pins.right !== null &&
-        pickedPins.includes(adjacent_pins.right);
+        adjacentPins.rightAbove !== null &&
+        pickedPins.includes(adjacentPins.rightAbove) &&
+        adjacentPins.right !== null &&
+        pickedPins.includes(adjacentPins.right);
 
       const bottomRightTriangle =
-        adjacent_pins.rightBelow !== null &&
-        pickedPins.includes(adjacent_pins.rightBelow) &&
-        adjacent_pins.right !== null &&
-        pickedPins.includes(adjacent_pins.right);
+        adjacentPins.rightBelow !== null &&
+        pickedPins.includes(adjacentPins.rightBelow) &&
+        adjacentPins.right !== null &&
+        pickedPins.includes(adjacentPins.right);
 
       const bottomTriangle =
-        adjacent_pins.leftBelow !== null &&
-        pickedPins.includes(adjacent_pins.leftBelow) &&
-        adjacent_pins.rightBelow !== null &&
-        pickedPins.includes(adjacent_pins.rightBelow);
+        adjacentPins.leftBelow !== null &&
+        pickedPins.includes(adjacentPins.leftBelow) &&
+        adjacentPins.rightBelow !== null &&
+        pickedPins.includes(adjacentPins.rightBelow);
 
       const bottomLeftTriangle =
-        adjacent_pins.leftBelow !== null &&
-        pickedPins.includes(adjacent_pins.leftBelow) &&
-        adjacent_pins.left !== null &&
-        pickedPins.includes(adjacent_pins.left);
+        adjacentPins.leftBelow !== null &&
+        pickedPins.includes(adjacentPins.leftBelow) &&
+        adjacentPins.left !== null &&
+        pickedPins.includes(adjacentPins.left);
 
       const topLeftTriangle =
-        adjacent_pins.leftAbove !== null &&
-        pickedPins.includes(adjacent_pins.leftAbove) &&
-        adjacent_pins.left !== null &&
-        pickedPins.includes(adjacent_pins.left);
+        adjacentPins.leftAbove !== null &&
+        pickedPins.includes(adjacentPins.leftAbove) &&
+        adjacentPins.left !== null &&
+        pickedPins.includes(adjacentPins.left);
 
       if (
         topTriangle ||
@@ -980,7 +980,7 @@ const Nubble: React.FC<Props> = (props) => {
               key={teamPoints.teamNumber}
             >
               {props.gamemodeSettings.numTeams > 1 && (
-                <div className="nubble-team-label">Team {teamPoints.teamNumber + 1}</div>
+                <div className="nubble-team-label">{teamNumberColourMappings.find(x => x.teamNumber === teamPoints.teamNumber)?.colour}</div>
               )}
               <div className="nubble-score">
                 {totalPoints.find((x) => x.teamNumber === teamPoints.teamNumber)?.total}
