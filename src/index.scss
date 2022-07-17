@@ -1300,11 +1300,11 @@ $data-statuses: (
   background-color: #fff8;
   padding: 0.4em;
   min-width: 55em;
-  .team-points-wrapper {
+  .team-info-wrapper {
     display: flex;
     align-items: center;
     justify-content: center;
-    .team-points {
+    .team-points, .team-timer {
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -1315,7 +1315,7 @@ $data-statuses: (
         font-weight: bold;
         opacity: 1;
       }
-      .nubble-score {
+      .nubble-score, .nubble-timer {
         align-self: center;
         margin-top: 0.3em;
         margin-bottom: 0.3em;

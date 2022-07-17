@@ -964,7 +964,7 @@ const Nubble: React.FC<Props> = (props) => {
       </div>
 
       <div className="nubble-score-wrapper">
-        <div className="team-points-wrapper">
+        <div className="team-info-wrapper">
           {totalPoints.map((teamPoints) => (
             <div
               className="team-points"
@@ -978,21 +978,21 @@ const Nubble: React.FC<Props> = (props) => {
               <div className="nubble-score">
                 {totalPoints.find((x) => x.teamNumber === teamPoints.teamNumber)?.total}
               </div>
+
+              <div
+                className="team-timer"
+                data-team-number={teamPoints.teamNumber}
+                data-selected={teamPoints.teamNumber === props.currentTeamNumber}
+                key={teamPoints.teamNumber}
+              >
+                <div className="nubble-timer">
+                  {props.teamTimers.find((x) => x.teamNumber === teamPoints.teamNumber)?.remainingSeconds}
+                </div>
+              </div>
             </div>
           ))}
         </div>
         <div className="nubble-pin-scores">{displayPinScores()}</div>
-      </div>
-
-      <div>
-        {props.gamemodeSettings.timerConfig.isTimed &&
-          props.teamTimers.map((teamTimer) => (
-            <ProgressBar
-              progress={teamTimer.remainingSeconds}
-              total={teamTimer.totalSeconds}
-              display={{ type: "transition", colorTransition: GreenToRedColorTransition }}
-            ></ProgressBar>
-          ))}
       </div>
     </div>
   );
