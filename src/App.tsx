@@ -561,7 +561,8 @@ export const App: React.FC = () => {
       setPage(newEntryPage);
     } else {
       // Delay setting of new page (until after splashscreen)
-      window.setTimeout(() => setPage(newEntryPage), LOADING_TIMEOUT_MS + FADE_OUT_DURATION_MS);
+      // TOOD: Renable splashscreen?
+      // window.setTimeout(() => setPage(newEntryPage), LOADING_TIMEOUT_MS + FADE_OUT_DURATION_MS);
     }
   }, [saveData]);
 
