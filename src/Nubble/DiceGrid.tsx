@@ -12,18 +12,46 @@ interface Props {
 }
 
 const DiceGrid: React.FC<Props> = (props) => {
-  return (
-    <div className="dice_wrapper">
-      <div className="dice_row">
-        {props.diceValues.map((diceValue, i) => (
-          <Dice key={i} value={diceValue} settings={props.settings} />
-        ))}
+  const numDice = props.diceValues.length;
+  const isEvenNumDice = numDice % 2 === 0;
+
+  if (isEvenNumDice) {
+    const halfwayIndex = Math.ceil(numDice / 2);
+    const firstDiceRow = props.diceValues.slice(0, halfwayIndex);
+    const secondDiceRow = props.diceValues.slice(halfwayIndex);
+
+    // Two rows of dice
+    return (
+      <div className="dice_wrapper">
+        <div className="dice_row">
+          {firstDiceRow.map((diceValue, i) => (
+            <Dice key={i} value={diceValue} settings={props.settings} />
+          ))}
+        </div>
+        <div className="dice_row">
+          {secondDiceRow.map((diceValue, i) => (
+            <Dice key={i} value={diceValue} settings={props.settings} />
+          ))}
+        </div>
+        <Button mode={"default"} onClick={props.rollDice} settings={props.settings} disabled={props.disabled}>
+          {props.children}
+        </Button>
       </div>
-      <Button mode={"default"} onClick={props.rollDice} settings={props.settings} disabled={props.disabled}>
-        {props.children}
-      </Button>
-    </div>
-  );
+    );
+  } else {
+    return (
+      <div className="dice_wrapper">
+        <div className="dice_row">
+          {props.diceValues.map((diceValue, i) => (
+            <Dice key={i} value={diceValue} settings={props.settings} />
+          ))}
+        </div>
+        <Button mode={"default"} onClick={props.rollDice} settings={props.settings} disabled={props.disabled}>
+          {props.children}
+        </Button>
+      </div>
+    );
+  }
 };
 
 export default DiceGrid;
