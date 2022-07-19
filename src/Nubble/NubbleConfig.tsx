@@ -169,6 +169,18 @@ const NubbleConfig: React.FC<NubbleConfigProps> = (props) => {
       return;
     }
 
+    // Run out of time whilst making guess
+    if (teamTimers[currentTeamNumber].remainingSeconds <= 0) {
+      // Next team's turn
+      const newCurrentTeamNumber = getNextTeamNumberWithRemainingTime(currentTeamNumber, teamTimers);
+      if (newCurrentTeamNumber !== null) {
+        setCurrentTeamNumber(newCurrentTeamNumber);
+      }
+      // Next team rolls their own dice values
+      setStatus("picked-awaiting-dice-roll");
+      return;
+    }
+
     const timer = setInterval(() => {
       // The team to play next has time left
       if (teamTimers[currentTeamNumber].remainingSeconds > 0) {
