@@ -165,9 +165,8 @@ const Nubble: React.FC<Props> = (props) => {
     }
 
     // Have all teams used all their time?
-    const isGameOver = !props.teamTimers
-      .map((teamTimer) => teamTimer.remainingSeconds)
-      .some((teamTimer) => teamTimer > 0);
+    const numRemainingTeams = props.teamTimers.filter(team => team.remainingSeconds > 0).length;
+    const isGameOver = numRemainingTeams === 0;
 
     // Game over when all timers have run out
     if (isGameOver) {
