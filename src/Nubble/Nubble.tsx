@@ -11,6 +11,7 @@ import DiceGrid from "./DiceGrid";
 import {
   DEFAULT_NUBBLE_GUESS_TIMER_VALUE,
   DEFAULT_NUBBLE_TIMER_VALUE,
+  getNextTeamNumberWithRemainingTime,
   HexagonPinAdjacency,
   nubbleGridShape,
   nubbleGridShapes,
@@ -419,22 +420,6 @@ const Nubble: React.FC<Props> = (props) => {
       }
     }
 
-    props.setStatus("picked-awaiting-dice-roll");
-
-    // The team numbers of teams which have time left (are still playing)
-    const teamNumbersOrder = props.teamTimers
-      .filter((teamTimerInfo) => teamTimerInfo.remainingSeconds > 0)
-      .map((teamTimerInfo) => teamTimerInfo.teamNumber);
-    // At what index is the current team number in the queue/order of all team numbers?
-    const currentTeamPosition = teamNumbersOrder.findIndex((teamNumber) => teamNumber === props.currentTeamNumber);
-    
-    // Is the current team the last in the queue/order?
-    const isFinalTeam = currentTeamPosition === teamNumbersOrder.length - 1;
-    // Choose next team number in queue/order (after final team, it goes back to start again)
-    const newCurrentTeamNumber = isFinalTeam ? teamNumbersOrder[0] : teamNumbersOrder[currentTeamPosition + 1];
-
-    props.setCurrentTeamNumber(newCurrentTeamNumber);
-
     // Keep track that the pin has now been correctly picked
     const newPickedPins = pickedPins.slice();
     newPickedPins.push({ pinNumber, teamNumber: props.currentTeamNumber });
@@ -475,6 +460,14 @@ const Nubble: React.FC<Props> = (props) => {
 
       setTotalPoints(newTotalPoints);
     }
+
+    // Next team's turn
+    const newCurrentTeamNumber = getNextTeamNumberWithRemainingTime(props.currentTeamNumber, props.teamTimers);
+    if (newCurrentTeamNumber !== null) {
+      props.setCurrentTeamNumber(newCurrentTeamNumber);
+    }
+    // Next team rolls their own dice values
+    props.setStatus("picked-awaiting-dice-roll");
   }
 
   // Array (length of rowLength) of buttons

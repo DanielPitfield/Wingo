@@ -54,6 +54,21 @@ export type HexagonPinAdjacency = {
   right: number | null;
 };
 
+export function getNextTeamNumberWithRemainingTime(
+  currentTeamNumber: number,
+  teamTimers: { teamNumber: number; remainingSeconds: number; totalSeconds: number }[]
+) {
+  const teamsAfter = teamTimers.filter((team) => team.remainingSeconds > 0 && team.teamNumber > currentTeamNumber);
+  const teamsBefore = teamTimers.filter((team) => team.remainingSeconds > 0 && team.teamNumber < currentTeamNumber);
+  const teamNumbersOrder = teamsAfter.concat(teamsBefore).map((x) => x.teamNumber);
+
+  if (teamNumbersOrder.length >= 1) {
+    return teamNumbersOrder[0];
+  } else {
+    return null;
+  }
+}
+
 const NubbleConfig: React.FC<NubbleConfigProps> = (props) => {
   const DEFAULT_NUM_DICE = 4;
   const DEFAULT_DICE_MIN = 1;
