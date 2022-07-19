@@ -427,7 +427,7 @@ const Nubble: React.FC<Props> = (props) => {
       .map((teamTimerInfo) => teamTimerInfo.teamNumber);
     // At what index is the current team number in the queue/order of all team numbers?
     const currentTeamPosition = teamNumbersOrder.findIndex((teamNumber) => teamNumber === props.currentTeamNumber);
-
+    
     // Is the current team the last in the queue/order?
     const isFinalTeam = currentTeamPosition === teamNumbersOrder.length - 1;
     // Choose next team number in queue/order (after final team, it goes back to start again)
@@ -693,9 +693,7 @@ const Nubble: React.FC<Props> = (props) => {
         .map((team) => team.teamName);
 
       const outcomeString =
-        winningTeamNames.length === 1
-          ? `${winningTeamNames[0]} team wins!`
-          : `Draw - ${winningTeamNames.join(",")} teams`;
+        winningTeamNames.length === 1 ? `${winningTeamNames[0]} team wins!` : `Draw - ${winningTeamNames.join(", ")}`;
 
       if (props.status === "game-over-timer-ended") {
         return (
@@ -705,6 +703,7 @@ const Nubble: React.FC<Props> = (props) => {
             No remaining time
             <br />
             {outcomeString}
+            <br />
             {totalPoints.map((teamPoints) => (
               <>
                 <br></br>
@@ -723,11 +722,12 @@ const Nubble: React.FC<Props> = (props) => {
             All pins picked
             <br />
             {outcomeString}
-            {totalPoints.map((teamPointsInfo) => (
+            <br />
+            {totalPoints.map((teamPoints) => (
               <>
                 <br></br>
-                <>{`${teamNumberColourMappings.find((x) => x.teamNumber === teamPointsInfo.teamNumber)?.teamName}: ${
-                  teamPointsInfo.total
+                <>{`${teamNumberColourMappings.find((x) => x.teamNumber === teamPoints.teamNumber)?.teamName}: ${
+                  totalPoints.find((x) => x.teamNumber === teamPoints.teamNumber)?.total
                 }`}</>
               </>
             ))}

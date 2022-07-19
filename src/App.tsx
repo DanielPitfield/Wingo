@@ -397,7 +397,8 @@ export const pages: {
 
 export const App: React.FC = () => {
   // App wide listener for right click event
-  document.addEventListener("contextmenu", handleRightClick);
+  // TODO: Decide whether right click should be enabled
+  //document.addEventListener("contextmenu", handleRightClick);
 
   /* 
   To re-enable it for a component, use:
@@ -699,6 +700,8 @@ export const App: React.FC = () => {
 
         case "nubble":
           // Use the saved Nubble Config gamesettings, or the default setitngs if no previous save was found
+
+          // TODO: No default settings for anything other than Wordle modes
           return SaveData.getNubbleConfigGamemodeSettings() || defaultSettings;
       }
 
@@ -726,7 +729,6 @@ export const App: React.FC = () => {
       gamemodeSettings: {
         timer: { isTimed: true, seconds: 100 },
         numTiles: 6,
-        // TODO: https://stackoverflow.com/questions/37978528/typescript-type-string-is-not-assignable-to-type
         numberSize: "small" as arithmeticNumberSize,
         numGuesses: 3,
         numOperands: 3,
