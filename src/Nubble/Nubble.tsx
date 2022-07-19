@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Button } from "../Button";
 import { NumberPuzzle } from "../CountdownNumbers/CountdownSolver";
 import GamemodeSettingsMenu from "../GamemodeSettingsMenu";
 import "../index.scss";
@@ -25,6 +26,7 @@ interface Props {
     | "dice-rolled-awaiting-pick"
     | "picked-awaiting-dice-roll"
     | "game-over-incorrect-tile"
+    | "game-over-no-more-pins"
     | "game-over-timer-ended";
   setStatus: (
     newStatus:
@@ -32,6 +34,7 @@ interface Props {
       | "dice-rolled-awaiting-pick"
       | "picked-awaiting-dice-roll"
       | "game-over-incorrect-tile"
+      | "game-over-no-more-pins"
       | "game-over-timer-ended"
   ) => void;
   currentTeamNumber: number;
@@ -216,6 +219,13 @@ const Nubble: React.FC<Props> = (props) => {
       setTotalPoints(newTotalPoints);
     }
   }, [props.gamemodeSettings.guessTimerConfig.isTimed, props.remainingGuessTimerSeconds]);
+
+  // Check if there are no more pins to selected (when a pin is selected)
+  React.useEffect(() => {
+    if (pickedPins.length === props.gamemodeSettings.gridSize) {
+      props.setStatus("game-over-no-more-pins");
+    }
+  }, [pickedPins]);
 
   // Reset game when any settings are changed
   React.useEffect(() => {
@@ -614,6 +624,119 @@ const Nubble: React.FC<Props> = (props) => {
     return pinScores;
   }
 
+  function isGameInProgress() {
+    if (
+      props.status === "dice-rolling" ||
+      props.status === "dice-rolled-awaiting-pick" ||
+      props.status === "picked-awaiting-dice-roll"
+    ) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  function displayOutcome() {
+    if (isGameInProgress()) {
+      return;
+    }
+
+    // Singleplayer
+    if (props.gamemodeSettings.numTeams === 1) {
+      const finalScore = totalPoints[0].total;
+
+      if (props.status === "game-over-incorrect-tile") {
+        // Can only end with this status in singleplayer
+        return (
+          <MessageNotification type="error">
+            <strong>Game over</strong>
+            <br />
+            Incorrect pin
+            <br />
+            Final Score: {finalScore ?? 0}
+          </MessageNotification>
+        );
+      } else if (props.status === "game-over-timer-ended") {
+        return (
+          <MessageNotification type="default">
+            <strong>Game Over</strong>
+            <br />
+            No remaining time
+            <br />
+            Final Score: {finalScore ?? 0}
+          </MessageNotification>
+        );
+      } else if (props.status === "game-over-no-more-pins") {
+        return (
+          <MessageNotification type="default">
+            <strong>Game over</strong>
+            <br />
+            All pins picked
+            <br />
+            Final Score: {finalScore ?? 0}
+          </MessageNotification>
+        );
+      }
+    }
+    // Multiplayer
+    else if (props.gamemodeSettings.numTeams > 1) {
+      // TODO: Better way of doing all this, reduce()?
+      const teamScores = totalPoints.map((team) => team.total);
+      const winningScore = Math.max(...teamScores);
+
+      // There may be a draw and so more than one team number (and name)
+      const winningTeamNumbers = totalPoints
+        .filter((team) => team.total === winningScore)
+        .map((team) => team.teamNumber);
+      const winningTeamNames = teamNumberColourMappings
+        .filter((team) => winningTeamNumbers.includes(team.teamNumber))
+        .map((team) => team.teamName);
+
+      const outcomeString =
+        winningTeamNames.length === 1
+          ? `${winningTeamNames[0]} team wins!`
+          : `Draw - ${winningTeamNames.join(",")} teams`;
+
+      if (props.status === "game-over-timer-ended") {
+        return (
+          <MessageNotification type="default">
+            <strong>Game Over</strong>
+            <br />
+            No remaining time
+            <br />
+            {outcomeString}
+            {totalPoints.map((teamPoints) => (
+              <>
+                <br></br>
+                <>{`${teamNumberColourMappings.find((x) => x.teamNumber === teamPoints.teamNumber)?.teamName}: ${
+                  totalPoints.find((x) => x.teamNumber === teamPoints.teamNumber)?.total
+                }`}</>
+              </>
+            ))}
+          </MessageNotification>
+        );
+      } else if (props.status === "game-over-no-more-pins") {
+        return (
+          <MessageNotification type="default">
+            <strong>Game Over</strong>
+            <br />
+            All pins picked
+            <br />
+            {outcomeString}
+            {totalPoints.map((teamPointsInfo) => (
+              <>
+                <br></br>
+                <>{`${teamNumberColourMappings.find((x) => x.teamNumber === teamPointsInfo.teamNumber)?.teamName}: ${
+                  teamPointsInfo.total
+                }`}</>
+              </>
+            ))}
+          </MessageNotification>
+        );
+      }
+    }
+  }
+
   function ResetGame() {
     // Reset timer back to full
     if (props.gamemodeSettings.timerConfig.isTimed) {
@@ -931,18 +1054,25 @@ const Nubble: React.FC<Props> = (props) => {
 
   return (
     <div className="App" style={{ backgroundImage: `url(${props.theme.backgroundImageSrc})`, backgroundSize: "100%" }}>
+      <div>{displayOutcome()}</div>
+
+      <div>
+        {!isGameInProgress() && (
+          <Button
+            mode="accept"
+            settings={props.settings}
+            onClick={() => ResetGame()}
+            additionalProps={{ autoFocus: true }}
+          >
+            Restart
+          </Button>
+        )}
+      </div>
+
       {!props.isCampaignLevel && (
         <div className="gamemodeSettings">
           <GamemodeSettingsMenu>{generateSettingsOptions()}</GamemodeSettingsMenu>
         </div>
-      )}
-
-      {props.status === "game-over-incorrect-tile" && (
-        <MessageNotification type="error">
-          Incorrect tile picked
-          <br />
-          Your score was <strong>{totalPoints}</strong>
-        </MessageNotification>
       )}
 
       <DiceGrid
