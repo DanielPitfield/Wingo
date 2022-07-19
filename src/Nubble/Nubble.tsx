@@ -165,7 +165,7 @@ const Nubble: React.FC<Props> = (props) => {
     }
 
     // Have all teams used all their time?
-    const numRemainingTeams = props.teamTimers.filter(team => team.remainingSeconds > 0).length;
+    const numRemainingTeams = props.teamTimers.filter((team) => team.remainingSeconds > 0).length;
     const isGameOver = numRemainingTeams === 0;
 
     // Game over when all timers have run out
@@ -464,9 +464,9 @@ const Nubble: React.FC<Props> = (props) => {
     const newCurrentTeamNumber = getNextTeamNumberWithRemainingTime(props.currentTeamNumber, props.teamTimers);
     if (newCurrentTeamNumber !== null) {
       props.setCurrentTeamNumber(newCurrentTeamNumber);
+      // Next team rolls their own dice values
+      props.setStatus("picked-awaiting-dice-roll");
     }
-    // Next team rolls their own dice values
-    props.setStatus("picked-awaiting-dice-roll");
   }
 
   // Array (length of rowLength) of buttons
