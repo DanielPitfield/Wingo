@@ -906,6 +906,7 @@ export const App: React.FC = () => {
           <NubbleConfig
             page={page}
             theme={theme}
+            campaignConfig={{isCampaignLevel: false}}
             settings={settings}
             gamemodeSettings={pageGamemodeSettings as NubbleConfigProps["gamemodeSettings"]}
           />

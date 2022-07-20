@@ -20,13 +20,22 @@ import {
 } from "./NubbleConfig";
 
 interface Props {
-  isCampaignLevel: boolean;
+  campaignConfig:
+    | {
+        isCampaignLevel: true;
+        // What score must be achieved to pass the campaign level?
+        targetScore: number;
+        // How many pins can be selected before game ends?
+        maxNumSelectedPins: number;
+      }
+    | { isCampaignLevel: false };
   theme: Theme;
   status:
     | "dice-rolling"
     | "dice-rolled-awaiting-pick"
     | "picked-awaiting-dice-roll"
     | "game-over-incorrect-tile"
+    | "game-over-target-score"
     | "game-over-no-more-pins"
     | "game-over-timer-ended";
   setStatus: (
@@ -35,6 +44,7 @@ interface Props {
       | "dice-rolled-awaiting-pick"
       | "picked-awaiting-dice-roll"
       | "game-over-incorrect-tile"
+      | "game-over-target-score"
       | "game-over-no-more-pins"
       | "game-over-timer-ended"
   ) => void;
@@ -220,10 +230,29 @@ const Nubble: React.FC<Props> = (props) => {
     }
   }, [props.gamemodeSettings.guessTimerConfig.isTimed, props.remainingGuessTimerSeconds]);
 
-  // Check if there are no more pins to selected (when a pin is selected)
+  // Check for end games (pins)
   React.useEffect(() => {
-    if (pickedPins.length === props.gamemodeSettings.gridSize) {
+    // Reached max allowed number of selected pins
+    const campaignPinLimit =
+      props.campaignConfig.isCampaignLevel && pickedPins.length === props.campaignConfig.maxNumSelectedPins;
+    // No more pins to select
+    const fullGrid = pickedPins.length === props.gamemodeSettings.gridSize;
+
+    if (campaignPinLimit || fullGrid) {
       props.setStatus("game-over-no-more-pins");
+    }
+  }, [pickedPins]);
+
+  // Check for end games (scores)
+  React.useEffect(() => {
+    if (!props.campaignConfig.isCampaignLevel) {
+      return;
+    }
+
+    const score = totalPoints[0].total ?? 0;
+
+    if (score >= props.campaignConfig.targetScore) {
+      props.setStatus("game-over-target-score");
     }
   }, [pickedPins]);
 
@@ -427,6 +456,10 @@ const Nubble: React.FC<Props> = (props) => {
     // Find out how many base points the pin is worth
     let pinScore = gridPoints.find((x) => x.number === pinNumber)?.points;
 
+    if (!pinScore) {
+      return;
+    }
+
     if (isPrime(pinNumber)) {
       // Double points if the picked pin is a prime number
       pinScore = pinScore! * 2;
@@ -436,7 +469,7 @@ const Nubble: React.FC<Props> = (props) => {
     const adjacentBonus = 200;
 
     if (isAdjacentBonus(pinNumber)) {
-      pinScore = pinScore! + adjacentBonus;
+      pinScore = pinScore + adjacentBonus;
     }
 
     // Add points to total points
@@ -648,7 +681,19 @@ const Nubble: React.FC<Props> = (props) => {
             Final Score: {finalScore ?? 0}
           </MessageNotification>
         );
-      } else if (props.status === "game-over-timer-ended") {
+      }
+      else if (props.campaignConfig.isCampaignLevel && props.status === "game-over-target-score") {
+        return (
+          <MessageNotification type="success">
+            <strong>Game Over</strong>
+            <br />
+            Reached target score of {props.campaignConfig.targetScore}
+            <br />
+            Final Score: {finalScore ?? 0}
+          </MessageNotification>
+        );
+      }
+      else if (props.status === "game-over-timer-ended") {
         return (
           <MessageNotification type="default">
             <strong>Game Over</strong>
@@ -1061,7 +1106,7 @@ const Nubble: React.FC<Props> = (props) => {
         )}
       </div>
 
-      {!props.isCampaignLevel && (
+      {!props.campaignConfig.isCampaignLevel && (
         <div className="gamemodeSettings">
           <GamemodeSettingsMenu>{generateSettingsOptions()}</GamemodeSettingsMenu>
         </div>

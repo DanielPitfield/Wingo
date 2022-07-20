@@ -1401,8 +1401,8 @@ $nubble-colors-names: (
   //font-weight: bold;
   &[data-shape="square"] {
     padding: 0.3em;
-    min-width: 3.4em;
-    min-height: 3.4em;
+    min-width: 3em;
+    min-height: 3em;
     margin: 0.1em;
     &[data-team-number] {
       position: relative;

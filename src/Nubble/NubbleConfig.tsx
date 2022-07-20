@@ -19,6 +19,16 @@ export interface NubbleConfigProps {
   page: Page;
   theme: Theme;
 
+  campaignConfig:
+    | {
+        isCampaignLevel: true;
+        // What score must be achieved to pass the campaign level?
+        targetScore: number;
+        // How many pins can be selected before game ends?
+        maxNumSelectedPins: number;
+      }
+    | { isCampaignLevel: false };
+
   gamemodeSettings?: {
     numDice: number;
     // The lowest value which can be the number shown on a dice
@@ -98,7 +108,9 @@ const NubbleConfig: React.FC<NubbleConfigProps> = (props) => {
     diceMax: props.gamemodeSettings?.diceMax ?? DEFAULT_DICE_MAX,
     gridShape: props.gamemodeSettings?.gridShape ?? DEFAULT_GRID_SHAPE,
     gridSize: props.gamemodeSettings?.gridSize ?? DEFAULT_GRID_SIZE,
-    numTeams: Math.min(MAX_NUM_TEAMS, props.gamemodeSettings?.numTeams ?? DEFAULT_NUM_TEAMS),
+    numTeams: props.campaignConfig.isCampaignLevel
+      ? 1
+      : Math.min(MAX_NUM_TEAMS, props.gamemodeSettings?.numTeams ?? DEFAULT_NUM_TEAMS),
     isGameOverOnIncorrectPick: props.gamemodeSettings?.isGameOverOnIncorrectPick ?? false,
     guessTimerConfig: props.gamemodeSettings?.guessTimerConfig ?? { isTimed: false },
     timerConfig: props.gamemodeSettings?.timerConfig ?? { isTimed: false },
@@ -130,6 +142,7 @@ const NubbleConfig: React.FC<NubbleConfigProps> = (props) => {
     | "dice-rolled-awaiting-pick"
     | "picked-awaiting-dice-roll"
     | "game-over-incorrect-tile"
+    | "game-over-target-score"
     | "game-over-no-more-pins"
     | "game-over-timer-ended"
   >("dice-rolled-awaiting-pick");
@@ -214,7 +227,9 @@ const NubbleConfig: React.FC<NubbleConfigProps> = (props) => {
 
   React.useEffect(() => {
     // Save the latest gamemode settings
-    SaveData.setNubbleConfigGamemodeSettings(gamemodeSettings);
+    if (!props.campaignConfig.isCampaignLevel) {
+      SaveData.setNubbleConfigGamemodeSettings(gamemodeSettings);
+    }
   }, [gamemodeSettings]);
 
   function updateTeamTimers(
@@ -671,7 +686,7 @@ const NubbleConfig: React.FC<NubbleConfigProps> = (props) => {
 
   return (
     <Nubble
-      isCampaignLevel={props.page === "campaign/area/level"}
+      campaignConfig={props.campaignConfig}
       theme={props.theme}
       gamemodeSettings={gamemodeSettings}
       status={status}
