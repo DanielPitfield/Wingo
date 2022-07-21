@@ -53,7 +53,7 @@ export interface WordleConfigProps {
     puzzleRevealMs?: number;
     puzzleLeaveNumBlanks?: number;
     // Limitless mode
-    maxNumLives?: number;
+    maxLivesConfig?: { isLimited: true; maxLives: number } | { isLimited: false };
     timerConfig?: { isTimed: true; seconds: number } | { isTimed: false };
   };
 
@@ -65,6 +65,8 @@ export interface WordleConfigProps {
   // Word to guess specified in some way?
   conundrum?: string;
   targetWord?: string;
+
+  // The words which are valid to be used as guesses
   wordArray?: string[];
 
   // Previous guesses (for daily)
@@ -85,6 +87,9 @@ interface Props extends WordleConfigProps {
   addGold: (gold: number) => void;
   setTheme: (theme: Theme) => void;
 }
+
+export const DEFAULT_PUZZLE_REVEAL_MS = 2000;
+export const DEFAULT_PUZZLE_LEAVE_NUM_BLANKS = 3;
 
 export const wordLengthMappingsGuessable = [
   { value: 3, array: words_three_guessable },
@@ -204,12 +209,21 @@ export function getLetterStatus(
   return status;
 }
 
-export function getNewLives(numGuesses: number, wordIndex: number, maxNumLives: number): number {
+export function getNewLives(
+  numGuesses: number,
+  wordIndex: number,
+  maxLivesConfig: { isLimited: true; maxLives: number } | { isLimited: false }
+): number {
   // Calculate the number of rows not used
   const extraRows = numGuesses - (wordIndex + 1);
-  // The number of new lives is the number of extra rows (capped at a max of above variable)
-  const newLives = Math.min(extraRows, maxNumLives);
-  return newLives;
+
+  // Not limited, the number of new lives is not capped
+  if (!maxLivesConfig.isLimited) {
+    return extraRows;
+  }
+
+  // Limited, the number of new lives (but capped at the max value)
+  return Math.min(extraRows, maxLivesConfig.maxLives);
 }
 
 /**
@@ -282,10 +296,6 @@ const WordleConfig: React.FC<Props> = (props) => {
       [props.targetWord?.length!, props.gamemodeSettings?.wordLength!, props.defaultWordLength!].filter((x) => x)
     ) ?? DEFAULT_WORD_LENGTH;
 
-  const DEFAULT_PUZZLE_REVEAL_MS = 2000;
-  const DEFAULT_PUZZLE_LEAVE_NUM_BLANKS = 3;
-  const DEFAULT_MAX_NUM_LIVES = 5;
-
   const defaultGamemodeSettings = {
     wordLength: defaultWordLength,
     // At what word length should increasing and limitless go up to?
@@ -295,7 +305,7 @@ const WordleConfig: React.FC<Props> = (props) => {
     isHintShown: props.gamemodeSettings?.isHintShown ?? props.mode === "puzzle" ? true : false,
     puzzleRevealMs: props.gamemodeSettings?.puzzleRevealMs ?? DEFAULT_PUZZLE_REVEAL_MS,
     puzzleLeaveNumBlanks: props.gamemodeSettings?.puzzleLeaveNumBlanks ?? DEFAULT_PUZZLE_LEAVE_NUM_BLANKS,
-    maxNumLives: props.gamemodeSettings?.maxNumLives ?? DEFAULT_MAX_NUM_LIVES,
+    maxLivesConfig: props.gamemodeSettings?.maxLivesConfig ?? {isLimited: false},
     timerConfig: props.gamemodeSettings?.timerConfig ?? { isTimed: false },
   };
 
@@ -306,7 +316,7 @@ const WordleConfig: React.FC<Props> = (props) => {
     isHintShown: boolean;
     puzzleRevealMs: number;
     puzzleLeaveNumBlanks: number;
-    maxNumLives: number;
+    maxLivesConfig: { isLimited: true; maxLives: number } | { isLimited: false };
     timerConfig: { isTimed: true; seconds: number } | { isTimed: false };
   }>(defaultGamemodeSettings);
 
@@ -941,7 +951,7 @@ const WordleConfig: React.FC<Props> = (props) => {
 
     // Add new rows for success in limitless mode
     if (props.mode === "limitless" && isCorrectAnswer) {
-      const newLives = getNewLives(numGuesses, wordIndex, gamemodeSettings.maxNumLives);
+      const newLives = getNewLives(numGuesses, wordIndex, gamemodeSettings.maxLivesConfig);
       setNumGuesses(numGuesses + newLives);
     }
 
@@ -1162,7 +1172,7 @@ const WordleConfig: React.FC<Props> = (props) => {
     isHintShown: boolean;
     puzzleRevealMs: number;
     puzzleLeaveNumBlanks: number;
-    maxNumLives: number;
+    maxLivesConfig: { isLimited: true; maxLives: number } | { isLimited: false };
     timerConfig: { isTimed: true; seconds: number } | { isTimed: false };
   }) {
     setGamemodeSettings(newGamemodeSettings);

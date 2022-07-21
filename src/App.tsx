@@ -13,7 +13,7 @@ import { Area, AreaConfig } from "./Campaign/Area";
 import { getId, Level, LevelConfig } from "./Campaign/Level";
 import LetterCategoriesConfig from "./LetterCategories/LetterCategoriesConfig";
 import ArithmeticReveal from "./NumbersArithmetic/ArithmeticReveal";
-import ArithmeticDrag, { arithmeticNumberSize, arithmeticNumberSizes } from "./NumbersArithmetic/ArithmeticDrag";
+import ArithmeticDrag, { arithmeticNumberSize } from "./NumbersArithmetic/ArithmeticDrag";
 import { PuzzleConfig } from "./Puzzles/PuzzleConfig";
 import { Theme, Themes } from "./Themes";
 import { AllCampaignAreas } from "./Campaign/AllCampaignAreas";
@@ -33,6 +33,7 @@ import { LingoGameshow } from "./LingoGameshow";
 import { FiArrowLeft, FiHelpCircle, FiSettings } from "react-icons/fi";
 import HelpInformation from "./HelpInformation";
 import { TitlePage } from "./TitlePage";
+import { WordleConfigProps, DEFAULT_PUZZLE_REVEAL_MS, DEFAULT_PUZZLE_LEAVE_NUM_BLANKS } from "./WordleConfig";
 
 // WordLength values (for different modes)
 export const DEFAULT_WORD_LENGTH = 5;
@@ -433,105 +434,61 @@ export const App: React.FC = () => {
   const [gold, setGold] = useState<number>(SaveData.readGold());
   const [playBackgroundMusic, stopBackgroundMusic] = useBackgroundMusic(settings, theme);
 
-  // The configurable options available for each gamemode variation of Wordle/WordleConfig
-  const gamemodeSettings: {
-    page: Page;
-    settings: {
-      wordLength?: number;
-      isFirstLetterProvided?: boolean;
-      showHint?: boolean;
-      timer?: { isTimed: true; seconds: number } | { isTimed: false };
-    };
-  }[] = [
+  // The configurable options available for each gamemode variation of Wordle/WordleConfig (and their default values with no save data)
+  const defaultWordleGamemodeSettings: { page: Page; settings: WordleConfigProps["gamemodeSettings"] }[] = [
     {
       page: "wingo/repeat",
       settings: {
         wordLength: DEFAULT_WORD_LENGTH,
         isFirstLetterProvided: false,
-        showHint: false,
-        timer: { isTimed: false },
+        isHintShown: false,
+        timerConfig: { isTimed: false },
       },
     },
     {
       page: "wingo/category",
       settings: {
         isFirstLetterProvided: false,
-        showHint: false,
-        timer: { isTimed: false },
+        isHintShown: false,
+        timerConfig: { isTimed: false },
       },
     },
     {
       page: "wingo/increasing",
       settings: {
+        wordLength: MIN_TARGET_WORD_LENGTH,
+        wordLengthMaxLimit: MAX_TARGET_WORD_LENGTH,
         isFirstLetterProvided: false,
-        showHint: false,
-        timer: { isTimed: false },
+        isHintShown: false,
+        timerConfig: { isTimed: false },
       },
     },
     {
       page: "wingo/limitless",
       settings: {
+        wordLength: MIN_TARGET_WORD_LENGTH,
+        wordLengthMaxLimit: MAX_TARGET_WORD_LENGTH,
+        maxLivesConfig: { isLimited: false },
         isFirstLetterProvided: false,
-        showHint: false,
-        timer: { isTimed: false },
+        isHintShown: false,
+        timerConfig: { isTimed: false },
       },
     },
     {
       page: "wingo/puzzle",
       settings: {
+        puzzleRevealMs: DEFAULT_PUZZLE_REVEAL_MS,
+        puzzleLeaveNumBlanks: DEFAULT_PUZZLE_LEAVE_NUM_BLANKS,
         wordLength: DEFAULT_WORD_LENGTH_PUZZLE,
       },
     },
-    {
-      page: "wingo/interlinked",
-      settings: {
-        wordLength: DEFAULT_WORD_LENGTH,
-        isFirstLetterProvided: false,
-        showHint: false,
-        timer: { isTimed: false },
-      },
-    },
-    {
-      page: "wingo/crossword",
-      settings: {
-        wordLength: DEFAULT_WORD_LENGTH,
-        isFirstLetterProvided: false,
-        showHint: true,
-        timer: { isTimed: false },
-      },
-    },
-    {
-      page: "wingo/crossword/fit",
-      settings: {
-        wordLength: DEFAULT_WORD_LENGTH,
-        isFirstLetterProvided: false,
-        showHint: true,
-        timer: { isTimed: true, seconds: 30 },
-      },
-    },
-    // Although named as if it isn't, the conundrum mode is actually a mode of WordleConfig
+    // The conundrum mode is actually a mode of WordleConfig
     {
       page: "countdown/conundrum",
       settings: {
-        timer: { isTimed: true, seconds: 30 },
+        timerConfig: { isTimed: true, seconds: 30 },
       },
     },
-
-    /*
-    {
-      page: "puzzle/sequence",
-      settings: {
-        timer: { isTimed: true, seconds: 10 },
-      },
-    },
-    // TODO: QOL: Nubble guess timer (baked into component)
-    {
-      page: "nubble",
-      settings: {
-        timer: { isTimed: false },
-      },
-    },
-    */
   ];
 
   function getNewEntryPage(): Page {
@@ -679,34 +636,24 @@ export const App: React.FC = () => {
 
     // Get the gamemode settings for this specific page
     const pageGamemodeSettings = (() => {
-      // Get the default settings for this page (to be returned if no saved gamesettings were found)
-      const defaultSettings = gamemodeSettings.find((x) => x.page === page)?.settings;
-
       switch (page) {
-        // For any Wingo gamemode
-        case "wingo/daily":
+        // WordleConfig modes
         case "wingo/repeat":
         case "wingo/category":
         case "wingo/increasing":
         case "wingo/limitless":
         case "wingo/puzzle":
-        case "wingo/interlinked":
-        case "wingo/crossword":
-        case "wingo/crossword/fit":
-        case "wingo/crossword/weekly":
-        case "wingo/crossword/daily":
-          // Use the saved Wingo Config gamesettings, or the default setitngs if no previous save was found
-          return SaveData.getWordleConfigGamemodeSettings() || defaultSettings;
+        case "countdown/conundrum":
+          // Use the saved Wingo Config gamemodeSettings, or the default setitngs (if no previous save was found)
+          return (
+            SaveData.getWordleConfigGamemodeSettings() ||
+            defaultWordleGamemodeSettings.find((x) => x.page === page)?.settings
+          );
 
         case "nubble":
-          // Use the saved Nubble Config gamesettings, or the default setitngs if no previous save was found
-
-          // TODO: No default settings for anything other than Wordle modes
-          return SaveData.getNubbleConfigGamemodeSettings() || defaultSettings;
+        // TODO: No default nubble settings
+        // return SaveData.getNubbleConfigGamemodeSettings() || defaultSettings;
       }
-
-      // Else; return the default settings
-      return defaultSettings;
     })();
 
     const commonWingoProps = {
@@ -906,7 +853,7 @@ export const App: React.FC = () => {
           <NubbleConfig
             page={page}
             theme={theme}
-            campaignConfig={{isCampaignLevel: false}}
+            campaignConfig={{ isCampaignLevel: false }}
             settings={settings}
             gamemodeSettings={pageGamemodeSettings as NubbleConfigProps["gamemodeSettings"]}
           />

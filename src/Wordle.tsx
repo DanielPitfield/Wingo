@@ -21,7 +21,7 @@ interface Props {
     isHintShown: boolean;
     puzzleRevealMs: number;
     puzzleLeaveNumBlanks: number;
-    maxNumLives: number;
+    maxLivesConfig: { isLimited: true; maxLives: number } | { isLimited: false };
     timerConfig: { isTimed: true; seconds: number } | { isTimed: false };
   };
   remainingSeconds: number;
@@ -58,7 +58,7 @@ interface Props {
     isHintShown: boolean;
     puzzleRevealMs: number;
     puzzleLeaveNumBlanks: number;
-    maxNumLives: number;
+    maxLivesConfig: { isLimited: true; maxLives: number } | { isLimited: false };
     timerConfig: { isTimed: true; seconds: number } | { isTimed: false };
   }) => void;
 
@@ -84,6 +84,13 @@ const Wordle: React.FC<Props> = (props) => {
     props.gamemodeSettings?.timerConfig?.isTimed === true
       ? props.gamemodeSettings?.timerConfig.seconds
       : DEFAULT_TIMER_VALUE
+  );
+
+  const DEFAULT_MAX_NUM_LIVES = 5;
+  const [mostRecentMaxLives, setMostRecentMaxLives] = useState(
+    props.gamemodeSettings?.maxLivesConfig.isLimited === true
+      ? props.gamemodeSettings.maxLivesConfig.maxLives
+      : DEFAULT_MAX_NUM_LIVES
   );
 
   // Create grid of rows (for guessing words)
@@ -311,22 +318,43 @@ const Wordle: React.FC<Props> = (props) => {
           )}
 
           {props.mode === "limitless" && (
-            <label>
-              <input
-                type="number"
-                value={props.gamemodeSettings.maxNumLives}
-                min={0}
-                max={50}
-                onChange={(e) => {
-                  const newGamemodeSettings = {
-                    ...props.gamemodeSettings,
-                    maxNumLives: e.target.valueAsNumber,
-                  };
-                  props.updateGamemodeSettings(newGamemodeSettings);
-                }}
-              ></input>
-              Max number of extra lives gained
-            </label>
+            <>
+              <label>
+                <input
+                  checked={props.gamemodeSettings.maxLivesConfig.isLimited}
+                  type="checkbox"
+                  onChange={() => {
+                    // If currently limited, on change, make the game not limited and vice versa
+                    const newmaxLivesConfig: { isLimited: true; maxLives: number } | { isLimited: false } = props
+                      .gamemodeSettings.maxLivesConfig.isLimited
+                      ? { isLimited: false }
+                      : { isLimited: true, maxLives: mostRecentMaxLives };
+                    const newGamemodeSettings = { ...props.gamemodeSettings, maxLivesConfig: newmaxLivesConfig };
+                    props.updateGamemodeSettings(newGamemodeSettings);
+                  }}
+                ></input>
+                Cap max number of extra lives
+              </label>
+              {props.gamemodeSettings.maxLivesConfig.isLimited && (
+                <label>
+                  <input
+                    type="number"
+                    value={props.gamemodeSettings.maxLivesConfig.maxLives}
+                    min={1}
+                    max={50}
+                    onChange={(e) => {
+                      setMostRecentMaxLives(e.target.valueAsNumber);
+                      const newGamemodeSettings = {
+                        ...props.gamemodeSettings,
+                        maxLivesConfig: { isLimited: true, maxLives: e.target.valueAsNumber },
+                      };
+                      props.updateGamemodeSettings(newGamemodeSettings);
+                    }}
+                  ></input>
+                  Max number of extra lives
+                </label>
+              )}
+            </>
           )}
 
           <label>
@@ -409,11 +437,11 @@ const Wordle: React.FC<Props> = (props) => {
       return;
     }
 
-    // Determine whethe the game ended in failure or success
+    // Determine whether the game ended in failure or success
     const wasFailure =
       !props.inDictionary ||
       (props.mode === "limitless" &&
-        getNewLives(props.numGuesses, props.wordIndex, props.gamemodeSettings.maxNumLives) <= 0);
+        getNewLives(props.numGuesses, props.wordIndex, props.gamemodeSettings.maxLivesConfig) <= 0);
 
     if (wasFailure) {
       playFailureChimeSoundEffect();
@@ -460,7 +488,7 @@ const Wordle: React.FC<Props> = (props) => {
     }
 
     // The number of rows not used in guessing word
-    const newLives = getNewLives(props.numGuesses, props.wordIndex, props.gamemodeSettings.maxNumLives);
+    const newLives = getNewLives(props.numGuesses, props.wordIndex, props.gamemodeSettings.maxLivesConfig);
 
     if (props.mode === "limitless") {
       // Word guessed with rows to spare
