@@ -159,6 +159,11 @@ const NubbleConfig: React.FC<NubbleConfigProps> = (props) => {
       return;
     }
 
+    // Only decrease time when dice have been rolled and a pick must be made
+    if (status !== "dice-rolled-awaiting-pick") {
+      return;
+    }
+
     const guessTimer = setInterval(() => {
       if (remainingGuessTimerSeconds > 0) {
         setRemainingGuessTimerSeconds(remainingGuessTimerSeconds - 1);
@@ -226,10 +231,12 @@ const NubbleConfig: React.FC<NubbleConfigProps> = (props) => {
   }, [setTeamTimers, teamTimers, gamemodeSettings.timerConfig.isTimed, status]);
 
   React.useEffect(() => {
-    // Save the latest gamemode settings
-    if (!props.campaignConfig.isCampaignLevel) {
-      SaveData.setNubbleConfigGamemodeSettings(gamemodeSettings);
+    if (props.campaignConfig.isCampaignLevel) {
+      return;
     }
+
+    // Save the latest gamemode settings
+    SaveData.setNubbleConfigGamemodeSettings(gamemodeSettings);
   }, [gamemodeSettings]);
 
   function updateTeamTimers(

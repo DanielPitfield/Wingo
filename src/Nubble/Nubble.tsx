@@ -5,7 +5,7 @@ import GamemodeSettingsMenu from "../GamemodeSettingsMenu";
 import "../index.scss";
 import { MessageNotification } from "../MessageNotification";
 import ProgressBar, { GreenToRedColorTransition } from "../ProgressBar";
-import { SettingsData } from "../SaveData";
+import { SaveData, SettingsData } from "../SaveData";
 import { Theme } from "../Themes";
 import DiceGrid from "./DiceGrid";
 import {
@@ -230,27 +230,30 @@ const Nubble: React.FC<Props> = (props) => {
     }
   }, [props.gamemodeSettings.guessTimerConfig.isTimed, props.remainingGuessTimerSeconds]);
 
-  // Check for end games (pins)
   React.useEffect(() => {
-    // Reached max allowed number of selected pins
-    const campaignPinLimit =
-      props.campaignConfig.isCampaignLevel && pickedPins.length === props.campaignConfig.maxNumSelectedPins;
-    // No more pins to select
-    const fullGrid = pickedPins.length === props.gamemodeSettings.gridSize;
+    // Reset guess timer
+    if (props.gamemodeSettings.guessTimerConfig.isTimed) {
+      props.updateRemainingGuessTimerSeconds(props.gamemodeSettings.guessTimerConfig.seconds);
+    }
 
-    if (campaignPinLimit || fullGrid) {
+    // No more pins to select
+    if (pickedPins.length === props.gamemodeSettings.gridSize) {
       props.setStatus("game-over-no-more-pins");
     }
-  }, [pickedPins]);
 
-  // Check for end games (scores)
-  React.useEffect(() => {
+    // Only campaign checks from now on
     if (!props.campaignConfig.isCampaignLevel) {
       return;
     }
 
+    // Reached max allowed number of selected pins
+    if (pickedPins.length === props.campaignConfig.maxNumSelectedPins) {
+      props.setStatus("game-over-no-more-pins");
+    }
+
     const score = totalPoints[0].total ?? 0;
 
+    // Reached target score
     if (score >= props.campaignConfig.targetScore) {
       props.setStatus("game-over-target-score");
     }
@@ -258,7 +261,15 @@ const Nubble: React.FC<Props> = (props) => {
 
   // Reset game when any settings are changed
   React.useEffect(() => {
+    // TODO: There is a very similar useEffect() to this within NubbleConfig
+    if (props.campaignConfig.isCampaignLevel) {
+      return;
+    }
+
     ResetGame();
+
+    // Save the latest gamemode settings
+    SaveData.setNubbleConfigGamemodeSettings(props.gamemodeSettings);
   }, [props.gamemodeSettings]);
 
   /**
@@ -681,8 +692,7 @@ const Nubble: React.FC<Props> = (props) => {
             Final Score: {finalScore ?? 0}
           </MessageNotification>
         );
-      }
-      else if (props.campaignConfig.isCampaignLevel && props.status === "game-over-target-score") {
+      } else if (props.campaignConfig.isCampaignLevel && props.status === "game-over-target-score") {
         return (
           <MessageNotification type="success">
             <strong>Game Over</strong>
@@ -692,8 +702,7 @@ const Nubble: React.FC<Props> = (props) => {
             Final Score: {finalScore ?? 0}
           </MessageNotification>
         );
-      }
-      else if (props.status === "game-over-timer-ended") {
+      } else if (props.status === "game-over-timer-ended") {
         return (
           <MessageNotification type="default">
             <strong>Game Over</strong>

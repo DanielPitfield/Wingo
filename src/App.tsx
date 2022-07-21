@@ -3,7 +3,7 @@ import { SplashScreen } from "./SplashScreen";
 import { LobbyMenu } from "./LobbyMenu";
 import WordleConfig, { categoryMappings, pickRandomElementFrom, wordLengthMappingsTargets } from "./WordleConfig";
 import { Button } from "./Button";
-import NubbleConfig, { NubbleConfigProps } from "./Nubble/NubbleConfig";
+import NubbleConfig, { NubbleConfigProps, nubbleGridShape, nubbleGridSize } from "./Nubble/NubbleConfig";
 import GoldCoin from "./images/gold.png";
 import { SaveData, SettingsData } from "./SaveData";
 import CountdownLettersConfig from "./CountdownLetters/CountdownLettersConfig";
@@ -491,6 +491,22 @@ export const App: React.FC = () => {
     },
   ];
 
+  const defaultNubbleGamemodeSettings: NubbleConfigProps["gamemodeSettings"] = {
+    numDice: 4,
+    // The lowest value which can be the number shown on a dice
+    diceMin: 1,
+    diceMax: 6,
+    gridShape: "hexagon" as nubbleGridShape,
+    gridSize: 100 as nubbleGridSize,
+    numTeams: 1,
+    // When a number which can't be made with the dice numbers is picked, does the game end?
+    isGameOverOnIncorrectPick: false,
+    // How long to make a guess after the dice have been rolled?
+    guessTimerConfig: { isTimed: false },
+    // How long overall until the game ends?
+    timerConfig: { isTimed: true, seconds: 600 },
+  };
+
   function getNewEntryPage(): Page {
     let pageFromUrl = getPageFromUrl();
 
@@ -651,8 +667,7 @@ export const App: React.FC = () => {
           );
 
         case "nubble":
-        // TODO: No default nubble settings
-        // return SaveData.getNubbleConfigGamemodeSettings() || defaultSettings;
+          return SaveData.getNubbleConfigGamemodeSettings() || defaultNubbleGamemodeSettings;
       }
     })();
 

@@ -695,6 +695,10 @@ const WordleConfig: React.FC<Props> = (props) => {
 
   // Reset game after change of settings (stops cheating by changing settings partway through a game)
   React.useEffect(() => {
+    if (props.page === "campaign/area/level") {
+      return;
+    }
+
     ResetGame();
 
     // Save the latest gamemode settings for this mode
