@@ -442,14 +442,27 @@ export const App: React.FC = () => {
     timerConfig: { isTimed: false },
   };
 
-  /*
   const dailyCrosswordGamemodeSettings: WordleInterlinkedProps["gamemodeSettings"] = {
     numWords: 6,
+    minWordLength: MIN_TARGET_WORD_LENGTH,
+    maxWordLength: MAX_TARGET_WORD_LENGTH,
+    numWordGuesses: 10,
+    numGridGuesses: 2,
     isFirstLetterProvided: false,
     isHintShown: false,
     timerConfig: { isTimed: false },
   };
-  */
+
+  const weeklyCrosswordGamemodeSettings: WordleInterlinkedProps["gamemodeSettings"] = {
+    numWords: 10,
+    minWordLength: MIN_TARGET_WORD_LENGTH,
+    maxWordLength: MAX_TARGET_WORD_LENGTH,
+    numWordGuesses: 20,
+    numGridGuesses: 4,
+    isFirstLetterProvided: false,
+    isHintShown: false,
+    timerConfig: { isTimed: false },
+  };
 
   // The configurable options available for each gamemode variation of Wordle/WordleConfig (and their default values with no save data)
   const defaultWordleGamemodeSettings: { page: Page; settings: WordleConfigProps["gamemodeSettings"] }[] = [
@@ -694,10 +707,10 @@ export const App: React.FC = () => {
           return dailyWordleGamemodeSettings;
 
         case "wingo/crossword/daily":
-          // TODO
+          return dailyCrosswordGamemodeSettings;
 
         case "wingo/crossword/weekly":
-          // TODO
+          return weeklyCrosswordGamemodeSettings;
 
         // WordleConfig modes
         case "wingo/repeat":
