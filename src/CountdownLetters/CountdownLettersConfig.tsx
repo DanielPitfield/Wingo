@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { countdownMode, Page } from "../App";
 import CountdownLetters from "./CountdownLetters";
-import { wordLengthMappingsGuessable } from "../WordleConfig";
 import { Theme } from "../Themes";
 import { SettingsData } from "../SaveData";
+import { wordLengthMappingsGuessable } from "../defaultGamemodeSettings";
 
 export interface CountdownLettersConfigProps {
   mode: countdownMode;

@@ -1,15 +1,16 @@
 import React, { useState } from "react";
 import { Keyboard } from "../Keyboard";
-import { countdownMode, MAX_TARGET_WORD_LENGTH, MIN_TARGET_WORD_LENGTH, Page } from "../App";
+import { countdownMode, Page } from "../App";
 import { WordRow } from "../WordRow";
 import { Button } from "../Button";
 import { MessageNotification } from "../MessageNotification";
 import ProgressBar, { GreenToRedColorTransition } from "../ProgressBar";
 import { isWordValid } from "./CountdownLettersConfig";
-import { pickRandomElementFrom, wordLengthMappingsGuessable } from "../WordleConfig";
+import { pickRandomElementFrom } from "../WordleConfig";
 import { Theme } from "../Themes";
 import { SaveData, SettingsData } from "../SaveData";
 import GamemodeSettingsMenu from "../GamemodeSettingsMenu";
+import { MIN_TARGET_WORD_LENGTH, MAX_TARGET_WORD_LENGTH, wordLengthMappingsGuessable } from "../defaultGamemodeSettings";
 
 interface Props {
   isCampaignLevel: boolean;

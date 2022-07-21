@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { Keyboard } from "./Keyboard";
-import { MAX_TARGET_WORD_LENGTH, MIN_TARGET_WORD_LENGTH, Page } from "./App";
+import { Page } from "./App";
 import { WordRow } from "./WordRow";
 import { Button } from "./Button";
 import { MessageNotification } from "./MessageNotification";
 import ProgressBar, { GreenToRedColorTransition } from "./ProgressBar";
-import { categoryMappings, getNewLives } from "./WordleConfig";
+import { getNewLives } from "./WordleConfig";
 import { Theme } from "./Themes";
 import { SettingsData } from "./SaveData";
 import { useCorrectChime, useFailureChime, useLightPingChime } from "./Sounds";
 import GamemodeSettingsMenu from "./GamemodeSettingsMenu";
+import { MAX_TARGET_WORD_LENGTH, MIN_TARGET_WORD_LENGTH, categoryMappings } from "./defaultGamemodeSettings";
 
 interface Props {
   isCampaignLevel: boolean;

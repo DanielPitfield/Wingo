@@ -3,8 +3,9 @@ import { Page } from "../App";
 import LetterCategories from "./LetterCategories";
 import { SettingsData } from "../SaveData";
 import { DEFAULT_ALPHABET } from "../Keyboard";
-import { categoryMappings, pickRandomElementFrom } from "../WordleConfig";
+import { pickRandomElementFrom } from "../WordleConfig";
 import { Theme } from "../Themes";
+import { categoryMappings } from "../defaultGamemodeSettings";
 
 interface Props {
   enforceFullLengthGuesses: boolean;

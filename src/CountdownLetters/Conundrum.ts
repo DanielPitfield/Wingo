@@ -1,5 +1,6 @@
+import { wordLengthMappingsTargets } from "../defaultGamemodeSettings";
 import { words_nine_targets } from "../WordArrays/Lengths/words_9";
-import { pickRandomElementFrom, wordLengthMappingsTargets } from "../WordleConfig";
+import { pickRandomElementFrom } from "../WordleConfig";
 
 export function checkAnagram(constructedWord: string, targetWord: string) {
   var constructedWordLetters = constructedWord.split("").sort().join("");

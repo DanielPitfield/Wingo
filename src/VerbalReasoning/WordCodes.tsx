@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { shuffleArray } from "../NumbersArithmetic/ArithmeticDrag";
-import { pickRandomElementFrom, wordLengthMappingsTargets } from "../WordleConfig";
+import { pickRandomElementFrom } from "../WordleConfig";
 import { Page } from "../App";
 import { Button } from "../Button";
 import { DEFAULT_ALPHABET, Keyboard } from "../Keyboard";
@@ -15,6 +15,7 @@ import { arrayMove, OrderGroup } from "react-draggable-order";
 import { DraggableItem } from "../NumbersArithmetic/DraggableItem";
 import { getQuestionSetOutcome } from "./Algebra/Algebra";
 import GamemodeSettingsMenu from "../GamemodeSettingsMenu";
+import { wordLengthMappingsTargets } from "../defaultGamemodeSettings";
 
 const wordCodesModes = ["match", "question"] as const;
 type wordCodesMode = typeof wordCodesModes[number];

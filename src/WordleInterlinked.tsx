@@ -4,14 +4,14 @@ import { useState } from "react";
 import { shuffleArray } from "./NumbersArithmetic/ArithmeticDrag";
 import { Theme } from "./Themes";
 import { Keyboard } from "./Keyboard";
-import { categoryMappings, getWordSummary, wordLengthMappingsTargets } from "./WordleConfig";
+import { getWordSummary } from "./WordleConfig";
 import { Button } from "./Button";
 import React from "react";
 import { MessageNotification } from "./MessageNotification";
 import { CrosswordGenerationResult, crosswordGenerator as crossWordGenerator } from "./CrossWordGenerator";
 import GamemodeSettingsMenu from "./GamemodeSettingsMenu";
-import { DEFAULT_WORD_LENGTH, MAX_TARGET_WORD_LENGTH, MIN_TARGET_WORD_LENGTH } from "./App";
 import ProgressBar, { GreenToRedColorTransition } from "./ProgressBar";
+import { categoryMappings, DEFAULT_WORD_LENGTH, MAX_TARGET_WORD_LENGTH, MIN_TARGET_WORD_LENGTH, wordLengthMappingsTargets } from "./defaultGamemodeSettings";
 
 type Orientation = "vertical" | "horizontal";
 

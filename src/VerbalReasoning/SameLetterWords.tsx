@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-import { DEFAULT_WORD_LENGTH, Page } from "../App";
+import { Page } from "../App";
 import { Button } from "../Button";
+import { DEFAULT_WORD_LENGTH, wordLengthMappingsTargets } from "../defaultGamemodeSettings";
 import GamemodeSettingsMenu from "../GamemodeSettingsMenu";
 import { MessageNotification } from "../MessageNotification";
 import { shuffleArray } from "../NumbersArithmetic/ArithmeticDrag";
@@ -9,7 +10,7 @@ import ProgressBar, { GreenToRedColorTransition } from "../ProgressBar";
 import { SettingsData } from "../SaveData";
 import { useClickChime, useCorrectChime, useFailureChime, useLightPingChime } from "../Sounds";
 import { Theme } from "../Themes";
-import { pickRandomElementFrom, wordLengthMappingsTargets } from "../WordleConfig";
+import { pickRandomElementFrom } from "../WordleConfig";
 
 interface Props {
   isCampaignLevel: boolean;

@@ -1,34 +1,14 @@
 import React, { useState } from "react";
-import { DEFAULT_WORD_LENGTH, MAX_TARGET_WORD_LENGTH, MIN_TARGET_WORD_LENGTH, Page } from "./App";
 import Wordle from "./Wordle";
-import { words_three_guessable, words_three_targets } from "./WordArrays/Lengths/words_3";
-import { words_four_guessable, words_four_targets } from "./WordArrays/Lengths/words_4";
-import { words_five_guessable, words_five_targets } from "./WordArrays/Lengths/words_5";
-import { words_six_guessable, words_six_targets } from "./WordArrays/Lengths/words_6";
-import { words_seven_guessable, words_seven_targets } from "./WordArrays/Lengths/words_7";
-import { words_eight_guessable, words_eight_targets } from "./WordArrays/Lengths/words_8";
-import { words_nine_guessable, words_nine_targets } from "./WordArrays/Lengths/words_9";
-import { words_ten_guessable, words_ten_targets } from "./WordArrays/Lengths/words_10";
-import { words_eleven_guessable, words_eleven_targets } from "./WordArrays/Lengths/words_11";
 import { words_puzzles } from "./WordArrays/words_puzzles";
 import { SaveData, SettingsData } from "./SaveData";
-import { words_dogs } from "./WordArrays/Categories/dogs";
-import { words_countries } from "./WordArrays/Categories/countries";
-import { words_chemical_elements } from "./WordArrays/Categories/chemical_elements";
-import { words_colours } from "./WordArrays/Categories/colours";
-import { words_fruits } from "./WordArrays/Categories/fruits";
-import { words_sports } from "./WordArrays/Categories/sports";
 import { Theme } from "./Themes";
 import { WordleInterlinked } from "./WordleInterlinked";
-import { words_vegetables } from "./WordArrays/Categories/vegetables";
-import { words_pizza_toppings } from "./WordArrays/Categories/pizza_toppings";
-import { words_capital_cities } from "./WordArrays/Categories/capital_cities";
-import { words_animals } from "./WordArrays/Categories/animals";
-import { words_herbs_and_spices } from "./WordArrays/Categories/herbs_and_spices";
-import { words_meats_and_fish } from "./WordArrays/Categories/meats_and_fish";
-import { words_gemstones } from "./WordArrays/Categories/gemstones";
+
 import { Chance } from "chance";
 import { generateConundrum } from "./CountdownLetters/Conundrum";
+import { Page } from "./App";
+import { categoryMappings, DEFAULT_PUZZLE_LEAVE_NUM_BLANKS, DEFAULT_PUZZLE_REVEAL_MS, DEFAULT_WORD_LENGTH, MAX_TARGET_WORD_LENGTH, MIN_TARGET_WORD_LENGTH, wordLengthMappingsGuessable, wordLengthMappingsTargets } from "./defaultGamemodeSettings";
 
 export interface WordleConfigProps {
   mode:
@@ -87,50 +67,6 @@ interface Props extends WordleConfigProps {
   addGold: (gold: number) => void;
   setTheme: (theme: Theme) => void;
 }
-
-export const DEFAULT_PUZZLE_REVEAL_MS = 2000;
-export const DEFAULT_PUZZLE_LEAVE_NUM_BLANKS = 3;
-
-export const wordLengthMappingsGuessable = [
-  { value: 3, array: words_three_guessable },
-  { value: 4, array: words_four_guessable },
-  { value: 5, array: words_five_guessable },
-  { value: 6, array: words_six_guessable },
-  { value: 7, array: words_seven_guessable },
-  { value: 8, array: words_eight_guessable },
-  { value: 9, array: words_nine_guessable },
-  { value: 10, array: words_ten_guessable },
-  { value: 11, array: words_eleven_guessable },
-];
-
-export const wordLengthMappingsTargets = [
-  { value: 3, array: words_three_targets },
-  { value: 4, array: words_four_targets },
-  { value: 5, array: words_five_targets },
-  { value: 6, array: words_six_targets },
-  { value: 7, array: words_seven_targets },
-  { value: 8, array: words_eight_targets },
-  { value: 9, array: words_nine_targets },
-  { value: 10, array: words_ten_targets },
-  { value: 11, array: words_eleven_targets },
-];
-
-export const categoryMappings = [
-  { name: "Animals", array: words_animals },
-  { name: "Capital Cities", array: words_capital_cities },
-  { name: "Chemical Elements", array: words_chemical_elements },
-  { name: "Colours", array: words_colours },
-  { name: "Countries", array: words_countries },
-  { name: "Dog Breeds", array: words_dogs },
-  { name: "Fruits", array: words_fruits },
-  { name: "Gemstones", array: words_gemstones },
-  { name: "Herbs and Spices", array: words_herbs_and_spices },
-  { name: "Meats and Fish", array: words_meats_and_fish },
-  { name: "Pizza Toppings", array: words_pizza_toppings },
-  { name: "Puzzles", array: words_puzzles },
-  { name: "Sports", array: words_sports },
-  { name: "Vegetables", array: words_vegetables },
-];
 
 export function pickRandomElementFrom(array: any[]) {
   if (!array || array.length === 0) {

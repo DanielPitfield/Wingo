@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { SplashScreen } from "./SplashScreen";
 import { LobbyMenu } from "./LobbyMenu";
-import WordleConfig, { categoryMappings, pickRandomElementFrom, wordLengthMappingsTargets } from "./WordleConfig";
+import WordleConfig, { pickRandomElementFrom } from "./WordleConfig";
 import { Button } from "./Button";
-import NubbleConfig, { NubbleConfigProps, nubbleGridShape, nubbleGridSize } from "./Nubble/NubbleConfig";
+import NubbleConfig, { NubbleConfigProps } from "./Nubble/NubbleConfig";
 import GoldCoin from "./images/gold.png";
 import { SaveData, SettingsData } from "./SaveData";
 import CountdownLettersConfig from "./CountdownLetters/CountdownLettersConfig";
@@ -33,30 +33,20 @@ import { LingoGameshow } from "./LingoGameshow";
 import { FiArrowLeft, FiHelpCircle, FiSettings } from "react-icons/fi";
 import HelpInformation from "./HelpInformation";
 import { TitlePage } from "./TitlePage";
-import { WordleConfigProps, DEFAULT_PUZZLE_REVEAL_MS, DEFAULT_PUZZLE_LEAVE_NUM_BLANKS } from "./WordleConfig";
-import { WordleInterlinkedProps } from "./WordleInterlinked";
-
-// WordLength values (for different modes)
-export const DEFAULT_WORD_LENGTH = 5;
-
-const DEFAULT_WORD_LENGTH_INCREASING = 4;
-const DEFAULT_WORD_LENGTH_CONUNDRUM = 9;
-const DEFAULT_WORD_LENGTH_PUZZLE = 10;
-
-// numGuesses values (for different modes)
-const DEFAULT_NUM_GUESSES = 6;
-const DEFAULT_NUM_GUESSES_PUZZLE = 1;
-const DEFAULT_NUM_GUESSES_COUNTDOWN_NUMBERS = 5;
-
-// The wordLengths of target word arrays that have at least one word
-const targetWordLengths = wordLengthMappingsTargets
-  .filter((mapping) => mapping.array.length > 0)
-  .map((mapping) => mapping.value);
-export const MIN_TARGET_WORD_LENGTH = Math.min(...targetWordLengths);
-export const MAX_TARGET_WORD_LENGTH = Math.max(...targetWordLengths);
-
-// The number of categories with at least one word
-export const MAX_NUM_CATEGORIES = categoryMappings.filter((mapping) => mapping.array.length > 0).length;
+import {
+  dailyCrosswordGamemodeSettings,
+  dailyWordleGamemodeSettings,
+  defaultNubbleGamemodeSettings,
+  defaultWordleGamemodeSettings,
+  DEFAULT_NUM_GUESSES,
+  DEFAULT_NUM_GUESSES_COUNTDOWN_NUMBERS,
+  DEFAULT_NUM_GUESSES_PUZZLE,
+  DEFAULT_WORD_LENGTH,
+  DEFAULT_WORD_LENGTH_CONUNDRUM,
+  DEFAULT_WORD_LENGTH_INCREASING,
+  DEFAULT_WORD_LENGTH_PUZZLE,
+  weeklyCrosswordGamemodeSettings,
+} from "./defaultGamemodeSettings";
 
 const countdownModes = ["casual", "realistic"] as const;
 export type countdownMode = typeof countdownModes[number];
@@ -435,108 +425,6 @@ export const App: React.FC = () => {
   const [gold, setGold] = useState<number>(SaveData.readGold());
   const [playBackgroundMusic, stopBackgroundMusic] = useBackgroundMusic(settings, theme);
 
-  const dailyWordleGamemodeSettings: WordleConfigProps["gamemodeSettings"] = {
-    wordLength: DEFAULT_WORD_LENGTH,
-    isFirstLetterProvided: false,
-    isHintShown: false,
-    timerConfig: { isTimed: false },
-  };
-
-  const dailyCrosswordGamemodeSettings: WordleInterlinkedProps["gamemodeSettings"] = {
-    numWords: 6,
-    minWordLength: MIN_TARGET_WORD_LENGTH,
-    maxWordLength: MAX_TARGET_WORD_LENGTH,
-    numWordGuesses: 10,
-    numGridGuesses: 2,
-    isFirstLetterProvided: false,
-    isHintShown: false,
-    timerConfig: { isTimed: false },
-  };
-
-  const weeklyCrosswordGamemodeSettings: WordleInterlinkedProps["gamemodeSettings"] = {
-    numWords: 10,
-    minWordLength: MIN_TARGET_WORD_LENGTH,
-    maxWordLength: MAX_TARGET_WORD_LENGTH,
-    numWordGuesses: 20,
-    numGridGuesses: 4,
-    isFirstLetterProvided: false,
-    isHintShown: false,
-    timerConfig: { isTimed: false },
-  };
-
-  // The configurable options available for each gamemode variation of Wordle/WordleConfig (and their default values with no save data)
-  const defaultWordleGamemodeSettings: { page: Page; settings: WordleConfigProps["gamemodeSettings"] }[] = [
-    {
-      page: "wingo/repeat",
-      settings: {
-        wordLength: DEFAULT_WORD_LENGTH,
-        isFirstLetterProvided: false,
-        isHintShown: false,
-        timerConfig: { isTimed: false },
-      },
-    },
-    {
-      page: "wingo/category",
-      settings: {
-        isFirstLetterProvided: false,
-        isHintShown: false,
-        timerConfig: { isTimed: false },
-      },
-    },
-    {
-      page: "wingo/increasing",
-      settings: {
-        wordLength: MIN_TARGET_WORD_LENGTH,
-        wordLengthMaxLimit: MAX_TARGET_WORD_LENGTH,
-        isFirstLetterProvided: false,
-        isHintShown: false,
-        timerConfig: { isTimed: false },
-      },
-    },
-    {
-      page: "wingo/limitless",
-      settings: {
-        wordLength: MIN_TARGET_WORD_LENGTH,
-        wordLengthMaxLimit: MAX_TARGET_WORD_LENGTH,
-        maxLivesConfig: { isLimited: false },
-        isFirstLetterProvided: false,
-        isHintShown: false,
-        timerConfig: { isTimed: false },
-      },
-    },
-    {
-      page: "wingo/puzzle",
-      settings: {
-        puzzleRevealMs: DEFAULT_PUZZLE_REVEAL_MS,
-        puzzleLeaveNumBlanks: DEFAULT_PUZZLE_LEAVE_NUM_BLANKS,
-        wordLength: DEFAULT_WORD_LENGTH_PUZZLE,
-      },
-    },
-    // The conundrum mode is actually a mode of WordleConfig
-    {
-      page: "countdown/conundrum",
-      settings: {
-        timerConfig: { isTimed: true, seconds: 30 },
-      },
-    },
-  ];
-
-  const defaultNubbleGamemodeSettings: NubbleConfigProps["gamemodeSettings"] = {
-    numDice: 4,
-    // The lowest value which can be the number shown on a dice
-    diceMin: 1,
-    diceMax: 6,
-    gridShape: "hexagon" as nubbleGridShape,
-    gridSize: 100 as nubbleGridSize,
-    numTeams: 1,
-    // When a number which can't be made with the dice numbers is picked, does the game end?
-    isGameOverOnIncorrectPick: false,
-    // How long to make a guess after the dice have been rolled?
-    guessTimerConfig: { isTimed: false },
-    // How long overall until the game ends?
-    timerConfig: { isTimed: true, seconds: 600 },
-  };
-
   function getNewEntryPage(): Page {
     let pageFromUrl = getPageFromUrl();
 
@@ -683,7 +571,6 @@ export const App: React.FC = () => {
     // Get the gamemode settings for this specific page
     const pageGamemodeSettings = (() => {
       switch (page) {
-
         /*
         | "letters_categories"
         | "countdown/letters"
@@ -702,13 +589,11 @@ export const App: React.FC = () => {
         | "lingo/gameshow";
         */
 
+        // Daily/weekly modes should always use the same settings (that can't be changed)
         case "wingo/daily":
-          // Daily mode should always use the same settings that can't be changed
           return dailyWordleGamemodeSettings;
-
         case "wingo/crossword/daily":
           return dailyCrosswordGamemodeSettings;
-
         case "wingo/crossword/weekly":
           return weeklyCrosswordGamemodeSettings;
 
@@ -729,7 +614,6 @@ export const App: React.FC = () => {
         case "wingo/interlinked":
         case "wingo/crossword":
         case "wingo/crossword/fit":
-
 
         case "nubble":
           return SaveData.getNubbleConfigGamemodeSettings() || defaultNubbleGamemodeSettings;

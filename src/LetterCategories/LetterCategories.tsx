@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Keyboard } from "../Keyboard";
-import { MAX_NUM_CATEGORIES, Page } from "../App";
+import { Page } from "../App";
 import { WordRow } from "../WordRow";
 import { Button } from "../Button";
 import { MessageNotification } from "../MessageNotification";
@@ -8,6 +8,7 @@ import ProgressBar, { GreenToRedColorTransition } from "../ProgressBar";
 import { Theme } from "../Themes";
 import { SettingsData } from "../SaveData";
 import GamemodeSettingsMenu from "../GamemodeSettingsMenu";
+import { MAX_NUM_CATEGORIES } from "../defaultGamemodeSettings";
 
 interface Props {
   isCampaignLevel: boolean;
