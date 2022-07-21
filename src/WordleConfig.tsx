@@ -697,8 +697,8 @@ const WordleConfig: React.FC<Props> = (props) => {
   React.useEffect(() => {
     ResetGame();
 
-    // Save the latest gamemode settings
-    SaveData.setWordleConfigGamemodeSettings(gamemodeSettings);
+    // Save the latest gamemode settings for this mode
+    SaveData.setWordleConfigGamemodeSettings(props.page, gamemodeSettings);
   }, [gamemodeSettings]);
 
   // Update targetWord every time the targetCategory changes

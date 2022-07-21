@@ -646,7 +646,7 @@ export const App: React.FC = () => {
         case "countdown/conundrum":
           // Use the saved Wingo Config gamemodeSettings, or the default setitngs (if no previous save was found)
           return (
-            SaveData.getWordleConfigGamemodeSettings() ||
+            SaveData.getWordleConfigGamemodeSettings(page) ||
             defaultWordleGamemodeSettings.find((x) => x.page === page)?.settings
           );
 

@@ -1,4 +1,4 @@
-import { Page } from "./App";
+import { Page, pages } from "./App";
 import { LevelConfig } from "./Campaign/Level";
 import { BaseChallenge } from "./Challenges/BaseChallenge";
 import { NubbleConfigProps } from "./Nubble/NubbleConfig";
@@ -88,6 +88,16 @@ export function newGuid(): string {
       return char;
     })
     .join("");
+}
+
+function determineLocalStorageItemName(page: Page): string | null {
+  const modeName = pages.find((x) => x.page === page)?.title;
+
+  if (!modeName) {
+    return null;
+  }
+
+  return modeName + "gamemodeSettings";
 }
 
 /** */
@@ -378,16 +388,28 @@ export class SaveData {
    * Saves the gamemode settings for Wordle Config.
    * @param gameSettings The latest gamemode settings for Wordle Config to save.
    */
-  public static setWordleConfigGamemodeSettings(gameSettings: WordleConfigProps["gamemodeSettings"]) {
-    localStorage.setItem("wordleConfigGamemodeSettings", JSON.stringify(gameSettings));
+  public static setWordleConfigGamemodeSettings(page: Page, gameSettings: WordleConfigProps["gamemodeSettings"]) {
+    const itemName = determineLocalStorageItemName(page);
+
+    if (!itemName) {
+      return;
+    }
+
+    localStorage.setItem(itemName, JSON.stringify(gameSettings));
   }
 
   /**
    * Gets the saved gamemode settings for Wordle Config, or null if no saved gamemode settings were found.
    * @returns The saved gamemode settings for Wordle Config to save.
    */
-  public static getWordleConfigGamemodeSettings(): WordleConfigProps["gamemodeSettings"] | null {
-    const wordleConfigGamemodeSettings = localStorage.getItem("wordleConfigGamemodeSettings");
+  public static getWordleConfigGamemodeSettings(page: Page): WordleConfigProps["gamemodeSettings"] | null {
+    const itemName = determineLocalStorageItemName(page);
+
+    if (!itemName) {
+      return;
+    }
+
+    const wordleConfigGamemodeSettings = localStorage.getItem(itemName);
 
     // If saved gamemode settings were found
     if (wordleConfigGamemodeSettings) {
