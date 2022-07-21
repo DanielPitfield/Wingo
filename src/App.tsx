@@ -34,6 +34,7 @@ import { FiArrowLeft, FiHelpCircle, FiSettings } from "react-icons/fi";
 import HelpInformation from "./HelpInformation";
 import { TitlePage } from "./TitlePage";
 import { WordleConfigProps, DEFAULT_PUZZLE_REVEAL_MS, DEFAULT_PUZZLE_LEAVE_NUM_BLANKS } from "./WordleConfig";
+import { WordleInterlinkedProps } from "./WordleInterlinked";
 
 // WordLength values (for different modes)
 export const DEFAULT_WORD_LENGTH = 5;
@@ -434,6 +435,22 @@ export const App: React.FC = () => {
   const [gold, setGold] = useState<number>(SaveData.readGold());
   const [playBackgroundMusic, stopBackgroundMusic] = useBackgroundMusic(settings, theme);
 
+  const dailyWordleGamemodeSettings: WordleConfigProps["gamemodeSettings"] = {
+    wordLength: DEFAULT_WORD_LENGTH,
+    isFirstLetterProvided: false,
+    isHintShown: false,
+    timerConfig: { isTimed: false },
+  };
+
+  /*
+  const dailyCrosswordGamemodeSettings: WordleInterlinkedProps["gamemodeSettings"] = {
+    numWords: 6,
+    isFirstLetterProvided: false,
+    isHintShown: false,
+    timerConfig: { isTimed: false },
+  };
+  */
+
   // The configurable options available for each gamemode variation of Wordle/WordleConfig (and their default values with no save data)
   const defaultWordleGamemodeSettings: { page: Page; settings: WordleConfigProps["gamemodeSettings"] }[] = [
     {
@@ -653,6 +670,35 @@ export const App: React.FC = () => {
     // Get the gamemode settings for this specific page
     const pageGamemodeSettings = (() => {
       switch (page) {
+
+        /*
+        | "letters_categories"
+        | "countdown/letters"
+        | "countdown/numbers"
+        | "numbers/arithmetic_reveal"
+        | "numbers/arithmetic_drag/order"
+        | "numbers/arithmetic_drag/match"
+        | "only_connect/wall"
+        | "verbal_reasoning/sameLetters"
+        | "verbal_reasoning/number_sets"
+        | "verbal_reasoning/algebra"
+        | "verbal_reasoning/word_codes"
+        | "verbal_reasoning/word_codes/match"
+        | "puzzle/sequence"
+        | "countdown/gameshow"
+        | "lingo/gameshow";
+        */
+
+        case "wingo/daily":
+          // Daily mode should always use the same settings that can't be changed
+          return dailyWordleGamemodeSettings;
+
+        case "wingo/crossword/daily":
+          // TODO
+
+        case "wingo/crossword/weekly":
+          // TODO
+
         // WordleConfig modes
         case "wingo/repeat":
         case "wingo/category":
@@ -666,11 +712,18 @@ export const App: React.FC = () => {
             defaultWordleGamemodeSettings.find((x) => x.page === page)?.settings
           );
 
+        // WordleInterlinked modes
+        case "wingo/interlinked":
+        case "wingo/crossword":
+        case "wingo/crossword/fit":
+
+
         case "nubble":
           return SaveData.getNubbleConfigGamemodeSettings() || defaultNubbleGamemodeSettings;
       }
     })();
 
+    // Overwrite properties for specific modes where required
     const commonWingoProps = {
       gamemodeSettings: pageGamemodeSettings,
       defaultWordLength: DEFAULT_WORD_LENGTH,
@@ -793,6 +846,7 @@ export const App: React.FC = () => {
         );
 
       case "wingo/interlinked":
+        // TODO: Directly return WordleInterlinked component?
         return <WordleConfig {...commonWingoProps} mode="interlinked" />;
 
       case "wingo/crossword":

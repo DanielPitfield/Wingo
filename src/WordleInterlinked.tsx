@@ -27,8 +27,9 @@ export type TileStatus = {
   status: "incorrect" | "contains" | "correct" | "not set" | "not in word";
 };
 
-interface Props {
+export interface WordleInterlinkedProps {
   isCampaignLevel: boolean;
+
   // TODO: Add as a gamemode setting?
   wordArrayConfig:
     | { type: "custom"; array: string[]; useExact: boolean; canRestart: boolean }
@@ -52,11 +53,10 @@ interface Props {
     numWordGuesses?: number;
     numGridGuesses?: number;
     isFirstLetterProvided?: boolean;
-    showHint?: boolean;
+    isHintShown?: boolean;
     timerConfig?: { isTimed: true; seconds: number } | { isTimed: false };
   };
 
-  settings: SettingsData;
   initialConfig?: {
     words: string[];
     inProgress: boolean;
@@ -66,6 +66,10 @@ interface Props {
     remainingGridGuesses: number;
     remainingWordGuesses?: number;
   };
+}
+
+interface Props extends WordleInterlinkedProps {
+  settings: SettingsData;
   theme?: Theme;
   onSave?: (
     words: string[],
@@ -109,7 +113,7 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
 
     isFirstLetterProvided: props.gamemodeSettings?.isFirstLetterProvided ?? false,
     // Use gamemode setting value if specified, otherwise default to true for large crosswords (more than 2 words)
-    isHintShown: props.gamemodeSettings?.showHint ?? STARTING_NUM_WORDS > 2 ? true : false,
+    isHintShown: props.gamemodeSettings?.isHintShown ?? STARTING_NUM_WORDS > 2 ? true : false,
 
     timerConfig: props.gamemodeSettings?.timerConfig ?? { isTimed: false },
   };
