@@ -4,7 +4,7 @@ import { BaseChallenge } from "./Challenges/BaseChallenge";
 import { NubbleConfigProps } from "./Nubble/NubbleConfig";
 import { Themes } from "./Themes";
 import { WordleConfigProps } from "./WordleConfig";
-import { TileStatus } from "./WordleInterlinked";
+import { TileStatus, WordleInterlinkedProps } from "./WordleInterlinked";
 
 export type CampaignSaveData = {
   areas: { name: string; status: "locked" | "unlockable" | "unlocked"; completedLevelIds: string[] }[];
@@ -420,18 +420,38 @@ export class SaveData {
     return null;
   }
 
-  /**
-   * Saves the gamemode settings for Nubble Config.
-   * @param gameSettings The latest gamemode settings for Nubble Config to save.
-   */
+   public static setWordleInterlinkedGamemodeSettings(page: Page, gameSettings: WordleInterlinkedProps["gamemodeSettings"]) {
+    const itemName = determineLocalStorageItemName(page);
+
+    if (!itemName) {
+      return;
+    }
+
+    localStorage.setItem(itemName, JSON.stringify(gameSettings));
+  }
+
+  public static getWordleInterlinkedGamemodeSettings(page: Page): WordleInterlinkedProps["gamemodeSettings"] | null {
+    const itemName = determineLocalStorageItemName(page);
+
+    if (!itemName) {
+      return;
+    }
+
+    const wordleInterlinkedGamemodeSettings = localStorage.getItem(itemName);
+
+    // If saved gamemode settings were found
+    if (wordleInterlinkedGamemodeSettings) {
+      return JSON.parse(wordleInterlinkedGamemodeSettings) as WordleConfigProps["gamemodeSettings"];
+    }
+
+    // Else if not found; return null
+    return null;
+  }
+
   public static setNubbleConfigGamemodeSettings(gameSettings: NubbleConfigProps["gamemodeSettings"]) {
     localStorage.setItem("nubbleConfigGamemodeSettings", JSON.stringify(gameSettings));
   }
 
-  /**
-   * Gets the saved gamemode settings for Nubble Config, or null if no saved gamemode settings were found.
-   * @returns The saved gamemode settings for Nubble Config to save.
-   */
   public static getNubbleConfigGamemodeSettings(): NubbleConfigProps["gamemodeSettings"] | null {
     const nubbleConfigGamemodeSettings = localStorage.getItem("nubbleConfigGamemodeSettings");
 

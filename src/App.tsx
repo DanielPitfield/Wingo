@@ -38,6 +38,7 @@ import {
   dailyWordleGamemodeSettings,
   defaultNubbleGamemodeSettings,
   defaultWordleGamemodeSettings,
+  defaultWordleInterlinkedGamemodeSettings,
   DEFAULT_NUM_GUESSES,
   DEFAULT_NUM_GUESSES_COUNTDOWN_NUMBERS,
   DEFAULT_NUM_GUESSES_PUZZLE,
@@ -614,6 +615,10 @@ export const App: React.FC = () => {
         case "wingo/interlinked":
         case "wingo/crossword":
         case "wingo/crossword/fit":
+          return (
+            SaveData.getWordleInterlinkedGamemodeSettings(page) ||
+            defaultWordleInterlinkedGamemodeSettings.find((x) => x.page === page)?.settings
+          );
 
         case "nubble":
           return SaveData.getNubbleConfigGamemodeSettings() || defaultNubbleGamemodeSettings;

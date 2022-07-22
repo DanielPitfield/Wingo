@@ -164,7 +164,7 @@ export const dailyCrosswordGamemodeSettings: WordleInterlinkedProps["gamemodeSet
   numWordGuesses: 10,
   numGridGuesses: 2,
   isFirstLetterProvided: false,
-  isHintShown: false,
+  isHintShown: true,
   timerConfig: { isTimed: false },
 };
 
@@ -175,7 +175,7 @@ export const weeklyCrosswordGamemodeSettings: WordleInterlinkedProps["gamemodeSe
   numWordGuesses: 20,
   numGridGuesses: 4,
   isFirstLetterProvided: false,
-  isHintShown: false,
+  isHintShown: true,
   timerConfig: { isTimed: false },
 };
 
@@ -190,7 +190,7 @@ export const defaultWordleInterlinkedGamemodeSettings: {
       minWordLength: DEFAULT_WORD_LENGTH,
       maxWordLength: DEFAULT_WORD_LENGTH,
       numWordGuesses: 0,
-      numGridGuesses: 5,
+      numGridGuesses: DEFAULT_NUM_GUESSES,
       isFirstLetterProvided: false,
       isHintShown: false,
       timerConfig: { isTimed: false },
@@ -199,16 +199,26 @@ export const defaultWordleInterlinkedGamemodeSettings: {
   {
     page: "wingo/crossword",
     settings: {
+      numWords: 6,
+      minWordLength: MIN_TARGET_WORD_LENGTH,
+      maxWordLength: MAX_TARGET_WORD_LENGTH,
+      numWordGuesses: 10,
+      numGridGuesses: 2,
       isFirstLetterProvided: false,
-      isHintShown: false,
+      isHintShown: true,
       timerConfig: { isTimed: false },
     },
   },
   {
     page: "wingo/crossword/fit",
     settings: {
+      numWords: 6,
+      minWordLength: DEFAULT_WORD_LENGTH,
+      maxWordLength: DEFAULT_WORD_LENGTH,
+      numWordGuesses: 0,
+      numGridGuesses: 1,
       isFirstLetterProvided: false,
-      isHintShown: false,
+      isHintShown: true,
       timerConfig: { isTimed: false },
     },
   },

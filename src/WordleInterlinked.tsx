@@ -1,5 +1,5 @@
 import LetterTile from "./LetterTile";
-import { SettingsData } from "./SaveData";
+import { SaveData, SettingsData } from "./SaveData";
 import { useState } from "react";
 import { shuffleArray } from "./NumbersArithmetic/ArithmeticDrag";
 import { Theme } from "./Themes";
@@ -275,7 +275,14 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
 
   // Reset game after change of settings (stops cheating by changing settings partway through a game)
   React.useEffect(() => {
+    if (props.isCampaignLevel) {
+      return;
+    }
+
     ResetGame();
+
+    // Save the latest gamemode settings for this mode
+    // SaveData.setWordleInterlinkedGamemodeSettings(props.page, gamemodeSettings);
   }, [gamemodeSettings]);
 
   React.useEffect(() => {
