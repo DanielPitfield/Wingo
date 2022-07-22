@@ -21,7 +21,6 @@ interface Props {
   hasFinalRound: boolean;
 
   commonWingoProps: {
-    saveData: Storage;
     defaultnumGuesses: number;
     page: Page;
     theme: Theme;

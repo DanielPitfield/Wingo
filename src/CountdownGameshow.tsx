@@ -23,7 +23,6 @@ interface Props {
   hasFinishingConundrum: boolean;
 
   commonWingoProps: {
-    saveData: Storage;
     defaultnumGuesses: number;
     page: Page;
     theme: Theme;

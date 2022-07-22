@@ -8,7 +8,17 @@ import { WordleInterlinked } from "./WordleInterlinked";
 import { Chance } from "chance";
 import { generateConundrum } from "./CountdownLetters/Conundrum";
 import { Page } from "./App";
-import { categoryMappings, DEFAULT_PUZZLE_LEAVE_NUM_BLANKS, DEFAULT_PUZZLE_REVEAL_MS, DEFAULT_WORD_LENGTH, MAX_TARGET_WORD_LENGTH, MIN_TARGET_WORD_LENGTH, wordLengthMappingsGuessable, wordLengthMappingsTargets } from "./defaultGamemodeSettings";
+import {
+  categoryMappings,
+  defaultWordleInterlinkedGamemodeSettings,
+  DEFAULT_PUZZLE_LEAVE_NUM_BLANKS,
+  DEFAULT_PUZZLE_REVEAL_MS,
+  DEFAULT_WORD_LENGTH,
+  MAX_TARGET_WORD_LENGTH,
+  MIN_TARGET_WORD_LENGTH,
+  wordLengthMappingsGuessable,
+  wordLengthMappingsTargets,
+} from "./defaultGamemodeSettings";
 
 export interface WordleConfigProps {
   mode:
@@ -241,7 +251,7 @@ const WordleConfig: React.FC<Props> = (props) => {
     isHintShown: props.gamemodeSettings?.isHintShown ?? props.mode === "puzzle" ? true : false,
     puzzleRevealMs: props.gamemodeSettings?.puzzleRevealMs ?? DEFAULT_PUZZLE_REVEAL_MS,
     puzzleLeaveNumBlanks: props.gamemodeSettings?.puzzleLeaveNumBlanks ?? DEFAULT_PUZZLE_LEAVE_NUM_BLANKS,
-    maxLivesConfig: props.gamemodeSettings?.maxLivesConfig ?? {isLimited: false},
+    maxLivesConfig: props.gamemodeSettings?.maxLivesConfig ?? { isLimited: false },
     timerConfig: props.gamemodeSettings?.timerConfig ?? { isTimed: false },
   };
 
@@ -1118,55 +1128,56 @@ const WordleConfig: React.FC<Props> = (props) => {
     setGamemodeSettings(newGamemodeSettings);
   }
 
-  const DEFAULT_CROSSWORD_MAX_LENGTH = 8;
+  // Get the gamemode settings for the specific page (WordleInterlinked mode)
+  const pageGamemodeSettings = (() => {
+    switch (props.page) {
+      // Daily/weekly modes should always use the same settings (never from SaveData)
+      case "wingo/crossword/daily":
+      case "wingo/crossword/weekly":
+        return defaultWordleInterlinkedGamemodeSettings.find((x) => x.page === props.page)?.settings;
+
+      // WordleInterlinked modes
+      case "wingo/interlinked":
+      case "wingo/crossword":
+      case "wingo/crossword/fit":
+        return (
+          SaveData.getWordleInterlinkedGamemodeSettings(props.page) ||
+          defaultWordleInterlinkedGamemodeSettings.find((x) => x.page === props.page)?.settings
+        );
+
+      default:
+        return gamemodeSettings;
+    }
+  })();
+
+  const commonWingoInterlinkedProps = {
+    isCampaignLevel: props.page === "campaign/area/level",
+    gamemodeSettings: pageGamemodeSettings,
+    page: props.page,
+    theme: props.theme,
+    setPage: props.setPage,
+    setTheme: props.setTheme,
+    addGold: props.addGold,
+    settings: props.settings,
+    onComplete: props.onComplete,
+  };
 
   if (props.mode === "interlinked") {
     return (
-      <WordleInterlinked
-        isCampaignLevel={props.page === "campaign/area/level"}
-        wordArrayConfig={{ type: "length" }}
-        gamemodeSettings={{
-          numWords: 2,
-          minWordLength: DEFAULT_WORD_LENGTH,
-          maxWordLength: DEFAULT_WORD_LENGTH,
-          isHintShown: false,
-          numWordGuesses: 0,
-          numGridGuesses: 6,
-          timerConfig: { isTimed: true, seconds: 60 },
-        }}
-        provideWords={false}
-        theme={props.theme}
-        settings={props.settings}
-        onComplete={props.onComplete}
-      />
+      <WordleInterlinked {...commonWingoInterlinkedProps} wordArrayConfig={{ type: "length" }} provideWords={false} />
     );
   }
 
   if (props.mode === "crossword") {
     return (
-      <WordleInterlinked
-        isCampaignLevel={props.page === "campaign/area/level"}
-        wordArrayConfig={{ type: "category" }}
-        gamemodeSettings={{
-          numWords: 6,
-          minWordLength: MIN_TARGET_WORD_LENGTH,
-          maxWordLength: DEFAULT_CROSSWORD_MAX_LENGTH,
-          isHintShown: true,
-          numWordGuesses: 10,
-          numGridGuesses: 2,
-          timerConfig: { isTimed: true, seconds: 180 },
-        }}
-        provideWords={false}
-        theme={props.theme}
-        settings={props.settings}
-      />
+      <WordleInterlinked {...commonWingoInterlinkedProps} wordArrayConfig={{ type: "category" }} provideWords={false} />
     );
   }
 
   if (props.mode === "crossword/daily") {
     return (
       <WordleInterlinked
-        isCampaignLevel={props.page === "campaign/area/level"}
+        {...commonWingoInterlinkedProps}
         wordArrayConfig={{
           type: "custom",
           array: getDeterministicArrayItems(
@@ -1179,18 +1190,7 @@ const WordleConfig: React.FC<Props> = (props) => {
         }}
         onSave={SaveData.setDailyCrossWordGuesses}
         initialConfig={SaveData.getDailyCrossWordGuesses() || undefined}
-        gamemodeSettings={{
-          numWords: 6,
-          minWordLength: MIN_TARGET_WORD_LENGTH,
-          maxWordLength: DEFAULT_CROSSWORD_MAX_LENGTH,
-          isHintShown: true,
-          numWordGuesses: 10,
-          numGridGuesses: 2,
-          timerConfig: { isTimed: false },
-        }}
         provideWords={false}
-        theme={props.theme}
-        settings={props.settings}
       />
     );
   }
@@ -1198,7 +1198,7 @@ const WordleConfig: React.FC<Props> = (props) => {
   if (props.mode === "crossword/weekly") {
     return (
       <WordleInterlinked
-        isCampaignLevel={props.page === "campaign/area/level"}
+        {...commonWingoInterlinkedProps}
         wordArrayConfig={{
           type: "custom",
           array: getDeterministicArrayItems(
@@ -1211,43 +1211,14 @@ const WordleConfig: React.FC<Props> = (props) => {
         }}
         onSave={SaveData.setWeeklyCrossWordGuesses}
         initialConfig={SaveData.getWeeklyCrossWordGuesses() || undefined}
-        gamemodeSettings={{
-          numWords: 10,
-          minWordLength: MIN_TARGET_WORD_LENGTH,
-          maxWordLength: DEFAULT_CROSSWORD_MAX_LENGTH,
-          isHintShown: true,
-          numWordGuesses: 10,
-          numGridGuesses: 2,
-          timerConfig: { isTimed: false },
-        }}
         provideWords={false}
-        theme={props.theme}
-        settings={props.settings}
-        onComplete={props.onComplete}
       />
     );
   }
 
   if (props.mode === "crossword/fit") {
     return (
-      <WordleInterlinked
-        isCampaignLevel={props.page === "campaign/area/level"}
-        wordArrayConfig={{ type: "length" }}
-        gamemodeSettings={{
-          numWords: 6,
-          minWordLength: DEFAULT_WORD_LENGTH,
-          maxWordLength: DEFAULT_WORD_LENGTH,
-          fitRestrictionConfig: { isRestricted: true, fitRestriction: 0 },
-          isHintShown: false,
-          numWordGuesses: 0,
-          numGridGuesses: 1,
-          timerConfig: { isTimed: true, seconds: 60 },
-        }}
-        provideWords={true}
-        theme={props.theme}
-        settings={props.settings}
-        onComplete={props.onComplete}
-      />
+      <WordleInterlinked {...commonWingoInterlinkedProps} wordArrayConfig={{ type: "length" }} provideWords={true} />
     );
   }
 

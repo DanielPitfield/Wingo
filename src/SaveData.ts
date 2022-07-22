@@ -420,7 +420,10 @@ export class SaveData {
     return null;
   }
 
-   public static setWordleInterlinkedGamemodeSettings(page: Page, gameSettings: WordleInterlinkedProps["gamemodeSettings"]) {
+  public static setWordleInterlinkedGamemodeSettings(
+    page: Page,
+    gameSettings: WordleInterlinkedProps["gamemodeSettings"]
+  ) {
     const itemName = determineLocalStorageItemName(page);
 
     if (!itemName) {

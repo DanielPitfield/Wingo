@@ -11,7 +11,14 @@ import { MessageNotification } from "./MessageNotification";
 import { CrosswordGenerationResult, crosswordGenerator as crossWordGenerator } from "./CrossWordGenerator";
 import GamemodeSettingsMenu from "./GamemodeSettingsMenu";
 import ProgressBar, { GreenToRedColorTransition } from "./ProgressBar";
-import { categoryMappings, DEFAULT_WORD_LENGTH, MAX_TARGET_WORD_LENGTH, MIN_TARGET_WORD_LENGTH, wordLengthMappingsTargets } from "./defaultGamemodeSettings";
+import {
+  categoryMappings,
+  DEFAULT_WORD_LENGTH,
+  MAX_TARGET_WORD_LENGTH,
+  MIN_TARGET_WORD_LENGTH,
+  wordLengthMappingsTargets,
+} from "./defaultGamemodeSettings";
+import { Page } from "./App";
 
 type Orientation = "vertical" | "horizontal";
 
@@ -69,8 +76,12 @@ export interface WordleInterlinkedProps {
 }
 
 interface Props extends WordleInterlinkedProps {
-  settings: SettingsData;
+  page: Page;
   theme?: Theme;
+  settings: SettingsData;
+  setPage: (page: Page) => void;
+  addGold: (gold: number) => void;
+  setTheme: (theme: Theme) => void;
   onSave?: (
     words: string[],
     inProgress: boolean,
@@ -282,7 +293,7 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
     ResetGame();
 
     // Save the latest gamemode settings for this mode
-    // SaveData.setWordleInterlinkedGamemodeSettings(props.page, gamemodeSettings);
+    SaveData.setWordleInterlinkedGamemodeSettings(props.page, gamemodeSettings);
   }, [gamemodeSettings]);
 
   React.useEffect(() => {

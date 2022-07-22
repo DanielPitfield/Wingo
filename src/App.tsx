@@ -34,11 +34,8 @@ import { FiArrowLeft, FiHelpCircle, FiSettings } from "react-icons/fi";
 import HelpInformation from "./HelpInformation";
 import { TitlePage } from "./TitlePage";
 import {
-  dailyCrosswordGamemodeSettings,
-  dailyWordleGamemodeSettings,
   defaultNubbleGamemodeSettings,
   defaultWordleGamemodeSettings,
-  defaultWordleInterlinkedGamemodeSettings,
   DEFAULT_NUM_GUESSES,
   DEFAULT_NUM_GUESSES_COUNTDOWN_NUMBERS,
   DEFAULT_NUM_GUESSES_PUZZLE,
@@ -46,7 +43,6 @@ import {
   DEFAULT_WORD_LENGTH_CONUNDRUM,
   DEFAULT_WORD_LENGTH_INCREASING,
   DEFAULT_WORD_LENGTH_PUZZLE,
-  weeklyCrosswordGamemodeSettings,
 } from "./defaultGamemodeSettings";
 
 const countdownModes = ["casual", "realistic"] as const;
@@ -569,7 +565,7 @@ export const App: React.FC = () => {
       onComplete: onComplete,
     };
 
-    // Get the gamemode settings for this specific page
+    // Get the gamemode settings for the specific page (gamemode)
     const pageGamemodeSettings = (() => {
       switch (page) {
         /*
@@ -590,13 +586,9 @@ export const App: React.FC = () => {
         | "lingo/gameshow";
         */
 
-        // Daily/weekly modes should always use the same settings (that can't be changed)
+        // Daily mode should always use the same settings (never from SaveData)
         case "wingo/daily":
-          return dailyWordleGamemodeSettings;
-        case "wingo/crossword/daily":
-          return dailyCrosswordGamemodeSettings;
-        case "wingo/crossword/weekly":
-          return weeklyCrosswordGamemodeSettings;
+          return defaultWordleGamemodeSettings.find((x) => x.page === page)?.settings;
 
         // WordleConfig modes
         case "wingo/repeat":
@@ -611,15 +603,6 @@ export const App: React.FC = () => {
             defaultWordleGamemodeSettings.find((x) => x.page === page)?.settings
           );
 
-        // WordleInterlinked modes
-        case "wingo/interlinked":
-        case "wingo/crossword":
-        case "wingo/crossword/fit":
-          return (
-            SaveData.getWordleInterlinkedGamemodeSettings(page) ||
-            defaultWordleInterlinkedGamemodeSettings.find((x) => x.page === page)?.settings
-          );
-
         case "nubble":
           return SaveData.getNubbleConfigGamemodeSettings() || defaultNubbleGamemodeSettings;
       }
@@ -629,7 +612,6 @@ export const App: React.FC = () => {
     const commonWingoProps = {
       gamemodeSettings: pageGamemodeSettings,
       defaultWordLength: DEFAULT_WORD_LENGTH,
-      saveData: saveData,
       defaultnumGuesses: DEFAULT_NUM_GUESSES,
       enforceFullLengthGuesses: true,
       page: page,

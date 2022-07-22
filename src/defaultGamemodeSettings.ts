@@ -94,14 +94,16 @@ export const DEFAULT_PUZZLE_LEAVE_NUM_BLANKS = 3;
 export const MAX_NUM_CATEGORIES = categoryMappings.filter((mapping) => mapping.array.length > 0).length;
 
 // --- Default Gamemode settings --- //
-export const dailyWordleGamemodeSettings: WordleConfigProps["gamemodeSettings"] = {
-  wordLength: DEFAULT_WORD_LENGTH,
-  isFirstLetterProvided: false,
-  isHintShown: false,
-  timerConfig: { isTimed: false },
-};
-
 export const defaultWordleGamemodeSettings: { page: Page; settings: WordleConfigProps["gamemodeSettings"] }[] = [
+  {
+    page: "wingo/daily",
+    settings: {
+      wordLength: DEFAULT_WORD_LENGTH,
+      isFirstLetterProvided: false,
+      isHintShown: false,
+      timerConfig: { isTimed: false },
+    },
+  },
   {
     page: "wingo/repeat",
     settings: {
@@ -157,32 +159,36 @@ export const defaultWordleGamemodeSettings: { page: Page; settings: WordleConfig
   },
 ];
 
-export const dailyCrosswordGamemodeSettings: WordleInterlinkedProps["gamemodeSettings"] = {
-  numWords: 6,
-  minWordLength: MIN_TARGET_WORD_LENGTH,
-  maxWordLength: MAX_TARGET_WORD_LENGTH,
-  numWordGuesses: 10,
-  numGridGuesses: 2,
-  isFirstLetterProvided: false,
-  isHintShown: true,
-  timerConfig: { isTimed: false },
-};
-
-export const weeklyCrosswordGamemodeSettings: WordleInterlinkedProps["gamemodeSettings"] = {
-  numWords: 10,
-  minWordLength: MIN_TARGET_WORD_LENGTH,
-  maxWordLength: MAX_TARGET_WORD_LENGTH,
-  numWordGuesses: 20,
-  numGridGuesses: 4,
-  isFirstLetterProvided: false,
-  isHintShown: true,
-  timerConfig: { isTimed: false },
-};
-
 export const defaultWordleInterlinkedGamemodeSettings: {
   page: Page;
   settings: WordleInterlinkedProps["gamemodeSettings"];
 }[] = [
+  {
+    page: "wingo/crossword/daily",
+    settings: {
+      numWords: 6,
+      minWordLength: MIN_TARGET_WORD_LENGTH,
+      maxWordLength: MAX_TARGET_WORD_LENGTH,
+      numWordGuesses: 10,
+      numGridGuesses: 2,
+      isFirstLetterProvided: false,
+      isHintShown: true,
+      timerConfig: { isTimed: false },
+    },
+  },
+  {
+    page: "wingo/crossword/weekly",
+    settings: {
+      numWords: 10,
+      minWordLength: MIN_TARGET_WORD_LENGTH,
+      maxWordLength: MAX_TARGET_WORD_LENGTH,
+      numWordGuesses: 20,
+      numGridGuesses: 4,
+      isFirstLetterProvided: false,
+      isHintShown: true,
+      timerConfig: { isTimed: false },
+    },
+  },
   {
     page: "wingo/interlinked",
     settings: {
