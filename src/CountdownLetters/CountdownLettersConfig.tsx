@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { countdownMode, Page } from "../App";
 import CountdownLetters from "./CountdownLetters";
 import { Theme } from "../Themes";
-import { SettingsData } from "../SaveData";
+import { SaveData, SettingsData } from "../SaveData";
 import { wordLengthMappingsGuessable } from "../defaultGamemodeSettings";
 
 export interface CountdownLettersConfigProps {
@@ -138,6 +138,20 @@ const CountdownLettersConfig: React.FC<Props> = (props) => {
     };
   }, [setRemainingSeconds, remainingSeconds, gamemodeSettings.timerConfig.isTimed, countdownWord]);
 
+  // Reset game after change of settings (stops cheating by changing settings partway through a game)
+  React.useEffect(() => {
+    if (props.page === "campaign/area/level" || props.gameshowScore !== undefined) {
+      return;
+    }
+
+    // TODO: Function returns above if part of gameshow, so none of these parameters are needed
+    ResetGame(false, "", "", 0);
+
+    // Save the latest gamemode settings for this mode
+    SaveData.setLetterCategoriesConfigGamemodeSettings(gamemodeSettings);
+  }, [gamemodeSettings]);
+
+  // TODO: Better way to callback the outcome/status of a completed letters round for CountdownGameshow?
   function ResetGame(wasCorrect: boolean, answer: string, targetAnswer: string, score: number | null) {
     // Callback of the score achieved (used for Countdown Gameshow)
     props.onComplete?.(wasCorrect, answer, targetAnswer, score);
