@@ -69,18 +69,29 @@ export const LobbyMenu: React.FC<Props> = (props) => {
         </div>
 
         <div className="sidebar">
-          <div className="sidebar-title">Letters</div>
+          <div className="sidebar-title">Wingo</div>
           <ul className="widgets">
             {renderGameModeTile("wingo/repeat")}
-            {renderGameModeTile("wingo/category")}
+            {renderGameModeTile("wingo/puzzle")}
             {renderGameModeTile("wingo/increasing")}
             {renderGameModeTile("wingo/limitless")}
-            {renderGameModeTile("wingo/puzzle")}
+            {renderGameModeTile("wingo/category")}
             {renderGameModeTile("wingo/interlinked")}
             {renderGameModeTile("wingo/crossword")}
-            {renderGameModeTile("wingo/crossword/fit")}
+          </ul>
+        </div>
+
+        <div className="sidebar">
+          <div className="sidebar-title">Letters</div>
+          <ul className="widgets">
+            {renderGameModeTile("only_connect/wall")}
             {renderGameModeTile("countdown/letters")}
             {renderGameModeTile("countdown/conundrum")}
+            {renderGameModeTile("letters_categories")}
+            {renderGameModeTile("verbal_reasoning/sameLetters")}
+            {renderGameModeTile("verbal_reasoning/word_codes")}
+            {renderGameModeTile("verbal_reasoning/word_codes/match")}
+            {renderGameModeTile("wingo/crossword/fit")}
           </ul>
         </div>
 
@@ -88,25 +99,18 @@ export const LobbyMenu: React.FC<Props> = (props) => {
           <div className="sidebar-title">Numbers</div>
           <ul className="widgets">
             {renderGameModeTile("numbers/arithmetic_reveal")}
+            {renderGameModeTile("nubble")}
+            {renderGameModeTile("countdown/numbers")}
             {renderGameModeTile("numbers/arithmetic_drag/order")}
             {renderGameModeTile("numbers/arithmetic_drag/match")}
-            {renderGameModeTile("countdown/numbers")}
-            {renderGameModeTile("nubble")}
+            {renderGameModeTile("verbal_reasoning/number_sets")}
+            {renderGameModeTile("verbal_reasoning/algebra")}
           </ul>
         </div>
 
         <div className="sidebar">
           <div className="sidebar-title">Puzzle</div>
-          <ul className="widgets">
-            {renderGameModeTile("puzzle/sequence")}
-            {renderGameModeTile("only_connect/wall")}
-            {renderGameModeTile("verbal_reasoning/sameLetters")}
-            {renderGameModeTile("verbal_reasoning/number_sets")}
-            {renderGameModeTile("verbal_reasoning/algebra")}
-            {renderGameModeTile("verbal_reasoning/word_codes")}
-            {renderGameModeTile("verbal_reasoning/word_codes/match")}
-            {renderGameModeTile("letters_categories")}
-          </ul>
+          <ul className="widgets">{renderGameModeTile("puzzle/sequence")}</ul>
         </div>
 
         <div className="sidebar">

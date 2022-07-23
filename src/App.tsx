@@ -603,6 +603,8 @@ export const App: React.FC = () => {
             defaultWordleGamemodeSettings.find((x) => x.page === page)?.settings
           );
 
+        case "letters_categories":
+          
         case "nubble":
           return SaveData.getNubbleConfigGamemodeSettings() || defaultNubbleGamemodeSettings;
       }
