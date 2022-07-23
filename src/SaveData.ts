@@ -1,6 +1,8 @@
 import { Page, pages } from "./App";
 import { LevelConfig } from "./Campaign/Level";
 import { BaseChallenge } from "./Challenges/BaseChallenge";
+import { CountdownLettersConfigProps } from "./CountdownLetters/CountdownLettersConfig";
+import { LetterCategoriesConfigProps } from "./LetterCategories/LetterCategoriesConfig";
 import { NubbleConfigProps } from "./Nubble/NubbleConfig";
 import { Themes } from "./Themes";
 import { WordleConfigProps } from "./WordleConfig";
@@ -442,12 +444,10 @@ export class SaveData {
 
     const wordleInterlinkedGamemodeSettings = localStorage.getItem(itemName);
 
-    // If saved gamemode settings were found
     if (wordleInterlinkedGamemodeSettings) {
       return JSON.parse(wordleInterlinkedGamemodeSettings) as WordleConfigProps["gamemodeSettings"];
     }
 
-    // Else if not found; return null
     return null;
   }
 
@@ -458,12 +458,38 @@ export class SaveData {
   public static getNubbleConfigGamemodeSettings(): NubbleConfigProps["gamemodeSettings"] | null {
     const nubbleConfigGamemodeSettings = localStorage.getItem("nubbleConfigGamemodeSettings");
 
-    // If saved gamemode settings were found
     if (nubbleConfigGamemodeSettings) {
       return JSON.parse(nubbleConfigGamemodeSettings) as NubbleConfigProps["gamemodeSettings"];
     }
 
-    // Else if not found; return null
+    return null;
+  }
+
+  public static setLetterCategoriesConfigGamemodeSettings(gameSettings: LetterCategoriesConfigProps["gamemodeSettings"]) {
+    localStorage.setItem("letterCategoriesConfigGamemodeSettings", JSON.stringify(gameSettings));
+  }
+
+  public static getLetterCategoriesConfigGamemodeSettings(): LetterCategoriesConfigProps["gamemodeSettings"] | null {
+    const letterCategoriesConfigGamemodeSettings = localStorage.getItem("letterCategoriesConfigGamemodeSettings");
+
+    if (letterCategoriesConfigGamemodeSettings) {
+      return JSON.parse(letterCategoriesConfigGamemodeSettings) as LetterCategoriesConfigProps["gamemodeSettings"];
+    }
+
+    return null;
+  }
+
+  public static setCountdownLettersConfigGamemodeSettings(gameSettings: CountdownLettersConfigProps["gamemodeSettings"]) {
+    localStorage.setItem("countdownLettersConfigGamemodeSettings", JSON.stringify(gameSettings));
+  }
+
+  public static getCountdownLettersConfigGamemodeSettings(): CountdownLettersConfigProps["gamemodeSettings"] | null {
+    const countdownLettersConfigGamemodeSettings = localStorage.getItem("countdownLettersConfigGamemodeSettings");
+
+    if (countdownLettersConfigGamemodeSettings) {
+      return JSON.parse(countdownLettersConfigGamemodeSettings) as CountdownLettersConfigProps["gamemodeSettings"];
+    }
+
     return null;
   }
 

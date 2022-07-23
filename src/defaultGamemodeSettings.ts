@@ -25,6 +25,8 @@ import { words_gemstones } from "./WordArrays/Categories/gemstones";
 import { WordleConfigProps } from "./WordleConfig";
 import { WordleInterlinkedProps } from "./WordleInterlinked";
 import { words_puzzles } from "./WordArrays/words_puzzles";
+import { LetterCategoriesConfigProps } from "./LetterCategories/LetterCategoriesConfig";
+import { CountdownLettersConfigProps } from "./CountdownLetters/CountdownLettersConfig";
 
 // --- Default values/variables --- //
 export const wordLengthMappingsTargets = [
@@ -229,6 +231,16 @@ export const defaultWordleInterlinkedGamemodeSettings: {
     },
   },
 ];
+
+export const defaultLetterCategoriesGamemodeSettings: LetterCategoriesConfigProps["gamemodeSettings"] = {
+  defaultNumCategories: 5,
+  timerConfig: { isTimed: false },
+};
+
+export const defaultCountdownLettersGamemodeSettings: CountdownLettersConfigProps["gamemodeSettings"] = {
+  defaultNumLetters: 9,
+  timerConfig: { isTimed: true, seconds: 30 },
+};
 
 export const defaultNubbleGamemodeSettings: NubbleConfigProps["gamemodeSettings"] = {
   numDice: 4,

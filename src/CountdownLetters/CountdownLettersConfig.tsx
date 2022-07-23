@@ -9,22 +9,22 @@ export interface CountdownLettersConfigProps {
   mode: countdownMode;
   guesses?: string[];
   countdownWord?: string;
-}
-
-interface Props extends CountdownLettersConfigProps {
-  page: Page;
   gamemodeSettings?: {
     // The number of letters (that make up the selection used to make a word)
     defaultNumLetters?: number;
     timerConfig?: { isTimed: true; seconds: number } | { isTimed: false };
   };
+  gameshowScore?: number;
+}
+
+interface Props extends CountdownLettersConfigProps {
+  page: Page;
   theme: Theme;
   settings: SettingsData;
   setTheme: (theme: Theme) => void;
   setPage: (page: Page) => void;
   addGold: (gold: number) => void;
   onComplete?: (wasCorrect: boolean, answer: string, targetAnswer: string, score: number | null) => void;
-  gameshowScore?: number;
 }
 
 export function isWordValid(countdownWord: string, guessedWord: string) {

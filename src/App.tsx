@@ -34,6 +34,8 @@ import { FiArrowLeft, FiHelpCircle, FiSettings } from "react-icons/fi";
 import HelpInformation from "./HelpInformation";
 import { TitlePage } from "./TitlePage";
 import {
+  defaultCountdownLettersGamemodeSettings,
+  defaultLetterCategoriesGamemodeSettings,
   defaultNubbleGamemodeSettings,
   defaultWordleGamemodeSettings,
   DEFAULT_NUM_GUESSES,
@@ -569,7 +571,6 @@ export const App: React.FC = () => {
     const pageGamemodeSettings = (() => {
       switch (page) {
         /*
-        | "letters_categories"
         | "countdown/letters"
         | "countdown/numbers"
         | "numbers/arithmetic_reveal"
@@ -604,7 +605,11 @@ export const App: React.FC = () => {
           );
 
         case "letters_categories":
-          
+          return SaveData.getLetterCategoriesConfigGamemodeSettings() || defaultLetterCategoriesGamemodeSettings;
+
+        case "countdown/letters":
+          return SaveData.getCountdownLettersConfigGamemodeSettings() || defaultCountdownLettersGamemodeSettings;
+
         case "nubble":
           return SaveData.getNubbleConfigGamemodeSettings() || defaultNubbleGamemodeSettings;
       }

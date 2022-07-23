@@ -1,19 +1,22 @@
 import React, { useState } from "react";
 import { Page } from "../App";
 import LetterCategories from "./LetterCategories";
-import { SettingsData } from "../SaveData";
+import { SaveData, SettingsData } from "../SaveData";
 import { DEFAULT_ALPHABET } from "../Keyboard";
 import { pickRandomElementFrom } from "../WordleConfig";
 import { Theme } from "../Themes";
 import { categoryMappings } from "../defaultGamemodeSettings";
 
-interface Props {
+export interface LetterCategoriesConfigProps {
   enforceFullLengthGuesses: boolean;
   gamemodeSettings?: {
     defaultNumCategories?: number;
     timerConfig?: { isTimed: true; seconds: number } | { isTimed: false };
   };
   finishingButtonText?: string;
+}
+
+interface Props extends LetterCategoriesConfigProps {
   theme: Theme;
   settings: SettingsData;
   page: Page;
@@ -106,7 +109,7 @@ const LetterCategoriesConfig: React.FC<Props> = (props) => {
 
         // Get all the words in the category starting with isFirstLetterProvided
         const words = randomCategory.array
-          .map((wordHintCombination: { word: string, hint: string}) => wordHintCombination.word)
+          .map((wordHintCombination: { word: string; hint: string }) => wordHintCombination.word)
           .filter((word: string) => word.charAt(0) === isFirstLetterProvided);
 
         // No words starting with isFirstLetterProvided
@@ -160,10 +163,22 @@ const LetterCategoriesConfig: React.FC<Props> = (props) => {
     }
   }, [inProgress]);
 
+  // Reset game after change of settings (stops cheating by changing settings partway through a game)
+  React.useEffect(() => {
+    if (props.page === "campaign/area/level") {
+      return;
+    }
+
+    ResetGame();
+
+    // Save the latest gamemode settings for this mode
+    SaveData.setLetterCategoriesConfigGamemodeSettings(gamemodeSettings);
+  }, [gamemodeSettings]);
+
   function ResetGame() {
     props.onComplete?.(true);
+    //set
     setGuesses([]);
-    setCurrentWord("");
     setWordIndex(0);
     setinProgress(true);
     sethasSubmitLetter(false);
