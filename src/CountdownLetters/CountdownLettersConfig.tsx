@@ -148,7 +148,7 @@ const CountdownLettersConfig: React.FC<Props> = (props) => {
     ResetGame(false, "", "", 0);
 
     // Save the latest gamemode settings for this mode
-    SaveData.setLetterCategoriesConfigGamemodeSettings(gamemodeSettings);
+    SaveData.setCountdownLettersConfigGamemodeSettings(gamemodeSettings);
   }, [gamemodeSettings]);
 
   // TODO: Better way to callback the outcome/status of a completed letters round for CountdownGameshow?

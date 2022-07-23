@@ -2,6 +2,7 @@ import { Page, pages } from "./App";
 import { LevelConfig } from "./Campaign/Level";
 import { BaseChallenge } from "./Challenges/BaseChallenge";
 import { CountdownLettersConfigProps } from "./CountdownLetters/CountdownLettersConfig";
+import { CountdownNumbersConfigProps } from "./CountdownNumbers/CountdownNumbersConfig";
 import { LetterCategoriesConfigProps } from "./LetterCategories/LetterCategoriesConfig";
 import { NubbleConfigProps } from "./Nubble/NubbleConfig";
 import { Themes } from "./Themes";
@@ -445,7 +446,7 @@ export class SaveData {
     const wordleInterlinkedGamemodeSettings = localStorage.getItem(itemName);
 
     if (wordleInterlinkedGamemodeSettings) {
-      return JSON.parse(wordleInterlinkedGamemodeSettings) as WordleConfigProps["gamemodeSettings"];
+      return JSON.parse(wordleInterlinkedGamemodeSettings) as WordleInterlinkedProps["gamemodeSettings"];
     }
 
     return null;
@@ -488,6 +489,20 @@ export class SaveData {
 
     if (countdownLettersConfigGamemodeSettings) {
       return JSON.parse(countdownLettersConfigGamemodeSettings) as CountdownLettersConfigProps["gamemodeSettings"];
+    }
+
+    return null;
+  }
+
+  public static setCountdownNumbersConfigGamemodeSettings(gameSettings: CountdownNumbersConfigProps["gamemodeSettings"]) {
+    localStorage.setItem("countdownNumbersConfigGamemodeSettings", JSON.stringify(gameSettings));
+  }
+
+  public static getCountdownNumbersConfigGamemodeSettings(): CountdownNumbersConfigProps["gamemodeSettings"] | null {
+    const countdownNumbersConfigGamemodeSettings = localStorage.getItem("countdownNumbersConfigGamemodeSettings");
+
+    if (countdownNumbersConfigGamemodeSettings) {
+      return JSON.parse(countdownNumbersConfigGamemodeSettings) as CountdownNumbersConfigProps["gamemodeSettings"];
     }
 
     return null;

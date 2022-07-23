@@ -35,6 +35,7 @@ import HelpInformation from "./HelpInformation";
 import { TitlePage } from "./TitlePage";
 import {
   defaultCountdownLettersGamemodeSettings,
+  defaultCountdownNumbersGamemodeSettings,
   defaultLetterCategoriesGamemodeSettings,
   defaultNubbleGamemodeSettings,
   defaultWordleGamemodeSettings,
@@ -571,7 +572,6 @@ export const App: React.FC = () => {
     const pageGamemodeSettings = (() => {
       switch (page) {
         /*
-        | "countdown/letters"
         | "countdown/numbers"
         | "numbers/arithmetic_reveal"
         | "numbers/arithmetic_drag/order"
@@ -593,10 +593,10 @@ export const App: React.FC = () => {
 
         // WordleConfig modes
         case "wingo/repeat":
-        case "wingo/category":
+        case "wingo/puzzle":
         case "wingo/increasing":
         case "wingo/limitless":
-        case "wingo/puzzle":
+        case "wingo/category":
         case "countdown/conundrum":
           // Use the saved Wingo Config gamemodeSettings, or the default setitngs (if no previous save was found)
           return (
@@ -609,6 +609,9 @@ export const App: React.FC = () => {
 
         case "countdown/letters":
           return SaveData.getCountdownLettersConfigGamemodeSettings() || defaultCountdownLettersGamemodeSettings;
+
+        case "countdown/numbers":
+          return SaveData.getCountdownNumbersConfigGamemodeSettings() || defaultCountdownNumbersGamemodeSettings;
 
         case "nubble":
           return SaveData.getNubbleConfigGamemodeSettings() || defaultNubbleGamemodeSettings;

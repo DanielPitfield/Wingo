@@ -3,10 +3,9 @@ import { countdownMode, Page } from "../App";
 import CountdownNumbers from "./CountdownNumbers";
 import { calculateTotal } from "./NumberRow";
 import { Theme } from "../Themes";
-import { SettingsData } from "../SaveData";
+import { SaveData, SettingsData } from "../SaveData";
 
-interface Props {
-  page: Page;
+export interface CountdownNumbersConfigProps {
   mode: countdownMode;
   gamemodeSettings?: {
     hasScaryNumbers?: boolean;
@@ -16,13 +15,17 @@ interface Props {
     timerConfig?: { isTimed: true; seconds: number } | { isTimed: false };
   };
   defaultNumGuesses: number;
+  gameshowScore?: number;
+}
+
+interface Props extends CountdownNumbersConfigProps {
+  page: Page;
   theme: Theme;
   settings: SettingsData;
   setTheme: (theme: Theme) => void;
   setPage: (page: Page) => void;
   addGold: (gold: number) => void;
   onComplete?: (wasCorrect: boolean, answer: string, targetAnswer: string, score: number | null) => void;
-  gameshowScore?: number;
 }
 
 export const operators: { name: "÷" | "-" | "+" | "×"; function: (num1: number, num2: number) => number }[] = [
@@ -91,13 +94,12 @@ const CountdownNumbersConfig: React.FC<Props> = (props) => {
   };
 
   const [gamemodeSettings, setGamemodeSettings] = useState<{
-    hasScaryNumbers: boolean,
-    scoringMethod: "standard" | "pointLostPerDifference",
+    hasScaryNumbers: boolean;
+    scoringMethod: "standard" | "pointLostPerDifference";
     numOperands: number;
     timerConfig: { isTimed: true; seconds: number } | { isTimed: false };
   }>(defaultGamemodeSettings);
 
-  
   const [remainingSeconds, setRemainingSeconds] = useState(
     props.gamemodeSettings?.timerConfig?.isTimed === true
       ? props.gamemodeSettings?.timerConfig.seconds
@@ -171,28 +173,6 @@ const CountdownNumbersConfig: React.FC<Props> = (props) => {
   }, [setRemainingSeconds, remainingSeconds, gamemodeSettings.timerConfig.isTimed, countdownStatuses]);
 
   React.useEffect(() => {
-    const newCountdownStatuses: (
-      | {
-          type: "original";
-          number: number | null;
-          picked: boolean;
-        }
-      | {
-          type: "intermediary";
-          wordIndex: number;
-          number: number | null;
-          picked: boolean;
-        }
-    )[] = Array.from({ length: gamemodeSettings.numOperands }).map((_) => ({
-      type: "original",
-      number: null,
-      picked: false,
-    }));
-
-    setCountdownStatuses(newCountdownStatuses);
-  }, [gamemodeSettings.numOperands]);
-
-  React.useEffect(() => {
     const intermediaryNumbers: typeof countdownStatuses = currentGuesses.map((guess, index) => {
       const existingCountdownStatus = countdownStatuses.find((x) => x.type === "intermediary" && x.wordIndex === index);
 
@@ -214,6 +194,19 @@ const CountdownNumbersConfig: React.FC<Props> = (props) => {
 
     clearGrid();
   }, [hasTimerEnded]);
+
+  // Reset game after change of settings (stops cheating by changing settings partway through a game)
+  React.useEffect(() => {
+    if (props.page === "campaign/area/level" || props.gameshowScore !== undefined) {
+      return;
+    }
+
+    // TODO: Function returns above if part of gameshow, so none of these parameters are needed
+    ResetGame(false, "", "", 0);
+
+    // Save the latest gamemode settings for this mode
+    SaveData.setCountdownNumbersConfigGamemodeSettings(gamemodeSettings);
+  }, [gamemodeSettings]);
 
   function getTargetNumber(min: number, max: number) {
     min = Math.ceil(min);
@@ -249,7 +242,7 @@ const CountdownNumbersConfig: React.FC<Props> = (props) => {
     if (!hasNumberSelectionFinished(countdownStatuses, gamemodeSettings.numOperands)) {
       return;
     }
-    
+
     // Nothing entered yet
     if (!hasSubmitNumber) {
       return;
