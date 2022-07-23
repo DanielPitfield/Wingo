@@ -77,6 +77,23 @@ const LetterCategoriesConfig: React.FC<Props> = (props) => {
 
   // targetWord generation
   React.useEffect(() => {
+    generateTargetWords();
+  }, [inProgress]);
+
+  // Reset game after change of settings (stops cheating by changing settings partway through a game)
+  React.useEffect(() => {
+    if (props.page === "campaign/area/level") {
+      return;
+    }
+
+    ResetGame();
+
+    // Save the latest gamemode settings for this mode
+    SaveData.setLetterCategoriesConfigGamemodeSettings(gamemodeSettings);
+  }, [gamemodeSettings]);
+
+  // Picks a required starting letter and then target words from categories starting with this letter
+  function generateTargetWords() {
     if (inProgress) {
       // Get a random letter from the Alphabet
       const isFirstLetterProvided = pickRandomElementFrom(DEFAULT_ALPHABET);
@@ -161,23 +178,11 @@ const LetterCategoriesConfig: React.FC<Props> = (props) => {
       // Set the wordLength to the length of the largest valid word in any of the categories
       setwordLength(longestValidLength);
     }
-  }, [inProgress]);
-
-  // Reset game after change of settings (stops cheating by changing settings partway through a game)
-  React.useEffect(() => {
-    if (props.page === "campaign/area/level") {
-      return;
-    }
-
-    ResetGame();
-
-    // Save the latest gamemode settings for this mode
-    SaveData.setLetterCategoriesConfigGamemodeSettings(gamemodeSettings);
-  }, [gamemodeSettings]);
+  }
 
   function ResetGame() {
     props.onComplete?.(true);
-    //set
+    generateTargetWords();
     setGuesses([]);
     setWordIndex(0);
     setinProgress(true);
