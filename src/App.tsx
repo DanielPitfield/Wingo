@@ -857,6 +857,7 @@ export const App: React.FC = () => {
             themes={[Themes.GenericLetterCountdown, Themes.GenericNumberCountdown]}
             setTheme={setThemeIfNoPreferredSet}
             addGold={addGold}
+            // TODO: Should CountdownGameshow have gamemodeSettings like other gamemodes or an initial configuration page?
             numSets={5}
             numLetterRoundsPerSet={2}
             numNumberRoundsPerSet={1}
@@ -869,6 +870,7 @@ export const App: React.FC = () => {
         return (
           <LingoGameshow
             commonWingoProps={commonWingoProps}
+            // TODO: Should LingoGameshow have gamemodeSettings like other gamemodes or an initial configuration page?
             firstRoundConfig={{ numLingos: 4, numPuzzles: 1 }}
             secondRoundConfig={{ numLingos: 3, numPuzzles: 1 }}
             thirdRoundConfig={{ numFourLengthLingos: 2, numPuzzles: 1, numFiveLengthLingos: 2, numberPuzzles: 1 }}
