@@ -44,6 +44,7 @@ import {
   defaultNubbleGamemodeSettings,
   defaultNumberSetsGamemodeSettings,
   defaultSameLetterWordsGamemodeSettings,
+  defaultWordCodesGamemodeSettings,
   defaultWordleGamemodeSettings,
   DEFAULT_NUM_GUESSES,
   DEFAULT_NUM_GUESSES_COUNTDOWN_NUMBERS,
@@ -85,7 +86,7 @@ export type Page =
   | "verbal_reasoning/sameLetters"
   | "verbal_reasoning/number_sets"
   | "verbal_reasoning/algebra"
-  | "verbal_reasoning/word_codes"
+  | "verbal_reasoning/word_codes/question"
   | "verbal_reasoning/word_codes/match"
   | "puzzle/sequence"
   | "campaign"
@@ -364,7 +365,7 @@ export const pages: {
     isPlayable: true,
   },
   {
-    page: "verbal_reasoning/word_codes",
+    page: "verbal_reasoning/word_codes/question",
     title: "Word Codes",
     description: "Decipher codes to find words (and vice versa)",
     shortTitle: "Word Codes",
@@ -565,23 +566,10 @@ export const App: React.FC = () => {
   }
 
   const pageComponent = (() => {
-    const commonProps = {
-      page: page,
-      theme: theme,
-      setPage: setPage,
-      setTheme: setThemeIfNoPreferredSet,
-      addGold: addGold,
-      settings: settings,
-      onComplete: onComplete,
-    };
-
     // Get the gamemode settings for the specific page (gamemode)
     const pageGamemodeSettings = (() => {
       switch (page) {
         /*
-        | "verbal_reasoning/algebra"
-        | "verbal_reasoning/word_codes"
-        | "verbal_reasoning/word_codes/match"
         | "puzzle/sequence"
         | "countdown/gameshow"
         | "lingo/gameshow";
@@ -640,10 +628,34 @@ export const App: React.FC = () => {
         case "verbal_reasoning/algebra":
           return SaveData.getAlgebraGamemodeSettings() || defaultAlgebraGamemodeSettings;
 
+        case "verbal_reasoning/word_codes/question":
+          return (
+            SaveData.getWordCodesGamemodeSettings("question") ||
+            defaultWordCodesGamemodeSettings.find((x) => x.mode === "question")?.settings
+          );
+
+        case "verbal_reasoning/word_codes/match":
+          return (
+            SaveData.getWordCodesGamemodeSettings("match") ||
+            defaultWordCodesGamemodeSettings.find((x) => x.mode === "match")?.settings
+          );
+
         case "nubble":
           return SaveData.getNubbleConfigGamemodeSettings() || defaultNubbleGamemodeSettings;
       }
     })();
+
+    const commonProps = {
+      isCampaignLevel: false,
+      gamemodeSettings: pageGamemodeSettings,
+      page: page,
+      theme: theme,
+      setPage: setPage,
+      setTheme: setThemeIfNoPreferredSet,
+      addGold: addGold,
+      settings: settings,
+      onComplete: onComplete,
+    };
 
     // Overwrite properties for specific modes where required
     const commonWingoProps = {
@@ -657,21 +669,6 @@ export const App: React.FC = () => {
       setTheme: setThemeIfNoPreferredSet,
       addGold: addGold,
       settings: settings,
-      onComplete: onComplete,
-    };
-
-    const commonArithmeticDragProps = {
-      isCampaignLevel: false,
-      gamemodeSettings: {
-        timer: { isTimed: true, seconds: 100 },
-        numTiles: 6,
-        numberSize: "small" as arithmeticNumberSize,
-        numGuesses: 3,
-        numOperands: 3,
-      },
-      theme: theme,
-      settings: settings,
-      setPage: setPage,
       onComplete: onComplete,
     };
 
@@ -786,19 +783,13 @@ export const App: React.FC = () => {
         return <LetterCategoriesConfig {...commonProps} enforceFullLengthGuesses={false} />;
 
       case "countdown/letters":
-        return (
-          <CountdownLettersConfig
-            {...commonProps}
-            mode={"casual" as countdownMode}
-            theme={Themes.GenericLetterCountdown}
-          />
-        );
+        return <CountdownLettersConfig {...commonProps} mode={"casual"} theme={Themes.GenericLetterCountdown} />;
 
       case "countdown/numbers":
         return (
           <CountdownNumbersConfig
             {...commonProps}
-            mode={"casual" as countdownMode}
+            mode={"casual"}
             defaultNumGuesses={DEFAULT_NUM_GUESSES_COUNTDOWN_NUMBERS}
             theme={Themes.GenericNumberCountdown}
           />
@@ -815,116 +806,37 @@ export const App: React.FC = () => {
         );
 
       case "numbers/arithmetic_reveal":
-        return (
-          <ArithmeticReveal
-            isCampaignLevel={false}
-            gamemodeSettings={{
-              numTiles: 4,
-              numCheckpoints: 3,
-              numberSize: "small" as arithmeticNumberSize,
-              revealIntervalSeconds: 3,
-              timerConfig: { isTimed: true, seconds: 10 },
-            }}
-            theme={theme}
-            settings={settings}
-            setPage={setPage}
-            onComplete={commonWingoProps.onComplete}
-          />
-        );
+        return <ArithmeticReveal {...commonProps} />;
 
       case "numbers/arithmetic_drag/order":
-        return <ArithmeticDrag {...commonArithmeticDragProps} mode="order" />;
+        return <ArithmeticDrag {...commonProps} mode="order" />;
 
       case "numbers/arithmetic_drag/match":
-        return <ArithmeticDrag {...commonArithmeticDragProps} mode="match" />;
+        return <ArithmeticDrag {...commonProps} mode="match" />;
 
       case "nubble":
-        return (
-          <NubbleConfig
-            page={page}
-            theme={theme}
-            campaignConfig={{ isCampaignLevel: false }}
-            settings={settings}
-            gamemodeSettings={pageGamemodeSettings as NubbleConfigProps["gamemodeSettings"]}
-          />
-        );
+        return <NubbleConfig campaignConfig={{ isCampaignLevel: false }} {...commonProps} />;
 
       case "only_connect/wall":
-        return (
-          <GroupWall
-            isCampaignLevel={false}
-            theme={theme}
-            settings={settings}
-            setPage={setPage}
-            onComplete={commonWingoProps.onComplete}
-          />
-        );
+        return <GroupWall {...commonProps} />;
 
       case "verbal_reasoning/sameLetters":
-        return (
-          <SameLetterWords
-            isCampaignLevel={false}
-            theme={theme}
-            settings={settings}
-            setPage={setPage}
-            onComplete={commonWingoProps.onComplete}
-          />
-        );
+        return <SameLetterWords {...commonProps} />;
 
       case "verbal_reasoning/number_sets":
-        return (
-          <NumberSets
-            isCampaignLevel={false}
-            theme={theme}
-            settings={settings}
-            setPage={setPage}
-            onComplete={commonWingoProps.onComplete}
-          />
-        );
+        return <NumberSets {...commonProps} />;
 
       case "verbal_reasoning/algebra":
-        return (
-          <Algebra
-            isCampaignLevel={false}
-            theme={theme}
-            settings={settings}
-            setPage={setPage}
-            onComplete={commonWingoProps.onComplete}
-          />
-        );
+        return <Algebra {...commonProps} />;
 
-      case "verbal_reasoning/word_codes":
-        return (
-          <WordCodes
-            isCampaignLevel={false}
-            theme={theme}
-            settings={settings}
-            setPage={setPage}
-            onComplete={commonWingoProps.onComplete}
-          />
-        );
+      case "verbal_reasoning/word_codes/question":
+        return <WordCodes mode={"question"} {...commonProps} />;
 
       case "verbal_reasoning/word_codes/match":
-        return (
-          <WordCodes
-            isCampaignLevel={false}
-            gamemodeSettings={{ mode: "match", numCodesToMatch: 4 }}
-            theme={theme}
-            settings={settings}
-            setPage={setPage}
-            onComplete={commonWingoProps.onComplete}
-          />
-        );
+        return <WordCodes mode={"match"} {...commonProps} />;
 
       case "puzzle/sequence":
-        return (
-          <PuzzleConfig
-            theme={theme}
-            setTheme={setThemeIfNoPreferredSet}
-            settings={settings}
-            onComplete={commonWingoProps.onComplete}
-          />
-        );
+        return <PuzzleConfig {...commonProps} />;
 
       case "challenges":
         return <ChallengesInfo settings={settings} addGold={addGold} />;

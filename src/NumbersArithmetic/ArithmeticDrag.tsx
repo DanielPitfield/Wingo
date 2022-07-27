@@ -22,8 +22,8 @@ export type arithmeticMode = typeof arithmeticModes[number];
 
 export interface ArithmeticDragProps {
   isCampaignLevel: boolean;
-  // TODO: Should this be in gamemodeSettings?
   mode: arithmeticMode;
+
   gamemodeSettings?: {
     /* TODO: Difficulty presets
     All these settings control the difficulty for this mode

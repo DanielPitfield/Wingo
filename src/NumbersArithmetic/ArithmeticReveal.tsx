@@ -33,7 +33,7 @@ export interface ArithmeticRevealProps {
     // How big/difficult are the numbers used in these expressions?
     numberSize?: arithmeticNumberSize;
     // The time between tiles appearing
-    revealIntervalSeconds: number;
+    revealIntervalSeconds?: number;
     timerConfig?: { isTimed: true; seconds: number } | { isTimed: false };
   };
 }

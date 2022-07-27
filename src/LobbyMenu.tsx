@@ -89,7 +89,7 @@ export const LobbyMenu: React.FC<Props> = (props) => {
             {renderGameModeTile("countdown/conundrum")}
             {renderGameModeTile("letters_categories")}
             {renderGameModeTile("verbal_reasoning/sameLetters")}
-            {renderGameModeTile("verbal_reasoning/word_codes")}
+            {renderGameModeTile("verbal_reasoning/word_codes/question")}
             {renderGameModeTile("verbal_reasoning/word_codes/match")}
             {renderGameModeTile("wingo/crossword/fit")}
           </ul>

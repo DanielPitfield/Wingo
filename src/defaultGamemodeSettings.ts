@@ -34,6 +34,7 @@ import { GroupWallProps } from "./OnlyConnect/GroupWall";
 import { SameLetterWordsProps } from "./VerbalReasoning/SameLetterWords";
 import { NumberSetsProps } from "./VerbalReasoning/NumberSets/NumberSets";
 import { AlgebraProps } from "./VerbalReasoning/Algebra/Algebra";
+import { wordCodesMode, WordCodesProps } from "./VerbalReasoning/WordCodes";
 
 // --- Default values/variables --- //
 export const wordLengthMappingsTargets = [
@@ -254,17 +255,20 @@ export const defaultCountdownNumbersGamemodeSettings: CountdownNumbersConfigProp
   scoringMethod: "standard",
   defaultNumOperands: 6,
   timerConfig: { isTimed: true, seconds: 30 },
-}
+};
 
 export const defaultArithmeticRevealGamemodeSettings: ArithmeticRevealProps["gamemodeSettings"] = {
   numCheckpoints: 1,
   numTiles: 5,
   numberSize: "medium",
   revealIntervalSeconds: 3,
-  timerConfig: { isTimed: true, seconds: 10 },  
-}
+  timerConfig: { isTimed: true, seconds: 10 },
+};
 
-export const defaultArithmeticDragGamemodeSettings: { mode: arithmeticMode; settings: ArithmeticDragProps["gamemodeSettings"] }[] = [
+export const defaultArithmeticDragGamemodeSettings: {
+  mode: arithmeticMode;
+  settings: ArithmeticDragProps["gamemodeSettings"];
+}[] = [
   {
     mode: "match",
     settings: {
@@ -272,7 +276,7 @@ export const defaultArithmeticDragGamemodeSettings: { mode: arithmeticMode; sett
       numGuesses: 3,
       numOperands: 2,
       numberSize: "medium",
-      timerConfig: { isTimed: true, seconds: 100 }
+      timerConfig: { isTimed: true, seconds: 100 },
     },
   },
   {
@@ -282,7 +286,7 @@ export const defaultArithmeticDragGamemodeSettings: { mode: arithmeticMode; sett
       numGuesses: 3,
       numOperands: 2,
       numberSize: "medium",
-      timerConfig: { isTimed: true, seconds: 100 }
+      timerConfig: { isTimed: true, seconds: 100 },
     },
   },
 ];
@@ -292,7 +296,7 @@ export const defaultGroupWallGamemodeSettings: GroupWallProps["gamemodeSettings"
   groupSize: 4,
   numGuesses: 3,
   timerConfig: { isTimed: false },
-}
+};
 
 export const defaultSameLetterWordsGamemodeSettings: SameLetterWordsProps["gamemodeSettings"] = {
   wordLength: DEFAULT_WORD_LENGTH,
@@ -300,17 +304,44 @@ export const defaultSameLetterWordsGamemodeSettings: SameLetterWordsProps["gamem
   numTotalWords: 20,
   numGuesses: 20,
   timerConfig: { isTimed: false },
-}
+};
 
 export const defaultNumberSetsGamemodeSettings: NumberSetsProps["gamemodeSettings"] = {
   difficulty: "easy",
   timerConfig: { isTimed: false },
-}
+};
 
 export const defaultAlgebraGamemodeSettings: AlgebraProps["gamemodeSettings"] = {
   difficulty: "easy",
   timerConfig: { isTimed: false },
-}
+};
+
+export const defaultWordCodesGamemodeSettings: { mode: wordCodesMode; settings: WordCodesProps["gamemodeSettings"] }[] =
+  [
+    {
+      mode: "question",
+      settings: {
+        numDisplayWords: 4,
+        numDisplayCodes: 3,
+        numWordToCodeQuestions: 2,
+        numCodeToWordQuestions: 1,
+        codeLength: 4,
+        numAdditionalLetters: 2,
+        numGuesses: 3,
+        timerConfig: { isTimed: false },
+      },
+    },
+    {
+      mode: "match",
+      settings: {
+        numCodesToMatch: 4,
+        codeLength: 4,
+        numAdditionalLetters: 2,
+        numGuesses: 3,
+        timerConfig: { isTimed: false },
+      },
+    },
+  ];
 
 export const defaultNubbleGamemodeSettings: NubbleConfigProps["gamemodeSettings"] = {
   numDice: 4,

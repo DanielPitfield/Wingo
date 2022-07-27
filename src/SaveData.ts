@@ -12,6 +12,7 @@ import { Themes } from "./Themes";
 import { AlgebraProps } from "./VerbalReasoning/Algebra/Algebra";
 import { NumberSetsProps } from "./VerbalReasoning/NumberSets/NumberSets";
 import { SameLetterWordsProps } from "./VerbalReasoning/SameLetterWords";
+import { wordCodesMode, WordCodesProps } from "./VerbalReasoning/WordCodes";
 import { WordleConfigProps } from "./WordleConfig";
 import { TileStatus, WordleInterlinkedProps } from "./WordleInterlinked";
 
@@ -611,6 +612,32 @@ export class SaveData {
 
     if (algebraGamemodeSettings) {
       return JSON.parse(algebraGamemodeSettings) as AlgebraProps["gamemodeSettings"];
+    }
+
+    return null;
+  }
+
+  public static setWordCodesGamemodeSettings(
+    mode: wordCodesMode,
+    gameSettings: WordCodesProps["gamemodeSettings"]
+  ) {
+    if (mode === "question") {
+      localStorage.setItem("wordCodesQuestionGamemodeSettings", JSON.stringify(gameSettings));
+    } else if (mode === "match") {
+      localStorage.setItem("wordCodesMatchGamemodeSettings", JSON.stringify(gameSettings));
+    }
+  }
+
+  public static getWordCodesGamemodeSettings(
+    mode: wordCodesMode
+  ): WordCodesProps["gamemodeSettings"] | null {
+    const wordCodesGamemodeSettings =
+      mode === "question"
+        ? localStorage.getItem("wordCodesQuestionGamemodeSettings")
+        : localStorage.getItem("wordCodesMatchGamemodeSettings");
+
+    if (wordCodesGamemodeSettings) {
+      return JSON.parse(wordCodesGamemodeSettings) as WordCodesProps["gamemodeSettings"];
     }
 
     return null;
