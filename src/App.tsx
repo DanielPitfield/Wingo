@@ -34,6 +34,7 @@ import { FiArrowLeft, FiHelpCircle, FiSettings } from "react-icons/fi";
 import HelpInformation from "./HelpInformation";
 import { TitlePage } from "./TitlePage";
 import {
+  defaultArithmeticDragGamemodeSettings,
   defaultArithmeticRevealGamemodeSettings,
   defaultCountdownLettersGamemodeSettings,
   defaultCountdownNumbersGamemodeSettings,
@@ -574,9 +575,6 @@ export const App: React.FC = () => {
     const pageGamemodeSettings = (() => {
       switch (page) {
         /*
-        | "numbers/arithmetic_reveal"
-        | "numbers/arithmetic_drag/order"
-        | "numbers/arithmetic_drag/match"
         | "only_connect/wall"
         | "verbal_reasoning/sameLetters"
         | "verbal_reasoning/number_sets"
@@ -614,8 +612,20 @@ export const App: React.FC = () => {
         case "countdown/numbers":
           return SaveData.getCountdownNumbersConfigGamemodeSettings() || defaultCountdownNumbersGamemodeSettings;
 
-          case "numbers/arithmetic_reveal":
-            return SaveData.getArithmeticRevealGamemodeSettings() || defaultArithmeticRevealGamemodeSettings;
+        case "numbers/arithmetic_reveal":
+          return SaveData.getArithmeticRevealGamemodeSettings() || defaultArithmeticRevealGamemodeSettings;
+
+        case "numbers/arithmetic_drag/order":
+          return (
+            SaveData.getArithmeticDragGamemodeSettings("order") ||
+            defaultArithmeticDragGamemodeSettings.find((x) => x.mode === "order")?.settings
+          );
+
+        case "numbers/arithmetic_drag/match":
+          return (
+            SaveData.getArithmeticDragGamemodeSettings("match") ||
+            defaultArithmeticDragGamemodeSettings.find((x) => x.mode === "match")?.settings
+          );
 
         case "nubble":
           return SaveData.getNubbleConfigGamemodeSettings() || defaultNubbleGamemodeSettings;

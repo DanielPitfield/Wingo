@@ -5,6 +5,7 @@ import { CountdownLettersConfigProps } from "./CountdownLetters/CountdownLetters
 import { CountdownNumbersConfigProps } from "./CountdownNumbers/CountdownNumbersConfig";
 import { LetterCategoriesConfigProps } from "./LetterCategories/LetterCategoriesConfig";
 import { NubbleConfigProps } from "./Nubble/NubbleConfig";
+import { ArithmeticDragProps, arithmeticMode } from "./NumbersArithmetic/ArithmeticDrag";
 import { ArithmeticRevealProps } from "./NumbersArithmetic/ArithmeticReveal";
 import { Themes } from "./Themes";
 import { WordleConfigProps } from "./WordleConfig";
@@ -467,7 +468,9 @@ export class SaveData {
     return null;
   }
 
-  public static setLetterCategoriesConfigGamemodeSettings(gameSettings: LetterCategoriesConfigProps["gamemodeSettings"]) {
+  public static setLetterCategoriesConfigGamemodeSettings(
+    gameSettings: LetterCategoriesConfigProps["gamemodeSettings"]
+  ) {
     localStorage.setItem("letterCategoriesConfigGamemodeSettings", JSON.stringify(gameSettings));
   }
 
@@ -481,7 +484,9 @@ export class SaveData {
     return null;
   }
 
-  public static setCountdownLettersConfigGamemodeSettings(gameSettings: CountdownLettersConfigProps["gamemodeSettings"]) {
+  public static setCountdownLettersConfigGamemodeSettings(
+    gameSettings: CountdownLettersConfigProps["gamemodeSettings"]
+  ) {
     localStorage.setItem("countdownLettersConfigGamemodeSettings", JSON.stringify(gameSettings));
   }
 
@@ -495,7 +500,9 @@ export class SaveData {
     return null;
   }
 
-  public static setCountdownNumbersConfigGamemodeSettings(gameSettings: CountdownNumbersConfigProps["gamemodeSettings"]) {
+  public static setCountdownNumbersConfigGamemodeSettings(
+    gameSettings: CountdownNumbersConfigProps["gamemodeSettings"]
+  ) {
     localStorage.setItem("countdownNumbersConfigGamemodeSettings", JSON.stringify(gameSettings));
   }
 
@@ -518,6 +525,32 @@ export class SaveData {
 
     if (arithmeticRevealGamemodeSettings) {
       return JSON.parse(arithmeticRevealGamemodeSettings) as ArithmeticRevealProps["gamemodeSettings"];
+    }
+
+    return null;
+  }
+
+  public static setArithmeticDragGamemodeSettings(
+    mode: arithmeticMode,
+    gameSettings: ArithmeticDragProps["gamemodeSettings"]
+  ) {
+    if (mode === "match") {
+      localStorage.setItem("arithmeticDragMatchGamemodeSettings", JSON.stringify(gameSettings));
+    } else if (mode === "order") {
+      localStorage.setItem("arithmeticDragOrderGamemodeSettings", JSON.stringify(gameSettings));
+    }
+  }
+
+  public static getArithmeticDragGamemodeSettings(
+    mode: arithmeticMode
+  ): ArithmeticDragProps["gamemodeSettings"] | null {
+    const arithmeticDragGamemodeSettings =
+      mode === "match"
+        ? localStorage.getItem("arithmeticDragMatchGamemodeSettings")
+        : localStorage.getItem("arithmeticDragOrderGamemodeSettings");
+
+    if (arithmeticDragGamemodeSettings) {
+      return JSON.parse(arithmeticDragGamemodeSettings) as ArithmeticDragProps["gamemodeSettings"];
     }
 
     return null;

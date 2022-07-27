@@ -29,7 +29,7 @@ import { LetterCategoriesConfigProps } from "./LetterCategories/LetterCategories
 import { CountdownLettersConfigProps } from "./CountdownLetters/CountdownLettersConfig";
 import { CountdownNumbersConfigProps } from "./CountdownNumbers/CountdownNumbersConfig";
 import { ArithmeticRevealProps } from "./NumbersArithmetic/ArithmeticReveal";
-import { arithmeticNumberSize } from "./NumbersArithmetic/ArithmeticDrag";
+import { ArithmeticDragProps, arithmeticMode, arithmeticNumberSize } from "./NumbersArithmetic/ArithmeticDrag";
 
 // --- Default values/variables --- //
 export const wordLengthMappingsTargets = [
@@ -259,6 +259,29 @@ export const defaultArithmeticRevealGamemodeSettings: ArithmeticRevealProps["gam
   revealIntervalSeconds: 3,
   timerConfig: { isTimed: true, seconds: 10 },  
 }
+
+export const defaultArithmeticDragGamemodeSettings: { mode: arithmeticMode; settings: ArithmeticDragProps["gamemodeSettings"] }[] = [
+  {
+    mode: "match",
+    settings: {
+      numTiles: 6,
+      numGuesses: 3,
+      numOperands: 2,
+      numberSize: "medium" as arithmeticNumberSize,
+      timerConfig: { isTimed: true, seconds: 100 }
+    },
+  },
+  {
+    mode: "order",
+    settings: {
+      numTiles: 6,
+      numGuesses: 3,
+      numOperands: 2,
+      numberSize: "medium" as arithmeticNumberSize,
+      timerConfig: { isTimed: true, seconds: 100 }
+    },
+  },
+];
 
 export const defaultNubbleGamemodeSettings: NubbleConfigProps["gamemodeSettings"] = {
   numDice: 4,
