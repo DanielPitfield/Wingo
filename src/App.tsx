@@ -34,6 +34,7 @@ import { FiArrowLeft, FiHelpCircle, FiSettings } from "react-icons/fi";
 import HelpInformation from "./HelpInformation";
 import { TitlePage } from "./TitlePage";
 import {
+  defaultArithmeticRevealGamemodeSettings,
   defaultCountdownLettersGamemodeSettings,
   defaultCountdownNumbersGamemodeSettings,
   defaultLetterCategoriesGamemodeSettings,
@@ -51,6 +52,7 @@ import {
 const countdownModes = ["casual", "realistic"] as const;
 export type countdownMode = typeof countdownModes[number];
 
+// TODO: Simplify string literals (names of pages)
 export type Page =
   | "splash-screen"
   | "title-page"
@@ -572,7 +574,6 @@ export const App: React.FC = () => {
     const pageGamemodeSettings = (() => {
       switch (page) {
         /*
-        | "countdown/numbers"
         | "numbers/arithmetic_reveal"
         | "numbers/arithmetic_drag/order"
         | "numbers/arithmetic_drag/match"
@@ -612,6 +613,9 @@ export const App: React.FC = () => {
 
         case "countdown/numbers":
           return SaveData.getCountdownNumbersConfigGamemodeSettings() || defaultCountdownNumbersGamemodeSettings;
+
+          case "numbers/arithmetic_reveal":
+            return SaveData.getArithmeticRevealGamemodeSettings() || defaultArithmeticRevealGamemodeSettings;
 
         case "nubble":
           return SaveData.getNubbleConfigGamemodeSettings() || defaultNubbleGamemodeSettings;

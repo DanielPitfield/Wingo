@@ -28,6 +28,8 @@ import { words_puzzles } from "./WordArrays/words_puzzles";
 import { LetterCategoriesConfigProps } from "./LetterCategories/LetterCategoriesConfig";
 import { CountdownLettersConfigProps } from "./CountdownLetters/CountdownLettersConfig";
 import { CountdownNumbersConfigProps } from "./CountdownNumbers/CountdownNumbersConfig";
+import { ArithmeticRevealProps } from "./NumbersArithmetic/ArithmeticReveal";
+import { arithmeticNumberSize } from "./NumbersArithmetic/ArithmeticDrag";
 
 // --- Default values/variables --- //
 export const wordLengthMappingsTargets = [
@@ -248,6 +250,14 @@ export const defaultCountdownNumbersGamemodeSettings: CountdownNumbersConfigProp
   scoringMethod: "standard",
   defaultNumOperands: 6,
   timerConfig: { isTimed: true, seconds: 30 },
+}
+
+export const defaultArithmeticRevealGamemodeSettings: ArithmeticRevealProps["gamemodeSettings"] = {
+  numCheckpoints: 1,
+  numTiles: 5,
+  numberSize: "medium" as arithmeticNumberSize,
+  revealIntervalSeconds: 3,
+  timerConfig: { isTimed: true, seconds: 10 },  
 }
 
 export const defaultNubbleGamemodeSettings: NubbleConfigProps["gamemodeSettings"] = {

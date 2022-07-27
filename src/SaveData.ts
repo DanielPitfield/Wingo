@@ -5,6 +5,7 @@ import { CountdownLettersConfigProps } from "./CountdownLetters/CountdownLetters
 import { CountdownNumbersConfigProps } from "./CountdownNumbers/CountdownNumbersConfig";
 import { LetterCategoriesConfigProps } from "./LetterCategories/LetterCategoriesConfig";
 import { NubbleConfigProps } from "./Nubble/NubbleConfig";
+import { ArithmeticRevealProps } from "./NumbersArithmetic/ArithmeticReveal";
 import { Themes } from "./Themes";
 import { WordleConfigProps } from "./WordleConfig";
 import { TileStatus, WordleInterlinkedProps } from "./WordleInterlinked";
@@ -503,6 +504,20 @@ export class SaveData {
 
     if (countdownNumbersConfigGamemodeSettings) {
       return JSON.parse(countdownNumbersConfigGamemodeSettings) as CountdownNumbersConfigProps["gamemodeSettings"];
+    }
+
+    return null;
+  }
+
+  public static setArithmeticRevealGamemodeSettings(gameSettings: ArithmeticRevealProps["gamemodeSettings"]) {
+    localStorage.setItem("arithmeticRevealGamemodeSettings", JSON.stringify(gameSettings));
+  }
+
+  public static getArithmeticRevealGamemodeSettings(): ArithmeticRevealProps["gamemodeSettings"] | null {
+    const arithmeticRevealGamemodeSettings = localStorage.getItem("arithmeticRevealGamemodeSettings");
+
+    if (arithmeticRevealGamemodeSettings) {
+      return JSON.parse(arithmeticRevealGamemodeSettings) as ArithmeticRevealProps["gamemodeSettings"];
     }
 
     return null;
