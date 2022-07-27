@@ -228,84 +228,86 @@ const SameLetterWords: React.FC<Props> = (props) => {
     setSelectedWords(newSelectedWords);
   }
 
-  // (props.numMatching) words within (props.numTotal) words
+  function isAnagram(originalWord: string, newWord: string) {
+    // Letters of the words (in alphabetical order)
+    const originalWordLetters = originalWord.split("").sort().join("");
+    const newWordLetters = newWord.split("").sort().join("");
+
+    return originalWordLetters === newWordLetters;
+  }
+
+  // Subset of words with same letters (the correct selection)
+  function getMatchingWords(originalWord: string): string[] {
+    // Matching words (anagrams) must be the same length, so pick from array of words with length of original word
+    const targetWordArray = wordLengthMappingsTargets.find((x) => x.value === originalWord.length)?.array;
+
+    if (!targetWordArray) {
+      return [];
+    }
+
+    // Filter words which are anagrams of orignial word
+    const matchingWords = targetWordArray.filter((word) => isAnagram(originalWord, word));
+    // Shuffle
+    const shuffledMatchingWords = shuffleArray(matchingWords);
+    // Only take as many as required
+    const matchingWordsSubset = shuffledMatchingWords.slice(0, gamemodeSettings.numMatchingWords);
+
+    return matchingWordsSubset;
+  }
+
+  // Filler words which aren't made with same letters
+  function getRandomWords(originalWord: string): string[] {
+    const targetWordArray = wordLengthMappingsTargets.find((x) => x.value === originalWord.length)?.array;
+
+    if (!targetWordArray) {
+      return [];
+    }
+
+    // Filter words which are NOT anagrams of orignial word
+    const randomWords = targetWordArray.filter((word) => !isAnagram(originalWord, word));
+    // Shuffle
+    const shuffledRandomWords = shuffleArray(randomWords);
+    // The required number of random words (to fill the grid along with the matching words)
+    const numRandomWords = gamemodeSettings.numTotalWords - gamemodeSettings.numMatchingWords;
+    // Only take as many as required
+    const randomWordsSubset = shuffledRandomWords.slice(0, numRandomWords);
+
+    return randomWordsSubset;
+  }
+
+  // The matching words and filler words combined
   function getGridWords(): string[] {
-    // Array to hold all the words for the grid
-    let grid_words: string[] = [];
-
     // The word array containing all the words of the specified length
-    let targetWordArray: string[] = [];
+    const targetWordArray = wordLengthMappingsTargets.find((x) => x.value === gamemodeSettings.wordLength)?.array!;
 
-    // The letters a word must have to match the original word (in alphabetical order)
-    let validLetters: string[] = [];
+    let matchingWords: string[] = [];
+    let gridWords: string[] = [];
 
-    function isWordValid(validLetters: string[], word: string) {
-      // Letters of the word (in alphabetical order)
-      const word_letters = word.split("").sort((a, b) => a.localeCompare(b));
+    const isCorrectNumMatchingWords = matchingWords.length === gamemodeSettings.numMatchingWords;
+    const isCorrectNumTotalWords = gridWords.length === gamemodeSettings.numTotalWords;
+    const completeSubset = isCorrectNumMatchingWords && isCorrectNumTotalWords;
 
-      return word_letters.join("") === validLetters.join("");
+    // TODO: This could loop indefinitely
+    
+    /*
+    Add a fail counter (as while loop condition)
+    Nest while loop inside a for loop which trys with a fewer number of words
+    */
+
+    while (!completeSubset) {
+      // Choose a random word from this array
+      const originalWord = pickRandomElementFrom(targetWordArray);
+
+      matchingWords = getMatchingWords(originalWord);
+      const randomWords = getRandomWords(originalWord);
+
+      gridWords = matchingWords.concat(randomWords);
     }
 
-    // Start from prop.numMatchingWords, and decrement down (if we could not find that number of matching words in targetWordArray)
-    for (let numMatchingWords = gamemodeSettings.numMatchingWords; numMatchingWords >= 1; numMatchingWords--) {
-      console.log(`Trying to find ${numMatchingWords} matching words in array`);
+    setValidWords(matchingWords);
+    console.log(matchingWords);
 
-      // Determine the maximum number of times to find the props.numMatchingWords in the targetArray, before just continuing
-      const MAX_ATTEMPTS_BEFORE_TRYING_LOWER_NUM = 15;
-
-      // For a sensible number of attempts for this numMatchingWords
-      for (let attemptNo = 1; attemptNo <= MAX_ATTEMPTS_BEFORE_TRYING_LOWER_NUM; attemptNo++) {
-        // The word array containing all the words of the specified length
-        targetWordArray = wordLengthMappingsTargets.find((x) => x.value === gamemodeSettings.wordLength)?.array!;
-
-        // Choose a random word from this array
-        const originalWord = pickRandomElementFrom(targetWordArray);
-
-        // The letters a word must have to match the original word (in alphabetical order)
-        validLetters = originalWord.split("").sort((a: string, b: string) => a.localeCompare(b));
-
-        // Matching words
-        const original_matches = targetWordArray.filter((word) => isWordValid(validLetters, word));
-
-        // Otherwise, select a subset of the matching words (shuffle and slice)
-        const shuffled_matches = shuffleArray(original_matches);
-        grid_words = shuffled_matches.slice(0, gamemodeSettings.numMatchingWords);
-
-        // If a suitable number of grid words was found
-        if (grid_words.length >= numMatchingWords) {
-          break;
-        }
-      }
-
-      // If a suitable number of grid words was found
-      if (grid_words.length >= numMatchingWords) {
-        break;
-      }
-    }
-
-    const matching_words = grid_words.slice();
-    // Set the correct/matching words
-    setValidWords(matching_words);
-    console.log(matching_words);
-
-    // Non-matching words
-    let fail_count = 0;
-
-    while (grid_words.length < gamemodeSettings.numTotalWords && fail_count < 100) {
-      // Choose a random word from target array
-      const randomWord = pickRandomElementFrom(targetWordArray);
-      // Not already in array and is NOT a matching word
-      if (!grid_words.includes(randomWord) && !isWordValid(validLetters, randomWord)) {
-        grid_words.push(randomWord);
-      } else {
-        fail_count += 1;
-      }
-    }
-
-    // Shuffle again
-    grid_words = shuffleArray(grid_words);
-
-    return grid_words;
+    return gridWords;
   }
 
   function populateRow(rowNumber: number) {
