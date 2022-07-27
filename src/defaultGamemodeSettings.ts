@@ -29,9 +29,10 @@ import { LetterCategoriesConfigProps } from "./LetterCategories/LetterCategories
 import { CountdownLettersConfigProps } from "./CountdownLetters/CountdownLettersConfig";
 import { CountdownNumbersConfigProps } from "./CountdownNumbers/CountdownNumbersConfig";
 import { ArithmeticRevealProps } from "./NumbersArithmetic/ArithmeticReveal";
-import { ArithmeticDragProps, arithmeticMode, arithmeticNumberSize } from "./NumbersArithmetic/ArithmeticDrag";
+import { ArithmeticDragProps, arithmeticMode } from "./NumbersArithmetic/ArithmeticDrag";
 import { GroupWallProps } from "./OnlyConnect/GroupWall";
 import { SameLetterWordsProps } from "./VerbalReasoning/SameLetterWords";
+import { NumberSetsProps } from "./VerbalReasoning/NumberSets/NumberSets";
 
 // --- Default values/variables --- //
 export const wordLengthMappingsTargets = [
@@ -257,7 +258,7 @@ export const defaultCountdownNumbersGamemodeSettings: CountdownNumbersConfigProp
 export const defaultArithmeticRevealGamemodeSettings: ArithmeticRevealProps["gamemodeSettings"] = {
   numCheckpoints: 1,
   numTiles: 5,
-  numberSize: "medium" as arithmeticNumberSize,
+  numberSize: "medium",
   revealIntervalSeconds: 3,
   timerConfig: { isTimed: true, seconds: 10 },  
 }
@@ -269,7 +270,7 @@ export const defaultArithmeticDragGamemodeSettings: { mode: arithmeticMode; sett
       numTiles: 6,
       numGuesses: 3,
       numOperands: 2,
-      numberSize: "medium" as arithmeticNumberSize,
+      numberSize: "medium",
       timerConfig: { isTimed: true, seconds: 100 }
     },
   },
@@ -279,7 +280,7 @@ export const defaultArithmeticDragGamemodeSettings: { mode: arithmeticMode; sett
       numTiles: 6,
       numGuesses: 3,
       numOperands: 2,
-      numberSize: "medium" as arithmeticNumberSize,
+      numberSize: "medium",
       timerConfig: { isTimed: true, seconds: 100 }
     },
   },
@@ -297,6 +298,11 @@ export const defaultSameLetterWordsGamemodeSettings: SameLetterWordsProps["gamem
   numMatchingWords: 4,
   numTotalWords: 20,
   numGuesses: 20,
+  timerConfig: { isTimed: false },
+}
+
+export const defaultNumberSetsGamemodeSettings: NumberSetsProps["gamemodeSettings"] = {
+  difficulty: "easy",
   timerConfig: { isTimed: false },
 }
 

@@ -41,6 +41,7 @@ import {
   defaultGroupWallGamemodeSettings,
   defaultLetterCategoriesGamemodeSettings,
   defaultNubbleGamemodeSettings,
+  defaultNumberSetsGamemodeSettings,
   defaultSameLetterWordsGamemodeSettings,
   defaultWordleGamemodeSettings,
   DEFAULT_NUM_GUESSES,
@@ -577,7 +578,6 @@ export const App: React.FC = () => {
     const pageGamemodeSettings = (() => {
       switch (page) {
         /*
-        | "verbal_reasoning/number_sets"
         | "verbal_reasoning/algebra"
         | "verbal_reasoning/word_codes"
         | "verbal_reasoning/word_codes/match"
@@ -632,6 +632,9 @@ export const App: React.FC = () => {
 
         case "verbal_reasoning/sameLetters":
           return SaveData.getSameLetterWordsGamemodeSettings() || defaultSameLetterWordsGamemodeSettings;
+
+        case "verbal_reasoning/number_sets":
+          return SaveData.getNumberSetsGamemodeSettings() || defaultNumberSetsGamemodeSettings;
 
         case "nubble":
           return SaveData.getNubbleConfigGamemodeSettings() || defaultNubbleGamemodeSettings;
