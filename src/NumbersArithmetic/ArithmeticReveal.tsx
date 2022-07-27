@@ -298,15 +298,15 @@ const ArithmeticReveal: React.FC<Props> = (props) => {
     SaveData.setArithmeticRevealGamemodeSettings(gamemodeSettings);
   }, [gamemodeSettings]);
 
-  // Create new tiles (which are to be displayed)
+  // Create the tiles to be revealed (only once on start)
   React.useEffect(() => {
-    // If all tiles have been initialised
+    // If all tiles have been initialised already
     if (tiles.length > 0) {
       return;
     }
 
     generateAllTiles();
-  }, [tiles, gamemodeSettings.numTiles]);
+  }, [tiles]);
 
   // Prepare for next checkpoint
   React.useEffect(() => {
@@ -342,7 +342,7 @@ const ArithmeticReveal: React.FC<Props> = (props) => {
     }, gamemodeSettings.revealIntervalSeconds * 1000);
 
     return () => clearInterval(timer);
-  }, [gamemodeSettings.numTiles, gamemodeSettings.revealIntervalSeconds, revealState]);
+  }, [revealState]);
 
   // (Guess) Timer Setup
   React.useEffect(() => {
@@ -441,7 +441,7 @@ const ArithmeticReveal: React.FC<Props> = (props) => {
               The answer was <strong>{targetNumbers[currentCheckpoint]}</strong>
             </span>
             <br />
-            {tiles[currentCheckpoint].join(" , ")}
+            {tiles[currentCheckpoint].join(" ")}
           </MessageNotification>
 
           <br></br>
