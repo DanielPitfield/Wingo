@@ -38,6 +38,7 @@ import {
   defaultArithmeticRevealGamemodeSettings,
   defaultCountdownLettersGamemodeSettings,
   defaultCountdownNumbersGamemodeSettings,
+  defaultGroupWallGamemodeSettings,
   defaultLetterCategoriesGamemodeSettings,
   defaultNubbleGamemodeSettings,
   defaultWordleGamemodeSettings,
@@ -575,7 +576,6 @@ export const App: React.FC = () => {
     const pageGamemodeSettings = (() => {
       switch (page) {
         /*
-        | "only_connect/wall"
         | "verbal_reasoning/sameLetters"
         | "verbal_reasoning/number_sets"
         | "verbal_reasoning/algebra"
@@ -626,6 +626,9 @@ export const App: React.FC = () => {
             SaveData.getArithmeticDragGamemodeSettings("match") ||
             defaultArithmeticDragGamemodeSettings.find((x) => x.mode === "match")?.settings
           );
+
+        case "only_connect/wall":
+          return SaveData.getGroupWallGamemodeSettings() || defaultGroupWallGamemodeSettings;
 
         case "nubble":
           return SaveData.getNubbleConfigGamemodeSettings() || defaultNubbleGamemodeSettings;

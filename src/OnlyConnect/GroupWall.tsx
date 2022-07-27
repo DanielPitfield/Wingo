@@ -6,22 +6,24 @@ import GamemodeSettingsMenu from "../GamemodeSettingsMenu";
 import { MessageNotification } from "../MessageNotification";
 import { shuffleArray } from "../NumbersArithmetic/ArithmeticDrag";
 import ProgressBar, { GreenToRedColorTransition } from "../ProgressBar";
-import { SettingsData } from "../SaveData";
+import { SaveData, SettingsData } from "../SaveData";
 import { useClickChime, useCorrectChime, useFailureChime, useLightPingChime } from "../Sounds";
 import { Theme } from "../Themes";
 import { pickRandomElementFrom } from "../WordleConfig";
 
-interface Props {
+export interface GroupWallProps {
   isCampaignLevel: boolean;
 
   gamemodeSettings?: {
-    timerConfig?: { isTimed: true; seconds: number } | { isTimed: false };
     numGroups?: number;
     groupSize?: number;
     // How many times can you check your attempts, once there are only two groups remaining?
     numGuesses?: number;
+    timerConfig?: { isTimed: true; seconds: number } | { isTimed: false };
   };
+}
 
+interface Props extends GroupWallProps {
   theme: Theme;
   settings: SettingsData;
   setPage: (page: Page) => void;
@@ -96,6 +98,18 @@ const GroupWall: React.FC<Props> = (props) => {
   const [playLightPingSoundEffect] = useLightPingChime(props.settings);
   const [playClickSoundEffect] = useClickChime(props.settings);
 
+  // Reset game after change of settings (stops cheating by changing settings partway through a game)
+  React.useEffect(() => {
+    if (props.isCampaignLevel) {
+      return;
+    }
+
+    ResetGame();
+
+    // Save the latest gamemode settings for this mode
+    SaveData.setGroupWallGamemodeSettings(gamemodeSettings);
+  }, [gamemodeSettings]);
+
   // (Guess) Timer Setup
   React.useEffect(() => {
     if (!gamemodeSettings.timerConfig.isTimed || !inProgress) {
@@ -123,9 +137,8 @@ const GroupWall: React.FC<Props> = (props) => {
       return;
     }
 
-    const grid_words = getGridWords();
-    setGridWords(grid_words);
-  }, []);
+    setGridWords(getGridWords());
+  }, [gridWords]);
 
   // Check selection
   React.useEffect(() => {
@@ -372,7 +385,9 @@ const GroupWall: React.FC<Props> = (props) => {
       <>
         <MessageNotification type={numCompletedGroups === gamemodeSettings.numGroups ? "success" : "error"}>
           <strong>
-            {numCompletedGroups === gamemodeSettings.numGroups ? "All groups found!" : `${numCompletedGroups} groups found`}
+            {numCompletedGroups === gamemodeSettings.numGroups
+              ? "All groups found!"
+              : `${numCompletedGroups} groups found`}
           </strong>
         </MessageNotification>
 
@@ -408,7 +423,7 @@ const GroupWall: React.FC<Props> = (props) => {
 
     return (
       <>
-      <label>
+        <label>
           <input
             type="number"
             value={gamemodeSettings.numGroups}

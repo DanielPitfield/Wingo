@@ -7,6 +7,7 @@ import { LetterCategoriesConfigProps } from "./LetterCategories/LetterCategories
 import { NubbleConfigProps } from "./Nubble/NubbleConfig";
 import { ArithmeticDragProps, arithmeticMode } from "./NumbersArithmetic/ArithmeticDrag";
 import { ArithmeticRevealProps } from "./NumbersArithmetic/ArithmeticReveal";
+import { GroupWallProps } from "./OnlyConnect/GroupWall";
 import { Themes } from "./Themes";
 import { WordleConfigProps } from "./WordleConfig";
 import { TileStatus, WordleInterlinkedProps } from "./WordleInterlinked";
@@ -551,6 +552,20 @@ export class SaveData {
 
     if (arithmeticDragGamemodeSettings) {
       return JSON.parse(arithmeticDragGamemodeSettings) as ArithmeticDragProps["gamemodeSettings"];
+    }
+
+    return null;
+  }
+
+  public static setGroupWallGamemodeSettings(gameSettings: GroupWallProps["gamemodeSettings"]) {
+    localStorage.setItem("groupWallGamemodeSettings", JSON.stringify(gameSettings));
+  }
+
+  public static getGroupWallGamemodeSettings(): GroupWallProps["gamemodeSettings"] | null {
+    const groupWallGamemodeSettings = localStorage.getItem("groupWallGamemodeSettings");
+
+    if (groupWallGamemodeSettings) {
+      return JSON.parse(groupWallGamemodeSettings) as GroupWallProps["gamemodeSettings"];
     }
 
     return null;

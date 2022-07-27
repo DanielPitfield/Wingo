@@ -30,6 +30,7 @@ import { CountdownLettersConfigProps } from "./CountdownLetters/CountdownLetters
 import { CountdownNumbersConfigProps } from "./CountdownNumbers/CountdownNumbersConfig";
 import { ArithmeticRevealProps } from "./NumbersArithmetic/ArithmeticReveal";
 import { ArithmeticDragProps, arithmeticMode, arithmeticNumberSize } from "./NumbersArithmetic/ArithmeticDrag";
+import { GroupWallProps } from "./OnlyConnect/GroupWall";
 
 // --- Default values/variables --- //
 export const wordLengthMappingsTargets = [
@@ -282,6 +283,13 @@ export const defaultArithmeticDragGamemodeSettings: { mode: arithmeticMode; sett
     },
   },
 ];
+
+export const defaultGroupWallGamemodeSettings: GroupWallProps["gamemodeSettings"] = {
+  numGroups: 4,
+  groupSize: 4,
+  numGuesses: 3,
+  timerConfig: { isTimed: false },
+}
 
 export const defaultNubbleGamemodeSettings: NubbleConfigProps["gamemodeSettings"] = {
   numDice: 4,
