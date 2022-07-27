@@ -7,23 +7,25 @@ import { MessageNotification } from "../MessageNotification";
 import { shuffleArray } from "../NumbersArithmetic/ArithmeticDrag";
 import { getPrettyWord } from "../OnlyConnect/GroupWall";
 import ProgressBar, { GreenToRedColorTransition } from "../ProgressBar";
-import { SettingsData } from "../SaveData";
+import { SaveData, SettingsData } from "../SaveData";
 import { useClickChime, useCorrectChime, useFailureChime, useLightPingChime } from "../Sounds";
 import { Theme } from "../Themes";
 import { pickRandomElementFrom } from "../WordleConfig";
 
-interface Props {
+export interface SameLetterWordsProps {
   isCampaignLevel: boolean;
 
   gamemodeSettings?: {
     wordLength?: number;
     numMatchingWords?: number;
     numTotalWords?: number;
-    timerConfig?: { isTimed: true; seconds: number } | { isTimed: false };
     // How many times can you check your attempts?
     numGuesses?: number;
+    timerConfig?: { isTimed: true; seconds: number } | { isTimed: false };
   };
+}
 
+interface Props extends SameLetterWordsProps {
   theme: Theme;
   settings: SettingsData;
   setPage: (page: Page) => void;
@@ -51,11 +53,18 @@ const SameLetterWords: React.FC<Props> = (props) => {
   const [gridWords, setGridWords] = useState<string[]>([]);
 
   // TODO: Handling unexpected gamemodeSettings (that have been provided)
-  const STARTING_NUM_TOTAL_WORDS = Math.max(MIN_NUM_TOTAL_WORDS, props.gamemodeSettings?.numTotalWords ?? DEFAULT_NUM_TOTAL_WORDS);
+  const STARTING_NUM_TOTAL_WORDS = Math.max(
+    MIN_NUM_TOTAL_WORDS,
+    props.gamemodeSettings?.numTotalWords ?? DEFAULT_NUM_TOTAL_WORDS
+  );
 
-  const numMatchingWordsFloor = Math.max(MIN_NUM_MATCHING_WORDS, props.gamemodeSettings?.numMatchingWords ?? DEFAULT_NUM_MATCHING_WORDS);
+  const numMatchingWordsFloor = Math.max(
+    MIN_NUM_MATCHING_WORDS,
+    props.gamemodeSettings?.numMatchingWords ?? DEFAULT_NUM_MATCHING_WORDS
+  );
   // Number of words to match can't be more than the total number of words
-  const STARTING_NUM_MATCHING_WORDS = numMatchingWordsFloor < STARTING_NUM_TOTAL_WORDS ? numMatchingWordsFloor : STARTING_NUM_TOTAL_WORDS - 1;
+  const STARTING_NUM_MATCHING_WORDS =
+    numMatchingWordsFloor < STARTING_NUM_TOTAL_WORDS ? numMatchingWordsFloor : STARTING_NUM_TOTAL_WORDS - 1;
 
   const defaultGamemodeSettings = {
     wordLength: props.gamemodeSettings?.wordLength ?? DEFAULT_WORD_LENGTH,
@@ -92,6 +101,18 @@ const SameLetterWords: React.FC<Props> = (props) => {
   const [playLightPingSoundEffect] = useLightPingChime(props.settings);
   const [playClickSoundEffect] = useClickChime(props.settings);
 
+  // Reset game after change of settings (stops cheating by changing settings partway through a game)
+  React.useEffect(() => {
+    if (props.isCampaignLevel) {
+      return;
+    }
+
+    ResetGame();
+
+    // Save the latest gamemode settings for this mode
+    SaveData.setSameLetterWordsGamemodeSettings(gamemodeSettings);
+  }, [gamemodeSettings]);
+
   // (Guess) Timer Setup
   React.useEffect(() => {
     if (!gamemodeSettings.timerConfig.isTimed || !inProgress) {
@@ -119,9 +140,8 @@ const SameLetterWords: React.FC<Props> = (props) => {
       return;
     }
 
-    const grid_words = getGridWords();
-    setGridWords(grid_words);
-  }, []);
+    setGridWords(getGridWords());
+  }, [gridWords]);
 
   // Check selection
   React.useEffect(() => {
@@ -382,6 +402,7 @@ const SameLetterWords: React.FC<Props> = (props) => {
     setValidWords([]);
     setGridWords(getGridWords());
     setRemainingGuesses(gamemodeSettings.numGuesses);
+
     if (gamemodeSettings.timerConfig.isTimed) {
       // Reset the timer if it is enabled in the game options
       setRemainingSeconds(gamemodeSettings.timerConfig.seconds);

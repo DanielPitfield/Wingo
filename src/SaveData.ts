@@ -9,6 +9,7 @@ import { ArithmeticDragProps, arithmeticMode } from "./NumbersArithmetic/Arithme
 import { ArithmeticRevealProps } from "./NumbersArithmetic/ArithmeticReveal";
 import { GroupWallProps } from "./OnlyConnect/GroupWall";
 import { Themes } from "./Themes";
+import { SameLetterWordsProps } from "./VerbalReasoning/SameLetterWords";
 import { WordleConfigProps } from "./WordleConfig";
 import { TileStatus, WordleInterlinkedProps } from "./WordleInterlinked";
 
@@ -566,6 +567,20 @@ export class SaveData {
 
     if (groupWallGamemodeSettings) {
       return JSON.parse(groupWallGamemodeSettings) as GroupWallProps["gamemodeSettings"];
+    }
+
+    return null;
+  }
+
+  public static setSameLetterWordsGamemodeSettings(gameSettings: SameLetterWordsProps["gamemodeSettings"]) {
+    localStorage.setItem("sameLetterWordsGamemodeSettings", JSON.stringify(gameSettings));
+  }
+
+  public static getSameLetterWordsGamemodeSettings(): SameLetterWordsProps["gamemodeSettings"] | null {
+    const sameLetterWordsGamemodeSettings = localStorage.getItem("sameLetterWordsGamemodeSettings");
+
+    if (sameLetterWordsGamemodeSettings) {
+      return JSON.parse(sameLetterWordsGamemodeSettings) as SameLetterWordsProps["gamemodeSettings"];
     }
 
     return null;

@@ -31,6 +31,7 @@ import { CountdownNumbersConfigProps } from "./CountdownNumbers/CountdownNumbers
 import { ArithmeticRevealProps } from "./NumbersArithmetic/ArithmeticReveal";
 import { ArithmeticDragProps, arithmeticMode, arithmeticNumberSize } from "./NumbersArithmetic/ArithmeticDrag";
 import { GroupWallProps } from "./OnlyConnect/GroupWall";
+import { SameLetterWordsProps } from "./VerbalReasoning/SameLetterWords";
 
 // --- Default values/variables --- //
 export const wordLengthMappingsTargets = [
@@ -288,6 +289,14 @@ export const defaultGroupWallGamemodeSettings: GroupWallProps["gamemodeSettings"
   numGroups: 4,
   groupSize: 4,
   numGuesses: 3,
+  timerConfig: { isTimed: false },
+}
+
+export const defaultSameLetterWordsGamemodeSettings: SameLetterWordsProps["gamemodeSettings"] = {
+  wordLength: DEFAULT_WORD_LENGTH,
+  numMatchingWords: 4,
+  numTotalWords: 20,
+  numGuesses: 20,
   timerConfig: { isTimed: false },
 }
 
