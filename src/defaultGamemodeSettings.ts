@@ -33,6 +33,7 @@ import { ArithmeticDragProps, arithmeticMode } from "./NumbersArithmetic/Arithme
 import { GroupWallProps } from "./OnlyConnect/GroupWall";
 import { SameLetterWordsProps } from "./VerbalReasoning/SameLetterWords";
 import { NumberSetsProps } from "./VerbalReasoning/NumberSets/NumberSets";
+import { AlgebraProps } from "./VerbalReasoning/Algebra/Algebra";
 
 // --- Default values/variables --- //
 export const wordLengthMappingsTargets = [
@@ -302,6 +303,11 @@ export const defaultSameLetterWordsGamemodeSettings: SameLetterWordsProps["gamem
 }
 
 export const defaultNumberSetsGamemodeSettings: NumberSetsProps["gamemodeSettings"] = {
+  difficulty: "easy",
+  timerConfig: { isTimed: false },
+}
+
+export const defaultAlgebraGamemodeSettings: AlgebraProps["gamemodeSettings"] = {
   difficulty: "easy",
   timerConfig: { isTimed: false },
 }

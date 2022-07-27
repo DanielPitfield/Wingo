@@ -34,6 +34,7 @@ import { FiArrowLeft, FiHelpCircle, FiSettings } from "react-icons/fi";
 import HelpInformation from "./HelpInformation";
 import { TitlePage } from "./TitlePage";
 import {
+  defaultAlgebraGamemodeSettings,
   defaultArithmeticDragGamemodeSettings,
   defaultArithmeticRevealGamemodeSettings,
   defaultCountdownLettersGamemodeSettings,
@@ -635,6 +636,9 @@ export const App: React.FC = () => {
 
         case "verbal_reasoning/number_sets":
           return SaveData.getNumberSetsGamemodeSettings() || defaultNumberSetsGamemodeSettings;
+
+        case "verbal_reasoning/algebra":
+          return SaveData.getAlgebraGamemodeSettings() || defaultAlgebraGamemodeSettings;
 
         case "nubble":
           return SaveData.getNubbleConfigGamemodeSettings() || defaultNubbleGamemodeSettings;
