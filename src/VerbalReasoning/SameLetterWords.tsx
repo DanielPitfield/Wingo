@@ -52,7 +52,6 @@ const SameLetterWords: React.FC<Props> = (props) => {
   const [validWords, setValidWords] = useState<string[]>([]);
   const [gridWords, setGridWords] = useState<string[]>([]);
 
-  // TODO: Handling unexpected gamemodeSettings (that have been provided)
   const STARTING_NUM_TOTAL_WORDS = Math.max(
     MIN_NUM_TOTAL_WORDS,
     props.gamemodeSettings?.numTotalWords ?? DEFAULT_NUM_TOTAL_WORDS
@@ -256,7 +255,8 @@ const SameLetterWords: React.FC<Props> = (props) => {
   }
 
   // Filler words which aren't made with same letters
-  function getRandomWords(originalWord: string): string[] {
+  function getRandomWords(originalWord: string, numRandomWords: number): string[] {
+    // Would be too easy to find words which don't have the same letters if they are a different length (to the original word)!
     const targetWordArray = wordLengthMappingsTargets.find((x) => x.value === originalWord.length)?.array;
 
     if (!targetWordArray) {
@@ -267,51 +267,46 @@ const SameLetterWords: React.FC<Props> = (props) => {
     const randomWords = targetWordArray.filter((word) => !isAnagram(originalWord, word));
     // Shuffle
     const shuffledRandomWords = shuffleArray(randomWords);
-    // The required number of random words (to fill the grid along with the matching words)
-    const numRandomWords = gamemodeSettings.numTotalWords - gamemodeSettings.numMatchingWords;
     // Only take as many as required
     const randomWordsSubset = shuffledRandomWords.slice(0, numRandomWords);
 
     return randomWordsSubset;
   }
 
-  // The matching words and filler words combined
+  // Combine a subset of matching words and filler words
   function getGridWords(): string[] {
     // The word array containing all the words of the specified length
     const targetWordArray = wordLengthMappingsTargets.find((x) => x.value === gamemodeSettings.wordLength)?.array!;
 
-    let matchingWords: string[] = [];
-    let gridWords: string[] = [];
-
-    const isCorrectNumMatchingWords = matchingWords.length === gamemodeSettings.numMatchingWords;
-    const isCorrectNumTotalWords = gridWords.length === gamemodeSettings.numTotalWords;
-    const completeSubset = isCorrectNumMatchingWords && isCorrectNumTotalWords;
-
     // The maximum number of attempts to try find a complete subset for each number of matching words
     const MAX_ATTEMPTS_BEFORE_TRYING_LOWER_NUM = 50;
 
-    // Start by trying to find a subset with the specified number of matching words
-    // Decrement the number of matching words (until a complete subset is found)
+    // Decrement the number of matching words (starting from specified number, until a complete subset is found)
     for (let numMatchingWords = gamemodeSettings.numMatchingWords; numMatchingWords >= 2; numMatchingWords--) {
       console.log(`Trying to find ${numMatchingWords} matching words in array`);
+      // The required number of filler words to make a complete grid (if the current number of matching words are found)
+      const numRandomWords = gamemodeSettings.numTotalWords - gamemodeSettings.numMatchingWords;
 
       let attemptCount = 0;
 
-      while (!completeSubset && attemptCount < MAX_ATTEMPTS_BEFORE_TRYING_LOWER_NUM) {
+      while (attemptCount < MAX_ATTEMPTS_BEFORE_TRYING_LOWER_NUM) {
         const originalWord = pickRandomElementFrom(targetWordArray);
+        const matchingWords = getMatchingWords(originalWord);
 
-        matchingWords = getMatchingWords(originalWord);
-        const randomWords = getRandomWords(originalWord);
-
-        gridWords = matchingWords.concat(randomWords);
+        // Found a matching words subset of the length being considered currently
+        if (matchingWords.length === numMatchingWords) {
+          const randomWords = getRandomWords(originalWord, numRandomWords);
+          const gridWords = matchingWords.concat(randomWords);
+          // Grid was able to be completed with sufficient number of filler words
+          if (gridWords.length === gamemodeSettings.numTotalWords) {
+            // Set and log the correct selection of words (the matching words)
+            setValidWords(matchingWords);
+            console.log(matchingWords);
+            return gridWords;
+          }
+        }
 
         attemptCount += 1;
-      }
-
-      if (completeSubset) {
-        setValidWords(matchingWords);
-        console.log(matchingWords);
-        return gridWords;
       }
     }
 

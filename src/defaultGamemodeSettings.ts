@@ -301,7 +301,7 @@ export const defaultGroupWallGamemodeSettings: GroupWallProps["gamemodeSettings"
 export const defaultSameLetterWordsGamemodeSettings: SameLetterWordsProps["gamemodeSettings"] = {
   wordLength: DEFAULT_WORD_LENGTH,
   numMatchingWords: 4,
-  numTotalWords: 20,
+  numTotalWords: 16,
   numGuesses: 20,
   timerConfig: { isTimed: false },
 };
