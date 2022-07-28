@@ -439,24 +439,19 @@ const Nubble: React.FC<Props> = (props) => {
 
     // There are no solutions (ways of making the selected number)
     if (solutions.length < 1) {
-      if (props.gamemodeSettings.isGameOverOnIncorrectPick) {
-        // Singleplayer
-        if (props.gamemodeSettings.numTeams === 1) {
-          // End game if game setting is enabled
-          props.setStatus("game-over-incorrect-tile");
-          // Return early
-          return;
-        } else {
-          // Set current team's remaining time to zero
-          const newTeamTimers = props.teamTimers.map((teamTimerInfo) => {
-            if (teamTimerInfo.teamNumber === props.currentTeamNumber) {
-              return { ...teamTimerInfo, remainingSeconds: 0 };
-            }
-            return teamTimerInfo;
-          });
-          props.updateTeamTimers(newTeamTimers);
-        }
+      if (props.gamemodeSettings.isGameOverOnIncorrectPick && props.gamemodeSettings.numTeams === 1) {
+        props.setStatus("game-over-incorrect-tile"); // End game
+      } else if (props.gamemodeSettings.isGameOverOnIncorrectPick && props.gamemodeSettings.numTeams > 1) {
+        // Set current team's remaining time to zero
+        const newTeamTimers = props.teamTimers.map((teamTimerInfo) => {
+          if (teamTimerInfo.teamNumber === props.currentTeamNumber) {
+            return { ...teamTimerInfo, remainingSeconds: 0 };
+          }
+          return teamTimerInfo;
+        });
+        props.updateTeamTimers(newTeamTimers);
       }
+      return;
     }
 
     // Keep track that the pin has now been correctly picked
