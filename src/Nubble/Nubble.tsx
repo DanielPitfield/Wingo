@@ -419,6 +419,16 @@ const Nubble: React.FC<Props> = (props) => {
     }
   }
 
+  // Determine and set the next team to play
+  function nextTeamTurn() {
+    const newCurrentTeamNumber = getNextTeamNumberWithRemainingTime(props.currentTeamNumber, props.teamTimers);
+    if (newCurrentTeamNumber !== null) {
+      props.setCurrentTeamNumber(newCurrentTeamNumber);
+      // Next team rolls their own dice values
+      props.setStatus("picked-awaiting-dice-roll");
+    }
+  }
+
   /**
    *
    * @param pinNumber
@@ -451,6 +461,7 @@ const Nubble: React.FC<Props> = (props) => {
         });
         props.updateTeamTimers(newTeamTimers);
       }
+      nextTeamTurn();
       return;
     }
 
@@ -460,22 +471,17 @@ const Nubble: React.FC<Props> = (props) => {
     setPickedPins(newPickedPins);
 
     // Find out how many base points the pin is worth
-    let pinScore = gridPoints.find((x) => x.number === pinNumber)?.points;
+    let pinScore = gridPoints.find((x) => x.number === pinNumber)?.points ?? 0;
 
-    if (!pinScore) {
-      return;
-    }
-
+    // Double points if the picked pin is a prime number
     if (isPrime(pinNumber)) {
-      // Double points if the picked pin is a prime number
-      pinScore = pinScore! * 2;
+      pinScore *= 2;
     }
 
     // Bonus points awarded for nubble triangle
-    const adjacentBonus = 200;
-
+    const ADJACENT_BONUS = 200;
     if (isAdjacentBonus(pinNumber)) {
-      pinScore = pinScore + adjacentBonus;
+      pinScore += ADJACENT_BONUS;
     }
 
     // Add points to total points
@@ -499,13 +505,7 @@ const Nubble: React.FC<Props> = (props) => {
       setTotalPoints(newTotalPoints);
     }
 
-    // Next team's turn
-    const newCurrentTeamNumber = getNextTeamNumberWithRemainingTime(props.currentTeamNumber, props.teamTimers);
-    if (newCurrentTeamNumber !== null) {
-      props.setCurrentTeamNumber(newCurrentTeamNumber);
-      // Next team rolls their own dice values
-      props.setStatus("picked-awaiting-dice-roll");
-    }
+    nextTeamTurn();
   }
 
   // Array (length of rowLength) of buttons
