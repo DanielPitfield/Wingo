@@ -318,6 +318,7 @@ const LetterCategoriesConfig: React.FC<Props> = (props) => {
       categoryNames={categoryNames || []}
       categoryWordTargets={categoryWordTargets || [[]]}
       finishingButtonText={props.finishingButtonText}
+      page={props.page}
       theme={props.theme}
       settings={props.settings}
       onEnter={onEnter}

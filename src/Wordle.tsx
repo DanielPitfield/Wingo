@@ -15,6 +15,7 @@ import { MAX_TARGET_WORD_LENGTH, MIN_TARGET_WORD_LENGTH, categoryMappings } from
 interface Props {
   isCampaignLevel: boolean;
   mode: "daily" | "repeat" | "category" | "increasing" | "limitless" | "puzzle" | "conundrum";
+
   gamemodeSettings: {
     wordLength: number;
     wordLengthMaxLimit: number;
@@ -25,6 +26,7 @@ interface Props {
     maxLivesConfig: { isLimited: true; maxLives: number } | { isLimited: false };
     timerConfig: { isTimed: true; seconds: number } | { isTimed: false };
   };
+
   remainingSeconds: number;
   numGuesses: number;
   guesses: string[];
@@ -43,8 +45,10 @@ interface Props {
     status: "" | "contains" | "correct" | "not set" | "not in word";
   }[];
   revealedLetterIndexes: number[];
+
   settings: SettingsData;
   finishingButtonText?: string;
+  page: Page;
   theme?: Theme;
   setPage: (page: Page) => void;
   onEnter: () => void;
@@ -112,8 +116,8 @@ const Wordle: React.FC<Props> = (props) => {
 
       Grid.push(
         <WordRow
-          key={"read-only"}
-          mode={props.mode}
+          key={"wordle/read-only"}
+          page={props.page}
           isReadOnly={true}
           inProgress={props.inProgress}
           word={displayWord}
@@ -130,10 +134,10 @@ const Wordle: React.FC<Props> = (props) => {
     } else if (props.mode === "conundrum" && props.conundrum) {
       // Create read only WordRow that reveals conundrum
       Grid.push(
-        <div key={"conundrum_reveal"} className="countdown-letters-wrapper">
+        <div className="countdown-letters-wrapper" key={"conundrum/reveal"} >
           <WordRow
-            key={"read-only"}
-            mode={props.mode}
+            key={"conundrum/read-only"}
+            page={props.page}
             isReadOnly={true}
             inProgress={props.inProgress}
             word={props.conundrum}
@@ -178,8 +182,8 @@ const Wordle: React.FC<Props> = (props) => {
 
       Grid.push(
         <WordRow
-          key={i}
-          mode={props.mode}
+          key={`wordle/row/${i}`}
+          page={props.page}
           isReadOnly={false}
           inProgress={props.inProgress}
           isVertical={false}

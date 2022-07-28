@@ -3,7 +3,7 @@ import { SplashScreen } from "./SplashScreen";
 import { LobbyMenu } from "./LobbyMenu";
 import WordleConfig, { pickRandomElementFrom } from "./WordleConfig";
 import { Button } from "./Button";
-import NubbleConfig, { NubbleConfigProps } from "./Nubble/NubbleConfig";
+import NubbleConfig from "./Nubble/NubbleConfig";
 import GoldCoin from "./images/gold.png";
 import { SaveData, SettingsData } from "./SaveData";
 import CountdownLettersConfig from "./CountdownLetters/CountdownLettersConfig";
@@ -13,7 +13,7 @@ import { Area, AreaConfig } from "./Campaign/Area";
 import { getId, Level, LevelConfig } from "./Campaign/Level";
 import LetterCategoriesConfig from "./LetterCategories/LetterCategoriesConfig";
 import ArithmeticReveal from "./NumbersArithmetic/ArithmeticReveal";
-import ArithmeticDrag, { arithmeticNumberSize } from "./NumbersArithmetic/ArithmeticDrag";
+import ArithmeticDrag from "./NumbersArithmetic/ArithmeticDrag";
 import { PuzzleConfig } from "./Puzzles/PuzzleConfig";
 import { Theme, Themes } from "./Themes";
 import { AllCampaignAreas } from "./Campaign/AllCampaignAreas";
@@ -54,9 +54,6 @@ import {
   DEFAULT_WORD_LENGTH_INCREASING,
   DEFAULT_WORD_LENGTH_PUZZLE,
 } from "./defaultGamemodeSettings";
-
-const countdownModes = ["casual", "realistic"] as const;
-export type countdownMode = typeof countdownModes[number];
 
 // TODO: Simplify string literals (names of pages)
 export type Page =
@@ -783,13 +780,12 @@ export const App: React.FC = () => {
         return <LetterCategoriesConfig {...commonProps} enforceFullLengthGuesses={false} />;
 
       case "countdown/letters":
-        return <CountdownLettersConfig {...commonProps} mode={"casual"} theme={Themes.GenericLetterCountdown} />;
+        return <CountdownLettersConfig {...commonProps} theme={Themes.GenericLetterCountdown} />;
 
       case "countdown/numbers":
         return (
           <CountdownNumbersConfig
             {...commonProps}
-            mode={"casual"}
             defaultNumGuesses={DEFAULT_NUM_GUESSES_COUNTDOWN_NUMBERS}
             theme={Themes.GenericNumberCountdown}
           />

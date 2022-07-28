@@ -8,6 +8,7 @@ import { Theme } from "../Themes";
 import WordleConfig, { WordleConfigProps } from "../WordleConfig";
 import { AreaConfig } from "./Area";
 
+// TODO: Lots of new modes which have been added which aren't supported by this type
 export type LevelConfig = {
   hint?: React.ReactNode;
   level:

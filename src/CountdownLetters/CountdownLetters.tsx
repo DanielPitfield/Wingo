@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Keyboard } from "../Keyboard";
-import { countdownMode, Page } from "../App";
+import { Page } from "../App";
 import { WordRow } from "../WordRow";
 import { Button } from "../Button";
 import { MessageNotification } from "../MessageNotification";
@@ -10,11 +10,14 @@ import { pickRandomElementFrom } from "../WordleConfig";
 import { Theme } from "../Themes";
 import { SaveData, SettingsData } from "../SaveData";
 import GamemodeSettingsMenu from "../GamemodeSettingsMenu";
-import { MIN_TARGET_WORD_LENGTH, MAX_TARGET_WORD_LENGTH, wordLengthMappingsGuessable } from "../defaultGamemodeSettings";
+import {
+  MIN_TARGET_WORD_LENGTH,
+  MAX_TARGET_WORD_LENGTH,
+  wordLengthMappingsGuessable,
+} from "../defaultGamemodeSettings";
 
 interface Props {
   isCampaignLevel: boolean;
-  mode: countdownMode;
 
   gamemodeSettings: {
     numLetters: number;
@@ -33,6 +36,8 @@ interface Props {
     letter: string;
     status: "" | "contains" | "correct" | "not set" | "not in word";
   }[];
+
+  page: Page;
   theme: Theme;
   settings: SettingsData;
   setTheme: (theme: Theme) => void;
@@ -88,12 +93,11 @@ const CountdownLetters: React.FC<Props> = (props) => {
       levelProps: {
         countdownWord: props.countdownWord,
         guesses: props.guesses,
-        mode: props.mode,
       },
     });
 
     setGameId(gameId);
-  }, [props.mode, props.targetWord, IS_SELECTION_FINISHED]);
+  }, [props.targetWord, IS_SELECTION_FINISHED]);
 
   // Create grid of rows (for guessing words)
   function populateGrid(wordLength: number) {
@@ -212,9 +216,10 @@ const CountdownLetters: React.FC<Props> = (props) => {
 
     // Read only letter selection WordRow
     Grid.push(
-      <div key={"letter_selection"} className="countdown-letters-wrapper">
+      <div className="countdown-letters-wrapper" key={"letter_selection"}>
         <WordRow
-          mode={props.mode}
+        key={"countdown/letters/read-only"}
+          page={props.page}
           isReadOnly={true}
           inProgress={props.inProgress}
           word={props.countdownWord}
@@ -258,8 +263,8 @@ const CountdownLetters: React.FC<Props> = (props) => {
     // WordRow to enter words using available letters
     Grid.push(
       <WordRow
-        key={"countdown/letters_input"}
-        mode={props.mode}
+        key={"countdown/letters/input"}
+        page={props.page}
         isReadOnly={false}
         inProgress={props.inProgress}
         isVertical={false}
@@ -390,14 +395,41 @@ const CountdownLetters: React.FC<Props> = (props) => {
     );
 
     let outcome: "success" | "failure" | "in-progress" = "in-progress";
+    let outcomeNotification;
     const GOLD_PER_LETTER = 30;
 
-    let outcomeNoticiation;
+    if (selectedFinalGuess) {
+      outcome = "success";
+      // Reward gold based on how long the selected guess is
+      props.addGold(selectedFinalGuess.length * GOLD_PER_LETTER);
 
-    if (!selectedFinalGuess) {
-      // finalGuess is empty (no guess was made), no points
+      // TODO: Save CountdownLetters round
+      if (gameId) {
+        SaveData.addCompletedRoundToGameHistory(gameId, {
+          timestamp: new Date().toISOString(),
+          gameCategory: "wingo",
+          outcome,
+          levelProps: {
+            countdownWord: props.countdownWord,
+            guesses: props.guesses,
+          },
+        });
+
+        outcomeNotification = (
+          <>
+            <MessageNotification type="success">
+              <strong>{selectedFinalGuess.toUpperCase()}</strong>
+              <br />
+              <strong>{selectedFinalGuess.length} points</strong>
+            </MessageNotification>
+            {bestWordsList}
+          </>
+        );
+      }
+    } else {
       outcome = "failure";
-      outcomeNoticiation = (
+
+      outcomeNotification = (
         <>
           <MessageNotification type="error">
             <strong>No guess was made</strong>
@@ -409,66 +441,7 @@ const CountdownLetters: React.FC<Props> = (props) => {
       );
     }
 
-    if (props.mode === "casual") {
-      // Already evaluated that guess is valid, so just display result
-      outcome = "success";
-      // Reward gold based on how long the selected guess is
-      props.addGold(selectedFinalGuess.length * GOLD_PER_LETTER);
-      outcomeNoticiation = (
-        <>
-          <MessageNotification type="success">
-            <strong>{selectedFinalGuess.toUpperCase()}</strong>
-            <br />
-            <strong>{selectedFinalGuess.length} points</strong>
-          </MessageNotification>
-          {bestWordsList}
-        </>
-      );
-    }
-    // Realistic mode, guess (has not yet and so) needs to be evaluated
-    else if (props.inDictionary && isWordValid(props.countdownWord, selectedFinalGuess)) {
-      outcome = "success";
-      props.addGold(selectedFinalGuess.length * GOLD_PER_LETTER);
-      outcomeNoticiation = (
-        <>
-          <MessageNotification type="success">
-            <strong>{selectedFinalGuess.toUpperCase()}</strong>
-            <br />
-            <strong>{selectedFinalGuess.length} points</strong>
-          </MessageNotification>
-          {bestWordsList}
-        </>
-      );
-    } else {
-      // Invalid word
-      outcome = "failure";
-      outcomeNoticiation = (
-        <>
-          <MessageNotification type="error">
-            <strong>{selectedFinalGuess.toUpperCase()} is an invalid word</strong>
-            <br />
-            <strong>0 points</strong>
-          </MessageNotification>
-          {bestWordsList}
-        </>
-      );
-    }
-
-    // TODO: Save CountdownLetters round
-    if (gameId) {
-      SaveData.addCompletedRoundToGameHistory(gameId, {
-        timestamp: new Date().toISOString(),
-        gameCategory: "wingo",
-        outcome,
-        levelProps: {
-          countdownWord: props.countdownWord,
-          guesses: props.guesses,
-          mode: props.mode,
-        },
-      });
-    }
-
-    return outcomeNoticiation;
+    return outcomeNotification;
   }
 
   // Set the selected final guess to the longest word (as long as `manualGuessSelectionMade` is false)

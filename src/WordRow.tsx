@@ -1,10 +1,11 @@
 import React from "react";
+import { Page } from "./App";
 import LetterTile from "./LetterTile";
 import { SettingsData } from "./SaveData";
 import { getWordSummary } from "./WordleConfig";
 
 interface Props {
-  mode: string;
+  page: Page;
   isReadOnly: boolean;
   inProgress?: boolean;
   length: number;
@@ -29,10 +30,10 @@ export const WordRow: React.FC<Props> = (props) => {
   // NOTE: The targetWord will be "" (empty string) with the WordRow that handles guessed words during the 'Countdown Letters' mode
 
   // Array of (character, status) for every letter
-  wordSummary = getWordSummary(props.mode, props.word, props.targetWord, props.inDictionary);
+  wordSummary = getWordSummary(props.page, props.word, props.targetWord, props.inDictionary);
 
   // Overwrite wordSummary if LettersCategories mode
-  if (props.mode === "letters_categories" && props.targetArray) {
+  if (props.page === "letters_categories" && props.targetArray) {
     if (props.targetArray.includes(props.word)) {
       wordSummary.map((x) => {
         x.status = "correct";
@@ -73,11 +74,11 @@ export const WordRow: React.FC<Props> = (props) => {
       }
     }
     // Don't apply animation for LetterTiles in Countdown Letters mode
-    else if (props.mode === "countdown_letters_casual" || props.mode === "countdown_letters_realistic") {
+    else if (props.page === "countdown/letters") {
       return false;
     }
     // Don't apply animation for LetterTiles in daily mode, when the game reports as having ended
-    else if (props.mode === "daily" && !props.inProgress && props.word && props.hasSubmit) {
+    else if (props.page === "wingo/daily" && !props.inProgress && props.word && props.hasSubmit) {
       return false;
     }
     // Other modes and everything is suitable for animation

@@ -1,12 +1,11 @@
 import React, { useState } from "react";
-import { countdownMode, Page } from "../App";
+import { Page } from "../App";
 import CountdownNumbers from "./CountdownNumbers";
 import { calculateTotal } from "./NumberRow";
 import { Theme } from "../Themes";
 import { SaveData, SettingsData } from "../SaveData";
 
 export interface CountdownNumbersConfigProps {
-  mode: countdownMode;
   gamemodeSettings?: {
     hasScaryNumbers?: boolean;
     scoringMethod?: "standard" | "pointLostPerDifference";
@@ -14,6 +13,7 @@ export interface CountdownNumbersConfigProps {
     defaultNumOperands?: number;
     timerConfig?: { isTimed: true; seconds: number } | { isTimed: false };
   };
+
   defaultNumGuesses: number;
   gameshowScore?: number;
 }
@@ -245,11 +245,6 @@ const CountdownNumbersConfig: React.FC<Props> = (props) => {
 
     // Nothing entered yet
     if (!hasSubmitNumber) {
-      return;
-    }
-
-    if (props.mode === "realistic") {
-      // TODO: Realistic mode: ask for result of intemediary calculations
       return;
     }
 
@@ -520,7 +515,6 @@ const CountdownNumbersConfig: React.FC<Props> = (props) => {
   return (
     <CountdownNumbers
       isCampaignLevel={props.page === "campaign/area/level"}
-      mode={props.mode}
       gamemodeSettings={gamemodeSettings}
       remainingSeconds={remainingSeconds}
       wordIndex={wordIndex}

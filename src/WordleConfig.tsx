@@ -87,21 +87,23 @@ export function pickRandomElementFrom(array: any[]) {
   return array[Math.floor(Math.random() * array.length)];
 }
 
-export function getWordSummary(mode: string, word: string, targetWord: string, inDictionary: boolean) {
-  const simpleStatusModes = ["letters_categories"];
+export function getWordSummary(page: Page, word: string, targetWord: string, inDictionary: boolean) {
+  // Either correct or incorrect (green or red statuses) and nothing inbetween
+  const simpleStatusModes: Page[] = ["letters_categories"];
+
   // Character and status array
   let defaultCharacterStatuses = (word || "").split("").map((character, index) => ({
     character: character,
     status: getLetterStatus(character, index, targetWord, inDictionary),
   }));
 
-  if (simpleStatusModes.includes(mode) && word === targetWord) {
+  if (simpleStatusModes.includes(page) && word === targetWord) {
     let finalCharacterStatuses = defaultCharacterStatuses.map((x) => {
       x.status = "correct";
       return x;
     });
     return finalCharacterStatuses;
-  } else if (simpleStatusModes.includes(mode) && word !== targetWord) {
+  } else if (simpleStatusModes.includes(page) && word !== targetWord) {
     let finalCharacterStatuses = defaultCharacterStatuses.map((x) => {
       x.status = "incorrect";
       return x;
@@ -1243,6 +1245,7 @@ const WordleConfig: React.FC<Props> = (props) => {
       revealedLetterIndexes={revealedLetterIndexes}
       letterStatuses={letterStatuses}
       finishingButtonText={props.finishingButtonText}
+      page={props.page}
       theme={props.theme}
       settings={props.settings}
       onEnter={onEnter}

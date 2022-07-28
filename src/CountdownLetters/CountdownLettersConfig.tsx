@@ -1,12 +1,11 @@
 import React, { useState } from "react";
-import { countdownMode, Page } from "../App";
+import { Page } from "../App";
 import CountdownLetters from "./CountdownLetters";
 import { Theme } from "../Themes";
 import { SaveData, SettingsData } from "../SaveData";
 import { wordLengthMappingsGuessable } from "../defaultGamemodeSettings";
 
 export interface CountdownLettersConfigProps {
-  mode: countdownMode;
   guesses?: string[];
   countdownWord?: string;
   gamemodeSettings?: {
@@ -192,14 +191,7 @@ const CountdownLettersConfig: React.FC<Props> = (props) => {
       return;
     }
 
-    if (props.mode === "realistic") {
-      // Don't need to do any evaluation of the guess and just add to guesses regardless
-      setGuesses(guesses.concat(currentWord));
-      ContinueGame();
-      return;
-    }
-
-    // Stop progress for evalution for Casual game mode type
+    // Stop progress so the status of tiles shows briefly
     setinProgress(false);
 
     const wordArray = wordLengthMappingsGuessable.find((x) => x.value === currentWord.length)?.array;
@@ -273,7 +265,6 @@ const CountdownLettersConfig: React.FC<Props> = (props) => {
   return (
     <CountdownLetters
       isCampaignLevel={props.page === "campaign/area/level"}
-      mode={props.mode}
       gamemodeSettings={gamemodeSettings}
       remainingSeconds={remainingSeconds}
       guesses={guesses}
@@ -284,6 +275,7 @@ const CountdownLettersConfig: React.FC<Props> = (props) => {
       hasSubmitLetter={hasSubmitLetter}
       targetWord={targetWord || ""}
       letterStatuses={letterStatuses}
+      page={props.page}
       theme={props.theme}
       settings={props.settings}
       setTheme={props.setTheme}
