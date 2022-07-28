@@ -1,19 +1,25 @@
 import React, { useState } from "react";
 import { Keyboard } from "../Keyboard";
-import { countdownMode, MAX_TARGET_WORD_LENGTH, MIN_TARGET_WORD_LENGTH, Page } from "../App";
+import { Page } from "../App";
 import { WordRow } from "../WordRow";
 import { Button } from "../Button";
 import { MessageNotification } from "../MessageNotification";
 import ProgressBar, { GreenToRedColorTransition } from "../ProgressBar";
-import { isWordValid } from "./CountdownLettersConfig";
-import { pickRandomElementFrom, wordLengthMappingsGuessable } from "../WordleConfig";
+import { isCountdownGuessValid } from "./CountdownLettersConfig";
+import { pickRandomElementFrom } from "../WordleConfig";
 import { Theme } from "../Themes";
 import { SaveData, SettingsData } from "../SaveData";
 import GamemodeSettingsMenu from "../GamemodeSettingsMenu";
+import {
+  MIN_TARGET_WORD_LENGTH,
+  MAX_TARGET_WORD_LENGTH,
+  wordLengthMappingsGuessable,
+  wordLengthMappingsTargets,
+} from "../defaultGamemodeSettings";
+import { shuffleArray } from "../NumbersArithmetic/ArithmeticDrag";
 
 interface Props {
   isCampaignLevel: boolean;
-  mode: countdownMode;
 
   gamemodeSettings: {
     numLetters: number;
@@ -32,6 +38,8 @@ interface Props {
     letter: string;
     status: "" | "contains" | "correct" | "not set" | "not in word";
   }[];
+
+  page: Page;
   theme: Theme;
   settings: SettingsData;
   setTheme: (theme: Theme) => void;
@@ -57,10 +65,7 @@ interface Props {
 
 const CountdownLetters: React.FC<Props> = (props) => {
   // Currently selected guess, to be used as the final guess when time runs out
-  const [selectedFinalGuess, setSelectedFinalGuess] = useState("");
-  // Stores whether a manual selection has been made (to stop us overwriting that manual decision)
-  const [manualGuessSelectionMade, setManualGuessSelectionMade] = useState(false);
-  const [gameId, setGameId] = useState<string | null>(null);
+  const [bestGuess, setBestGuess] = useState("");
   // Check if letter selection has finished
   const IS_SELECTION_FINISHED = props.countdownWord.length === props.gamemodeSettings.numLetters;
 
@@ -70,29 +75,6 @@ const CountdownLetters: React.FC<Props> = (props) => {
       ? props.gamemodeSettings?.timerConfig.seconds
       : DEFAULT_TIMER_VALUE
   );
-
-  // TODO: Save CountdownLetters game
-  React.useEffect(() => {
-    if (!IS_SELECTION_FINISHED) {
-      return;
-    }
-
-    if (!props.targetWord) {
-      return;
-    }
-
-    const gameId = SaveData.addGameToHistory("countdown/letters", {
-      timestamp: new Date().toISOString(),
-      gameCategory: "countdown_letters",
-      levelProps: {
-        countdownWord: props.countdownWord,
-        guesses: props.guesses,
-        mode: props.mode,
-      },
-    });
-
-    setGameId(gameId);
-  }, [props.mode, props.targetWord, IS_SELECTION_FINISHED]);
 
   // Create grid of rows (for guessing words)
   function populateGrid(wordLength: number) {
@@ -211,9 +193,10 @@ const CountdownLetters: React.FC<Props> = (props) => {
 
     // Read only letter selection WordRow
     Grid.push(
-      <div key={"letter_selection"} className="countdown-letters-wrapper">
+      <div className="countdown-letters-wrapper" key={"letter_selection"}>
         <WordRow
-          mode={props.mode}
+          key={"countdown/letters/read-only"}
+          page={props.page}
           isReadOnly={true}
           inProgress={props.inProgress}
           word={props.countdownWord}
@@ -257,8 +240,8 @@ const CountdownLetters: React.FC<Props> = (props) => {
     // WordRow to enter words using available letters
     Grid.push(
       <WordRow
-        key={"countdown/letters_input"}
-        mode={props.mode}
+        key={"countdown/letters/input"}
+        page={props.page}
         isReadOnly={false}
         inProgress={props.inProgress}
         isVertical={false}
@@ -338,43 +321,40 @@ const CountdownLetters: React.FC<Props> = (props) => {
     );
   }
 
-  // TODO: Add game to SaveData history
-  // TODO: Calculate gold reward
   function getBestWords(countdownWord: string) {
     const MAX_WORDS_TO_RETURN = 5;
 
     // Array to store best words that are found
-    const best_words = [];
+    let bestWords: string[] = [];
 
     // Start with bigger words first
-    for (let i = countdownWord.length; i >= 4; i--) {
-      // Get word array containng words of i size
-      const wordArray = wordLengthMappingsGuessable.find((x) => x.value === i)?.array!;
-      // Safety check for wordArray
-      if (wordArray) {
-        // Check the entire array for any valid words
-        for (const word of wordArray) {
-          // Safety check for word
-          if (word) {
-            if (isWordValid(countdownWord, word)) {
-              // Push to array if word is valid
-              best_words.push(word);
+    for (let wordLength = countdownWord.length; wordLength >= 4; wordLength--) {
+      const firstWordArray: string[] = wordLengthMappingsGuessable.find((x) => x.value === wordLength)?.array ?? [];
+      const secondTargetArray: string[] = wordLengthMappingsTargets.find((x) => x.value === wordLength)?.array ?? [];
 
-              if (best_words.length >= MAX_WORDS_TO_RETURN) {
-                return best_words;
-              }
-            }
-          }
-        }
+      // Get all words of current wordLength
+      const wordArray: string[] = firstWordArray.concat(secondTargetArray);
+
+      // The words which can be made with the selected countdown letters
+      const validWords: string[] = wordArray.filter((word) => isCountdownGuessValid(word, countdownWord));
+
+      bestWords = bestWords.concat(validWords);
+
+      if (bestWords.length >= MAX_WORDS_TO_RETURN) {
+        break;
       }
     }
 
-    return best_words;
+    return shuffleArray(bestWords).slice(0, MAX_WORDS_TO_RETURN);
   }
 
   function displayOutcome() {
     // Game has not yet ended (currently only when when timer runs out)
     if (props.inProgress) {
+      return;
+    }
+
+    if (props.remainingSeconds > 0) {
       return;
     }
 
@@ -388,15 +368,25 @@ const CountdownLetters: React.FC<Props> = (props) => {
       </ul>
     );
 
-    let outcome: "success" | "failure" | "in-progress" = "in-progress";
+    let outcomeNotification;
     const GOLD_PER_LETTER = 30;
 
-    let outcomeNoticiation;
+    if (bestGuess) {
+      // Reward gold based on how long the selected guess is
+      props.addGold(bestGuess.length * GOLD_PER_LETTER);
 
-    if (!selectedFinalGuess) {
-      // finalGuess is empty (no guess was made), no points
-      outcome = "failure";
-      outcomeNoticiation = (
+      outcomeNotification = (
+        <>
+          <MessageNotification type="success">
+            <strong>{bestGuess.toUpperCase()}</strong>
+            <br />
+            <strong>{bestGuess.length} points</strong>
+          </MessageNotification>
+          {bestWordsList}
+        </>
+      );
+    } else {
+      outcomeNotification = (
         <>
           <MessageNotification type="error">
             <strong>No guess was made</strong>
@@ -408,84 +398,19 @@ const CountdownLetters: React.FC<Props> = (props) => {
       );
     }
 
-    if (props.mode === "casual") {
-      // Already evaluated that guess is valid, so just display result
-      outcome = "success";
-      // Reward gold based on how long the selected guess is
-      props.addGold(selectedFinalGuess.length * GOLD_PER_LETTER);
-      outcomeNoticiation = (
-        <>
-          <MessageNotification type="success">
-            <strong>{selectedFinalGuess.toUpperCase()}</strong>
-            <br />
-            <strong>{selectedFinalGuess.length} points</strong>
-          </MessageNotification>
-          {bestWordsList}
-        </>
-      );
-    }
-    // Realistic mode, guess (has not yet and so) needs to be evaluated
-    else if (props.inDictionary && isWordValid(props.countdownWord, selectedFinalGuess)) {
-      outcome = "success";
-      props.addGold(selectedFinalGuess.length * GOLD_PER_LETTER);
-      outcomeNoticiation = (
-        <>
-          <MessageNotification type="success">
-            <strong>{selectedFinalGuess.toUpperCase()}</strong>
-            <br />
-            <strong>{selectedFinalGuess.length} points</strong>
-          </MessageNotification>
-          {bestWordsList}
-        </>
-      );
-    } else {
-      // Invalid word
-      outcome = "failure";
-      outcomeNoticiation = (
-        <>
-          <MessageNotification type="error">
-            <strong>{selectedFinalGuess.toUpperCase()} is an invalid word</strong>
-            <br />
-            <strong>0 points</strong>
-          </MessageNotification>
-          {bestWordsList}
-        </>
-      );
-    }
-
-    // TODO: Save CountdownLetters round
-    if (gameId) {
-      SaveData.addCompletedRoundToGameHistory(gameId, {
-        timestamp: new Date().toISOString(),
-        gameCategory: "wingo",
-        outcome,
-        levelProps: {
-          countdownWord: props.countdownWord,
-          guesses: props.guesses,
-          mode: props.mode,
-        },
-      });
-    }
-
-    return outcomeNoticiation;
+    return outcomeNotification;
   }
 
-  // Set the selected final guess to the longest word (as long as `manualGuessSelectionMade` is false)
+  // Automatically choose the best word guessed so far
   React.useEffect(() => {
-    // If a manual selection has been made
-    if (manualGuessSelectionMade) {
-      // Keep it as the manual selection
-      return;
-    }
-
     // Compares words and returns a single value of the longest word
     const longestWord = props.guesses.reduce(
       (currentWord, nextWord) => (currentWord.length > nextWord.length ? currentWord : nextWord),
       ""
     );
 
-    setSelectedFinalGuess(longestWord);
-  }, [manualGuessSelectionMade, props.guesses]);
+    setBestGuess(longestWord);
+  }, [props.guesses]);
 
   function displayGameshowScore() {
     if (props.gameshowScore === undefined || props.gameshowScore === null) {
@@ -513,7 +438,7 @@ const CountdownLetters: React.FC<Props> = (props) => {
       <div>{displayOutcome()}</div>
 
       <div>
-        {!props.inProgress && (
+        {!props.inProgress && props.remainingSeconds <= 0 && (
           <Button
             mode={"accept"}
             settings={props.settings}
@@ -521,13 +446,13 @@ const CountdownLetters: React.FC<Props> = (props) => {
             onClick={() =>
               props.ResetGame(
                 // correct?
-                selectedFinalGuess ? selectedFinalGuess.length > 0 : false,
+                bestGuess ? bestGuess.length > 0 : false,
                 // guess made
-                selectedFinalGuess ? selectedFinalGuess : "",
+                bestGuess ? bestGuess : "",
                 // target word
                 "",
                 // score
-                selectedFinalGuess ? selectedFinalGuess.length : 0
+                bestGuess ? bestGuess.length : 0
               )
             }
             additionalProps={{ autoFocus: true }}
@@ -566,21 +491,8 @@ const CountdownLetters: React.FC<Props> = (props) => {
       </div>
 
       <div className="countdown/letters_guesses">
-        {props.guesses.map((guess, i) => (
-          <label key={i} className="countdown/letters_guess_label">
-            <input
-              type="radio"
-              checked={selectedFinalGuess === guess}
-              onChange={(event) => {
-                setManualGuessSelectionMade(true);
-                setSelectedFinalGuess(event.target.value);
-              }}
-              className="countdown/letters_guess_input"
-              name="countdown/letters_guess"
-              value={guess}
-            />
-            {guess}
-          </label>
+        {props.guesses.map((guess) => (
+          <>{guess}</>
         ))}
       </div>
     </div>

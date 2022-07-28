@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { countdownMode, Page } from "../App";
+import { Page } from "../App";
 import { Button } from "../Button";
 import { MessageNotification } from "../MessageNotification";
 import ProgressBar, { GreenToRedColorTransition } from "../ProgressBar";
@@ -16,7 +16,6 @@ import { pickRandomElementFrom } from "../WordleConfig";
 
 interface Props {
   isCampaignLevel: boolean;
-  mode: countdownMode;
 
   gamemodeSettings: {
     hasScaryNumbers: boolean;

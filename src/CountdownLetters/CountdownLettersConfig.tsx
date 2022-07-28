@@ -1,33 +1,32 @@
 import React, { useState } from "react";
-import { countdownMode, Page } from "../App";
+import { Page } from "../App";
 import CountdownLetters from "./CountdownLetters";
-import { wordLengthMappingsGuessable } from "../WordleConfig";
 import { Theme } from "../Themes";
-import { SettingsData } from "../SaveData";
+import { SaveData, SettingsData } from "../SaveData";
+import { wordLengthMappingsGuessable, wordLengthMappingsTargets } from "../defaultGamemodeSettings";
 
 export interface CountdownLettersConfigProps {
-  mode: countdownMode;
   guesses?: string[];
   countdownWord?: string;
-}
-
-interface Props extends CountdownLettersConfigProps {
-  page: Page;
   gamemodeSettings?: {
     // The number of letters (that make up the selection used to make a word)
     defaultNumLetters?: number;
     timerConfig?: { isTimed: true; seconds: number } | { isTimed: false };
   };
+  gameshowScore?: number;
+}
+
+interface Props extends CountdownLettersConfigProps {
+  page: Page;
   theme: Theme;
   settings: SettingsData;
   setTheme: (theme: Theme) => void;
   setPage: (page: Page) => void;
   addGold: (gold: number) => void;
   onComplete?: (wasCorrect: boolean, answer: string, targetAnswer: string, score: number | null) => void;
-  gameshowScore?: number;
 }
 
-export function isWordValid(countdownWord: string, guessedWord: string) {
+export function isCountdownGuessValid(guessedWord: string, countdownWord: string) {
   if (!countdownWord || !guessedWord) {
     return false;
   }
@@ -138,6 +137,20 @@ const CountdownLettersConfig: React.FC<Props> = (props) => {
     };
   }, [setRemainingSeconds, remainingSeconds, gamemodeSettings.timerConfig.isTimed, countdownWord]);
 
+  // Reset game after change of settings (stops cheating by changing settings partway through a game)
+  React.useEffect(() => {
+    if (props.page === "campaign/area/level" || props.gameshowScore !== undefined) {
+      return;
+    }
+
+    // TODO: Function returns above if part of gameshow, so none of these parameters are needed
+    ResetGame(false, "", "", 0);
+
+    // Save the latest gamemode settings for this mode
+    SaveData.setCountdownLettersConfigGamemodeSettings(gamemodeSettings);
+  }, [gamemodeSettings]);
+
+  // TODO: Better way to callback the outcome/status of a completed letters round for CountdownGameshow?
   function ResetGame(wasCorrect: boolean, answer: string, targetAnswer: string, score: number | null) {
     // Callback of the score achieved (used for Countdown Gameshow)
     props.onComplete?.(wasCorrect, answer, targetAnswer, score);
@@ -156,6 +169,8 @@ const CountdownLettersConfig: React.FC<Props> = (props) => {
   }
 
   function ContinueGame() {
+    setinProgress(true);
+    setinDictionary(false);
     setCurrentWord("");
     setinProgress(true);
     setinDictionary(true);
@@ -178,22 +193,18 @@ const CountdownLettersConfig: React.FC<Props> = (props) => {
       return;
     }
 
-    if (props.mode === "realistic") {
-      // Don't need to do any evaluation of the guess and just add to guesses regardless
-      setGuesses(guesses.concat(currentWord));
-      ContinueGame();
-      return;
-    }
+    const firstWordArray: string[] =
+      wordLengthMappingsGuessable.find((x) => x.value === currentWord.length)?.array ?? [];
+    const secondTargetArray: string[] =
+      wordLengthMappingsTargets.find((x) => x.value === currentWord.length)?.array ?? [];
 
-    // Stop progress for evalution for Casual game mode type
-    setinProgress(false);
-
-    const wordArray = wordLengthMappingsGuessable.find((x) => x.value === currentWord.length)?.array;
+    // A guess can be from etiher guessable or target word arrays (just checking it is an actual word)
+    const wordArray: string[] = firstWordArray.concat(secondTargetArray);
 
     // Accepted word (known word in dictionary)
     const wordInDictionary = wordArray?.includes(currentWord.toLowerCase());
     // Word can be made with available letters
-    const isValidWord = isWordValid(countdownWord, currentWord);
+    const isValidWord = isCountdownGuessValid(currentWord, countdownWord);
 
     // Check the validity of the word for the player
     if (wordInDictionary && isValidWord) {
@@ -206,12 +217,13 @@ const CountdownLettersConfig: React.FC<Props> = (props) => {
       setinDictionary(false);
     }
 
+    // Stop progress so the status of tiles shows briefly
+    setinProgress(false);
+
     // Wait half a second to show validity of word, then continue
     setTimeout(() => {
       ContinueGame();
     }, 500);
-
-    // TODO: Add completed round to game history
   }
 
   function onSubmitCountdownLetter(letter: string) {
@@ -259,7 +271,6 @@ const CountdownLettersConfig: React.FC<Props> = (props) => {
   return (
     <CountdownLetters
       isCampaignLevel={props.page === "campaign/area/level"}
-      mode={props.mode}
       gamemodeSettings={gamemodeSettings}
       remainingSeconds={remainingSeconds}
       guesses={guesses}
@@ -270,6 +281,7 @@ const CountdownLettersConfig: React.FC<Props> = (props) => {
       hasSubmitLetter={hasSubmitLetter}
       targetWord={targetWord || ""}
       letterStatuses={letterStatuses}
+      page={props.page}
       theme={props.theme}
       settings={props.settings}
       setTheme={props.setTheme}

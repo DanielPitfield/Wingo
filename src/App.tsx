@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { SplashScreen } from "./SplashScreen";
 import { LobbyMenu } from "./LobbyMenu";
-import WordleConfig, { categoryMappings, pickRandomElementFrom, wordLengthMappingsTargets } from "./WordleConfig";
+import WordleConfig, { pickRandomElementFrom } from "./WordleConfig";
 import { Button } from "./Button";
-import NubbleConfig, { NubbleConfigProps, nubbleGridShape, nubbleGridSize } from "./Nubble/NubbleConfig";
+import NubbleConfig from "./Nubble/NubbleConfig";
 import GoldCoin from "./images/gold.png";
 import { SaveData, SettingsData } from "./SaveData";
 import CountdownLettersConfig from "./CountdownLetters/CountdownLettersConfig";
@@ -13,7 +13,7 @@ import { Area, AreaConfig } from "./Campaign/Area";
 import { getId, Level, LevelConfig } from "./Campaign/Level";
 import LetterCategoriesConfig from "./LetterCategories/LetterCategoriesConfig";
 import ArithmeticReveal from "./NumbersArithmetic/ArithmeticReveal";
-import ArithmeticDrag, { arithmeticNumberSize } from "./NumbersArithmetic/ArithmeticDrag";
+import ArithmeticDrag from "./NumbersArithmetic/ArithmeticDrag";
 import { PuzzleConfig } from "./Puzzles/PuzzleConfig";
 import { Theme, Themes } from "./Themes";
 import { AllCampaignAreas } from "./Campaign/AllCampaignAreas";
@@ -33,34 +33,29 @@ import { LingoGameshow } from "./LingoGameshow";
 import { FiArrowLeft, FiHelpCircle, FiSettings } from "react-icons/fi";
 import HelpInformation from "./HelpInformation";
 import { TitlePage } from "./TitlePage";
-import { WordleConfigProps, DEFAULT_PUZZLE_REVEAL_MS, DEFAULT_PUZZLE_LEAVE_NUM_BLANKS } from "./WordleConfig";
-import { WordleInterlinkedProps } from "./WordleInterlinked";
+import {
+  defaultAlgebraGamemodeSettings,
+  defaultArithmeticDragGamemodeSettings,
+  defaultArithmeticRevealGamemodeSettings,
+  defaultCountdownLettersGamemodeSettings,
+  defaultCountdownNumbersGamemodeSettings,
+  defaultGroupWallGamemodeSettings,
+  defaultLetterCategoriesGamemodeSettings,
+  defaultNubbleGamemodeSettings,
+  defaultNumberSetsGamemodeSettings,
+  defaultSameLetterWordsGamemodeSettings,
+  defaultWordCodesGamemodeSettings,
+  defaultWordleGamemodeSettings,
+  DEFAULT_NUM_GUESSES,
+  DEFAULT_NUM_GUESSES_COUNTDOWN_NUMBERS,
+  DEFAULT_NUM_GUESSES_PUZZLE,
+  DEFAULT_WORD_LENGTH,
+  DEFAULT_WORD_LENGTH_CONUNDRUM,
+  DEFAULT_WORD_LENGTH_INCREASING,
+  DEFAULT_WORD_LENGTH_PUZZLE,
+} from "./defaultGamemodeSettings";
 
-// WordLength values (for different modes)
-export const DEFAULT_WORD_LENGTH = 5;
-
-const DEFAULT_WORD_LENGTH_INCREASING = 4;
-const DEFAULT_WORD_LENGTH_CONUNDRUM = 9;
-const DEFAULT_WORD_LENGTH_PUZZLE = 10;
-
-// numGuesses values (for different modes)
-const DEFAULT_NUM_GUESSES = 6;
-const DEFAULT_NUM_GUESSES_PUZZLE = 1;
-const DEFAULT_NUM_GUESSES_COUNTDOWN_NUMBERS = 5;
-
-// The wordLengths of target word arrays that have at least one word
-const targetWordLengths = wordLengthMappingsTargets
-  .filter((mapping) => mapping.array.length > 0)
-  .map((mapping) => mapping.value);
-export const MIN_TARGET_WORD_LENGTH = Math.min(...targetWordLengths);
-export const MAX_TARGET_WORD_LENGTH = Math.max(...targetWordLengths);
-
-// The number of categories with at least one word
-export const MAX_NUM_CATEGORIES = categoryMappings.filter((mapping) => mapping.array.length > 0).length;
-
-const countdownModes = ["casual", "realistic"] as const;
-export type countdownMode = typeof countdownModes[number];
-
+// TODO: Simplify string literals (names of pages)
 export type Page =
   | "splash-screen"
   | "title-page"
@@ -88,7 +83,7 @@ export type Page =
   | "verbal_reasoning/sameLetters"
   | "verbal_reasoning/number_sets"
   | "verbal_reasoning/algebra"
-  | "verbal_reasoning/word_codes"
+  | "verbal_reasoning/word_codes/question"
   | "verbal_reasoning/word_codes/match"
   | "puzzle/sequence"
   | "campaign"
@@ -367,7 +362,7 @@ export const pages: {
     isPlayable: true,
   },
   {
-    page: "verbal_reasoning/word_codes",
+    page: "verbal_reasoning/word_codes/question",
     title: "Word Codes",
     description: "Decipher codes to find words (and vice versa)",
     shortTitle: "Word Codes",
@@ -434,108 +429,6 @@ export const App: React.FC = () => {
   );
   const [gold, setGold] = useState<number>(SaveData.readGold());
   const [playBackgroundMusic, stopBackgroundMusic] = useBackgroundMusic(settings, theme);
-
-  const dailyWordleGamemodeSettings: WordleConfigProps["gamemodeSettings"] = {
-    wordLength: DEFAULT_WORD_LENGTH,
-    isFirstLetterProvided: false,
-    isHintShown: false,
-    timerConfig: { isTimed: false },
-  };
-
-  const dailyCrosswordGamemodeSettings: WordleInterlinkedProps["gamemodeSettings"] = {
-    numWords: 6,
-    minWordLength: MIN_TARGET_WORD_LENGTH,
-    maxWordLength: MAX_TARGET_WORD_LENGTH,
-    numWordGuesses: 10,
-    numGridGuesses: 2,
-    isFirstLetterProvided: false,
-    isHintShown: false,
-    timerConfig: { isTimed: false },
-  };
-
-  const weeklyCrosswordGamemodeSettings: WordleInterlinkedProps["gamemodeSettings"] = {
-    numWords: 10,
-    minWordLength: MIN_TARGET_WORD_LENGTH,
-    maxWordLength: MAX_TARGET_WORD_LENGTH,
-    numWordGuesses: 20,
-    numGridGuesses: 4,
-    isFirstLetterProvided: false,
-    isHintShown: false,
-    timerConfig: { isTimed: false },
-  };
-
-  // The configurable options available for each gamemode variation of Wordle/WordleConfig (and their default values with no save data)
-  const defaultWordleGamemodeSettings: { page: Page; settings: WordleConfigProps["gamemodeSettings"] }[] = [
-    {
-      page: "wingo/repeat",
-      settings: {
-        wordLength: DEFAULT_WORD_LENGTH,
-        isFirstLetterProvided: false,
-        isHintShown: false,
-        timerConfig: { isTimed: false },
-      },
-    },
-    {
-      page: "wingo/category",
-      settings: {
-        isFirstLetterProvided: false,
-        isHintShown: false,
-        timerConfig: { isTimed: false },
-      },
-    },
-    {
-      page: "wingo/increasing",
-      settings: {
-        wordLength: MIN_TARGET_WORD_LENGTH,
-        wordLengthMaxLimit: MAX_TARGET_WORD_LENGTH,
-        isFirstLetterProvided: false,
-        isHintShown: false,
-        timerConfig: { isTimed: false },
-      },
-    },
-    {
-      page: "wingo/limitless",
-      settings: {
-        wordLength: MIN_TARGET_WORD_LENGTH,
-        wordLengthMaxLimit: MAX_TARGET_WORD_LENGTH,
-        maxLivesConfig: { isLimited: false },
-        isFirstLetterProvided: false,
-        isHintShown: false,
-        timerConfig: { isTimed: false },
-      },
-    },
-    {
-      page: "wingo/puzzle",
-      settings: {
-        puzzleRevealMs: DEFAULT_PUZZLE_REVEAL_MS,
-        puzzleLeaveNumBlanks: DEFAULT_PUZZLE_LEAVE_NUM_BLANKS,
-        wordLength: DEFAULT_WORD_LENGTH_PUZZLE,
-      },
-    },
-    // The conundrum mode is actually a mode of WordleConfig
-    {
-      page: "countdown/conundrum",
-      settings: {
-        timerConfig: { isTimed: true, seconds: 30 },
-      },
-    },
-  ];
-
-  const defaultNubbleGamemodeSettings: NubbleConfigProps["gamemodeSettings"] = {
-    numDice: 4,
-    // The lowest value which can be the number shown on a dice
-    diceMin: 1,
-    diceMax: 6,
-    gridShape: "hexagon" as nubbleGridShape,
-    gridSize: 100 as nubbleGridSize,
-    numTeams: 1,
-    // When a number which can't be made with the dice numbers is picked, does the game end?
-    isGameOverOnIncorrectPick: false,
-    // How long to make a guess after the dice have been rolled?
-    guessTimerConfig: { isTimed: false },
-    // How long overall until the game ends?
-    timerConfig: { isTimed: true, seconds: 600 },
-  };
 
   function getNewEntryPage(): Page {
     let pageFromUrl = getPageFromUrl();
@@ -670,7 +563,88 @@ export const App: React.FC = () => {
   }
 
   const pageComponent = (() => {
+    // Get the gamemode settings for the specific page (gamemode)
+    const pageGamemodeSettings = (() => {
+      switch (page) {
+        /*
+        | "puzzle/sequence"
+        | "countdown/gameshow"
+        | "lingo/gameshow";
+        */
+
+        // Daily mode should always use the same settings (never from SaveData)
+        case "wingo/daily":
+          return defaultWordleGamemodeSettings.find((x) => x.page === page)?.settings;
+
+        // WordleConfig modes
+        case "wingo/repeat":
+        case "wingo/puzzle":
+        case "wingo/increasing":
+        case "wingo/limitless":
+        case "wingo/category":
+        case "countdown/conundrum":
+          // Use the saved Wingo Config gamemodeSettings, or the default setitngs (if no previous save was found)
+          return (
+            SaveData.getWordleConfigGamemodeSettings(page) ||
+            defaultWordleGamemodeSettings.find((x) => x.page === page)?.settings
+          );
+
+        case "letters_categories":
+          return SaveData.getLetterCategoriesConfigGamemodeSettings() || defaultLetterCategoriesGamemodeSettings;
+
+        case "countdown/letters":
+          return SaveData.getCountdownLettersConfigGamemodeSettings() || defaultCountdownLettersGamemodeSettings;
+
+        case "countdown/numbers":
+          return SaveData.getCountdownNumbersConfigGamemodeSettings() || defaultCountdownNumbersGamemodeSettings;
+
+        case "numbers/arithmetic_reveal":
+          return SaveData.getArithmeticRevealGamemodeSettings() || defaultArithmeticRevealGamemodeSettings;
+
+        case "numbers/arithmetic_drag/order":
+          return (
+            SaveData.getArithmeticDragGamemodeSettings("order") ||
+            defaultArithmeticDragGamemodeSettings.find((x) => x.mode === "order")?.settings
+          );
+
+        case "numbers/arithmetic_drag/match":
+          return (
+            SaveData.getArithmeticDragGamemodeSettings("match") ||
+            defaultArithmeticDragGamemodeSettings.find((x) => x.mode === "match")?.settings
+          );
+
+        case "only_connect/wall":
+          return SaveData.getGroupWallGamemodeSettings() || defaultGroupWallGamemodeSettings;
+
+        case "verbal_reasoning/sameLetters":
+          return SaveData.getSameLetterWordsGamemodeSettings() || defaultSameLetterWordsGamemodeSettings;
+
+        case "verbal_reasoning/number_sets":
+          return SaveData.getNumberSetsGamemodeSettings() || defaultNumberSetsGamemodeSettings;
+
+        case "verbal_reasoning/algebra":
+          return SaveData.getAlgebraGamemodeSettings() || defaultAlgebraGamemodeSettings;
+
+        case "verbal_reasoning/word_codes/question":
+          return (
+            SaveData.getWordCodesGamemodeSettings("question") ||
+            defaultWordCodesGamemodeSettings.find((x) => x.mode === "question")?.settings
+          );
+
+        case "verbal_reasoning/word_codes/match":
+          return (
+            SaveData.getWordCodesGamemodeSettings("match") ||
+            defaultWordCodesGamemodeSettings.find((x) => x.mode === "match")?.settings
+          );
+
+        case "nubble":
+          return SaveData.getNubbleConfigGamemodeSettings() || defaultNubbleGamemodeSettings;
+      }
+    })();
+
     const commonProps = {
+      isCampaignLevel: false,
+      gamemodeSettings: pageGamemodeSettings,
       page: page,
       theme: theme,
       setPage: setPage,
@@ -680,67 +654,10 @@ export const App: React.FC = () => {
       onComplete: onComplete,
     };
 
-    // Get the gamemode settings for this specific page
-    const pageGamemodeSettings = (() => {
-      switch (page) {
-
-        /*
-        | "letters_categories"
-        | "countdown/letters"
-        | "countdown/numbers"
-        | "numbers/arithmetic_reveal"
-        | "numbers/arithmetic_drag/order"
-        | "numbers/arithmetic_drag/match"
-        | "only_connect/wall"
-        | "verbal_reasoning/sameLetters"
-        | "verbal_reasoning/number_sets"
-        | "verbal_reasoning/algebra"
-        | "verbal_reasoning/word_codes"
-        | "verbal_reasoning/word_codes/match"
-        | "puzzle/sequence"
-        | "countdown/gameshow"
-        | "lingo/gameshow";
-        */
-
-        case "wingo/daily":
-          // Daily mode should always use the same settings that can't be changed
-          return dailyWordleGamemodeSettings;
-
-        case "wingo/crossword/daily":
-          return dailyCrosswordGamemodeSettings;
-
-        case "wingo/crossword/weekly":
-          return weeklyCrosswordGamemodeSettings;
-
-        // WordleConfig modes
-        case "wingo/repeat":
-        case "wingo/category":
-        case "wingo/increasing":
-        case "wingo/limitless":
-        case "wingo/puzzle":
-        case "countdown/conundrum":
-          // Use the saved Wingo Config gamemodeSettings, or the default setitngs (if no previous save was found)
-          return (
-            SaveData.getWordleConfigGamemodeSettings(page) ||
-            defaultWordleGamemodeSettings.find((x) => x.page === page)?.settings
-          );
-
-        // WordleInterlinked modes
-        case "wingo/interlinked":
-        case "wingo/crossword":
-        case "wingo/crossword/fit":
-
-
-        case "nubble":
-          return SaveData.getNubbleConfigGamemodeSettings() || defaultNubbleGamemodeSettings;
-      }
-    })();
-
     // Overwrite properties for specific modes where required
     const commonWingoProps = {
       gamemodeSettings: pageGamemodeSettings,
       defaultWordLength: DEFAULT_WORD_LENGTH,
-      saveData: saveData,
       defaultnumGuesses: DEFAULT_NUM_GUESSES,
       enforceFullLengthGuesses: true,
       page: page,
@@ -749,21 +666,6 @@ export const App: React.FC = () => {
       setTheme: setThemeIfNoPreferredSet,
       addGold: addGold,
       settings: settings,
-      onComplete: onComplete,
-    };
-
-    const commonArithmeticDragProps = {
-      isCampaignLevel: false,
-      gamemodeSettings: {
-        timer: { isTimed: true, seconds: 100 },
-        numTiles: 6,
-        numberSize: "small" as arithmeticNumberSize,
-        numGuesses: 3,
-        numOperands: 3,
-      },
-      theme: theme,
-      settings: settings,
-      setPage: setPage,
       onComplete: onComplete,
     };
 
@@ -878,19 +780,12 @@ export const App: React.FC = () => {
         return <LetterCategoriesConfig {...commonProps} enforceFullLengthGuesses={false} />;
 
       case "countdown/letters":
-        return (
-          <CountdownLettersConfig
-            {...commonProps}
-            mode={"casual" as countdownMode}
-            theme={Themes.GenericLetterCountdown}
-          />
-        );
+        return <CountdownLettersConfig {...commonProps} theme={Themes.GenericLetterCountdown} />;
 
       case "countdown/numbers":
         return (
           <CountdownNumbersConfig
             {...commonProps}
-            mode={"casual" as countdownMode}
             defaultNumGuesses={DEFAULT_NUM_GUESSES_COUNTDOWN_NUMBERS}
             theme={Themes.GenericNumberCountdown}
           />
@@ -907,116 +802,37 @@ export const App: React.FC = () => {
         );
 
       case "numbers/arithmetic_reveal":
-        return (
-          <ArithmeticReveal
-            isCampaignLevel={false}
-            gamemodeSettings={{
-              numTiles: 4,
-              numCheckpoints: 3,
-              numberSize: "small" as arithmeticNumberSize,
-              revealIntervalSeconds: 3,
-              timerConfig: { isTimed: true, seconds: 10 },
-            }}
-            theme={theme}
-            settings={settings}
-            setPage={setPage}
-            onComplete={commonWingoProps.onComplete}
-          />
-        );
+        return <ArithmeticReveal {...commonProps} />;
 
       case "numbers/arithmetic_drag/order":
-        return <ArithmeticDrag {...commonArithmeticDragProps} mode="order" />;
+        return <ArithmeticDrag {...commonProps} mode="order" />;
 
       case "numbers/arithmetic_drag/match":
-        return <ArithmeticDrag {...commonArithmeticDragProps} mode="match" />;
+        return <ArithmeticDrag {...commonProps} mode="match" />;
 
       case "nubble":
-        return (
-          <NubbleConfig
-            page={page}
-            theme={theme}
-            campaignConfig={{ isCampaignLevel: false }}
-            settings={settings}
-            gamemodeSettings={pageGamemodeSettings as NubbleConfigProps["gamemodeSettings"]}
-          />
-        );
+        return <NubbleConfig campaignConfig={{ isCampaignLevel: false }} {...commonProps} />;
 
       case "only_connect/wall":
-        return (
-          <GroupWall
-            isCampaignLevel={false}
-            theme={theme}
-            settings={settings}
-            setPage={setPage}
-            onComplete={commonWingoProps.onComplete}
-          />
-        );
+        return <GroupWall {...commonProps} />;
 
       case "verbal_reasoning/sameLetters":
-        return (
-          <SameLetterWords
-            isCampaignLevel={false}
-            theme={theme}
-            settings={settings}
-            setPage={setPage}
-            onComplete={commonWingoProps.onComplete}
-          />
-        );
+        return <SameLetterWords {...commonProps} />;
 
       case "verbal_reasoning/number_sets":
-        return (
-          <NumberSets
-            isCampaignLevel={false}
-            theme={theme}
-            settings={settings}
-            setPage={setPage}
-            onComplete={commonWingoProps.onComplete}
-          />
-        );
+        return <NumberSets {...commonProps} />;
 
       case "verbal_reasoning/algebra":
-        return (
-          <Algebra
-            isCampaignLevel={false}
-            theme={theme}
-            settings={settings}
-            setPage={setPage}
-            onComplete={commonWingoProps.onComplete}
-          />
-        );
+        return <Algebra {...commonProps} />;
 
-      case "verbal_reasoning/word_codes":
-        return (
-          <WordCodes
-            isCampaignLevel={false}
-            theme={theme}
-            settings={settings}
-            setPage={setPage}
-            onComplete={commonWingoProps.onComplete}
-          />
-        );
+      case "verbal_reasoning/word_codes/question":
+        return <WordCodes mode={"question"} {...commonProps} />;
 
       case "verbal_reasoning/word_codes/match":
-        return (
-          <WordCodes
-            isCampaignLevel={false}
-            gamemodeSettings={{ mode: "match", numCodesToMatch: 4 }}
-            theme={theme}
-            settings={settings}
-            setPage={setPage}
-            onComplete={commonWingoProps.onComplete}
-          />
-        );
+        return <WordCodes mode={"match"} {...commonProps} />;
 
       case "puzzle/sequence":
-        return (
-          <PuzzleConfig
-            theme={theme}
-            setTheme={setThemeIfNoPreferredSet}
-            settings={settings}
-            onComplete={commonWingoProps.onComplete}
-          />
-        );
+        return <PuzzleConfig {...commonProps} />;
 
       case "challenges":
         return <ChallengesInfo settings={settings} addGold={addGold} />;
@@ -1037,6 +853,7 @@ export const App: React.FC = () => {
             themes={[Themes.GenericLetterCountdown, Themes.GenericNumberCountdown]}
             setTheme={setThemeIfNoPreferredSet}
             addGold={addGold}
+            // TODO: Should CountdownGameshow have gamemodeSettings like other gamemodes or an initial configuration page?
             numSets={5}
             numLetterRoundsPerSet={2}
             numNumberRoundsPerSet={1}
@@ -1049,6 +866,7 @@ export const App: React.FC = () => {
         return (
           <LingoGameshow
             commonWingoProps={commonWingoProps}
+            // TODO: Should LingoGameshow have gamemodeSettings like other gamemodes or an initial configuration page?
             firstRoundConfig={{ numLingos: 4, numPuzzles: 1 }}
             secondRoundConfig={{ numLingos: 3, numPuzzles: 1 }}
             thirdRoundConfig={{ numFourLengthLingos: 2, numPuzzles: 1, numFiveLengthLingos: 2, numberPuzzles: 1 }}

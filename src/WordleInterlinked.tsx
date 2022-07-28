@@ -1,17 +1,24 @@
 import LetterTile from "./LetterTile";
-import { SettingsData } from "./SaveData";
+import { SaveData, SettingsData } from "./SaveData";
 import { useState } from "react";
 import { shuffleArray } from "./NumbersArithmetic/ArithmeticDrag";
 import { Theme } from "./Themes";
 import { Keyboard } from "./Keyboard";
-import { categoryMappings, getWordSummary, wordLengthMappingsTargets } from "./WordleConfig";
+import { getWordSummary } from "./WordleConfig";
 import { Button } from "./Button";
 import React from "react";
 import { MessageNotification } from "./MessageNotification";
 import { CrosswordGenerationResult, crosswordGenerator as crossWordGenerator } from "./CrossWordGenerator";
 import GamemodeSettingsMenu from "./GamemodeSettingsMenu";
-import { DEFAULT_WORD_LENGTH, MAX_TARGET_WORD_LENGTH, MIN_TARGET_WORD_LENGTH } from "./App";
 import ProgressBar, { GreenToRedColorTransition } from "./ProgressBar";
+import {
+  categoryMappings,
+  DEFAULT_WORD_LENGTH,
+  MAX_TARGET_WORD_LENGTH,
+  MIN_TARGET_WORD_LENGTH,
+  wordLengthMappingsTargets,
+} from "./defaultGamemodeSettings";
+import { Page } from "./App";
 
 type Orientation = "vertical" | "horizontal";
 
@@ -69,8 +76,12 @@ export interface WordleInterlinkedProps {
 }
 
 interface Props extends WordleInterlinkedProps {
-  settings: SettingsData;
+  page: Page;
   theme?: Theme;
+  settings: SettingsData;
+  setPage: (page: Page) => void;
+  addGold: (gold: number) => void;
+  setTheme: (theme: Theme) => void;
   onSave?: (
     words: string[],
     inProgress: boolean,
@@ -275,7 +286,14 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
 
   // Reset game after change of settings (stops cheating by changing settings partway through a game)
   React.useEffect(() => {
+    if (props.isCampaignLevel) {
+      return;
+    }
+
     ResetGame();
+
+    // Save the latest gamemode settings for this mode
+    SaveData.setWordleInterlinkedGamemodeSettings(props.page, gamemodeSettings);
   }, [gamemodeSettings]);
 
   React.useEffect(() => {

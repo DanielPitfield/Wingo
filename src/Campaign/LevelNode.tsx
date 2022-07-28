@@ -38,10 +38,10 @@ export const LevelNode: React.FC<{
   const previousLevel = isFirstLevel ? undefined : props.area.levels[props.index - 1];
 
   // Determine whether the level has already been completed
-  const level_completed = areaInfo?.completedLevelIds.some((x) => x === getId(props.level.level)) || false;
+  const isLevelCompleted = areaInfo?.completedLevelIds.some((x) => x === getId(props.level.level)) || false;
 
   // Determine whether the level has been unlocked (i.e. the previous level has been completed)
-  const level_unlocked = !previousLevel
+  const isLevelUnlocked = !previousLevel
     ? areaInfo?.completedLevelIds.includes("unlock")
     : areaInfo?.completedLevelIds.some((x) => x === getId(previousLevel.level)) || false;
 
@@ -61,7 +61,7 @@ export const LevelNode: React.FC<{
         ref={setReferenceElement as any}
         key={`Area ${areaInfo?.name} Level ${props.index + 1}`}
         onClick={() => {
-          if (level_unlocked && !level_completed) {
+          if (isLevelUnlocked && !isLevelCompleted) {
             playClickSoundEffect();
             props.setSelectedCampaignLevel(props.level);
             props.setPage("campaign/area/level");
@@ -69,8 +69,8 @@ export const LevelNode: React.FC<{
         }}
         onMouseOver={() => props.onHoverLevel(props.isSelected ? null : props.level)}
         onMouseLeave={() => props.onHoverLevel(null)}
-        data-is-completed={level_completed}
-        data-is-unlocked={level_unlocked}
+        data-is-completed={isLevelCompleted}
+        data-is-unlocked={isLevelUnlocked}
         data-animation-setting={props.settings.graphics.animation}
         style={{
           position: "absolute",
@@ -86,12 +86,12 @@ export const LevelNode: React.FC<{
           <div
             className="level-button widget"
             key={`Area ${areaInfo?.name} Level ${props.index + 1}`}
-            data-is-completed={level_completed}
-            data-is-unlocked={level_unlocked}
+            data-is-completed={isLevelCompleted}
+            data-is-unlocked={isLevelUnlocked}
           >
             <strong className="widget-subtitle">
               <span className="level-status">
-                {level_completed ? "Completed" : level_unlocked ? "Unlocked!" : "Locked"}
+                {isLevelCompleted ? "Completed" : isLevelUnlocked ? "Unlocked!" : "Locked"}
               </span>
               <span className="level-number">Level {props.index + 1}</span>
             </strong>

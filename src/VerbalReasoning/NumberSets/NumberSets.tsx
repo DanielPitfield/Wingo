@@ -6,7 +6,7 @@ import LetterTile from "../../LetterTile";
 import { MessageNotification } from "../../MessageNotification";
 import { NumPad } from "../../NumPad";
 import ProgressBar, { GreenToRedColorTransition } from "../../ProgressBar";
-import { SettingsData } from "../../SaveData";
+import { SaveData, SettingsData } from "../../SaveData";
 import { useClickChime, useCorrectChime, useFailureChime, useLightPingChime } from "../../Sounds";
 import { Theme } from "../../Themes";
 import { DEFAULT_DIFFICULTY, algebraDifficulty, algebraDifficulties } from "../Algebra/Algebra";
@@ -27,7 +27,7 @@ export type NumberSetTemplate = {
   correctAnswer: number;
 };
 
-interface Props {
+export interface NumberSetsProps {
   isCampaignLevel: boolean;
   defaultSet?: NumberSetConfigProps;
 
@@ -35,7 +35,9 @@ interface Props {
     difficulty?: algebraDifficulty;
     timerConfig?: { isTimed: true; seconds: number } | { isTimed: false };
   };
+}
 
+interface Props extends NumberSetsProps {
   theme: Theme;
   settings: SettingsData;
   setPage: (page: Page) => void;
@@ -78,6 +80,19 @@ const NumberSets: React.FC<Props> = (props) => {
   const [playCorrectChimeSoundEffect] = useCorrectChime(props.settings);
   const [playFailureChimeSoundEffect] = useFailureChime(props.settings);
 
+  // Reset game after change of settings (stops cheating by changing settings partway through a game)
+  React.useEffect(() => {
+    if (props.isCampaignLevel) {
+      return;
+    }
+
+    ResetGame();
+
+    // Save the latest gamemode settings for this mode
+    SaveData.setNumberSetsGamemodeSettings(gamemodeSettings);
+  }, [gamemodeSettings]);
+
+  // Evaluate each guess
   React.useEffect(() => {
     if (inProgress) {
       return;
@@ -91,6 +106,7 @@ const NumberSets: React.FC<Props> = (props) => {
       playFailureChimeSoundEffect();
     }
   }, [guess, inProgress]);
+
   // (Guess) Timer Setup
   React.useEffect(() => {
     if (!gamemodeSettings.timerConfig.isTimed || !inProgress) {
@@ -116,7 +132,7 @@ const NumberSets: React.FC<Props> = (props) => {
     if (props.defaultSet) {
       setNumberSet(props.defaultSet);
     } else {
-      // TODO: Choose set of currently set difficulty
+      // TODO: Choose set of current difficulty
       const numberSet = generateSet();
       setNumberSet(numberSet);
       console.log(numberSet);

@@ -1,34 +1,24 @@
 import React, { useState } from "react";
-import { DEFAULT_WORD_LENGTH, MAX_TARGET_WORD_LENGTH, MIN_TARGET_WORD_LENGTH, Page } from "./App";
 import Wordle from "./Wordle";
-import { words_three_guessable, words_three_targets } from "./WordArrays/Lengths/words_3";
-import { words_four_guessable, words_four_targets } from "./WordArrays/Lengths/words_4";
-import { words_five_guessable, words_five_targets } from "./WordArrays/Lengths/words_5";
-import { words_six_guessable, words_six_targets } from "./WordArrays/Lengths/words_6";
-import { words_seven_guessable, words_seven_targets } from "./WordArrays/Lengths/words_7";
-import { words_eight_guessable, words_eight_targets } from "./WordArrays/Lengths/words_8";
-import { words_nine_guessable, words_nine_targets } from "./WordArrays/Lengths/words_9";
-import { words_ten_guessable, words_ten_targets } from "./WordArrays/Lengths/words_10";
-import { words_eleven_guessable, words_eleven_targets } from "./WordArrays/Lengths/words_11";
 import { words_puzzles } from "./WordArrays/words_puzzles";
 import { SaveData, SettingsData } from "./SaveData";
-import { words_dogs } from "./WordArrays/Categories/dogs";
-import { words_countries } from "./WordArrays/Categories/countries";
-import { words_chemical_elements } from "./WordArrays/Categories/chemical_elements";
-import { words_colours } from "./WordArrays/Categories/colours";
-import { words_fruits } from "./WordArrays/Categories/fruits";
-import { words_sports } from "./WordArrays/Categories/sports";
 import { Theme } from "./Themes";
 import { WordleInterlinked } from "./WordleInterlinked";
-import { words_vegetables } from "./WordArrays/Categories/vegetables";
-import { words_pizza_toppings } from "./WordArrays/Categories/pizza_toppings";
-import { words_capital_cities } from "./WordArrays/Categories/capital_cities";
-import { words_animals } from "./WordArrays/Categories/animals";
-import { words_herbs_and_spices } from "./WordArrays/Categories/herbs_and_spices";
-import { words_meats_and_fish } from "./WordArrays/Categories/meats_and_fish";
-import { words_gemstones } from "./WordArrays/Categories/gemstones";
+
 import { Chance } from "chance";
 import { generateConundrum } from "./CountdownLetters/Conundrum";
+import { Page } from "./App";
+import {
+  categoryMappings,
+  defaultWordleInterlinkedGamemodeSettings,
+  DEFAULT_PUZZLE_LEAVE_NUM_BLANKS,
+  DEFAULT_PUZZLE_REVEAL_MS,
+  DEFAULT_WORD_LENGTH,
+  MAX_TARGET_WORD_LENGTH,
+  MIN_TARGET_WORD_LENGTH,
+  wordLengthMappingsGuessable,
+  wordLengthMappingsTargets,
+} from "./defaultGamemodeSettings";
 
 export interface WordleConfigProps {
   mode:
@@ -88,50 +78,6 @@ interface Props extends WordleConfigProps {
   setTheme: (theme: Theme) => void;
 }
 
-export const DEFAULT_PUZZLE_REVEAL_MS = 2000;
-export const DEFAULT_PUZZLE_LEAVE_NUM_BLANKS = 3;
-
-export const wordLengthMappingsGuessable = [
-  { value: 3, array: words_three_guessable },
-  { value: 4, array: words_four_guessable },
-  { value: 5, array: words_five_guessable },
-  { value: 6, array: words_six_guessable },
-  { value: 7, array: words_seven_guessable },
-  { value: 8, array: words_eight_guessable },
-  { value: 9, array: words_nine_guessable },
-  { value: 10, array: words_ten_guessable },
-  { value: 11, array: words_eleven_guessable },
-];
-
-export const wordLengthMappingsTargets = [
-  { value: 3, array: words_three_targets },
-  { value: 4, array: words_four_targets },
-  { value: 5, array: words_five_targets },
-  { value: 6, array: words_six_targets },
-  { value: 7, array: words_seven_targets },
-  { value: 8, array: words_eight_targets },
-  { value: 9, array: words_nine_targets },
-  { value: 10, array: words_ten_targets },
-  { value: 11, array: words_eleven_targets },
-];
-
-export const categoryMappings = [
-  { name: "Animals", array: words_animals },
-  { name: "Capital Cities", array: words_capital_cities },
-  { name: "Chemical Elements", array: words_chemical_elements },
-  { name: "Colours", array: words_colours },
-  { name: "Countries", array: words_countries },
-  { name: "Dog Breeds", array: words_dogs },
-  { name: "Fruits", array: words_fruits },
-  { name: "Gemstones", array: words_gemstones },
-  { name: "Herbs and Spices", array: words_herbs_and_spices },
-  { name: "Meats and Fish", array: words_meats_and_fish },
-  { name: "Pizza Toppings", array: words_pizza_toppings },
-  { name: "Puzzles", array: words_puzzles },
-  { name: "Sports", array: words_sports },
-  { name: "Vegetables", array: words_vegetables },
-];
-
 export function pickRandomElementFrom(array: any[]) {
   if (!array || array.length === 0) {
     return null;
@@ -141,21 +87,23 @@ export function pickRandomElementFrom(array: any[]) {
   return array[Math.floor(Math.random() * array.length)];
 }
 
-export function getWordSummary(mode: string, word: string, targetWord: string, inDictionary: boolean) {
-  const simpleStatusModes = ["letters_categories"];
+export function getWordSummary(page: Page, word: string, targetWord: string, inDictionary: boolean) {
+  // Either correct or incorrect (green or red statuses) and nothing inbetween
+  const simpleStatusModes: Page[] = ["letters_categories"];
+
   // Character and status array
   let defaultCharacterStatuses = (word || "").split("").map((character, index) => ({
     character: character,
     status: getLetterStatus(character, index, targetWord, inDictionary),
   }));
 
-  if (simpleStatusModes.includes(mode) && word === targetWord) {
+  if (simpleStatusModes.includes(page) && word === targetWord) {
     let finalCharacterStatuses = defaultCharacterStatuses.map((x) => {
       x.status = "correct";
       return x;
     });
     return finalCharacterStatuses;
-  } else if (simpleStatusModes.includes(mode) && word !== targetWord) {
+  } else if (simpleStatusModes.includes(page) && word !== targetWord) {
     let finalCharacterStatuses = defaultCharacterStatuses.map((x) => {
       x.status = "incorrect";
       return x;
@@ -305,7 +253,7 @@ const WordleConfig: React.FC<Props> = (props) => {
     isHintShown: props.gamemodeSettings?.isHintShown ?? props.mode === "puzzle" ? true : false,
     puzzleRevealMs: props.gamemodeSettings?.puzzleRevealMs ?? DEFAULT_PUZZLE_REVEAL_MS,
     puzzleLeaveNumBlanks: props.gamemodeSettings?.puzzleLeaveNumBlanks ?? DEFAULT_PUZZLE_LEAVE_NUM_BLANKS,
-    maxLivesConfig: props.gamemodeSettings?.maxLivesConfig ?? {isLimited: false},
+    maxLivesConfig: props.gamemodeSettings?.maxLivesConfig ?? { isLimited: false },
     timerConfig: props.gamemodeSettings?.timerConfig ?? { isTimed: false },
   };
 
@@ -1182,55 +1130,56 @@ const WordleConfig: React.FC<Props> = (props) => {
     setGamemodeSettings(newGamemodeSettings);
   }
 
-  const DEFAULT_CROSSWORD_MAX_LENGTH = 8;
+  // Get the gamemode settings for the specific page (WordleInterlinked mode)
+  const pageGamemodeSettings = (() => {
+    switch (props.page) {
+      // Daily/weekly modes should always use the same settings (never from SaveData)
+      case "wingo/crossword/daily":
+      case "wingo/crossword/weekly":
+        return defaultWordleInterlinkedGamemodeSettings.find((x) => x.page === props.page)?.settings;
+
+      // WordleInterlinked modes
+      case "wingo/interlinked":
+      case "wingo/crossword":
+      case "wingo/crossword/fit":
+        return (
+          SaveData.getWordleInterlinkedGamemodeSettings(props.page) ||
+          defaultWordleInterlinkedGamemodeSettings.find((x) => x.page === props.page)?.settings
+        );
+
+      default:
+        return gamemodeSettings;
+    }
+  })();
+
+  const commonWingoInterlinkedProps = {
+    isCampaignLevel: props.page === "campaign/area/level",
+    gamemodeSettings: pageGamemodeSettings,
+    page: props.page,
+    theme: props.theme,
+    setPage: props.setPage,
+    setTheme: props.setTheme,
+    addGold: props.addGold,
+    settings: props.settings,
+    onComplete: props.onComplete,
+  };
 
   if (props.mode === "interlinked") {
     return (
-      <WordleInterlinked
-        isCampaignLevel={props.page === "campaign/area/level"}
-        wordArrayConfig={{ type: "length" }}
-        gamemodeSettings={{
-          numWords: 2,
-          minWordLength: DEFAULT_WORD_LENGTH,
-          maxWordLength: DEFAULT_WORD_LENGTH,
-          isHintShown: false,
-          numWordGuesses: 0,
-          numGridGuesses: 6,
-          timerConfig: { isTimed: true, seconds: 60 },
-        }}
-        provideWords={false}
-        theme={props.theme}
-        settings={props.settings}
-        onComplete={props.onComplete}
-      />
+      <WordleInterlinked {...commonWingoInterlinkedProps} wordArrayConfig={{ type: "length" }} provideWords={false} />
     );
   }
 
   if (props.mode === "crossword") {
     return (
-      <WordleInterlinked
-        isCampaignLevel={props.page === "campaign/area/level"}
-        wordArrayConfig={{ type: "category" }}
-        gamemodeSettings={{
-          numWords: 6,
-          minWordLength: MIN_TARGET_WORD_LENGTH,
-          maxWordLength: DEFAULT_CROSSWORD_MAX_LENGTH,
-          isHintShown: true,
-          numWordGuesses: 10,
-          numGridGuesses: 2,
-          timerConfig: { isTimed: true, seconds: 180 },
-        }}
-        provideWords={false}
-        theme={props.theme}
-        settings={props.settings}
-      />
+      <WordleInterlinked {...commonWingoInterlinkedProps} wordArrayConfig={{ type: "category" }} provideWords={false} />
     );
   }
 
   if (props.mode === "crossword/daily") {
     return (
       <WordleInterlinked
-        isCampaignLevel={props.page === "campaign/area/level"}
+        {...commonWingoInterlinkedProps}
         wordArrayConfig={{
           type: "custom",
           array: getDeterministicArrayItems(
@@ -1243,18 +1192,7 @@ const WordleConfig: React.FC<Props> = (props) => {
         }}
         onSave={SaveData.setDailyCrossWordGuesses}
         initialConfig={SaveData.getDailyCrossWordGuesses() || undefined}
-        gamemodeSettings={{
-          numWords: 6,
-          minWordLength: MIN_TARGET_WORD_LENGTH,
-          maxWordLength: DEFAULT_CROSSWORD_MAX_LENGTH,
-          isHintShown: true,
-          numWordGuesses: 10,
-          numGridGuesses: 2,
-          timerConfig: { isTimed: false },
-        }}
         provideWords={false}
-        theme={props.theme}
-        settings={props.settings}
       />
     );
   }
@@ -1262,7 +1200,7 @@ const WordleConfig: React.FC<Props> = (props) => {
   if (props.mode === "crossword/weekly") {
     return (
       <WordleInterlinked
-        isCampaignLevel={props.page === "campaign/area/level"}
+        {...commonWingoInterlinkedProps}
         wordArrayConfig={{
           type: "custom",
           array: getDeterministicArrayItems(
@@ -1275,43 +1213,14 @@ const WordleConfig: React.FC<Props> = (props) => {
         }}
         onSave={SaveData.setWeeklyCrossWordGuesses}
         initialConfig={SaveData.getWeeklyCrossWordGuesses() || undefined}
-        gamemodeSettings={{
-          numWords: 10,
-          minWordLength: MIN_TARGET_WORD_LENGTH,
-          maxWordLength: DEFAULT_CROSSWORD_MAX_LENGTH,
-          isHintShown: true,
-          numWordGuesses: 10,
-          numGridGuesses: 2,
-          timerConfig: { isTimed: false },
-        }}
         provideWords={false}
-        theme={props.theme}
-        settings={props.settings}
-        onComplete={props.onComplete}
       />
     );
   }
 
   if (props.mode === "crossword/fit") {
     return (
-      <WordleInterlinked
-        isCampaignLevel={props.page === "campaign/area/level"}
-        wordArrayConfig={{ type: "length" }}
-        gamemodeSettings={{
-          numWords: 6,
-          minWordLength: DEFAULT_WORD_LENGTH,
-          maxWordLength: DEFAULT_WORD_LENGTH,
-          fitRestrictionConfig: { isRestricted: true, fitRestriction: 0 },
-          isHintShown: false,
-          numWordGuesses: 0,
-          numGridGuesses: 1,
-          timerConfig: { isTimed: true, seconds: 60 },
-        }}
-        provideWords={true}
-        theme={props.theme}
-        settings={props.settings}
-        onComplete={props.onComplete}
-      />
+      <WordleInterlinked {...commonWingoInterlinkedProps} wordArrayConfig={{ type: "length" }} provideWords={true} />
     );
   }
 
@@ -1336,6 +1245,7 @@ const WordleConfig: React.FC<Props> = (props) => {
       revealedLetterIndexes={revealedLetterIndexes}
       letterStatuses={letterStatuses}
       finishingButtonText={props.finishingButtonText}
+      page={props.page}
       theme={props.theme}
       settings={props.settings}
       onEnter={onEnter}

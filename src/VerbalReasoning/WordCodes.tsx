@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { shuffleArray } from "../NumbersArithmetic/ArithmeticDrag";
-import { pickRandomElementFrom, wordLengthMappingsTargets } from "../WordleConfig";
+import { pickRandomElementFrom } from "../WordleConfig";
 import { Page } from "../App";
 import { Button } from "../Button";
 import { DEFAULT_ALPHABET, Keyboard } from "../Keyboard";
@@ -8,27 +8,27 @@ import LetterTile from "../LetterTile";
 import { MessageNotification } from "../MessageNotification";
 import { NumPad } from "../NumPad";
 import ProgressBar, { GreenToRedColorTransition } from "../ProgressBar";
-import { SettingsData } from "../SaveData";
+import { SaveData, SettingsData } from "../SaveData";
 import { useClickChime, useCorrectChime, useFailureChime, useLightPingChime } from "../Sounds";
 import { Theme } from "../Themes";
 import { arrayMove, OrderGroup } from "react-draggable-order";
 import { DraggableItem } from "../NumbersArithmetic/DraggableItem";
 import { getQuestionSetOutcome } from "./Algebra/Algebra";
 import GamemodeSettingsMenu from "../GamemodeSettingsMenu";
+import { wordLengthMappingsTargets } from "../defaultGamemodeSettings";
 
 const wordCodesModes = ["match", "question"] as const;
-type wordCodesMode = typeof wordCodesModes[number];
+export type wordCodesMode = typeof wordCodesModes[number];
 
-interface Props {
-  isCampaignLevel: boolean;
+export interface WordCodesProps {
+  isCampaignLevel: boolean;  
+  /* 
+  Question mode - there can be more words provided than codes, answer questions converting between words and codes
+  Match mode - same number of words as codes, match them together
+  */
+  mode: wordCodesMode;
 
   gamemodeSettings?: {
-    /* 
-    Question mode - there can be more words provided than codes, answer questions converting between words and codes
-    Match mode - same number of words as codes, match them together
-    */
-    mode?: wordCodesMode;
-
     // Question mode only settings
     numDisplayWords?: number;
     numDisplayCodes?: number;
@@ -38,12 +38,15 @@ interface Props {
     // Match mode only setting
     numCodesToMatch?: number;
 
+    // Both modes
     codeLength?: number;
     numAdditionalLetters?: number;
     numGuesses?: number;
     timerConfig?: { isTimed: true; seconds: number } | { isTimed: false };
   };
+}
 
+interface Props extends WordCodesProps {
   theme: Theme;
   settings: SettingsData;
   setPage: (page: Page) => void;
@@ -52,14 +55,13 @@ interface Props {
 
 /** */
 const WordCodes: React.FC<Props> = (props) => {
-  const DEFAULT_MODE = "question";
-
   // Question mode only
   const DEFAULT_NUM_DISPLAY_WORDS = 4;
   const DEFAULT_NUM_DISPLAY_CODES = 3;
   const DEFAULT_NUM_WORD_TO_CODE_QUESTIONS = 2;
   const DEFAULT_NUM_CODE_TO_WORD_QUESTIONS = 1;
 
+  // Both modes
   const DEFAULT_CODE_LENGTH = 4;
   const DEFAULT_NUM_CODES_TO_MATCH = 4;
   const DEFAULT_NUM_ADDITIONAL_LETTERS = 2;
@@ -97,8 +99,6 @@ const WordCodes: React.FC<Props> = (props) => {
   );
 
   const defaultGamemodeSettings = {
-    mode: props.gamemodeSettings?.mode ?? DEFAULT_MODE,
-
     numDisplayWords: STARTING_NUM_DISPLAY_WORDS,
     numDisplayCodes: STARTING_NUM_DISPLAY_CODES,
     numWordToCodeQuestions: props.gamemodeSettings?.numWordToCodeQuestions ?? DEFAULT_NUM_WORD_TO_CODE_QUESTIONS,
@@ -112,8 +112,6 @@ const WordCodes: React.FC<Props> = (props) => {
   };
 
   const [gamemodeSettings, setGamemodeSettings] = useState<{
-    mode: wordCodesMode;
-
     numDisplayWords: number;
     numDisplayCodes: number;
     numWordToCodeQuestions: number;
@@ -149,6 +147,18 @@ const WordCodes: React.FC<Props> = (props) => {
   const [playFailureChimeSoundEffect] = useFailureChime(props.settings);
   const [playLightPingSoundEffect] = useLightPingChime(props.settings);
   const [playClickSoundEffect] = useClickChime(props.settings);
+
+  // Reset game after change of settings (stops cheating by changing settings partway through a game)
+  React.useEffect(() => {
+    if (props.isCampaignLevel) {
+      return;
+    }
+
+    ResetGame();
+
+    // Save the latest gamemode settings for this mode
+    SaveData.setWordCodesGamemodeSettings(props.mode, gamemodeSettings);
+  }, [gamemodeSettings]);
 
   // (Guess) Timer Setup
   React.useEffect(() => {
@@ -199,13 +209,13 @@ const WordCodes: React.FC<Props> = (props) => {
 
   // Update tiles or display information (each time wordCodes changes)
   React.useEffect(() => {
-    //const expectedWordCodesLength = gamemodeSettings.mode === "match" ? gamemodeSettings.numCodesToMatch : gamemodeSettings.numDisplayWords;
+    //const expectedWordCodesLength = props.mode === "match" ? gamemodeSettings.numCodesToMatch : gamemodeSettings.numDisplayWords;
 
     if (!wordCodes || wordCodes.length === 0 /*|| wordCodes.length !== expectedWordCodesLength*/) {
       return;
     }
 
-    if (gamemodeSettings.mode === "match") {
+    if (props.mode === "match") {
       // Word Tiles
       let newWordTiles: { word: string; code: string; status: "not set" }[] = [];
       newWordTiles = wordCodes.map((wordCode) => ({ ...wordCode, status: "not set" }));
@@ -295,7 +305,7 @@ const WordCodes: React.FC<Props> = (props) => {
     const originalMatches = targetWordArray.filter((word) => isWordValid(validLetters, word));
 
     const subsetSize =
-      gamemodeSettings.mode === "match" ? gamemodeSettings.numCodesToMatch : gamemodeSettings.numDisplayWords;
+      props.mode === "match" ? gamemodeSettings.numCodesToMatch : gamemodeSettings.numDisplayWords;
     // Choose/determine a subset of these words
     let wordSubset: string[] = [];
     let failCount = 0;
@@ -336,7 +346,7 @@ const WordCodes: React.FC<Props> = (props) => {
 
     setWordCodes(newWordCodes);
 
-    if (gamemodeSettings.mode === "question") {
+    if (props.mode === "question") {
       // Choose/determine a subset of valid words
       let questionWordSubset: string[] = [];
 
@@ -376,7 +386,7 @@ const WordCodes: React.FC<Props> = (props) => {
 
   // Textual information for questions gamemode
   function displayInformation() {
-    if (gamemodeSettings.mode !== "question") {
+    if (props.mode !== "question") {
       return;
     }
 
@@ -414,7 +424,7 @@ const WordCodes: React.FC<Props> = (props) => {
   }
 
   function displayQuestion() {
-    if (gamemodeSettings.mode !== "question") {
+    if (props.mode !== "question") {
       return;
     }
 
@@ -451,7 +461,7 @@ const WordCodes: React.FC<Props> = (props) => {
       return false;
     }
 
-    if (gamemodeSettings.mode !== "question") {
+    if (props.mode !== "question") {
       return false;
     }
 
@@ -485,7 +495,7 @@ const WordCodes: React.FC<Props> = (props) => {
 
   // Draggable tiles for match gamemode
   function displayTiles() {
-    if (gamemodeSettings.mode !== "match") {
+    if (props.mode !== "match") {
       return;
     }
 
@@ -527,7 +537,7 @@ const WordCodes: React.FC<Props> = (props) => {
   }
 
   function checkTiles() {
-    if (gamemodeSettings.mode !== "match") {
+    if (props.mode !== "match") {
       return;
     }
 
@@ -577,13 +587,13 @@ const WordCodes: React.FC<Props> = (props) => {
       return;
     }
 
-    if (gamemodeSettings.mode === "question" && !questionWordCodes) {
+    if (props.mode === "question" && !questionWordCodes) {
       return;
     }
 
     let message_notification;
 
-    if (gamemodeSettings.mode === "match") {
+    if (props.mode === "match") {
       const numCorrectTiles = wordTiles.filter((x) => x.status === "correct").length;
       const successCondition = numCorrectTiles === wordTiles.length;
 
@@ -606,7 +616,7 @@ const WordCodes: React.FC<Props> = (props) => {
           </Button>
         </>
       );
-    } else if (gamemodeSettings.mode === "question") {
+    } else if (props.mode === "question") {
       const successCondition = isGuessCorrect();
 
       // The number of questions in this set of questions
@@ -737,29 +747,7 @@ const WordCodes: React.FC<Props> = (props) => {
 
     return (
       <>
-        <label>
-          <select
-            onChange={(e) => {
-              const newGamemodeSettings = {
-                ...gamemodeSettings,
-                mode: e.target.value as wordCodesMode,
-              };
-              setGamemodeSettings(newGamemodeSettings);
-            }}
-            className="wordCodesMode_input"
-            name="wordCodesMode"
-            value={gamemodeSettings.mode}
-          >
-            {wordCodesModes.map((mode) => (
-              <option key={mode} value={mode}>
-                {mode}
-              </option>
-            ))}
-          </select>
-          Mode
-        </label>
-
-        {gamemodeSettings.mode !== "match" && (
+        {props.mode !== "match" && (
           <label>
             <input
               type="number"
@@ -779,7 +767,7 @@ const WordCodes: React.FC<Props> = (props) => {
           </label>
         )}
 
-        {gamemodeSettings.mode !== "match" && (
+        {props.mode !== "match" && (
           <label>
             <input
               type="number"
@@ -799,7 +787,7 @@ const WordCodes: React.FC<Props> = (props) => {
           </label>
         )}
 
-        {gamemodeSettings.mode !== "match" && (
+        {props.mode !== "match" && (
           <label>
             <input
               type="number"
@@ -819,7 +807,7 @@ const WordCodes: React.FC<Props> = (props) => {
           </label>
         )}
 
-        {gamemodeSettings.mode !== "match" && (
+        {props.mode !== "match" && (
           <label>
             <input
               type="number"
@@ -961,12 +949,12 @@ const WordCodes: React.FC<Props> = (props) => {
 
       <div className="outcome">{displayOutcome()}</div>
 
-      {Boolean(gamemodeSettings.mode === "match" && inProgress) && (
+      {Boolean(props.mode === "match" && inProgress) && (
         <MessageNotification type="default">{`Guesses left: ${remainingGuesses}`}</MessageNotification>
       )}
 
-      {gamemodeSettings.mode === "match" && <div className="tile_row">{displayTiles()}</div>}
-      {Boolean(gamemodeSettings.mode === "match" && inProgress) && (
+      {props.mode === "match" && <div className="tile_row">{displayTiles()}</div>}
+      {Boolean(props.mode === "match" && inProgress) && (
         <Button
           mode={remainingGuesses <= 1 ? "accept" : "default"}
           settings={props.settings}
@@ -976,9 +964,9 @@ const WordCodes: React.FC<Props> = (props) => {
         </Button>
       )}
 
-      {gamemodeSettings.mode !== "match" && <div className="word_codes_information">{displayInformation()}</div>}
-      {gamemodeSettings.mode !== "match" && displayQuestion()}
-      {gamemodeSettings.mode !== "match" && (
+      {props.mode !== "match" && <div className="word_codes_information">{displayInformation()}</div>}
+      {props.mode !== "match" && displayQuestion()}
+      {props.mode !== "match" && (
         <div className="guess">
           <LetterTile
             letter={guess}
@@ -987,7 +975,7 @@ const WordCodes: React.FC<Props> = (props) => {
           ></LetterTile>
         </div>
       )}
-      {Boolean(gamemodeSettings.mode !== "match" && questionWordCodes[questionNumber]?.isWordToCode) && (
+      {Boolean(props.mode !== "match" && questionWordCodes[questionNumber]?.isWordToCode) && (
         <NumPad
           onEnter={() => setInProgress(false)}
           onBackspace={onBackspace}
@@ -997,7 +985,7 @@ const WordCodes: React.FC<Props> = (props) => {
           showKeyboard={props.settings.gameplay.keyboard}
         />
       )}
-      {Boolean(gamemodeSettings.mode !== "match" && !questionWordCodes[questionNumber]?.isWordToCode) && (
+      {Boolean(props.mode !== "match" && !questionWordCodes[questionNumber]?.isWordToCode) && (
         <Keyboard
           onEnter={() => setInProgress(false)}
           onBackspace={onBackspace}

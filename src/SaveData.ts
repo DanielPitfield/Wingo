@@ -1,10 +1,20 @@
 import { Page, pages } from "./App";
 import { LevelConfig } from "./Campaign/Level";
 import { BaseChallenge } from "./Challenges/BaseChallenge";
+import { CountdownLettersConfigProps } from "./CountdownLetters/CountdownLettersConfig";
+import { CountdownNumbersConfigProps } from "./CountdownNumbers/CountdownNumbersConfig";
+import { LetterCategoriesConfigProps } from "./LetterCategories/LetterCategoriesConfig";
 import { NubbleConfigProps } from "./Nubble/NubbleConfig";
+import { ArithmeticDragProps, arithmeticMode } from "./NumbersArithmetic/ArithmeticDrag";
+import { ArithmeticRevealProps } from "./NumbersArithmetic/ArithmeticReveal";
+import { GroupWallProps } from "./OnlyConnect/GroupWall";
 import { Themes } from "./Themes";
+import { AlgebraProps } from "./VerbalReasoning/Algebra/Algebra";
+import { NumberSetsProps } from "./VerbalReasoning/NumberSets/NumberSets";
+import { SameLetterWordsProps } from "./VerbalReasoning/SameLetterWords";
+import { wordCodesMode, WordCodesProps } from "./VerbalReasoning/WordCodes";
 import { WordleConfigProps } from "./WordleConfig";
-import { TileStatus } from "./WordleInterlinked";
+import { TileStatus, WordleInterlinkedProps } from "./WordleInterlinked";
 
 export type CampaignSaveData = {
   areas: { name: string; status: "locked" | "unlockable" | "unlocked"; completedLevelIds: string[] }[];
@@ -420,27 +430,216 @@ export class SaveData {
     return null;
   }
 
-  /**
-   * Saves the gamemode settings for Nubble Config.
-   * @param gameSettings The latest gamemode settings for Nubble Config to save.
-   */
+  public static setWordleInterlinkedGamemodeSettings(
+    page: Page,
+    gameSettings: WordleInterlinkedProps["gamemodeSettings"]
+  ) {
+    const itemName = determineLocalStorageItemName(page);
+
+    if (!itemName) {
+      return;
+    }
+
+    localStorage.setItem(itemName, JSON.stringify(gameSettings));
+  }
+
+  public static getWordleInterlinkedGamemodeSettings(page: Page): WordleInterlinkedProps["gamemodeSettings"] | null {
+    const itemName = determineLocalStorageItemName(page);
+
+    if (!itemName) {
+      return;
+    }
+
+    const wordleInterlinkedGamemodeSettings = localStorage.getItem(itemName);
+
+    if (wordleInterlinkedGamemodeSettings) {
+      return JSON.parse(wordleInterlinkedGamemodeSettings) as WordleInterlinkedProps["gamemodeSettings"];
+    }
+
+    return null;
+  }
+
   public static setNubbleConfigGamemodeSettings(gameSettings: NubbleConfigProps["gamemodeSettings"]) {
     localStorage.setItem("nubbleConfigGamemodeSettings", JSON.stringify(gameSettings));
   }
 
-  /**
-   * Gets the saved gamemode settings for Nubble Config, or null if no saved gamemode settings were found.
-   * @returns The saved gamemode settings for Nubble Config to save.
-   */
   public static getNubbleConfigGamemodeSettings(): NubbleConfigProps["gamemodeSettings"] | null {
     const nubbleConfigGamemodeSettings = localStorage.getItem("nubbleConfigGamemodeSettings");
 
-    // If saved gamemode settings were found
     if (nubbleConfigGamemodeSettings) {
       return JSON.parse(nubbleConfigGamemodeSettings) as NubbleConfigProps["gamemodeSettings"];
     }
 
-    // Else if not found; return null
+    return null;
+  }
+
+  public static setLetterCategoriesConfigGamemodeSettings(
+    gameSettings: LetterCategoriesConfigProps["gamemodeSettings"]
+  ) {
+    localStorage.setItem("letterCategoriesConfigGamemodeSettings", JSON.stringify(gameSettings));
+  }
+
+  public static getLetterCategoriesConfigGamemodeSettings(): LetterCategoriesConfigProps["gamemodeSettings"] | null {
+    const letterCategoriesConfigGamemodeSettings = localStorage.getItem("letterCategoriesConfigGamemodeSettings");
+
+    if (letterCategoriesConfigGamemodeSettings) {
+      return JSON.parse(letterCategoriesConfigGamemodeSettings) as LetterCategoriesConfigProps["gamemodeSettings"];
+    }
+
+    return null;
+  }
+
+  public static setCountdownLettersConfigGamemodeSettings(
+    gameSettings: CountdownLettersConfigProps["gamemodeSettings"]
+  ) {
+    localStorage.setItem("countdownLettersConfigGamemodeSettings", JSON.stringify(gameSettings));
+  }
+
+  public static getCountdownLettersConfigGamemodeSettings(): CountdownLettersConfigProps["gamemodeSettings"] | null {
+    const countdownLettersConfigGamemodeSettings = localStorage.getItem("countdownLettersConfigGamemodeSettings");
+
+    if (countdownLettersConfigGamemodeSettings) {
+      return JSON.parse(countdownLettersConfigGamemodeSettings) as CountdownLettersConfigProps["gamemodeSettings"];
+    }
+
+    return null;
+  }
+
+  public static setCountdownNumbersConfigGamemodeSettings(
+    gameSettings: CountdownNumbersConfigProps["gamemodeSettings"]
+  ) {
+    localStorage.setItem("countdownNumbersConfigGamemodeSettings", JSON.stringify(gameSettings));
+  }
+
+  public static getCountdownNumbersConfigGamemodeSettings(): CountdownNumbersConfigProps["gamemodeSettings"] | null {
+    const countdownNumbersConfigGamemodeSettings = localStorage.getItem("countdownNumbersConfigGamemodeSettings");
+
+    if (countdownNumbersConfigGamemodeSettings) {
+      return JSON.parse(countdownNumbersConfigGamemodeSettings) as CountdownNumbersConfigProps["gamemodeSettings"];
+    }
+
+    return null;
+  }
+
+  public static setArithmeticRevealGamemodeSettings(gameSettings: ArithmeticRevealProps["gamemodeSettings"]) {
+    localStorage.setItem("arithmeticRevealGamemodeSettings", JSON.stringify(gameSettings));
+  }
+
+  public static getArithmeticRevealGamemodeSettings(): ArithmeticRevealProps["gamemodeSettings"] | null {
+    const arithmeticRevealGamemodeSettings = localStorage.getItem("arithmeticRevealGamemodeSettings");
+
+    if (arithmeticRevealGamemodeSettings) {
+      return JSON.parse(arithmeticRevealGamemodeSettings) as ArithmeticRevealProps["gamemodeSettings"];
+    }
+
+    return null;
+  }
+
+  public static setArithmeticDragGamemodeSettings(
+    mode: arithmeticMode,
+    gameSettings: ArithmeticDragProps["gamemodeSettings"]
+  ) {
+    if (mode === "match") {
+      localStorage.setItem("arithmeticDragMatchGamemodeSettings", JSON.stringify(gameSettings));
+    } else if (mode === "order") {
+      localStorage.setItem("arithmeticDragOrderGamemodeSettings", JSON.stringify(gameSettings));
+    }
+  }
+
+  public static getArithmeticDragGamemodeSettings(
+    mode: arithmeticMode
+  ): ArithmeticDragProps["gamemodeSettings"] | null {
+    const arithmeticDragGamemodeSettings =
+      mode === "match"
+        ? localStorage.getItem("arithmeticDragMatchGamemodeSettings")
+        : localStorage.getItem("arithmeticDragOrderGamemodeSettings");
+
+    if (arithmeticDragGamemodeSettings) {
+      return JSON.parse(arithmeticDragGamemodeSettings) as ArithmeticDragProps["gamemodeSettings"];
+    }
+
+    return null;
+  }
+
+  public static setGroupWallGamemodeSettings(gameSettings: GroupWallProps["gamemodeSettings"]) {
+    localStorage.setItem("groupWallGamemodeSettings", JSON.stringify(gameSettings));
+  }
+
+  public static getGroupWallGamemodeSettings(): GroupWallProps["gamemodeSettings"] | null {
+    const groupWallGamemodeSettings = localStorage.getItem("groupWallGamemodeSettings");
+
+    if (groupWallGamemodeSettings) {
+      return JSON.parse(groupWallGamemodeSettings) as GroupWallProps["gamemodeSettings"];
+    }
+
+    return null;
+  }
+
+  public static setSameLetterWordsGamemodeSettings(gameSettings: SameLetterWordsProps["gamemodeSettings"]) {
+    localStorage.setItem("sameLetterWordsGamemodeSettings", JSON.stringify(gameSettings));
+  }
+
+  public static getSameLetterWordsGamemodeSettings(): SameLetterWordsProps["gamemodeSettings"] | null {
+    const sameLetterWordsGamemodeSettings = localStorage.getItem("sameLetterWordsGamemodeSettings");
+
+    if (sameLetterWordsGamemodeSettings) {
+      return JSON.parse(sameLetterWordsGamemodeSettings) as SameLetterWordsProps["gamemodeSettings"];
+    }
+
+    return null;
+  }
+
+  public static setNumberSetsGamemodeSettings(gameSettings: NumberSetsProps["gamemodeSettings"]) {
+    localStorage.setItem("numberSetsGamemodeSettings", JSON.stringify(gameSettings));
+  }
+
+  public static getNumberSetsGamemodeSettings(): NumberSetsProps["gamemodeSettings"] | null {
+    const numberSetsGamemodeSettings = localStorage.getItem("numberSetsGamemodeSettings");
+
+    if (numberSetsGamemodeSettings) {
+      return JSON.parse(numberSetsGamemodeSettings) as NumberSetsProps["gamemodeSettings"];
+    }
+
+    return null;
+  }
+
+  public static setAlgebraGamemodeSettings(gameSettings: AlgebraProps["gamemodeSettings"]) {
+    localStorage.setItem("algebraGamemodeSettings", JSON.stringify(gameSettings));
+  }
+
+  public static getAlgebraGamemodeSettings(): AlgebraProps["gamemodeSettings"] | null {
+    const algebraGamemodeSettings = localStorage.getItem("algebraGamemodeSettings");
+
+    if (algebraGamemodeSettings) {
+      return JSON.parse(algebraGamemodeSettings) as AlgebraProps["gamemodeSettings"];
+    }
+
+    return null;
+  }
+
+  public static setWordCodesGamemodeSettings(
+    mode: wordCodesMode,
+    gameSettings: WordCodesProps["gamemodeSettings"]
+  ) {
+    if (mode === "question") {
+      localStorage.setItem("wordCodesQuestionGamemodeSettings", JSON.stringify(gameSettings));
+    } else if (mode === "match") {
+      localStorage.setItem("wordCodesMatchGamemodeSettings", JSON.stringify(gameSettings));
+    }
+  }
+
+  public static getWordCodesGamemodeSettings(
+    mode: wordCodesMode
+  ): WordCodesProps["gamemodeSettings"] | null {
+    const wordCodesGamemodeSettings =
+      mode === "question"
+        ? localStorage.getItem("wordCodesQuestionGamemodeSettings")
+        : localStorage.getItem("wordCodesMatchGamemodeSettings");
+
+    if (wordCodesGamemodeSettings) {
+      return JSON.parse(wordCodesGamemodeSettings) as WordCodesProps["gamemodeSettings"];
+    }
+
     return null;
   }
 

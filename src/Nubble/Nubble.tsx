@@ -419,6 +419,16 @@ const Nubble: React.FC<Props> = (props) => {
     }
   }
 
+  // Determine and set the next team to play
+  function nextTeamTurn() {
+    const newCurrentTeamNumber = getNextTeamNumberWithRemainingTime(props.currentTeamNumber, props.teamTimers);
+    if (newCurrentTeamNumber !== null) {
+      props.setCurrentTeamNumber(newCurrentTeamNumber);
+      // Next team rolls their own dice values
+      props.setStatus("picked-awaiting-dice-roll");
+    }
+  }
+
   /**
    *
    * @param pinNumber
@@ -439,24 +449,20 @@ const Nubble: React.FC<Props> = (props) => {
 
     // There are no solutions (ways of making the selected number)
     if (solutions.length < 1) {
-      if (props.gamemodeSettings.isGameOverOnIncorrectPick) {
-        // Singleplayer
-        if (props.gamemodeSettings.numTeams === 1) {
-          // End game if game setting is enabled
-          props.setStatus("game-over-incorrect-tile");
-          // Return early
-          return;
-        } else {
-          // Set current team's remaining time to zero
-          const newTeamTimers = props.teamTimers.map((teamTimerInfo) => {
-            if (teamTimerInfo.teamNumber === props.currentTeamNumber) {
-              return { ...teamTimerInfo, remainingSeconds: 0 };
-            }
-            return teamTimerInfo;
-          });
-          props.updateTeamTimers(newTeamTimers);
-        }
+      if (props.gamemodeSettings.isGameOverOnIncorrectPick && props.gamemodeSettings.numTeams === 1) {
+        props.setStatus("game-over-incorrect-tile"); // End game
+      } else if (props.gamemodeSettings.isGameOverOnIncorrectPick && props.gamemodeSettings.numTeams > 1) {
+        // Set current team's remaining time to zero
+        const newTeamTimers = props.teamTimers.map((teamTimerInfo) => {
+          if (teamTimerInfo.teamNumber === props.currentTeamNumber) {
+            return { ...teamTimerInfo, remainingSeconds: 0 };
+          }
+          return teamTimerInfo;
+        });
+        props.updateTeamTimers(newTeamTimers);
       }
+      nextTeamTurn();
+      return;
     }
 
     // Keep track that the pin has now been correctly picked
@@ -465,22 +471,17 @@ const Nubble: React.FC<Props> = (props) => {
     setPickedPins(newPickedPins);
 
     // Find out how many base points the pin is worth
-    let pinScore = gridPoints.find((x) => x.number === pinNumber)?.points;
+    let pinScore = gridPoints.find((x) => x.number === pinNumber)?.points ?? 0;
 
-    if (!pinScore) {
-      return;
-    }
-
+    // Double points if the picked pin is a prime number
     if (isPrime(pinNumber)) {
-      // Double points if the picked pin is a prime number
-      pinScore = pinScore! * 2;
+      pinScore *= 2;
     }
 
     // Bonus points awarded for nubble triangle
-    const adjacentBonus = 200;
-
+    const ADJACENT_BONUS = 200;
     if (isAdjacentBonus(pinNumber)) {
-      pinScore = pinScore + adjacentBonus;
+      pinScore += ADJACENT_BONUS;
     }
 
     // Add points to total points
@@ -504,13 +505,7 @@ const Nubble: React.FC<Props> = (props) => {
       setTotalPoints(newTotalPoints);
     }
 
-    // Next team's turn
-    const newCurrentTeamNumber = getNextTeamNumberWithRemainingTime(props.currentTeamNumber, props.teamTimers);
-    if (newCurrentTeamNumber !== null) {
-      props.setCurrentTeamNumber(newCurrentTeamNumber);
-      // Next team rolls their own dice values
-      props.setStatus("picked-awaiting-dice-roll");
-    }
+    nextTeamTurn();
   }
 
   // Array (length of rowLength) of buttons
@@ -784,17 +779,16 @@ const Nubble: React.FC<Props> = (props) => {
   }
 
   function ResetGame() {
-    // Reset timer back to full
     if (props.gamemodeSettings.timerConfig.isTimed) {
       const newRemainingSeconds = props.gamemodeSettings.timerConfig.seconds ?? mostRecentTotalSeconds;
+
       // Reset all teams' times back to full
-      const newTeamTimers = props.teamTimers.map((teamTimerInfo) => {
-        return {
-          ...teamTimerInfo,
-          remainingSeconds: newRemainingSeconds,
-          totalSeconds: newRemainingSeconds,
-        };
-      });
+      const newTeamTimers = Array.from({ length: props.gamemodeSettings.numTeams }).map((_, i) => ({
+        teamNumber: i,
+        remainingSeconds: newRemainingSeconds,
+        totalSeconds: newRemainingSeconds,
+      }));
+
       props.updateTeamTimers(newTeamTimers);
     }
     // Clear any game progress

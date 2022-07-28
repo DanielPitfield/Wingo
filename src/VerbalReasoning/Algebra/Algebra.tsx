@@ -7,13 +7,13 @@ import LetterTile from "../../LetterTile";
 import { MessageNotification } from "../../MessageNotification";
 import { NumPad } from "../../NumPad";
 import ProgressBar, { GreenToRedColorTransition } from "../../ProgressBar";
-import { SettingsData } from "../../SaveData";
+import { SaveData, SettingsData } from "../../SaveData";
 import { useClickChime, useCorrectChime, useFailureChime, useLightPingChime } from "../../Sounds";
 import { Theme } from "../../Themes";
 import { AlgebraTemplates } from "./AlgebraTemplates";
 
-export const algebraDifficulties = ["novice","easy","medium","hard","expert"] as const;
-export type algebraDifficulty = typeof algebraDifficulties[number];  
+export const algebraDifficulties = ["novice", "easy", "medium", "hard", "expert"] as const;
+export type algebraDifficulty = typeof algebraDifficulties[number];
 export const DEFAULT_DIFFICULTY: algebraDifficulty = "easy";
 
 export type AlgebraConfigProps = {
@@ -28,15 +28,17 @@ export type QuestionTemplate = {
   correctAnswer: string;
 };
 
-interface Props {
+export interface AlgebraProps {
   isCampaignLevel: boolean;
   defaultTemplate?: AlgebraConfigProps;
 
   gamemodeSettings?: {
     difficulty?: algebraDifficulty;
     timerConfig?: { isTimed: true; seconds: number } | { isTimed: false };
-  }
+  };
+}
 
+interface Props extends AlgebraProps {
   theme: Theme;
   settings: SettingsData;
   setPage: (page: Page) => void;
@@ -97,6 +99,18 @@ const Algebra: React.FC<Props> = (props) => {
   const [playFailureChimeSoundEffect] = useFailureChime(props.settings);
   const [playLightPingSoundEffect] = useLightPingChime(props.settings);
   const [playClickSoundEffect] = useClickChime(props.settings);
+
+  // Reset game after change of settings (stops cheating by changing settings partway through a game)
+  React.useEffect(() => {
+    if (props.isCampaignLevel) {
+      return;
+    }
+
+    ResetGame();
+
+    // Save the latest gamemode settings for this mode
+    SaveData.setAlgebraGamemodeSettings(gamemodeSettings);
+  }, [gamemodeSettings]);
 
   // (Guess) Timer Setup
   React.useEffect(() => {
@@ -337,7 +351,7 @@ const Algebra: React.FC<Props> = (props) => {
   function generateSettingsOptions(): React.ReactNode {
     return (
       <>
-      <label>
+        <label>
           <select
             onChange={(e) => {
               const newGamemodeSettings = {
@@ -406,9 +420,10 @@ const Algebra: React.FC<Props> = (props) => {
       style={{ backgroundImage: `url(${props.theme.backgroundImageSrc})`, backgroundSize: "100%" }}
     >
       {!props.isCampaignLevel && (
-      <div className="gamemodeSettings">
-        <GamemodeSettingsMenu>{generateSettingsOptions()}</GamemodeSettingsMenu>
-      </div>)}
+        <div className="gamemodeSettings">
+          <GamemodeSettingsMenu>{generateSettingsOptions()}</GamemodeSettingsMenu>
+        </div>
+      )}
       <div className="outcome">{displayOutcome()}</div>
       {displayInputs()}
       {displayQuestion()}

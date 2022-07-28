@@ -8,7 +8,7 @@ import LetterTile from "../LetterTile";
 import { MessageNotification } from "../MessageNotification";
 import { randomIntFromInterval } from "../Nubble/Nubble";
 import ProgressBar, { GreenToRedColorTransition } from "../ProgressBar";
-import { SettingsData } from "../SaveData";
+import { SaveData, SettingsData } from "../SaveData";
 import { Theme } from "../Themes";
 import { pickRandomElementFrom } from "../WordleConfig";
 import { DraggableItem } from "./DraggableItem";
@@ -18,11 +18,10 @@ export const arithmeticNumberSizes = ["small", "medium", "large"] as const;
 export type arithmeticNumberSize = typeof arithmeticNumberSizes[number];
 
 const arithmeticModes = ["order", "match"] as const;
-type arithmeticMode = typeof arithmeticModes[number];
+export type arithmeticMode = typeof arithmeticModes[number];
 
-interface Props {
+export interface ArithmeticDragProps {
   isCampaignLevel: boolean;
-  // TODO: Should this be in gamemodeSettings?
   mode: arithmeticMode;
 
   gamemodeSettings?: {
@@ -36,7 +35,6 @@ interface Props {
     (when the Custom option is selected, the inputs for the settings appear)
     */
 
-    timerConfig?: { isTimed: true; seconds: number } | { isTimed: false };
     // How many expressions (to match or order)?
     numTiles?: number;
     // How big/difficult are the numbers used in these expressions?
@@ -45,8 +43,11 @@ interface Props {
     numOperands?: number;
     // How many times can you check your attempts?
     numGuesses?: number;
+    timerConfig?: { isTimed: true; seconds: number } | { isTimed: false };
   };
+}
 
+interface Props extends ArithmeticDragProps {
   theme: Theme;
   settings: SettingsData;
   setPage: (page: Page) => void;
@@ -304,31 +305,36 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
       let newResultTiles: { total: number; status: "not set" }[] = [];
 
       // Array of just the expression tile totals
-      const tile_totals = newExpressionTiles.map((x) => x.total);
+      const tileTotals = newExpressionTiles.map((x) => x.total);
       // Shuffle them (so they don't appear in same order as expression tiles)
-      const shuffled_totals = shuffleArray(tile_totals);
+      const shuffledTotals = shuffleArray(tileTotals);
       // All tiles begin with 'not set' status
-      newResultTiles = shuffled_totals.map((total) => ({ total: total, status: "not set" }));
+      newResultTiles = shuffledTotals.map((total) => ({ total: total, status: "not set" }));
       setResultTiles(newResultTiles);
     }
   }
 
-  // TODO: Handling mid-game changes - apply this to other modes
-
-  // Any of the game mode settings are changed then reset the game
+  // Reset game after change of settings (stops cheating by changing settings partway through a game)
   React.useEffect(() => {
+    if (props.isCampaignLevel) {
+      return;
+    }
+
     ResetGame();
+
+    // Save the latest gamemode settings for this mode
+    SaveData.setArithmeticDragGamemodeSettings(props.mode, gamemodeSettings);
   }, [gamemodeSettings]);
 
+  // Create the tiles to be revealed (only once on start)
   React.useEffect(() => {
-    // If all tiles have been initialised
+    // If all tiles have been initialised already
     if (expressionTiles.length > 0) {
       return;
     }
 
-    /* TODO: Dependency and set method (expressionTiles and setExpressionTiles loop) */
     generateAllTiles();
-  }, [expressionTiles, resultTiles, gamemodeSettings.numTiles]);
+  }, [expressionTiles, resultTiles]);
 
   // (Guess) Timer Setup
   React.useEffect(() => {
@@ -395,7 +401,7 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
   }
 
   function checkTiles() {
-    const tile_totals = expressionTiles.map((x) => x.total);
+    const tileTotals = expressionTiles.map((x) => x.total);
 
     let newExpressionTiles = expressionTiles.slice();
     let newResultTiles = resultTiles.slice();
@@ -403,13 +409,13 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
     // Smallest to largest
     if (props.mode === "order") {
       // Sort the tile totals into ascending order
-      const sorted_totals = tile_totals.sort((x, y) => {
+      const sortedTotals = tileTotals.sort((x, y) => {
         return x - y;
       });
 
       newExpressionTiles = expressionTiles.map((x, index) => {
         // Tile is in correct position
-        if (expressionTiles[index].total === sorted_totals[index]) {
+        if (expressionTiles[index].total === sortedTotals[index]) {
           // Change status to correct
           x.status = "correct";
         } else {

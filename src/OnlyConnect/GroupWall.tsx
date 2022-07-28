@@ -1,26 +1,29 @@
 import React, { useState } from "react";
 import { Page } from "../App";
 import { Button } from "../Button";
+import { categoryMappings } from "../defaultGamemodeSettings";
 import GamemodeSettingsMenu from "../GamemodeSettingsMenu";
 import { MessageNotification } from "../MessageNotification";
 import { shuffleArray } from "../NumbersArithmetic/ArithmeticDrag";
 import ProgressBar, { GreenToRedColorTransition } from "../ProgressBar";
-import { SettingsData } from "../SaveData";
+import { SaveData, SettingsData } from "../SaveData";
 import { useClickChime, useCorrectChime, useFailureChime, useLightPingChime } from "../Sounds";
 import { Theme } from "../Themes";
-import { categoryMappings, pickRandomElementFrom } from "../WordleConfig";
+import { pickRandomElementFrom } from "../WordleConfig";
 
-interface Props {
+export interface GroupWallProps {
   isCampaignLevel: boolean;
 
   gamemodeSettings?: {
-    timerConfig?: { isTimed: true; seconds: number } | { isTimed: false };
     numGroups?: number;
     groupSize?: number;
     // How many times can you check your attempts, once there are only two groups remaining?
     numGuesses?: number;
+    timerConfig?: { isTimed: true; seconds: number } | { isTimed: false };
   };
+}
 
+interface Props extends GroupWallProps {
   theme: Theme;
   settings: SettingsData;
   setPage: (page: Page) => void;
@@ -95,6 +98,18 @@ const GroupWall: React.FC<Props> = (props) => {
   const [playLightPingSoundEffect] = useLightPingChime(props.settings);
   const [playClickSoundEffect] = useClickChime(props.settings);
 
+  // Reset game after change of settings (stops cheating by changing settings partway through a game)
+  React.useEffect(() => {
+    if (props.isCampaignLevel) {
+      return;
+    }
+
+    ResetGame();
+
+    // Save the latest gamemode settings for this mode
+    SaveData.setGroupWallGamemodeSettings(gamemodeSettings);
+  }, [gamemodeSettings]);
+
   // (Guess) Timer Setup
   React.useEffect(() => {
     if (!gamemodeSettings.timerConfig.isTimed || !inProgress) {
@@ -122,9 +137,8 @@ const GroupWall: React.FC<Props> = (props) => {
       return;
     }
 
-    const grid_words = getGridWords();
-    setGridWords(grid_words);
-  }, []);
+    setGridWords(getGridWords());
+  }, [gridWords]);
 
   // Check selection
   React.useEffect(() => {
@@ -188,12 +202,11 @@ const GroupWall: React.FC<Props> = (props) => {
 
         return x;
       })
-      /* 
-        Re-orders gridWords (shove newly found group into correct position/row on grid)
 
-        The 999's ensure that if a grid word has no row number (i.e. not part of a group),
-        that it appears after any grouped words.
-        */
+      /* 
+      Re-orders gridWords (shove newly found group into correct position/row on grid)
+      The 999's ensure that if a grid word has no row number (i.e. not part of a group), that it appears after any grouped words.
+      */
       .sort((a, b) => {
         return (a?.rowNumber || 999) - (b?.rowNumber || 999);
       });
@@ -264,60 +277,44 @@ const GroupWall: React.FC<Props> = (props) => {
     setSelectedWords(newSelectedWords);
   }
 
-  // (props.groupSize) words from (props.numGroups) categories, shuffled
+  // (gamemodeSettings.groupSize) words from (gamemodeSettings.numGroups) categories, shuffled
   function getGridWords(): {
     word: string;
     categoryName: string;
     inCompleteGroup: boolean;
     rowNumber: number | null;
   }[] {
-    // Names of the groups/categories that must be found in the wall
-    let categoryNames: string[] = [];
-
     // Array to hold all the words for the grid (along with their categories)
     let gridWords: { word: string; categoryName: string; inCompleteGroup: boolean; rowNumber: number | null }[] = [];
 
-    // Use the specified number of groups but never exceed the number of category word lists
+    // Use the specified number of categories (but never exceed the number of category word lists)
     const numCategories = Math.min(gamemodeSettings.numGroups, categoryMappings.length);
+    // Filter the categories which have enough enough words in their word list
+    const suitableCategories = categoryMappings.filter(
+      (category) => category.array.length >= gamemodeSettings.groupSize
+    );
+    // Randomly select the required number of categories
+    const chosenCategories = shuffleArray(suitableCategories).slice(0, numCategories);
 
-    while (categoryNames.length < numCategories) {
-      const randomCategory = pickRandomElementFrom(categoryMappings);
+    for (let i = 0; i < chosenCategories.length; i++) {
+      const category = chosenCategories[i];
+      const wordList: string[] = shuffleArray(category.array).map((x) => x.word);
+      // The subset of words chosen from this category
+      const wordSubset = wordList.slice(0, gamemodeSettings.groupSize);
 
-      // If the category has not already been used and there are enough words in the word list
-      if (!categoryNames.includes(randomCategory.name) && randomCategory.array.length >= gamemodeSettings.groupSize) {
-        const wordList = randomCategory.array;
+      // Attach category name to every word (in an object)
+      const categorySubset = wordSubset.map((word) => ({
+        word: word,
+        categoryName: category.name,
+        inCompleteGroup: false,
+        rowNumber: null,
+      }));
 
-        // Array to hold the group of words from this category
-        let wordSubset: string[] = [];
-
-        // Until a full group of words has been determined from the category
-        while (wordSubset.length < gamemodeSettings.groupSize) {
-          const randomWord = pickRandomElementFrom(wordList).word;
-
-          // Word has not already been selected (avoids duplicates)
-          if (randomWord && !wordSubset.includes(randomWord)) {
-            wordSubset.push(randomWord);
-          }
-        }
-
-        // Attach category name to word (in an object)
-        const categorySubset = wordSubset.map((word) => ({
-          word: word,
-          categoryName: randomCategory.name,
-          inCompleteGroup: false,
-          rowNumber: null,
-        }));
-
-        // Add group of words
-        gridWords = gridWords.concat(categorySubset);
-
-        // Keep track this category has been used
-        categoryNames.push(randomCategory.name);
-      }
+      // Add group of words
+      gridWords = gridWords.concat(categorySubset);
     }
 
-    gridWords = shuffleArray(gridWords);
-    return gridWords;
+    return shuffleArray(gridWords);
   }
 
   function populateRow(rowNumber: number) {
@@ -357,6 +354,42 @@ const GroupWall: React.FC<Props> = (props) => {
     return Grid;
   }
 
+  function getCorrectGrid() {
+    const categoryNames = Array.from(new Set(gridWords.map((word) => word.categoryName)));
+    // The names of the categories for which the player found all the words to
+    const completeCategoryNames = Array.from(
+      new Set(gridWords.filter((word) => word.inCompleteGroup).map((word) => word.categoryName))
+    );
+
+    return (
+      <div className="only-connect-correct-answer">
+        {categoryNames.map((_, i) => {
+          if (completeCategoryNames.includes(categoryNames[i])) {
+            // Player completed this category, just show what the name of the category was
+            return (
+              <>
+                {categoryNames[i]}
+                <br></br>
+              </>
+            );
+          } else {
+            // Player did NOT complete the category, show the name and words of the category
+            const categoryWords: string[] = gridWords
+              .filter((word) => word.categoryName === categoryNames[i])
+              .map((x) => x.word);
+              // TODO: Formatting of correct words
+            return (
+              <>
+                <>{`${categoryNames[i]} (${categoryWords.join(", ")})`}</>
+                <br></br>
+              </>
+            );
+          }
+        })}
+      </div>
+    );
+  }
+
   /**
    *
    * @returns
@@ -371,7 +404,10 @@ const GroupWall: React.FC<Props> = (props) => {
       <>
         <MessageNotification type={numCompletedGroups === gamemodeSettings.numGroups ? "success" : "error"}>
           <strong>
-            {numCompletedGroups === gamemodeSettings.numGroups ? "All groups found!" : `${numCompletedGroups} groups found`}
+            {numCompletedGroups === gamemodeSettings.numGroups
+              ? "All groups found!"
+              : `${numCompletedGroups} groups found`}
+            {getCorrectGrid()}
           </strong>
         </MessageNotification>
 
@@ -407,7 +443,7 @@ const GroupWall: React.FC<Props> = (props) => {
 
     return (
       <>
-      <label>
+        <label>
           <input
             type="number"
             value={gamemodeSettings.numGroups}

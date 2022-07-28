@@ -8,12 +8,12 @@ import ProgressBar, { GreenToRedColorTransition } from "../ProgressBar";
 import { Button } from "../Button";
 import { operators } from "../CountdownNumbers/CountdownNumbersConfig";
 import { Theme } from "../Themes";
-import { SettingsData } from "../SaveData";
+import { SaveData, SettingsData } from "../SaveData";
 import GamemodeSettingsMenu from "../GamemodeSettingsMenu";
 import { arithmeticNumberSize, arithmeticNumberSizes } from "./ArithmeticDrag";
 import { pickRandomElementFrom } from "../WordleConfig";
 
-interface Props {
+export interface ArithmeticRevealProps {
   isCampaignLevel: boolean;
 
   gamemodeSettings?: {
@@ -26,17 +26,19 @@ interface Props {
     But then also offer a Custom option, where the user can fine tune these settings themselves
     (when the Custom option is selected, the inputs for the settings appear)
     */
-
-    timerConfig?: { isTimed: true; seconds: number } | { isTimed: false };
+    
     numCheckpoints?: number;
     // How many tiles appear EACH checkpoint?
     numTiles?: number;
     // How big/difficult are the numbers used in these expressions?
     numberSize?: arithmeticNumberSize;
     // The time between tiles appearing
-    revealIntervalSeconds: number;
+    revealIntervalSeconds?: number;
+    timerConfig?: { isTimed: true; seconds: number } | { isTimed: false };
   };
+}
 
+interface Props extends ArithmeticRevealProps {
   theme: Theme;
   settings: SettingsData;
   setPage: (page: Page) => void;
@@ -284,22 +286,29 @@ const ArithmeticReveal: React.FC<Props> = (props) => {
     setTargetNumbers(newTargetNumbers);
   }
 
-  // TODO: Handling mid-game changes - apply this to other modes
-
-  // Any of the game mode settings are changed then reset the game
+  // Reset game after change of settings (stops cheating by changing settings partway through a game)
   React.useEffect(() => {
+    if (props.isCampaignLevel) {
+      return;
+    }
+
     ResetGame();
+
+    // Save the latest gamemode settings for this mode
+    SaveData.setArithmeticRevealGamemodeSettings(gamemodeSettings);
   }, [gamemodeSettings]);
 
+  // Create the tiles to be revealed (only once on start)
   React.useEffect(() => {
-    // If all tiles have been initialised
+    // If all tiles have been initialised already
     if (tiles.length > 0) {
       return;
     }
 
     generateAllTiles();
-  }, [tiles, gamemodeSettings.numTiles]);
+  }, [tiles]);
 
+  // Prepare for next checkpoint
   React.useEffect(() => {
     setInProgress(true);
     setRevealState({ type: "in-progress", revealedTiles: 0 });
@@ -333,7 +342,7 @@ const ArithmeticReveal: React.FC<Props> = (props) => {
     }, gamemodeSettings.revealIntervalSeconds * 1000);
 
     return () => clearInterval(timer);
-  }, [gamemodeSettings.numTiles, gamemodeSettings.revealIntervalSeconds, revealState]);
+  }, [revealState]);
 
   // (Guess) Timer Setup
   React.useEffect(() => {
@@ -432,7 +441,7 @@ const ArithmeticReveal: React.FC<Props> = (props) => {
               The answer was <strong>{targetNumbers[currentCheckpoint]}</strong>
             </span>
             <br />
-            {tiles[currentCheckpoint].join(" , ")}
+            {tiles[currentCheckpoint].join(" ")}
           </MessageNotification>
 
           <br></br>
@@ -462,6 +471,7 @@ const ArithmeticReveal: React.FC<Props> = (props) => {
       // Reset the timer if it is enabled in the game options
       setRemainingSeconds(gamemodeSettings.timerConfig.seconds);
     }
+    // This will set new tiles and new target numbers
     generateAllTiles();
   }
 

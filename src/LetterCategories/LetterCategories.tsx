@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Keyboard } from "../Keyboard";
-import { MAX_NUM_CATEGORIES, Page } from "../App";
+import { Page } from "../App";
 import { WordRow } from "../WordRow";
 import { Button } from "../Button";
 import { MessageNotification } from "../MessageNotification";
@@ -8,6 +8,7 @@ import ProgressBar, { GreenToRedColorTransition } from "../ProgressBar";
 import { Theme } from "../Themes";
 import { SettingsData } from "../SaveData";
 import GamemodeSettingsMenu from "../GamemodeSettingsMenu";
+import { MAX_NUM_CATEGORIES } from "../defaultGamemodeSettings";
 
 interface Props {
   isCampaignLevel: boolean;
@@ -25,12 +26,14 @@ interface Props {
   inProgress: boolean;
   hasSubmitLetter: boolean;
   correctGuessesCount: number;
-  theme: Theme;
-  settings: SettingsData;
   categoryRequiredStartingLetter?: string;
   categoryWordTargets?: string[][];
   categoryNames?: string[];
   finishingButtonText?: string;
+
+  page: Page;
+  theme: Theme;
+  settings: SettingsData;
   setPage: (page: Page) => void;
   onEnter: () => void;
   onSubmitLetter: (letter: string) => void;
@@ -87,8 +90,8 @@ const LetterCategories: React.FC<Props> = (props) => {
         <div className="word-row-category-wrapper" key={i}>
           <div className="word-row-category-name">{props.categoryNames?.[i]}</div>
           <WordRow
-            key={i}
-            mode={"letters_categories"}
+            key={`letters_categories/row/${i}`}
+            page={props.page}
             isReadOnly={false}
             inProgress={props.inProgress}
             isVertical={false}
@@ -103,8 +106,8 @@ const LetterCategories: React.FC<Props> = (props) => {
         </div>
       ) : (
         <WordRow
-          key={i}
-          mode={"letters_categories"}
+          key={`letters_categories/row/${i}`}
+          page={props.page}
           isReadOnly={false}
           inProgress={props.inProgress}
           isVertical={false}

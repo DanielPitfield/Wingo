@@ -1,28 +1,31 @@
 import React, { useState } from "react";
-import { DEFAULT_WORD_LENGTH, Page } from "../App";
+import { Page } from "../App";
 import { Button } from "../Button";
+import { DEFAULT_WORD_LENGTH, wordLengthMappingsTargets } from "../defaultGamemodeSettings";
 import GamemodeSettingsMenu from "../GamemodeSettingsMenu";
 import { MessageNotification } from "../MessageNotification";
 import { shuffleArray } from "../NumbersArithmetic/ArithmeticDrag";
 import { getPrettyWord } from "../OnlyConnect/GroupWall";
 import ProgressBar, { GreenToRedColorTransition } from "../ProgressBar";
-import { SettingsData } from "../SaveData";
+import { SaveData, SettingsData } from "../SaveData";
 import { useClickChime, useCorrectChime, useFailureChime, useLightPingChime } from "../Sounds";
 import { Theme } from "../Themes";
-import { pickRandomElementFrom, wordLengthMappingsTargets } from "../WordleConfig";
+import { pickRandomElementFrom } from "../WordleConfig";
 
-interface Props {
+export interface SameLetterWordsProps {
   isCampaignLevel: boolean;
 
   gamemodeSettings?: {
     wordLength?: number;
     numMatchingWords?: number;
     numTotalWords?: number;
-    timerConfig?: { isTimed: true; seconds: number } | { isTimed: false };
     // How many times can you check your attempts?
     numGuesses?: number;
+    timerConfig?: { isTimed: true; seconds: number } | { isTimed: false };
   };
+}
 
+interface Props extends SameLetterWordsProps {
   theme: Theme;
   settings: SettingsData;
   setPage: (page: Page) => void;
@@ -49,12 +52,18 @@ const SameLetterWords: React.FC<Props> = (props) => {
   const [validWords, setValidWords] = useState<string[]>([]);
   const [gridWords, setGridWords] = useState<string[]>([]);
 
-  // TODO: Handling unexpected gamemodeSettings (that have been provided)
-  const STARTING_NUM_TOTAL_WORDS = Math.max(MIN_NUM_TOTAL_WORDS, props.gamemodeSettings?.numTotalWords ?? DEFAULT_NUM_TOTAL_WORDS);
+  const STARTING_NUM_TOTAL_WORDS = Math.max(
+    MIN_NUM_TOTAL_WORDS,
+    props.gamemodeSettings?.numTotalWords ?? DEFAULT_NUM_TOTAL_WORDS
+  );
 
-  const numMatchingWordsFloor = Math.max(MIN_NUM_MATCHING_WORDS, props.gamemodeSettings?.numMatchingWords ?? DEFAULT_NUM_MATCHING_WORDS);
+  const numMatchingWordsFloor = Math.max(
+    MIN_NUM_MATCHING_WORDS,
+    props.gamemodeSettings?.numMatchingWords ?? DEFAULT_NUM_MATCHING_WORDS
+  );
   // Number of words to match can't be more than the total number of words
-  const STARTING_NUM_MATCHING_WORDS = numMatchingWordsFloor < STARTING_NUM_TOTAL_WORDS ? numMatchingWordsFloor : STARTING_NUM_TOTAL_WORDS - 1;
+  const STARTING_NUM_MATCHING_WORDS =
+    numMatchingWordsFloor < STARTING_NUM_TOTAL_WORDS ? numMatchingWordsFloor : STARTING_NUM_TOTAL_WORDS - 1;
 
   const defaultGamemodeSettings = {
     wordLength: props.gamemodeSettings?.wordLength ?? DEFAULT_WORD_LENGTH,
@@ -91,6 +100,18 @@ const SameLetterWords: React.FC<Props> = (props) => {
   const [playLightPingSoundEffect] = useLightPingChime(props.settings);
   const [playClickSoundEffect] = useClickChime(props.settings);
 
+  // Reset game after change of settings (stops cheating by changing settings partway through a game)
+  React.useEffect(() => {
+    if (props.isCampaignLevel) {
+      return;
+    }
+
+    ResetGame();
+
+    // Save the latest gamemode settings for this mode
+    SaveData.setSameLetterWordsGamemodeSettings(gamemodeSettings);
+  }, [gamemodeSettings]);
+
   // (Guess) Timer Setup
   React.useEffect(() => {
     if (!gamemodeSettings.timerConfig.isTimed || !inProgress) {
@@ -118,8 +139,7 @@ const SameLetterWords: React.FC<Props> = (props) => {
       return;
     }
 
-    const grid_words = getGridWords();
-    setGridWords(grid_words);
+    setGridWords(getGridWords());
   }, []);
 
   // Check selection
@@ -207,84 +227,91 @@ const SameLetterWords: React.FC<Props> = (props) => {
     setSelectedWords(newSelectedWords);
   }
 
-  // (props.numMatching) words within (props.numTotal) words
+  function isAnagram(originalWord: string, newWord: string) {
+    // Letters of the words (in alphabetical order)
+    const originalWordLetters = originalWord.split("").sort().join("");
+    const newWordLetters = newWord.split("").sort().join("");
+
+    return originalWordLetters === newWordLetters;
+  }
+
+  // Subset of words with same letters (the correct selection)
+  function getMatchingWords(originalWord: string): string[] {
+    // Matching words (anagrams) must be the same length, so pick from array of words with length of original word
+    const targetWordArray = wordLengthMappingsTargets.find((x) => x.value === originalWord.length)?.array;
+
+    if (!targetWordArray) {
+      return [];
+    }
+
+    // Filter words which are anagrams of orignial word
+    const matchingWords = targetWordArray.filter((word) => isAnagram(originalWord, word));
+    // Shuffle
+    const shuffledMatchingWords = shuffleArray(matchingWords);
+    // Only take as many as required
+    const matchingWordsSubset = shuffledMatchingWords.slice(0, gamemodeSettings.numMatchingWords);
+
+    return matchingWordsSubset;
+  }
+
+  // Filler words which aren't made with same letters
+  function getRandomWords(originalWord: string, numRandomWords: number): string[] {
+    // Would be too easy to find words which don't have the same letters if they are a different length (to the original word)!
+    const targetWordArray = wordLengthMappingsTargets.find((x) => x.value === originalWord.length)?.array;
+
+    if (!targetWordArray) {
+      return [];
+    }
+
+    // Filter words which are NOT anagrams of orignial word
+    const randomWords = targetWordArray.filter((word) => !isAnagram(originalWord, word));
+    // Shuffle
+    const shuffledRandomWords = shuffleArray(randomWords);
+    // Only take as many as required
+    const randomWordsSubset = shuffledRandomWords.slice(0, numRandomWords);
+
+    return randomWordsSubset;
+  }
+
+  // Combine a subset of matching words and filler words
   function getGridWords(): string[] {
-    // Array to hold all the words for the grid
-    let grid_words: string[] = [];
-
     // The word array containing all the words of the specified length
-    let targetWordArray: string[] = [];
+    const targetWordArray = wordLengthMappingsTargets.find((x) => x.value === gamemodeSettings.wordLength)?.array!;
 
-    // The letters a word must have to match the original word (in alphabetical order)
-    let validLetters: string[] = [];
+    // The maximum number of attempts to try find a complete subset for each number of matching words
+    const MAX_ATTEMPTS_BEFORE_TRYING_LOWER_NUM = 50;
 
-    function isWordValid(validLetters: string[], word: string) {
-      // Letters of the word (in alphabetical order)
-      const word_letters = word.split("").sort((a, b) => a.localeCompare(b));
-
-      return word_letters.join("") === validLetters.join("");
-    }
-
-    // Start from prop.numMatchingWords, and decrement down (if we could not find that number of matching words in targetWordArray)
-    for (let numMatchingWords = gamemodeSettings.numMatchingWords; numMatchingWords >= 1; numMatchingWords--) {
+    // Decrement the number of matching words (starting from specified number, until a complete subset is found)
+    for (let numMatchingWords = gamemodeSettings.numMatchingWords; numMatchingWords >= 2; numMatchingWords--) {
       console.log(`Trying to find ${numMatchingWords} matching words in array`);
+      // The required number of filler words to make a complete grid (if the current number of matching words are found)
+      const numRandomWords = gamemodeSettings.numTotalWords - gamemodeSettings.numMatchingWords;
 
-      // Determine the maximum number of times to find the props.numMatchingWords in the targetArray, before just continuing
-      const MAX_ATTEMPTS_BEFORE_TRYING_LOWER_NUM = 15;
+      let attemptCount = 0;
 
-      // For a sensible number of attempts for this numMatchingWords
-      for (let attemptNo = 1; attemptNo <= MAX_ATTEMPTS_BEFORE_TRYING_LOWER_NUM; attemptNo++) {
-        // The word array containing all the words of the specified length
-        targetWordArray = wordLengthMappingsTargets.find((x) => x.value === gamemodeSettings.wordLength)?.array!;
-
-        // Choose a random word from this array
+      while (attemptCount < MAX_ATTEMPTS_BEFORE_TRYING_LOWER_NUM) {
         const originalWord = pickRandomElementFrom(targetWordArray);
+        const matchingWords = getMatchingWords(originalWord);
 
-        // The letters a word must have to match the original word (in alphabetical order)
-        validLetters = originalWord.split("").sort((a: string, b: string) => a.localeCompare(b));
-
-        // Matching words
-        const original_matches = targetWordArray.filter((word) => isWordValid(validLetters, word));
-
-        // Otherwise, select a subset of the matching words (shuffle and slice)
-        const shuffled_matches = shuffleArray(original_matches);
-        grid_words = shuffled_matches.slice(0, gamemodeSettings.numMatchingWords);
-
-        // If a suitable number of grid words was found
-        if (grid_words.length >= numMatchingWords) {
-          break;
+        // Found a matching words subset of the length being considered currently
+        if (matchingWords.length === numMatchingWords) {
+          const randomWords = getRandomWords(originalWord, numRandomWords);
+          const gridWords = matchingWords.concat(randomWords);
+          // Grid was able to be completed with sufficient number of filler words
+          if (gridWords.length === gamemodeSettings.numTotalWords) {
+            // Set and log the correct selection of words (the matching words)
+            setValidWords(matchingWords);
+            console.log(matchingWords);
+            return gridWords;
+          }
         }
-      }
 
-      // If a suitable number of grid words was found
-      if (grid_words.length >= numMatchingWords) {
-        break;
+        attemptCount += 1;
       }
     }
 
-    const matching_words = grid_words.slice();
-    // Set the correct/matching words
-    setValidWords(matching_words);
-    console.log(matching_words);
-
-    // Non-matching words
-    let fail_count = 0;
-
-    while (grid_words.length < gamemodeSettings.numTotalWords && fail_count < 100) {
-      // Choose a random word from target array
-      const randomWord = pickRandomElementFrom(targetWordArray);
-      // Not already in array and is NOT a matching word
-      if (!grid_words.includes(randomWord) && !isWordValid(validLetters, randomWord)) {
-        grid_words.push(randomWord);
-      } else {
-        fail_count += 1;
-      }
-    }
-
-    // Shuffle again
-    grid_words = shuffleArray(grid_words);
-
-    return grid_words;
+    // Subset could not be found
+    return [];
   }
 
   function populateRow(rowNumber: number) {
@@ -381,6 +408,7 @@ const SameLetterWords: React.FC<Props> = (props) => {
     setValidWords([]);
     setGridWords(getGridWords());
     setRemainingGuesses(gamemodeSettings.numGuesses);
+
     if (gamemodeSettings.timerConfig.isTimed) {
       // Reset the timer if it is enabled in the game options
       setRemainingSeconds(gamemodeSettings.timerConfig.seconds);
