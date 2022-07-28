@@ -26,7 +26,7 @@ interface Props extends CountdownLettersConfigProps {
   onComplete?: (wasCorrect: boolean, answer: string, targetAnswer: string, score: number | null) => void;
 }
 
-export function isWordValid(countdownWord: string, guessedWord: string) {
+export function isCountdownGuessValid(guessedWord: string, countdownWord: string) {
   if (!countdownWord || !guessedWord) {
     return false;
   }
@@ -169,6 +169,8 @@ const CountdownLettersConfig: React.FC<Props> = (props) => {
   }
 
   function ContinueGame() {
+    setinProgress(true);
+    setinDictionary(false);
     setCurrentWord("");
     setinProgress(true);
     setinDictionary(true);
@@ -191,12 +193,8 @@ const CountdownLettersConfig: React.FC<Props> = (props) => {
       return;
     }
 
-    // Stop progress so the status of tiles shows briefly
-    setinProgress(false);
-
     const firstWordArray: string[] =
       wordLengthMappingsGuessable.find((x) => x.value === currentWord.length)?.array ?? [];
-
     const secondTargetArray: string[] =
       wordLengthMappingsTargets.find((x) => x.value === currentWord.length)?.array ?? [];
 
@@ -206,7 +204,7 @@ const CountdownLettersConfig: React.FC<Props> = (props) => {
     // Accepted word (known word in dictionary)
     const wordInDictionary = wordArray?.includes(currentWord.toLowerCase());
     // Word can be made with available letters
-    const isValidWord = isWordValid(countdownWord, currentWord);
+    const isValidWord = isCountdownGuessValid(currentWord, countdownWord);
 
     // Check the validity of the word for the player
     if (wordInDictionary && isValidWord) {
@@ -219,12 +217,13 @@ const CountdownLettersConfig: React.FC<Props> = (props) => {
       setinDictionary(false);
     }
 
+    // Stop progress so the status of tiles shows briefly
+    setinProgress(false);
+
     // Wait half a second to show validity of word, then continue
     setTimeout(() => {
       ContinueGame();
     }, 500);
-
-    // TODO: Add completed round to game history
   }
 
   function onSubmitCountdownLetter(letter: string) {

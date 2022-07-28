@@ -5,7 +5,7 @@ import { WordRow } from "../WordRow";
 import { Button } from "../Button";
 import { MessageNotification } from "../MessageNotification";
 import ProgressBar, { GreenToRedColorTransition } from "../ProgressBar";
-import { isWordValid } from "./CountdownLettersConfig";
+import { isCountdownGuessValid } from "./CountdownLettersConfig";
 import { pickRandomElementFrom } from "../WordleConfig";
 import { Theme } from "../Themes";
 import { SaveData, SettingsData } from "../SaveData";
@@ -14,7 +14,9 @@ import {
   MIN_TARGET_WORD_LENGTH,
   MAX_TARGET_WORD_LENGTH,
   wordLengthMappingsGuessable,
+  wordLengthMappingsTargets,
 } from "../defaultGamemodeSettings";
+import { shuffleArray } from "../NumbersArithmetic/ArithmeticDrag";
 
 interface Props {
   isCampaignLevel: boolean;
@@ -63,8 +65,7 @@ interface Props {
 
 const CountdownLetters: React.FC<Props> = (props) => {
   // Currently selected guess, to be used as the final guess when time runs out
-  const [selectedFinalGuess, setSelectedFinalGuess] = useState("");
-  const [gameId, setGameId] = useState<string | null>(null);
+  const [bestGuess, setBestGuess] = useState("");
   // Check if letter selection has finished
   const IS_SELECTION_FINISHED = props.countdownWord.length === props.gamemodeSettings.numLetters;
 
@@ -320,43 +321,40 @@ const CountdownLetters: React.FC<Props> = (props) => {
     );
   }
 
-  // TODO: Add game to SaveData history
-  // TODO: Calculate gold reward
   function getBestWords(countdownWord: string) {
     const MAX_WORDS_TO_RETURN = 5;
 
     // Array to store best words that are found
-    const best_words = [];
+    let bestWords: string[] = [];
 
     // Start with bigger words first
-    for (let i = countdownWord.length; i >= 4; i--) {
-      // Get word array containng words of i size
-      const wordArray = wordLengthMappingsGuessable.find((x) => x.value === i)?.array!;
-      // Safety check for wordArray
-      if (wordArray) {
-        // Check the entire array for any valid words
-        for (const word of wordArray) {
-          // Safety check for word
-          if (word) {
-            if (isWordValid(countdownWord, word)) {
-              // Push to array if word is valid
-              best_words.push(word);
+    for (let wordLength = countdownWord.length; wordLength >= 4; wordLength--) {
+      const firstWordArray: string[] = wordLengthMappingsGuessable.find((x) => x.value === wordLength)?.array ?? [];
+      const secondTargetArray: string[] = wordLengthMappingsTargets.find((x) => x.value === wordLength)?.array ?? [];
 
-              if (best_words.length >= MAX_WORDS_TO_RETURN) {
-                return best_words;
-              }
-            }
-          }
-        }
+      // Get all words of current wordLength
+      const wordArray: string[] = firstWordArray.concat(secondTargetArray);
+
+      // The words which can be made with the selected countdown letters
+      const validWords: string[] = wordArray.filter((word) => isCountdownGuessValid(word, countdownWord));
+
+      bestWords = bestWords.concat(validWords);
+
+      if (bestWords.length >= MAX_WORDS_TO_RETURN) {
+        break;
       }
     }
 
-    return best_words;
+    return shuffleArray(bestWords).slice(0, MAX_WORDS_TO_RETURN);
   }
 
   function displayOutcome() {
     // Game has not yet ended (currently only when when timer runs out)
     if (props.inProgress) {
+      return;
+    }
+
+    if (props.remainingSeconds > 0) {
       return;
     }
 
@@ -370,41 +368,24 @@ const CountdownLetters: React.FC<Props> = (props) => {
       </ul>
     );
 
-    let outcome: "success" | "failure" | "in-progress" = "in-progress";
     let outcomeNotification;
     const GOLD_PER_LETTER = 30;
 
-    if (selectedFinalGuess) {
-      outcome = "success";
+    if (bestGuess) {
       // Reward gold based on how long the selected guess is
-      props.addGold(selectedFinalGuess.length * GOLD_PER_LETTER);
+      props.addGold(bestGuess.length * GOLD_PER_LETTER);
 
-      // TODO: Save CountdownLetters round
-      if (gameId) {
-        SaveData.addCompletedRoundToGameHistory(gameId, {
-          timestamp: new Date().toISOString(),
-          gameCategory: "wingo",
-          outcome,
-          levelProps: {
-            countdownWord: props.countdownWord,
-            guesses: props.guesses,
-          },
-        });
-
-        outcomeNotification = (
-          <>
-            <MessageNotification type="success">
-              <strong>{selectedFinalGuess.toUpperCase()}</strong>
-              <br />
-              <strong>{selectedFinalGuess.length} points</strong>
-            </MessageNotification>
-            {bestWordsList}
-          </>
-        );
-      }
+      outcomeNotification = (
+        <>
+          <MessageNotification type="success">
+            <strong>{bestGuess.toUpperCase()}</strong>
+            <br />
+            <strong>{bestGuess.length} points</strong>
+          </MessageNotification>
+          {bestWordsList}
+        </>
+      );
     } else {
-      outcome = "failure";
-
       outcomeNotification = (
         <>
           <MessageNotification type="error">
@@ -428,7 +409,7 @@ const CountdownLetters: React.FC<Props> = (props) => {
       ""
     );
 
-    setSelectedFinalGuess(longestWord);
+    setBestGuess(longestWord);
   }, [props.guesses]);
 
   function displayGameshowScore() {
@@ -457,7 +438,7 @@ const CountdownLetters: React.FC<Props> = (props) => {
       <div>{displayOutcome()}</div>
 
       <div>
-        {!props.inProgress && (
+        {!props.inProgress && props.remainingSeconds <= 0 && (
           <Button
             mode={"accept"}
             settings={props.settings}
@@ -465,13 +446,13 @@ const CountdownLetters: React.FC<Props> = (props) => {
             onClick={() =>
               props.ResetGame(
                 // correct?
-                selectedFinalGuess ? selectedFinalGuess.length > 0 : false,
+                bestGuess ? bestGuess.length > 0 : false,
                 // guess made
-                selectedFinalGuess ? selectedFinalGuess : "",
+                bestGuess ? bestGuess : "",
                 // target word
                 "",
                 // score
-                selectedFinalGuess ? selectedFinalGuess.length : 0
+                bestGuess ? bestGuess.length : 0
               )
             }
             additionalProps={{ autoFocus: true }}
