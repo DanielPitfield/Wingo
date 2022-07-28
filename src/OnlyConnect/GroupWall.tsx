@@ -354,6 +354,42 @@ const GroupWall: React.FC<Props> = (props) => {
     return Grid;
   }
 
+  function getCorrectGrid() {
+    const categoryNames = Array.from(new Set(gridWords.map((word) => word.categoryName)));
+    // The names of the categories for which the player found all the words to
+    const completeCategoryNames = Array.from(
+      new Set(gridWords.filter((word) => word.inCompleteGroup).map((word) => word.categoryName))
+    );
+
+    return (
+      <div className="only-connect-correct-answer">
+        {categoryNames.map((_, i) => {
+          if (completeCategoryNames.includes(categoryNames[i])) {
+            // Player completed this category, just show what the name of the category was
+            return (
+              <>
+                {categoryNames[i]}
+                <br></br>
+              </>
+            );
+          } else {
+            // Player did NOT complete the category, show the name and words of the category
+            const categoryWords: string[] = gridWords
+              .filter((word) => word.categoryName === categoryNames[i])
+              .map((x) => x.word);
+              // TODO: Formatting of correct words
+            return (
+              <>
+                <>{`${categoryNames[i]} (${categoryWords.join(", ")})`}</>
+                <br></br>
+              </>
+            );
+          }
+        })}
+      </div>
+    );
+  }
+
   /**
    *
    * @returns
@@ -371,6 +407,7 @@ const GroupWall: React.FC<Props> = (props) => {
             {numCompletedGroups === gamemodeSettings.numGroups
               ? "All groups found!"
               : `${numCompletedGroups} groups found`}
+            {getCorrectGrid()}
           </strong>
         </MessageNotification>
 
