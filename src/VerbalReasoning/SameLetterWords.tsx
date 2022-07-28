@@ -141,7 +141,7 @@ const SameLetterWords: React.FC<Props> = (props) => {
     }
 
     setGridWords(getGridWords());
-  }, [gridWords]);
+  }, []);
 
   // Check selection
   React.useEffect(() => {
@@ -287,27 +287,36 @@ const SameLetterWords: React.FC<Props> = (props) => {
     const isCorrectNumTotalWords = gridWords.length === gamemodeSettings.numTotalWords;
     const completeSubset = isCorrectNumMatchingWords && isCorrectNumTotalWords;
 
-    // TODO: This could loop indefinitely
-    
-    /*
-    Add a fail counter (as while loop condition)
-    Nest while loop inside a for loop which trys with a fewer number of words
-    */
+    // The maximum number of attempts to try find a complete subset for each number of matching words
+    const MAX_ATTEMPTS_BEFORE_TRYING_LOWER_NUM = 50;
 
-    while (!completeSubset) {
-      // Choose a random word from this array
-      const originalWord = pickRandomElementFrom(targetWordArray);
+    // Start by trying to find a subset with the specified number of matching words
+    // Decrement the number of matching words (until a complete subset is found)
+    for (let numMatchingWords = gamemodeSettings.numMatchingWords; numMatchingWords >= 2; numMatchingWords--) {
+      console.log(`Trying to find ${numMatchingWords} matching words in array`);
 
-      matchingWords = getMatchingWords(originalWord);
-      const randomWords = getRandomWords(originalWord);
+      let attemptCount = 0;
 
-      gridWords = matchingWords.concat(randomWords);
+      while (!completeSubset && attemptCount < MAX_ATTEMPTS_BEFORE_TRYING_LOWER_NUM) {
+        const originalWord = pickRandomElementFrom(targetWordArray);
+
+        matchingWords = getMatchingWords(originalWord);
+        const randomWords = getRandomWords(originalWord);
+
+        gridWords = matchingWords.concat(randomWords);
+
+        attemptCount += 1;
+      }
+
+      if (completeSubset) {
+        setValidWords(matchingWords);
+        console.log(matchingWords);
+        return gridWords;
+      }
     }
 
-    setValidWords(matchingWords);
-    console.log(matchingWords);
-
-    return gridWords;
+    // Subset could not be found
+    return [];
   }
 
   function populateRow(rowNumber: number) {
