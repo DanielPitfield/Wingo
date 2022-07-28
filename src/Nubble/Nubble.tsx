@@ -779,17 +779,16 @@ const Nubble: React.FC<Props> = (props) => {
   }
 
   function ResetGame() {
-    // Reset timer back to full
     if (props.gamemodeSettings.timerConfig.isTimed) {
       const newRemainingSeconds = props.gamemodeSettings.timerConfig.seconds ?? mostRecentTotalSeconds;
+
       // Reset all teams' times back to full
-      const newTeamTimers = props.teamTimers.map((teamTimerInfo) => {
-        return {
-          ...teamTimerInfo,
-          remainingSeconds: newRemainingSeconds,
-          totalSeconds: newRemainingSeconds,
-        };
-      });
+      const newTeamTimers = Array.from({ length: props.gamemodeSettings.numTeams }).map((_, i) => ({
+        teamNumber: i,
+        remainingSeconds: newRemainingSeconds,
+        totalSeconds: newRemainingSeconds,
+      }));
+
       props.updateTeamTimers(newTeamTimers);
     }
     // Clear any game progress
