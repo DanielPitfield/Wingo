@@ -3,7 +3,7 @@ import { Page } from "../App";
 import CountdownLetters from "./CountdownLetters";
 import { Theme } from "../Themes";
 import { SaveData, SettingsData } from "../SaveData";
-import { wordLengthMappingsGuessable } from "../defaultGamemodeSettings";
+import { wordLengthMappingsGuessable, wordLengthMappingsTargets } from "../defaultGamemodeSettings";
 
 export interface CountdownLettersConfigProps {
   guesses?: string[];
@@ -194,7 +194,14 @@ const CountdownLettersConfig: React.FC<Props> = (props) => {
     // Stop progress so the status of tiles shows briefly
     setinProgress(false);
 
-    const wordArray = wordLengthMappingsGuessable.find((x) => x.value === currentWord.length)?.array;
+    const firstWordArray: string[] =
+      wordLengthMappingsGuessable.find((x) => x.value === currentWord.length)?.array ?? [];
+
+    const secondTargetArray: string[] =
+      wordLengthMappingsTargets.find((x) => x.value === currentWord.length)?.array ?? [];
+
+    // A guess can be from etiher guessable or target word arrays (just checking it is an actual word)
+    const wordArray: string[] = firstWordArray.concat(secondTargetArray);
 
     // Accepted word (known word in dictionary)
     const wordInDictionary = wordArray?.includes(currentWord.toLowerCase());

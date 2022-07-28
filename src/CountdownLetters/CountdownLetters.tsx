@@ -64,8 +64,6 @@ interface Props {
 const CountdownLetters: React.FC<Props> = (props) => {
   // Currently selected guess, to be used as the final guess when time runs out
   const [selectedFinalGuess, setSelectedFinalGuess] = useState("");
-  // Stores whether a manual selection has been made (to stop us overwriting that manual decision)
-  const [manualGuessSelectionMade, setManualGuessSelectionMade] = useState(false);
   const [gameId, setGameId] = useState<string | null>(null);
   // Check if letter selection has finished
   const IS_SELECTION_FINISHED = props.countdownWord.length === props.gamemodeSettings.numLetters;
@@ -76,28 +74,6 @@ const CountdownLetters: React.FC<Props> = (props) => {
       ? props.gamemodeSettings?.timerConfig.seconds
       : DEFAULT_TIMER_VALUE
   );
-
-  // TODO: Save CountdownLetters game
-  React.useEffect(() => {
-    if (!IS_SELECTION_FINISHED) {
-      return;
-    }
-
-    if (!props.targetWord) {
-      return;
-    }
-
-    const gameId = SaveData.addGameToHistory("countdown/letters", {
-      timestamp: new Date().toISOString(),
-      gameCategory: "countdown_letters",
-      levelProps: {
-        countdownWord: props.countdownWord,
-        guesses: props.guesses,
-      },
-    });
-
-    setGameId(gameId);
-  }, [props.targetWord, IS_SELECTION_FINISHED]);
 
   // Create grid of rows (for guessing words)
   function populateGrid(wordLength: number) {
@@ -218,7 +194,7 @@ const CountdownLetters: React.FC<Props> = (props) => {
     Grid.push(
       <div className="countdown-letters-wrapper" key={"letter_selection"}>
         <WordRow
-        key={"countdown/letters/read-only"}
+          key={"countdown/letters/read-only"}
           page={props.page}
           isReadOnly={true}
           inProgress={props.inProgress}
@@ -444,14 +420,8 @@ const CountdownLetters: React.FC<Props> = (props) => {
     return outcomeNotification;
   }
 
-  // Set the selected final guess to the longest word (as long as `manualGuessSelectionMade` is false)
+  // Automatically choose the best word guessed so far
   React.useEffect(() => {
-    // If a manual selection has been made
-    if (manualGuessSelectionMade) {
-      // Keep it as the manual selection
-      return;
-    }
-
     // Compares words and returns a single value of the longest word
     const longestWord = props.guesses.reduce(
       (currentWord, nextWord) => (currentWord.length > nextWord.length ? currentWord : nextWord),
@@ -459,7 +429,7 @@ const CountdownLetters: React.FC<Props> = (props) => {
     );
 
     setSelectedFinalGuess(longestWord);
-  }, [manualGuessSelectionMade, props.guesses]);
+  }, [props.guesses]);
 
   function displayGameshowScore() {
     if (props.gameshowScore === undefined || props.gameshowScore === null) {
@@ -540,21 +510,8 @@ const CountdownLetters: React.FC<Props> = (props) => {
       </div>
 
       <div className="countdown/letters_guesses">
-        {props.guesses.map((guess, i) => (
-          <label key={i} className="countdown/letters_guess_label">
-            <input
-              type="radio"
-              checked={selectedFinalGuess === guess}
-              onChange={(event) => {
-                setManualGuessSelectionMade(true);
-                setSelectedFinalGuess(event.target.value);
-              }}
-              className="countdown/letters_guess_input"
-              name="countdown/letters_guess"
-              value={guess}
-            />
-            {guess}
-          </label>
+        {props.guesses.map((guess) => (
+          <>{guess}</>
         ))}
       </div>
     </div>
