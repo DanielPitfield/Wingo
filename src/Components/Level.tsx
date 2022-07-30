@@ -1,10 +1,10 @@
 import React from "react";
-import { Page } from "../App";
-import CountdownLettersConfig, { CountdownLettersConfigProps } from "../Pages/CountdownLettersConfig";
-import CountdownNumbersConfig, { CountdownNumbersConfigProps } from "../Pages/CountdownNumbersConfig";
+import { PageName } from "../PageNames";
+import LettersGameConfig, { LettersGameConfigProps } from "../Pages/LettersGameConfig";
+import NumbersGameConfig, { NumbersGameConfigProps } from "../Pages/NumbersGameConfig";
 import LetterCategoriesConfig, { LetterCategoriesConfigProps } from "../Pages/LetterCategoriesConfig";
 import { MessageNotification } from "./MessageNotification";
-import NubbleConfig, { NubbleConfigProps } from "../Pages/NubbleConfig";
+import NumbleConfig, { NumbleConfigProps } from "../Pages/NumbleConfig";
 import ArithmeticDrag, { ArithmeticDragProps } from "../Pages/ArithmeticDrag";
 import ArithmeticReveal, { ArithmeticRevealProps } from "../Pages/ArithmeticReveal";
 import OnlyConnect, { GroupWallProps } from "../Pages/OnlyConnect";
@@ -14,7 +14,7 @@ import Algebra, { AlgebraProps } from "../Pages/Algebra";
 import NumberSets, { NumberSetsProps } from "../Pages/NumberSets";
 import SameLetterWords, { SameLetterWordsProps } from "../Pages/SameLetterWords";
 import WordCodes, { WordCodesProps } from "../Pages/WordCodes";
-import WordleConfig, { WordleConfigProps } from "../Pages/WordleConfig";
+import WingoConfig, { WingoConfigProps } from "../Pages/WingoConfig";
 import { AreaConfig } from "../Pages/Area";
 
 // TODO: Lots of new modes which have been added which aren't supported by this type
@@ -23,70 +23,70 @@ export type LevelConfig = {
   level:
     | {
         gameCategory: "Wingo";
-        page: Page;
-        levelProps: WordleConfigProps;
+        page: PageName;
+        levelProps: WingoConfigProps;
       }
     | {
         gameCategory: "LetterCategories";
-        page: Page;
+        page: PageName;
         levelProps: LetterCategoriesConfigProps;
       }
     | {
-        gameCategory: "CountdownLetters";
-        page: Page;
-        levelProps: CountdownLettersConfigProps;
+        gameCategory: "LettersGame";
+        page: PageName;
+        levelProps: LettersGameConfigProps;
       }
     | {
-        gameCategory: "CountdownNumbers";
-        page: Page;
-        levelProps: CountdownNumbersConfigProps;
+        gameCategory: "NumbersGame";
+        page: PageName;
+        levelProps: NumbersGameConfigProps;
       }
     | {
         gameCategory: "ArithmeticReveal";
-        page: Page;
+        page: PageName;
         levelProps: ArithmeticRevealProps;
       }
     | {
-        gameCategory: "ArithmeticDrag";
-        page: Page;
+        gameCategory: "ArithmeticDrag/Match";
+        page: PageName;
         levelProps: ArithmeticDragProps;
       }
     | {
         gameCategory: "GroupWall";
-        page: Page;
+        page: PageName;
         levelProps: GroupWallProps;
       }
     | {
         gameCategory: "SameLetterWords";
-        page: Page;
+        page: PageName;
         levelProps: SameLetterWordsProps;
       }
     | {
         gameCategory: "NumberSets";
-        page: Page;
+        page: PageName;
         levelProps: NumberSetsProps;
       }
     | {
         gameCategory: "Algebra";
-        page: Page;
+        page: PageName;
         levelProps: AlgebraProps;
       }
     | {
         gameCategory: "WordCodes";
-        page: Page;
+        page: PageName;
         levelProps: WordCodesProps;
       }
     | {
-        gameCategory: "Nubble";
-        page: Page;
-        levelProps: NubbleConfigProps;
+        gameCategory: "Numble";
+        page: PageName;
+        levelProps: NumbleConfigProps;
       };
 
   // TODO: LevelConfigs (remaining unimplemented modes)
   /*
-    | "puzzle/sequence"
-    | "countdown/gameshow"
-    | "lingo/gameshow";
+    | "PuzzleSequence"
+    | "LettersNumbersGameshow"
+    | "Wingo/Gameshow";
   */
 } & (
   | {
@@ -117,16 +117,16 @@ export function getId(level: LevelConfig["level"]): string {
     case "LetterCategories":
       return pageString;
 
-    case "CountdownLetters":
-      return `${pageString}-${level.levelProps.countdownWord}`;
+    case "LettersGame":
+      return `${pageString}-${level.levelProps.lettersGameSelectionWord}`;
 
-    case "CountdownNumbers":
+    case "NumbersGame":
       return pageString;
 
     case "ArithmeticReveal":
       return pageString;
 
-    case "ArithmeticDrag":
+    case "ArithmeticDrag/Match":
       return pageString;
 
     case "GroupWall":
@@ -144,14 +144,14 @@ export function getId(level: LevelConfig["level"]): string {
     case "WordCodes":
       return `${pageString}-${level.levelProps.mode}`;
 
-    case "Nubble":
+    case "Numble":
       return pageString;
 
     // TODO: Unique identifier for level (remaining unimplemented modes)
     /*
-      | "puzzle/sequence"
-      | "countdown/gameshow"
-      | "lingo/gameshow";
+      | "PuzzleSequence"
+      | "LettersNumbersGameshow"
+      | "Wingo/Gameshow";
     */
   }
 }
@@ -160,11 +160,11 @@ export function getId(level: LevelConfig["level"]): string {
 export const Level: React.FC<{
   area: AreaConfig;
   level: LevelConfig;
-  page: Page;
+  page: PageName;
   theme: Theme;
   settings: SettingsData;
   setTheme: (theme: Theme) => void;
-  setPage: (page: Page) => void;
+  setPage: (page: PageName) => void;
   addGold: (gold: number) => void;
   onCompleteLevel: (isUnlockLevel: boolean, level: LevelConfig) => void;
 }> = (props) => {
@@ -182,7 +182,7 @@ export const Level: React.FC<{
     switch (props.level.level.gameCategory) {
       case "Wingo":
         return (
-          <WordleConfig
+          <WingoConfig
             {...props.level.level.levelProps}
             {...commonProps}
             onComplete={(wasCorrect) => {
@@ -209,9 +209,9 @@ export const Level: React.FC<{
           />
         );
 
-      case "CountdownLetters":
+      case "LettersGame":
         return (
-          <CountdownLettersConfig
+          <LettersGameConfig
             {...props.level.level.levelProps}
             {...commonProps}
             settings={props.settings}
@@ -224,9 +224,9 @@ export const Level: React.FC<{
           />
         );
 
-      case "CountdownNumbers":
+      case "NumbersGame":
         return (
-          <CountdownNumbersConfig
+          <NumbersGameConfig
             {...props.level.level.levelProps}
             {...commonProps}
             onComplete={(wasCorrect) => {
@@ -252,7 +252,7 @@ export const Level: React.FC<{
           />
         );
 
-      case "ArithmeticDrag":
+      case "ArithmeticDrag/Match":
         return (
           <ArithmeticDrag
             {...props.level.level.levelProps}
@@ -336,9 +336,9 @@ export const Level: React.FC<{
           />
         );
 
-      case "Nubble":
+      case "Numble":
         return (
-          <NubbleConfig
+          <NumbleConfig
             {...props.level.level.levelProps}
             {...commonProps}
             onComplete={(wasCorrect) => {
@@ -352,9 +352,9 @@ export const Level: React.FC<{
 
       // TODO: Render Campaign level (remaining unimplemented modes)
       /*
-        | "puzzle/sequence"
-        | "countdown/gameshow"
-        | "lingo/gameshow";
+        | "PuzzleSequence"
+        | "LettersNumbersGameshow"
+        | "Wingo/Gameshow";
       */
     }
   }

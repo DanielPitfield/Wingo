@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Page } from "../App";
+import { PageName } from "../PageNames";
 import { LevelConfig } from "../Components/Level";
 import { MessageNotification } from "../Components/MessageNotification";
 import { SettingsData } from "../Data/SaveData";
@@ -19,7 +19,7 @@ export const Area: React.FC<{
   settings: SettingsData;
   setTheme: (theme: Theme) => void;
   setSelectedCampaignLevel: (level: LevelConfig) => void;
-  setPage: (page: Page) => void;
+  setPage: (page: PageName) => void;
 }> = (props) => {
   const [selectedLevel, setSelectedLevel] = useState<LevelConfig | null>(null);
 

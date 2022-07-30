@@ -7,21 +7,21 @@ interface Props {
     id: { type: "original"; index: number } | { type: "intermediary"; rowIndex: number }
   ) => void;
   disabled: boolean;
-  countdownStatuses: {
+  numberTileStatuses: {
     type: "original" | "intermediary";
     number: number | null;
     picked: boolean;
   }[];
 }
 
-export const CountdownRow: React.FC<Props> = (props) => {
+export const NumberSelectionRow: React.FC<Props> = (props) => {
   /**
    *
    * @returns
    */
   function CreateRow() {
     const tileArray = [];
-    const originalNumbers = props.countdownStatuses.filter(x => x.type === "original");
+    const originalNumbers = props.numberTileStatuses.filter((x) => x.type === "original");
 
     for (let i = 0; i < originalNumbers.length; i++) {
       tileArray.push(

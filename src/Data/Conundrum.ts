@@ -1,6 +1,6 @@
 import { wordLengthMappingsTargets } from "./DefaultGamemodeSettings";
 import { words_nine_targets } from "./WordArrays/Lengths/Words9";
-import { pickRandomElementFrom } from "../Pages/WordleConfig";
+import { pickRandomElementFrom } from "../Pages/WingoConfig";
 
 export function checkAnagram(constructedWord: string, targetWord: string) {
   var constructedWordLetters = constructedWord.split("").sort().join("");

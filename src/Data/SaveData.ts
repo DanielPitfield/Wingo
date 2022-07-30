@@ -1,10 +1,11 @@
-import { Page, pages } from "../App";
+import { pageDescriptions } from "../PageDescriptions";
+import { PageName } from "../PageNames";
 import { LevelConfig } from "../Components/Level";
 import { BaseChallenge } from "./Challenges/BaseChallenge";
-import { CountdownLettersConfigProps } from "../Pages/CountdownLettersConfig";
-import { CountdownNumbersConfigProps } from "../Pages/CountdownNumbersConfig";
+import { LettersGameConfigProps } from "../Pages/LettersGameConfig";
+import { NumbersGameConfigProps } from "../Pages/NumbersGameConfig";
 import { LetterCategoriesConfigProps } from "../Pages/LetterCategoriesConfig";
-import { NubbleConfigProps } from "../Pages/NubbleConfig";
+import { NumbleConfigProps } from "../Pages/NumbleConfig";
 import { ArithmeticDragProps, arithmeticMode } from "../Pages/ArithmeticDrag";
 import { ArithmeticRevealProps } from "../Pages/ArithmeticReveal";
 import { GroupWallProps } from "../Pages/OnlyConnect";
@@ -13,8 +14,8 @@ import { AlgebraProps } from "../Pages/Algebra";
 import { NumberSetsProps } from "../Pages/NumberSets";
 import { SameLetterWordsProps } from "../Pages/SameLetterWords";
 import { wordCodesMode, WordCodesProps } from "../Pages/WordCodes";
-import { WordleConfigProps } from "../Pages/WordleConfig";
-import { TileStatus, WordleInterlinkedProps } from "../Pages/WordleInterlinked";
+import { WingoConfigProps } from "../Pages/WingoConfig";
+import { TileStatus, WingoInterlinkedProps } from "../Pages/WingoInterlinked";
 
 export type CampaignSaveData = {
   areas: { name: string; status: "locked" | "unlockable" | "unlocked"; completedLevelIds: string[] }[];
@@ -67,7 +68,7 @@ export type HistorySaveData = {
     id: string;
 
     /** Page/mode of the game */
-    page: Page;
+    page: PageName;
 
     /** Configuration at the start of the game */
     configAtStartOfGame: {
@@ -100,8 +101,8 @@ export function newGuid(): string {
     .join("");
 }
 
-function determineLocalStorageItemName(page: Page): string | null {
-  const modeName = pages.find((x) => x.page === page)?.title;
+function determineLocalStorageItemName(page: PageName): string | null {
+  const modeName = pageDescriptions.find((x) => x.page === page)?.title;
 
   if (!modeName) {
     return null;
@@ -220,7 +221,7 @@ export class SaveData {
    * @returns Identifier of the game.
    */
   public static addGameToHistory(
-    page: Page,
+    page: PageName,
     configAtStartOfGame: HistorySaveData["games"][0]["configAtStartOfGame"]
   ): string {
     const history = SaveData.getHistory();
@@ -395,10 +396,10 @@ export class SaveData {
   }
 
   /**
-   * Saves the gamemode settings for Wordle Config.
-   * @param gameSettings The latest gamemode settings for Wordle Config to save.
+   * Saves the gamemode settings for Wingo Config.
+   * @param gameSettings The latest gamemode settings for Wingo Config to save.
    */
-  public static setWordleConfigGamemodeSettings(page: Page, gameSettings: WordleConfigProps["gamemodeSettings"]) {
+  public static setWingoConfigGamemodeSettings(page: PageName, gameSettings: WingoConfigProps["gamemodeSettings"]) {
     const itemName = determineLocalStorageItemName(page);
 
     if (!itemName) {
@@ -409,30 +410,30 @@ export class SaveData {
   }
 
   /**
-   * Gets the saved gamemode settings for Wordle Config, or null if no saved gamemode settings were found.
-   * @returns The saved gamemode settings for Wordle Config to save.
+   * Gets the saved gamemode settings for Wingo Config, or null if no saved gamemode settings were found.
+   * @returns The saved gamemode settings for Wingo Config to save.
    */
-  public static getWordleConfigGamemodeSettings(page: Page): WordleConfigProps["gamemodeSettings"] | null {
+  public static getWingoConfigGamemodeSettings(page: PageName): WingoConfigProps["gamemodeSettings"] | null {
     const itemName = determineLocalStorageItemName(page);
 
     if (!itemName) {
       return;
     }
 
-    const wordleConfigGamemodeSettings = localStorage.getItem(itemName);
+    const wingoConfigGamemodeSettings = localStorage.getItem(itemName);
 
     // If saved gamemode settings were found
-    if (wordleConfigGamemodeSettings) {
-      return JSON.parse(wordleConfigGamemodeSettings) as WordleConfigProps["gamemodeSettings"];
+    if (wingoConfigGamemodeSettings) {
+      return JSON.parse(wingoConfigGamemodeSettings) as WingoConfigProps["gamemodeSettings"];
     }
 
     // Else if not found; return null
     return null;
   }
 
-  public static setWordleInterlinkedGamemodeSettings(
-    page: Page,
-    gameSettings: WordleInterlinkedProps["gamemodeSettings"]
+  public static setWingoInterlinkedGamemodeSettings(
+    page: PageName,
+    gameSettings: WingoInterlinkedProps["gamemodeSettings"]
   ) {
     const itemName = determineLocalStorageItemName(page);
 
@@ -443,31 +444,31 @@ export class SaveData {
     localStorage.setItem(itemName, JSON.stringify(gameSettings));
   }
 
-  public static getWordleInterlinkedGamemodeSettings(page: Page): WordleInterlinkedProps["gamemodeSettings"] | null {
+  public static getWingoInterlinkedGamemodeSettings(page: PageName): WingoInterlinkedProps["gamemodeSettings"] | null {
     const itemName = determineLocalStorageItemName(page);
 
     if (!itemName) {
       return;
     }
 
-    const wordleInterlinkedGamemodeSettings = localStorage.getItem(itemName);
+    const wingoInterlinkedGamemodeSettings = localStorage.getItem(itemName);
 
-    if (wordleInterlinkedGamemodeSettings) {
-      return JSON.parse(wordleInterlinkedGamemodeSettings) as WordleInterlinkedProps["gamemodeSettings"];
+    if (wingoInterlinkedGamemodeSettings) {
+      return JSON.parse(wingoInterlinkedGamemodeSettings) as WingoInterlinkedProps["gamemodeSettings"];
     }
 
     return null;
   }
 
-  public static setNubbleConfigGamemodeSettings(gameSettings: NubbleConfigProps["gamemodeSettings"]) {
-    localStorage.setItem("nubbleConfigGamemodeSettings", JSON.stringify(gameSettings));
+  public static setNumbleConfigGamemodeSettings(gameSettings: NumbleConfigProps["gamemodeSettings"]) {
+    localStorage.setItem("numbleConfigGamemodeSettings", JSON.stringify(gameSettings));
   }
 
-  public static getNubbleConfigGamemodeSettings(): NubbleConfigProps["gamemodeSettings"] | null {
-    const nubbleConfigGamemodeSettings = localStorage.getItem("nubbleConfigGamemodeSettings");
+  public static getNumbleConfigGamemodeSettings(): NumbleConfigProps["gamemodeSettings"] | null {
+    const numbleConfigGamemodeSettings = localStorage.getItem("numbleConfigGamemodeSettings");
 
-    if (nubbleConfigGamemodeSettings) {
-      return JSON.parse(nubbleConfigGamemodeSettings) as NubbleConfigProps["gamemodeSettings"];
+    if (numbleConfigGamemodeSettings) {
+      return JSON.parse(numbleConfigGamemodeSettings) as NumbleConfigProps["gamemodeSettings"];
     }
 
     return null;
@@ -489,33 +490,29 @@ export class SaveData {
     return null;
   }
 
-  public static setCountdownLettersConfigGamemodeSettings(
-    gameSettings: CountdownLettersConfigProps["gamemodeSettings"]
-  ) {
-    localStorage.setItem("countdownLettersConfigGamemodeSettings", JSON.stringify(gameSettings));
+  public static setLettersGameConfigGamemodeSettings(gameSettings: LettersGameConfigProps["gamemodeSettings"]) {
+    localStorage.setItem("lettersGameConfigGamemodeSettings", JSON.stringify(gameSettings));
   }
 
-  public static getCountdownLettersConfigGamemodeSettings(): CountdownLettersConfigProps["gamemodeSettings"] | null {
-    const countdownLettersConfigGamemodeSettings = localStorage.getItem("countdownLettersConfigGamemodeSettings");
+  public static getLettersGameConfigGamemodeSettings(): LettersGameConfigProps["gamemodeSettings"] | null {
+    const lettersGameConfigGamemodeSettings = localStorage.getItem("lettersGameConfigGamemodeSettings");
 
-    if (countdownLettersConfigGamemodeSettings) {
-      return JSON.parse(countdownLettersConfigGamemodeSettings) as CountdownLettersConfigProps["gamemodeSettings"];
+    if (lettersGameConfigGamemodeSettings) {
+      return JSON.parse(lettersGameConfigGamemodeSettings) as LettersGameConfigProps["gamemodeSettings"];
     }
 
     return null;
   }
 
-  public static setCountdownNumbersConfigGamemodeSettings(
-    gameSettings: CountdownNumbersConfigProps["gamemodeSettings"]
-  ) {
-    localStorage.setItem("countdownNumbersConfigGamemodeSettings", JSON.stringify(gameSettings));
+  public static setNumbersGameConfigGamemodeSettings(gameSettings: NumbersGameConfigProps["gamemodeSettings"]) {
+    localStorage.setItem("numbersGameConfigGamemodeSettings", JSON.stringify(gameSettings));
   }
 
-  public static getCountdownNumbersConfigGamemodeSettings(): CountdownNumbersConfigProps["gamemodeSettings"] | null {
-    const countdownNumbersConfigGamemodeSettings = localStorage.getItem("countdownNumbersConfigGamemodeSettings");
+  public static getNumbersGameConfigGamemodeSettings(): NumbersGameConfigProps["gamemodeSettings"] | null {
+    const numbersGameConfigGamemodeSettings = localStorage.getItem("numbersGameConfigGamemodeSettings");
 
-    if (countdownNumbersConfigGamemodeSettings) {
-      return JSON.parse(countdownNumbersConfigGamemodeSettings) as CountdownNumbersConfigProps["gamemodeSettings"];
+    if (numbersGameConfigGamemodeSettings) {
+      return JSON.parse(numbersGameConfigGamemodeSettings) as NumbersGameConfigProps["gamemodeSettings"];
     }
 
     return null;
@@ -617,10 +614,7 @@ export class SaveData {
     return null;
   }
 
-  public static setWordCodesGamemodeSettings(
-    mode: wordCodesMode,
-    gameSettings: WordCodesProps["gamemodeSettings"]
-  ) {
+  public static setWordCodesGamemodeSettings(mode: wordCodesMode, gameSettings: WordCodesProps["gamemodeSettings"]) {
     if (mode === "question") {
       localStorage.setItem("wordCodesQuestionGamemodeSettings", JSON.stringify(gameSettings));
     } else if (mode === "match") {
@@ -628,9 +622,7 @@ export class SaveData {
     }
   }
 
-  public static getWordCodesGamemodeSettings(
-    mode: wordCodesMode
-  ): WordCodesProps["gamemodeSettings"] | null {
+  public static getWordCodesGamemodeSettings(mode: wordCodesMode): WordCodesProps["gamemodeSettings"] | null {
     const wordCodesGamemodeSettings =
       mode === "question"
         ? localStorage.getItem("wordCodesQuestionGamemodeSettings")

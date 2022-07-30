@@ -39,7 +39,7 @@ export const words_fruits = [
   { word: "kumquat", hint: "" },
   { word: "lemon", hint: "" },
   { word: "lime", hint: "" },
-  { word: "lingonberry", hint: "" },
+  { word: "wingonberry", hint: "" },
   { word: "loganberry", hint: "" },
   { word: "loquat", hint: "" },
   { word: "lychee", hint: "" },

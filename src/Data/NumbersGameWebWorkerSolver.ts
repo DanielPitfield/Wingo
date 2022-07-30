@@ -1,4 +1,4 @@
-import { NumberPuzzle } from "./CountdownSolver";
+import { NumberPuzzle } from "./NumbersGameSolver";
 
 onmessage = function (e) {
   // Recieve data

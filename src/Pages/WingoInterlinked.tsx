@@ -4,7 +4,7 @@ import { useState } from "react";
 import { shuffleArray } from "./ArithmeticDrag";
 import { Theme } from "../Data/Themes";
 import { Keyboard } from "../Components/Keyboard";
-import { getWordSummary } from "./WordleConfig";
+import { getWordSummary } from "./WingoConfig";
 import { Button } from "../Components/Button";
 import React from "react";
 import { MessageNotification } from "../Components/MessageNotification";
@@ -18,7 +18,7 @@ import {
   MIN_TARGET_WORD_LENGTH,
   wordLengthMappingsTargets,
 } from "../Data/DefaultGamemodeSettings";
-import { Page } from "../App";
+import { PageName } from "../PageNames";
 
 type Orientation = "vertical" | "horizontal";
 
@@ -34,7 +34,7 @@ export type TileStatus = {
   status: "incorrect" | "contains" | "correct" | "not set" | "not in word";
 };
 
-export interface WordleInterlinkedProps {
+export interface WingoInterlinkedProps {
   isCampaignLevel: boolean;
 
   // TODO: Add as a gamemode setting?
@@ -75,11 +75,11 @@ export interface WordleInterlinkedProps {
   };
 }
 
-interface Props extends WordleInterlinkedProps {
-  page: Page;
+interface Props extends WingoInterlinkedProps {
+  page: PageName;
   theme?: Theme;
   settings: SettingsData;
-  setPage: (page: Page) => void;
+  setPage: (page: PageName) => void;
   addGold: (gold: number) => void;
   setTheme: (theme: Theme) => void;
   onSave?: (
@@ -94,7 +94,7 @@ interface Props extends WordleInterlinkedProps {
   onComplete?: (wasCorrect: boolean, answer: string, targetAnswer: string, score: number | null) => void;
 }
 
-export const WordleInterlinked: React.FC<Props> = (props) => {
+export const WingoInterlinked: React.FC<Props> = (props) => {
   const DEFAULT_NUM_WORDS = 2;
   const STARTING_NUM_WORDS = props.gamemodeSettings?.numWords ?? DEFAULT_NUM_WORDS;
 
@@ -293,7 +293,7 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
     ResetGame();
 
     // Save the latest gamemode settings for this mode
-    SaveData.setWordleInterlinkedGamemodeSettings(props.page, gamemodeSettings);
+    SaveData.setWingoInterlinkedGamemodeSettings(props.page, gamemodeSettings);
   }, [gamemodeSettings]);
 
   React.useEffect(() => {
@@ -1080,7 +1080,7 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
 
   return (
     <div
-      className="App wordle_interlinked"
+      className="App wingo_interlinked"
       style={{ backgroundImage: props.theme && `url(${props.theme.backgroundImageSrc})` }}
     >
       {!props.isCampaignLevel && (

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Page } from "../App";
+import { PageName } from "../PageNames";
 import { Button } from "../Components/Button";
 import { DEFAULT_WORD_LENGTH, wordLengthMappingsTargets } from "../Data/DefaultGamemodeSettings";
 import GamemodeSettingsMenu from "../Components/GamemodeSettingsMenu";
@@ -10,7 +10,7 @@ import ProgressBar, { GreenToRedColorTransition } from "../Components/ProgressBa
 import { SaveData, SettingsData } from "../Data/SaveData";
 import { useClickChime, useCorrectChime, useFailureChime, useLightPingChime } from "../Data/Sounds";
 import { Theme } from "../Data/Themes";
-import { pickRandomElementFrom } from "./WordleConfig";
+import { pickRandomElementFrom } from "./WingoConfig";
 
 export interface SameLetterWordsProps {
   isCampaignLevel: boolean;
@@ -28,10 +28,10 @@ export interface SameLetterWordsProps {
 }
 
 interface Props extends SameLetterWordsProps {
-  page: Page;
+  page: PageName;
   theme: Theme;
   settings: SettingsData;
-  setPage: (page: Page) => void;
+  setPage: (page: PageName) => void;
   setTheme: (theme: Theme) => void;
   addGold: (gold: number) => void;
   onComplete?: (wasCorrect: boolean) => void;

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { shuffleArray } from "./ArithmeticDrag";
-import { pickRandomElementFrom } from "./WordleConfig";
-import { Page } from "../App";
+import { pickRandomElementFrom } from "./WingoConfig";
+import { PageName } from "../PageNames";
 import { Button } from "../Components/Button";
 import { DEFAULT_ALPHABET, Keyboard } from "../Components/Keyboard";
 import LetterTile from "../Components/LetterTile";
@@ -49,10 +49,10 @@ export interface WordCodesProps {
 }
 
 interface Props extends WordCodesProps {
-  page: Page;
+  page: PageName;
   theme: Theme;
   settings: SettingsData;
-  setPage: (page: Page) => void;
+  setPage: (page: PageName) => void;
   setTheme: (theme: Theme) => void;
   addGold: (gold: number) => void;
   onComplete?: (wasCorrect: boolean) => void;
@@ -996,7 +996,7 @@ const WordCodes: React.FC<Props> = (props) => {
           settings={props.settings}
           onSubmitLetter={onSubmitLetter}
           targetWord=""
-          mode={"verbal_reasoning/word_codes/match"}
+          mode={"WordCodes/Match"}
           guesses={[]}
           letterStatuses={[]}
           inDictionary

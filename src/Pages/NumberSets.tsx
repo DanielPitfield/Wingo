@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Page } from "../App";
+import { PageName } from "../PageNames";
 import { Button } from "../Components/Button";
 import GamemodeSettingsMenu from "../Components/GamemodeSettingsMenu";
 import LetterTile from "../Components/LetterTile";
@@ -40,10 +40,10 @@ export interface NumberSetsProps {
 }
 
 interface Props extends NumberSetsProps {
-  page: Page;
+  page: PageName;
   theme: Theme;
   settings: SettingsData;
-  setPage: (page: Page) => void;
+  setPage: (page: PageName) => void;
   setTheme: (theme: Theme) => void;
   addGold: (gold: number) => void;
   onComplete?: (wasCorrect: boolean) => void;

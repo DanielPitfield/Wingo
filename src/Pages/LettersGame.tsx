@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import { Keyboard } from "../Components/Keyboard";
-import { Page } from "../App";
+import { PageName } from "../PageNames";
 import { WordRow } from "../Components/WordRow";
 import { Button } from "../Components/Button";
 import { MessageNotification } from "../Components/MessageNotification";
 import ProgressBar, { GreenToRedColorTransition } from "../Components/ProgressBar";
-import { isCountdownGuessValid } from "./CountdownLettersConfig";
-import { pickRandomElementFrom } from "./WordleConfig";
+import { isLettersGameGuessValid } from "./LettersGameConfig";
+import { pickRandomElementFrom } from "./WingoConfig";
 import { Theme } from "../Data/Themes";
 import { SaveData, SettingsData } from "../Data/SaveData";
 import GamemodeSettingsMenu from "../Components/GamemodeSettingsMenu";
@@ -28,7 +28,7 @@ interface Props {
 
   remainingSeconds: number;
   guesses: string[];
-  countdownWord: string;
+  lettersGameSelectionWord: string;
   currentWord: string;
   inProgress: boolean;
   inDictionary: boolean;
@@ -39,15 +39,15 @@ interface Props {
     status: "" | "contains" | "correct" | "not set" | "not in word";
   }[];
 
-  page: Page;
+  page: PageName;
   theme: Theme;
   settings: SettingsData;
   setTheme: (theme: Theme) => void;
-  setPage: (page: Page) => void;
+  setPage: (page: PageName) => void;
   addGold: (gold: number) => void;
   onEnter: () => void;
-  onSubmitCountdownLetter: (letter: string) => void;
-  onSubmitCountdownWord: (word: string) => void;
+  onSubmitLettersGameLetter: (letter: string) => void;
+  onSubmitLettersGameSelectionWord: (word: string) => void;
   onSubmitLetter: (letter: string) => void;
   onBackspace: () => void;
 
@@ -63,11 +63,11 @@ interface Props {
   gameshowScore?: number;
 }
 
-const CountdownLetters: React.FC<Props> = (props) => {
+const LettersGame: React.FC<Props> = (props) => {
   // Currently selected guess, to be used as the final guess when time runs out
   const [bestGuess, setBestGuess] = useState("");
   // Check if letter selection has finished
-  const IS_SELECTION_FINISHED = props.countdownWord.length === props.gamemodeSettings.numLetters;
+  const IS_SELECTION_FINISHED = props.lettersGameSelectionWord.length === props.gamemodeSettings.numLetters;
 
   const DEFAULT_TIMER_VALUE = 30;
   const [mostRecentTotalSeconds, setMostRecentTotalSeconds] = useState(
@@ -96,7 +96,7 @@ const CountdownLetters: React.FC<Props> = (props) => {
 
     function getVowel(): string {
       // Already 9 picked letters, don't add any more
-      if (props.countdownWord.length === 9) {
+      if (props.lettersGameSelectionWord.length === 9) {
         return "";
       }
 
@@ -127,7 +127,7 @@ const CountdownLetters: React.FC<Props> = (props) => {
     }
 
     function getConsonant(): string {
-      if (props.countdownWord.length === 9) {
+      if (props.lettersGameSelectionWord.length === 9) {
         return "";
       }
 
@@ -173,33 +173,33 @@ const CountdownLetters: React.FC<Props> = (props) => {
     }
 
     function quickLetterSelection() {
-      let newCountdownWord = "";
+      let newLettersGameWord = "";
 
       // Build word by randomly adding vowels and consonants
       for (let i = 0; i < wordLength; i++) {
         let x = Math.floor(Math.random() * 2) === 0;
         // Equal chance (to add a vowel or consonant)
         if (x) {
-          newCountdownWord += getVowel();
+          newLettersGameWord += getVowel();
         } else {
-          newCountdownWord += getConsonant();
+          newLettersGameWord += getConsonant();
         }
       }
       // Set the entire word at once
-      props.onSubmitCountdownWord(newCountdownWord);
+      props.onSubmitLettersGameSelectionWord(newLettersGameWord);
     }
 
     var Grid = [];
 
     // Read only letter selection WordRow
     Grid.push(
-      <div className="countdown-letters-wrapper" key={"letter_selection"}>
+      <div className="letters-game-wrapper" key={"letter_selection"}>
         <WordRow
-          key={"countdown/letters/read-only"}
+          key={"letters-game/read-only"}
           page={props.page}
           isReadOnly={true}
           inProgress={props.inProgress}
-          word={props.countdownWord}
+          word={props.lettersGameSelectionWord}
           isVertical={false}
           length={wordLength}
           targetWord={""}
@@ -213,7 +213,7 @@ const CountdownLetters: React.FC<Props> = (props) => {
             mode={"default"}
             disabled={IS_SELECTION_FINISHED}
             settings={props.settings}
-            onClick={() => props.onSubmitCountdownLetter(getVowel())}
+            onClick={() => props.onSubmitLettersGameLetter(getVowel())}
           >
             Vowel
           </Button>
@@ -221,13 +221,13 @@ const CountdownLetters: React.FC<Props> = (props) => {
             mode={"default"}
             disabled={IS_SELECTION_FINISHED}
             settings={props.settings}
-            onClick={() => props.onSubmitCountdownLetter(getConsonant())}
+            onClick={() => props.onSubmitLettersGameLetter(getConsonant())}
           >
             Consonant
           </Button>
           <Button
             mode={"default"}
-            disabled={props.countdownWord.length !== 0 || IS_SELECTION_FINISHED}
+            disabled={props.lettersGameSelectionWord.length !== 0 || IS_SELECTION_FINISHED}
             settings={props.settings}
             onClick={quickLetterSelection}
           >
@@ -240,7 +240,7 @@ const CountdownLetters: React.FC<Props> = (props) => {
     // WordRow to enter words using available letters
     Grid.push(
       <WordRow
-        key={"countdown/letters/input"}
+        key={"letters-game/input"}
         page={props.page}
         isReadOnly={false}
         inProgress={props.inProgress}
@@ -321,22 +321,22 @@ const CountdownLetters: React.FC<Props> = (props) => {
     );
   }
 
-  function getBestWords(countdownWord: string) {
+  function getBestWords(lettersGameSelectionWord: string) {
     const MAX_WORDS_TO_RETURN = 5;
 
     // Array to store best words that are found
     let bestWords: string[] = [];
 
     // Start with bigger words first
-    for (let wordLength = countdownWord.length; wordLength >= 4; wordLength--) {
+    for (let wordLength = lettersGameSelectionWord.length; wordLength >= 4; wordLength--) {
       const firstWordArray: string[] = wordLengthMappingsGuessable.find((x) => x.value === wordLength)?.array ?? [];
       const secondTargetArray: string[] = wordLengthMappingsTargets.find((x) => x.value === wordLength)?.array ?? [];
 
       // Get all words of current wordLength
       const wordArray: string[] = firstWordArray.concat(secondTargetArray);
 
-      // The words which can be made with the selected countdown letters
-      const validWords: string[] = wordArray.filter((word) => isCountdownGuessValid(word, countdownWord));
+      // The words which can be made with the selected letters
+      const validWords: string[] = wordArray.filter((word) => isLettersGameGuessValid(word, lettersGameSelectionWord));
 
       bestWords = bestWords.concat(validWords);
 
@@ -359,7 +359,7 @@ const CountdownLetters: React.FC<Props> = (props) => {
     }
 
     // Create a list of the longest words that can be made with the available letters
-    const bestWords = getBestWords(props.countdownWord);
+    const bestWords = getBestWords(props.lettersGameSelectionWord);
     const bestWordsList = (
       <ul className="best_words_list">
         {bestWords.map((bestWord) => (
@@ -465,11 +465,11 @@ const CountdownLetters: React.FC<Props> = (props) => {
         )}
       </div>
 
-      <div className="countdown/word_grid">{populateGrid(props.gamemodeSettings.numLetters)}</div>
+      <div className="letters-game-word-grid">{populateGrid(props.gamemodeSettings.numLetters)}</div>
 
       <div className="keyboard">
         <Keyboard
-          mode={"countdown/letters"}
+          mode={"LettersGame"}
           onEnter={props.onEnter}
           onSubmitLetter={props.onSubmitLetter}
           onBackspace={props.onBackspace}
@@ -493,7 +493,7 @@ const CountdownLetters: React.FC<Props> = (props) => {
         )}
       </div>
 
-      <div className="countdown/letters_guesses">
+      <div className="letters-game-guesses">
         {props.guesses.map((guess) => (
           <>{guess}</>
         ))}
@@ -502,4 +502,4 @@ const CountdownLetters: React.FC<Props> = (props) => {
   );
 };
 
-export default CountdownLetters;
+export default LettersGame;

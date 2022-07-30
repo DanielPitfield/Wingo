@@ -1,16 +1,16 @@
 import React, { useState } from "react";
 import { arrayMove, OrderGroup } from "react-draggable-order";
-import { Page } from "../App";
+import { PageName } from "../PageNames";
 import { Button } from "../Components/Button";
-import { operators, operators_symbols } from "./CountdownNumbersConfig";
+import { operators, operators_symbols } from "./NumbersGameConfig";
 import GamemodeSettingsMenu from "../Components/GamemodeSettingsMenu";
 import LetterTile from "../Components/LetterTile";
 import { MessageNotification } from "../Components/MessageNotification";
-import { randomIntFromInterval } from "./Nubble";
+import { randomIntFromInterval } from "./Numble";
 import ProgressBar, { GreenToRedColorTransition } from "../Components/ProgressBar";
 import { SaveData, SettingsData } from "../Data/SaveData";
 import { Theme } from "../Data/Themes";
-import { pickRandomElementFrom } from "./WordleConfig";
+import { pickRandomElementFrom } from "./WingoConfig";
 import { DraggableItem } from "../Components/DraggableItem";
 
 // Const Contexts: https://stackoverflow.com/questions/44497388/typescript-array-to-string-literal-type
@@ -50,10 +50,10 @@ export interface ArithmeticDragProps {
 }
 
 interface Props extends ArithmeticDragProps {
-  page: Page;
+  page: PageName;
   theme: Theme;
   settings: SettingsData;
-  setPage: (page: Page) => void;
+  setPage: (page: PageName) => void;
   setTheme: (theme: Theme) => void;
   addGold: (gold: number) => void;
   onComplete?: (wasCorrect: boolean) => void;

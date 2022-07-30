@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Button } from "../Components/Button";
-import { NumberPuzzle } from "../Data/CountdownSolver";
+import { NumberPuzzle } from "../Data/NumbersGameSolver";
 import GamemodeSettingsMenu from "../Components/GamemodeSettingsMenu";
 import { MessageNotification } from "../Components/MessageNotification";
 import ProgressBar, { GreenToRedColorTransition } from "../Components/ProgressBar";
@@ -8,15 +8,15 @@ import { SaveData, SettingsData } from "../Data/SaveData";
 import { Theme } from "../Data/Themes";
 import DiceGrid from "../Components/DiceGrid";
 import {
-  DEFAULT_NUBBLE_GUESS_TIMER_VALUE,
-  DEFAULT_NUBBLE_TIMER_VALUE,
+  DEFAULT_NUMBLE_GUESS_TIMER_VALUE,
+  DEFAULT_NUMBLE_TIMER_VALUE,
   getNextTeamNumberWithRemainingTime,
   HexagonPinAdjacency,
-  nubbleGridShape,
-  nubbleGridShapes,
-  nubbleGridSize,
-  nubbleGridSizes,
-} from "./NubbleConfig";
+  numbleGridShape,
+  numbleGridShapes,
+  numbleGridSize,
+  numbleGridSizes,
+} from "./NumbleConfig";
 
 interface Props {
   campaignConfig:
@@ -53,8 +53,8 @@ interface Props {
     numDice: number;
     diceMin: number;
     diceMax: number;
-    gridShape: nubbleGridShape;
-    gridSize: nubbleGridSize;
+    gridShape: numbleGridShape;
+    gridSize: numbleGridSize;
     numTeams: number;
     isGameOverOnIncorrectPick: boolean;
     guessTimerConfig:
@@ -87,8 +87,8 @@ interface Props {
     numDice: number;
     diceMin: number;
     diceMax: number;
-    gridShape: nubbleGridShape;
-    gridSize: nubbleGridSize;
+    gridShape: numbleGridShape;
+    gridSize: numbleGridSize;
     numTeams: number;
     isGameOverOnIncorrectPick: boolean;
     guessTimerConfig:
@@ -121,7 +121,7 @@ export function randomIntFromInterval(min: number, max: number) {
   return Math.floor(Math.random() * (max - min + 1) + min);
 }
 
-const Nubble: React.FC<Props> = (props) => {
+const Numble: React.FC<Props> = (props) => {
   const [diceValues, setdiceValues] = useState<number[]>(
     Array.from({ length: props.gamemodeSettings.numDice }).map((x) => randomDiceNumber())
   );
@@ -141,13 +141,13 @@ const Nubble: React.FC<Props> = (props) => {
   const [mostRecentGuessTimerTotalSeconds, setMostRecentGuessTimerTotalSeconds] = useState(
     props.gamemodeSettings?.guessTimerConfig?.isTimed === true
       ? props.gamemodeSettings?.guessTimerConfig.seconds
-      : DEFAULT_NUBBLE_GUESS_TIMER_VALUE
+      : DEFAULT_NUMBLE_GUESS_TIMER_VALUE
   );
 
   const [mostRecentTotalSeconds, setMostRecentTotalSeconds] = useState(
     props.gamemodeSettings?.timerConfig?.isTimed === true
       ? props.gamemodeSettings?.timerConfig.seconds
-      : DEFAULT_NUBBLE_TIMER_VALUE
+      : DEFAULT_NUMBLE_TIMER_VALUE
   );
 
   const teamNumberColourMappings = [
@@ -164,7 +164,7 @@ const Nubble: React.FC<Props> = (props) => {
 
   // Game timer handling
   React.useEffect(() => {
-    // TODO: Move status to NubbleConfig and set within timer useEffect()?
+    // TODO: Move status to NumbleConfig and set within timer useEffect()?
     if (!props.gamemodeSettings.timerConfig.isTimed) {
       return;
     }
@@ -260,7 +260,7 @@ const Nubble: React.FC<Props> = (props) => {
 
   // Reset game when any settings are changed
   React.useEffect(() => {
-    // TODO: There is a very similar useEffect() to this within NubbleConfig
+    // TODO: There is a very similar useEffect() to this within NumbleConfig
     if (props.campaignConfig.isCampaignLevel) {
       return;
     }
@@ -268,7 +268,7 @@ const Nubble: React.FC<Props> = (props) => {
     ResetGame();
 
     // Save the latest gamemode settings
-    SaveData.setNubbleConfigGamemodeSettings(props.gamemodeSettings);
+    SaveData.setNumbleConfigGamemodeSettings(props.gamemodeSettings);
   }, [props.gamemodeSettings]);
 
   /**
@@ -349,7 +349,7 @@ const Nubble: React.FC<Props> = (props) => {
       } else {
         return false;
       }
-    } else if (props.gamemodeSettings.gridShape === ("hexagon" as nubbleGridShape)) {
+    } else if (props.gamemodeSettings.gridShape === ("hexagon" as numbleGridShape)) {
       // Pin adjacency information
       const adjacentMappings = props.determineHexagonAdjacentMappings();
       // Adjacent pins of the clicked pin
@@ -477,7 +477,7 @@ const Nubble: React.FC<Props> = (props) => {
       pinScore *= 2;
     }
 
-    // Bonus points awarded for nubble triangle
+    // Bonus points awarded for numble triangle
     const ADJACENT_BONUS = 200;
     if (isAdjacentBonus(pinNumber)) {
       pinScore += ADJACENT_BONUS;
@@ -527,10 +527,10 @@ const Nubble: React.FC<Props> = (props) => {
 
     return (
       <div
-        className="nubble-grid-row"
+        className="numble-grid-row"
         style={{
           transform:
-            props.gamemodeSettings.gridShape === ("hexagon" as nubbleGridShape)
+            props.gamemodeSettings.gridShape === ("hexagon" as numbleGridShape)
               ? `translate(${offset * 10 * X_SLANT}px, ${offset * 10 * Y_SLANT}px)`
               : undefined,
         }}
@@ -549,7 +549,7 @@ const Nubble: React.FC<Props> = (props) => {
             return (
               <button
                 key={i}
-                className="nubble-button"
+                className="numble-button"
                 data-prime={isPrime(value)}
                 data-shape={props.gamemodeSettings.gridShape}
                 data-picked={isPicked}
@@ -561,7 +561,7 @@ const Nubble: React.FC<Props> = (props) => {
                 {value}
               </button>
             );
-          } else if (props.gamemodeSettings.gridShape === ("hexagon" as nubbleGridShape)) {
+          } else if (props.gamemodeSettings.gridShape === ("hexagon" as numbleGridShape)) {
             const value = rowInformation?.values[i];
 
             if (!value) {
@@ -574,7 +574,7 @@ const Nubble: React.FC<Props> = (props) => {
             return (
               <button
                 key={i}
-                className="nubble-button"
+                className="numble-button"
                 data-prime={isPrime(value)}
                 data-shape={props.gamemodeSettings.gridShape}
                 data-picked={isPicked}
@@ -618,12 +618,12 @@ const Nubble: React.FC<Props> = (props) => {
     const pinScores = [];
     const pointColourMappings = props.determinePointColourMappings();
 
-    // Create read-only nubble pin of each colour with text of how many points it awards
+    // Create read-only numble pin of each colour with text of how many points it awards
     for (const row of pointColourMappings) {
       pinScores.push(
         <button
           key={row.colour}
-          className="nubble-button-display"
+          className="numble-button-display"
           data-prime={false}
           data-picked={false}
           data-colour={row.colour}
@@ -634,14 +634,14 @@ const Nubble: React.FC<Props> = (props) => {
       );
     }
 
-    // Use the last/highest row colour to show prime nubble pin
+    // Use the last/highest row colour to show prime numble pin
     const lastPointColourMapping = pointColourMappings[pointColourMappings.length - 1];
 
-    // Create a prime nubble pin (a pin with a border) to show it awards double points
+    // Create a prime numble pin (a pin with a border) to show it awards double points
     pinScores.push(
       <button
         key={"prime-read-only"}
-        className="nubble-button-display"
+        className="numble-button-display"
         data-prime={true}
         data-picked={false}
         data-colour={lastPointColourMapping.colour}
@@ -858,17 +858,17 @@ const Nubble: React.FC<Props> = (props) => {
             onChange={(e) => {
               const newGamemodeSettings = {
                 ...props.gamemodeSettings,
-                gridShape: e.target.value as nubbleGridShape,
+                gridShape: e.target.value as numbleGridShape,
               };
               props.updateGamemodeSettings(newGamemodeSettings);
             }}
-            className="nubbleGridShape_input"
-            name="nubbleGridShape"
-            value={props.gamemodeSettings.gridShape as nubbleGridShape}
+            className="numbleGridShape_input"
+            name="numbleGridShape"
+            value={props.gamemodeSettings.gridShape as numbleGridShape}
           >
-            {nubbleGridShapes.map((nubbleGridShape) => (
-              <option key={nubbleGridShape} value={nubbleGridShape}>
-                {nubbleGridShape}
+            {numbleGridShapes.map((numbleGridShape) => (
+              <option key={numbleGridShape} value={numbleGridShape}>
+                {numbleGridShape}
               </option>
             ))}
           </select>
@@ -880,17 +880,17 @@ const Nubble: React.FC<Props> = (props) => {
             onChange={(e) => {
               const newGamemodeSettings = {
                 ...props.gamemodeSettings,
-                gridSize: parseInt(e.target.value) as nubbleGridSize,
+                gridSize: parseInt(e.target.value) as numbleGridSize,
               };
               props.updateGamemodeSettings(newGamemodeSettings);
             }}
-            className="nubbleGridSize_input"
-            name="nubbleGridSize"
-            value={props.gamemodeSettings.gridSize as nubbleGridSize}
+            className="numbleGridSize_input"
+            name="numbleGridSize"
+            value={props.gamemodeSettings.gridSize as numbleGridSize}
           >
-            {nubbleGridSizes.map((nubbleGridSize) => (
-              <option key={nubbleGridSize} value={nubbleGridSize}>
-                {nubbleGridSize}
+            {numbleGridSizes.map((numbleGridSize) => (
+              <option key={numbleGridSize} value={numbleGridSize}>
+                {numbleGridSize}
               </option>
             ))}
           </select>
@@ -1142,11 +1142,11 @@ const Nubble: React.FC<Props> = (props) => {
         )}
       </div>
 
-      <div className="nubble-grid" data-shape={props.gamemodeSettings.gridShape}>
+      <div className="numble-grid" data-shape={props.gamemodeSettings.gridShape}>
         {populateGrid()}
       </div>
 
-      <div className="nubble-score-wrapper">
+      <div className="numble-score-wrapper">
         <div className="teams-info-wrapper">
           {totalPoints.map((teamPoints) => (
             <div
@@ -1156,23 +1156,23 @@ const Nubble: React.FC<Props> = (props) => {
               key={teamPoints.teamNumber}
             >
               {props.gamemodeSettings.numTeams > 1 && (
-                <div className="nubble-team-label">
+                <div className="numble-team-label">
                   {teamNumberColourMappings.find((x) => x.teamNumber === teamPoints.teamNumber)?.teamName}
                 </div>
               )}
-              <div className="nubble-score">
+              <div className="numble-score">
                 {totalPoints.find((x) => x.teamNumber === teamPoints.teamNumber)?.total}
               </div>
-              <div className="nubble-timer">
+              <div className="numble-timer">
                 {props.teamTimers.find((x) => x.teamNumber === teamPoints.teamNumber)?.remainingSeconds}
               </div>
             </div>
           ))}
         </div>
-        <div className="nubble-pin-scores">{displayPinScores()}</div>
+        <div className="numble-pin-scores">{displayPinScores()}</div>
       </div>
     </div>
   );
 };
 
-export default Nubble;
+export default Numble;

@@ -1,9 +1,9 @@
 import React from "react";
 import { Button } from "./Button";
-import { getWordSummary } from "../Pages/WordleConfig";
+import { getWordSummary } from "../Pages/WingoConfig";
 import { SettingsData } from "../Data/SaveData";
 import { useClickChime } from "../Data/Sounds";
-import { Page } from "../App";
+import { PageName } from "../PageNames";
 import { FiChevronLeft, FiCornerDownLeft } from "react-icons/fi";
 
 interface Props {
@@ -11,7 +11,7 @@ interface Props {
   onSubmitLetter: (letter: string) => void;
   onEnter: () => void;
   onBackspace: () => void;
-  mode: Page;
+  mode: PageName;
   guesses: string[];
   targetWord: string;
   inDictionary: boolean;
@@ -33,8 +33,8 @@ export const Keyboard: React.FC<Props> = (props) => {
   const [playClickSoundEffect] = useClickChime(props.settings);
   const alphabet = props.customAlphabet || DEFAULT_ALPHABET;
 
-  const modesWithSpaces: Page[] = ["wingo/category", "letters_categories", "wingo/interlinked"];
-  const modesWithoutKeyboardStatuses: Page[] = ["letters_categories", "countdown/letters", "wingo/interlinked"];
+  const modesWithSpaces: PageName[] = ["wingo/category", "LettersCategories", "wingo/interlinked"];
+  const modesWithoutKeyboardStatuses: PageName[] = ["LettersCategories", "LettersGame", "wingo/interlinked"];
 
   React.useEffect(() => {
     if (props.disabled) {

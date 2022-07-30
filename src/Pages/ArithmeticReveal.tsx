@@ -1,17 +1,17 @@
 import React, { useState } from "react";
-import { Page } from "../App";
+import { PageName } from "../PageNames";
 import { MessageNotification } from "../Components/MessageNotification";
 import LetterTile from "../Components/LetterTile";
-import { randomIntFromInterval } from "./Nubble";
+import { randomIntFromInterval } from "./Numble";
 import { NumPad } from "../Components/NumPad";
 import ProgressBar, { GreenToRedColorTransition } from "../Components/ProgressBar";
 import { Button } from "../Components/Button";
-import { operators } from "./CountdownNumbersConfig";
+import { operators } from "./NumbersGameConfig";
 import { Theme } from "../Data/Themes";
 import { SaveData, SettingsData } from "../Data/SaveData";
 import GamemodeSettingsMenu from "../Components/GamemodeSettingsMenu";
 import { arithmeticNumberSize, arithmeticNumberSizes } from "./ArithmeticDrag";
-import { pickRandomElementFrom } from "./WordleConfig";
+import { pickRandomElementFrom } from "./WingoConfig";
 
 export interface ArithmeticRevealProps {
   isCampaignLevel: boolean;
@@ -41,10 +41,10 @@ export interface ArithmeticRevealProps {
 }
 
 interface Props extends ArithmeticRevealProps {
-  page: Page;
+  page: PageName;
   theme: Theme;
   settings: SettingsData;
-  setPage: (page: Page) => void;
+  setPage: (page: PageName) => void;
   setTheme: (theme: Theme) => void;
   addGold: (gold: number) => void;
   onComplete?: (wasCorrect: boolean) => void;

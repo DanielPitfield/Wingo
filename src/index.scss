@@ -138,9 +138,7 @@ input {
   margin: 20px 0 20px 0;
 }
 
-.word_grid,
-.countdown_word_grid,
-.countdown_numbers_grid {
+.word_grid {
   margin-top: 1em;
   margin-bottom: 1em;
   background-color: #e6e6e6;
@@ -155,13 +153,6 @@ input {
   display: flex;
   align-items: center;
   flex-direction: column;
-}
-
-// Background color of countdown word grid is slightly different
-.countdown_word_grid {
-  background-color: #2474bb !important;
-  background-image: none !important;
-  border: 10px solid rgb(44, 44, 184);
 }
 
 .word-row-category-wrapper {
@@ -234,7 +225,7 @@ input {
   }
 }
 
-// For when a letter is entered during Wordle
+// For when a letter is entered during Wingo
 @keyframes popLetterInput {
   0% {
     -ms-transform: scale(1);
@@ -250,7 +241,7 @@ input {
   }
 }
 
-// For when checking a guess in Wordle (each letter tile flips to reveal status)
+// For when checking a guess in Wingo (each letter tile flips to reveal status)
 @keyframes flipRevealLetter {
   0% {
     transform: perspective(400px) rotateX(90deg);
@@ -266,7 +257,7 @@ input {
   }
 }
 
-// For when an incomplete guess is entered during Wordle
+// For when an incomplete guess is entered during Wingo
 @keyframes shakeIncorrectInput {
   0% {
     -ms-transform: translateX(0);
@@ -286,7 +277,7 @@ input {
   }
 }
 
-// For when the target word is correctly guessed during Wordle
+// For when the target word is correctly guessed during Wingo
 @keyframes jumpCorrectInput {
   0% {
     transform: translateY(0);
@@ -326,9 +317,8 @@ input {
   }
 }
 
-// The letter tiles of Countdown Letters
-.countdown-letters-wrapper .word_row .letter_tile,
-.countdown_word_grid .word_row .letter_tile {
+// The letter tiles of Letters Game
+.letters-game-wrapper .word_row .letter_tile {
   border: none;
   border-radius: 0px;
   background-color: #2c2cb8;
@@ -377,9 +367,8 @@ $data-statuses: (
   background-color: map.get($data-statuses, "not in word");
 }
 
-// Wordle and CountdownLetter letter tiles
-.letter_tile[data-status="correct"],
-.countdown_word_grid .word_row .letter_tile[data-status="correct"] {
+// Wingo and Letters Game letter tiles
+.letter_tile[data-status="correct"] {
   color: white;
   background-color: map.get($data-statuses, "correct");
   box-shadow: 0px 3px 2px 0px darken(map.get($data-statuses, "correct"), 20%);
@@ -389,8 +378,7 @@ $data-statuses: (
   }
 }
 
-.letter_tile[data-status="contains"],
-.countdown_word_grid .word_row .letter_tile[data-status="contains"] {
+.letter_tile[data-status="contains"] {
   color: white;
   background-color: map.get($data-statuses, "contains");
   box-shadow: 0px 3px 2px 0px darken(map.get($data-statuses, "contains"), 20%);
@@ -400,8 +388,7 @@ $data-statuses: (
   }
 }
 
-.letter_tile[data-status="incorrect"],
-.countdown_word_grid .word_row .letter_tile[data-status="incorrect"] {
+.letter_tile[data-status="incorrect"] {
   color: white;
   background-color: map.get($data-statuses, "incorrect");
   box-shadow: 0px 3px 2px 0px darken(map.get($data-statuses, "incorrect"), 20%);
@@ -411,8 +398,7 @@ $data-statuses: (
   }
 }
 
-.letter_tile[data-status="not in word"],
-.countdown_word_grid .word_row .letter_tile[data-status="not in word"] {
+.letter_tile[data-status="not in word"] {
   color: white;
   background-color: map.get($data-statuses, "not in word");
   box-shadow: 0px 3px 2px 0px darken(map.get($data-statuses, "not in word"), 20%);
@@ -492,7 +478,7 @@ $data-statuses: (
   }
 }
 
-.countdown-numbers-grid {
+.numbers-game-grid {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -1340,7 +1326,7 @@ $dark-orange-border: #e27e0b;
 $red: #b10503bb;
 $red-border: #b10503;
 
-$nubble-colors-names: (
+$numble-colors-names: (
   orange: $orange,
   light-blue: $light-blue,
   yellow: $yellow,
@@ -1353,7 +1339,7 @@ $nubble-colors-names: (
   red: $red,
 );
 
-.nubble-score-wrapper {
+.numble-score-wrapper {
   display: flex;
   flex-direction: column;
   background-color: #fff8;
@@ -1386,8 +1372,8 @@ $nubble-colors-names: (
       &[data-team-number="3"] {
         color: $yellow-border;
       }
-      .nubble-score,
-      .nubble-timer {
+      .numble-score,
+      .numble-timer {
         align-self: center;
         margin-top: 0.3em;
         margin-bottom: 0.3em;
@@ -1399,8 +1385,8 @@ $nubble-colors-names: (
       }
     }
   }
-  .nubble-pin-scores {
-    .nubble-button-display {
+  .numble-pin-scores {
+    .numble-button-display {
       color: white;
       font-size: 1.2em;
       //font-weight: bold;
@@ -1416,7 +1402,7 @@ $nubble-colors-names: (
   }
 }
 
-.nubble-button {
+.numble-button {
   cursor: pointer;
   color: white;
   text-align: center;
@@ -1535,18 +1521,18 @@ $nubble-colors-names: (
   }
 }
 
-.nubble-button-display {
+.numble-button-display {
   cursor: default;
 }
 
-.nubble-button[data-shape="square"][data-prime="true"],
-.nubble-button-display[data-prime="true"] {
+.numble-button[data-shape="square"][data-prime="true"],
+.numble-button-display[data-prime="true"] {
   border: 4px solid #3d3d3d !important;
 }
 
-// Sets background, border and on hover colours for nubble pins
-@each $colourName, $color in $nubble-colors-names {
-  .nubble-button[data-shape="square"][data-colour="#{$colourName}"] {
+// Sets background, border and on hover colours for numble pins
+@each $colourName, $color in $numble-colors-names {
+  .numble-button[data-shape="square"][data-colour="#{$colourName}"] {
     background-color: $color;
     // Border has darker tone of colour
     border: 4px solid darken($color, 10%);
@@ -1562,7 +1548,7 @@ $nubble-colors-names: (
       color: #ddd;
     }
   }
-  .nubble-button[data-shape="hexagon"][data-colour="#{$colourName}"] {
+  .numble-button[data-shape="hexagon"][data-colour="#{$colourName}"] {
     background: none;
     border: none;
     padding: 0.1em;
@@ -1597,14 +1583,14 @@ $nubble-colors-names: (
       color: #aaa;
     }
   }
-  .nubble-button-display[data-colour="#{$colourName}"] {
+  .numble-button-display[data-colour="#{$colourName}"] {
     background-color: $color;
     // Border has darker tone of colour
     border: 4px solid darken($color, 10%);
   }
 }
 
-.nubble-grid {
+.numble-grid {
   padding: 0em 10em;
   &[data-shape="hexagon"] {
     margin-top: -4em;
@@ -1629,26 +1615,6 @@ $nubble-colors-names: (
   cursor: pointer;
   padding: 1em;
   min-width: 4em;
-}
-
-.countdown_letters_guesses {
-  margin-top: 1.5em;
-  display: flex;
-  flex-direction: column;
-  text-align: left;
-  width: 250px;
-  background-color: #eee;
-  border: 1px solid #ccc;
-  padding: 0.5em;
-}
-
-.countdown_letters_guess_label {
-  font-family: "Ubuntu", sans-serif;
-  font-size: 1.2em;
-  text-transform: uppercase;
-}
-
-.countdown_letters_guess_input {
 }
 
 .campaign {
@@ -2117,7 +2083,7 @@ $nubble-colors-names: (
   }
 }
 
-.wordle_interlinked {
+.wingo_interlinked {
   background-repeat: no-repeat;
   background-size: 100%;
   //background-size: cover;

@@ -1,11 +1,11 @@
 import React from "react";
-import { Page } from "../App";
+import { PageName } from "../PageNames";
 import LetterTile from "./LetterTile";
 import { SettingsData } from "../Data/SaveData";
-import { getWordSummary } from "../Pages/WordleConfig";
+import { getWordSummary } from "../Pages/WingoConfig";
 
 interface Props {
-  page: Page;
+  page: PageName;
   isReadOnly: boolean;
   inProgress?: boolean;
   length: number;
@@ -27,13 +27,13 @@ export const WordRow: React.FC<Props> = (props) => {
     status: "incorrect" | "contains" | "correct" | "not set" | "not in word";
   }[] = [];
 
-  // NOTE: The targetWord will be "" (empty string) with the WordRow that handles guessed words during the 'Countdown Letters' mode
+  // NOTE: The targetWord will be "" (empty string) with the WordRow that handles guessed words during the 'Letters Game' mode
 
   // Array of (character, status) for every letter
   wordSummary = getWordSummary(props.page, props.word, props.targetWord, props.inDictionary);
 
   // Overwrite wordSummary if LettersCategories mode
-  if (props.page === "letters_categories" && props.targetArray) {
+  if (props.page === "LettersCategories" && props.targetArray) {
     if (props.targetArray.includes(props.word)) {
       wordSummary.map((x) => {
         x.status = "correct";
@@ -53,11 +53,10 @@ export const WordRow: React.FC<Props> = (props) => {
       // There is a letter
       if (x.character !== undefined && x.character !== "" && x.character !== " ") {
         x.status = "correct";
-      }
-      else {
+      } else {
         x.status = "not set";
       }
-      
+
       return x;
     });
   }
@@ -68,13 +67,12 @@ export const WordRow: React.FC<Props> = (props) => {
       // The letter is revealed
       if (props.revealedLetterIndexes.includes(letterIndex)) {
         return true;
-      }
-      else {
+      } else {
         return false;
       }
     }
-    // Don't apply animation for LetterTiles in Countdown Letters mode
-    else if (props.page === "countdown/letters") {
+    // Don't apply animation for LetterTiles in Letters Game mode
+    else if (props.page === "LettersGame") {
       return false;
     }
     // Don't apply animation for LetterTiles in daily mode, when the game reports as having ended

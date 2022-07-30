@@ -1,18 +1,18 @@
 import React, { useState } from "react";
-import { Page } from "../App";
+import { PageName } from "../PageNames";
 import { Button } from "../Components/Button";
 import { MessageNotification } from "../Components/MessageNotification";
 import ProgressBar, { GreenToRedColorTransition } from "../Components/ProgressBar";
 import { NumberRow } from "../Components/NumberRow";
 import NumberTile from "../Components/NumberTile";
-import { Guess, hasNumberSelectionFinished, hasNumberSelectionStarted } from "./CountdownNumbersConfig";
-import { CountdownRow } from "../Components/CountdownRow";
+import { Guess, hasNumberSelectionFinished, hasNumberSelectionStarted } from "./NumbersGameConfig";
+import { NumberSelectionRow } from "../Components/NumberSelectionRow";
 import { Theme } from "../Data/Themes";
-import { NumberPuzzle, NumberPuzzleValue } from "../Data/CountdownSolver";
+import { NumberPuzzle, NumberPuzzleValue } from "../Data/NumbersGameSolver";
 import { SettingsData } from "../Data/SaveData";
 import GamemodeSettingsMenu from "../Components/GamemodeSettingsMenu";
-import { randomIntFromInterval } from "./Nubble";
-import { pickRandomElementFrom } from "./WordleConfig";
+import { randomIntFromInterval } from "./Numble";
+import { pickRandomElementFrom } from "./WingoConfig";
 
 interface Props {
   isCampaignLevel: boolean;
@@ -31,7 +31,7 @@ interface Props {
   closestGuessSoFar: number | null;
   numGuesses: number;
   currentGuess: Guess;
-  countdownStatuses: {
+  numberTileStatuses: {
     type: "original" | "intermediary";
     number: number | null;
     picked: boolean;
@@ -49,9 +49,9 @@ interface Props {
   clearGrid: () => void;
   submitBestGuess: () => void;
   setTheme: (theme: Theme) => void;
-  setPage: (page: Page) => void;
-  onSubmitCountdownNumber: (number: number) => void;
-  onSubmitCountdownExpression: (numberExpression: number[]) => void;
+  setPage: (page: PageName) => void;
+  onSubmitNumbersGameNumber: (number: number) => void;
+  onSubmitNumbersGameSelection: (numberExpression: number[]) => void;
   onSubmitNumber: (number: number) => void;
   onBackspace: () => void;
 
@@ -74,7 +74,7 @@ interface Props {
  * @param props
  * @returns
  */
-const CountdownNumbers: React.FC<Props> = (props) => {
+const NumbersGame: React.FC<Props> = (props) => {
   const [solutions, setSolutions] = useState<{ best: NumberPuzzleValue; all: NumberPuzzleValue[] } | null>(null);
 
   const DEFAULT_TIMER_VALUE = 30;
@@ -89,19 +89,21 @@ const CountdownNumbers: React.FC<Props> = (props) => {
       return;
     }
 
-    const inputNumbers = props.countdownStatuses.filter((x) => x.type === "original" && x.number).map((x) => x.number!);
+    const inputNumbers = props.numberTileStatuses
+      .filter((x) => x.type === "original" && x.number)
+      .map((x) => x.number!);
 
     // The amount of numbers that can be selected does not match with the specified/requested number from props
     if (inputNumbers.length !== props.gamemodeSettings.numOperands) {
       return;
     }
 
-    // TODO: Use WebWorkers for solving Countdown Numbers
+    // TODO: Use WebWorkers for solving Numbers Game
 
     /*
     if (window.Worker) {
       // Start Web Worker
-      var worker = new Worker("CountdownNumbersSolver.ts");
+      var worker = new Worker("NumbersGameWebWorkerSolver.ts");
       // Send data
       worker.postMessage({
         targetNumber: props.targetNumber,
@@ -126,7 +128,7 @@ const CountdownNumbers: React.FC<Props> = (props) => {
 
   function getSmallNumber(): number | null {
     // Already selected enough numbers, don't add any more
-    if (hasNumberSelectionFinished(props.countdownStatuses, props.gamemodeSettings.numOperands)) {
+    if (hasNumberSelectionFinished(props.numberTileStatuses, props.gamemodeSettings.numOperands)) {
       return null;
     }
 
@@ -140,7 +142,7 @@ const CountdownNumbers: React.FC<Props> = (props) => {
   }
 
   function getBigNumber(): number | null {
-    if (hasNumberSelectionFinished(props.countdownStatuses, props.gamemodeSettings.numOperands)) {
+    if (hasNumberSelectionFinished(props.numberTileStatuses, props.gamemodeSettings.numOperands)) {
       return null;
     }
 
@@ -166,26 +168,29 @@ const CountdownNumbers: React.FC<Props> = (props) => {
 
   // Automatically choose a selection of small or big numbers
   function quickNumberSelection() {
-    let newCountdownExpression = [];
+    let newNumbersGameSelection = [];
 
     // Build selection by randomly adding small numbers or big numbers
     for (let i = 0; i < props.gamemodeSettings.numOperands; i++) {
       let x = Math.floor(Math.random() * 3) === 0;
       // 66% chance small number, 33% chance big number
       if (x) {
-        newCountdownExpression.push(getBigNumber()!);
+        newNumbersGameSelection.push(getBigNumber()!);
       } else {
-        newCountdownExpression.push(getSmallNumber()!);
+        newNumbersGameSelection.push(getSmallNumber()!);
       }
     }
     // Set the entire expression at once
-    props.onSubmitCountdownExpression(newCountdownExpression);
+    props.onSubmitNumbersGameSelection(newNumbersGameSelection);
   }
   // Create grid of rows (for guessing numbers)
   function populateGrid() {
     var Grid = [];
 
-    const isSelectionFinished = hasNumberSelectionFinished(props.countdownStatuses, props.gamemodeSettings.numOperands);
+    const isSelectionFinished = hasNumberSelectionFinished(
+      props.numberTileStatuses,
+      props.gamemodeSettings.numOperands
+    );
 
     /*
     Target Number
@@ -194,15 +199,15 @@ const CountdownNumbers: React.FC<Props> = (props) => {
     NumberRows for intemediary calculations
     */
     Grid.push(
-      <div className="countdown-numbers-wrapper">
+      <div className="numbers-game-wrapper">
         <div className="target-number">
           <NumberTile number={isSelectionFinished ? props.targetNumber : null} disabled={true} isReadOnly={true} />
         </div>
-        <CountdownRow
+        <NumberSelectionRow
           key={"number_selection"}
           disabled={!isSelectionFinished}
           onClick={props.onClick}
-          countdownStatuses={props.countdownStatuses}
+          numberTileStatuses={props.numberTileStatuses}
         />
         <div className="add-number-buttons-wrapper">
           <Button
@@ -210,7 +215,7 @@ const CountdownNumbers: React.FC<Props> = (props) => {
             mode={"default"}
             settings={props.settings}
             disabled={isSelectionFinished}
-            onClick={() => props.onSubmitCountdownNumber(getSmallNumber()!)}
+            onClick={() => props.onSubmitNumbersGameNumber(getSmallNumber()!)}
           >
             Small
           </Button>
@@ -219,7 +224,7 @@ const CountdownNumbers: React.FC<Props> = (props) => {
             mode={"default"}
             settings={props.settings}
             disabled={isSelectionFinished}
-            onClick={() => props.onSubmitCountdownNumber(getBigNumber()!)}
+            onClick={() => props.onSubmitNumbersGameNumber(getBigNumber()!)}
           >
             Big
           </Button>
@@ -227,7 +232,7 @@ const CountdownNumbers: React.FC<Props> = (props) => {
             className="add-number-buttons"
             mode={"default"}
             settings={props.settings}
-            disabled={hasNumberSelectionStarted(props.countdownStatuses) || isSelectionFinished}
+            disabled={hasNumberSelectionStarted(props.numberTileStatuses) || isSelectionFinished}
             onClick={quickNumberSelection}
           >
             Quick Pick
@@ -264,7 +269,7 @@ const CountdownNumbers: React.FC<Props> = (props) => {
 
       Grid.push(
         <NumberRow
-          key={`countdown_numbers_input ${i}`}
+          key={`numbers-game-input ${i}`}
           hasTimerEnded={props.hasTimerEnded}
           onClick={props.onClick}
           expression={guess}
@@ -273,7 +278,7 @@ const CountdownNumbers: React.FC<Props> = (props) => {
           setOperator={props.setOperator}
           disabled={!isSelectionFinished || i > props.wordIndex}
           rowIndex={i}
-          indetermediaryGuessStatuses={props.countdownStatuses.filter((x) => x.type === "intermediary") as any}
+          indetermediaryGuessStatuses={props.numberTileStatuses.filter((x) => x.type === "intermediary") as any}
         />
       );
     }
@@ -435,7 +440,7 @@ const CountdownNumbers: React.FC<Props> = (props) => {
         score = 10 - difference;
       }
     } else {
-      throw new Error("Unexpected CountdownNumbers scoring method");
+      throw new Error("Unexpected NumbersGame scoring method");
     }
 
     return score;
@@ -557,7 +562,7 @@ const CountdownNumbers: React.FC<Props> = (props) => {
         </>
       )}
 
-      <div className="countdown-numbers-grid">{populateGrid()}</div>
+      <div className="numbers-game-grid">{populateGrid()}</div>
 
       {props.inProgress && (
         <>
@@ -583,4 +588,4 @@ const CountdownNumbers: React.FC<Props> = (props) => {
   );
 };
 
-export default CountdownNumbers;
+export default NumbersGame;

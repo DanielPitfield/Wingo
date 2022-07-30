@@ -1,5 +1,6 @@
 import React from "react";
-import { Page, pages } from "../App";
+import { pageDescriptions } from "../PageDescriptions";
+import { PageName } from "../PageNames";
 import { BsInfoCircleFill } from "react-icons/bs";
 import { AllChallenges } from "../Data/Challenges/AllChallenges";
 import { SaveData, SettingsData } from "../Data/SaveData";
@@ -15,7 +16,7 @@ interface Props {
   theme: Theme;
   settings: SettingsData;
   setTheme: (theme: Theme) => void;
-  setPage: (page: Page) => void;
+  setPage: (page: PageName) => void;
   setSelectedArea: (areaConfig: AreaConfig) => void;
   setSelectedCampaignLevel: (level: LevelConfig) => void;
   addGold: (gold: number) => void;
@@ -24,8 +25,8 @@ interface Props {
 export const LobbyMenu: React.FC<Props> = (props) => {
   const history = SaveData.getHistory();
 
-  function renderGameModeTile(page: Page) {
-    const pageInfo = pages.find((x) => x.page === page);
+  function renderGameModeTile(page: PageName) {
+    const pageInfo = pageDescriptions.find((x) => x.page === page);
 
     return (
       <li className="widget">
@@ -84,13 +85,13 @@ export const LobbyMenu: React.FC<Props> = (props) => {
         <div className="sidebar">
           <div className="sidebar-title">Letters</div>
           <ul className="widgets">
-            {renderGameModeTile("only_connect/wall")}
-            {renderGameModeTile("countdown/letters")}
-            {renderGameModeTile("countdown/conundrum")}
-            {renderGameModeTile("letters_categories")}
-            {renderGameModeTile("verbal_reasoning/sameLetters")}
-            {renderGameModeTile("verbal_reasoning/word_codes/question")}
-            {renderGameModeTile("verbal_reasoning/word_codes/match")}
+            {renderGameModeTile("OnlyConnect")}
+            {renderGameModeTile("LettersGame")}
+            {renderGameModeTile("Conundrum")}
+            {renderGameModeTile("LettersCategories")}
+            {renderGameModeTile("SameLetters")}
+            {renderGameModeTile("WordCodes/Question")}
+            {renderGameModeTile("WordCodes/Match")}
             {renderGameModeTile("wingo/crossword/fit")}
           </ul>
         </div>
@@ -98,26 +99,26 @@ export const LobbyMenu: React.FC<Props> = (props) => {
         <div className="sidebar">
           <div className="sidebar-title">Numbers</div>
           <ul className="widgets">
-            {renderGameModeTile("numbers/arithmetic_reveal")}
-            {renderGameModeTile("nubble")}
-            {renderGameModeTile("countdown/numbers")}
-            {renderGameModeTile("numbers/arithmetic_drag/order")}
-            {renderGameModeTile("numbers/arithmetic_drag/match")}
-            {renderGameModeTile("verbal_reasoning/number_sets")}
-            {renderGameModeTile("verbal_reasoning/algebra")}
+            {renderGameModeTile("ArithmeticReveal")}
+            {renderGameModeTile("numble")}
+            {renderGameModeTile("NumbersGame")}
+            {renderGameModeTile("ArithmeticDrag/Order")}
+            {renderGameModeTile("ArithmeticDrag/Match")}
+            {renderGameModeTile("NumberSets")}
+            {renderGameModeTile("Algebra")}
           </ul>
         </div>
 
         <div className="sidebar">
           <div className="sidebar-title">Puzzle</div>
-          <ul className="widgets">{renderGameModeTile("puzzle/sequence")}</ul>
+          <ul className="widgets">{renderGameModeTile("PuzzleSequence")}</ul>
         </div>
 
         <div className="sidebar">
           <div className="sidebar-title">Gameshow Presets</div>
           <ul className="widgets">
-            {renderGameModeTile("lingo/gameshow")}
-            {renderGameModeTile("countdown/gameshow")}
+            {renderGameModeTile("Wingo/Gameshow")}
+            {renderGameModeTile("LettersNumbersGameshow")}
             {renderGameModeTile("random")}
           </ul>
         </div>

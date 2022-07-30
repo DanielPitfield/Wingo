@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { Keyboard } from "../Components/Keyboard";
-import { Page } from "../App";
+import { PageName } from "../PageNames";
 import { WordRow } from "../Components/WordRow";
 import { Button } from "../Components/Button";
 import { MessageNotification } from "../Components/MessageNotification";
 import ProgressBar, { GreenToRedColorTransition } from "../Components/ProgressBar";
-import { getNewLives } from "./WordleConfig";
+import { getNewLives } from "./WingoConfig";
 import { Theme } from "../Data/Themes";
 import { SettingsData } from "../Data/SaveData";
 import { useCorrectChime, useFailureChime, useLightPingChime } from "../Data/Sounds";
@@ -48,9 +48,9 @@ interface Props {
 
   settings: SettingsData;
   finishingButtonText?: string;
-  page: Page;
+  page: PageName;
   theme?: Theme;
-  setPage: (page: Page) => void;
+  setPage: (page: PageName) => void;
   onEnter: () => void;
   onSubmitLetter: (letter: string) => void;
   onSubmitTargetCategory: (category: string) => void;
@@ -73,7 +73,7 @@ interface Props {
   gameshowScore?: number;
 }
 
-const Wordle: React.FC<Props> = (props) => {
+const Wingo: React.FC<Props> = (props) => {
   const [secondsUntilNextDailyWingo, setSecondsUntilNextDailyWingo] = useState(getSecondsUntilMidnight());
   const [playCorrectChimeSoundEffect] = useCorrectChime(props.settings);
   const [playFailureChimeSoundEffect] = useFailureChime(props.settings);
@@ -116,7 +116,7 @@ const Wordle: React.FC<Props> = (props) => {
 
       Grid.push(
         <WordRow
-          key={"wordle/read-only"}
+          key={"wingo/read-only"}
           page={props.page}
           isReadOnly={true}
           inProgress={props.inProgress}
@@ -134,7 +134,7 @@ const Wordle: React.FC<Props> = (props) => {
     } else if (props.mode === "conundrum" && props.conundrum) {
       // Create read only WordRow that reveals conundrum
       Grid.push(
-        <div className="countdown-letters-wrapper" key={"conundrum/reveal"}>
+        <div className="letters-game-wrapper" key={"conundrum/reveal"}>
           <WordRow
             key={"conundrum/read-only"}
             page={props.page}
@@ -182,7 +182,7 @@ const Wordle: React.FC<Props> = (props) => {
 
       Grid.push(
         <WordRow
-          key={`wordle/row/${i}`}
+          key={`wingo/row/${i}`}
           page={props.page}
           isReadOnly={false}
           inProgress={props.inProgress}
@@ -599,7 +599,7 @@ const Wordle: React.FC<Props> = (props) => {
     return date.toISOString().split("T")[1].split(".")[0];
   }
 
-  // Render the countdown to the next daily wingo
+  // Render the timer to the next daily wingo
   useEffect(() => {
     if (props.mode !== "daily") {
       return;
@@ -636,7 +636,7 @@ const Wordle: React.FC<Props> = (props) => {
       <div>{displayOutcome()}</div>
       {props.mode === "daily" && !props.inProgress && (
         <MessageNotification type="default">
-          Next Daily Wordle in: {secondsToTimeString(secondsUntilNextDailyWingo)}
+          Next Daily Wingo in: {secondsToTimeString(secondsUntilNextDailyWingo)}
         </MessageNotification>
       )}
       <div>
@@ -694,7 +694,7 @@ const Wordle: React.FC<Props> = (props) => {
 
       <div className="keyboard">
         <Keyboard
-          mode={`wingo/${props.mode}` as Page}
+          mode={`wingo/${props.mode}` as PageName}
           onEnter={props.onEnter}
           onSubmitLetter={(letter) => {
             props.onSubmitLetter(letter);
@@ -725,4 +725,4 @@ const Wordle: React.FC<Props> = (props) => {
   );
 };
 
-export default Wordle;
+export default Wingo;

@@ -1,5 +1,5 @@
 import React from "react";
-import { Page } from "../App";
+import { PageName } from "../PageNames";
 import { AreaConfig } from "./Area";
 import { Button } from "../Components/Button";
 import { getId, LevelConfig } from "../Components/Level";
@@ -17,7 +17,7 @@ export const Campaign: React.FC<{
   setTheme: (theme: Theme) => void;
   setSelectedArea: (areaConfig: AreaConfig) => void;
   setSelectedCampaignLevel: (level: LevelConfig) => void;
-  setPage: (page: Page) => void;
+  setPage: (page: PageName) => void;
 }> = (props) => {
   /** */
   function onAreaClick(area: AreaConfig, unlock_status: CampaignSaveData["areas"][0]["status"]) {

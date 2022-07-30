@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { SplashScreen } from "./Pages/SplashScreen";
 import { LobbyMenu } from "./Pages/LobbyMenu";
-import WordleConfig, { pickRandomElementFrom } from "./Pages/WordleConfig";
+import WingoConfig, { pickRandomElementFrom } from "./Pages/WingoConfig";
 import { Button } from "./Components/Button";
-import NubbleConfig from "./Pages/NubbleConfig";
+import NumbleConfig from "./Pages/NumbleConfig";
 import GoldCoin from "./Data/Images/gold.png";
 import { SaveData, SettingsData } from "./Data/SaveData";
-import CountdownLettersConfig from "./Pages/CountdownLettersConfig";
-import CountdownNumbersConfig from "./Pages/CountdownNumbersConfig";
+import LettersGameConfig from "./Pages/LettersGameConfig";
+import NumbersGameConfig from "./Pages/NumbersGameConfig";
 import { Campaign } from "./Pages/Campaign";
 import { Area, AreaConfig } from "./Pages/Area";
 import { getId, Level, LevelConfig } from "./Components/Level";
@@ -28,8 +28,8 @@ import NumberSets from "./Pages/NumberSets";
 import Algebra from "./Pages/Algebra";
 import { ChallengesInfo } from "./Components/ChallengesInfo";
 import WordCodes from "./Pages/WordCodes";
-import { CountdownGameshow } from "./Pages/CountdownGameshow";
-import { LingoGameshow } from "./Pages/LingoGameshow";
+import { LettersNumbersGameshow } from "./Pages/LettersNumbersGameshow";
+import { WingoGameshow } from "./Pages/WingoGameshow";
 import { FiArrowLeft, FiHelpCircle, FiSettings } from "react-icons/fi";
 import HelpInformation from "./Components/HelpInformation";
 import { TitlePage } from "./Pages/TitlePage";
@@ -37,360 +37,25 @@ import {
   defaultAlgebraGamemodeSettings,
   defaultArithmeticDragGamemodeSettings,
   defaultArithmeticRevealGamemodeSettings,
-  defaultCountdownLettersGamemodeSettings,
-  defaultCountdownNumbersGamemodeSettings,
+  defaultLettersGameGamemodeSettings,
+  defaultNumbersGameGamemodeSettings,
   defaultGroupWallGamemodeSettings,
   defaultLetterCategoriesGamemodeSettings,
-  defaultNubbleGamemodeSettings,
+  defaultNumbleGamemodeSettings,
   defaultNumberSetsGamemodeSettings,
   defaultSameLetterWordsGamemodeSettings,
   defaultWordCodesGamemodeSettings,
-  defaultWordleGamemodeSettings,
+  defaultWingoGamemodeSettings,
   DEFAULT_NUM_GUESSES,
-  DEFAULT_NUM_GUESSES_COUNTDOWN_NUMBERS,
+  DEFAULT_NUM_GUESSES_NUMBERS_GAME,
   DEFAULT_NUM_GUESSES_PUZZLE,
   DEFAULT_WORD_LENGTH,
   DEFAULT_WORD_LENGTH_CONUNDRUM,
   DEFAULT_WORD_LENGTH_INCREASING,
   DEFAULT_WORD_LENGTH_PUZZLE,
 } from "./Data/DefaultGamemodeSettings";
-
-// TODO: Simplify string literals (names of pages)
-export type Page =
-  | "splash-screen"
-  | "title-page"
-  | "home"
-  | "wingo/daily"
-  | "wingo/repeat"
-  | "wingo/category"
-  | "wingo/increasing"
-  | "wingo/limitless"
-  | "wingo/puzzle"
-  | "wingo/interlinked"
-  | "wingo/crossword"
-  | "wingo/crossword/fit"
-  | "wingo/crossword/weekly"
-  | "wingo/crossword/daily"
-  | "letters_categories"
-  | "countdown/letters"
-  | "countdown/numbers"
-  | "countdown/conundrum"
-  | "numbers/arithmetic_reveal"
-  | "numbers/arithmetic_drag/order"
-  | "numbers/arithmetic_drag/match"
-  | "nubble"
-  | "only_connect/wall"
-  | "verbal_reasoning/sameLetters"
-  | "verbal_reasoning/number_sets"
-  | "verbal_reasoning/algebra"
-  | "verbal_reasoning/word_codes/question"
-  | "verbal_reasoning/word_codes/match"
-  | "puzzle/sequence"
-  | "campaign"
-  | "campaign/area"
-  | "campaign/area/level"
-  | "challenges"
-  | "settings"
-  | "random"
-  | "countdown/gameshow"
-  | "lingo/gameshow";
-
-// This is needed for runtime; make sure it matches the Page type
-export const pages: {
-  page: Page;
-  title: string;
-  description?: string;
-  shortTitle?: string;
-  isPlayable: boolean;
-  helpInfo?: JSX.Element;
-}[] = [
-  { page: "splash-screen", title: "Wingo", isPlayable: false },
-  { page: "title-page", title: "Home", isPlayable: false },
-  //{ page: "home", title: "", isPlayable: false },
-  {
-    page: "wingo/daily",
-    title: "Daily Wingo",
-    description: "Guess today's word",
-    shortTitle: "Daily",
-    isPlayable: false,
-    helpInfo: (
-      <>
-        <p>Only one attempt (a set of up to 6 guesses) allowed</p>
-        <p>The target word changes every day (the countdown timer shows when a new word is available)</p>
-        <p>Your attempt will be saved and can be viewed at any time</p>
-      </>
-    ),
-  },
-  {
-    page: "wingo/repeat",
-    title: "Standard/Normal Wingo",
-    description: "Guess a word",
-    shortTitle: "Standard",
-    isPlayable: true,
-    helpInfo: (
-      <>
-        <p>Press the 'Restart' button after an attempt for a new target word</p>
-      </>
-    ),
-  },
-  {
-    page: "wingo/category",
-    title: "Wingo Categories",
-    description: "Guess a word related to a category",
-    shortTitle: "Categories",
-    isPlayable: true,
-    helpInfo: (
-      <>
-        <p>The target word is a word from the currently selected category</p>
-        <p>
-          The guesses you make must also be words from this category (but they do not have to be the length of the
-          target word)
-        </p>
-        <p>The category can be changed from the dropdown list (this will delete any guesses made)</p>
-      </>
-    ),
-  },
-  {
-    page: "wingo/increasing",
-    title: "Wingo Increasing Length",
-    description: "Increase the word length to guess with every correct answer",
-    shortTitle: "Increasing",
-    isPlayable: true,
-    helpInfo: (
-      <>
-        <p>The target word will increase in length (one letter longer) after each successful guess</p>
-      </>
-    ),
-  },
-  {
-    page: "wingo/limitless",
-    title: "Wingo Limitless/Survival",
-    description: "Gain lives with correct, early answers; how long can you survive?",
-    shortTitle: "Limitless",
-    isPlayable: true,
-    helpInfo: (
-      <>
-        <p>Gain extra guesses (up to a maximum of 5) by guessing a word with guesses to spare</p>
-        <p>A guess will be lost each time the target word is not guessed</p>
-        <p>The target word will increase in length (one letter longer) after each successful guess</p>
-      </>
-    ),
-  },
-  {
-    page: "wingo/puzzle",
-    title: "Wingo Puzzle",
-    description: "Use a cryptic clue to guess the word as fast as possible!",
-    shortTitle: "Puzzle",
-    isPlayable: true,
-    helpInfo: (
-      <>
-        <p>Guess the target word from the hint provided</p>
-        <p>A random letter of the target word will become revealed every few seconds</p>
-        <p>Press 'Enter' once you know the answer and make your guess (this will stop the letters revealing!)</p>
-      </>
-    ),
-  },
-  {
-    page: "wingo/interlinked",
-    title: "Wingo Interlinked",
-    description: "Guess two words interlinked by a shared letter",
-    shortTitle: "Interlinked",
-    isPlayable: true,
-    helpInfo: (
-      <>
-        <p>Guess the two target words, using the shared letter as a hint</p>
-        <p>Click on the word to highlight it, and make a guess</p>
-        <p>Click 'Check Crossword' once you have guessed both words to see if your guesses are correct</p>
-        <p>Do all this without running out of guesses!</p>
-      </>
-    ),
-  },
-  {
-    page: "wingo/crossword",
-    title: "Wingo Crossword",
-    description: "Guess a crossword of words",
-    shortTitle: "Crossword",
-    isPlayable: true,
-    helpInfo: (
-      <>
-        <p>Guess the many target words, using the shared letters as hints</p>
-        <p>Click on the word to highlight it, and make a guess</p>
-        <p>Click 'Check Current Word' once you have guessed one word to see which letters are correct</p>
-        <p>Click 'Check Crossword' once you have guessed all words to see if your guesses are correct</p>
-        <p>Do all this without running out of guesses!</p>
-      </>
-    ),
-  },
-  {
-    page: "wingo/crossword/fit",
-    title: "Wingo Crossword Fit",
-    description: "Fill the crossword with the provided words",
-    shortTitle: "Crossword Fit",
-    isPlayable: true,
-    helpInfo: (
-      <>
-        <p>Fill each word with one of the provided words, using the revealed letters as hints</p>
-        <p>Click on the word to highlight it, and make a guess</p>
-        <p>Click 'Check Crossword' once you have guessed all words to see if your guesses are correct</p>
-        <p>Do all this without running out of guesses!</p>
-      </>
-    ),
-  },
-  {
-    page: "wingo/crossword/weekly",
-    title: "Wingo Crossword (Weekly)",
-    description: "Guess a crossword for this week",
-    shortTitle: "Weekly Crossword",
-    isPlayable: false,
-    helpInfo: (
-      <>
-        <p>Complete a crossword specifically for this week</p>
-        <p>Guess the many target words, using the shared letters as hints</p>
-        <p>Click on the word to highlight it, and make a guess</p>
-        <p>Click 'Check Current Word' once you have guessed one word to see which letters are correct</p>
-        <p>Click 'Check Crossword' once you have guessed all words to see if your guesses are correct</p>
-        <p>Do all this without running out of guesses!</p>
-      </>
-    ),
-  },
-  {
-    page: "wingo/crossword/daily",
-    title: "Wingo Crossword (Daily)",
-    description: "Guess a crossword for today",
-    shortTitle: "Daily Crossword",
-    isPlayable: false,
-    helpInfo: (
-      <>
-        <p>Complete a crossword specifically for today only!</p>
-        <p>Guess the many target words, using the shared letters as hints</p>
-        <p>Click on the word to highlight it, and make a guess</p>
-        <p>Click 'Check Current Word' once you have guessed one word to see which letters are correct</p>
-        <p>Click 'Check Crossword' once you have guessed all words to see if your guesses are correct</p>
-        <p>Do all this without running out of guesses!</p>
-      </>
-    ),
-  },
-  {
-    page: "letters_categories",
-    title: "Letters Categories",
-    description: "Guess the word for each category",
-    shortTitle: "Categories (5)",
-    isPlayable: true,
-    helpInfo: (
-      <>
-        <p>Select a category</p>
-        <p>Guess the word from the hint for the category within the number of guesses</p>
-        <p>Press the 'Restart' button after an attempt or change the Category for a new target word</p>
-      </>
-    ),
-  },
-  {
-    page: "countdown/letters",
-    title: "Countdown Letters",
-    description: "Find the highest scoring word from the list of random letters",
-    shortTitle: "Countdown",
-    isPlayable: true,
-  },
-  {
-    page: "countdown/numbers",
-    title: "Countdown Numbers",
-    description: "Get the target number using a list of random numbers",
-    shortTitle: "Countdown",
-    isPlayable: true,
-  },
-  {
-    page: "countdown/conundrum",
-    title: "Countdown Conundrum",
-    description: "Find the single word which uses all the letters",
-    shortTitle: "Conundrum",
-    isPlayable: true,
-  },
-  {
-    page: "numbers/arithmetic_reveal",
-    title: "Quick Maths",
-    description: "Test your arithmetic with quickfire calculations",
-    shortTitle: "Quick Maths",
-    isPlayable: true,
-  },
-  {
-    page: "numbers/arithmetic_drag/order",
-    title: "Arithmetic (Order)",
-    description: "Put the arithmetic expressions in order from smallest to largest",
-    shortTitle: "Arithmetic (Order)",
-    isPlayable: true,
-  },
-  {
-    page: "numbers/arithmetic_drag/match",
-    title: "Arithmetic (Match)",
-    description: "Match the arithmetic expressions with the results they evaluate to",
-    shortTitle: "Arithmetic (Match)",
-    isPlayable: true,
-  },
-  {
-    page: "nubble",
-    title: "Nubble",
-    description: "Find the highest scoring number from a list of random numbers",
-    shortTitle: "Nubble",
-    isPlayable: true,
-  },
-  {
-    page: "only_connect/wall",
-    title: "Only Connect",
-    description: "Find groups of words from a scrambled word grid",
-    shortTitle: "Only Connect",
-    isPlayable: true,
-  },
-  {
-    page: "verbal_reasoning/sameLetters",
-    title: "Same Letter Words",
-    description: "Find the words which are made from the same letters",
-    shortTitle: "Same Letter Words",
-    isPlayable: true,
-  },
-  {
-    page: "verbal_reasoning/number_sets",
-    title: "Number Sets",
-    description: "Find the answer to a unique number set",
-    shortTitle: "Number Sets",
-    isPlayable: true,
-  },
-  {
-    page: "verbal_reasoning/algebra",
-    title: "Algebra",
-    description: "Find the answer to a unique number set",
-    shortTitle: "Algebra",
-    isPlayable: true,
-  },
-  {
-    page: "verbal_reasoning/word_codes/question",
-    title: "Word Codes",
-    description: "Decipher codes to find words (and vice versa)",
-    shortTitle: "Word Codes",
-    isPlayable: true,
-  },
-  {
-    page: "verbal_reasoning/word_codes/match",
-    title: "Word Codes (Match)",
-    description: "Match the words to their codes",
-    shortTitle: "Word Codes (Match)",
-    isPlayable: true,
-  },
-  {
-    page: "puzzle/sequence",
-    title: "Sequence Puzzle",
-    description: "Find what comes next in the sequence",
-    shortTitle: "Sequence",
-    isPlayable: true,
-  },
-  { page: "campaign", title: "Campaign", shortTitle: "Campaign", isPlayable: false },
-  { page: "campaign/area", title: "Campaign Areas", shortTitle: "Areas", isPlayable: false },
-  { page: "campaign/area/level", title: "Campaign Level", shortTitle: "Level", isPlayable: false },
-  { page: "challenges", title: "Challenges", shortTitle: "Challenges", isPlayable: false },
-  { page: "settings", title: "Settings", shortTitle: "Settings", isPlayable: false },
-  { page: "random", title: "Random", shortTitle: "Random", isPlayable: false },
-  { page: "countdown/gameshow", title: "Countdown Gameshow", shortTitle: "Countdown Gameshow", isPlayable: false },
-  { page: "lingo/gameshow", title: "Lingo Gameshow", shortTitle: "Lingo Gameshow", isPlayable: false },
-];
+import { PageName } from "./PageNames";
+import { pageDescriptions } from "./PageDescriptions";
 
 export const App: React.FC = () => {
   // App wide listener for right click event
@@ -412,7 +77,7 @@ export const App: React.FC = () => {
 
   const [loadingState, setLoadingState] = useState<"loading" | "loaded">("loading");
 
-  const [page, setPage] = useState<Page>(getNewEntryPage());
+  const [page, setPage] = useState<PageName>(getNewEntryPage());
 
   // Modal explaining current gamemode is shown?
   const [isHelpInfoShown, setIsHelpInfoShown] = useState(false);
@@ -430,7 +95,7 @@ export const App: React.FC = () => {
   const [gold, setGold] = useState<number>(SaveData.readGold());
   const [playBackgroundMusic, stopBackgroundMusic] = useBackgroundMusic(settings, theme);
 
-  function getNewEntryPage(): Page {
+  function getNewEntryPage(): PageName {
     let pageFromUrl = getPageFromUrl();
 
     // Redirect to the campaign page if loaded from a level/area
@@ -439,9 +104,9 @@ export const App: React.FC = () => {
     }
 
     // Find the page that has the title of the option chosen in the settings menu (dropdown)
-    const entryPageSelection = pages.find((page) => page.title === settings.gameplay.entryPage)?.page;
+    const entryPageSelection = pageDescriptions.find((page) => page.title === settings.gameplay.entryPage)?.page;
     // The new entry page (in order of precedence, from left to right)
-    return (pageFromUrl || entryPageSelection) ?? "title-page";
+    return (pageFromUrl || entryPageSelection) ?? "TitlePage";
   }
 
   useEffect(() => {
@@ -466,7 +131,7 @@ export const App: React.FC = () => {
   useEffect(() => {
     // Set the page to any playable page
     if (page === "random") {
-      const playablePages = pages.filter((page) => page.isPlayable);
+      const playablePages = pageDescriptions.filter((page) => page.isPlayable);
       const newPage = pickRandomElementFrom(playablePages)?.page;
       setPage(newPage);
       setIsRandomSession(true);
@@ -494,10 +159,10 @@ export const App: React.FC = () => {
    *
    * @returns
    */
-  function getPageFromUrl(): Page | undefined {
+  function getPageFromUrl(): PageName | undefined {
     const urlPathWithoutLeadingTrailingSlashes = window.location.pathname.replace(/^\//g, "").replace(/\/$/g, "");
 
-    return pages.find((page) => page.page === urlPathWithoutLeadingTrailingSlashes)?.page;
+    return pageDescriptions.find((page) => page.page === urlPathWithoutLeadingTrailingSlashes)?.page;
   }
 
   function onCompleteLevel(isUnlockLevel: boolean, levelConfig: LevelConfig) {
@@ -521,7 +186,7 @@ export const App: React.FC = () => {
       window.history.pushState({}, "", `/${page}`);
 
       // Update the window title in the browser
-      document.title = pages.find((x) => x.page === page)?.title || DEFAULT_PAGE_TITLE;
+      document.title = pageDescriptions.find((x) => x.page === page)?.title || DEFAULT_PAGE_TITLE;
     }
   }, [page]);
 
@@ -568,78 +233,78 @@ export const App: React.FC = () => {
       switch (page) {
         // Daily mode should always use the same settings (never from SaveData)
         case "wingo/daily":
-          return defaultWordleGamemodeSettings.find((x) => x.page === page)?.settings;
+          return defaultWingoGamemodeSettings.find((x) => x.page === page)?.settings;
 
-        // WordleConfig modes
+        // WingoConfig modes
         case "wingo/repeat":
         case "wingo/puzzle":
         case "wingo/increasing":
         case "wingo/limitless":
         case "wingo/category":
-        case "countdown/conundrum":
+        case "Conundrum":
           // Use the saved Wingo Config gamemodeSettings, or the default setitngs (if no previous save was found)
           return (
-            SaveData.getWordleConfigGamemodeSettings(page) ||
-            defaultWordleGamemodeSettings.find((x) => x.page === page)?.settings
+            SaveData.getWingoConfigGamemodeSettings(page) ||
+            defaultWingoGamemodeSettings.find((x) => x.page === page)?.settings
           );
 
-        case "letters_categories":
+        case "LettersCategories":
           return SaveData.getLetterCategoriesConfigGamemodeSettings() || defaultLetterCategoriesGamemodeSettings;
 
-        case "countdown/letters":
-          return SaveData.getCountdownLettersConfigGamemodeSettings() || defaultCountdownLettersGamemodeSettings;
+        case "LettersGame":
+          return SaveData.getLettersGameConfigGamemodeSettings() || defaultLettersGameGamemodeSettings;
 
-        case "countdown/numbers":
-          return SaveData.getCountdownNumbersConfigGamemodeSettings() || defaultCountdownNumbersGamemodeSettings;
+        case "NumbersGame":
+          return SaveData.getNumbersGameConfigGamemodeSettings() || defaultNumbersGameGamemodeSettings;
 
-        case "numbers/arithmetic_reveal":
+        case "ArithmeticReveal":
           return SaveData.getArithmeticRevealGamemodeSettings() || defaultArithmeticRevealGamemodeSettings;
 
-        case "numbers/arithmetic_drag/order":
+        case "ArithmeticDrag/Order":
           return (
             SaveData.getArithmeticDragGamemodeSettings("order") ||
             defaultArithmeticDragGamemodeSettings.find((x) => x.mode === "order")?.settings
           );
 
-        case "numbers/arithmetic_drag/match":
+        case "ArithmeticDrag/Match":
           return (
             SaveData.getArithmeticDragGamemodeSettings("match") ||
             defaultArithmeticDragGamemodeSettings.find((x) => x.mode === "match")?.settings
           );
 
-        case "only_connect/wall":
+        case "OnlyConnect":
           return SaveData.getGroupWallGamemodeSettings() || defaultGroupWallGamemodeSettings;
 
-        case "verbal_reasoning/sameLetters":
+        case "SameLetters":
           return SaveData.getSameLetterWordsGamemodeSettings() || defaultSameLetterWordsGamemodeSettings;
 
-        case "verbal_reasoning/number_sets":
+        case "NumberSets":
           return SaveData.getNumberSetsGamemodeSettings() || defaultNumberSetsGamemodeSettings;
 
-        case "verbal_reasoning/algebra":
+        case "Algebra":
           return SaveData.getAlgebraGamemodeSettings() || defaultAlgebraGamemodeSettings;
 
-        case "verbal_reasoning/word_codes/question":
+        case "WordCodes/Question":
           return (
             SaveData.getWordCodesGamemodeSettings("question") ||
             defaultWordCodesGamemodeSettings.find((x) => x.mode === "question")?.settings
           );
 
-        case "verbal_reasoning/word_codes/match":
+        case "WordCodes/Match":
           return (
             SaveData.getWordCodesGamemodeSettings("match") ||
             defaultWordCodesGamemodeSettings.find((x) => x.mode === "match")?.settings
           );
 
-        case "nubble":
-          return SaveData.getNubbleConfigGamemodeSettings() || defaultNubbleGamemodeSettings;
+        case "numble":
+          return SaveData.getNumbleConfigGamemodeSettings() || defaultNumbleGamemodeSettings;
       }
 
       // TODO: Default gamemode settings (remaining unimplemented modes)
       /*
-        | "puzzle/sequence"
-        | "countdown/gameshow"
-        | "lingo/gameshow";
+        | "PuzzleSequence"
+        | "LettersNumbersGameshow"
+        | "Wingo/Gameshow";
       */
     })();
 
@@ -674,7 +339,7 @@ export const App: React.FC = () => {
       case "splash-screen":
         return <SplashScreen loadingState={loadingState} settings={settings} />;
 
-      case "title-page":
+      case "TitlePage":
         return <TitlePage setPage={setPage} settings={settings} />;
 
       case "home":
@@ -733,27 +398,27 @@ export const App: React.FC = () => {
         );
 
       case "wingo/daily":
-        return <WordleConfig {...commonWingoProps} mode="daily" />;
+        return <WingoConfig {...commonWingoProps} mode="daily" />;
 
       case "wingo/repeat":
-        return <WordleConfig {...commonWingoProps} mode="repeat" />;
+        return <WingoConfig {...commonWingoProps} mode="repeat" />;
 
       case "wingo/category":
-        return <WordleConfig {...commonWingoProps} mode="category" enforceFullLengthGuesses={false} />;
+        return <WingoConfig {...commonWingoProps} mode="category" enforceFullLengthGuesses={false} />;
 
       case "wingo/increasing":
         return (
-          <WordleConfig {...commonWingoProps} mode="increasing" defaultWordLength={DEFAULT_WORD_LENGTH_INCREASING} />
+          <WingoConfig {...commonWingoProps} mode="increasing" defaultWordLength={DEFAULT_WORD_LENGTH_INCREASING} />
         );
 
       case "wingo/limitless":
         return (
-          <WordleConfig {...commonWingoProps} mode="limitless" defaultWordLength={DEFAULT_WORD_LENGTH_INCREASING} />
+          <WingoConfig {...commonWingoProps} mode="limitless" defaultWordLength={DEFAULT_WORD_LENGTH_INCREASING} />
         );
 
       case "wingo/puzzle":
         return (
-          <WordleConfig
+          <WingoConfig
             {...commonWingoProps}
             mode="puzzle"
             defaultWordLength={DEFAULT_WORD_LENGTH_PUZZLE}
@@ -762,39 +427,39 @@ export const App: React.FC = () => {
         );
 
       case "wingo/interlinked":
-        // TODO: Directly return WordleInterlinked component?
-        return <WordleConfig {...commonWingoProps} mode="interlinked" />;
+        // TODO: Directly return WingoInterlinked component?
+        return <WingoConfig {...commonWingoProps} mode="interlinked" />;
 
       case "wingo/crossword":
-        return <WordleConfig {...commonWingoProps} mode="crossword" />;
+        return <WingoConfig {...commonWingoProps} mode="crossword" />;
 
       case "wingo/crossword/fit":
-        return <WordleConfig {...commonWingoProps} mode="crossword/fit" />;
+        return <WingoConfig {...commonWingoProps} mode="crossword/fit" />;
 
       case "wingo/crossword/weekly":
-        return <WordleConfig {...commonWingoProps} mode="crossword/weekly" />;
+        return <WingoConfig {...commonWingoProps} mode="crossword/weekly" />;
 
       case "wingo/crossword/daily":
-        return <WordleConfig {...commonWingoProps} mode="crossword/daily" />;
+        return <WingoConfig {...commonWingoProps} mode="crossword/daily" />;
 
-      case "letters_categories":
+      case "LettersCategories":
         return <LetterCategoriesConfig {...commonProps} enforceFullLengthGuesses={false} />;
 
-      case "countdown/letters":
-        return <CountdownLettersConfig {...commonProps} theme={Themes.GenericLetterCountdown} />;
+      case "LettersGame":
+        return <LettersGameConfig {...commonProps} theme={Themes.GenericLettersGame} />;
 
-      case "countdown/numbers":
+      case "NumbersGame":
         return (
-          <CountdownNumbersConfig
+          <NumbersGameConfig
             {...commonProps}
-            defaultNumGuesses={DEFAULT_NUM_GUESSES_COUNTDOWN_NUMBERS}
-            theme={Themes.GenericNumberCountdown}
+            defaultNumGuesses={DEFAULT_NUM_GUESSES_NUMBERS_GAME}
+            theme={Themes.GenericNumbersGame}
           />
         );
 
-      case "countdown/conundrum":
+      case "Conundrum":
         return (
-          <WordleConfig
+          <WingoConfig
             {...commonWingoProps}
             mode="conundrum"
             defaultWordLength={DEFAULT_WORD_LENGTH_CONUNDRUM}
@@ -802,37 +467,37 @@ export const App: React.FC = () => {
           />
         );
 
-      case "numbers/arithmetic_reveal":
+      case "ArithmeticReveal":
         return <ArithmeticReveal {...commonProps} />;
 
-      case "numbers/arithmetic_drag/order":
+      case "ArithmeticDrag/Order":
         return <ArithmeticDrag {...commonProps} mode="order" />;
 
-      case "numbers/arithmetic_drag/match":
+      case "ArithmeticDrag/Match":
         return <ArithmeticDrag {...commonProps} mode="match" />;
 
-      case "nubble":
-        return <NubbleConfig campaignConfig={{ isCampaignLevel: false }} {...commonProps} />;
+      case "numble":
+        return <NumbleConfig campaignConfig={{ isCampaignLevel: false }} {...commonProps} />;
 
-      case "only_connect/wall":
+      case "OnlyConnect":
         return <OnlyConnect {...commonProps} />;
 
-      case "verbal_reasoning/sameLetters":
+      case "SameLetters":
         return <SameLetterWords {...commonProps} />;
 
-      case "verbal_reasoning/number_sets":
+      case "NumberSets":
         return <NumberSets {...commonProps} />;
 
-      case "verbal_reasoning/algebra":
+      case "Algebra":
         return <Algebra {...commonProps} />;
 
-      case "verbal_reasoning/word_codes/question":
+      case "WordCodes/Question":
         return <WordCodes mode={"question"} {...commonProps} />;
 
-      case "verbal_reasoning/word_codes/match":
+      case "WordCodes/Match":
         return <WordCodes mode={"match"} {...commonProps} />;
 
-      case "puzzle/sequence":
+      case "PuzzleSequence":
         return <PuzzleConfig {...commonProps} />;
 
       case "challenges":
@@ -844,17 +509,17 @@ export const App: React.FC = () => {
       case "random":
         return null;
 
-      case "countdown/gameshow":
+      case "LettersNumbersGameshow":
         return (
-          <CountdownGameshow
+          <LettersNumbersGameshow
             commonWingoProps={commonWingoProps}
             settings={settings}
             setPage={setPage}
             page={page}
-            themes={[Themes.GenericLetterCountdown, Themes.GenericNumberCountdown]}
+            themes={[Themes.GenericLettersGame, Themes.GenericNumbersGame]}
             setTheme={setThemeIfNoPreferredSet}
             addGold={addGold}
-            // TODO: Should CountdownGameshow have gamemodeSettings like other gamemodes or an initial configuration page?
+            // TODO: Should LettersNumbersGameshow have gamemodeSettings like other gamemodes or an initial configuration page?
             numSets={5}
             numLetterRoundsPerSet={2}
             numNumberRoundsPerSet={1}
@@ -863,14 +528,14 @@ export const App: React.FC = () => {
           />
         );
 
-      case "lingo/gameshow":
+      case "Wingo/Gameshow":
         return (
-          <LingoGameshow
+          <WingoGameshow
             commonWingoProps={commonWingoProps}
-            // TODO: Should LingoGameshow have gamemodeSettings like other gamemodes or an initial configuration page?
-            firstRoundConfig={{ numLingos: 4, numPuzzles: 1 }}
-            secondRoundConfig={{ numLingos: 3, numPuzzles: 1 }}
-            thirdRoundConfig={{ numFourLengthLingos: 2, numPuzzles: 1, numFiveLengthLingos: 2, numberPuzzles: 1 }}
+            // TODO: Should WingoGameshow have gamemodeSettings like other gamemodes or an initial configuration page?
+            firstRoundConfig={{ numWingos: 4, numPuzzles: 1 }}
+            secondRoundConfig={{ numWingos: 3, numPuzzles: 1 }}
+            thirdRoundConfig={{ numFourLengthWingos: 2, numPuzzles: 1, numFiveLengthWingos: 2, numberPuzzles: 1 }}
             hasFinalRound={true}
           />
         );
@@ -879,7 +544,7 @@ export const App: React.FC = () => {
 
   return (
     <div className="app" data-automation-id="app" data-automation-page-name={page}>
-      {page !== "splash-screen" && page !== "title-page" && (
+      {page !== "splash-screen" && page !== "TitlePage" && (
         <>
           <div className="toolbar">
             {page !== "home" && (
@@ -904,8 +569,8 @@ export const App: React.FC = () => {
                 </Button>
               </nav>
             )}
-            <h1 className="title">{pages.find((x) => x.page === page)?.title}</h1>
-            {Boolean(pages.find((x) => x.page === page)?.helpInfo) && (
+            <h1 className="title">{pageDescriptions.find((x) => x.page === page)?.title}</h1>
+            {Boolean(pageDescriptions.find((x) => x.page === page)?.helpInfo) && (
               <Button
                 mode="default"
                 className="help-info-button"
@@ -947,7 +612,7 @@ export const App: React.FC = () => {
       >
         {pageComponent}
       </ErrorBoundary>
-      {Boolean(isHelpInfoShown && page !== "home" && page !== "title-page" && page !== "settings") && (
+      {Boolean(isHelpInfoShown && page !== "home" && page !== "TitlePage" && page !== "settings") && (
         <HelpInformation page={page} onClose={() => setIsHelpInfoShown(false)}></HelpInformation>
       )}
       <div className="version">{VERSION}</div>

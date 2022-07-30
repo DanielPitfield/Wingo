@@ -8229,7 +8229,7 @@ const words_five = [
   { word: "linga", canBeTargetWord: true },
   { word: "linge", canBeTargetWord: true },
   { word: "lingy", canBeTargetWord: true },
-  { word: "lingo", canBeTargetWord: true },
+  { word: "wingo", canBeTargetWord: true },
   { word: "lings", canBeTargetWord: true },
   { word: "linha", canBeTargetWord: true },
   { word: "linie", canBeTargetWord: true },

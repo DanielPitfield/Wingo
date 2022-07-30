@@ -1,20 +1,27 @@
 import React, { useState } from "react";
-import { Page } from "../App";
+import { PageName } from "../PageNames";
 import { SaveData, SettingsData } from "../Data/SaveData";
 import { Theme } from "../Data/Themes";
-import Nubble from "./Nubble";
-import { hexagon_100, hexagon_64, hexagon_25, square_100, square_64, square_25 } from "../Data/NubblePointColourMappings";
+import Numble from "./Numble";
+import {
+  hexagon_100,
+  hexagon_64,
+  hexagon_25,
+  square_100,
+  square_64,
+  square_25,
+} from "../Data/NumblePointColourMappings";
 
-export const nubbleGridShapes = ["square", "hexagon"] as const;
-export type nubbleGridShape = typeof nubbleGridShapes[number];
+export const numbleGridShapes = ["square", "hexagon"] as const;
+export type numbleGridShape = typeof numbleGridShapes[number];
 
-export const nubbleGridSizes = [25, 64, 100] as const;
-export type nubbleGridSize = typeof nubbleGridSizes[number];
+export const numbleGridSizes = [25, 64, 100] as const;
+export type numbleGridSize = typeof numbleGridSizes[number];
 
-export const DEFAULT_NUBBLE_GUESS_TIMER_VALUE = 20;
-export const DEFAULT_NUBBLE_TIMER_VALUE = 600;
+export const DEFAULT_NUMBLE_GUESS_TIMER_VALUE = 20;
+export const DEFAULT_NUMBLE_TIMER_VALUE = 600;
 
-export interface NubbleConfigProps {
+export interface NumbleConfigProps {
   campaignConfig:
     | {
         isCampaignLevel: true;
@@ -30,8 +37,8 @@ export interface NubbleConfigProps {
     // The lowest value which can be the number shown on a dice
     diceMin?: number;
     diceMax?: number;
-    gridShape?: nubbleGridShape;
-    gridSize?: nubbleGridSize;
+    gridShape?: numbleGridShape;
+    gridSize?: numbleGridSize;
     numTeams?: number;
     // When a number which can't be made with the dice numbers is picked, does the game end?
     isGameOverOnIncorrectPick?: boolean;
@@ -51,11 +58,11 @@ export interface NubbleConfigProps {
   finishingButtonText?: string;
 }
 
-interface Props extends NubbleConfigProps {
-  page: Page;
+interface Props extends NumbleConfigProps {
+  page: PageName;
   theme: Theme;
   settings: SettingsData;
-  setPage: (page: Page) => void;
+  setPage: (page: PageName) => void;
   setTheme: (theme: Theme) => void;
   addGold: (gold: number) => void;
   onComplete?: (wasCorrect: boolean) => void;
@@ -99,11 +106,11 @@ export function getNextTeamNumberWithRemainingTime(
   }
 }
 
-const NubbleConfig: React.FC<Props> = (props) => {
+const NumbleConfig: React.FC<Props> = (props) => {
   const DEFAULT_NUM_DICE = 4;
   const DEFAULT_DICE_MIN = 1;
   const DEFAULT_DICE_MAX = 6;
-  const DEFAULT_GRID_SHAPE = "hexagon" as nubbleGridShape;
+  const DEFAULT_GRID_SHAPE = "hexagon" as numbleGridShape;
   const DEFAULT_GRID_SIZE = 100;
   const DEFAULT_NUM_TEAMS = 1;
   const MAX_NUM_TEAMS = 4;
@@ -126,8 +133,8 @@ const NubbleConfig: React.FC<Props> = (props) => {
     numDice: number;
     diceMin: number;
     diceMax: number;
-    gridShape: nubbleGridShape;
-    gridSize: nubbleGridSize;
+    gridShape: numbleGridShape;
+    gridSize: numbleGridSize;
     numTeams: number;
     isGameOverOnIncorrectPick: boolean;
     guessTimerConfig:
@@ -157,7 +164,7 @@ const NubbleConfig: React.FC<Props> = (props) => {
   const [remainingGuessTimerSeconds, setRemainingGuessTimerSeconds] = useState(
     props.gamemodeSettings?.guessTimerConfig?.isTimed === true
       ? props.gamemodeSettings?.guessTimerConfig.seconds
-      : DEFAULT_NUBBLE_GUESS_TIMER_VALUE
+      : DEFAULT_NUMBLE_GUESS_TIMER_VALUE
   );
 
   React.useEffect(() => {
@@ -188,7 +195,7 @@ const NubbleConfig: React.FC<Props> = (props) => {
   const INITIAL_TIMER_VALUE =
     props.gamemodeSettings?.timerConfig?.isTimed === true
       ? props.gamemodeSettings?.timerConfig.seconds
-      : DEFAULT_NUBBLE_TIMER_VALUE;
+      : DEFAULT_NUMBLE_TIMER_VALUE;
   // Each team starts with the same initial amount of time
   const initialTeamTimers = Array.from({ length: gamemodeSettings.numTeams }).map((_, i) => ({
     teamNumber: i,
@@ -242,7 +249,7 @@ const NubbleConfig: React.FC<Props> = (props) => {
     }
 
     // Save the latest gamemode settings
-    SaveData.setNubbleConfigGamemodeSettings(gamemodeSettings);
+    SaveData.setNumbleConfigGamemodeSettings(gamemodeSettings);
   }, [gamemodeSettings]);
 
   function updateTeamTimers(
@@ -698,7 +705,7 @@ const NubbleConfig: React.FC<Props> = (props) => {
   }
 
   return (
-    <Nubble
+    <Numble
       campaignConfig={props.campaignConfig}
       theme={props.theme}
       gamemodeSettings={gamemodeSettings}
@@ -717,8 +724,8 @@ const NubbleConfig: React.FC<Props> = (props) => {
       determineSquareAdjacentMappings={determineSquareAdjacentMappings}
       determineHexagonAdjacentMappings={determineHexagonAdjacentMappings}
       settings={props.settings}
-    ></Nubble>
+    ></Numble>
   );
 };
 
-export default NubbleConfig;
+export default NumbleConfig;

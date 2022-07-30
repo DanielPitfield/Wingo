@@ -1,16 +1,16 @@
 import React, { useState } from "react";
-import Wordle from "./Wordle";
+import Wingo from "./Wingo";
 import { words_puzzles } from "../Data/WordArrays/WordsPuzzles";
 import { SaveData, SettingsData } from "../Data/SaveData";
 import { Theme } from "../Data/Themes";
-import { WordleInterlinked } from "./WordleInterlinked";
+import { WingoInterlinked } from "./WingoInterlinked";
 
 import { Chance } from "chance";
 import { generateConundrum } from "../Data/Conundrum";
-import { Page } from "../App";
+import { PageName } from "../PageNames";
 import {
   categoryMappings,
-  defaultWordleInterlinkedGamemodeSettings,
+  defaultWingoInterlinkedGamemodeSettings,
   DEFAULT_PUZZLE_LEAVE_NUM_BLANKS,
   DEFAULT_PUZZLE_REVEAL_MS,
   DEFAULT_WORD_LENGTH,
@@ -19,7 +19,7 @@ import {
   wordLengthMappingsTargets,
 } from "../Data/DefaultGamemodeSettings";
 
-export interface WordleConfigProps {
+export interface WingoConfigProps {
   mode:
     | "daily"
     | "repeat"
@@ -63,16 +63,16 @@ export interface WordleConfigProps {
 
   checkInDictionary?: boolean;
   finishingButtonText?: string;
-  
+
   roundScoringInfo?: { basePoints: number; pointsLostPerGuess: number };
   gameshowScore?: number;
 }
 
-interface Props extends WordleConfigProps {
-  page: Page;
+interface Props extends WingoConfigProps {
+  page: PageName;
   theme: Theme;
   settings: SettingsData;
-  setPage: (page: Page) => void;
+  setPage: (page: PageName) => void;
   setTheme: (theme: Theme) => void;
   addGold: (gold: number) => void;
   onComplete?: (wasCorrect: boolean, answer: string, targetAnswer: string, score: number | null) => void;
@@ -87,9 +87,9 @@ export function pickRandomElementFrom(array: any[]) {
   return array[Math.floor(Math.random() * array.length)];
 }
 
-export function getWordSummary(page: Page, word: string, targetWord: string, inDictionary: boolean) {
+export function getWordSummary(page: PageName, word: string, targetWord: string, inDictionary: boolean) {
   // Either correct or incorrect (green or red statuses) and nothing inbetween
-  const simpleStatusModes: Page[] = ["letters_categories"];
+  const simpleStatusModes: PageName[] = ["LettersCategories"];
 
   // Character and status array
   let defaultCharacterStatuses = (word || "").split("").map((character, index) => ({
@@ -232,7 +232,7 @@ function getDeterministicArrayItems<T>(
   return chance.shuffle(array.slice()).slice(0, numItems);
 }
 
-const WordleConfig: React.FC<Props> = (props) => {
+const WingoConfig: React.FC<Props> = (props) => {
   const [guesses, setGuesses] = useState<string[]>(props.guesses ?? []);
   const [numGuesses, setNumGuesses] = useState(props.defaultnumGuesses);
   const [gameId, setGameId] = useState<string | null>(null);
@@ -650,7 +650,7 @@ const WordleConfig: React.FC<Props> = (props) => {
     ResetGame();
 
     // Save the latest gamemode settings for this mode
-    SaveData.setWordleConfigGamemodeSettings(props.page, gamemodeSettings);
+    SaveData.setWingoConfigGamemodeSettings(props.page, gamemodeSettings);
   }, [gamemodeSettings]);
 
   // Update targetWord every time the targetCategory changes
@@ -826,7 +826,7 @@ const WordleConfig: React.FC<Props> = (props) => {
     else if (props.mode === "conundrum" && props.conundrum && currentWord.toUpperCase() !== targetWord.toUpperCase()) {
       return 0;
     }
-    // Lingo round
+    // Wingo round
     else if (props.mode !== "conundrum" && props.roundScoringInfo) {
       const pointsLost =
         props.mode === "puzzle"
@@ -837,7 +837,7 @@ const WordleConfig: React.FC<Props> = (props) => {
 
       return score;
     }
-    // Unexpected round type or Lingo round but with no scoring information
+    // Unexpected round type or Wingo round but with no scoring information
     else {
       return null;
     }
@@ -1132,21 +1132,21 @@ const WordleConfig: React.FC<Props> = (props) => {
     setGamemodeSettings(newGamemodeSettings);
   }
 
-  // Get the gamemode settings for the specific page (WordleInterlinked mode)
+  // Get the gamemode settings for the specific page (WingoInterlinked mode)
   const pageGamemodeSettings = (() => {
     switch (props.page) {
       // Daily/weekly modes should always use the same settings (never from SaveData)
       case "wingo/crossword/daily":
       case "wingo/crossword/weekly":
-        return defaultWordleInterlinkedGamemodeSettings.find((x) => x.page === props.page)?.settings;
+        return defaultWingoInterlinkedGamemodeSettings.find((x) => x.page === props.page)?.settings;
 
-      // WordleInterlinked modes
+      // WingoInterlinked modes
       case "wingo/interlinked":
       case "wingo/crossword":
       case "wingo/crossword/fit":
         return (
-          SaveData.getWordleInterlinkedGamemodeSettings(props.page) ||
-          defaultWordleInterlinkedGamemodeSettings.find((x) => x.page === props.page)?.settings
+          SaveData.getWingoInterlinkedGamemodeSettings(props.page) ||
+          defaultWingoInterlinkedGamemodeSettings.find((x) => x.page === props.page)?.settings
         );
 
       default:
@@ -1168,19 +1168,19 @@ const WordleConfig: React.FC<Props> = (props) => {
 
   if (props.mode === "interlinked") {
     return (
-      <WordleInterlinked {...commonWingoInterlinkedProps} wordArrayConfig={{ type: "length" }} provideWords={false} />
+      <WingoInterlinked {...commonWingoInterlinkedProps} wordArrayConfig={{ type: "length" }} provideWords={false} />
     );
   }
 
   if (props.mode === "crossword") {
     return (
-      <WordleInterlinked {...commonWingoInterlinkedProps} wordArrayConfig={{ type: "category" }} provideWords={false} />
+      <WingoInterlinked {...commonWingoInterlinkedProps} wordArrayConfig={{ type: "category" }} provideWords={false} />
     );
   }
 
   if (props.mode === "crossword/daily") {
     return (
-      <WordleInterlinked
+      <WingoInterlinked
         {...commonWingoInterlinkedProps}
         wordArrayConfig={{
           type: "custom",
@@ -1201,7 +1201,7 @@ const WordleConfig: React.FC<Props> = (props) => {
 
   if (props.mode === "crossword/weekly") {
     return (
-      <WordleInterlinked
+      <WingoInterlinked
         {...commonWingoInterlinkedProps}
         wordArrayConfig={{
           type: "custom",
@@ -1222,12 +1222,12 @@ const WordleConfig: React.FC<Props> = (props) => {
 
   if (props.mode === "crossword/fit") {
     return (
-      <WordleInterlinked {...commonWingoInterlinkedProps} wordArrayConfig={{ type: "length" }} provideWords={true} />
+      <WingoInterlinked {...commonWingoInterlinkedProps} wordArrayConfig={{ type: "length" }} provideWords={true} />
     );
   }
 
   return (
-    <Wordle
+    <Wingo
       isCampaignLevel={props.page === "campaign/area/level"}
       mode={props.mode}
       gamemodeSettings={gamemodeSettings}
@@ -1260,8 +1260,8 @@ const WordleConfig: React.FC<Props> = (props) => {
       setPage={props.setPage}
       setTheme={props.setTheme}
       gameshowScore={props.gameshowScore}
-    ></Wordle>
+    ></Wingo>
   );
 };
 
-export default WordleConfig;
+export default WingoConfig;

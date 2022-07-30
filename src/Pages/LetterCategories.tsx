@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Keyboard } from "../Components/Keyboard";
-import { Page } from "../App";
+import { PageName } from "../PageNames";
 import { WordRow } from "../Components/WordRow";
 import { Button } from "../Components/Button";
 import { MessageNotification } from "../Components/MessageNotification";
@@ -31,10 +31,10 @@ interface Props {
   categoryNames?: string[];
   finishingButtonText?: string;
 
-  page: Page;
+  page: PageName;
   theme: Theme;
   settings: SettingsData;
-  setPage: (page: Page) => void;
+  setPage: (page: PageName) => void;
   onEnter: () => void;
   onSubmitLetter: (letter: string) => void;
   onBackspace: () => void;
@@ -252,7 +252,7 @@ const LetterCategories: React.FC<Props> = (props) => {
 
       <div className="keyboard">
         <Keyboard
-          mode={"letters_categories"}
+          mode={"LettersCategories"}
           onEnter={props.onEnter}
           onSubmitLetter={props.onSubmitLetter}
           onBackspace={props.onBackspace}

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { Page, pages } from "../App";
+import { pageDescriptions } from "../PageDescriptions";
+import { PageName } from "../PageNames";
 import { getId, LevelConfig } from "./Level";
 import { SaveData, SettingsData } from "../Data/SaveData";
 import { Theme } from "../Data/Themes";
@@ -16,7 +17,7 @@ export const LevelNode: React.FC<{
   onHoverLevel: (level: LevelConfig | null) => void;
   setTheme: (theme: Theme) => void;
   setSelectedCampaignLevel: (level: LevelConfig) => void;
-  setPage: (page: Page) => void;
+  setPage: (page: PageName) => void;
 }> = (props) => {
   const [referenceElement, setReferenceElement] = useState(null);
   const [popperElement, setPopperElement] = useState(null);
@@ -46,9 +47,7 @@ export const LevelNode: React.FC<{
     : areaInfo?.completedLevelIds.some((x) => x === getId(previousLevel.level)) || false;
 
   // Get the level page info
-  const levelInfo = pages.find(
-    (x) => x.page === props.level.level.page
-  );
+  const levelInfo = pageDescriptions.find((x) => x.page === props.level.level.page);
 
   if (props.level.type !== "level") {
     return null;
@@ -95,9 +94,7 @@ export const LevelNode: React.FC<{
               </span>
               <span className="level-number">Level {props.index + 1}</span>
             </strong>
-            <p className="level-mode">
-              {levelInfo?.title || levelInfo?.shortTitle}
-            </p>
+            <p className="level-mode">{levelInfo?.title || levelInfo?.shortTitle}</p>
             <div ref={setArrowElement as any} style={styles.arrow} />
           </div>
         </div>

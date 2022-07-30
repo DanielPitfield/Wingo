@@ -1,14 +1,15 @@
 import React from "react";
-import { Page, pages } from "../App";
+import { pageDescriptions } from "../PageDescriptions";
+import { PageName } from "../PageNames";
 import { Modal } from "./Modal";
 
 interface Props {
-  page: Page;
+  page: PageName;
   onClose: () => void;
 }
 
 export const HelpInformation: React.FC<Props> = (props) => {
-  const pageInfo = pages.find((x) => x.page === props.page);
+  const pageInfo = pageDescriptions.find((x) => x.page === props.page);
 
   return (
     <Modal

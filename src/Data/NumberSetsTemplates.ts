@@ -1,5 +1,5 @@
-import { operators } from "../Pages/CountdownNumbersConfig";
-import { randomIntFromInterval } from "../Pages/Nubble";
+import { operators } from "../Pages/NumbersGameConfig";
+import { randomIntFromInterval } from "../Pages/Numble";
 import { NumberSetConfigProps, NumberSetTemplate } from "../Pages/NumberSets";
 
 // TODO: Examples and finding of operator are hardcoded

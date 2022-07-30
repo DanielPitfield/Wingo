@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Page } from "../App";
+import { PageName } from "../PageNames";
 import { Button } from "../Components/Button";
 import GamemodeSettingsMenu from "../Components/GamemodeSettingsMenu";
 import { DEFAULT_ALPHABET, Keyboard } from "../Components/Keyboard";
@@ -41,10 +41,10 @@ export interface AlgebraProps {
 }
 
 interface Props extends AlgebraProps {
-  page: Page;
+  page: PageName;
   theme: Theme;
   settings: SettingsData;
-  setPage: (page: Page) => void;
+  setPage: (page: PageName) => void;
   setTheme: (theme: Theme) => void;
   addGold: (gold: number) => void;
   onComplete?: (wasCorrect: boolean) => void;
@@ -464,7 +464,7 @@ const Algebra: React.FC<Props> = (props) => {
           customAlphabet={"ABCDEFGHIJKLMNOPQRSTUVWXYZ".slice(0, algebraTemplate?.inputs.length).split("")}
           showBackspace={false}
           targetWord=""
-          mode="verbal_reasoning/algebra"
+          mode="Algebra"
           guesses={[]}
           letterStatuses={[]}
           inDictionary

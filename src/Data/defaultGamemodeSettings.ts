@@ -1,5 +1,5 @@
-import { Page } from "../App";
-import { NubbleConfigProps, nubbleGridShape, nubbleGridSize } from "../Pages/NubbleConfig";
+import { PageName } from "../PageNames";
+import { NumbleConfigProps, numbleGridShape, numbleGridSize } from "../Pages/NumbleConfig";
 import { words_ten_guessable, words_ten_targets } from "./WordArrays/Lengths/Words10";
 import { words_eleven_guessable, words_eleven_targets } from "./WordArrays/Lengths/Words11";
 import { words_three_guessable, words_three_targets } from "./WordArrays/Lengths/Words3";
@@ -22,12 +22,12 @@ import { words_animals } from "./WordArrays/Categories/Animals";
 import { words_herbs_and_spices } from "./WordArrays/Categories/HerbsAndSpices";
 import { words_meats_and_fish } from "./WordArrays/Categories/MeatsAndFish";
 import { words_gemstones } from "./WordArrays/Categories/Gemstones";
-import { WordleConfigProps } from "../Pages/WordleConfig";
-import { WordleInterlinkedProps } from "../Pages/WordleInterlinked";
+import { WingoConfigProps } from "../Pages/WingoConfig";
+import { WingoInterlinkedProps } from "../Pages/WingoInterlinked";
 import { words_puzzles } from "./WordArrays/WordsPuzzles";
 import { LetterCategoriesConfigProps } from "../Pages/LetterCategoriesConfig";
-import { CountdownLettersConfigProps } from "../Pages/CountdownLettersConfig";
-import { CountdownNumbersConfigProps } from "../Pages/CountdownNumbersConfig";
+import { LettersGameConfigProps } from "../Pages/LettersGameConfig";
+import { NumbersGameConfigProps } from "../Pages/NumbersGameConfig";
 import { ArithmeticRevealProps } from "../Pages/ArithmeticReveal";
 import { ArithmeticDragProps, arithmeticMode } from "../Pages/ArithmeticDrag";
 import { GroupWallProps } from "../Pages/OnlyConnect";
@@ -74,7 +74,7 @@ export const categoryMappings = [
   { name: "Meats and Fish", array: words_meats_and_fish },
   { name: "Pizza Toppings", array: words_pizza_toppings },
   // TODO: Should puzzles be here? The puzzles are mostly unrelated to each other and aren't really a category
-   { name: "Puzzles", array: words_puzzles },
+  { name: "Puzzles", array: words_puzzles },
   { name: "Sports", array: words_sports },
   { name: "Vegetables", array: words_vegetables },
 ];
@@ -96,7 +96,7 @@ export const DEFAULT_WORD_LENGTH_PUZZLE = 10;
 // numGuesses values (for different modes)
 export const DEFAULT_NUM_GUESSES = 6;
 export const DEFAULT_NUM_GUESSES_PUZZLE = 1;
-export const DEFAULT_NUM_GUESSES_COUNTDOWN_NUMBERS = 5;
+export const DEFAULT_NUM_GUESSES_NUMBERS_GAME = 5;
 
 export const DEFAULT_PUZZLE_REVEAL_MS = 2000;
 export const DEFAULT_PUZZLE_LEAVE_NUM_BLANKS = 3;
@@ -105,7 +105,7 @@ export const DEFAULT_PUZZLE_LEAVE_NUM_BLANKS = 3;
 export const MAX_NUM_CATEGORIES = categoryMappings.filter((mapping) => mapping.array.length > 0).length;
 
 // --- Default Gamemode settings --- //
-export const defaultWordleGamemodeSettings: { page: Page; settings: WordleConfigProps["gamemodeSettings"] }[] = [
+export const defaultWingoGamemodeSettings: { page: PageName; settings: WingoConfigProps["gamemodeSettings"] }[] = [
   {
     page: "wingo/daily",
     settings: {
@@ -161,18 +161,18 @@ export const defaultWordleGamemodeSettings: { page: Page; settings: WordleConfig
       wordLength: DEFAULT_WORD_LENGTH_PUZZLE,
     },
   },
-  // The conundrum mode is actually a mode of WordleConfig
+  // The conundrum mode is actually a mode of WingoConfig
   {
-    page: "countdown/conundrum",
+    page: "Conundrum",
     settings: {
       timerConfig: { isTimed: true, seconds: 30 },
     },
   },
 ];
 
-export const defaultWordleInterlinkedGamemodeSettings: {
-  page: Page;
-  settings: WordleInterlinkedProps["gamemodeSettings"];
+export const defaultWingoInterlinkedGamemodeSettings: {
+  page: PageName;
+  settings: WingoInterlinkedProps["gamemodeSettings"];
 }[] = [
   {
     page: "wingo/crossword/daily",
@@ -246,12 +246,12 @@ export const defaultLetterCategoriesGamemodeSettings: LetterCategoriesConfigProp
   timerConfig: { isTimed: false },
 };
 
-export const defaultCountdownLettersGamemodeSettings: CountdownLettersConfigProps["gamemodeSettings"] = {
+export const defaultLettersGameGamemodeSettings: LettersGameConfigProps["gamemodeSettings"] = {
   defaultNumLetters: 9,
   timerConfig: { isTimed: true, seconds: 30 },
 };
 
-export const defaultCountdownNumbersGamemodeSettings: CountdownNumbersConfigProps["gamemodeSettings"] = {
+export const defaultNumbersGameGamemodeSettings: NumbersGameConfigProps["gamemodeSettings"] = {
   hasScaryNumbers: false,
   scoringMethod: "standard",
   defaultNumOperands: 6,
@@ -344,13 +344,13 @@ export const defaultWordCodesGamemodeSettings: { mode: wordCodesMode; settings: 
     },
   ];
 
-export const defaultNubbleGamemodeSettings: NubbleConfigProps["gamemodeSettings"] = {
+export const defaultNumbleGamemodeSettings: NumbleConfigProps["gamemodeSettings"] = {
   numDice: 4,
   // The lowest value which can be the number shown on a dice
   diceMin: 1,
   diceMax: 6,
-  gridShape: "hexagon" as nubbleGridShape,
-  gridSize: 100 as nubbleGridSize,
+  gridShape: "hexagon" as numbleGridShape,
+  gridSize: 100 as numbleGridSize,
   numTeams: 1,
   // When a number which can't be made with the dice numbers is picked, does the game end?
   isGameOverOnIncorrectPick: false,

@@ -1,17 +1,17 @@
 import React, { useState } from "react";
 import { SettingsData } from "../Data/SaveData";
-import { Page } from "../App";
-import CountdownLettersConfig from "./CountdownLettersConfig";
-import CountdownNumbersConfig from "./CountdownNumbersConfig";
+import { PageName } from "../PageNames";
+import LettersGameConfig from "./LettersGameConfig";
+import NumbersGameConfig from "./NumbersGameConfig";
 import { Theme } from "../Data/Themes";
-import { displayGameshowSummary } from "./LingoGameshow";
+import { displayGameshowSummary } from "./WingoGameshow";
 import { Button } from "../Components/Button";
-import WordleConfig from "./WordleConfig";
+import WingoConfig from "./WingoConfig";
 
 interface Props {
   settings: SettingsData;
-  setPage: (page: Page) => void;
-  page: Page;
+  setPage: (page: PageName) => void;
+  page: PageName;
   themes: Theme[];
   setTheme: (theme: Theme) => void;
   addGold: (gold: number) => void;
@@ -23,9 +23,9 @@ interface Props {
 
   commonWingoProps: {
     defaultnumGuesses: number;
-    page: Page;
+    page: PageName;
     theme: Theme;
-    setPage: (page: Page) => void;
+    setPage: (page: PageName) => void;
     setTheme: (theme: Theme) => void;
     addGold: (gold: number) => void;
     settings: SettingsData;
@@ -33,7 +33,7 @@ interface Props {
   };
 }
 
-export const CountdownGameshow: React.FC<Props> = (props) => {
+export const LettersNumbersGameshow: React.FC<Props> = (props) => {
   const DEFAULT_NUM_GUESSES = 5;
 
   const [inProgress, setInProgress] = useState(true);
@@ -115,8 +115,8 @@ export const CountdownGameshow: React.FC<Props> = (props) => {
 
     if (roundType === "letter") {
       return (
-        <CountdownLettersConfig
-          page={"countdown/letters"}
+        <LettersGameConfig
+          page={"LettersGame"}
           theme={props.themes[0]}
           settings={props.settings}
           setTheme={props.setTheme}
@@ -128,9 +128,9 @@ export const CountdownGameshow: React.FC<Props> = (props) => {
       );
     } else if (roundType === "number") {
       return (
-        <CountdownNumbersConfig
+        <NumbersGameConfig
           defaultNumGuesses={DEFAULT_NUM_GUESSES}
-          page={"countdown/numbers"}
+          page={"NumbersGame"}
           theme={props.themes[1]}
           settings={props.settings}
           setTheme={props.setTheme}
@@ -142,7 +142,7 @@ export const CountdownGameshow: React.FC<Props> = (props) => {
       );
     } else if (roundType === "conundrum") {
       return (
-        <WordleConfig
+        <WingoConfig
           {...props.commonWingoProps}
           mode="conundrum"
           defaultWordLength={9}

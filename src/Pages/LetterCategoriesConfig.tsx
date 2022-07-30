@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import { Page } from "../App";
+import { PageName } from "../PageNames";
 import LetterCategories from "./LetterCategories";
 import { SaveData, SettingsData } from "../Data/SaveData";
 import { DEFAULT_ALPHABET } from "../Components/Keyboard";
-import { pickRandomElementFrom } from "./WordleConfig";
+import { pickRandomElementFrom } from "./WingoConfig";
 import { Theme } from "../Data/Themes";
 import { categoryMappings } from "../Data/DefaultGamemodeSettings";
 
@@ -17,10 +17,10 @@ export interface LetterCategoriesConfigProps {
 }
 
 interface Props extends LetterCategoriesConfigProps {
-  page: Page;
+  page: PageName;
   theme: Theme;
   settings: SettingsData;
-  setPage: (page: Page) => void;
+  setPage: (page: PageName) => void;
   setTheme: (theme: Theme) => void;
   addGold: (gold: number) => void;
   onComplete?: (wasCorrect: boolean) => void;

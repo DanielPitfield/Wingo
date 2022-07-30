@@ -1,13 +1,13 @@
 import React, { useState } from "react";
-import { Page } from "../App";
-import CountdownLetters from "./CountdownLetters";
+import { PageName } from "../PageNames";
+import LettersGame from "./LettersGame";
 import { Theme } from "../Data/Themes";
 import { SaveData, SettingsData } from "../Data/SaveData";
 import { wordLengthMappingsGuessable, wordLengthMappingsTargets } from "../Data/DefaultGamemodeSettings";
 
-export interface CountdownLettersConfigProps {
+export interface LettersGameConfigProps {
   guesses?: string[];
-  countdownWord?: string;
+  lettersGameSelectionWord?: string;
   gamemodeSettings?: {
     // The number of letters (that make up the selection used to make a word)
     defaultNumLetters?: number;
@@ -17,22 +17,22 @@ export interface CountdownLettersConfigProps {
   gameshowScore?: number;
 }
 
-interface Props extends CountdownLettersConfigProps {
-  page: Page;
+interface Props extends LettersGameConfigProps {
+  page: PageName;
   theme: Theme;
   settings: SettingsData;
-  setPage: (page: Page) => void;
+  setPage: (page: PageName) => void;
   setTheme: (theme: Theme) => void;
   addGold: (gold: number) => void;
   onComplete?: (wasCorrect: boolean, answer: string, targetAnswer: string, score: number | null) => void;
 }
 
-export function isCountdownGuessValid(guessedWord: string, countdownWord: string) {
-  if (!countdownWord || !guessedWord) {
+export function isLettersGameGuessValid(guessedWord: string, lettersGameSelectionWord: string) {
+  if (!lettersGameSelectionWord || !guessedWord) {
     return false;
   }
 
-  const validLetters = countdownWord.split("");
+  const validLetters = lettersGameSelectionWord.split("");
   const guessedWordLetters = guessedWord.split("");
 
   // For every letter in the guess
@@ -49,12 +49,12 @@ export function isCountdownGuessValid(guessedWord: string, countdownWord: string
   });
 }
 
-const CountdownLettersConfig: React.FC<Props> = (props) => {
+const LettersGameConfig: React.FC<Props> = (props) => {
   const DEFAULT_NUM_LETTERS = 9;
   const DEFAULT_TIMER_VALUE = 30;
 
   const [guesses, setGuesses] = useState<string[]>([]);
-  const [countdownWord, setCountdownWord] = useState("");
+  const [lettersGameSelectionWord, setLettersGameSelectionWord] = useState("");
   const [currentWord, setCurrentWord] = useState("");
   const [inProgress, setinProgress] = useState(true);
   const [inDictionary, setinDictionary] = useState(true);
@@ -122,7 +122,7 @@ const CountdownLettersConfig: React.FC<Props> = (props) => {
       return;
     }
 
-    if (countdownWord.length !== gamemodeSettings.numLetters) {
+    if (lettersGameSelectionWord.length !== gamemodeSettings.numLetters) {
       return;
     }
 
@@ -136,7 +136,7 @@ const CountdownLettersConfig: React.FC<Props> = (props) => {
     return () => {
       clearInterval(timer);
     };
-  }, [setRemainingSeconds, remainingSeconds, gamemodeSettings.timerConfig.isTimed, countdownWord]);
+  }, [setRemainingSeconds, remainingSeconds, gamemodeSettings.timerConfig.isTimed, lettersGameSelectionWord]);
 
   // Reset game after change of settings (stops cheating by changing settings partway through a game)
   React.useEffect(() => {
@@ -148,15 +148,15 @@ const CountdownLettersConfig: React.FC<Props> = (props) => {
     ResetGame(false, "", "", 0);
 
     // Save the latest gamemode settings for this mode
-    SaveData.setCountdownLettersConfigGamemodeSettings(gamemodeSettings);
+    SaveData.setLettersGameConfigGamemodeSettings(gamemodeSettings);
   }, [gamemodeSettings]);
 
-  // TODO: Better way to callback the outcome/status of a completed letters round for CountdownGameshow?
+  // TODO: Better way to callback the outcome/status of a completed letters round for Letters Numbers Gameshow?
   function ResetGame(wasCorrect: boolean, answer: string, targetAnswer: string, score: number | null) {
-    // Callback of the score achieved (used for Countdown Gameshow)
+    // Callback of the score achieved (used for Letters Numbers Gameshow)
     props.onComplete?.(wasCorrect, answer, targetAnswer, score);
     setGuesses([]);
-    setCountdownWord("");
+    setLettersGameSelectionWord("");
     setCurrentWord("");
     settargetWord("");
     setinProgress(true);
@@ -185,7 +185,7 @@ const CountdownLettersConfig: React.FC<Props> = (props) => {
     }
 
     // The vowels and consonants available have not all been picked
-    if (countdownWord.length !== gamemodeSettings.numLetters) {
+    if (lettersGameSelectionWord.length !== gamemodeSettings.numLetters) {
       return;
     }
 
@@ -205,7 +205,7 @@ const CountdownLettersConfig: React.FC<Props> = (props) => {
     // Accepted word (known word in dictionary)
     const wordInDictionary = wordArray?.includes(currentWord.toLowerCase());
     // Word can be made with available letters
-    const isValidWord = isCountdownGuessValid(currentWord, countdownWord);
+    const isValidWord = isLettersGameGuessValid(currentWord, lettersGameSelectionWord);
 
     // Check the validity of the word for the player
     if (wordInDictionary && isValidWord) {
@@ -227,15 +227,15 @@ const CountdownLettersConfig: React.FC<Props> = (props) => {
     }, 500);
   }
 
-  function onSubmitCountdownLetter(letter: string) {
-    if (countdownWord.length < gamemodeSettings.numLetters && inProgress) {
-      setCountdownWord(countdownWord + letter); // Append chosen letter to countdownWord
+  function onSubmitLettersGameLetter(letter: string) {
+    if (lettersGameSelectionWord.length < gamemodeSettings.numLetters && inProgress) {
+      setLettersGameSelectionWord(lettersGameSelectionWord + letter); // Append chosen letter to lettersGameSelectionWord
     }
   }
 
-  function onSubmitCountdownWord(word: string) {
-    if (countdownWord.length === 0 && inProgress) {
-      setCountdownWord(word);
+  function onSubmitLettersGameSelectionWord(word: string) {
+    if (lettersGameSelectionWord.length === 0 && inProgress) {
+      setLettersGameSelectionWord(word);
     }
   }
 
@@ -243,7 +243,7 @@ const CountdownLettersConfig: React.FC<Props> = (props) => {
     // Additional condition of all letters having been selected
     if (
       currentWord.length < gamemodeSettings.numLetters &&
-      countdownWord.length === gamemodeSettings.numLetters &&
+      lettersGameSelectionWord.length === gamemodeSettings.numLetters &&
       inProgress
     ) {
       setCurrentWord(currentWord + letter); // Append chosen letter to currentWord
@@ -270,13 +270,13 @@ const CountdownLettersConfig: React.FC<Props> = (props) => {
   }
 
   return (
-    <CountdownLetters
+    <LettersGame
       isCampaignLevel={props.page === "campaign/area/level"}
       gamemodeSettings={gamemodeSettings}
       remainingSeconds={remainingSeconds}
       guesses={guesses}
       currentWord={currentWord}
-      countdownWord={countdownWord}
+      lettersGameSelectionWord={lettersGameSelectionWord}
       inProgress={inProgress}
       inDictionary={inDictionary}
       hasSubmitLetter={hasSubmitLetter}
@@ -287,8 +287,8 @@ const CountdownLettersConfig: React.FC<Props> = (props) => {
       settings={props.settings}
       setTheme={props.setTheme}
       onEnter={onEnter}
-      onSubmitCountdownLetter={onSubmitCountdownLetter}
-      onSubmitCountdownWord={onSubmitCountdownWord}
+      onSubmitLettersGameLetter={onSubmitLettersGameLetter}
+      onSubmitLettersGameSelectionWord={onSubmitLettersGameSelectionWord}
       onSubmitLetter={onSubmitLetter}
       onBackspace={onBackspace}
       updateGamemodeSettings={updateGamemodeSettings}
@@ -298,8 +298,8 @@ const CountdownLettersConfig: React.FC<Props> = (props) => {
       setPage={props.setPage}
       addGold={props.addGold}
       gameshowScore={props.gameshowScore}
-    ></CountdownLetters>
+    ></LettersGame>
   );
 };
 
-export default CountdownLettersConfig;
+export default LettersGameConfig;

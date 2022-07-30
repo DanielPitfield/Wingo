@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Page } from "../App";
+import { PageName } from "../PageNames";
 import { Button } from "../Components/Button";
 import { categoryMappings } from "../Data/DefaultGamemodeSettings";
 import GamemodeSettingsMenu from "../Components/GamemodeSettingsMenu";
@@ -25,10 +25,10 @@ export interface GroupWallProps {
 }
 
 interface Props extends GroupWallProps {
-  page: Page;
+  page: PageName;
   theme: Theme;
   settings: SettingsData;
-  setPage: (page: Page) => void;
+  setPage: (page: PageName) => void;
   setTheme: (theme: Theme) => void;
   addGold: (gold: number) => void;
   onComplete?: (wasCorrect: boolean) => void;

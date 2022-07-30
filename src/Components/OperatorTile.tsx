@@ -1,5 +1,5 @@
 import React from "react";
-import { operators } from "../Pages/CountdownNumbersConfig";
+import { operators } from "../Pages/NumbersGameConfig";
 
 interface Props {
   hasTimerEnded: boolean;
