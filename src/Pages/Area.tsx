@@ -29,7 +29,7 @@ export const Area: React.FC<{
       className="area"
       style={{
         backgroundImage: `url(${props.area.theme.backgroundImageSrc})`,
-        backgroundSize: "100% 100%",
+        backgroundSize: "100%",
       }}
     >
       <section className="area-header">
