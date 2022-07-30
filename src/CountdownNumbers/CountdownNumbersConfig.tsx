@@ -23,8 +23,8 @@ interface Props extends CountdownNumbersConfigProps {
   page: Page;
   theme: Theme;
   settings: SettingsData;
-  setTheme: (theme: Theme) => void;
   setPage: (page: Page) => void;
+  setTheme: (theme: Theme) => void;
   addGold: (gold: number) => void;
   onComplete?: (wasCorrect: boolean, answer: string, targetAnswer: string, score: number | null) => void;
 }

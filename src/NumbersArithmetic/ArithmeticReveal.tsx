@@ -36,12 +36,17 @@ export interface ArithmeticRevealProps {
     revealIntervalSeconds?: number;
     timerConfig?: { isTimed: true; seconds: number } | { isTimed: false };
   };
+
+  finishingButtonText?: string;
 }
 
 interface Props extends ArithmeticRevealProps {
+  page: Page;
   theme: Theme;
   settings: SettingsData;
   setPage: (page: Page) => void;
+  setTheme: (theme: Theme) => void;
+  addGold: (gold: number) => void;
   onComplete?: (wasCorrect: boolean) => void;
 }
 

@@ -4,16 +4,16 @@ import CountdownLettersConfig, { CountdownLettersConfigProps } from "../Countdow
 import CountdownNumbersConfig, { CountdownNumbersConfigProps } from "../CountdownNumbers/CountdownNumbersConfig";
 import LetterCategoriesConfig, { LetterCategoriesConfigProps } from "../LetterCategories/LetterCategoriesConfig";
 import { MessageNotification } from "../MessageNotification";
-import { NubbleConfigProps } from "../Nubble/NubbleConfig";
-import { ArithmeticDragProps } from "../NumbersArithmetic/ArithmeticDrag";
-import { ArithmeticRevealProps } from "../NumbersArithmetic/ArithmeticReveal";
-import { GroupWallProps } from "../OnlyConnect/GroupWall";
+import NubbleConfig, { NubbleConfigProps } from "../Nubble/NubbleConfig";
+import ArithmeticDrag, { ArithmeticDragProps } from "../NumbersArithmetic/ArithmeticDrag";
+import ArithmeticReveal, { ArithmeticRevealProps } from "../NumbersArithmetic/ArithmeticReveal";
+import GroupWall, { GroupWallProps } from "../OnlyConnect/GroupWall";
 import { SettingsData } from "../SaveData";
 import { Theme } from "../Themes";
-import { AlgebraProps } from "../VerbalReasoning/Algebra/Algebra";
-import { NumberSetsProps } from "../VerbalReasoning/NumberSets/NumberSets";
-import { SameLetterWordsProps } from "../VerbalReasoning/SameLetterWords";
-import { WordCodesProps } from "../VerbalReasoning/WordCodes";
+import Algebra, { AlgebraProps } from "../VerbalReasoning/Algebra/Algebra";
+import NumberSets, { NumberSetsProps } from "../VerbalReasoning/NumberSets/NumberSets";
+import SameLetterWords, { SameLetterWordsProps } from "../VerbalReasoning/SameLetterWords";
+import WordCodes, { WordCodesProps } from "../VerbalReasoning/WordCodes";
 import WordleConfig, { WordleConfigProps } from "../WordleConfig";
 import { AreaConfig } from "./Area";
 
@@ -169,18 +169,22 @@ export const Level: React.FC<{
   onCompleteLevel: (isUnlockLevel: boolean, level: LevelConfig) => void;
 }> = (props) => {
   function renderGame() {
+    const commonProps = {
+      page: props.page,
+      theme: props.theme,
+      settings: props.settings,
+      setPage: props.setPage,
+      setTheme: props.setTheme,
+      addGold: props.addGold,
+      finishingButtonText: "Back to area",
+    };
+
     switch (props.level.level.gameCategory) {
       case "Wingo":
         return (
           <WordleConfig
             {...props.level.level.levelProps}
-            page={props.page}
-            theme={props.theme}
-            setTheme={props.setTheme}
-            setPage={props.setPage}
-            addGold={props.addGold}
-            finishingButtonText="Back to area"
-            settings={props.settings}
+            {...commonProps}
             onComplete={(wasCorrect) => {
               if (wasCorrect) {
                 props.onCompleteLevel(props.level.type === "unlock-level", props.level);
@@ -195,13 +199,7 @@ export const Level: React.FC<{
         return (
           <LetterCategoriesConfig
             {...props.level.level.levelProps}
-            page={props.page}
-            theme={props.theme}
-            setTheme={props.setTheme}
-            setPage={props.setPage}
-            addGold={props.addGold}
-            finishingButtonText="Back to area"
-            settings={props.settings}
+            {...commonProps}
             onComplete={(wasCorrect) => {
               if (wasCorrect) {
                 props.onCompleteLevel(props.level.type === "unlock-level", props.level);
@@ -211,16 +209,11 @@ export const Level: React.FC<{
           />
         );
 
-        case "CountdownLetters":
+      case "CountdownLetters":
         return (
           <CountdownLettersConfig
             {...props.level.level.levelProps}
-            page={props.page}
-            theme={props.theme}
-            setTheme={props.setTheme}
-            setPage={props.setPage}
-            addGold={props.addGold}
-            finishingButtonText="Back to area"
+            {...commonProps}
             settings={props.settings}
             onComplete={(wasCorrect) => {
               if (wasCorrect) {
@@ -231,17 +224,11 @@ export const Level: React.FC<{
           />
         );
 
-        case "CountdownNumbers":
+      case "CountdownNumbers":
         return (
           <CountdownNumbersConfig
             {...props.level.level.levelProps}
-            page={props.page}
-            theme={props.theme}
-            setTheme={props.setTheme}
-            setPage={props.setPage}
-            addGold={props.addGold}
-            finishingButtonText="Back to area"
-            settings={props.settings}
+            {...commonProps}
             onComplete={(wasCorrect) => {
               if (wasCorrect) {
                 props.onCompleteLevel(props.level.type === "unlock-level", props.level);
@@ -250,6 +237,125 @@ export const Level: React.FC<{
             }}
           />
         );
+
+      case "ArithmeticReveal":
+        return (
+          <ArithmeticReveal
+            {...props.level.level.levelProps}
+            {...commonProps}
+            onComplete={(wasCorrect) => {
+              if (wasCorrect) {
+                props.onCompleteLevel(props.level.type === "unlock-level", props.level);
+              }
+              props.setPage("campaign/area");
+            }}
+          />
+        );
+
+      case "ArithmeticDrag":
+        return (
+          <ArithmeticDrag
+            {...props.level.level.levelProps}
+            {...commonProps}
+            onComplete={(wasCorrect) => {
+              if (wasCorrect) {
+                props.onCompleteLevel(props.level.type === "unlock-level", props.level);
+              }
+              props.setPage("campaign/area");
+            }}
+          />
+        );
+
+      case "GroupWall":
+        return (
+          <GroupWall
+            {...props.level.level.levelProps}
+            {...commonProps}
+            onComplete={(wasCorrect) => {
+              if (wasCorrect) {
+                props.onCompleteLevel(props.level.type === "unlock-level", props.level);
+              }
+              props.setPage("campaign/area");
+            }}
+          />
+        );
+
+      case "SameLetterWords":
+        return (
+          <SameLetterWords
+            {...props.level.level.levelProps}
+            {...commonProps}
+            onComplete={(wasCorrect) => {
+              if (wasCorrect) {
+                props.onCompleteLevel(props.level.type === "unlock-level", props.level);
+              }
+              props.setPage("campaign/area");
+            }}
+          />
+        );
+
+      case "NumberSets":
+        return (
+          <NumberSets
+            {...props.level.level.levelProps}
+            {...commonProps}
+            onComplete={(wasCorrect) => {
+              if (wasCorrect) {
+                props.onCompleteLevel(props.level.type === "unlock-level", props.level);
+              }
+              props.setPage("campaign/area");
+            }}
+          />
+        );
+
+      case "Algebra":
+        return (
+          <Algebra
+            {...props.level.level.levelProps}
+            {...commonProps}
+            onComplete={(wasCorrect) => {
+              if (wasCorrect) {
+                props.onCompleteLevel(props.level.type === "unlock-level", props.level);
+              }
+              props.setPage("campaign/area");
+            }}
+          />
+        );
+
+      case "WordCodes":
+        return (
+          <WordCodes
+            {...props.level.level.levelProps}
+            {...commonProps}
+            onComplete={(wasCorrect) => {
+              if (wasCorrect) {
+                props.onCompleteLevel(props.level.type === "unlock-level", props.level);
+              }
+              props.setPage("campaign/area");
+            }}
+          />
+        );
+
+      case "Nubble":
+        return (
+          <NubbleConfig
+            {...props.level.level.levelProps}
+            {...commonProps}
+            onComplete={(wasCorrect) => {
+              if (wasCorrect) {
+                props.onCompleteLevel(props.level.type === "unlock-level", props.level);
+              }
+              props.setPage("campaign/area");
+            }}
+          />
+        );
+
+      // TODO: Render Campaign level (remaining unimplemented modes)
+      /*
+        | "puzzle/sequence"
+        | "countdown/gameshow"
+        | "lingo/gameshow";
+      */
     }
   }
   return (

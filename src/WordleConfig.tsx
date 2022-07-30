@@ -73,8 +73,8 @@ interface Props extends WordleConfigProps {
   theme: Theme;
   settings: SettingsData;
   setPage: (page: Page) => void;
-  addGold: (gold: number) => void;
   setTheme: (theme: Theme) => void;
+  addGold: (gold: number) => void;
   onComplete?: (wasCorrect: boolean, answer: string, targetAnswer: string, score: number | null) => void;
 }
 

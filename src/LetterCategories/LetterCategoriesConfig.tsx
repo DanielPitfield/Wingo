@@ -17,9 +17,9 @@ export interface LetterCategoriesConfigProps {
 }
 
 interface Props extends LetterCategoriesConfigProps {
+  page: Page;
   theme: Theme;
   settings: SettingsData;
-  page: Page;
   setPage: (page: Page) => void;
   setTheme: (theme: Theme) => void;
   addGold: (gold: number) => void;
