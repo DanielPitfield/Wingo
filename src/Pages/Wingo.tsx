@@ -630,7 +630,10 @@ const Wingo: React.FC<Props> = (props) => {
   return (
     <div
       className="App"
-      style={{ backgroundImage: props.theme && `url(${props.theme.backgroundImageSrc})`, backgroundSize: "100% 100%" }}
+      style={{
+        backgroundImage: !props.isCampaignLevel && props.theme ? `url(${props.theme.backgroundImageSrc})` : undefined,
+        backgroundSize: "100% 100%",
+      }}
     >
       {props.gameshowScore !== undefined && <div className="gameshow-score">{displayGameshowScore()}</div>}
       <div>{displayOutcome()}</div>
