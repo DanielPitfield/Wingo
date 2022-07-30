@@ -1160,12 +1160,18 @@ const Numble: React.FC<Props> = (props) => {
                   {teamNumberColourMappings.find((x) => x.teamNumber === teamPoints.teamNumber)?.teamName}
                 </div>
               )}
-              <div className="numble-score">
-                {totalPoints.find((x) => x.teamNumber === teamPoints.teamNumber)?.total}
-              </div>
-              <div className="numble-timer">
-                {props.teamTimers.find((x) => x.teamNumber === teamPoints.teamNumber)?.remainingSeconds}
-              </div>
+              <label>
+                Score
+                <div className="numble-score">
+                  {totalPoints.find((x) => x.teamNumber === teamPoints.teamNumber)?.total}
+                </div>
+              </label>
+              <label>
+                Time
+                <div className="numble-timer">
+                  {props.teamTimers.find((x) => x.teamNumber === teamPoints.teamNumber)?.remainingSeconds}
+                </div>
+              </label>
             </div>
           ))}
         </div>
