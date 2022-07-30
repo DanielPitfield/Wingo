@@ -209,6 +209,23 @@ const CountdownNumbersConfig: React.FC<Props> = (props) => {
     SaveData.setCountdownNumbersConfigGamemodeSettings(gamemodeSettings);
   }, [gamemodeSettings]);
 
+  React.useEffect(() => {
+    if (!inProgress) {
+      return;
+    }
+
+    const intermediaryStatuses = countdownStatuses.filter((status) => status.type === "intermediary");
+    const correctAnswer = intermediaryStatuses.find((status) => status.number === targetNumber);
+
+    if (wordIndex >= 1 && correctAnswer) {
+      // If game is in progress and there is an intermediary number, end the game prematurely
+      setClosestGuessSoFar(targetNumber);
+      setRemainingSeconds(0);
+      sethasTimerEnded(true);
+      setinProgress(false);
+    }
+  }, [countdownStatuses]);
+
   function getTargetNumber(min: number, max: number) {
     min = Math.ceil(min);
     max = Math.floor(max);
