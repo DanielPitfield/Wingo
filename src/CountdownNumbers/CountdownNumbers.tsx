@@ -520,21 +520,6 @@ const CountdownNumbers: React.FC<Props> = (props) => {
         </div>
       )}
 
-      {props.gameshowScore !== undefined && <div className="gameshow-score">{displayGameshowScore()}</div>}
-
-      <div className="countdown-numbers-grid">{populateGrid()}</div>
-
-      {props.inProgress && (
-        <>
-          <Button mode="destructive" onClick={props.clearGrid} settings={props.settings}>
-            Clear
-          </Button>
-          <Button mode="default" onClick={props.submitBestGuess} settings={props.settings}>
-            Use Best Guess
-          </Button>
-        </>
-      )}
-
       {!props.inProgress && (
         <>
           {displayOutcome()}
@@ -578,6 +563,22 @@ const CountdownNumbers: React.FC<Props> = (props) => {
           </Button>
         </>
       )}
+
+      {props.gameshowScore !== undefined && <div className="gameshow-score">{displayGameshowScore()}</div>}
+
+      <div className="countdown-numbers-grid">{populateGrid()}</div>
+
+      {props.inProgress && (
+        <>
+          <Button mode="destructive" onClick={props.clearGrid} settings={props.settings}>
+            Clear
+          </Button>
+          <Button mode="default" onClick={props.submitBestGuess} settings={props.settings}>
+            Use Best Guess
+          </Button>
+        </>
+      )}
+
       <div>
         {props.gamemodeSettings.timerConfig.isTimed && (
           <ProgressBar
