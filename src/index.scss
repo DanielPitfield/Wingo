@@ -426,6 +426,7 @@ $data-statuses: (
   vertical-align: middle;
 }
 
+// TODO: This isn't being applied, the className is target-number but that is the wrapping div not the target number tile
 .target_number {
   width: 100px;
   height: 60px;
@@ -487,7 +488,13 @@ $data-statuses: (
     }
   }
   .add-number-buttons-wrapper {
-    margin-bottom: 0.5em;
+    display: flex;
+    margin: 0.5em 0;
+  }
+  .add-number-buttons {
+    flex-direction: row;
+    flex-grow: 1;
+    justify-content: center;
   }
 }
 

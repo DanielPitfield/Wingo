@@ -125,79 +125,67 @@ const CountdownNumbers: React.FC<Props> = (props) => {
     setSolutions(puzzle.solve());
   }, [props.targetNumber]);
 
+  function getSmallNumber(): number | null {
+    // Already selected enough numbers, don't add any more
+    if (hasNumberSelectionFinished(props.countdownStatuses, props.gamemodeSettings.numOperands)) {
+      return null;
+    }
+
+    // Array of numbers 1 through 10
+    const smallNumbers = [];
+    for (let i = 1; i <= 10; i++) {
+      smallNumbers.push(i);
+    }
+
+    return pickRandomElementFrom(smallNumbers);
+  }
+
+  function getBigNumber(): number | null {
+    if (hasNumberSelectionFinished(props.countdownStatuses, props.gamemodeSettings.numOperands)) {
+      return null;
+    }
+
+    // The four standard big numbers
+    const bigNumbers = [25, 50, 75, 100];
+
+    if (props.gamemodeSettings.hasScaryNumbers) {
+      let scaryNumber;
+      while (scaryNumber === undefined) {
+        // Random number between 11 and 99
+        const randomNumber = randomIntFromInterval(11, 99);
+        // A multiple of 10 is too easy!
+        if (randomNumber % 10 !== 0) {
+          scaryNumber = randomNumber;
+        }
+      }
+      return scaryNumber;
+    } else {
+      // Randomly select one of the four standard big numbers
+      return pickRandomElementFrom(bigNumbers);
+    }
+  }
+
+  // Automatically choose a selection of small or big numbers
+  function quickNumberSelection() {
+    let newCountdownExpression = [];
+
+    // Build selection by randomly adding small numbers or big numbers
+    for (let i = 0; i < props.gamemodeSettings.numOperands; i++) {
+      let x = Math.floor(Math.random() * 3) === 0;
+      // 66% chance small number, 33% chance big number
+      if (x) {
+        newCountdownExpression.push(getBigNumber()!);
+      } else {
+        newCountdownExpression.push(getSmallNumber()!);
+      }
+    }
+    // Set the entire expression at once
+    props.onSubmitCountdownExpression(newCountdownExpression);
+  }
   // Create grid of rows (for guessing numbers)
   function populateGrid() {
-    /**
-     *
-     * @returns
-     */
-    function getSmallNumber(): number | null {
-      // Already 6 picked numbers, don't add any more
-      if (hasNumberSelectionFinished(props.countdownStatuses, props.gamemodeSettings.numOperands)) {
-        return null;
-      }
-
-      // Array of numbers 1 through 10
-      const smallNumbers = [];
-      for (let i = 1; i <= 10; i++) {
-        smallNumbers.push(i);
-      }
-
-      return pickRandomElementFrom(smallNumbers);
-    }
-
-    /**
-     *
-     * @returns
-     */
-    function getBigNumber(): number | null {
-      if (hasNumberSelectionFinished(props.countdownStatuses, props.gamemodeSettings.numOperands)) {
-        return null;
-      }
-
-      // The four standard big numbers
-      const bigNumbers = [25, 50, 75, 100];
-
-      if (props.gamemodeSettings.hasScaryNumbers) {
-        let scaryNumber;
-        while (scaryNumber === undefined) {
-          // Random number between 11 and 99
-          const randomNumber = randomIntFromInterval(11, 99);
-          // A multiple of 10 is too easy!
-          if (randomNumber % 10 !== 0) {
-            scaryNumber = randomNumber;
-          }
-        }
-        return scaryNumber;
-      } else {
-        // Randomly select one of the four standard big numbers
-        return pickRandomElementFrom(bigNumbers);
-      }
-    }
-
-    /**
-     *
-     */
-    function quickNumberSelection() {
-      let newCountdownExpression = [];
-
-      // Build word by randomly adding small numbers or big numbers
-      for (let i = 0; i < props.gamemodeSettings.numOperands; i++) {
-        let x = Math.floor(Math.random() * 3) === 0;
-        // 66% chance small number, 33% chance big number
-        if (x) {
-          newCountdownExpression.push(getBigNumber()!);
-        } else {
-          newCountdownExpression.push(getSmallNumber()!);
-        }
-      }
-      // Set the entire expression at once
-      props.onSubmitCountdownExpression(newCountdownExpression);
-    }
-
     var Grid = [];
 
-    // Check if 6 numbers have been selected
     const isSelectionFinished = hasNumberSelectionFinished(props.countdownStatuses, props.gamemodeSettings.numOperands);
 
     /*
@@ -218,7 +206,7 @@ const CountdownNumbers: React.FC<Props> = (props) => {
           countdownStatuses={props.countdownStatuses}
         />
         <div className="add-number-buttons-wrapper">
-          <Button
+          <Button className="add-number-buttons"
             mode={"default"}
             settings={props.settings}
             disabled={isSelectionFinished}
@@ -226,7 +214,7 @@ const CountdownNumbers: React.FC<Props> = (props) => {
           >
             Small
           </Button>
-          <Button
+          <Button className="add-number-buttons"
             mode={"default"}
             settings={props.settings}
             disabled={isSelectionFinished}
@@ -234,7 +222,7 @@ const CountdownNumbers: React.FC<Props> = (props) => {
           >
             Big
           </Button>
-          <Button
+          <Button className="add-number-buttons"
             mode={"default"}
             settings={props.settings}
             disabled={hasNumberSelectionStarted(props.countdownStatuses) || isSelectionFinished}
@@ -246,48 +234,46 @@ const CountdownNumbers: React.FC<Props> = (props) => {
       </div>
     );
 
-    if (props.inProgress) {
-      for (let i = 0; i < props.numGuesses; i++) {
-        let guess: Guess;
+    for (let i = 0; i < props.numGuesses; i++) {
+      let guess: Guess;
 
-        if (props.wordIndex === i) {
-          /* 
+      if (props.wordIndex === i) {
+        /* 
         If the wordIndex and the row number are the same
         (i.e the row is currently being used)
         Show the currentGuess
         */
-          guess = props.currentGuess;
-        } else if (props.wordIndex <= i) {
-          /*
+        guess = props.currentGuess;
+      } else if (props.wordIndex <= i) {
+        /*
         If the wordIndex is behind the currently iterated row
         (i.e the row has not been used yet)
         Show an empty guess
         */
-          guess = { operand1: null, operand2: null, operator: "+" };
-        } else {
-          /* 
+        guess = { operand1: null, operand2: null, operator: "+" };
+      } else {
+        /* 
         If the wordIndex is ahead of the currently iterated row
         (i.e the row has already been used)
         Show the respective guess
         */
-          guess = props.guesses[i];
-        }
-
-        Grid.push(
-          <NumberRow
-            key={`countdown_numbers_input ${i}`}
-            hasTimerEnded={props.hasTimerEnded}
-            onClick={props.onClick}
-            expression={guess}
-            targetNumber={props.targetNumber}
-            hasSubmit={!props.inProgress}
-            setOperator={props.setOperator}
-            disabled={!isSelectionFinished || i > props.wordIndex}
-            rowIndex={i}
-            indetermediaryGuessStatuses={props.countdownStatuses.filter((x) => x.type === "intermediary") as any}
-          />
-        );
+        guess = props.guesses[i];
       }
+
+      Grid.push(
+        <NumberRow
+          key={`countdown_numbers_input ${i}`}
+          hasTimerEnded={props.hasTimerEnded}
+          onClick={props.onClick}
+          expression={guess}
+          targetNumber={props.targetNumber}
+          hasSubmit={!props.inProgress}
+          setOperator={props.setOperator}
+          disabled={!isSelectionFinished || i > props.wordIndex}
+          rowIndex={i}
+          indetermediaryGuessStatuses={props.countdownStatuses.filter((x) => x.type === "intermediary") as any}
+        />
+      );
     }
 
     return Grid;
@@ -520,6 +506,8 @@ const CountdownNumbers: React.FC<Props> = (props) => {
         </div>
       )}
 
+      {props.gameshowScore !== undefined && <div className="gameshow-score">{displayGameshowScore()}</div>}
+
       {!props.inProgress && (
         <>
           {displayOutcome()}
@@ -563,8 +551,6 @@ const CountdownNumbers: React.FC<Props> = (props) => {
           </Button>
         </>
       )}
-
-      {props.gameshowScore !== undefined && <div className="gameshow-score">{displayGameshowScore()}</div>}
 
       <div className="countdown-numbers-grid">{populateGrid()}</div>
 
