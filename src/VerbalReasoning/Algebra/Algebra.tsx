@@ -422,7 +422,7 @@ const Algebra: React.FC<Props> = (props) => {
   return (
     <div
       className="App algebra"
-      style={{ backgroundImage: `url(${props.theme.backgroundImageSrc})`, backgroundSize: "100%" }}
+      style={{ backgroundImage: `url(${props.theme.backgroundImageSrc})`, backgroundSize: "100% 100%" }}
     >
       {!props.isCampaignLevel && (
         <div className="gamemodeSettings">

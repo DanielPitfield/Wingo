@@ -206,7 +206,8 @@ const CountdownNumbers: React.FC<Props> = (props) => {
           countdownStatuses={props.countdownStatuses}
         />
         <div className="add-number-buttons-wrapper">
-          <Button className="add-number-buttons"
+          <Button
+            className="add-number-buttons"
             mode={"default"}
             settings={props.settings}
             disabled={isSelectionFinished}
@@ -214,7 +215,8 @@ const CountdownNumbers: React.FC<Props> = (props) => {
           >
             Small
           </Button>
-          <Button className="add-number-buttons"
+          <Button
+            className="add-number-buttons"
             mode={"default"}
             settings={props.settings}
             disabled={isSelectionFinished}
@@ -222,7 +224,8 @@ const CountdownNumbers: React.FC<Props> = (props) => {
           >
             Big
           </Button>
-          <Button className="add-number-buttons"
+          <Button
+            className="add-number-buttons"
             mode={"default"}
             settings={props.settings}
             disabled={hasNumberSelectionStarted(props.countdownStatuses) || isSelectionFinished}
@@ -499,7 +502,10 @@ const CountdownNumbers: React.FC<Props> = (props) => {
   }
 
   return (
-    <div className="App" style={{ backgroundImage: `url(${props.theme.backgroundImageSrc})`, backgroundSize: "100%" }}>
+    <div
+      className="App"
+      style={{ backgroundImage: `url(${props.theme.backgroundImageSrc})`, backgroundSize: "100% 100%" }}
+    >
       {!props.isCampaignLevel && !props.gameshowScore && (
         <div className="gamemodeSettings">
           <GamemodeSettingsMenu>{generateSettingsOptions()}</GamemodeSettingsMenu>

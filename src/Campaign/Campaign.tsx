@@ -81,7 +81,7 @@ export const Campaign: React.FC<{
               backgroundImage: `url(${
                 unlock_status === "unlockable" ? BackgroundImageSrc : area.theme.backgroundImageSrc
               })`,
-              backgroundSize: "100%",
+              backgroundSize: "100% 100%",
             }}
           >
             <strong className="area-name widget-subtitle">Area {index + 1}</strong>

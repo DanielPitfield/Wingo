@@ -426,7 +426,10 @@ const CountdownLetters: React.FC<Props> = (props) => {
   }
 
   return (
-    <div className="App" style={{ backgroundImage: `url(${props.theme.backgroundImageSrc})`, backgroundSize: "100%" }}>
+    <div
+      className="App"
+      style={{ backgroundImage: `url(${props.theme.backgroundImageSrc})`, backgroundSize: "100% 100%" }}
+    >
       {!props.isCampaignLevel && !props.gameshowScore && (
         <div className="gamemodeSettings">
           <GamemodeSettingsMenu>{generateSettingsOptions()}</GamemodeSettingsMenu>

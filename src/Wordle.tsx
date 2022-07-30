@@ -134,7 +134,7 @@ const Wordle: React.FC<Props> = (props) => {
     } else if (props.mode === "conundrum" && props.conundrum) {
       // Create read only WordRow that reveals conundrum
       Grid.push(
-        <div className="countdown-letters-wrapper" key={"conundrum/reveal"} >
+        <div className="countdown-letters-wrapper" key={"conundrum/reveal"}>
           <WordRow
             key={"conundrum/read-only"}
             page={props.page}
@@ -630,7 +630,7 @@ const Wordle: React.FC<Props> = (props) => {
   return (
     <div
       className="App"
-      style={{ backgroundImage: props.theme && `url(${props.theme.backgroundImageSrc})`, backgroundSize: "100%" }}
+      style={{ backgroundImage: props.theme && `url(${props.theme.backgroundImageSrc})`, backgroundSize: "100% 100%" }}
     >
       {props.gameshowScore !== undefined && <div className="gameshow-score">{displayGameshowScore()}</div>}
       <div>{displayOutcome()}</div>

@@ -361,7 +361,7 @@ export const Level: React.FC<{
   return (
     <div
       className="level"
-      style={{ backgroundImage: `url(${props.theme.backgroundImageSrc})`, backgroundSize: "100%" }}
+      style={{ backgroundImage: `url(${props.theme.backgroundImageSrc})`, backgroundSize: "100% 100%" }}
     >
       <section className="area-header">
         <h2 className="area-header-title">{props.area.name}</h2>

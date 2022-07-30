@@ -21,7 +21,7 @@ const wordCodesModes = ["match", "question"] as const;
 export type wordCodesMode = typeof wordCodesModes[number];
 
 export interface WordCodesProps {
-  isCampaignLevel: boolean;  
+  isCampaignLevel: boolean;
   /* 
   Question mode - there can be more words provided than codes, answer questions converting between words and codes
   Match mode - same number of words as codes, match them together
@@ -309,8 +309,7 @@ const WordCodes: React.FC<Props> = (props) => {
     // Get only the words that can be made from these valid letters
     const originalMatches = targetWordArray.filter((word) => isWordValid(validLetters, word));
 
-    const subsetSize =
-      props.mode === "match" ? gamemodeSettings.numCodesToMatch : gamemodeSettings.numDisplayWords;
+    const subsetSize = props.mode === "match" ? gamemodeSettings.numCodesToMatch : gamemodeSettings.numDisplayWords;
     // Choose/determine a subset of these words
     let wordSubset: string[] = [];
     let failCount = 0;
@@ -944,7 +943,7 @@ const WordCodes: React.FC<Props> = (props) => {
   return (
     <div
       className="App word_codes"
-      style={{ backgroundImage: `url(${props.theme.backgroundImageSrc})`, backgroundSize: "100%" }}
+      style={{ backgroundImage: `url(${props.theme.backgroundImageSrc})`, backgroundSize: "100% 100%" }}
     >
       {!props.isCampaignLevel && (
         <div className="gamemodeSettings">
