@@ -26,7 +26,7 @@ export interface ArithmeticRevealProps {
     But then also offer a Custom option, where the user can fine tune these settings themselves
     (when the Custom option is selected, the inputs for the settings appear)
     */
-    
+
     numCheckpoints?: number;
     // How many tiles appear EACH checkpoint?
     numTiles?: number;
@@ -627,7 +627,7 @@ const ArithmeticReveal: React.FC<Props> = (props) => {
   return (
     <div
       className="App numbers_arithmetic"
-      style={{ backgroundImage: `url(${props.theme.backgroundImageSrc})`, backgroundSize: "100%" }}
+      style={{ backgroundImage: `url(${props.theme.backgroundImageSrc})`, backgroundSize: "100% 100%" }}
     >
       {!props.isCampaignLevel && (
         <div className="gamemodeSettings">

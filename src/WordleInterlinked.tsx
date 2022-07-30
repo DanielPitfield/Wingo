@@ -783,6 +783,14 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
             }
           })();
 
+          const displayedLetter = (() => {
+            if (inProgress) {
+              return letter === "?" ? "" : letter;
+            }
+
+            return matchingGridEntry?.letter || "?";
+          })();
+
           return (
             <div
               key={x}
@@ -791,7 +799,7 @@ export const WordleInterlinked: React.FC<Props> = (props) => {
             >
               <LetterTile
                 key={x}
-                letter={inProgress ? letter : matchingGridEntry ? matchingGridEntry?.letter : "?"}
+                letter={displayedLetter}
                 settings={props.settings}
                 status={letter === "?" ? "not set" : tileStatus ? tileStatus : "not set"}
                 onClick={matchingGridEntry ? () => setCurrentWordIndex(matchingGridEntry.wordIndex!) : undefined}

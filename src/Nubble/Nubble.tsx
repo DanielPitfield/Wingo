@@ -1093,7 +1093,10 @@ const Nubble: React.FC<Props> = (props) => {
   }
 
   return (
-    <div className="App" style={{ backgroundImage: `url(${props.theme.backgroundImageSrc})`, backgroundSize: "100%" }}>
+    <div
+      className="App"
+      style={{ backgroundImage: `url(${props.theme.backgroundImageSrc})`, backgroundSize: "100% 100%" }}
+    >
       <div>{displayOutcome()}</div>
 
       <div>

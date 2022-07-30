@@ -210,7 +210,7 @@ input {
   width: 1.6em;
   height: 1.6em;
   border: 2px solid #6664;
-  border-radius: 8px;
+  border-radius: 3px;
   margin: 2px;
   vertical-align: middle;
   font-family: "Ubuntu", sans-serif;
@@ -219,8 +219,9 @@ input {
   color: #444;
   text-transform: uppercase;
   user-select: none;
-  text-shadow: 0 2px 2px #999;
+  text-shadow: 0 3px 1px #999a;
   background-color: #e0e4e7;
+  box-shadow: 0px 3px 2px 0px #646464dd;
   /*
   transition: transform 0.8s;
   transform-style: preserve-3d;
@@ -381,6 +382,8 @@ $data-statuses: (
 .countdown_word_grid .word_row .letter_tile[data-status="correct"] {
   color: white;
   background-color: map.get($data-statuses, "correct");
+  box-shadow: 0px 3px 2px 0px darken(map.get($data-statuses, "correct"), 20%);
+  text-shadow: 0 4px 1px darken(map.get($data-statuses, "correct"), 12%);
   &[data-is-clickable="true"]:hover {
     background-color: lighten(map.get($data-statuses, "correct"), 10%);
   }
@@ -390,6 +393,8 @@ $data-statuses: (
 .countdown_word_grid .word_row .letter_tile[data-status="contains"] {
   color: white;
   background-color: map.get($data-statuses, "contains");
+  box-shadow: 0px 3px 2px 0px darken(map.get($data-statuses, "contains"), 20%);
+  text-shadow: 0 4px 1px darken(map.get($data-statuses, "contains"), 12%);
   &[data-is-clickable="true"]:hover {
     background-color: lighten(map.get($data-statuses, "contains"), 10%);
   }
@@ -399,6 +404,8 @@ $data-statuses: (
 .countdown_word_grid .word_row .letter_tile[data-status="incorrect"] {
   color: white;
   background-color: map.get($data-statuses, "incorrect");
+  box-shadow: 0px 3px 2px 0px darken(map.get($data-statuses, "incorrect"), 20%);
+  text-shadow: 0 4px 1px darken(map.get($data-statuses, "incorrect"), 12%);
   &[data-is-clickable="true"]:hover {
     background-color: lighten(map.get($data-statuses, "incorrect"), 10%);
   }
@@ -408,6 +415,8 @@ $data-statuses: (
 .countdown_word_grid .word_row .letter_tile[data-status="not in word"] {
   color: white;
   background-color: map.get($data-statuses, "not in word");
+  box-shadow: 0px 3px 2px 0px darken(map.get($data-statuses, "not in word"), 20%);
+  text-shadow: 0 4px 1px darken(map.get($data-statuses, "not in word"), 12%);
   &[data-is-clickable="true"]:hover {
     background-color: lighten(map.get($data-statuses, "not in word"), 10%);
   }
@@ -696,10 +705,11 @@ $data-statuses: (
     margin-bottom: 0.6em;
     font-size: 0.74em;
     .sidebar {
-      background: #ddd;
+      background: #e1e1e1;
       padding: 0.8em;
       margin: 0.6em;
       margin-bottom: 0;
+      box-shadow: 1px 1px 2px #7778;
       &.campaign-sidebar {
         padding: 0;
         .campaign.widgets {
@@ -716,7 +726,7 @@ $data-statuses: (
         padding: 0.2em;
         padding-bottom: 0.4em;
         margin: 0;
-        color: #fff;
+        color: #777;
         font-size: 1.5em;
         user-select: none;
         text-transform: uppercase;
@@ -740,7 +750,7 @@ $data-statuses: (
     margin: 0.4em;
     width: 11em;
     height: 7em;
-    background-color: #eee;
+    background-color: #f7f7f7;
     border-bottom: 3px solid #ccc;
     padding: 1em;
     padding-top: 0.5em;
@@ -761,6 +771,7 @@ $data-statuses: (
     .widget-title {
       font-size: 1.2em;
       position: relative;
+      padding-right: 1em;
       .tooltip {
         display: none;
         position: absolute;
@@ -2115,10 +2126,15 @@ $nubble-colors-names: (
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    min-height: 65vh;
+    background-color: #111;
+    border-color: #000;
+    background-image: none;
+    padding: 1em;
+    margin: 1em;
     .word-grid-row {
       display: flex;
       .letter-tile-wrapper {
+        background-color: #111;
         &[data-is-focussed="true"] {
           .letter_tile[data-status="not set"] {
             background-color: #fff;
@@ -2131,6 +2147,7 @@ $nubble-colors-names: (
         }
         .letter_tile {
           font-size: 1.7em !important;
+          border-radius: 0;
         }
       }
     }
