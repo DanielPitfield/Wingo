@@ -2108,10 +2108,14 @@ $nubble-colors-names: (
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    min-height: 65vh;
+    background-color: #111;
+    background-image: none;
+    padding: 1em;
+    margin: 1em;
     .word-grid-row {
       display: flex;
       .letter-tile-wrapper {
+        background-color: #111;
         &[data-is-focussed="true"] {
           .letter_tile[data-status="not set"] {
             background-color: #fff;
@@ -2124,6 +2128,7 @@ $nubble-colors-names: (
         }
         .letter_tile {
           font-size: 1.7em !important;
+          border-radius: 0;
         }
       }
     }
