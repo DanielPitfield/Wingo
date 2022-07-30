@@ -427,18 +427,25 @@ $data-statuses: (
 }
 
 // TODO: This isn't being applied, the className is target-number but that is the wrapping div not the target number tile
-.target_number {
-  width: 100px;
-  height: 60px;
-  border: 2px solid #969595;
-  margin: 2px;
-  vertical-align: middle;
-  font-size: 3rem;
-  font-weight: bold;
-  color: white;
-  background-color: rgb(6, 6, 179);
-  text-transform: uppercase;
-  user-select: none;
+.target-number {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0.2em 0;
+
+  .number_tile {
+    width: 2.5em;
+    height: 0.8em;
+    border: 2px solid #969595;
+    margin: 2px;
+    vertical-align: middle;
+    font-size: 3rem;
+    font-weight: bold;
+    color: white;
+    background-color: rgb(6, 6, 179);
+    text-transform: uppercase;
+    user-select: none;
+  }
 }
 
 .number_tile,
