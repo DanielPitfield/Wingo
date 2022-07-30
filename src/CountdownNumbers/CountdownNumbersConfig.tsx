@@ -235,24 +235,6 @@ const CountdownNumbersConfig: React.FC<Props> = (props) => {
     }
   }
 
-  function onEnter() {
-    if (!inProgress) {
-      return;
-    }
-
-    // The selection numbers have not all been picked
-    if (!hasNumberSelectionFinished(countdownStatuses, gamemodeSettings.numOperands)) {
-      return;
-    }
-
-    // Nothing entered yet
-    if (!hasSubmitNumber) {
-      return;
-    }
-
-    // TODO: Add completed round to game history
-  }
-
   function onSubmitCountdownNumber(number: number) {
     if (!number) {
       return;
@@ -533,7 +515,6 @@ const CountdownNumbersConfig: React.FC<Props> = (props) => {
       settings={props.settings}
       setTheme={props.setTheme}
       onClick={addOperandToGuess}
-      onEnter={onEnter}
       onSubmitCountdownNumber={onSubmitCountdownNumber}
       onSubmitCountdownExpression={onSubmitCountdownExpression}
       onSubmitNumber={onSubmitNumber}

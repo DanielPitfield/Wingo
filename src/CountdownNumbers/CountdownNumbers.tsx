@@ -50,7 +50,6 @@ interface Props {
   submitBestGuess: () => void;
   setTheme: (theme: Theme) => void;
   setPage: (page: Page) => void;
-  onEnter: () => void;
   onSubmitCountdownNumber: (number: number) => void;
   onSubmitCountdownExpression: (numberExpression: number[]) => void;
   onSubmitNumber: (number: number) => void;
