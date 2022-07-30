@@ -1,38 +1,38 @@
 import React, { useState, useEffect } from "react";
-import { SplashScreen } from "./SplashScreen";
-import { LobbyMenu } from "./LobbyMenu";
-import WordleConfig, { pickRandomElementFrom } from "./WordleConfig";
-import { Button } from "./Button";
-import NubbleConfig from "./Nubble/NubbleConfig";
-import GoldCoin from "./images/gold.png";
-import { SaveData, SettingsData } from "./SaveData";
-import CountdownLettersConfig from "./CountdownLetters/CountdownLettersConfig";
-import CountdownNumbersConfig from "./CountdownNumbers/CountdownNumbersConfig";
-import { Campaign } from "./Campaign/Campaign";
-import { Area, AreaConfig } from "./Campaign/Area";
-import { getId, Level, LevelConfig } from "./Campaign/Level";
-import LetterCategoriesConfig from "./LetterCategories/LetterCategoriesConfig";
-import ArithmeticReveal from "./NumbersArithmetic/ArithmeticReveal";
-import ArithmeticDrag from "./NumbersArithmetic/ArithmeticDrag";
-import { PuzzleConfig } from "./Puzzles/PuzzleConfig";
-import { Theme, Themes } from "./Themes";
-import { AllCampaignAreas } from "./Campaign/AllCampaignAreas";
-import { Settings } from "./Settings";
-import GroupWall from "./OnlyConnect/GroupWall";
-import { useBackgroundMusic } from "./Sounds";
-import { VERSION } from "./version";
+import { SplashScreen } from "./Pages/SplashScreen";
+import { LobbyMenu } from "./Pages/LobbyMenu";
+import WordleConfig, { pickRandomElementFrom } from "./Pages/WordleConfig";
+import { Button } from "./Components/Button";
+import NubbleConfig from "./Pages/NubbleConfig";
+import GoldCoin from "./Data/Images/gold.png";
+import { SaveData, SettingsData } from "./Data/SaveData";
+import CountdownLettersConfig from "./Pages/CountdownLettersConfig";
+import CountdownNumbersConfig from "./Pages/CountdownNumbersConfig";
+import { Campaign } from "./Pages/Campaign";
+import { Area, AreaConfig } from "./Pages/Area";
+import { getId, Level, LevelConfig } from "./Components/Level";
+import LetterCategoriesConfig from "./Pages/LetterCategoriesConfig";
+import ArithmeticReveal from "./Pages/ArithmeticReveal";
+import ArithmeticDrag from "./Pages/ArithmeticDrag";
+import { PuzzleConfig } from "./Pages/PuzzleConfig";
+import { Theme, Themes } from "./Data/Themes";
+import { AllCampaignAreas } from "./Data/CampaignAreas/AllCampaignAreas";
+import { Settings } from "./Pages/Settings";
+import OnlyConnect from "./Pages/OnlyConnect";
+import { useBackgroundMusic } from "./Data/Sounds";
+import { VERSION } from "./Data/Version";
 import { ErrorBoundary } from "react-error-boundary";
-import { ErrorFallback } from "./ErrorFallback";
-import SameLetterWords from "./VerbalReasoning/SameLetterWords";
-import NumberSets from "./VerbalReasoning/NumberSets/NumberSets";
-import Algebra from "./VerbalReasoning/Algebra/Algebra";
-import { ChallengesInfo } from "./Challenges/ChallengesInfo";
-import WordCodes from "./VerbalReasoning/WordCodes";
-import { CountdownGameshow } from "./CountdownGameshow";
-import { LingoGameshow } from "./LingoGameshow";
+import { ErrorFallback } from "./Pages/ErrorFallback";
+import SameLetterWords from "./Pages/SameLetterWords";
+import NumberSets from "./Pages/NumberSets";
+import Algebra from "./Pages/Algebra";
+import { ChallengesInfo } from "./Components/ChallengesInfo";
+import WordCodes from "./Pages/WordCodes";
+import { CountdownGameshow } from "./Pages/CountdownGameshow";
+import { LingoGameshow } from "./Pages/LingoGameshow";
 import { FiArrowLeft, FiHelpCircle, FiSettings } from "react-icons/fi";
-import HelpInformation from "./HelpInformation";
-import { TitlePage } from "./TitlePage";
+import HelpInformation from "./Components/HelpInformation";
+import { TitlePage } from "./Pages/TitlePage";
 import {
   defaultAlgebraGamemodeSettings,
   defaultArithmeticDragGamemodeSettings,
@@ -53,7 +53,7 @@ import {
   DEFAULT_WORD_LENGTH_CONUNDRUM,
   DEFAULT_WORD_LENGTH_INCREASING,
   DEFAULT_WORD_LENGTH_PUZZLE,
-} from "./defaultGamemodeSettings";
+} from "./Data/DefaultGamemodeSettings";
 
 // TODO: Simplify string literals (names of pages)
 export type Page =
@@ -815,7 +815,7 @@ export const App: React.FC = () => {
         return <NubbleConfig campaignConfig={{ isCampaignLevel: false }} {...commonProps} />;
 
       case "only_connect/wall":
-        return <GroupWall {...commonProps} />;
+        return <OnlyConnect {...commonProps} />;
 
       case "verbal_reasoning/sameLetters":
         return <SameLetterWords {...commonProps} />;
