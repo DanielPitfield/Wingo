@@ -9,7 +9,8 @@ export const area: AreaConfig = {
     type: "unlock-level",
     hint: <>Unlock this area</>,
     level: {
-      gameCategory: "wingo",
+      gameCategory: "Wingo",
+      page: "wingo/repeat",
       levelProps: {
         mode: "repeat",
         targetWord: "space",
@@ -36,7 +37,8 @@ export const area: AreaConfig = {
         y: 5,
       },
       level: {
-        gameCategory: "wingo",
+        gameCategory: "Wingo",
+        page: "wingo/repeat",
         levelProps: {
           mode: "repeat",
           targetWord: "earth",
@@ -60,7 +62,8 @@ export const area: AreaConfig = {
         y: 5,
       },
       level: {
-        gameCategory: "wingo",
+        gameCategory: "Wingo",
+        page: "wingo/repeat",
         levelProps: {
           mode: "repeat",
           targetWord: "mars",
@@ -84,7 +87,8 @@ export const area: AreaConfig = {
         y: 6,
       },
       level: {
-        gameCategory: "wingo",
+        gameCategory: "Wingo",
+        page: "wingo/repeat",
         levelProps: {
           mode: "repeat",
           targetWord: "orbit",
@@ -108,7 +112,8 @@ export const area: AreaConfig = {
         y: 12,
       },
       level: {
-        gameCategory: "wingo",
+        gameCategory: "Wingo",
+        page: "wingo/repeat",
         levelProps: {
           mode: "repeat",
           targetWord: "venus",
@@ -132,7 +137,8 @@ export const area: AreaConfig = {
         y: 20,
       },
       level: {
-        gameCategory: "wingo",
+        gameCategory: "Wingo",
+        page: "wingo/repeat",
         levelProps: {
           mode: "repeat",
           targetWord: "mercury",
@@ -156,7 +162,8 @@ export const area: AreaConfig = {
         y: 28,
       },
       level: {
-        gameCategory: "wingo",
+        gameCategory: "Wingo",
+        page: "wingo/repeat",
         levelProps: {
           mode: "repeat",
           targetWord: "gravity",
@@ -180,7 +187,8 @@ export const area: AreaConfig = {
         y: 36,
       },
       level: {
-        gameCategory: "wingo",
+        gameCategory: "Wingo",
+        page: "wingo/repeat",
         levelProps: {
           mode: "repeat",
           targetWord: "jupiter",
@@ -204,7 +212,8 @@ export const area: AreaConfig = {
         y: 44,
       },
       level: {
-        gameCategory: "wingo",
+        gameCategory: "Wingo",
+        page: "wingo/repeat",
         levelProps: {
           mode: "repeat",
           targetWord: "galaxy",
@@ -228,7 +237,8 @@ export const area: AreaConfig = {
         y: 52,
       },
       level: {
-        gameCategory: "wingo",
+        gameCategory: "Wingo",
+        page: "wingo/repeat",
         levelProps: {
           mode: "repeat",
           targetWord: "neptune",
@@ -252,7 +262,8 @@ export const area: AreaConfig = {
         y: 60,
       },
       level: {
-        gameCategory: "wingo",
+        gameCategory: "Wingo",
+        page: "wingo/repeat",
         levelProps: {
           mode: "repeat",
           targetWord: "flare",
@@ -268,6 +279,7 @@ export const area: AreaConfig = {
         },
       },
     },
+    /*
     {
       type: "level",
       hint: null,
@@ -282,6 +294,7 @@ export const area: AreaConfig = {
         },
       },
     },
+    */
     {
       type: "level",
       hint: <>Planet with icy rings</>,
@@ -290,7 +303,8 @@ export const area: AreaConfig = {
         y: 76,
       },
       level: {
-        gameCategory: "wingo",
+        gameCategory: "Wingo",
+        page: "wingo/repeat",
         levelProps: {
           mode: "repeat",
           targetWord: "saturn",
@@ -314,7 +328,8 @@ export const area: AreaConfig = {
         y: 82,
       },
       level: {
-        gameCategory: "wingo",
+        gameCategory: "Wingo",
+        page: "wingo/repeat",
         levelProps: {
           mode: "repeat",
           targetWord: "aurora",
@@ -338,7 +353,8 @@ export const area: AreaConfig = {
         y: 90,
       },
       level: {
-        gameCategory: "wingo",
+        gameCategory: "Wingo",
+        page: "wingo/repeat",
         levelProps: {
           mode: "repeat",
           targetWord: "uranus",
@@ -362,7 +378,8 @@ export const area: AreaConfig = {
         y: 10,
       },
       level: {
-        gameCategory: "wingo",
+        gameCategory: "Wingo",
+        page: "wingo/repeat",
         levelProps: {
           mode: "repeat",
           targetWord: "plasma",

@@ -13,6 +13,7 @@ export interface CountdownLettersConfigProps {
     defaultNumLetters?: number;
     timerConfig?: { isTimed: true; seconds: number } | { isTimed: false };
   };
+  finishingButtonText?: string;
   gameshowScore?: number;
 }
 
@@ -143,7 +144,7 @@ const CountdownLettersConfig: React.FC<Props> = (props) => {
       return;
     }
 
-    // TODO: Function returns above if part of gameshow, so none of these parameters are needed
+    // TODO: Function returns before reaching here if part of gameshow, so none of these parameters are needed
     ResetGame(false, "", "", 0);
 
     // Save the latest gamemode settings for this mode

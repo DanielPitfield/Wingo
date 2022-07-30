@@ -8,7 +8,8 @@ export const area: AreaConfig = {
     type: "unlock-level",
     hint: <>Unlock this area</>,
     level: {
-      gameCategory: "wingo",
+      gameCategory: "Wingo",
+      page: "wingo/repeat",
       levelProps: {
         mode: "repeat",
         targetWord: "nature",

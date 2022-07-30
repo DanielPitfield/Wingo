@@ -1,10 +1,19 @@
 import React from "react";
 import { Page } from "../App";
-import { CountdownLettersConfigProps } from "../CountdownLetters/CountdownLettersConfig";
+import CountdownLettersConfig, { CountdownLettersConfigProps } from "../CountdownLetters/CountdownLettersConfig";
+import CountdownNumbersConfig, { CountdownNumbersConfigProps } from "../CountdownNumbers/CountdownNumbersConfig";
+import LetterCategoriesConfig, { LetterCategoriesConfigProps } from "../LetterCategories/LetterCategoriesConfig";
 import { MessageNotification } from "../MessageNotification";
-import { PuzzleConfig, PuzzleConfigProps } from "../Puzzles/PuzzleConfig";
+import { NubbleConfigProps } from "../Nubble/NubbleConfig";
+import { ArithmeticDragProps } from "../NumbersArithmetic/ArithmeticDrag";
+import { ArithmeticRevealProps } from "../NumbersArithmetic/ArithmeticReveal";
+import { GroupWallProps } from "../OnlyConnect/GroupWall";
 import { SettingsData } from "../SaveData";
 import { Theme } from "../Themes";
+import { AlgebraProps } from "../VerbalReasoning/Algebra/Algebra";
+import { NumberSetsProps } from "../VerbalReasoning/NumberSets/NumberSets";
+import { SameLetterWordsProps } from "../VerbalReasoning/SameLetterWords";
+import { WordCodesProps } from "../VerbalReasoning/WordCodes";
 import WordleConfig, { WordleConfigProps } from "../WordleConfig";
 import { AreaConfig } from "./Area";
 
@@ -13,17 +22,72 @@ export type LevelConfig = {
   hint?: React.ReactNode;
   level:
     | {
-        gameCategory: "wingo";
+        gameCategory: "Wingo";
+        page: Page;
         levelProps: WordleConfigProps;
       }
     | {
-        gameCategory: "countdown_letters";
+        gameCategory: "LetterCategories";
+        page: Page;
+        levelProps: LetterCategoriesConfigProps;
+      }
+    | {
+        gameCategory: "CountdownLetters";
+        page: Page;
         levelProps: CountdownLettersConfigProps;
       }
     | {
-        gameCategory: "puzzle";
-        levelProps: PuzzleConfigProps;
+        gameCategory: "CountdownNumbers";
+        page: Page;
+        levelProps: CountdownNumbersConfigProps;
+      }
+    | {
+        gameCategory: "ArithmeticReveal";
+        page: Page;
+        levelProps: ArithmeticRevealProps;
+      }
+    | {
+        gameCategory: "ArithmeticDrag";
+        page: Page;
+        levelProps: ArithmeticDragProps;
+      }
+    | {
+        gameCategory: "GroupWall";
+        page: Page;
+        levelProps: GroupWallProps;
+      }
+    | {
+        gameCategory: "SameLetterWords";
+        page: Page;
+        levelProps: SameLetterWordsProps;
+      }
+    | {
+        gameCategory: "NumberSets";
+        page: Page;
+        levelProps: NumberSetsProps;
+      }
+    | {
+        gameCategory: "Algebra";
+        page: Page;
+        levelProps: AlgebraProps;
+      }
+    | {
+        gameCategory: "WordCodes";
+        page: Page;
+        levelProps: WordCodesProps;
+      }
+    | {
+        gameCategory: "Nubble";
+        page: Page;
+        levelProps: NubbleConfigProps;
       };
+
+  // TODO: LevelConfigs (remaining unimplemented modes)
+  /*
+    | "puzzle/sequence"
+    | "countdown/gameshow"
+    | "lingo/gameshow";
+  */
 } & (
   | {
       type: "unlock-level";
@@ -43,15 +107,52 @@ export type LevelConfig = {
  * @returns Unique identifier of the level.
  */
 export function getId(level: LevelConfig["level"]): string {
+  const pageString = level.page.toString();
+
+  // TODO: Mostly does not return a unique identifier (pageString won't be unique)
   switch (level.gameCategory) {
-    case "wingo":
-      return `${level.gameCategory}-${level.levelProps.mode}-${level.levelProps.targetWord}`;
+    case "Wingo":
+      return `${pageString}-${level.levelProps.targetWord}`;
 
-    case "puzzle":
-      return `${level.gameCategory}-${level.levelProps.mode}-${level.levelProps.correctAnswerDescription}`;
+    case "LetterCategories":
+      return pageString;
 
-    case "countdown_letters":
-      return `${level.gameCategory}-${level.levelProps.mode}-${level.levelProps.countdownWord}`;
+    case "CountdownLetters":
+      return `${pageString}-${level.levelProps.countdownWord}`;
+
+    case "CountdownNumbers":
+      return pageString;
+
+    case "ArithmeticReveal":
+      return pageString;
+
+    case "ArithmeticDrag":
+      return pageString;
+
+    case "GroupWall":
+      return pageString;
+
+    case "SameLetterWords":
+      return pageString;
+
+    case "NumberSets":
+      return `${pageString}-${level.levelProps.defaultSet?.question ?? ""}`;
+
+    case "Algebra":
+      return `${pageString}-${level.levelProps.defaultTemplate?.questions ?? ""}`;
+
+    case "WordCodes":
+      return `${pageString}-${level.levelProps.mode}`;
+
+    case "Nubble":
+      return pageString;
+
+    // TODO: Unique identifier for level (remaining unimplemented modes)
+    /*
+      | "puzzle/sequence"
+      | "countdown/gameshow"
+      | "lingo/gameshow";
+    */
   }
 }
 
@@ -69,11 +170,12 @@ export const Level: React.FC<{
 }> = (props) => {
   function renderGame() {
     switch (props.level.level.gameCategory) {
-      case "wingo":
+      case "Wingo":
         return (
           <WordleConfig
             {...props.level.level.levelProps}
             page={props.page}
+            theme={props.theme}
             setTheme={props.setTheme}
             setPage={props.setPage}
             addGold={props.addGold}
@@ -83,27 +185,67 @@ export const Level: React.FC<{
               if (wasCorrect) {
                 props.onCompleteLevel(props.level.type === "unlock-level", props.level);
               }
-
               // Go to level selection (likely to choose next level)
               props.setPage("campaign/area");
             }}
           />
         );
 
-      case "puzzle":
+      case "LetterCategories":
         return (
-          <PuzzleConfig
-            theme={{ ...props.theme, backgroundImageSrc: "" }}
+          <LetterCategoriesConfig
+            {...props.level.level.levelProps}
+            page={props.page}
+            theme={props.theme}
             setTheme={props.setTheme}
-            defaultPuzzle={props.level.level.levelProps}
-            finishingButtonText="Back to Area"
+            setPage={props.setPage}
+            addGold={props.addGold}
+            finishingButtonText="Back to area"
             settings={props.settings}
             onComplete={(wasCorrect) => {
               if (wasCorrect) {
                 props.onCompleteLevel(props.level.type === "unlock-level", props.level);
               }
+              props.setPage("campaign/area");
+            }}
+          />
+        );
 
-              // Go to level selection (likely to choose next level)
+        case "CountdownLetters":
+        return (
+          <CountdownLettersConfig
+            {...props.level.level.levelProps}
+            page={props.page}
+            theme={props.theme}
+            setTheme={props.setTheme}
+            setPage={props.setPage}
+            addGold={props.addGold}
+            finishingButtonText="Back to area"
+            settings={props.settings}
+            onComplete={(wasCorrect) => {
+              if (wasCorrect) {
+                props.onCompleteLevel(props.level.type === "unlock-level", props.level);
+              }
+              props.setPage("campaign/area");
+            }}
+          />
+        );
+
+        case "CountdownNumbers":
+        return (
+          <CountdownNumbersConfig
+            {...props.level.level.levelProps}
+            page={props.page}
+            theme={props.theme}
+            setTheme={props.setTheme}
+            setPage={props.setPage}
+            addGold={props.addGold}
+            finishingButtonText="Back to area"
+            settings={props.settings}
+            onComplete={(wasCorrect) => {
+              if (wasCorrect) {
+                props.onCompleteLevel(props.level.type === "unlock-level", props.level);
+              }
               props.setPage("campaign/area");
             }}
           />

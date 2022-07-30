@@ -21,6 +21,7 @@ interface Props extends LetterCategoriesConfigProps {
   settings: SettingsData;
   page: Page;
   setPage: (page: Page) => void;
+  setTheme: (theme: Theme) => void;
   addGold: (gold: number) => void;
   onComplete?: (wasCorrect: boolean) => void;
 }

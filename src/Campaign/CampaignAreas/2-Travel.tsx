@@ -8,7 +8,8 @@ export const area: AreaConfig = {
     type: "unlock-level",
     hint: <>Unlock this area</>,
     level: {
-      gameCategory: "wingo",
+      gameCategory: "Wingo",
+      page: "wingo/repeat",
       levelProps: {
         mode: "repeat",
         targetWord: "travel",
@@ -34,7 +35,8 @@ export const area: AreaConfig = {
         y: 27,
       },
       level: {
-        gameCategory: "wingo",
+        gameCategory: "Wingo",
+        page: "wingo/repeat",
         levelProps: {
           mode: "repeat",
           targetWord: "canada",
@@ -57,7 +59,8 @@ export const area: AreaConfig = {
         y: 30,
       },
       level: {
-        gameCategory: "wingo",
+        gameCategory: "Wingo",
+        page: "wingo/repeat",
         levelProps: {
           mode: "repeat",
           targetWord: "poutine",
@@ -80,7 +83,8 @@ export const area: AreaConfig = {
         y: 28,
       },
       level: {
-        gameCategory: "wingo",
+        gameCategory: "Wingo",
+        page: "wingo/repeat",
         levelProps: {
           mode: "repeat",
           targetWord: "moose",
@@ -103,7 +107,8 @@ export const area: AreaConfig = {
         y: 24,
       },
       level: {
-        gameCategory: "wingo",
+        gameCategory: "Wingo",
+        page: "wingo/repeat",
         levelProps: {
           mode: "repeat",
           targetWord: "maple-syrup",
@@ -126,7 +131,8 @@ export const area: AreaConfig = {
         y: 26,
       },
       level: {
-        gameCategory: "wingo",
+        gameCategory: "Wingo",
+        page: "wingo/repeat",
         levelProps: {
           mode: "repeat",
           targetWord: "polar-bear",
@@ -149,7 +155,8 @@ export const area: AreaConfig = {
         y: 36,
       },
       level: {
-        gameCategory: "wingo",
+        gameCategory: "Wingo",
+        page: "wingo/repeat",
         levelProps: {
           mode: "repeat",
           targetWord: "usa",
@@ -172,7 +179,8 @@ export const area: AreaConfig = {
         y: 38,
       },
       level: {
-        gameCategory: "wingo",
+        gameCategory: "Wingo",
+        page: "wingo/repeat",
         levelProps: {
           mode: "repeat",
           targetWord: "constitution",
@@ -195,7 +203,8 @@ export const area: AreaConfig = {
         y: 39,
       },
       level: {
-        gameCategory: "wingo",
+        gameCategory: "Wingo",
+        page: "wingo/repeat",
         levelProps: {
           mode: "repeat",
           targetWord: "cheeseburger",
@@ -218,7 +227,8 @@ export const area: AreaConfig = {
         y: 47,
       },
       level: {
-        gameCategory: "wingo",
+        gameCategory: "Wingo",
+        page: "wingo/repeat",
         levelProps: {
           mode: "repeat",
           targetWord: "baseball",
@@ -241,7 +251,8 @@ export const area: AreaConfig = {
         y: 55,
       },
       level: {
-        gameCategory: "wingo",
+        gameCategory: "Wingo",
+        page: "wingo/repeat",
         levelProps: {
           mode: "repeat",
           targetWord: "mexico",
@@ -264,7 +275,8 @@ export const area: AreaConfig = {
         y: 62,
       },
       level: {
-        gameCategory: "wingo",
+        gameCategory: "Wingo",
+        page: "wingo/repeat",
         levelProps: {
           mode: "repeat",
           targetWord: "mariachi",
@@ -287,7 +299,8 @@ export const area: AreaConfig = {
         y: 68,
       },
       level: {
-        gameCategory: "wingo",
+        gameCategory: "Wingo",
+        page: "wingo/repeat",
         levelProps: {
           mode: "repeat",
           targetWord: "brazil",
@@ -310,7 +323,8 @@ export const area: AreaConfig = {
         y: 68,
       },
       level: {
-        gameCategory: "wingo",
+        gameCategory: "Wingo",
+        page: "wingo/repeat",
         levelProps: {
           mode: "repeat",
           targetWord: "carnival",
@@ -333,7 +347,8 @@ export const area: AreaConfig = {
         y: 74,
       },
       level: {
-        gameCategory: "wingo",
+        gameCategory: "Wingo",
+        page: "wingo/repeat",
         levelProps: {
           mode: "repeat",
           targetWord: "samba",
@@ -356,7 +371,8 @@ export const area: AreaConfig = {
         y: 77,
       },
       level: {
-        gameCategory: "wingo",
+        gameCategory: "Wingo",
+        page: "wingo/repeat",
         levelProps: {
           mode: "repeat",
           targetWord: "football",
@@ -379,7 +395,8 @@ export const area: AreaConfig = {
         y: 84,
       },
       level: {
-        gameCategory: "wingo",
+        gameCategory: "Wingo",
+        page: "wingo/repeat",
         levelProps: {
           mode: "repeat",
           targetWord: "chile",
@@ -402,7 +419,8 @@ export const area: AreaConfig = {
         y: 94,
       },
       level: {
-        gameCategory: "wingo",
+        gameCategory: "Wingo",
+        page: "wingo/repeat",
         levelProps: {
           mode: "repeat",
           targetWord: "argentina",
@@ -425,7 +443,8 @@ export const area: AreaConfig = {
         y: 87,
       },
       level: {
-        gameCategory: "wingo",
+        gameCategory: "Wingo",
+        page: "wingo/repeat",
         levelProps: {
           mode: "repeat",
           targetWord: "south-africa",
@@ -448,7 +467,8 @@ export const area: AreaConfig = {
         y: 81,
       },
       level: {
-        gameCategory: "wingo",
+        gameCategory: "Wingo",
+        page: "wingo/repeat",
         levelProps: {
           mode: "repeat",
           targetWord: "a",
@@ -471,7 +491,8 @@ export const area: AreaConfig = {
         y: 78,
       },
       level: {
-        gameCategory: "wingo",
+        gameCategory: "Wingo",
+        page: "wingo/repeat",
         levelProps: {
           mode: "repeat",
           targetWord: "a",
@@ -494,7 +515,8 @@ export const area: AreaConfig = {
         y: 74,
       },
       level: {
-        gameCategory: "wingo",
+        gameCategory: "Wingo",
+        page: "wingo/repeat",
         levelProps: {
           mode: "repeat",
           targetWord: "a",
@@ -517,7 +539,8 @@ export const area: AreaConfig = {
         y: 67,
       },
       level: {
-        gameCategory: "wingo",
+        gameCategory: "Wingo",
+        page: "wingo/repeat",
         levelProps: {
           mode: "repeat",
           targetWord: "a",
@@ -540,7 +563,8 @@ export const area: AreaConfig = {
         y: 61,
       },
       level: {
-        gameCategory: "wingo",
+        gameCategory: "Wingo",
+        page: "wingo/repeat",
         levelProps: {
           mode: "repeat",
           targetWord: "a",
@@ -563,7 +587,8 @@ export const area: AreaConfig = {
         y: 65,
       },
       level: {
-        gameCategory: "wingo",
+        gameCategory: "Wingo",
+        page: "wingo/repeat",
         levelProps: {
           mode: "repeat",
           targetWord: "a",
@@ -586,7 +611,8 @@ export const area: AreaConfig = {
         y: 67,
       },
       level: {
-        gameCategory: "wingo",
+        gameCategory: "Wingo",
+        page: "wingo/repeat",
         levelProps: {
           mode: "repeat",
           targetWord: "a",
@@ -609,7 +635,8 @@ export const area: AreaConfig = {
         y: 64,
       },
       level: {
-        gameCategory: "wingo",
+        gameCategory: "Wingo",
+        page: "wingo/repeat",
         levelProps: {
           mode: "repeat",
           targetWord: "a",
@@ -632,7 +659,8 @@ export const area: AreaConfig = {
         y: 60,
       },
       level: {
-        gameCategory: "wingo",
+        gameCategory: "Wingo",
+        page: "wingo/repeat",
         levelProps: {
           mode: "repeat",
           targetWord: "a",
@@ -655,7 +683,8 @@ export const area: AreaConfig = {
         y: 55,
       },
       level: {
-        gameCategory: "wingo",
+        gameCategory: "Wingo",
+        page: "wingo/repeat",
         levelProps: {
           mode: "repeat",
           targetWord: "a",
@@ -678,7 +707,8 @@ export const area: AreaConfig = {
         y: 56,
       },
       level: {
-        gameCategory: "wingo",
+        gameCategory: "Wingo",
+        page: "wingo/repeat",
         levelProps: {
           mode: "repeat",
           targetWord: "a",
@@ -701,7 +731,8 @@ export const area: AreaConfig = {
         y: 53,
       },
       level: {
-        gameCategory: "wingo",
+        gameCategory: "Wingo",
+        page: "wingo/repeat",
         levelProps: {
           mode: "repeat",
           targetWord: "a",
@@ -724,7 +755,8 @@ export const area: AreaConfig = {
         y: 56,
       },
       level: {
-        gameCategory: "wingo",
+        gameCategory: "Wingo",
+        page: "wingo/repeat",
         levelProps: {
           mode: "repeat",
           targetWord: "a",
@@ -747,7 +779,8 @@ export const area: AreaConfig = {
         y: 55,
       },
       level: {
-        gameCategory: "wingo",
+        gameCategory: "Wingo",
+        page: "wingo/repeat",
         levelProps: {
           mode: "repeat",
           targetWord: "a",
@@ -770,7 +803,8 @@ export const area: AreaConfig = {
         y: 57,
       },
       level: {
-        gameCategory: "wingo",
+        gameCategory: "Wingo",
+        page: "wingo/repeat",
         levelProps: {
           mode: "repeat",
           targetWord: "a",
@@ -793,7 +827,8 @@ export const area: AreaConfig = {
         y: 63,
       },
       level: {
-        gameCategory: "wingo",
+        gameCategory: "Wingo",
+        page: "wingo/repeat",
         levelProps: {
           mode: "repeat",
           targetWord: "a",
@@ -816,7 +851,8 @@ export const area: AreaConfig = {
         y: 58,
       },
       level: {
-        gameCategory: "wingo",
+        gameCategory: "Wingo",
+        page: "wingo/repeat",
         levelProps: {
           mode: "repeat",
           targetWord: "a",

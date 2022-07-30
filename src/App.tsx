@@ -566,12 +566,6 @@ export const App: React.FC = () => {
     // Get the gamemode settings for the specific page (gamemode)
     const pageGamemodeSettings = (() => {
       switch (page) {
-        /*
-        | "puzzle/sequence"
-        | "countdown/gameshow"
-        | "lingo/gameshow";
-        */
-
         // Daily mode should always use the same settings (never from SaveData)
         case "wingo/daily":
           return defaultWordleGamemodeSettings.find((x) => x.page === page)?.settings;
@@ -640,6 +634,13 @@ export const App: React.FC = () => {
         case "nubble":
           return SaveData.getNubbleConfigGamemodeSettings() || defaultNubbleGamemodeSettings;
       }
+
+      // TODO: Default gamemode settings (remaining unimplemented modes)
+      /*
+        | "puzzle/sequence"
+        | "countdown/gameshow"
+        | "lingo/gameshow";
+      */
     })();
 
     const commonProps = {

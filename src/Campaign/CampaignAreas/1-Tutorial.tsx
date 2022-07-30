@@ -16,21 +16,22 @@ export const area: AreaConfig = {
       </>
     ),
     level: {
-      gameCategory: "wingo",
+      gameCategory: "Wingo",
+      page: "wingo/repeat",
       levelProps: {
         mode: "repeat",
         targetWord: "start",
         enforceFullLengthGuesses: true,
         defaultWordLength: 5,
         defaultnumGuesses: 6,
-        
+
         gamemodeSettings: {
           isFirstLetterProvided: true,
           puzzleLeaveNumBlanks: 0,
           puzzleRevealMs: 0,
           timerConfig: { isTimed: false },
         },
-        checkInDictionary: false, 
+        checkInDictionary: false,
       },
     },
   },
@@ -43,7 +44,8 @@ export const area: AreaConfig = {
         y: 10,
       },
       level: {
-        gameCategory: "wingo",
+        gameCategory: "Wingo",
+        page: "wingo/repeat",
         levelProps: {
           mode: "repeat",
           targetWord: "learn",

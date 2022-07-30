@@ -47,7 +47,7 @@ export const LevelNode: React.FC<{
 
   // Get the level page info
   const levelInfo = pages.find(
-    (x) => x.page === `${props.level.level.gameCategory}/${props.level.level.levelProps.mode}`
+    (x) => x.page === props.level.level.page
   );
 
   if (props.level.type !== "level") {
@@ -96,7 +96,7 @@ export const LevelNode: React.FC<{
               <span className="level-number">Level {props.index + 1}</span>
             </strong>
             <p className="level-mode">
-              {levelInfo?.title || levelInfo?.shortTitle || props.level.level.levelProps.mode}
+              {levelInfo?.title || levelInfo?.shortTitle}
             </p>
             <div ref={setArrowElement as any} style={styles.arrow} />
           </div>

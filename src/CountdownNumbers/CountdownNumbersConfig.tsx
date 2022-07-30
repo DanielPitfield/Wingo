@@ -15,6 +15,7 @@ export interface CountdownNumbersConfigProps {
   };
 
   defaultNumGuesses: number;
+  finishingButtonText?: string;
   gameshowScore?: number;
 }
 
@@ -214,6 +215,7 @@ const CountdownNumbersConfig: React.FC<Props> = (props) => {
     return Math.floor(Math.random() * (max - min) + min);
   }
 
+  // TODO: Simplify callback for gameshow
   function ResetGame(wasCorrect: boolean, answer: string, targetAnswer: string, score: number | null) {
     // Callback of the score achieved (used for Countdown Gameshow)
     props.onComplete?.(wasCorrect, answer, targetAnswer, score);

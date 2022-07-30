@@ -15,7 +15,6 @@ import {
   DEFAULT_PUZZLE_REVEAL_MS,
   DEFAULT_WORD_LENGTH,
   MAX_TARGET_WORD_LENGTH,
-  MIN_TARGET_WORD_LENGTH,
   wordLengthMappingsGuessable,
   wordLengthMappingsTargets,
 } from "./defaultGamemodeSettings";
@@ -64,18 +63,19 @@ export interface WordleConfigProps {
 
   checkInDictionary?: boolean;
   finishingButtonText?: string;
-  onComplete?: (wasCorrect: boolean, answer: string, targetAnswer: string, score: number | null) => void;
+  
   roundScoringInfo?: { basePoints: number; pointsLostPerGuess: number };
   gameshowScore?: number;
 }
 
 interface Props extends WordleConfigProps {
   page: Page;
-  theme?: Theme;
+  theme: Theme;
   settings: SettingsData;
   setPage: (page: Page) => void;
   addGold: (gold: number) => void;
   setTheme: (theme: Theme) => void;
+  onComplete?: (wasCorrect: boolean, answer: string, targetAnswer: string, score: number | null) => void;
 }
 
 export function pickRandomElementFrom(array: any[]) {
@@ -788,9 +788,11 @@ const WordleConfig: React.FC<Props> = (props) => {
       return;
     }
 
+    // TODO: Page is its own parameter but is also in the levelProps
     const gameId = SaveData.addGameToHistory(props.page, {
       timestamp: new Date().toISOString(),
-      gameCategory: "wingo",
+      gameCategory: "Wingo",
+      page: props.page,
       levelProps: {
         mode: props.mode,
         gamemodeSettings: {
@@ -1061,8 +1063,8 @@ const WordleConfig: React.FC<Props> = (props) => {
     if (outcome !== "in-progress" && gameId) {
       SaveData.addCompletedRoundToGameHistory(gameId, {
         timestamp: new Date().toISOString(),
-        gameCategory: "wingo",
-
+        gameCategory: "Wingo",
+        page: props.page,
         outcome,
         levelProps: {
           mode: props.mode,
