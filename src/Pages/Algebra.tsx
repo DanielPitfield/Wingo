@@ -11,6 +11,7 @@ import { SaveData, SettingsData } from "../Data/SaveData";
 import { useClickChime, useCorrectChime, useFailureChime, useLightPingChime } from "../Data/Sounds";
 import { Theme } from "../Data/Themes";
 import { AlgebraTemplates } from "../Data/AlgebraTemplates";
+import { LEVEL_FINISHING_TEXT } from "../Components/Level";
 
 export const algebraDifficulties = ["novice", "easy", "medium", "hard", "expert"] as const;
 export type algebraDifficulty = typeof algebraDifficulties[number];
@@ -36,8 +37,6 @@ export interface AlgebraProps {
     difficulty?: algebraDifficulty;
     timerConfig?: { isTimed: true; seconds: number } | { isTimed: false };
   };
-
-  finishingButtonText?: string;
 }
 
 interface Props extends AlgebraProps {
@@ -262,7 +261,7 @@ const Algebra: React.FC<Props> = (props) => {
               settings={props.settings}
               additionalProps={{ autoFocus: true }}
             >
-              Restart
+              {props.isCampaignLevel ? LEVEL_FINISHING_TEXT : "Restart"}
             </Button>
 
             <br></br>

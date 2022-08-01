@@ -9,6 +9,7 @@ import { Theme } from "../Data/Themes";
 import { SettingsData } from "../Data/SaveData";
 import GamemodeSettingsMenu from "../Components/GamemodeSettingsMenu";
 import { MAX_NUM_CATEGORIES } from "../Data/DefaultGamemodeSettings";
+import { LEVEL_FINISHING_TEXT } from "../Components/Level";
 
 interface Props {
   isCampaignLevel: boolean;
@@ -29,7 +30,6 @@ interface Props {
   categoryRequiredStartingLetter?: string;
   categoryWordTargets?: string[][];
   categoryNames?: string[];
-  finishingButtonText?: string;
 
   page: PageName;
   theme: Theme;
@@ -237,7 +237,7 @@ const LetterCategories: React.FC<Props> = (props) => {
             onClick={() => props.ResetGame()}
             additionalProps={{ autoFocus: true }}
           >
-            Restart
+            {props.isCampaignLevel ? LEVEL_FINISHING_TEXT : "Restart"}
           </Button>
         )}
       </div>

@@ -54,8 +54,6 @@ export interface NumbleConfigProps {
     // How long overall until the game ends?
     timerConfig?: { isTimed: true; seconds: number } | { isTimed: false };
   };
-
-  finishingButtonText?: string;
 }
 
 interface Props extends NumbleConfigProps {

@@ -11,6 +11,7 @@ import { SettingsData } from "../Data/SaveData";
 import { useCorrectChime, useFailureChime, useLightPingChime } from "../Data/Sounds";
 import GamemodeSettingsMenu from "../Components/GamemodeSettingsMenu";
 import { MAX_TARGET_WORD_LENGTH, MIN_TARGET_WORD_LENGTH, categoryMappings } from "../Data/DefaultGamemodeSettings";
+import { LEVEL_FINISHING_TEXT } from "../Components/Level";
 
 interface Props {
   isCampaignLevel: boolean;
@@ -46,10 +47,9 @@ interface Props {
   }[];
   revealedLetterIndexes: number[];
 
-  settings: SettingsData;
-  finishingButtonText?: string;
   page: PageName;
-  theme?: Theme;
+  theme?: Theme;  
+  settings: SettingsData;
   setPage: (page: PageName) => void;
   onEnter: () => void;
   onSubmitLetter: (letter: string) => void;
@@ -652,7 +652,7 @@ const Wingo: React.FC<Props> = (props) => {
           >
             {props.gameshowScore !== undefined
               ? "Next round"
-              : props.finishingButtonText || (isOutcomeContinue() ? "Continue" : "Restart")}
+              : props.isCampaignLevel ? LEVEL_FINISHING_TEXT : (isOutcomeContinue() ? "Continue" : "Restart")}
           </Button>
         )}
       </div>

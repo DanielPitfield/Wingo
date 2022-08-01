@@ -11,6 +11,7 @@ import { useClickChime, useCorrectChime, useFailureChime, useLightPingChime } fr
 import { Theme } from "../Data/Themes";
 import { DEFAULT_DIFFICULTY, algebraDifficulty, algebraDifficulties } from "./Algebra";
 import { generateSet } from "../Data/NumberSetsTemplates";
+import { LEVEL_FINISHING_TEXT } from "../Components/Level";
 
 /** Config for a specific number set (exported for config from campaign) */
 export type NumberSetConfigProps = {
@@ -35,8 +36,6 @@ export interface NumberSetsProps {
     difficulty?: algebraDifficulty;
     timerConfig?: { isTimed: true; seconds: number } | { isTimed: false };
   };
-
-  finishingButtonText?: string;
 }
 
 interface Props extends NumberSetsProps {
@@ -229,7 +228,7 @@ const NumberSets: React.FC<Props> = (props) => {
             settings={props.settings}
             additionalProps={{ autoFocus: true }}
           >
-            Restart
+            {props.isCampaignLevel ? LEVEL_FINISHING_TEXT : "Restart"}
           </Button>
         )}
       </>

@@ -5,6 +5,7 @@ import { Puzzles } from "../Data/Puzzles";
 import { Theme, ThemeIcons } from "../Data/Themes";
 import { SettingsData } from "../Data/SaveData";
 import { algebraDifficulty } from "./Algebra";
+import { LEVEL_FINISHING_TEXT } from "../Components/Level";
 
 /** Config for a specific puzzle (exported for config from campaign) */
 export type PuzzleConfigProps = {
@@ -29,10 +30,10 @@ type SequencePuzzleStyling = {
 
 /** Properties of the component */
 interface Props {
+  isCampaignLevel: boolean;
   defaultPuzzle?: PuzzleConfigProps;
   theme: Theme;
   settings: SettingsData;
-  finishingButtonText?: string;
   setTheme: (theme: Theme) => void;
   onComplete?: (wasCorrect: boolean) => void;
 }
@@ -245,7 +246,7 @@ export const PuzzleConfig: React.FC<Props> = (props) => {
       {renderNotification()}
       {result !== "in-progress" && (
         <Button mode="accept" settings={props.settings} onClick={() => resetGame()}>
-          {props.finishingButtonText || "Restart"}
+          {props.isCampaignLevel ? LEVEL_FINISHING_TEXT : "Restart"}
         </Button>
       )}
       {renderPuzzle()}

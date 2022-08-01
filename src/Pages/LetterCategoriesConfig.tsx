@@ -8,12 +8,13 @@ import { Theme } from "../Data/Themes";
 import { categoryMappings } from "../Data/DefaultGamemodeSettings";
 
 export interface LetterCategoriesConfigProps {
+  isCampaignLevel: boolean;
   enforceFullLengthGuesses: boolean;
+
   gamemodeSettings?: {
     defaultNumCategories?: number;
     timerConfig?: { isTimed: true; seconds: number } | { isTimed: false };
   };
-  finishingButtonText?: string;
 }
 
 interface Props extends LetterCategoriesConfigProps {
@@ -304,7 +305,7 @@ const LetterCategoriesConfig: React.FC<Props> = (props) => {
 
   return (
     <LetterCategories
-      isCampaignLevel={props.page === "campaign/area/level"}
+      isCampaignLevel={props.isCampaignLevel}
       gamemodeSettings={gamemodeSettings}
       remainingSeconds={remainingSeconds}
       wordLength={wordLength}
@@ -317,7 +318,6 @@ const LetterCategoriesConfig: React.FC<Props> = (props) => {
       categoryRequiredStartingLetter={categoryRequiredStartingLetter || ""}
       categoryNames={categoryNames || []}
       categoryWordTargets={categoryWordTargets || [[]]}
-      finishingButtonText={props.finishingButtonText}
       page={props.page}
       theme={props.theme}
       settings={props.settings}

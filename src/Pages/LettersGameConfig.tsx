@@ -8,12 +8,13 @@ import { wordLengthMappingsGuessable, wordLengthMappingsTargets } from "../Data/
 export interface LettersGameConfigProps {
   guesses?: string[];
   lettersGameSelectionWord?: string;
+
   gamemodeSettings?: {
     // The number of letters (that make up the selection used to make a word)
     defaultNumLetters?: number;
     timerConfig?: { isTimed: true; seconds: number } | { isTimed: false };
   };
-  finishingButtonText?: string;
+  
   gameshowScore?: number;
 }
 

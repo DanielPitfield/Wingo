@@ -9,6 +9,7 @@ import ProgressBar, { GreenToRedColorTransition } from "../Components/ProgressBa
 import { SaveData, SettingsData } from "../Data/SaveData";
 import { useClickChime, useCorrectChime, useFailureChime, useLightPingChime } from "../Data/Sounds";
 import { Theme } from "../Data/Themes";
+import { LEVEL_FINISHING_TEXT } from "../Components/Level";
 
 export interface GroupWallProps {
   isCampaignLevel: boolean;
@@ -20,8 +21,6 @@ export interface GroupWallProps {
     numGuesses?: number;
     timerConfig?: { isTimed: true; seconds: number } | { isTimed: false };
   };
-
-  finishingButtonText?: string;
 }
 
 interface Props extends GroupWallProps {
@@ -418,7 +417,7 @@ const OnlyConnect: React.FC<Props> = (props) => {
         <br></br>
 
         <Button mode="accept" settings={props.settings} onClick={() => ResetGame()}>
-          Restart
+          {props.isCampaignLevel ? LEVEL_FINISHING_TEXT : "Restart"}
         </Button>
       </>
     );

@@ -11,6 +11,7 @@ import { SaveData, SettingsData } from "../Data/SaveData";
 import { useClickChime, useCorrectChime, useFailureChime, useLightPingChime } from "../Data/Sounds";
 import { Theme } from "../Data/Themes";
 import { pickRandomElementFrom } from "./WingoConfig";
+import { LEVEL_FINISHING_TEXT } from "../Components/Level";
 
 export interface SameLetterWordsProps {
   isCampaignLevel: boolean;
@@ -23,8 +24,6 @@ export interface SameLetterWordsProps {
     numGuesses?: number;
     timerConfig?: { isTimed: true; seconds: number } | { isTimed: false };
   };
-
-  finishingButtonText?: string;
 }
 
 interface Props extends SameLetterWordsProps {
@@ -400,7 +399,7 @@ const SameLetterWords: React.FC<Props> = (props) => {
         <br></br>
 
         <Button mode="accept" settings={props.settings} onClick={() => ResetGame()}>
-          Restart
+          {props.isCampaignLevel ? LEVEL_FINISHING_TEXT : "Restart"}
         </Button>
       </>
     );

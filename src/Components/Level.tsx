@@ -156,6 +156,8 @@ export function getId(level: LevelConfig["level"]): string {
   }
 }
 
+export const LEVEL_FINISHING_TEXT = "Back to area";
+
 /** A level within an area (e.g. one game) */
 export const Level: React.FC<{
   area: AreaConfig;
@@ -176,7 +178,6 @@ export const Level: React.FC<{
       setPage: props.setPage,
       setTheme: props.setTheme,
       addGold: props.addGold,
-      finishingButtonText: "Back to area",
     };
 
     switch (props.level.level.gameCategory) {

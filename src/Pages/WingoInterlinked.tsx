@@ -19,6 +19,7 @@ import {
   wordLengthMappingsTargets,
 } from "../Data/DefaultGamemodeSettings";
 import { PageName } from "../PageNames";
+import { LEVEL_FINISHING_TEXT } from "../Components/Level";
 
 type Orientation = "vertical" | "horizontal";
 
@@ -1045,7 +1046,7 @@ export const WingoInterlinked: React.FC<Props> = (props) => {
           <>
             <br />
             <Button mode="accept" settings={props.settings} onClick={() => ResetGame()}>
-              Restart
+              {props.isCampaignLevel ? LEVEL_FINISHING_TEXT : "Restart"}
             </Button>
           </>
         )}

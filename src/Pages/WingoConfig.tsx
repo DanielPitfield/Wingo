@@ -20,6 +20,7 @@ import {
 } from "../Data/DefaultGamemodeSettings";
 
 export interface WingoConfigProps {
+  isCampaignLevel: boolean;
   mode:
     | "daily"
     | "repeat"
@@ -62,7 +63,6 @@ export interface WingoConfigProps {
   guesses?: string[];
 
   checkInDictionary?: boolean;
-  finishingButtonText?: string;
 
   roundScoringInfo?: { basePoints: number; pointsLostPerGuess: number };
   gameshowScore?: number;
@@ -794,6 +794,7 @@ const WingoConfig: React.FC<Props> = (props) => {
       gameCategory: "Wingo",
       page: props.page,
       levelProps: {
+        isCampaignLevel: props.isCampaignLevel,
         mode: props.mode,
         gamemodeSettings: {
           wordLength: gamemodeSettings.wordLength,
@@ -1155,7 +1156,7 @@ const WingoConfig: React.FC<Props> = (props) => {
   })();
 
   const commonWingoInterlinkedProps = {
-    isCampaignLevel: props.page === "campaign/area/level",
+    isCampaignLevel: props.isCampaignLevel,
     gamemodeSettings: pageGamemodeSettings,
     page: props.page,
     theme: props.theme,
@@ -1228,7 +1229,7 @@ const WingoConfig: React.FC<Props> = (props) => {
 
   return (
     <Wingo
-      isCampaignLevel={props.page === "campaign/area/level"}
+      isCampaignLevel={props.isCampaignLevel}
       mode={props.mode}
       gamemodeSettings={gamemodeSettings}
       remainingSeconds={remainingSeconds}
@@ -1246,7 +1247,6 @@ const WingoConfig: React.FC<Props> = (props) => {
       targetCategory={targetCategory || ""}
       revealedLetterIndexes={revealedLetterIndexes}
       letterStatuses={letterStatuses}
-      finishingButtonText={props.finishingButtonText}
       page={props.page}
       theme={props.theme}
       settings={props.settings}

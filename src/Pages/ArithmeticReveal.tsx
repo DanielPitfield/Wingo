@@ -12,6 +12,7 @@ import { SaveData, SettingsData } from "../Data/SaveData";
 import GamemodeSettingsMenu from "../Components/GamemodeSettingsMenu";
 import { arithmeticNumberSize, arithmeticNumberSizes } from "./ArithmeticDrag";
 import { pickRandomElementFrom } from "./WingoConfig";
+import { LEVEL_FINISHING_TEXT } from "../Components/Level";
 
 export interface ArithmeticRevealProps {
   isCampaignLevel: boolean;
@@ -36,8 +37,6 @@ export interface ArithmeticRevealProps {
     revealIntervalSeconds?: number;
     timerConfig?: { isTimed: true; seconds: number } | { isTimed: false };
   };
-
-  finishingButtonText?: string;
 }
 
 interface Props extends ArithmeticRevealProps {
@@ -430,7 +429,7 @@ const ArithmeticReveal: React.FC<Props> = (props) => {
             settings={props.settings}
             additionalProps={{ autoFocus: true }}
           >
-            Restart
+            {props.isCampaignLevel ? LEVEL_FINISHING_TEXT : "Restart"}
           </Button>
         </>
       );
@@ -457,7 +456,7 @@ const ArithmeticReveal: React.FC<Props> = (props) => {
             settings={props.settings}
             additionalProps={{ autoFocus: true }}
           >
-            Restart
+            {props.isCampaignLevel ? LEVEL_FINISHING_TEXT : "Restart"}
           </Button>
         </>
       );

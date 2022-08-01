@@ -13,6 +13,7 @@ import { SettingsData } from "../Data/SaveData";
 import GamemodeSettingsMenu from "../Components/GamemodeSettingsMenu";
 import { randomIntFromInterval } from "./Numble";
 import { pickRandomElementFrom } from "./WingoConfig";
+import { LEVEL_FINISHING_TEXT } from "../Components/Level";
 
 interface Props {
   isCampaignLevel: boolean;
@@ -557,7 +558,9 @@ const NumbersGame: React.FC<Props> = (props) => {
             settings={props.settings}
             additionalProps={{ autoFocus: true }}
           >
-            {props.gameshowScore !== undefined ? "Next round" : "Restart"}
+            {props.gameshowScore !== undefined
+              ? "Next round"
+              : props.isCampaignLevel ? LEVEL_FINISHING_TEXT : "Restart"}
           </Button>
         </>
       )}

@@ -218,6 +218,14 @@ export const App: React.FC = () => {
     return highestCampaignArea;
   }
 
+  function isCampaignLevel(pageName: PageName) {
+    if (pageName === "campaign/area/level") {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   function onComplete(wasCorrect: boolean) {
     if (!isRandomSession) {
       return;
@@ -309,7 +317,7 @@ export const App: React.FC = () => {
     })();
 
     const commonProps = {
-      isCampaignLevel: false,
+      isCampaignLevel: isCampaignLevel(page),
       gamemodeSettings: pageGamemodeSettings,
       page: page,
       theme: theme,
@@ -322,10 +330,9 @@ export const App: React.FC = () => {
 
     // Overwrite properties for specific modes where required
     const commonWingoProps = {
+      // TODO: Can {...commonProps} be used here?
+      isCampaignLevel: isCampaignLevel(page),
       gamemodeSettings: pageGamemodeSettings,
-      defaultWordLength: DEFAULT_WORD_LENGTH,
-      defaultnumGuesses: DEFAULT_NUM_GUESSES,
-      enforceFullLengthGuesses: true,
       page: page,
       theme: theme,
       setPage: setPage,
@@ -333,6 +340,10 @@ export const App: React.FC = () => {
       addGold: addGold,
       settings: settings,
       onComplete: onComplete,
+
+      defaultWordLength: DEFAULT_WORD_LENGTH,
+      defaultnumGuesses: DEFAULT_NUM_GUESSES,
+      enforceFullLengthGuesses: true,
     };
 
     switch (page) {

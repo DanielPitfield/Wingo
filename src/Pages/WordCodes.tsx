@@ -16,6 +16,7 @@ import { DraggableItem } from "../Components/DraggableItem";
 import { getQuestionSetOutcome } from "./Algebra";
 import GamemodeSettingsMenu from "../Components/GamemodeSettingsMenu";
 import { wordLengthMappingsTargets } from "../Data/DefaultGamemodeSettings";
+import { LEVEL_FINISHING_TEXT } from "../Components/Level";
 
 const wordCodesModes = ["match", "question"] as const;
 export type wordCodesMode = typeof wordCodesModes[number];
@@ -44,8 +45,6 @@ export interface WordCodesProps {
     numGuesses?: number;
     timerConfig?: { isTimed: true; seconds: number } | { isTimed: false };
   };
-
-  finishingButtonText?: string;
 }
 
 interface Props extends WordCodesProps {
@@ -616,7 +615,7 @@ const WordCodes: React.FC<Props> = (props) => {
             onClick={() => ResetGame()}
             additionalProps={{ autoFocus: true }}
           >
-            Restart
+            {props.isCampaignLevel ? LEVEL_FINISHING_TEXT : "Restart"}
           </Button>
         </>
       );
@@ -645,7 +644,7 @@ const WordCodes: React.FC<Props> = (props) => {
                 settings={props.settings}
                 additionalProps={{ autoFocus: true }}
               >
-                Restart
+                {props.isCampaignLevel ? LEVEL_FINISHING_TEXT : "Restart"}
               </Button>
 
               <br></br>

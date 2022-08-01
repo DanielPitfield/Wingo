@@ -12,6 +12,7 @@ import { SaveData, SettingsData } from "../Data/SaveData";
 import { Theme } from "../Data/Themes";
 import { pickRandomElementFrom } from "./WingoConfig";
 import { DraggableItem } from "../Components/DraggableItem";
+import { LEVEL_FINISHING_TEXT } from "../Components/Level";
 
 // Const Contexts: https://stackoverflow.com/questions/44497388/typescript-array-to-string-literal-type
 export const arithmeticNumberSizes = ["small", "medium", "large"] as const;
@@ -45,8 +46,6 @@ export interface ArithmeticDragProps {
     numGuesses?: number;
     timerConfig?: { isTimed: true; seconds: number } | { isTimed: false };
   };
-
-  finishingButtonText?: string;
 }
 
 interface Props extends ArithmeticDragProps {
@@ -494,7 +493,7 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
         <br></br>
 
         <Button mode="accept" settings={props.settings} onClick={() => ResetGame()}>
-          Restart
+          {props.isCampaignLevel ? LEVEL_FINISHING_TEXT : "Restart"}
         </Button>
       </>
     );

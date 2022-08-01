@@ -17,6 +17,7 @@ import {
   wordLengthMappingsTargets,
 } from "../Data/DefaultGamemodeSettings";
 import { shuffleArray } from "./ArithmeticDrag";
+import { LEVEL_FINISHING_TEXT } from "../Components/Level";
 
 interface Props {
   isCampaignLevel: boolean;
@@ -460,7 +461,9 @@ const LettersGame: React.FC<Props> = (props) => {
             }
             additionalProps={{ autoFocus: true }}
           >
-            {props.gameshowScore !== undefined ? "Next round" : "Restart"}
+            {props.gameshowScore !== undefined
+              ? "Next round"
+              : props.isCampaignLevel ? LEVEL_FINISHING_TEXT : "Restart"}
           </Button>
         )}
       </div>

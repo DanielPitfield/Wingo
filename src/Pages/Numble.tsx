@@ -17,6 +17,7 @@ import {
   numbleGridSize,
   numbleGridSizes,
 } from "./NumbleConfig";
+import { LEVEL_FINISHING_TEXT } from "../Components/Level";
 
 interface Props {
   campaignConfig:
@@ -1106,7 +1107,7 @@ const Numble: React.FC<Props> = (props) => {
             onClick={() => ResetGame()}
             additionalProps={{ autoFocus: true }}
           >
-            Restart
+            {props.campaignConfig.isCampaignLevel ? LEVEL_FINISHING_TEXT : "Restart"}
           </Button>
         )}
       </div>

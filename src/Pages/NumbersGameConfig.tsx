@@ -6,6 +6,8 @@ import { Theme } from "../Data/Themes";
 import { SaveData, SettingsData } from "../Data/SaveData";
 
 export interface NumbersGameConfigProps {
+  isCampaignLevel: boolean;
+
   gamemodeSettings?: {
     hasScaryNumbers?: boolean;
     scoringMethod?: "standard" | "pointLostPerDifference";
@@ -15,7 +17,6 @@ export interface NumbersGameConfigProps {
   };
 
   defaultNumGuesses: number;
-  finishingButtonText?: string;
   gameshowScore?: number;
 }
 
@@ -517,7 +518,7 @@ const NumbersGameConfig: React.FC<Props> = (props) => {
 
   return (
     <NumbersGame
-      isCampaignLevel={props.page === "campaign/area/level"}
+      isCampaignLevel={props.isCampaignLevel}
       gamemodeSettings={gamemodeSettings}
       remainingSeconds={remainingSeconds}
       wordIndex={wordIndex}
