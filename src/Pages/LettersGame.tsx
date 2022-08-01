@@ -8,7 +8,7 @@ import ProgressBar, { GreenToRedColorTransition } from "../Components/ProgressBa
 import { isLettersGameGuessValid } from "./LettersGameConfig";
 import { pickRandomElementFrom } from "./WingoConfig";
 import { Theme } from "../Data/Themes";
-import { SaveData, SettingsData } from "../Data/SaveData";
+import { SettingsData } from "../Data/SaveData";
 import GamemodeSettingsMenu from "../Components/GamemodeSettingsMenu";
 import {
   MIN_TARGET_WORD_LENGTH,

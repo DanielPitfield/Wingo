@@ -30,7 +30,6 @@ const LetterCategoriesConfig: React.FC<Props> = (props) => {
   const DEFAULT_NUM_CATEGORIES = 5;
 
   const [guesses, setGuesses] = useState<string[]>([]);
-  const [gameId, setGameId] = useState<string | null>(null);
   const [currentWord, setCurrentWord] = useState("");
   const [wordIndex, setWordIndex] = useState(0);
   const [inProgress, setinProgress] = useState(true);
