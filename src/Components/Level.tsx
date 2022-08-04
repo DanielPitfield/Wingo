@@ -178,35 +178,24 @@ export const Level: React.FC<{
       setPage: props.setPage,
       setTheme: props.setTheme,
       addGold: props.addGold,
+      onComplete: (wasCorrect: boolean) => {
+          if (wasCorrect) {
+            props.onCompleteLevel(props.level.type === "unlock-level", props.level);
+          }
+          // Go to level selection (likely to choose next level)
+          props.setPage("campaign/area");
+      },
     };
 
     switch (props.level.level.gameCategory) {
       case "Wingo":
-        return (
-          <WingoConfig
-            {...props.level.level.levelProps}
-            {...commonProps}
-            onComplete={(wasCorrect) => {
-              if (wasCorrect) {
-                props.onCompleteLevel(props.level.type === "unlock-level", props.level);
-              }
-              // Go to level selection (likely to choose next level)
-              props.setPage("campaign/area");
-            }}
-          />
-        );
+        return <WingoConfig {...props.level.level.levelProps} {...commonProps} />;
 
       case "LetterCategories":
         return (
           <LetterCategoriesConfig
             {...props.level.level.levelProps}
             {...commonProps}
-            onComplete={(wasCorrect) => {
-              if (wasCorrect) {
-                props.onCompleteLevel(props.level.type === "unlock-level", props.level);
-              }
-              props.setPage("campaign/area");
-            }}
           />
         );
 
@@ -215,13 +204,6 @@ export const Level: React.FC<{
           <LettersGameConfig
             {...props.level.level.levelProps}
             {...commonProps}
-            settings={props.settings}
-            onComplete={(wasCorrect) => {
-              if (wasCorrect) {
-                props.onCompleteLevel(props.level.type === "unlock-level", props.level);
-              }
-              props.setPage("campaign/area");
-            }}
           />
         );
 
@@ -230,12 +212,6 @@ export const Level: React.FC<{
           <NumbersGameConfig
             {...props.level.level.levelProps}
             {...commonProps}
-            onComplete={(wasCorrect) => {
-              if (wasCorrect) {
-                props.onCompleteLevel(props.level.type === "unlock-level", props.level);
-              }
-              props.setPage("campaign/area");
-            }}
           />
         );
 
@@ -244,12 +220,6 @@ export const Level: React.FC<{
           <ArithmeticReveal
             {...props.level.level.levelProps}
             {...commonProps}
-            onComplete={(wasCorrect) => {
-              if (wasCorrect) {
-                props.onCompleteLevel(props.level.type === "unlock-level", props.level);
-              }
-              props.setPage("campaign/area");
-            }}
           />
         );
 
@@ -258,12 +228,6 @@ export const Level: React.FC<{
           <ArithmeticDrag
             {...props.level.level.levelProps}
             {...commonProps}
-            onComplete={(wasCorrect) => {
-              if (wasCorrect) {
-                props.onCompleteLevel(props.level.type === "unlock-level", props.level);
-              }
-              props.setPage("campaign/area");
-            }}
           />
         );
 
@@ -272,12 +236,6 @@ export const Level: React.FC<{
           <OnlyConnect
             {...props.level.level.levelProps}
             {...commonProps}
-            onComplete={(wasCorrect) => {
-              if (wasCorrect) {
-                props.onCompleteLevel(props.level.type === "unlock-level", props.level);
-              }
-              props.setPage("campaign/area");
-            }}
           />
         );
 
@@ -286,12 +244,6 @@ export const Level: React.FC<{
           <SameLetterWords
             {...props.level.level.levelProps}
             {...commonProps}
-            onComplete={(wasCorrect) => {
-              if (wasCorrect) {
-                props.onCompleteLevel(props.level.type === "unlock-level", props.level);
-              }
-              props.setPage("campaign/area");
-            }}
           />
         );
 
@@ -300,12 +252,6 @@ export const Level: React.FC<{
           <NumberSets
             {...props.level.level.levelProps}
             {...commonProps}
-            onComplete={(wasCorrect) => {
-              if (wasCorrect) {
-                props.onCompleteLevel(props.level.type === "unlock-level", props.level);
-              }
-              props.setPage("campaign/area");
-            }}
           />
         );
 
@@ -314,12 +260,6 @@ export const Level: React.FC<{
           <Algebra
             {...props.level.level.levelProps}
             {...commonProps}
-            onComplete={(wasCorrect) => {
-              if (wasCorrect) {
-                props.onCompleteLevel(props.level.type === "unlock-level", props.level);
-              }
-              props.setPage("campaign/area");
-            }}
           />
         );
 
@@ -328,12 +268,6 @@ export const Level: React.FC<{
           <WordCodes
             {...props.level.level.levelProps}
             {...commonProps}
-            onComplete={(wasCorrect) => {
-              if (wasCorrect) {
-                props.onCompleteLevel(props.level.type === "unlock-level", props.level);
-              }
-              props.setPage("campaign/area");
-            }}
           />
         );
 
@@ -342,12 +276,6 @@ export const Level: React.FC<{
           <NumbleConfig
             {...props.level.level.levelProps}
             {...commonProps}
-            onComplete={(wasCorrect) => {
-              if (wasCorrect) {
-                props.onCompleteLevel(props.level.type === "unlock-level", props.level);
-              }
-              props.setPage("campaign/area");
-            }}
           />
         );
 
