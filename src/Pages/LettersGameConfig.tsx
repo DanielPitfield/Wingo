@@ -19,6 +19,7 @@ export interface LettersGameConfigProps {
 }
 
 interface Props extends LettersGameConfigProps {
+  isCampaignLevel: boolean;
   page: PageName;
   theme: Theme;
   settings: SettingsData;

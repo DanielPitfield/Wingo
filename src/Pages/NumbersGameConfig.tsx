@@ -6,8 +6,6 @@ import { Theme } from "../Data/Themes";
 import { SaveData, SettingsData } from "../Data/SaveData";
 
 export interface NumbersGameConfigProps {
-  isCampaignLevel: boolean;
-
   gamemodeSettings?: {
     hasScaryNumbers?: boolean;
     scoringMethod?: "standard" | "pointLostPerDifference";
@@ -21,6 +19,7 @@ export interface NumbersGameConfigProps {
 }
 
 interface Props extends NumbersGameConfigProps {
+  isCampaignLevel: boolean;
   page: PageName;
   theme: Theme;
   settings: SettingsData;

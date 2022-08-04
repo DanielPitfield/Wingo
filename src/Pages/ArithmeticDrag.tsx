@@ -22,7 +22,6 @@ const arithmeticModes = ["order", "match"] as const;
 export type arithmeticMode = typeof arithmeticModes[number];
 
 export interface ArithmeticDragProps {
-  isCampaignLevel: boolean;
   mode: arithmeticMode;
 
   gamemodeSettings?: {
@@ -49,6 +48,7 @@ export interface ArithmeticDragProps {
 }
 
 interface Props extends ArithmeticDragProps {
+  isCampaignLevel: boolean;
   page: PageName;
   theme: Theme;
   settings: SettingsData;

@@ -36,8 +36,6 @@ export type TileStatus = {
 };
 
 export interface WingoInterlinkedProps {
-  isCampaignLevel: boolean;
-
   // TODO: Add as a gamemode setting?
   wordArrayConfig:
     | { type: "custom"; array: string[]; useExact: boolean; canRestart: boolean }
@@ -77,6 +75,7 @@ export interface WingoInterlinkedProps {
 }
 
 interface Props extends WingoInterlinkedProps {
+  isCampaignLevel: boolean;
   page: PageName;
   theme?: Theme;
   settings: SettingsData;

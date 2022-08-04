@@ -20,7 +20,7 @@ import {
 } from "../Data/DefaultGamemodeSettings";
 
 export interface WingoConfigProps {
-  isCampaignLevel: boolean;
+  
   mode:
     | "daily"
     | "repeat"
@@ -69,8 +69,9 @@ export interface WingoConfigProps {
 }
 
 interface Props extends WingoConfigProps {
+  isCampaignLevel: boolean;
   page: PageName;
-  theme: Theme;
+  theme?: Theme;
   settings: SettingsData;
   setPage: (page: PageName) => void;
   setTheme: (theme: Theme) => void;
@@ -792,9 +793,8 @@ const WingoConfig: React.FC<Props> = (props) => {
     const gameId = SaveData.addGameToHistory(props.page, {
       timestamp: new Date().toISOString(),
       gameCategory: "Wingo",
-      page: props.page,
+      page: props.page,        
       levelProps: {
-        isCampaignLevel: props.isCampaignLevel,
         mode: props.mode,
         gamemodeSettings: {
           wordLength: gamemodeSettings.wordLength,

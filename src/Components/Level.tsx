@@ -168,10 +168,11 @@ export const Level: React.FC<{
   setTheme: (theme: Theme) => void;
   setPage: (page: PageName) => void;
   addGold: (gold: number) => void;
-  onCompleteLevel: (isUnlockLevel: boolean, level: LevelConfig) => void;
+  onCompleteCampaignLevel: (isUnlockLevel: boolean, level: LevelConfig) => void;
 }> = (props) => {
   function renderGame() {
     const commonProps = {
+      isCampaignLevel: true,
       page: props.page,
       theme: props.theme,
       settings: props.settings,
@@ -179,11 +180,12 @@ export const Level: React.FC<{
       setTheme: props.setTheme,
       addGold: props.addGold,
       onComplete: (wasCorrect: boolean) => {
-          if (wasCorrect) {
-            props.onCompleteLevel(props.level.type === "unlock-level", props.level);
-          }
-          // Go to level selection (likely to choose next level)
-          props.setPage("campaign/area");
+        // Update progress to next level (if correct answer)
+        if (wasCorrect) {
+          props.onCompleteCampaignLevel(props.level.type === "unlock-level", props.level);
+        }
+        // Then, go to level selection (to rety level or to choose next level)
+        props.setPage("campaign/area");
       },
     };
 
@@ -192,92 +194,37 @@ export const Level: React.FC<{
         return <WingoConfig {...props.level.level.levelProps} {...commonProps} />;
 
       case "LetterCategories":
-        return (
-          <LetterCategoriesConfig
-            {...props.level.level.levelProps}
-            {...commonProps}
-          />
-        );
+        return <LetterCategoriesConfig {...props.level.level.levelProps} {...commonProps} />;
 
       case "LettersGame":
-        return (
-          <LettersGameConfig
-            {...props.level.level.levelProps}
-            {...commonProps}
-          />
-        );
+        return <LettersGameConfig {...props.level.level.levelProps} {...commonProps} />;
 
       case "NumbersGame":
-        return (
-          <NumbersGameConfig
-            {...props.level.level.levelProps}
-            {...commonProps}
-          />
-        );
+        return <NumbersGameConfig {...props.level.level.levelProps} {...commonProps} />;
 
       case "ArithmeticReveal":
-        return (
-          <ArithmeticReveal
-            {...props.level.level.levelProps}
-            {...commonProps}
-          />
-        );
+        return <ArithmeticReveal {...props.level.level.levelProps} {...commonProps} />;
 
       case "ArithmeticDrag/Match":
-        return (
-          <ArithmeticDrag
-            {...props.level.level.levelProps}
-            {...commonProps}
-          />
-        );
+        return <ArithmeticDrag {...props.level.level.levelProps} {...commonProps} />;
 
       case "GroupWall":
-        return (
-          <OnlyConnect
-            {...props.level.level.levelProps}
-            {...commonProps}
-          />
-        );
+        return <OnlyConnect {...props.level.level.levelProps} {...commonProps} />;
 
       case "SameLetterWords":
-        return (
-          <SameLetterWords
-            {...props.level.level.levelProps}
-            {...commonProps}
-          />
-        );
+        return <SameLetterWords {...props.level.level.levelProps} {...commonProps} />;
 
       case "NumberSets":
-        return (
-          <NumberSets
-            {...props.level.level.levelProps}
-            {...commonProps}
-          />
-        );
+        return <NumberSets {...props.level.level.levelProps} {...commonProps} />;
 
       case "Algebra":
-        return (
-          <Algebra
-            {...props.level.level.levelProps}
-            {...commonProps}
-          />
-        );
+        return <Algebra {...props.level.level.levelProps} {...commonProps} />;
 
       case "WordCodes":
-        return (
-          <WordCodes
-            {...props.level.level.levelProps}
-            {...commonProps}
-          />
-        );
+        return <WordCodes {...props.level.level.levelProps} {...commonProps} />;
 
       case "Numble":
-        return (
-          <NumbleConfig
-            {...props.level.level.levelProps}
-            {...commonProps}
-          />
-        );
+        return <NumbleConfig {...props.level.level.levelProps} {...commonProps} />;
 
       // TODO: Render Campaign level (remaining unimplemented modes)
       /*

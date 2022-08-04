@@ -9,28 +9,20 @@ import { Button } from "../Components/Button";
 import WingoConfig from "./WingoConfig";
 
 interface Props {
-  settings: SettingsData;
-  setPage: (page: PageName) => void;
-  page: PageName;
   themes: Theme[];
-  setTheme: (theme: Theme) => void;
-  addGold: (gold: number) => void;
   numSets: number;
   numLetterRoundsPerSet: number;
   numNumberRoundsPerSet: number;
   numConundrumRoundsPerSet: number;
   hasFinishingConundrum: boolean;
 
-  commonWingoProps: {
-    defaultnumGuesses: number;
+    isCampaignLevel: boolean;
     page: PageName;
-    theme: Theme;
+    settings: SettingsData;
     setPage: (page: PageName) => void;
     setTheme: (theme: Theme) => void;
     addGold: (gold: number) => void;
-    settings: SettingsData;
     onComplete: (wasCorrect: boolean) => void;
-  };
 }
 
 export const LettersNumbersGameshow: React.FC<Props> = (props) => {
@@ -113,37 +105,31 @@ export const LettersNumbersGameshow: React.FC<Props> = (props) => {
       return;
     }
 
+    const commonProps = {
+      isCampaignLevel: props.isCampaignLevel,
+      page: props.page,
+      setPage: props.setPage,
+      setTheme: props.setTheme,
+      addGold: props.addGold,
+      settings: props.settings,
+      onComplete: onComplete,
+    };
+
     if (roundType === "letter") {
-      return (
-        <LettersGameConfig
-          page={"LettersGame"}
-          theme={props.themes[0]}
-          settings={props.settings}
-          setTheme={props.setTheme}
-          setPage={props.setPage}
-          addGold={props.addGold}
-          onComplete={onComplete}
-          gameshowScore={gameshowScore}
-        />
-      );
+      return <LettersGameConfig {...commonProps} theme={props.themes[0]} gameshowScore={gameshowScore} />;
     } else if (roundType === "number") {
       return (
         <NumbersGameConfig
-          defaultNumGuesses={DEFAULT_NUM_GUESSES}
-          page={"NumbersGame"}
+          {...commonProps}
           theme={props.themes[1]}
-          settings={props.settings}
-          setTheme={props.setTheme}
-          setPage={props.setPage}
-          addGold={props.addGold}
-          onComplete={onComplete}
+          defaultNumGuesses={DEFAULT_NUM_GUESSES}
           gameshowScore={gameshowScore}
         />
       );
     } else if (roundType === "conundrum") {
       return (
         <WingoConfig
-          {...props.commonWingoProps}
+          {...commonProps}
           mode="conundrum"
           defaultWordLength={9}
           defaultnumGuesses={1}

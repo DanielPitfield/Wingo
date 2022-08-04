@@ -22,7 +22,6 @@ const wordCodesModes = ["match", "question"] as const;
 export type wordCodesMode = typeof wordCodesModes[number];
 
 export interface WordCodesProps {
-  isCampaignLevel: boolean;
   /* 
   Question mode - there can be more words provided than codes, answer questions converting between words and codes
   Match mode - same number of words as codes, match them together
@@ -48,6 +47,7 @@ export interface WordCodesProps {
 }
 
 interface Props extends WordCodesProps {
+  isCampaignLevel: boolean;
   page: PageName;
   theme: Theme;
   settings: SettingsData;

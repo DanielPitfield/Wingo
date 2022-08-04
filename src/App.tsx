@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { SplashScreen } from "./Pages/SplashScreen";
 import { LobbyMenu } from "./Pages/LobbyMenu";
 import WingoConfig, { pickRandomElementFrom } from "./Pages/WingoConfig";
@@ -109,7 +109,7 @@ export const App: React.FC = () => {
     return (pageFromUrl || entryPageSelection) ?? "TitlePage";
   }
 
-  useEffect(() => {
+  React.useEffect(() => {
     const LOADING_TIMEOUT_MS = 2000;
     const FADE_OUT_DURATION_MS = 500;
 
@@ -128,7 +128,7 @@ export const App: React.FC = () => {
     }
   }, [saveData]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     // Set the page to any playable page
     if (page === "random") {
       const playablePages = pageDescriptions.filter((page) => page.isPlayable);
@@ -142,11 +142,11 @@ export const App: React.FC = () => {
     }
   }, [page]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     SaveData.setGold(gold);
   }, [gold]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     SaveData.setSettings(settings);
     setThemeIfNoPreferredSet(getHighestCampaignArea()?.theme || Themes.GenericWingo);
   }, [settings]);
@@ -165,19 +165,29 @@ export const App: React.FC = () => {
     return pageDescriptions.find((page) => page.page === urlPathWithoutLeadingTrailingSlashes)?.page;
   }
 
-  function onCompleteLevel(isUnlockLevel: boolean, levelConfig: LevelConfig) {
+  // Default (free play)
+  function onComplete() {
+    if (!isRandomSession) {
+      return;
+    } else {
+      // New random page
+      setPage("random");
+    }
+  }
+
+  // Update campaign progress (when a campaign level is successfully completed)
+  function onCompleteCampaignLevel(isUnlockLevel: boolean, levelConfig: LevelConfig) {
     if (selectedCampaignArea) {
       if (isUnlockLevel) {
         SaveData.addCompletedCampaignAreaUnlockLevel(selectedCampaignArea.name);
       } else {
         const levelId = getId(levelConfig.level);
-
         SaveData.addCompletedCampaignAreaLevel(selectedCampaignArea.name, levelId);
       }
     }
   }
 
-  useEffect(() => {
+  React.useEffect(() => {
     const DEFAULT_PAGE_TITLE = "Wingo";
 
     // If the page has changed (and its not the splash screen)
@@ -190,12 +200,12 @@ export const App: React.FC = () => {
     }
   }, [page]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     // On clicking 'Back' in the browser, update the page from the URL
     window.onpopstate = () => setPage(getPageFromUrl() || "home");
   }, []);
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (loadingState === "loaded") {
       playBackgroundMusic();
     }
@@ -223,15 +233,6 @@ export const App: React.FC = () => {
       return true;
     } else {
       return false;
-    }
-  }
-
-  function onComplete(wasCorrect: boolean) {
-    if (!isRandomSession) {
-      return;
-    } else {
-      // New random page
-      setPage("random");
     }
   }
 
@@ -330,17 +331,6 @@ export const App: React.FC = () => {
 
     // Overwrite properties for specific modes where required
     const commonWingoProps = {
-      // TODO: Can {...commonProps} be used here?
-      isCampaignLevel: isCampaignLevel(page),
-      gamemodeSettings: pageGamemodeSettings,
-      page: page,
-      theme: theme,
-      setPage: setPage,
-      setTheme: setThemeIfNoPreferredSet,
-      addGold: addGold,
-      settings: settings,
-      onComplete: onComplete,
-
       defaultWordLength: DEFAULT_WORD_LENGTH,
       defaultnumGuesses: DEFAULT_NUM_GUESSES,
       enforceFullLengthGuesses: true,
@@ -402,34 +392,45 @@ export const App: React.FC = () => {
               setPage={setPage}
               setTheme={setThemeIfNoPreferredSet}
               addGold={addGold}
-              onCompleteLevel={onCompleteLevel}
+              onCompleteCampaignLevel={onCompleteCampaignLevel}
               settings={settings}
             />
           )
         );
 
       case "wingo/daily":
-        return <WingoConfig {...commonWingoProps} mode="daily" />;
+        return <WingoConfig {...commonProps} {...commonWingoProps} mode="daily" />;
 
       case "wingo/repeat":
-        return <WingoConfig {...commonWingoProps} mode="repeat" />;
+        return <WingoConfig {...commonProps} {...commonWingoProps} mode="repeat" />;
 
       case "wingo/category":
-        return <WingoConfig {...commonWingoProps} mode="category" enforceFullLengthGuesses={false} />;
+        return <WingoConfig {...commonProps} {...commonWingoProps} mode="category" enforceFullLengthGuesses={false} />;
 
       case "wingo/increasing":
         return (
-          <WingoConfig {...commonWingoProps} mode="increasing" defaultWordLength={DEFAULT_WORD_LENGTH_INCREASING} />
+          <WingoConfig
+            {...commonProps}
+            {...commonWingoProps}
+            mode="increasing"
+            defaultWordLength={DEFAULT_WORD_LENGTH_INCREASING}
+          />
         );
 
       case "wingo/limitless":
         return (
-          <WingoConfig {...commonWingoProps} mode="limitless" defaultWordLength={DEFAULT_WORD_LENGTH_INCREASING} />
+          <WingoConfig
+            {...commonProps}
+            {...commonWingoProps}
+            mode="limitless"
+            defaultWordLength={DEFAULT_WORD_LENGTH_INCREASING}
+          />
         );
 
       case "wingo/puzzle":
         return (
           <WingoConfig
+            {...commonProps}
             {...commonWingoProps}
             mode="puzzle"
             defaultWordLength={DEFAULT_WORD_LENGTH_PUZZLE}
@@ -439,19 +440,19 @@ export const App: React.FC = () => {
 
       case "wingo/interlinked":
         // TODO: Directly return WingoInterlinked component?
-        return <WingoConfig {...commonWingoProps} mode="interlinked" />;
+        return <WingoConfig {...commonProps} {...commonWingoProps} mode="interlinked" />;
 
       case "wingo/crossword":
-        return <WingoConfig {...commonWingoProps} mode="crossword" />;
+        return <WingoConfig {...commonProps} {...commonWingoProps} mode="crossword" />;
 
       case "wingo/crossword/fit":
-        return <WingoConfig {...commonWingoProps} mode="crossword/fit" />;
+        return <WingoConfig {...commonProps} {...commonWingoProps} mode="crossword/fit" />;
 
       case "wingo/crossword/weekly":
-        return <WingoConfig {...commonWingoProps} mode="crossword/weekly" />;
+        return <WingoConfig {...commonProps} {...commonWingoProps} mode="crossword/weekly" />;
 
       case "wingo/crossword/daily":
-        return <WingoConfig {...commonWingoProps} mode="crossword/daily" />;
+        return <WingoConfig {...commonProps} {...commonWingoProps} mode="crossword/daily" />;
 
       case "LettersCategories":
         return <LetterCategoriesConfig {...commonProps} enforceFullLengthGuesses={false} />;
@@ -471,6 +472,7 @@ export const App: React.FC = () => {
       case "Conundrum":
         return (
           <WingoConfig
+            {...commonProps}
             {...commonWingoProps}
             mode="conundrum"
             defaultWordLength={DEFAULT_WORD_LENGTH_CONUNDRUM}
@@ -523,13 +525,9 @@ export const App: React.FC = () => {
       case "LettersNumbersGameshow":
         return (
           <LettersNumbersGameshow
-            commonWingoProps={commonWingoProps}
-            settings={settings}
-            setPage={setPage}
-            page={page}
+            {...commonProps}
+            {...commonWingoProps}
             themes={[Themes.GenericLettersGame, Themes.GenericNumbersGame]}
-            setTheme={setThemeIfNoPreferredSet}
-            addGold={addGold}
             // TODO: Should LettersNumbersGameshow have gamemodeSettings like other gamemodes or an initial configuration page?
             numSets={5}
             numLetterRoundsPerSet={2}
@@ -542,7 +540,8 @@ export const App: React.FC = () => {
       case "Wingo/Gameshow":
         return (
           <WingoGameshow
-            commonWingoProps={commonWingoProps}
+            {...commonProps}
+            {...commonWingoProps}
             // TODO: Should WingoGameshow have gamemodeSettings like other gamemodes or an initial configuration page?
             firstRoundConfig={{ numWingos: 4, numPuzzles: 1 }}
             secondRoundConfig={{ numWingos: 3, numPuzzles: 1 }}

@@ -29,7 +29,6 @@ export type NumberSetTemplate = {
 };
 
 export interface NumberSetsProps {
-  isCampaignLevel: boolean;
   defaultSet?: NumberSetConfigProps;
 
   gamemodeSettings?: {
@@ -39,6 +38,7 @@ export interface NumberSetsProps {
 }
 
 interface Props extends NumberSetsProps {
+  isCampaignLevel: boolean;
   page: PageName;
   theme: Theme;
   settings: SettingsData;

@@ -14,8 +14,6 @@ import { pickRandomElementFrom } from "./WingoConfig";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
 
 export interface SameLetterWordsProps {
-  isCampaignLevel: boolean;
-
   gamemodeSettings?: {
     wordLength?: number;
     numMatchingWords?: number;
@@ -27,6 +25,7 @@ export interface SameLetterWordsProps {
 }
 
 interface Props extends SameLetterWordsProps {
+  isCampaignLevel: boolean;
   page: PageName;
   theme: Theme;
   settings: SettingsData;

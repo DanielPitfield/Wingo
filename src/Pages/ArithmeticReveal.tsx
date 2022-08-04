@@ -15,8 +15,6 @@ import { pickRandomElementFrom } from "./WingoConfig";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
 
 export interface ArithmeticRevealProps {
-  isCampaignLevel: boolean;
-
   gamemodeSettings?: {
     /* TODO: Difficulty presets
     All these settings control the difficulty for this mode
@@ -40,6 +38,7 @@ export interface ArithmeticRevealProps {
 }
 
 interface Props extends ArithmeticRevealProps {
+  isCampaignLevel: boolean;
   page: PageName;
   theme: Theme;
   settings: SettingsData;

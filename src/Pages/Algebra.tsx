@@ -30,7 +30,6 @@ export type QuestionTemplate = {
 };
 
 export interface AlgebraProps {
-  isCampaignLevel: boolean;
   defaultTemplate?: AlgebraConfigProps;
 
   gamemodeSettings?: {
@@ -40,6 +39,7 @@ export interface AlgebraProps {
 }
 
 interface Props extends AlgebraProps {
+  isCampaignLevel: boolean;
   page: PageName;
   theme: Theme;
   settings: SettingsData;

@@ -12,8 +12,6 @@ import { Theme } from "../Data/Themes";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
 
 export interface GroupWallProps {
-  isCampaignLevel: boolean;
-
   gamemodeSettings?: {
     numGroups?: number;
     groupSize?: number;
@@ -24,6 +22,7 @@ export interface GroupWallProps {
 }
 
 interface Props extends GroupWallProps {
+  isCampaignLevel: boolean;
   page: PageName;
   theme: Theme;
   settings: SettingsData;

@@ -7,6 +7,7 @@ import { Button } from "../Components/Button";
 import { ChallengeReward } from "../Components/Challenge";
 import Success from "../Data/Images/success.svg";
 import Error from "../Data/Images/error.svg";
+import { DEFAULT_NUM_GUESSES } from "../Data/DefaultGamemodeSettings";
 
 interface Props {
   firstRoundConfig: { numWingos: number; numPuzzles: number };
@@ -17,18 +18,17 @@ interface Props {
     numFiveLengthWingos: number;
     numberPuzzles: number;
   };
-  hasFinalRound: boolean;
+  hasFinalRound: boolean;  
+  defaultnumGuesses: number;
 
-  commonWingoProps: {
-    defaultnumGuesses: number;
-    page: PageName;
-    theme: Theme;
-    setPage: (page: PageName) => void;
-    setTheme: (theme: Theme) => void;
-    addGold: (gold: number) => void;
-    settings: SettingsData;
-    onComplete: (wasCorrect: boolean) => void;
-  };
+  isCampaignLevel: boolean;
+  page: PageName;
+  theme: Theme;
+  settings: SettingsData;
+  setPage: (page: PageName) => void;
+  setTheme: (theme: Theme) => void;
+  addGold: (gold: number) => void;
+  onComplete: (wasCorrect: boolean) => void;
 }
 
 type RoundInfo = {
@@ -258,11 +258,21 @@ export const WingoGameshow: React.FC<Props> = (props) => {
       pointsLostPerGuess: nextRoundInfo.pointsLostPerGuess,
     };
 
+    const commonProps = {
+      isCampaignLevel: props.isCampaignLevel,
+      page: props.page,
+      theme: props.theme,
+      setPage: props.setPage,
+      setTheme: props.setTheme,
+      addGold: props.addGold,
+      settings: props.settings,
+      onComplete: onComplete,
+    };
+
     if (nextRoundInfo.isPuzzle) {
       return (
         <WingoConfig
-          {...props.commonWingoProps}
-          onComplete={onComplete}
+          {...commonProps}
           mode="puzzle"
           defaultWordLength={wordLength}
           defaultnumGuesses={1}
@@ -274,10 +284,10 @@ export const WingoGameshow: React.FC<Props> = (props) => {
     } else {
       return (
         <WingoConfig
-          {...props.commonWingoProps}
-          onComplete={onComplete}
+          {...commonProps}
           mode="repeat"
           defaultWordLength={wordLength}
+          defaultnumGuesses={5}
           enforceFullLengthGuesses={true}
           roundScoringInfo={roundScoringInfo}
           gameshowScore={gameshowScore}
@@ -317,8 +327,8 @@ export const WingoGameshow: React.FC<Props> = (props) => {
     <>
       {inProgress
         ? getNextRound()
-        : displayGameshowSummary(summary, props.commonWingoProps.settings, () =>
-            props.commonWingoProps.setPage("home")
+        : displayGameshowSummary(summary, props.settings, () =>
+            props.setPage("home")
           )}
     </>
   );

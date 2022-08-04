@@ -8,7 +8,6 @@ import { Theme } from "../Data/Themes";
 import { categoryMappings } from "../Data/DefaultGamemodeSettings";
 
 export interface LetterCategoriesConfigProps {
-  isCampaignLevel: boolean;
   enforceFullLengthGuesses: boolean;
 
   gamemodeSettings?: {
@@ -18,6 +17,7 @@ export interface LetterCategoriesConfigProps {
 }
 
 interface Props extends LetterCategoriesConfigProps {
+  isCampaignLevel: boolean;
   page: PageName;
   theme: Theme;
   settings: SettingsData;
