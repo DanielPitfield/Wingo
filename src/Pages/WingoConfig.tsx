@@ -845,14 +845,17 @@ const WingoConfig: React.FC<Props> = (props) => {
   }
 
   function ResetGame() {
-    if (currentWord.length > 0) {
+    if (!inProgress) {
+      // Guessed the target word correctly
+      const wasCorrect = currentWord.length > 0 && currentWord.toUpperCase() === targetWord?.toUpperCase();
       props.onComplete?.(
-        currentWord.toUpperCase() === targetWord?.toUpperCase(),
+        wasCorrect,
         currentWord,
         targetWord,
         determineScore()
       );
     }
+
     setisIncompleteWord(false);
 
     // Update word (when first letter provided setting is changed)

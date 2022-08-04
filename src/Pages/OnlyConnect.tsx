@@ -29,7 +29,7 @@ interface Props extends GroupWallProps {
   setPage: (page: PageName) => void;
   setTheme: (theme: Theme) => void;
   addGold: (gold: number) => void;
-  onComplete?: (wasCorrect: boolean) => void;
+  onComplete: (wasCorrect: boolean) => void;
 }
 
 export function getPrettyWord(text: string): string {
@@ -423,7 +423,12 @@ const OnlyConnect: React.FC<Props> = (props) => {
   }
 
   function ResetGame() {
-    props.onComplete?.(true);
+    if (!inProgress) {
+      // ALl groups correctly found
+      const wasCorrect = numCompletedGroups === gamemodeSettings.numGroups;   
+      props.onComplete(wasCorrect);
+    }
+
     setInProgress(true);
     setGridWords(getGridWords());
     setSelectedWords([]);

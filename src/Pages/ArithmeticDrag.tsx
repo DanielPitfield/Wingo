@@ -55,7 +55,7 @@ interface Props extends ArithmeticDragProps {
   setPage: (page: PageName) => void;
   setTheme: (theme: Theme) => void;
   addGold: (gold: number) => void;
-  onComplete?: (wasCorrect: boolean) => void;
+  onComplete: (wasCorrect: boolean) => void;
 }
 
 // https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array
@@ -500,7 +500,13 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
   }
 
   function ResetGame() {
-    props.onComplete?.(true);
+    if (!inProgress) {
+      const numCorrectTiles = expressionTiles.filter((x) => x.status === "correct").length;
+      // All tiles successfully matched
+      const wasCorrect = numCorrectTiles === expressionTiles.length;
+      props.onComplete(wasCorrect);
+    }
+
     setInProgress(true);
     setRemainingGuesses(gamemodeSettings.numGuesses);
     if (gamemodeSettings.timerConfig.isTimed) {

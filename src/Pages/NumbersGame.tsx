@@ -447,7 +447,7 @@ const NumbersGame: React.FC<Props> = (props) => {
     return score;
   }
 
-  function displayOutcome() {
+  function displayOutcome(): React.ReactNode {
     if (props.inProgress || !props.hasTimerEnded || !props.targetNumber) {
       return;
     }

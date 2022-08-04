@@ -349,7 +349,7 @@ const LettersGame: React.FC<Props> = (props) => {
     return shuffleArray(bestWords).slice(0, MAX_WORDS_TO_RETURN);
   }
 
-  function displayOutcome() {
+  function displayOutcome(): React.ReactNode {
     // Game has not yet ended (currently only when when timer runs out)
     if (props.inProgress) {
       return;

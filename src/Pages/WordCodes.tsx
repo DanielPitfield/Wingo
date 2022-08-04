@@ -680,6 +680,7 @@ const WordCodes: React.FC<Props> = (props) => {
 
   // Restart with new word codes and set of questions
   function ResetGame() {
+    // TODO: wasCorrect
     props.onComplete?.(true);
     setGuess("");
     setInProgress(true);

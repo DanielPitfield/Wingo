@@ -455,7 +455,7 @@ const Wingo: React.FC<Props> = (props) => {
     }
   }, [props.inProgress]);
 
-  function displayOutcome() {
+  function displayOutcome(): React.ReactNode {
     // Game still in progress
     if (props.inProgress) {
       return (

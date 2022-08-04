@@ -24,7 +24,7 @@ interface Props extends LetterCategoriesConfigProps {
   setPage: (page: PageName) => void;
   setTheme: (theme: Theme) => void;
   addGold: (gold: number) => void;
-  onComplete?: (wasCorrect: boolean) => void;
+  onComplete: (wasCorrect: boolean) => void;
 }
 
 const LetterCategoriesConfig: React.FC<Props> = (props) => {
@@ -182,7 +182,12 @@ const LetterCategoriesConfig: React.FC<Props> = (props) => {
   }
 
   function ResetGame() {
-    props.onComplete?.(true);
+    if (!inProgress) {
+      // All categories guessed correctly
+      const wasCorrect = correctGuessesCount === gamemodeSettings.numCategories;
+      props.onComplete(wasCorrect);
+    }
+
     generateTargetWords();
     setGuesses([]);
     setWordIndex(0);

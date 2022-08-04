@@ -189,10 +189,10 @@ const LetterCategories: React.FC<Props> = (props) => {
     );
   }
 
-  function displayOutcome(): JSX.Element {
+  function displayOutcome(): React.ReactNode {
     // Game still in progress, don't display anything
     if (props.inProgress) {
-      return <></>;
+      return;
     }
 
     // All correct

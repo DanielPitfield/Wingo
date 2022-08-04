@@ -667,7 +667,7 @@ const Numble: React.FC<Props> = (props) => {
     }
   }
 
-  function displayOutcome() {
+  function displayOutcome(): React.ReactNode {
     if (isGameInProgress()) {
       return;
     }
@@ -779,6 +779,9 @@ const Numble: React.FC<Props> = (props) => {
   }
 
   function ResetGame() {
+    // TODO: wasCorrect
+    // TODO: setInProgress(false) if a campaign level and the target score to complete the level has been achieved
+
     if (props.gamemodeSettings.timerConfig.isTimed) {
       const newRemainingSeconds = props.gamemodeSettings.timerConfig.seconds ?? mostRecentTotalSeconds;
 

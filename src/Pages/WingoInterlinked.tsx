@@ -1054,6 +1054,7 @@ export const WingoInterlinked: React.FC<Props> = (props) => {
   }
 
   function ResetGame() {
+    // TODO: wasCorrect
     const gridCompleted = tileStatuses.every((tile) => {
       if (tile.status === "correct") {
         return true;

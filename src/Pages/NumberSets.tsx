@@ -236,6 +236,7 @@ const NumberSets: React.FC<Props> = (props) => {
   }
 
   function ResetGame() {
+    // TODO: wasCorrect
     props.onComplete?.(true);
     setInProgress(true);
     setGuess("");

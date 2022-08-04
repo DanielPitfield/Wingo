@@ -45,7 +45,7 @@ interface Props extends ArithmeticRevealProps {
   setPage: (page: PageName) => void;
   setTheme: (theme: Theme) => void;
   addGold: (gold: number) => void;
-  onComplete?: (wasCorrect: boolean) => void;
+  onComplete: (wasCorrect: boolean) => void;
 }
 
 /** */
@@ -465,7 +465,12 @@ const ArithmeticReveal: React.FC<Props> = (props) => {
   }
 
   function ResetGame() {
-    props.onComplete?.(true);
+    if (!inProgress) {
+      // Guess at the end of last checkpoint is correct
+      const wasCorrect = guess === targetNumbers[gamemodeSettings.numCheckpoints - 1].toString();       
+      props.onComplete(wasCorrect);    
+    }     
+
     setInProgress(true);
     setGuess("");
     setCurrentCheckpoint(0);

@@ -294,6 +294,7 @@ const Algebra: React.FC<Props> = (props) => {
 
   // Restart with new set of questions
   function ResetGame() {
+    // TODO: wasCorrect
     props.onComplete?.(true);
     setInProgress(true);
     setGuess("");

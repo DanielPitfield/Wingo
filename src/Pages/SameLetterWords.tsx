@@ -32,7 +32,7 @@ interface Props extends SameLetterWordsProps {
   setPage: (page: PageName) => void;
   setTheme: (theme: Theme) => void;
   addGold: (gold: number) => void;
-  onComplete?: (wasCorrect: boolean) => void;
+  onComplete: (wasCorrect: boolean) => void;
 }
 
 /** */
@@ -374,17 +374,19 @@ const SameLetterWords: React.FC<Props> = (props) => {
       return;
     }
 
-    let message_notification;
-    const successCondition = selectedWords.length > 0 && selectedWords.every((word) => validWords.includes(word));
+    // Every valid word is within the selected words
+    const successCondition = validWords.every((word) => selectedWords.includes(word)) && validWords.length > 0 && selectedWords.length > 0;
+
+    let messageNotification;
 
     if (successCondition) {
-      message_notification = (
+      messageNotification = (
         <MessageNotification type="success">
           All <strong>{validWords.length}</strong> words with the same letters found!
         </MessageNotification>
       );
     } else {
-      message_notification = (
+      messageNotification = (
         <MessageNotification type="error">
           You didn't find the <strong>{validWords.length}</strong> words with the same letters
         </MessageNotification>
@@ -393,7 +395,7 @@ const SameLetterWords: React.FC<Props> = (props) => {
 
     return (
       <>
-        {message_notification}
+        {messageNotification}
 
         <br></br>
 
@@ -405,7 +407,12 @@ const SameLetterWords: React.FC<Props> = (props) => {
   }
 
   function ResetGame() {
-    props.onComplete?.(true);
+    if (!inProgress) {
+      // Every valid word is within the selected words (all same letter words found)
+      const wasCorrect = validWords.every((word) => selectedWords.includes(word)) && validWords.length > 0 && selectedWords.length > 0;    
+      props.onComplete(wasCorrect);
+    }
+
     setInProgress(true);
     setSelectedWords([]);
     setValidWords([]);
