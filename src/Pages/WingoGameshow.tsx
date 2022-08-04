@@ -7,6 +7,7 @@ import { Button } from "../Components/Button";
 import { ChallengeReward } from "../Components/Challenge";
 import Success from "../Data/Images/success.svg";
 import Error from "../Data/Images/error.svg";
+import { LevelConfig } from "../Components/Level";
 
 interface Props {
   firstRoundConfig: { numWingos: number; numPuzzles: number };
@@ -27,7 +28,9 @@ interface Props {
     setTheme: (theme: Theme) => void;
     addGold: (gold: number) => void;
     settings: SettingsData;
-    onComplete: (wasCorrect: boolean) => void;
+    onCompleteLevel: (completedLevelConfig:
+      | { isCampaignLevel: false }
+      | { isCampaignLevel: true; levelConfig: LevelConfig; isUnlockLevel: boolean; wasCorrect: boolean }) => void;
   };
 }
 

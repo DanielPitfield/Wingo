@@ -11,7 +11,7 @@ import { SaveData, SettingsData } from "../Data/SaveData";
 import { useClickChime, useCorrectChime, useFailureChime, useLightPingChime } from "../Data/Sounds";
 import { Theme } from "../Data/Themes";
 import { AlgebraTemplates } from "../Data/AlgebraTemplates";
-import { LEVEL_FINISHING_TEXT } from "../Components/Level";
+import { LevelConfig, LEVEL_FINISHING_TEXT } from "../Components/Level";
 
 export const algebraDifficulties = ["novice", "easy", "medium", "hard", "expert"] as const;
 export type algebraDifficulty = typeof algebraDifficulties[number];
@@ -46,7 +46,9 @@ interface Props extends AlgebraProps {
   setPage: (page: PageName) => void;
   setTheme: (theme: Theme) => void;
   addGold: (gold: number) => void;
-  onComplete?: (wasCorrect: boolean) => void;
+  onCompleteLevel: (completedLevelConfig:
+    | { isCampaignLevel: false }
+    | { isCampaignLevel: true; levelConfig: LevelConfig; isUnlockLevel: boolean; wasCorrect: boolean }) => void;
 }
 
 export function getQuestionSetOutcome(numCorrectAnswers: number, numQuestions: number) {
@@ -294,7 +296,8 @@ const Algebra: React.FC<Props> = (props) => {
 
   // Restart with new set of questions
   function ResetGame() {
-    props.onComplete?.(true);
+    const newCompletedLevelConfig = props.isCampaignLevel ? {isCampaignLevel: true, }
+    props.onCompleteLevel({isCampaignLevel: false});
     setInProgress(true);
     setGuess("");
     setAlgebraTemplate({

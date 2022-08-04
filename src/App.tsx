@@ -165,15 +165,31 @@ export const App: React.FC = () => {
     return pageDescriptions.find((page) => page.page === urlPathWithoutLeadingTrailingSlashes)?.page;
   }
 
-  function onCompleteLevel(isUnlockLevel: boolean, levelConfig: LevelConfig) {
-    if (selectedCampaignArea) {
-      if (isUnlockLevel) {
-        SaveData.addCompletedCampaignAreaUnlockLevel(selectedCampaignArea.name);
-      } else {
-        const levelId = getId(levelConfig.level);
-
-        SaveData.addCompletedCampaignAreaLevel(selectedCampaignArea.name, levelId);
-      }
+  function onCompleteLevel(
+    completedLevelConfig:
+      | { isCampaignLevel: false }
+      | { isCampaignLevel: true; levelConfig: LevelConfig; isUnlockLevel: boolean; wasCorrect: boolean }
+  ) {
+    // Free play
+    if (!completedLevelConfig.isCampaignLevel && !isRandomSession) {
+      return;
+    }
+    // Free play (but part of session which randomly chooses next gamemode)
+    else if (!completedLevelConfig.isCampaignLevel && isRandomSession) {
+      setPage("random");
+    }
+    // Campaign - wrong answer 
+    else if (selectedCampaignArea && completedLevelConfig.isCampaignLevel && !completedLevelConfig.wasCorrect) {
+      setPage("campaign/area");
+    }
+    // Campaign - unlock level
+    else if (selectedCampaignArea && completedLevelConfig.isCampaignLevel && completedLevelConfig.isUnlockLevel) {
+      SaveData.addCompletedCampaignAreaUnlockLevel(selectedCampaignArea.name);
+    }
+    // Campaign - normal level
+    else if (selectedCampaignArea && completedLevelConfig.isCampaignLevel && !completedLevelConfig.isUnlockLevel) {
+      const levelId = getId(completedLevelConfig.levelConfig.level);
+      SaveData.addCompletedCampaignAreaLevel(selectedCampaignArea.name, levelId);
     }
   }
 
@@ -223,15 +239,6 @@ export const App: React.FC = () => {
       return true;
     } else {
       return false;
-    }
-  }
-
-  function onComplete(wasCorrect: boolean) {
-    if (!isRandomSession) {
-      return;
-    } else {
-      // New random page
-      setPage("random");
     }
   }
 
@@ -325,7 +332,7 @@ export const App: React.FC = () => {
       setTheme: setThemeIfNoPreferredSet,
       addGold: addGold,
       settings: settings,
-      onComplete: onComplete,
+      onCompleteLevel: onCompleteLevel,
     };
 
     // Overwrite properties for specific modes where required
@@ -339,7 +346,7 @@ export const App: React.FC = () => {
       setTheme: setThemeIfNoPreferredSet,
       addGold: addGold,
       settings: settings,
-      onComplete: onComplete,
+      onCompleteLevel: onCompleteLevel,
 
       defaultWordLength: DEFAULT_WORD_LENGTH,
       defaultnumGuesses: DEFAULT_NUM_GUESSES,

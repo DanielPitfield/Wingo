@@ -12,7 +12,7 @@ import { SaveData, SettingsData } from "../Data/SaveData";
 import { Theme } from "../Data/Themes";
 import { pickRandomElementFrom } from "./WingoConfig";
 import { DraggableItem } from "../Components/DraggableItem";
-import { LEVEL_FINISHING_TEXT } from "../Components/Level";
+import { LevelConfig, LEVEL_FINISHING_TEXT } from "../Components/Level";
 
 // Const Contexts: https://stackoverflow.com/questions/44497388/typescript-array-to-string-literal-type
 export const arithmeticNumberSizes = ["small", "medium", "large"] as const;
@@ -55,7 +55,9 @@ interface Props extends ArithmeticDragProps {
   setPage: (page: PageName) => void;
   setTheme: (theme: Theme) => void;
   addGold: (gold: number) => void;
-  onComplete?: (wasCorrect: boolean) => void;
+  onCompleteLevel: (completedLevelConfig:
+    | { isCampaignLevel: false }
+    | { isCampaignLevel: true; levelConfig: LevelConfig; isUnlockLevel: boolean; wasCorrect: boolean }) => void;
 }
 
 // https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array
@@ -500,7 +502,7 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
   }
 
   function ResetGame() {
-    props.onComplete?.(true);
+    props.onCompleteLevel({isCampaignLevel: false});
     setInProgress(true);
     setRemainingGuesses(gamemodeSettings.numGuesses);
     if (gamemodeSettings.timerConfig.isTimed) {

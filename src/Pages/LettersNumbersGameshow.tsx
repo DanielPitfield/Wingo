@@ -7,6 +7,7 @@ import { Theme } from "../Data/Themes";
 import { displayGameshowSummary } from "./WingoGameshow";
 import { Button } from "../Components/Button";
 import WingoConfig from "./WingoConfig";
+import { LevelConfig } from "../Components/Level";
 
 interface Props {
   settings: SettingsData;
@@ -29,7 +30,9 @@ interface Props {
     setTheme: (theme: Theme) => void;
     addGold: (gold: number) => void;
     settings: SettingsData;
-    onComplete: (wasCorrect: boolean) => void;
+    onCompleteLevel: (completedLevelConfig:
+    | { isCampaignLevel: false }
+    | { isCampaignLevel: true; levelConfig: LevelConfig; isUnlockLevel: boolean; wasCorrect: boolean }) => void;
   };
 }
 
@@ -44,10 +47,8 @@ export const LettersNumbersGameshow: React.FC<Props> = (props) => {
     {
       roundNumber: number;
       mode: string;
-      modeName: string;
-      wasCorrect: boolean;
-      answer: string;
-      targetAnswer: string;
+      providedAnswer: string;
+      correctAnswer: string;
       score: number;
     }[]
   >([]);
@@ -122,7 +123,7 @@ export const LettersNumbersGameshow: React.FC<Props> = (props) => {
           setTheme={props.setTheme}
           setPage={props.setPage}
           addGold={props.addGold}
-          onComplete={onComplete}
+          onCompleteLevel={onCompleteLevel}
           gameshowScore={gameshowScore}
         />
       );
@@ -136,7 +137,7 @@ export const LettersNumbersGameshow: React.FC<Props> = (props) => {
           setTheme={props.setTheme}
           setPage={props.setPage}
           addGold={props.addGold}
-          onComplete={onComplete}
+          onCompleteLevel={onCompleteLevel}
           gameshowScore={gameshowScore}
         />
       );
@@ -153,17 +154,15 @@ export const LettersNumbersGameshow: React.FC<Props> = (props) => {
     }
   }
 
-  function onComplete(wasCorrect: boolean, answer: string, targetAnswer: string, score: number | null) {
+  function updateGameshowSummary(roundSummary: { answer: string, targetAnswer: string, score: number | null}) {
     // Incorrect answer or score couldn't be determined, use score of 0
-    const newScore = !wasCorrect || !score || score === undefined || score === null ? 0 : score;
+    const newScore = roundSummary.score ?? 0;
 
     const roundSummary = {
       roundNumber: roundNumber,
-      wasCorrect: wasCorrect,
       mode: getRoundType()?.toString() || "",
-      modeName: getRoundType()?.toString() || "",
-      answer: answer,
-      targetAnswer: targetAnswer,
+      answer: roundSummary.answer,
+      targetAnswer: roundSummary.targetAnswer,
       score: newScore,
     };
 
