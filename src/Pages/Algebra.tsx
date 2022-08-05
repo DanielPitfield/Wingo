@@ -46,7 +46,7 @@ interface Props extends AlgebraProps {
   setPage: (page: PageName) => void;
   setTheme: (theme: Theme) => void;
   addGold: (gold: number) => void;
-  onComplete?: (wasCorrect: boolean) => void;
+  onComplete: (wasCorrect: boolean) => void;
 }
 
 export function getQuestionSetOutcome(numCorrectAnswers: number, numQuestions: number) {
@@ -294,8 +294,13 @@ const Algebra: React.FC<Props> = (props) => {
 
   // Restart with new set of questions
   function ResetGame() {
-    // TODO: wasCorrect
-    props.onComplete?.(true);
+    // After last question in template set
+    if (!inProgress && algebraTemplate && questionNumber === algebraTemplate.questions.length - 1) {
+      // All questions answered correctly
+      const wasCorrect = numCorrectAnswers === algebraTemplate.questions.length;
+      props.onComplete(wasCorrect)
+    }
+
     setInProgress(true);
     setGuess("");
     setAlgebraTemplate({

@@ -7,7 +7,6 @@ import { Button } from "../Components/Button";
 import { ChallengeReward } from "../Components/Challenge";
 import Success from "../Data/Images/success.svg";
 import Error from "../Data/Images/error.svg";
-import { DEFAULT_NUM_GUESSES } from "../Data/DefaultGamemodeSettings";
 
 interface Props {
   firstRoundConfig: { numWingos: number; numPuzzles: number };
@@ -31,14 +30,13 @@ interface Props {
   onComplete: (wasCorrect: boolean) => void;
 }
 
-type RoundInfo = {
+type RoundInfo = {  
+  score: number;
   roundNumber: number;
   mode: string;
-  modeName: string;
   wasCorrect: boolean;
-  answer: string;
-  targetAnswer: string;
-  score: number;
+  guess: string;
+  correctAnswer: string;
 };
 
 export function displayGameshowSummary(summary: RoundInfo[], settings: SettingsData, onBackToHome: () => void) {
@@ -120,14 +118,14 @@ export function displayGameshowSummary(summary: RoundInfo[], settings: SettingsD
                       <h3 className="gameshow-round-summary-title">Round {round.roundNumber + 1}</h3>
                       <p className="gameshow-round-summary-description">
                         <p className="guess">
-                          <strong>Mode:</strong> {round.modeName}
+                          <strong>Mode:</strong> {round.mode}
                         </p>
                         <p className="guess">
-                          <strong>Guess:</strong> {round.answer ? round.answer.toUpperCase() : "-"}
+                          <strong>Guess:</strong> {round.guess ? round.guess.toUpperCase() : "-"}
                         </p>
-                        {round.targetAnswer.length > 0 && (
+                        {round.correctAnswer.length > 0 && (
                           <p className="answer">
-                            <strong>Answer:</strong> {round.targetAnswer.toUpperCase()}
+                            <strong>Answer:</strong> {round.correctAnswer.toUpperCase()}
                           </p>
                         )}
                       </p>
@@ -153,14 +151,13 @@ export const WingoGameshow: React.FC<Props> = (props) => {
   const [wordLength, setWordLength] = useState(4);
   const [gameshowScore, setGameshowScore] = useState(0);
   const [summary, setSummary] = useState<
-    {
+    {      
+      score: number;
       roundNumber: number;
       mode: string;
-      modeName: string;
       wasCorrect: boolean;
-      answer: string;
-      targetAnswer: string;
-      score: number;
+      guess: string;
+      correctAnswer: string;
     }[]
   >([]);
 
@@ -266,7 +263,8 @@ export const WingoGameshow: React.FC<Props> = (props) => {
       setTheme: props.setTheme,
       addGold: props.addGold,
       settings: props.settings,
-      onComplete: onComplete,
+      onComplete: props.onComplete,
+      onCompleteGameshowRound: onCompleteGameshowRound,
     };
 
     if (nextRoundInfo.isPuzzle) {
@@ -296,20 +294,19 @@ export const WingoGameshow: React.FC<Props> = (props) => {
     }
   }
 
-  function onComplete(wasCorrect: boolean, answer: string, targetAnswer: string, score: number | null) {
+  function onCompleteGameshowRound(wasCorrect: boolean, guess: string, correctAnswer: string, score: number | null) {
     // Incorrect answer or score couldn't be determined, use score of 0
     const newScore = !wasCorrect || !score || score === undefined || score === null ? 0 : score;
 
     const roundInfo = getRoundInfo();
 
-    const roundSummary = {
-      roundNumber: roundNumber,
-      mode: roundInfo?.isPuzzle ? "Puzzle" : "Standard",
-      modeName: `${roundInfo?.isPuzzle ? "Puzzle" : "Standard"} (${roundInfo?.wordLength} letters)`,
-      wasCorrect: wasCorrect,
-      answer: answer,
-      targetAnswer: targetAnswer,
+    const roundSummary = {      
       score: newScore,
+      roundNumber: roundNumber,
+      mode: `${roundInfo?.isPuzzle ? "Puzzle" : "Standard"} (${roundInfo?.wordLength} letters)`,
+      wasCorrect: wasCorrect,
+      guess: guess,
+      correctAnswer: correctAnswer,
     };
 
     // Update summary with answer and score for current round

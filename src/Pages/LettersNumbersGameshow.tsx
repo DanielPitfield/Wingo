@@ -33,14 +33,13 @@ export const LettersNumbersGameshow: React.FC<Props> = (props) => {
   const [roundNumber, setRoundNumber] = useState(0);
   const [gameshowScore, setGameshowScore] = useState(0);
   const [summary, setSummary] = useState<
-    {
+    {      
+      score: number;
       roundNumber: number;
       mode: string;
-      modeName: string;
       wasCorrect: boolean;
-      answer: string;
-      targetAnswer: string;
-      score: number;
+      guess: string;
+      correctAnswer: string;
     }[]
   >([]);
 
@@ -112,7 +111,8 @@ export const LettersNumbersGameshow: React.FC<Props> = (props) => {
       setTheme: props.setTheme,
       addGold: props.addGold,
       settings: props.settings,
-      onComplete: onComplete,
+      onComplete: props.onComplete,
+      onCompleteGameshowRound: onCompleteGameshowRound,
     };
 
     if (roundType === "letter") {
@@ -139,18 +139,17 @@ export const LettersNumbersGameshow: React.FC<Props> = (props) => {
     }
   }
 
-  function onComplete(wasCorrect: boolean, answer: string, targetAnswer: string, score: number | null) {
+  function onCompleteGameshowRound(wasCorrect: boolean, guess: string, correctAnswer: string, score: number | null) {
     // Incorrect answer or score couldn't be determined, use score of 0
     const newScore = !wasCorrect || !score || score === undefined || score === null ? 0 : score;
 
-    const roundSummary = {
-      roundNumber: roundNumber,
-      wasCorrect: wasCorrect,
-      mode: getRoundType()?.toString() || "",
-      modeName: getRoundType()?.toString() || "",
-      answer: answer,
-      targetAnswer: targetAnswer,
+    const roundSummary = {      
       score: newScore,
+      roundNumber: roundNumber,      
+      mode: getRoundType()?.toString() || "",
+      wasCorrect: wasCorrect,
+      guess: guess,
+      correctAnswer: correctAnswer,
     };
 
     // Update summary with answer and score for current round

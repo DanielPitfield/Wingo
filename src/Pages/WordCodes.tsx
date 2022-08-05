@@ -54,7 +54,7 @@ interface Props extends WordCodesProps {
   setPage: (page: PageName) => void;
   setTheme: (theme: Theme) => void;
   addGold: (gold: number) => void;
-  onComplete?: (wasCorrect: boolean) => void;
+  onComplete: (wasCorrect: boolean) => void;
 }
 
 /** */
@@ -594,14 +594,14 @@ const WordCodes: React.FC<Props> = (props) => {
       return;
     }
 
-    let message_notification;
+    let messageNotification;
 
     if (props.mode === "match") {
       const numCorrectTiles = wordTiles.filter((x) => x.status === "correct").length;
       const successCondition = numCorrectTiles === wordTiles.length;
 
       // Show how many tiles are in correct position
-      message_notification = (
+      messageNotification = (
         <>
           <MessageNotification type={successCondition ? "success" : "error"}>
             <strong>{successCondition ? "All tiles in the correct order!" : `${numCorrectTiles} tiles correct`}</strong>
@@ -627,7 +627,7 @@ const WordCodes: React.FC<Props> = (props) => {
       // Question was the last in the set of questions
       const lastQuestion = questionNumber === numQuestions - 1;
 
-      message_notification = (
+      messageNotification = (
         <>
           {/* Show number of correct answers and restart button after last question */}
           {lastQuestion && (
@@ -675,13 +675,24 @@ const WordCodes: React.FC<Props> = (props) => {
       );
     }
 
-    return message_notification;
+    return messageNotification;
   }
 
   // Restart with new word codes and set of questions
   function ResetGame() {
-    // TODO: wasCorrect
-    props.onComplete?.(true);
+    if (!inProgress) {
+      if (props.mode === "match") {
+        const numCorrectTiles = wordTiles.filter((x) => x.status === "correct").length;
+        const wasCorrect = numCorrectTiles === wordTiles.length;
+        props.onComplete(wasCorrect);
+      }
+      else if (props.mode === "question") {
+        const numQuestions = gamemodeSettings.numWordToCodeQuestions + gamemodeSettings.numCodeToWordQuestions;
+        const wasCorrect = numCorrectAnswers === numQuestions;
+        props.onComplete(wasCorrect);
+      }
+    }
+
     setGuess("");
     setInProgress(true);
     setWordTiles([]);

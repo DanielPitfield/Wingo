@@ -35,7 +35,7 @@ interface Props {
   theme: Theme;
   settings: SettingsData;
   setTheme: (theme: Theme) => void;
-  onComplete?: (wasCorrect: boolean) => void;
+  onComplete: (wasCorrect: boolean) => void;
 }
 
 /** Puzzle config */
@@ -98,9 +98,11 @@ export const PuzzleConfig: React.FC<Props> = (props) => {
   /**
    * Resets the game.
    */
-  function resetGame() {
-    // TODO: wasCorrect
-    props.onComplete?.(true);
+  function ResetGame() {
+    if (result !== "in-progress") {
+      props.onComplete(result === "correct");
+    }
+
     setResult("in-progress");
     setPuzzle({ ...Object.values(Puzzles)[Math.round(Math.random() * (Object.values(Puzzles).length - 1))] });
   }
@@ -246,7 +248,7 @@ export const PuzzleConfig: React.FC<Props> = (props) => {
     <div className="App puzzle-config" style={{ backgroundImage: puzzle && `url(${props.theme.backgroundImageSrc})` }}>
       {renderNotification()}
       {result !== "in-progress" && (
-        <Button mode="accept" settings={props.settings} onClick={() => resetGame()}>
+        <Button mode="accept" settings={props.settings} onClick={() => ResetGame()}>
           {props.isCampaignLevel ? LEVEL_FINISHING_TEXT : "Restart"}
         </Button>
       )}

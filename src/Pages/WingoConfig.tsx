@@ -20,7 +20,6 @@ import {
 } from "../Data/DefaultGamemodeSettings";
 
 export interface WingoConfigProps {
-  
   mode:
     | "daily"
     | "repeat"
@@ -76,7 +75,8 @@ interface Props extends WingoConfigProps {
   setPage: (page: PageName) => void;
   setTheme: (theme: Theme) => void;
   addGold: (gold: number) => void;
-  onComplete?: (wasCorrect: boolean, answer: string, targetAnswer: string, score: number | null) => void;
+  onComplete: (wasCorrect: boolean) => void;
+  onCompleteGameshowRound?: (wasCorrect: boolean, guess: string, correctAnswer: string, score: number | null) => void;
 }
 
 export function pickRandomElementFrom(array: any[]) {
@@ -793,7 +793,7 @@ const WingoConfig: React.FC<Props> = (props) => {
     const gameId = SaveData.addGameToHistory(props.page, {
       timestamp: new Date().toISOString(),
       gameCategory: "Wingo",
-      page: props.page,        
+      page: props.page,
       levelProps: {
         mode: props.mode,
         gamemodeSettings: {
@@ -848,12 +848,12 @@ const WingoConfig: React.FC<Props> = (props) => {
     if (!inProgress) {
       // Guessed the target word correctly
       const wasCorrect = currentWord.length > 0 && currentWord.toUpperCase() === targetWord?.toUpperCase();
-      props.onComplete?.(
-        wasCorrect,
-        currentWord,
-        targetWord,
-        determineScore()
-      );
+
+      if (props.gameshowScore === undefined) {
+        props.onComplete(wasCorrect);
+      } else {
+        props.onCompleteGameshowRound?.(wasCorrect, currentWord, targetWord, determineScore());
+      }
     }
 
     setisIncompleteWord(false);

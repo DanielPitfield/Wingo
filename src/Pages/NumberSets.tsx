@@ -18,6 +18,7 @@ export type NumberSetConfigProps = {
   difficulty: algebraDifficulty;
   correctAnswerDescription: string;
   examples: NumberSetTemplate[];
+  // TODO: Multiple questions like algebra gamemode?
   question: NumberSetTemplate;
 };
 
@@ -45,7 +46,7 @@ interface Props extends NumberSetsProps {
   setPage: (page: PageName) => void;
   setTheme: (theme: Theme) => void;
   addGold: (gold: number) => void;
-  onComplete?: (wasCorrect: boolean) => void;
+  onComplete: (wasCorrect: boolean) => void;
 }
 
 /** */
@@ -236,14 +237,14 @@ const NumberSets: React.FC<Props> = (props) => {
   }
 
   function ResetGame() {
-    // TODO: wasCorrect
-    props.onComplete?.(true);
+    if (!inProgress) {
+      const wasCorrect = guess === numberSet?.question.correctAnswer.toString();    
+      props.onComplete(wasCorrect);
+    }
+
     setInProgress(true);
     setGuess("");
-
-    const numberSet = generateSet();
-    setNumberSet(numberSet);
-    console.log(numberSet);
+    setNumberSet(generateSet());
 
     if (gamemodeSettings.timerConfig.isTimed) {
       // Reset the timer if it is enabled in the game options
