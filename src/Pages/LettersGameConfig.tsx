@@ -26,7 +26,8 @@ interface Props extends LettersGameConfigProps {
   setPage: (page: PageName) => void;
   setTheme: (theme: Theme) => void;
   addGold: (gold: number) => void;
-  onComplete?: (wasCorrect: boolean, answer: string, targetAnswer: string, score: number | null) => void;
+  onComplete: (wasCorrect: boolean, guess: string, correctAnswer: string, score: number | null) => void;
+  onCompleteGameshowRound?: (wasCorrect: boolean, guess: string, correctAnswer: string, score: number | null) => void;
 }
 
 export function isLettersGameGuessValid(guessedWord: string, lettersGameSelectionWord: string) {
@@ -154,9 +155,10 @@ const LettersGameConfig: React.FC<Props> = (props) => {
   }, [gamemodeSettings]);
 
   // TODO: Better way to callback the outcome/status of a completed letters round for Letters Numbers Gameshow?
-  function ResetGame(wasCorrect: boolean, answer: string, targetAnswer: string, score: number | null) {
+  function ResetGame(wasCorrect: boolean, guess: string, correctAnswer: string, score: number | null) {
     // Callback of the score achieved (used for Letters Numbers Gameshow)
-    props.onComplete?.(wasCorrect, answer, targetAnswer, score);
+    props.onCompleteGameshowRound?.(wasCorrect, guess, correctAnswer, score);
+
     setGuesses([]);
     setLettersGameSelectionWord("");
     setCurrentWord("");
@@ -165,6 +167,7 @@ const LettersGameConfig: React.FC<Props> = (props) => {
     setinDictionary(true);
     sethasSubmitLetter(false);
     setletterStatuses(defaultLetterStatuses);
+
     if (gamemodeSettings.timerConfig.isTimed) {
       // Reset the timer if it is enabled in the game options
       setRemainingSeconds(gamemodeSettings.timerConfig.seconds);

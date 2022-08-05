@@ -26,7 +26,8 @@ interface Props extends NumbersGameConfigProps {
   setPage: (page: PageName) => void;
   setTheme: (theme: Theme) => void;
   addGold: (gold: number) => void;
-  onComplete?: (wasCorrect: boolean, answer: string, targetAnswer: string, score: number | null) => void;
+  onComplete: (wasCorrect: boolean, guess: string, correctAnswer: string, score: number | null) => void;
+  onCompleteGameshowRound?: (wasCorrect: boolean, guess: string, correctAnswer: string, score: number | null) => void;
 }
 
 export const operators: { name: "÷" | "-" | "+" | "×"; function: (num1: number, num2: number) => number }[] = [
@@ -235,9 +236,10 @@ const NumbersGameConfig: React.FC<Props> = (props) => {
   }
 
   // TODO: Simplify callback for gameshow
-  function ResetGame(wasCorrect: boolean, answer: string, targetAnswer: string, score: number | null) {
+  function ResetGame(wasCorrect: boolean, guess: string, correctAnswer: string, score: number | null) {
     // Callback of the score achieved (used for Letters Numbers Gameshow)
-    props.onComplete?.(wasCorrect, answer, targetAnswer, score);
+    props.onCompleteGameshowRound?.(wasCorrect, guess, correctAnswer, score);
+
     setCurrentGuesses([]);
     setClosestGuessSoFar(null);
     setNumberTileStatuses(defaultNumberTileStatuses);
@@ -248,6 +250,7 @@ const NumbersGameConfig: React.FC<Props> = (props) => {
     sethasTimerEnded(false);
     sethasSubmitNumber(false);
     setNumGuesses(props.defaultNumGuesses);
+
     if (gamemodeSettings.timerConfig.isTimed) {
       // Reset the timer if it is enabled in the game options
       setRemainingSeconds(gamemodeSettings.timerConfig.seconds);

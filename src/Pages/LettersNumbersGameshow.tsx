@@ -16,13 +16,13 @@ interface Props {
   numConundrumRoundsPerSet: number;
   hasFinishingConundrum: boolean;
 
-    isCampaignLevel: boolean;
-    page: PageName;
-    settings: SettingsData;
-    setPage: (page: PageName) => void;
-    setTheme: (theme: Theme) => void;
-    addGold: (gold: number) => void;
-    onComplete: (wasCorrect: boolean) => void;
+  isCampaignLevel: boolean;
+  page: PageName;
+  settings: SettingsData;
+  setPage: (page: PageName) => void;
+  setTheme: (theme: Theme) => void;
+  addGold: (gold: number) => void;
+  onComplete: (wasCorrect: boolean) => void;
 }
 
 export const LettersNumbersGameshow: React.FC<Props> = (props) => {
@@ -33,7 +33,7 @@ export const LettersNumbersGameshow: React.FC<Props> = (props) => {
   const [roundNumber, setRoundNumber] = useState(0);
   const [gameshowScore, setGameshowScore] = useState(0);
   const [summary, setSummary] = useState<
-    {      
+    {
       score: number;
       roundNumber: number;
       mode: string;
@@ -89,6 +89,30 @@ export const LettersNumbersGameshow: React.FC<Props> = (props) => {
     }
   }, [roundNumber]);
 
+  function onCompleteGameshowRound(wasCorrect: boolean, guess: string, correctAnswer: string, score: number | null) {
+    // Incorrect answer or score couldn't be determined, use score of 0
+    const newScore = !wasCorrect ? 0 : score ?? 0;
+
+    const roundSummary = {
+      score: newScore,
+      roundNumber: roundNumber,
+      mode: getRoundType()?.toString() || "",
+      wasCorrect: wasCorrect,
+      guess: guess,
+      correctAnswer: correctAnswer,
+    };
+
+    // Update summary with answer and score for current round
+    let newSummary = summary.slice();
+    newSummary.push(roundSummary);
+    setSummary(newSummary);
+
+    // Start next round
+    setRoundNumber(roundNumber + 1);
+
+    return;
+  }
+
   function getRoundType() {
     if (!roundOrder || roundOrder.length === 0) {
       return;
@@ -137,30 +161,6 @@ export const LettersNumbersGameshow: React.FC<Props> = (props) => {
         />
       );
     }
-  }
-
-  function onCompleteGameshowRound(wasCorrect: boolean, guess: string, correctAnswer: string, score: number | null) {
-    // Incorrect answer or score couldn't be determined, use score of 0
-    const newScore = !wasCorrect || !score || score === undefined || score === null ? 0 : score;
-
-    const roundSummary = {      
-      score: newScore,
-      roundNumber: roundNumber,      
-      mode: getRoundType()?.toString() || "",
-      wasCorrect: wasCorrect,
-      guess: guess,
-      correctAnswer: correctAnswer,
-    };
-
-    // Update summary with answer and score for current round
-    let newSummary = summary.slice();
-    newSummary.push(roundSummary);
-    setSummary(newSummary);
-
-    // Start next round
-    setRoundNumber(roundNumber + 1);
-
-    return;
   }
 
   return (

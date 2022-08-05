@@ -17,7 +17,7 @@ interface Props {
     numFiveLengthWingos: number;
     numberPuzzles: number;
   };
-  hasFinalRound: boolean;  
+  hasFinalRound: boolean;
   defaultnumGuesses: number;
 
   isCampaignLevel: boolean;
@@ -30,7 +30,7 @@ interface Props {
   onComplete: (wasCorrect: boolean) => void;
 }
 
-type RoundInfo = {  
+type RoundInfo = {
   score: number;
   roundNumber: number;
   mode: string;
@@ -151,7 +151,7 @@ export const WingoGameshow: React.FC<Props> = (props) => {
   const [wordLength, setWordLength] = useState(4);
   const [gameshowScore, setGameshowScore] = useState(0);
   const [summary, setSummary] = useState<
-    {      
+    {
       score: number;
       roundNumber: number;
       mode: string;
@@ -229,6 +229,32 @@ export const WingoGameshow: React.FC<Props> = (props) => {
     setWordLength(nextRoundInfo?.wordLength);
   }, [roundNumber]);
 
+  function onCompleteGameshowRound(wasCorrect: boolean, guess: string, correctAnswer: string, score: number | null) {
+    // Incorrect answer or score couldn't be determined, use score of 0
+    const newScore = !wasCorrect ? 0 : score ?? 0;
+
+    const roundInfo = getRoundInfo();
+
+    const roundSummary = {
+      score: newScore,
+      roundNumber: roundNumber,
+      mode: `${roundInfo?.isPuzzle ? "Puzzle" : "Standard"} (${roundInfo?.wordLength} letters)`,
+      wasCorrect: wasCorrect,
+      guess: guess,
+      correctAnswer: correctAnswer,
+    };
+
+    // Update summary with answer and score for current round
+    let newSummary = summary.slice();
+    newSummary.push(roundSummary);
+    setSummary(newSummary);
+
+    // Start next round
+    setRoundNumber(roundNumber + 1);
+
+    return;
+  }
+
   function getRoundInfo() {
     if (!roundOrder || roundOrder.length === 0) {
       return;
@@ -294,39 +320,7 @@ export const WingoGameshow: React.FC<Props> = (props) => {
     }
   }
 
-  function onCompleteGameshowRound(wasCorrect: boolean, guess: string, correctAnswer: string, score: number | null) {
-    // Incorrect answer or score couldn't be determined, use score of 0
-    const newScore = !wasCorrect || !score || score === undefined || score === null ? 0 : score;
-
-    const roundInfo = getRoundInfo();
-
-    const roundSummary = {      
-      score: newScore,
-      roundNumber: roundNumber,
-      mode: `${roundInfo?.isPuzzle ? "Puzzle" : "Standard"} (${roundInfo?.wordLength} letters)`,
-      wasCorrect: wasCorrect,
-      guess: guess,
-      correctAnswer: correctAnswer,
-    };
-
-    // Update summary with answer and score for current round
-    let newSummary = summary.slice();
-    newSummary.push(roundSummary);
-    setSummary(newSummary);
-
-    // Start next round
-    setRoundNumber(roundNumber + 1);
-
-    return;
-  }
-
   return (
-    <>
-      {inProgress
-        ? getNextRound()
-        : displayGameshowSummary(summary, props.settings, () =>
-            props.setPage("home")
-          )}
-    </>
+    <>{inProgress ? getNextRound() : displayGameshowSummary(summary, props.settings, () => props.setPage("home"))}</>
   );
 };
