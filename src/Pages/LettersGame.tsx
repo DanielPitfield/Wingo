@@ -59,7 +59,7 @@ interface Props {
 
   updateRemainingSeconds: (newSeconds: number) => void;
 
-  ResetGame: (wasCorrect: boolean, answer: string, targetAnswer: string, score: number | null) => void;
+  ResetGame: () => void;
   ContinueGame: () => void;
   gameshowScore?: number;
 }
@@ -447,18 +447,7 @@ const LettersGame: React.FC<Props> = (props) => {
             mode={"accept"}
             settings={props.settings}
             // Reset the game (but callback the score that was just achieved)
-            onClick={() =>
-              props.ResetGame(
-                // correct?
-                bestGuess ? bestGuess.length > 0 : false,
-                // guess made
-                bestGuess ? bestGuess : "",
-                // target word
-                "",
-                // score
-                bestGuess ? bestGuess.length : 0
-              )
-            }
+            onClick={props.ResetGame}
             additionalProps={{ autoFocus: true }}
           >
             {props.gameshowScore !== undefined

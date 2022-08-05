@@ -14,7 +14,7 @@ export interface LettersGameConfigProps {
     defaultNumLetters?: number;
     timerConfig?: { isTimed: true; seconds: number } | { isTimed: false };
   };
-  
+
   gameshowScore?: number;
 }
 
@@ -26,7 +26,7 @@ interface Props extends LettersGameConfigProps {
   setPage: (page: PageName) => void;
   setTheme: (theme: Theme) => void;
   addGold: (gold: number) => void;
-  onComplete: (wasCorrect: boolean, guess: string, correctAnswer: string, score: number | null) => void;
+  onComplete: (wasCorrect: boolean) => void;
   onCompleteGameshowRound?: (wasCorrect: boolean, guess: string, correctAnswer: string, score: number | null) => void;
 }
 
@@ -147,17 +147,27 @@ const LettersGameConfig: React.FC<Props> = (props) => {
       return;
     }
 
-    // TODO: Function returns before reaching here if part of gameshow, so none of these parameters are needed
-    ResetGame(false, "", "", 0);
+    ResetGame();
 
     // Save the latest gamemode settings for this mode
     SaveData.setLettersGameConfigGamemodeSettings(gamemodeSettings);
   }, [gamemodeSettings]);
 
-  // TODO: Better way to callback the outcome/status of a completed letters round for Letters Numbers Gameshow?
-  function ResetGame(wasCorrect: boolean, guess: string, correctAnswer: string, score: number | null) {
-    // Callback of the score achieved (used for Letters Numbers Gameshow)
-    props.onCompleteGameshowRound?.(wasCorrect, guess, correctAnswer, score);
+  function ResetGame() {
+    if (!inProgress) {
+      // Guessed any length word from selection
+      const wasCorrect = guesses.length > 0;
+
+      if (props.gameshowScore === undefined) {
+        props.onComplete(wasCorrect);
+      } else {
+        const longestWord = guesses.reduce(
+          (currentWord, nextWord) => (currentWord.length > nextWord.length ? currentWord : nextWord),
+          ""
+        );
+        props.onCompleteGameshowRound?.(wasCorrect, longestWord, "", longestWord.length);
+      }
+    }
 
     setGuesses([]);
     setLettersGameSelectionWord("");

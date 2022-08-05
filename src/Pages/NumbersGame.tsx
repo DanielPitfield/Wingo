@@ -5,7 +5,7 @@ import { MessageNotification } from "../Components/MessageNotification";
 import ProgressBar, { GreenToRedColorTransition } from "../Components/ProgressBar";
 import { NumberRow } from "../Components/NumberRow";
 import NumberTile from "../Components/NumberTile";
-import { Guess, hasNumberSelectionFinished, hasNumberSelectionStarted } from "./NumbersGameConfig";
+import { determineScore, Guess, hasNumberSelectionFinished, hasNumberSelectionStarted } from "./NumbersGameConfig";
 import { NumberSelectionRow } from "../Components/NumberSelectionRow";
 import { Theme } from "../Data/Themes";
 import { NumberPuzzle, NumberPuzzleValue } from "../Data/NumbersGameSolver";
@@ -64,7 +64,7 @@ interface Props {
   }) => void;
   updateRemainingSeconds: (newSeconds: number) => void;
 
-  resetGame: (wasCorrect: boolean, answer: string, targetAnswer: string, score: number | null) => void;
+  ResetGame: () => void;
   setOperator: (operator: Guess["operator"]) => void;
   addGold: (gold: number) => void;
   gameshowScore?: number;
@@ -363,96 +363,12 @@ const NumbersGame: React.FC<Props> = (props) => {
     );
   }
 
-  /**
-   *
-   * @returns
-   */
-  function determineBestGuess(): number | null {
-    // No target number
-    if (!props.targetNumber) {
-      return null;
-    }
-
-    return props.closestGuessSoFar;
-  }
-
-  function determineDifference(): number | null {
-    if (!props.targetNumber) {
-      return null;
-    }
-    // Evaluate player's attempt(s)
-    const best_guess = determineBestGuess();
-
-    if (best_guess === null) {
-      return null;
-    }
-
-    const difference = Math.abs(best_guess - props.targetNumber);
-
-    return difference;
-  }
-
-  function determineScore(): number | null {
-    if (!props.targetNumber) {
-      return null;
-    }
-
-    // How far away was the result from the target number?
-    const difference = determineDifference();
-
-    if (difference === null) {
-      return null;
-    }
-
-    let score = 0;
-
-    /* 
-    Standard:
-    10 points for reaching it exactly
-    7 points for being 1–5 away
-    5 points for being 6–10 away
-    */
-
-    if (props.gamemodeSettings.scoringMethod === "standard") {
-      const exactAnswer = difference === 0;
-      const sevenPointRange = difference >= 1 && difference <= 5;
-      const fivePointRange = difference >= 6 && difference <= 10;
-
-      if (exactAnswer) {
-        score = 10;
-      } else if (sevenPointRange) {
-        score = 7;
-      } else if (fivePointRange) {
-        score = 5;
-      } else {
-        score = 0;
-      }
-    } else if (
-      props.gamemodeSettings.scoringMethod === "pointLostPerDifference" &&
-      difference >= 0 &&
-      difference <= 10
-    ) {
-      // Award one point for being 10 away
-      if (difference === 10) {
-        score = 1;
-      }
-      // 10 points for exact answer (and one point is lost for each additional one difference after that)
-      else {
-        score = 10 - difference;
-      }
-    } else {
-      throw new Error("Unexpected NumbersGame scoring method");
-    }
-
-    return score;
-  }
-
   function displayOutcome(): React.ReactNode {
     if (props.inProgress || !props.hasTimerEnded || !props.targetNumber) {
       return;
     }
 
-    const score = determineScore();
+    const {score, difference} = determineScore(props.closestGuessSoFar, props.targetNumber, props.gamemodeSettings.scoringMethod);
 
     if (score === null) {
       return (
@@ -476,7 +392,7 @@ const NumbersGame: React.FC<Props> = (props) => {
       } else if (score >= 1 && score <= 9) {
         return (
           <MessageNotification type="success">
-            You were <strong>{determineDifference()}</strong> away from the target number
+            You were <strong>{difference}</strong> away from the target number
             <br />
             <strong>{score}</strong> points
           </MessageNotification>
@@ -484,7 +400,7 @@ const NumbersGame: React.FC<Props> = (props) => {
       } else {
         return (
           <MessageNotification type="error">
-            You were {determineDifference()} away from the target number
+            You were {difference} away from the target number
             <br />
             <strong>0</strong> points
           </MessageNotification>
@@ -506,6 +422,8 @@ const NumbersGame: React.FC<Props> = (props) => {
     );
   }
 
+  const {score, difference} = determineScore(props.closestGuessSoFar, props.targetNumber, props.gamemodeSettings.scoringMethod);
+
   return (
     <div
       className="App"
@@ -523,7 +441,7 @@ const NumbersGame: React.FC<Props> = (props) => {
         <>
           {displayOutcome()}
 
-          {determineDifference() !== 0 && (
+          {difference !== 0 && (
             <div className="best-solution">
               <MessageNotification type="default">
                 Best Solution:
@@ -543,24 +461,15 @@ const NumbersGame: React.FC<Props> = (props) => {
 
           <Button
             mode={"accept"}
-            onClick={() =>
-              props.resetGame(
-                // correct?
-                determineScore !== null && determineScore()! > 0,
-                // guess made
-                !determineBestGuess() ? "" : determineBestGuess()!.toString(),
-                // target answer
-                props.targetNumber ? props.targetNumber?.toString() : "0",
-                // score
-                determineScore()
-              )
-            }
+            onClick={props.ResetGame}
             settings={props.settings}
             additionalProps={{ autoFocus: true }}
           >
             {props.gameshowScore !== undefined
               ? "Next round"
-              : props.isCampaignLevel ? LEVEL_FINISHING_TEXT : "Restart"}
+              : props.isCampaignLevel
+              ? LEVEL_FINISHING_TEXT
+              : "Restart"}
           </Button>
         </>
       )}
