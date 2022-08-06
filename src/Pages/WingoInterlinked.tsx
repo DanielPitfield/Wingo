@@ -91,7 +91,7 @@ interface Props extends WingoInterlinkedProps {
     remainingGridGuesses: number,
     remainingWordGuesses?: number
   ) => void;
-  onComplete?: (wasCorrect: boolean, answer: string, targetAnswer: string, score: number | null) => void;
+  onComplete: (wasCorrect: boolean) => void;
 }
 
 export const WingoInterlinked: React.FC<Props> = (props) => {
@@ -1054,15 +1054,25 @@ export const WingoInterlinked: React.FC<Props> = (props) => {
   }
 
   function ResetGame() {
-    // TODO: wasCorrect
-    const gridCompleted = tileStatuses.every((tile) => {
-      if (tile.status === "correct") {
-        return true;
-      }
-    });
+    if (!inProgress) {
+      // Every tile where a letter should be, has the correct status
+      const wasCorrect = tileStatuses.every((tile) => {
+        if (tile.status === "correct") {
+          return true;
+        }
+      });
+      props.onComplete(wasCorrect);
 
-    // TODO: Scoring method instead of 10 value
-    props.onComplete?.(gridCompleted, currentWords.join(""), gridConfig.words.map((x) => x.word).join(""), 10);
+      /*
+      const NUM_POINTS_PER_WORD = 10;
+      props.onCompleteGameshowRound?.(
+        wasCorrect,
+        currentWords.join(""),
+        gridConfig.words.map((x) => x.word).join(""),
+        gridConfig.words.length * NUM_POINTS_PER_WORD
+      );
+      */
+    }
 
     setRemainingSeconds(
       gamemodeSettings.timerConfig.isTimed ? gamemodeSettings.timerConfig.seconds : mostRecentTotalSeconds

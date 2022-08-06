@@ -829,12 +829,14 @@ const WingoConfig: React.FC<Props> = (props) => {
     }
     // Wingo round
     else if (props.mode !== "conundrum" && props.roundScoringInfo) {
+      const pointsLostPerGuess = props.roundScoringInfo?.pointsLostPerGuess ?? 0;
+      // Multiply points lost per guess by either the number of letters revealed or the number of guessed used
       const pointsLost =
         props.mode === "puzzle"
-          ? (revealedLetterIndexes.length - 1) * props.roundScoringInfo?.pointsLostPerGuess
-          : numGuesses * props.roundScoringInfo.pointsLostPerGuess;
+          ? (revealedLetterIndexes.length - 1) * pointsLostPerGuess
+          : numGuesses * pointsLostPerGuess;
 
-      const score = props.roundScoringInfo.basePoints - pointsLost;
+      const score = (props.roundScoringInfo.basePoints - pointsLost) ?? 0;
 
       return score;
     }

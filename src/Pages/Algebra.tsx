@@ -298,7 +298,7 @@ const Algebra: React.FC<Props> = (props) => {
     if (!inProgress && algebraTemplate && questionNumber === algebraTemplate.questions.length - 1) {
       // All questions answered correctly
       const wasCorrect = numCorrectAnswers === algebraTemplate.questions.length;
-      props.onComplete(wasCorrect)
+      props.onComplete(wasCorrect);
     }
 
     setInProgress(true);
