@@ -29,7 +29,6 @@ interface Props {
         maxNumSelectedPins: number;
       }
     | { isCampaignLevel: false };
-  theme: Theme;
   status:
     | "dice-rolling"
     | "dice-rolled-awaiting-pick"
@@ -102,6 +101,8 @@ interface Props {
     timerConfig: { isTimed: true; seconds: number } | { isTimed: false };
   }) => void;
 
+  onComplete: (wasCorrect: boolean) => void;
+
   determineHexagonRowValues: () => { rowNumber: number; values: number[] }[];
   determinePoints: (value: number) => number;
   determinePointColourMappings: () => { points: number; colour: string }[];
@@ -114,6 +115,7 @@ interface Props {
     adjacent_pins: HexagonPinAdjacency;
   }[];
 
+  theme: Theme;
   settings: SettingsData;
 }
 
@@ -779,8 +781,10 @@ const Numble: React.FC<Props> = (props) => {
   }
 
   function ResetGame() {
-    // TODO: wasCorrect
-    // TODO: setInProgress(false) if a campaign level and the target score to complete the level has been achieved
+    if (!isGameInProgress()) {
+      const wasCorrect = props.status === "game-over-target-score";
+      props.onComplete(wasCorrect);
+    }
 
     if (props.gamemodeSettings.timerConfig.isTimed) {
       const newRemainingSeconds = props.gamemodeSettings.timerConfig.seconds ?? mostRecentTotalSeconds;
@@ -794,11 +798,14 @@ const Numble: React.FC<Props> = (props) => {
 
       props.updateTeamTimers(newTeamTimers);
     }
+
     // Clear any game progress
     setPickedPins([]);
     setTotalPoints(initialScores);
+
     // First team is next to play
     props.setCurrentTeamNumber(0);
+
     // The quanity of dice (numDice) only updates after rolling
     rollDice();
   }
