@@ -63,7 +63,7 @@ interface Props extends NumbleConfigProps {
   setPage: (page: PageName) => void;
   setTheme: (theme: Theme) => void;
   addGold: (gold: number) => void;
-  onComplete?: (wasCorrect: boolean) => void;
+  onComplete: (wasCorrect: boolean) => void;
 }
 
 export type HexagonPinAdjacency = {
@@ -705,7 +705,6 @@ const NumbleConfig: React.FC<Props> = (props) => {
   return (
     <Numble
       campaignConfig={props.campaignConfig}
-      theme={props.theme}
       gamemodeSettings={gamemodeSettings}
       status={status}
       setStatus={setStatus}
@@ -716,11 +715,13 @@ const NumbleConfig: React.FC<Props> = (props) => {
       updateRemainingGuessTimerSeconds={updateRemainingGuessTimerSeconds}
       teamTimers={teamTimers}
       updateTeamTimers={updateTeamTimers}
+      onComplete={props.onComplete}
       determineHexagonRowValues={determineHexagonRowValues}
       determinePoints={determinePoints}
       determinePointColourMappings={determinePointColourMappings}
       determineSquareAdjacentMappings={determineSquareAdjacentMappings}
       determineHexagonAdjacentMappings={determineHexagonAdjacentMappings}
+      theme={props.theme}
       settings={props.settings}
     ></Numble>
   );

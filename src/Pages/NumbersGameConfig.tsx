@@ -6,6 +6,14 @@ import { Theme } from "../Data/Themes";
 import { SaveData, SettingsData } from "../Data/SaveData";
 
 export interface NumbersGameConfigProps {
+  campaignConfig:
+    | {
+        isCampaignLevel: true;
+        // What score must be achieved to pass the campaign level?
+        targetScore: number;
+      }
+    | { isCampaignLevel: false };
+
   gamemodeSettings?: {
     hasScaryNumbers?: boolean;
     scoringMethod?: "standard" | "pointLostPerDifference";
@@ -19,7 +27,6 @@ export interface NumbersGameConfigProps {
 }
 
 interface Props extends NumbersGameConfigProps {
-  isCampaignLevel: boolean;
   page: PageName;
   theme: Theme;
   settings: SettingsData;
@@ -295,8 +302,12 @@ const NumbersGameConfig: React.FC<Props> = (props) => {
   function ResetGame() {
     if (!inProgress) {
       const { score, difference } = determineScore(closestGuessSoFar, targetNumber, gamemodeSettings.scoringMethod);
-      // Within 10 of target number
-      const wasCorrect = Boolean(difference && difference <= 10);
+
+      const MAX_POSSIBLE_SCORE = 10;
+      // Achieved target score if a campaign level, otherwise just within 10 of target number
+      const wasCorrect = props.campaignConfig.isCampaignLevel
+        ? Boolean(score && score >= Math.min(props.campaignConfig.targetScore, MAX_POSSIBLE_SCORE))
+        : Boolean(difference && difference <= 10);
 
       if (props.gameshowScore === undefined) {
         props.onComplete(wasCorrect);
@@ -591,7 +602,7 @@ const NumbersGameConfig: React.FC<Props> = (props) => {
 
   return (
     <NumbersGame
-      isCampaignLevel={props.isCampaignLevel}
+      campaignConfig={props.campaignConfig}
       gamemodeSettings={gamemodeSettings}
       remainingSeconds={remainingSeconds}
       wordIndex={wordIndex}

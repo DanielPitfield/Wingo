@@ -16,7 +16,13 @@ import { pickRandomElementFrom } from "./WingoConfig";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
 
 interface Props {
-  isCampaignLevel: boolean;
+  campaignConfig:
+    | {
+        isCampaignLevel: true;
+        // What score must be achieved to pass the campaign level?
+        targetScore: number;
+      }
+    | { isCampaignLevel: false };
 
   gamemodeSettings: {
     hasScaryNumbers: boolean;
@@ -429,7 +435,7 @@ const NumbersGame: React.FC<Props> = (props) => {
       className="App"
       style={{ backgroundImage: `url(${props.theme.backgroundImageSrc})`, backgroundSize: "100% 100%" }}
     >
-      {!props.isCampaignLevel && !props.gameshowScore && (
+      {!props.campaignConfig.isCampaignLevel && !props.gameshowScore && (
         <div className="gamemodeSettings">
           <GamemodeSettingsMenu>{generateSettingsOptions()}</GamemodeSettingsMenu>
         </div>
@@ -467,7 +473,7 @@ const NumbersGame: React.FC<Props> = (props) => {
           >
             {props.gameshowScore !== undefined
               ? "Next round"
-              : props.isCampaignLevel
+              : props.campaignConfig.isCampaignLevel
               ? LEVEL_FINISHING_TEXT
               : "Restart"}
           </Button>

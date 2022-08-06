@@ -458,11 +458,18 @@ export const App: React.FC = () => {
         return <LetterCategoriesConfig {...commonProps} enforceFullLengthGuesses={false} />;
 
       case "LettersGame":
-        return <LettersGameConfig {...commonProps} theme={Themes.GenericLettersGame} />;
+        return (
+          <LettersGameConfig
+            campaignConfig={{ isCampaignLevel: false }}
+            {...commonProps}
+            theme={Themes.GenericLettersGame}
+          />
+        );
 
       case "NumbersGame":
         return (
           <NumbersGameConfig
+            campaignConfig={{ isCampaignLevel: false }}
             {...commonProps}
             defaultNumGuesses={DEFAULT_NUM_GUESSES_NUMBERS_GAME}
             theme={Themes.GenericNumbersGame}

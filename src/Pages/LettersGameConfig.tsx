@@ -6,6 +6,14 @@ import { SaveData, SettingsData } from "../Data/SaveData";
 import { wordLengthMappingsGuessable, wordLengthMappingsTargets } from "../Data/DefaultGamemodeSettings";
 
 export interface LettersGameConfigProps {
+  campaignConfig:
+    | {
+        isCampaignLevel: true;
+        // What score must be achieved to pass the campaign level?
+        targetScore: number;
+      }
+    | { isCampaignLevel: false };
+
   guesses?: string[];
   lettersGameSelectionWord?: string;
 
@@ -19,7 +27,6 @@ export interface LettersGameConfigProps {
 }
 
 interface Props extends LettersGameConfigProps {
-  isCampaignLevel: boolean;
   page: PageName;
   theme: Theme;
   settings: SettingsData;
@@ -155,17 +162,20 @@ const LettersGameConfig: React.FC<Props> = (props) => {
 
   function ResetGame() {
     if (!inProgress) {
-      // Guessed any length word from selection
-      const wasCorrect = guesses.length > 0;
+      const longestWord = guesses.reduce(
+        (currentWord, nextWord) => (currentWord.length > nextWord.length ? currentWord : nextWord),
+        ""
+      );
+      // The score is just the length (number of letters) in the longest word
+      const score = longestWord.length ?? 0;
+
+      // Achieved target score if a campaign level, otherwise just any length word was guessed
+      const wasCorrect = props.campaignConfig.isCampaignLevel ? score >= Math.min(props.campaignConfig.targetScore, gamemodeSettings.numLetters) : score > 0;
 
       if (props.gameshowScore === undefined) {
         props.onComplete(wasCorrect);
       } else {
-        const longestWord = guesses.reduce(
-          (currentWord, nextWord) => (currentWord.length > nextWord.length ? currentWord : nextWord),
-          ""
-        );
-        props.onCompleteGameshowRound?.(wasCorrect, longestWord, "", longestWord.length);
+        props.onCompleteGameshowRound?.(wasCorrect, longestWord, "", score);
       }
     }
 
@@ -286,7 +296,7 @@ const LettersGameConfig: React.FC<Props> = (props) => {
 
   return (
     <LettersGame
-      isCampaignLevel={props.page === "campaign/area/level"}
+      campaignConfig={props.campaignConfig}
       gamemodeSettings={gamemodeSettings}
       remainingSeconds={remainingSeconds}
       guesses={guesses}
