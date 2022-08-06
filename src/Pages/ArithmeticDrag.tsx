@@ -22,6 +22,14 @@ const arithmeticModes = ["order", "match"] as const;
 export type arithmeticMode = typeof arithmeticModes[number];
 
 export interface ArithmeticDragProps {
+  campaignConfig:
+    | {
+        isCampaignLevel: true;
+        // How many expressions must be ordered/matched correctly to pass the campaign level?
+        targetScore: number;
+      }
+    | { isCampaignLevel: false };
+
   mode: arithmeticMode;
 
   gamemodeSettings?: {
@@ -48,7 +56,6 @@ export interface ArithmeticDragProps {
 }
 
 interface Props extends ArithmeticDragProps {
-  isCampaignLevel: boolean;
   page: PageName;
   theme: Theme;
   settings: SettingsData;
@@ -320,7 +327,7 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
 
   // Reset game after change of settings (stops cheating by changing settings partway through a game)
   React.useEffect(() => {
-    if (props.isCampaignLevel) {
+    if (props.campaignConfig.isCampaignLevel) {
       return;
     }
 
@@ -493,7 +500,7 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
         <br></br>
 
         <Button mode="accept" settings={props.settings} onClick={() => ResetGame()}>
-          {props.isCampaignLevel ? LEVEL_FINISHING_TEXT : "Restart"}
+          {props.campaignConfig.isCampaignLevel ? LEVEL_FINISHING_TEXT : "Restart"}
         </Button>
       </>
     );
@@ -502,8 +509,10 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
   function ResetGame() {
     if (!inProgress) {
       const numCorrectTiles = expressionTiles.filter((x) => x.status === "correct").length;
-      // All tiles successfully matched
-      const wasCorrect = numCorrectTiles === expressionTiles.length;
+      // Achieved target score if a campaign level, otherwise just all answers were correct
+      const wasCorrect = props.campaignConfig.isCampaignLevel
+        ? numCorrectTiles >= Math.min(props.campaignConfig.targetScore, expressionTiles.length)
+        : numCorrectTiles === expressionTiles.length;
       props.onComplete(wasCorrect);
     }
 
@@ -643,7 +652,7 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
       className="App numbers_arithmetic"
       style={{ backgroundImage: `url(${props.theme.backgroundImageSrc})`, backgroundSize: "100% 100%" }}
     >
-      {!props.isCampaignLevel && (
+      {!props.campaignConfig.isCampaignLevel && (
         <div className="gamemodeSettings">
           <GamemodeSettingsMenu>{generateSettingsOptions()}</GamemodeSettingsMenu>
         </div>

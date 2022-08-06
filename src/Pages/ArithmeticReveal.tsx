@@ -15,6 +15,14 @@ import { pickRandomElementFrom } from "./WingoConfig";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
 
 export interface ArithmeticRevealProps {
+  campaignConfig:
+    | {
+        isCampaignLevel: true;
+        // How far to progress (how many checkpoints) to pass the campaign level?
+        targetScore: number;
+      }
+    | { isCampaignLevel: false };
+
   gamemodeSettings?: {
     /* TODO: Difficulty presets
     All these settings control the difficulty for this mode
@@ -38,7 +46,6 @@ export interface ArithmeticRevealProps {
 }
 
 interface Props extends ArithmeticRevealProps {
-  isCampaignLevel: boolean;
   page: PageName;
   theme: Theme;
   settings: SettingsData;
@@ -291,7 +298,7 @@ const ArithmeticReveal: React.FC<Props> = (props) => {
 
   // Reset game after change of settings (stops cheating by changing settings partway through a game)
   React.useEffect(() => {
-    if (props.isCampaignLevel) {
+    if (props.campaignConfig.isCampaignLevel) {
       return;
     }
 
@@ -428,7 +435,7 @@ const ArithmeticReveal: React.FC<Props> = (props) => {
             settings={props.settings}
             additionalProps={{ autoFocus: true }}
           >
-            {props.isCampaignLevel ? LEVEL_FINISHING_TEXT : "Restart"}
+            {props.campaignConfig.isCampaignLevel ? LEVEL_FINISHING_TEXT : "Restart"}
           </Button>
         </>
       );
@@ -455,7 +462,7 @@ const ArithmeticReveal: React.FC<Props> = (props) => {
             settings={props.settings}
             additionalProps={{ autoFocus: true }}
           >
-            {props.isCampaignLevel ? LEVEL_FINISHING_TEXT : "Restart"}
+            {props.campaignConfig.isCampaignLevel ? LEVEL_FINISHING_TEXT : "Restart"}
           </Button>
         </>
       );
@@ -466,10 +473,12 @@ const ArithmeticReveal: React.FC<Props> = (props) => {
 
   function ResetGame() {
     if (!inProgress) {
-      // Guess at the end of last checkpoint is correct
-      const wasCorrect = guess === targetNumbers[gamemodeSettings.numCheckpoints - 1].toString();       
-      props.onComplete(wasCorrect);    
-    }     
+      // Reached target checkpoint if a campaign level, otherwise reached the end (entered last target number)
+      const wasCorrect = props.campaignConfig.isCampaignLevel
+        ? currentCheckpoint >= Math.min(props.campaignConfig.targetScore, gamemodeSettings.numCheckpoints)
+        : guess === targetNumbers[gamemodeSettings.numCheckpoints - 1].toString();
+      props.onComplete(wasCorrect);
+    }
 
     setInProgress(true);
     setGuess("");
@@ -632,7 +641,7 @@ const ArithmeticReveal: React.FC<Props> = (props) => {
       className="App numbers_arithmetic"
       style={{ backgroundImage: `url(${props.theme.backgroundImageSrc})`, backgroundSize: "100% 100%" }}
     >
-      {!props.isCampaignLevel && (
+      {!props.campaignConfig.isCampaignLevel && (
         <div className="gamemodeSettings">
           <GamemodeSettingsMenu>{generateSettingsOptions()}</GamemodeSettingsMenu>
         </div>

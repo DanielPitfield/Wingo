@@ -319,6 +319,7 @@ export const App: React.FC = () => {
 
     const commonProps = {
       isCampaignLevel: isCampaignLevel(page),
+      campaignConfig: { isCampaignLevel: false as false},
       gamemodeSettings: pageGamemodeSettings,
       page: page,
       theme: theme,
@@ -460,7 +461,6 @@ export const App: React.FC = () => {
       case "LettersGame":
         return (
           <LettersGameConfig
-            campaignConfig={{ isCampaignLevel: false }}
             {...commonProps}
             theme={Themes.GenericLettersGame}
           />
@@ -469,7 +469,6 @@ export const App: React.FC = () => {
       case "NumbersGame":
         return (
           <NumbersGameConfig
-            campaignConfig={{ isCampaignLevel: false }}
             {...commonProps}
             defaultNumGuesses={DEFAULT_NUM_GUESSES_NUMBERS_GAME}
             theme={Themes.GenericNumbersGame}
@@ -497,7 +496,7 @@ export const App: React.FC = () => {
         return <ArithmeticDrag {...commonProps} mode="match" />;
 
       case "numble":
-        return <NumbleConfig campaignConfig={{ isCampaignLevel: false }} {...commonProps} />;
+        return <NumbleConfig {...commonProps} />;
 
       case "OnlyConnect":
         return <OnlyConnect {...commonProps} />;

@@ -30,6 +30,14 @@ export type QuestionTemplate = {
 };
 
 export interface AlgebraProps {
+  campaignConfig:
+    | {
+        isCampaignLevel: true;
+        // How many questions must be answered correctly to pass the campaign level?
+        targetScore: number;
+      }
+    | { isCampaignLevel: false };
+
   defaultTemplate?: AlgebraConfigProps;
 
   gamemodeSettings?: {
@@ -39,7 +47,6 @@ export interface AlgebraProps {
 }
 
 interface Props extends AlgebraProps {
-  isCampaignLevel: boolean;
   page: PageName;
   theme: Theme;
   settings: SettingsData;
@@ -106,7 +113,7 @@ const Algebra: React.FC<Props> = (props) => {
 
   // Reset game after change of settings (stops cheating by changing settings partway through a game)
   React.useEffect(() => {
-    if (props.isCampaignLevel) {
+    if (props.campaignConfig.isCampaignLevel) {
       return;
     }
 
@@ -261,7 +268,7 @@ const Algebra: React.FC<Props> = (props) => {
               settings={props.settings}
               additionalProps={{ autoFocus: true }}
             >
-              {props.isCampaignLevel ? LEVEL_FINISHING_TEXT : "Restart"}
+              {props.campaignConfig.isCampaignLevel ? LEVEL_FINISHING_TEXT : "Restart"}
             </Button>
 
             <br></br>
@@ -296,8 +303,10 @@ const Algebra: React.FC<Props> = (props) => {
   function ResetGame() {
     // After last question in template set
     if (!inProgress && algebraTemplate && questionNumber === algebraTemplate.questions.length - 1) {
-      // All questions answered correctly
-      const wasCorrect = numCorrectAnswers === algebraTemplate.questions.length;
+    // Achieved target score if a campaign level, otherwise just all answers were correct
+      const wasCorrect = props.campaignConfig.isCampaignLevel
+        ? numCorrectAnswers >= Math.min(props.campaignConfig.targetScore, algebraTemplate.questions.length)
+        : numCorrectAnswers === algebraTemplate.questions.length;
       props.onComplete(wasCorrect);
     }
 
@@ -429,7 +438,7 @@ const Algebra: React.FC<Props> = (props) => {
       className="App algebra"
       style={{ backgroundImage: `url(${props.theme.backgroundImageSrc})`, backgroundSize: "100% 100%" }}
     >
-      {!props.isCampaignLevel && (
+      {!props.campaignConfig.isCampaignLevel && (
         <div className="gamemodeSettings">
           <GamemodeSettingsMenu>{generateSettingsOptions()}</GamemodeSettingsMenu>
         </div>
