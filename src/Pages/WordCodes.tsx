@@ -22,6 +22,14 @@ const wordCodesModes = ["match", "question"] as const;
 export type wordCodesMode = typeof wordCodesModes[number];
 
 export interface WordCodesProps {
+  campaignConfig:
+    | {
+        isCampaignLevel: true;
+        // How many expressions must be ordered/matched correctly to pass the campaign level?
+        targetScore: number;
+      }
+    | { isCampaignLevel: false };
+
   /* 
   Question mode - there can be more words provided than codes, answer questions converting between words and codes
   Match mode - same number of words as codes, match them together
@@ -47,7 +55,6 @@ export interface WordCodesProps {
 }
 
 interface Props extends WordCodesProps {
-  isCampaignLevel: boolean;
   page: PageName;
   theme: Theme;
   settings: SettingsData;
@@ -154,7 +161,7 @@ const WordCodes: React.FC<Props> = (props) => {
 
   // Reset game after change of settings (stops cheating by changing settings partway through a game)
   React.useEffect(() => {
-    if (props.isCampaignLevel) {
+    if (props.campaignConfig.isCampaignLevel) {
       return;
     }
 
@@ -615,7 +622,7 @@ const WordCodes: React.FC<Props> = (props) => {
             onClick={() => ResetGame()}
             additionalProps={{ autoFocus: true }}
           >
-            {props.isCampaignLevel ? LEVEL_FINISHING_TEXT : "Restart"}
+            {props.campaignConfig.isCampaignLevel ? LEVEL_FINISHING_TEXT : "Restart"}
           </Button>
         </>
       );
@@ -644,7 +651,7 @@ const WordCodes: React.FC<Props> = (props) => {
                 settings={props.settings}
                 additionalProps={{ autoFocus: true }}
               >
-                {props.isCampaignLevel ? LEVEL_FINISHING_TEXT : "Restart"}
+                {props.campaignConfig.isCampaignLevel ? LEVEL_FINISHING_TEXT : "Restart"}
               </Button>
 
               <br></br>
@@ -683,12 +690,21 @@ const WordCodes: React.FC<Props> = (props) => {
     if (!inProgress) {
       if (props.mode === "match") {
         const numCorrectTiles = wordTiles.filter((x) => x.status === "correct").length;
-        const wasCorrect = numCorrectTiles === wordTiles.length;
+
+        // Achieved target score if a campaign level, otherwise just all answers were correct
+        const wasCorrect = props.campaignConfig.isCampaignLevel
+          ? numCorrectTiles >= Math.min(props.campaignConfig.targetScore, wordTiles.length)
+          : numCorrectTiles === wordTiles.length;
+
         props.onComplete(wasCorrect);
-      }
-      else if (props.mode === "question") {
+      } else if (props.mode === "question") {
         const numQuestions = gamemodeSettings.numWordToCodeQuestions + gamemodeSettings.numCodeToWordQuestions;
-        const wasCorrect = numCorrectAnswers === numQuestions;
+
+        // Achieved target score if a campaign level, otherwise just all answers were correct
+        const wasCorrect = props.campaignConfig.isCampaignLevel
+          ? numCorrectAnswers >= Math.min(props.campaignConfig.targetScore, numQuestions)
+          : numCorrectAnswers === numQuestions;
+
         props.onComplete(wasCorrect);
       }
     }
@@ -956,7 +972,7 @@ const WordCodes: React.FC<Props> = (props) => {
       className="App word_codes"
       style={{ backgroundImage: `url(${props.theme.backgroundImageSrc})`, backgroundSize: "100% 100%" }}
     >
-      {!props.isCampaignLevel && (
+      {!props.campaignConfig.isCampaignLevel && (
         <div className="gamemodeSettings">
           <GamemodeSettingsMenu>{generateSettingsOptions()}</GamemodeSettingsMenu>
         </div>

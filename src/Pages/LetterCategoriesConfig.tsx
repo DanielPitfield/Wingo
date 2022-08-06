@@ -8,16 +8,23 @@ import { Theme } from "../Data/Themes";
 import { categoryMappings } from "../Data/DefaultGamemodeSettings";
 
 export interface LetterCategoriesConfigProps {
-  enforceFullLengthGuesses: boolean;
+  campaignConfig:
+    | {
+        isCampaignLevel: true;
+        // How many categories must be successfully answered to pass the campaign level?
+        targetScore: number;
+      }
+    | { isCampaignLevel: false };
 
   gamemodeSettings?: {
     defaultNumCategories?: number;
     timerConfig?: { isTimed: true; seconds: number } | { isTimed: false };
   };
+
+  enforceFullLengthGuesses: boolean;
 }
 
 interface Props extends LetterCategoriesConfigProps {
-  isCampaignLevel: boolean;
   page: PageName;
   theme: Theme;
   settings: SettingsData;
@@ -183,9 +190,11 @@ const LetterCategoriesConfig: React.FC<Props> = (props) => {
 
   function ResetGame() {
     if (!inProgress) {
-      // All categories guessed correctly
-      const wasCorrect = correctGuessesCount === gamemodeSettings.numCategories;
-      props.onComplete(wasCorrect);
+      // Achieved target score if a campaign level, otherwise just all categories guessed correctly
+      const wasCorrect = props.campaignConfig.isCampaignLevel
+        ? correctGuessesCount >= Math.min(props.campaignConfig.targetScore, gamemodeSettings.numCategories)
+        : correctGuessesCount === gamemodeSettings.numCategories;
+        props.onComplete(wasCorrect);
     }
 
     generateTargetWords();
@@ -310,7 +319,7 @@ const LetterCategoriesConfig: React.FC<Props> = (props) => {
 
   return (
     <LetterCategories
-      isCampaignLevel={props.isCampaignLevel}
+      campaignConfig={props.campaignConfig}
       gamemodeSettings={gamemodeSettings}
       remainingSeconds={remainingSeconds}
       wordLength={wordLength}

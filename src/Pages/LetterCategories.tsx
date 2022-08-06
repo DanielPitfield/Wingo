@@ -12,7 +12,13 @@ import { MAX_NUM_CATEGORIES } from "../Data/DefaultGamemodeSettings";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
 
 interface Props {
-  isCampaignLevel: boolean;
+  campaignConfig:
+    | {
+        isCampaignLevel: true;
+        // How many categories must be successfully answered to pass the campaign level?
+        targetScore: number;
+      }
+    | { isCampaignLevel: false };
 
   gamemodeSettings: {
     numCategories: number;
@@ -237,12 +243,12 @@ const LetterCategories: React.FC<Props> = (props) => {
             onClick={() => props.ResetGame()}
             additionalProps={{ autoFocus: true }}
           >
-            {props.isCampaignLevel ? LEVEL_FINISHING_TEXT : "Restart"}
+            {props.campaignConfig.isCampaignLevel ? LEVEL_FINISHING_TEXT : "Restart"}
           </Button>
         )}
       </div>
 
-      {!props.isCampaignLevel && (
+      {!props.campaignConfig.isCampaignLevel && (
         <div className="gamemodeSettings">
           <GamemodeSettingsMenu>{generateSettingsOptions()}</GamemodeSettingsMenu>
         </div>

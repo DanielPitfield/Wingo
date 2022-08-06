@@ -30,6 +30,14 @@ export type NumberSetTemplate = {
 };
 
 export interface NumberSetsProps {
+  campaignConfig:
+    | {
+        isCampaignLevel: true;
+        // How many questions must be answered correctly to pass the campaign level?
+        targetScore: number;
+      }
+    | { isCampaignLevel: false };
+
   defaultSet?: NumberSetConfigProps;
 
   gamemodeSettings?: {
@@ -39,7 +47,6 @@ export interface NumberSetsProps {
 }
 
 interface Props extends NumberSetsProps {
-  isCampaignLevel: boolean;
   page: PageName;
   theme: Theme;
   settings: SettingsData;
@@ -87,7 +94,7 @@ const NumberSets: React.FC<Props> = (props) => {
 
   // Reset game after change of settings (stops cheating by changing settings partway through a game)
   React.useEffect(() => {
-    if (props.isCampaignLevel) {
+    if (props.campaignConfig.isCampaignLevel) {
       return;
     }
 
@@ -229,7 +236,7 @@ const NumberSets: React.FC<Props> = (props) => {
             settings={props.settings}
             additionalProps={{ autoFocus: true }}
           >
-            {props.isCampaignLevel ? LEVEL_FINISHING_TEXT : "Restart"}
+            {props.campaignConfig.isCampaignLevel ? LEVEL_FINISHING_TEXT : "Restart"}
           </Button>
         )}
       </>
@@ -238,8 +245,16 @@ const NumberSets: React.FC<Props> = (props) => {
 
   function ResetGame() {
     if (!inProgress) {
-      const wasCorrect = guess === numberSet?.question.correctAnswer.toString();    
+      const wasCorrect = guess === numberSet?.question.correctAnswer.toString();
       props.onComplete(wasCorrect);
+
+    /*
+    // TODO: wasCorrect campaign pass criteria with multiple questions
+    // Achieved target score if a campaign level, otherwise just all answers were correct
+    const wasCorrect = props.campaignConfig.isCampaignLevel
+    ? numCorrectAnswers >= Math.min(props.campaignConfig.targetScore, gamemodeSettings.numQuestions)
+    : numCorrectAnswers === gamemodeSettings.numQuestions;
+    */
     }
 
     setInProgress(true);
@@ -347,7 +362,7 @@ const NumberSets: React.FC<Props> = (props) => {
       className="App number_sets"
       style={{ backgroundImage: `url(${props.theme.backgroundImageSrc})`, backgroundSize: "100% 100%" }}
     >
-      {!props.isCampaignLevel && (
+      {!props.campaignConfig.isCampaignLevel && (
         <div className="gamemodeSettings">
           <GamemodeSettingsMenu>{generateSettingsOptions()}</GamemodeSettingsMenu>
         </div>
