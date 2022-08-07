@@ -688,25 +688,18 @@ const WordCodes: React.FC<Props> = (props) => {
   // Restart with new word codes and set of questions
   function ResetGame() {
     if (!inProgress) {
-      if (props.mode === "match") {
-        const numCorrectTiles = wordTiles.filter((x) => x.status === "correct").length;
+      const score = props.mode === "match" ? wordTiles.filter((x) => x.status === "correct").length : numCorrectAnswers;
+      const numQuestions =
+        props.mode === "match"
+          ? wordTiles.length
+          : gamemodeSettings.numWordToCodeQuestions + gamemodeSettings.numCodeToWordQuestions;
 
-        // Achieved target score if a campaign level, otherwise just all answers were correct
-        const wasCorrect = props.campaignConfig.isCampaignLevel
-          ? numCorrectTiles >= Math.min(props.campaignConfig.targetScore, wordTiles.length)
-          : numCorrectTiles === wordTiles.length;
+      // Achieved target score if a campaign level, otherwise just all answers were correct
+      const wasCorrect = props.campaignConfig.isCampaignLevel
+        ? score >= Math.min(props.campaignConfig.targetScore, numQuestions)
+        : score === numQuestions;
 
-        props.onComplete(wasCorrect);
-      } else if (props.mode === "question") {
-        const numQuestions = gamemodeSettings.numWordToCodeQuestions + gamemodeSettings.numCodeToWordQuestions;
-
-        // Achieved target score if a campaign level, otherwise just all answers were correct
-        const wasCorrect = props.campaignConfig.isCampaignLevel
-          ? numCorrectAnswers >= Math.min(props.campaignConfig.targetScore, numQuestions)
-          : numCorrectAnswers === numQuestions;
-
-        props.onComplete(wasCorrect);
-      }
+      props.onComplete(wasCorrect);
     }
 
     setGuess("");
