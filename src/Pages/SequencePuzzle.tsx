@@ -6,6 +6,7 @@ import { Theme, ThemeIcons } from "../Data/Themes";
 import { SettingsData } from "../Data/SaveData";
 import { algebraDifficulty } from "./Algebra";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
+import { PageName } from "../PageNames";
 
 /** Config for a specific puzzle (exported for config from campaign) */
 export type PuzzleConfigProps = {
@@ -29,17 +30,23 @@ type SequencePuzzleStyling = {
 };
 
 /** Properties of the component */
-interface Props {
+export interface SequencePuzzleProps {
   isCampaignLevel: boolean;
   defaultPuzzle?: PuzzleConfigProps;
+}
+
+interface Props extends SequencePuzzleProps {
+  page: PageName;
   theme: Theme;
   settings: SettingsData;
+  setPage: (page: PageName) => void;
   setTheme: (theme: Theme) => void;
+  addGold: (gold: number) => void;
   onComplete: (wasCorrect: boolean) => void;
 }
 
 /** Puzzle config */
-export const PuzzleConfig: React.FC<Props> = (props) => {
+export const SequencePuzzle: React.FC<Props> = (props) => {
   // Result of the guess
   const [result, setResult] = useState<"in-progress" | "correct" | "incorrect">("in-progress");
 
@@ -256,3 +263,5 @@ export const PuzzleConfig: React.FC<Props> = (props) => {
     </div>
   );
 };
+
+export default SequencePuzzle;

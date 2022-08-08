@@ -1,4 +1,4 @@
-import { PuzzleConfigProps } from "../Pages/PuzzleConfig";
+import { PuzzleConfigProps } from "../Pages/SequencePuzzle";
 
 /** All puzzles */
 export const Puzzles = {

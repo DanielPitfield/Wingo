@@ -14,7 +14,6 @@ import { getId, Level, LevelConfig } from "./Components/Level";
 import LetterCategoriesConfig from "./Pages/LetterCategoriesConfig";
 import ArithmeticReveal from "./Pages/ArithmeticReveal";
 import ArithmeticDrag from "./Pages/ArithmeticDrag";
-import { PuzzleConfig } from "./Pages/PuzzleConfig";
 import { Theme, Themes } from "./Data/Themes";
 import { AllCampaignAreas } from "./Data/CampaignAreas/AllCampaignAreas";
 import { Settings } from "./Pages/Settings";
@@ -56,6 +55,7 @@ import {
 } from "./Data/DefaultGamemodeSettings";
 import { PageName } from "./PageNames";
 import { pageDescriptions } from "./PageDescriptions";
+import SequencePuzzle from "./Pages/SequencePuzzle";
 
 export const App: React.FC = () => {
   // App wide listener for right click event
@@ -517,7 +517,7 @@ export const App: React.FC = () => {
         return <WordCodes mode={"match"} {...commonProps} />;
 
       case "PuzzleSequence":
-        return <PuzzleConfig {...commonProps} />;
+        return <SequencePuzzle {...commonProps} />;
 
       case "challenges":
         return <ChallengesInfo settings={settings} addGold={addGold} />;

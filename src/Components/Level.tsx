@@ -18,8 +18,8 @@ import WingoConfig, { WingoConfigProps } from "../Pages/WingoConfig";
 import { AreaConfig } from "../Pages/Area";
 import { LettersNumbersGameshow, LettersNumbersGameshowProps } from "../Pages/LettersNumbersGameshow";
 import { WingoGameshow, WingoGameshowProps } from "../Pages/WingoGameshow";
+import SequencePuzzle, { SequencePuzzleProps } from "../Pages/SequencePuzzle";
 
-// TODO: Lots of new modes which have been added which aren't supported by this type
 export type LevelConfig = {
   hint?: React.ReactNode;
   level:
@@ -92,12 +92,12 @@ export type LevelConfig = {
         gameCategory: "WingoGameshow";
         page: PageName;
         levelProps: WingoGameshowProps;
+      }
+    | {
+        gameCategory: "SequencePuzzle";
+        page: PageName;
+        levelProps: SequencePuzzleProps;
       };
-
-  // TODO: LevelConfigs (remaining unimplemented modes)
-  /*
-    | "PuzzleSequence"
-  */
 } & (
   | {
       type: "unlock-level";
@@ -163,10 +163,8 @@ export function getId(level: LevelConfig["level"]): string {
     case "WingoGameshow":
       return pageString;
 
-    // TODO: Unique identifier for level (remaining unimplemented modes)
-    /*
-      | "PuzzleSequence"
-    */
+    case "SequencePuzzle":
+      return pageString;
   }
 }
 
@@ -252,10 +250,8 @@ export const Level: React.FC<{
       case "WingoGameshow":
         return <WingoGameshow {...props.level.level.levelProps} {...commonProps} />;
 
-      // TODO: Render Campaign level (remaining unimplemented modes)
-      /*
-        | "PuzzleSequence"
-      */
+      case "SequencePuzzle":
+        return <SequencePuzzle {...props.level.level.levelProps} {...commonProps} />;
     }
   }
   return (
