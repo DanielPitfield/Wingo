@@ -7,17 +7,27 @@ import { Theme } from "../Data/Themes";
 import { displayGameshowSummary } from "./WingoGameshow";
 import { Button } from "../Components/Button";
 import WingoConfig from "./WingoConfig";
+import { LEVEL_FINISHING_TEXT } from "../Components/Level";
 
-interface Props {
-  themes: Theme[];
+export interface LettersNumbersGameshowProps {
+  campaignConfig:
+    | {
+        isCampaignLevel: true;
+        // What score must be achieved to pass the campaign level?
+        targetScore: number;
+      }
+    | { isCampaignLevel: false };
+
   numSets: number;
   numLetterRoundsPerSet: number;
   numNumberRoundsPerSet: number;
   numConundrumRoundsPerSet: number;
   hasFinishingConundrum: boolean;
+}
 
-  isCampaignLevel: boolean;
+interface Props extends LettersNumbersGameshowProps {
   page: PageName;
+  themes: Theme[];
   settings: SettingsData;
   setPage: (page: PageName) => void;
   setTheme: (theme: Theme) => void;
@@ -76,6 +86,11 @@ export const LettersNumbersGameshow: React.FC<Props> = (props) => {
 
     const totalScore = summary.map((round) => round.score).reduce((prev, next) => prev + next);
     setGameshowScore(totalScore);
+
+    // Campaign level and reached target score
+    if (props.campaignConfig.isCampaignLevel && totalScore >= props.campaignConfig.targetScore) {
+      setInProgress(false);
+    }
   }, [summary]);
 
   // Check if the gameshow has ended (when the roundNumber changes)
@@ -129,12 +144,17 @@ export const LettersNumbersGameshow: React.FC<Props> = (props) => {
     }
 
     const commonProps = {
-      isCampaignLevel: props.isCampaignLevel,
-      page: props.page,
+      /*
+      Always say the rounds of the gameshow are NOT campaign levels (even if the gameshow IS a campaign level)
+      This way the score from the rounds is reported back correctly (wasCorrect is less strict)
+      The pass criteria for a gameshow campaign level is that the gameshow score has reached the target score
+      */
+      campaignConfig: { isCampaignLevel: false as false },
+      page: props.page,      
+      settings: props.settings,
       setPage: props.setPage,
       setTheme: props.setTheme,
       addGold: props.addGold,
-      settings: props.settings,
       onComplete: props.onComplete,
       onCompleteGameshowRound: onCompleteGameshowRound,
     };
@@ -154,6 +174,7 @@ export const LettersNumbersGameshow: React.FC<Props> = (props) => {
       return (
         <WingoConfig
           {...commonProps}
+          isCampaignLevel={false}
           mode="conundrum"
           defaultWordLength={9}
           defaultnumGuesses={1}
@@ -165,15 +186,22 @@ export const LettersNumbersGameshow: React.FC<Props> = (props) => {
 
   return (
     <>
-      {inProgress ? getNextRound() : displayGameshowSummary(summary, props.settings, () => props.setPage("home"))}
+      {inProgress ? getNextRound() : displayGameshowSummary(summary, props.settings)}
       {!inProgress && (
         <Button
           mode={"accept"}
-          onClick={() => props.setPage("home")}
+          onClick={() => {
+            // Campaign level and reached target score, otherwise completed all rounds
+            const wasCorrect = props.campaignConfig.isCampaignLevel
+              ? gameshowScore >= props.campaignConfig.targetScore
+              : roundNumber >= roundOrder.length;
+            props.onComplete(wasCorrect);
+            props.campaignConfig.isCampaignLevel ? props.setPage("campaign/area/level") : props.setPage("home");
+          }}
           settings={props.settings}
           additionalProps={{ autoFocus: true }}
         >
-          Back to Home
+          {props.campaignConfig.isCampaignLevel ? LEVEL_FINISHING_TEXT : "Back to Home"}
         </Button>
       )}
     </>

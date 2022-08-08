@@ -9,13 +9,15 @@ import ArithmeticDrag, { ArithmeticDragProps } from "../Pages/ArithmeticDrag";
 import ArithmeticReveal, { ArithmeticRevealProps } from "../Pages/ArithmeticReveal";
 import OnlyConnect, { GroupWallProps } from "../Pages/OnlyConnect";
 import { SettingsData } from "../Data/SaveData";
-import { Theme } from "../Data/Themes";
+import { Theme, Themes } from "../Data/Themes";
 import Algebra, { AlgebraProps } from "../Pages/Algebra";
 import NumberSets, { NumberSetsProps } from "../Pages/NumberSets";
 import SameLetterWords, { SameLetterWordsProps } from "../Pages/SameLetterWords";
 import WordCodes, { WordCodesProps } from "../Pages/WordCodes";
 import WingoConfig, { WingoConfigProps } from "../Pages/WingoConfig";
 import { AreaConfig } from "../Pages/Area";
+import { LettersNumbersGameshow, LettersNumbersGameshowProps } from "../Pages/LettersNumbersGameshow";
+import { WingoGameshow, WingoGameshowProps } from "../Pages/WingoGameshow";
 
 // TODO: Lots of new modes which have been added which aren't supported by this type
 export type LevelConfig = {
@@ -80,13 +82,21 @@ export type LevelConfig = {
         gameCategory: "Numble";
         page: PageName;
         levelProps: NumbleConfigProps;
+      }
+    | {
+        gameCategory: "LettersNumbersGameshow";
+        page: PageName;
+        levelProps: LettersNumbersGameshowProps;
+      }
+    | {
+        gameCategory: "WingoGameshow";
+        page: PageName;
+        levelProps: WingoGameshowProps;
       };
 
   // TODO: LevelConfigs (remaining unimplemented modes)
   /*
     | "PuzzleSequence"
-    | "LettersNumbersGameshow"
-    | "Wingo/Gameshow";
   */
 } & (
   | {
@@ -147,11 +157,15 @@ export function getId(level: LevelConfig["level"]): string {
     case "Numble":
       return pageString;
 
+    case "LettersNumbersGameshow":
+      return pageString;
+
+    case "WingoGameshow":
+      return pageString;
+
     // TODO: Unique identifier for level (remaining unimplemented modes)
     /*
       | "PuzzleSequence"
-      | "LettersNumbersGameshow"
-      | "Wingo/Gameshow";
     */
   }
 }
@@ -226,11 +240,21 @@ export const Level: React.FC<{
       case "Numble":
         return <NumbleConfig {...props.level.level.levelProps} {...commonProps} />;
 
+      case "LettersNumbersGameshow":
+        return (
+          <LettersNumbersGameshow
+            themes={[Themes.GenericLettersGame, Themes.GenericNumbersGame]}
+            {...props.level.level.levelProps}
+            {...commonProps}
+          />
+        );
+
+      case "WingoGameshow":
+        return <WingoGameshow {...props.level.level.levelProps} {...commonProps} />;
+
       // TODO: Render Campaign level (remaining unimplemented modes)
       /*
         | "PuzzleSequence"
-        | "LettersNumbersGameshow"
-        | "Wingo/Gameshow";
       */
     }
   }
