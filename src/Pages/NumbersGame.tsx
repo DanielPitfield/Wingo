@@ -96,6 +96,8 @@ const NumbersGame: React.FC<Props> = (props) => {
       : DEFAULT_TIMER_VALUE
   );
 
+  const [computeSolutionButtonClicked, setComputeSolutionButtonClicked] = useState(false);
+
   // Finding a solution (once the targetNumber is known)
   React.useEffect(() => {
     // Don't try to find a solution (if it will cause a delay)
@@ -427,11 +429,15 @@ const NumbersGame: React.FC<Props> = (props) => {
       return (
         <Button
           mode={"default"}
-          onClick={computeBestSolution}
+          onClick={() => {
+            setComputeSolutionButtonClicked(true);
+            window.setTimeout(() => computeBestSolution(), 0);
+          }}
           settings={props.settings}
           additionalProps={{ autoFocus: true }}
+          disabled={computeSolutionButtonClicked}
         >
-          Find Best Solution
+          {computeSolutionButtonClicked && solutions === null ? "Calculating..." : "Find Best Solution"}
         </Button>
       );
     }
@@ -490,7 +496,11 @@ const NumbersGame: React.FC<Props> = (props) => {
 
           <Button
             mode={"accept"}
-            onClick={props.ResetGame}
+            onClick={() => {
+              props.ResetGame();
+              setSolutions(null);
+              setComputeSolutionButtonClicked(false);
+            }}
             settings={props.settings}
             additionalProps={{ autoFocus: true }}
           >
