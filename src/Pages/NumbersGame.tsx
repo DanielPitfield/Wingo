@@ -82,6 +82,11 @@ interface Props {
  * @returns
  */
 const NumbersGame: React.FC<Props> = (props) => {
+  // The number of operands the numberPuzzle can compute a solution for (with no noticeable delay)
+  const NUMBERPUZZLE_MAX_NUM_OPERANDS_WITHHOUT_DELAY = 6;
+  // The maximum possible number of operands the numberPuzzle can a compute solution for (without the browser crashing)
+  const NUMBERPUZZLE_MAX_NUM_OPERANDS = 7;
+
   const [solutions, setSolutions] = useState<{ best: NumberPuzzleValue; all: NumberPuzzleValue[] } | null>(null);
 
   const DEFAULT_TIMER_VALUE = 30;
@@ -91,46 +96,14 @@ const NumbersGame: React.FC<Props> = (props) => {
       : DEFAULT_TIMER_VALUE
   );
 
+  // Finding a solution (once the targetNumber is known)
   React.useEffect(() => {
-    if (!props.targetNumber) {
+    // Don't try to find a solution (if it will cause a delay)
+    if (props.gamemodeSettings.numOperands > NUMBERPUZZLE_MAX_NUM_OPERANDS_WITHHOUT_DELAY) {
       return;
     }
 
-    const inputNumbers = props.numberTileStatuses
-      .filter((x) => x.type === "original" && x.number)
-      .map((x) => x.number!);
-
-    // The amount of numbers that can be selected does not match with the specified/requested number from props
-    if (inputNumbers.length !== props.gamemodeSettings.numOperands) {
-      return;
-    }
-
-    // TODO: Use WebWorkers for solving Numbers Game
-
-    /*
-    if (window.Worker) {
-      // Start Web Worker
-      let worker = new Worker("NumbersGameWebWorkerSolver.ts");
-      // Send data
-      worker.postMessage({
-        targetNumber: props.targetNumber,
-        inputNumbers: inputNumbers,
-      });
-      // Recieve solution
-      worker.onmessage = function (e) {
-        const solutions = e.data;
-        if (solutions) {
-          setSolutions(solutions.best);
-        }
-      };
-    } else {
-      throw new Error("Web Workers not supported");
-    }
-    */
-
-    // Slow to solve with 7 numbers, page unrensponsive with 8 numbers
-    const puzzle = new NumberPuzzle(props.targetNumber, inputNumbers);
-    setSolutions(puzzle.solve());
+    computeBestSolution();
   }, [props.targetNumber]);
 
   function getSmallNumber(): number | null {
@@ -293,6 +266,32 @@ const NumbersGame: React.FC<Props> = (props) => {
     return Grid;
   }
 
+  function computeBestSolution() {
+    if (!props.targetNumber) {
+      return;
+    }
+
+    if (props.gamemodeSettings.numOperands > NUMBERPUZZLE_MAX_NUM_OPERANDS) {
+      return;
+    }
+
+    const inputNumbers = props.numberTileStatuses
+      .filter((x) => x.type === "original" && x.number)
+      .map((x) => x.number!);
+
+    if (inputNumbers.length > NUMBERPUZZLE_MAX_NUM_OPERANDS) {
+      return;
+    }
+
+    // The amount of numbers that can be selected does not match with the specified/requested number from props
+    if (inputNumbers.length !== props.gamemodeSettings.numOperands) {
+      return;
+    }
+
+    const puzzle = new NumberPuzzle(props.targetNumber, inputNumbers);
+    setSolutions(puzzle.solve());
+  }
+
   function generateSettingsOptions(): React.ReactNode {
     return (
       <>
@@ -390,33 +389,82 @@ const NumbersGame: React.FC<Props> = (props) => {
           </MessageNotification>
         </>
       );
+    } else if (score === 10) {
+      return (
+        <MessageNotification type="success">
+          You got the target number!
+          <br />
+          <strong>{score}</strong> points
+        </MessageNotification>
+      );
+    } else if (score >= 1 && score <= 9) {
+      return (
+        <MessageNotification type="success">
+          You were <strong>{difference}</strong> away from the target number
+          <br />
+          <strong>{score}</strong> points
+        </MessageNotification>
+      );
     } else {
-      if (score === 10) {
-        return (
-          <MessageNotification type="success">
-            You got the target number!
-            <br />
-            <strong>{score}</strong> points
-          </MessageNotification>
-        );
-      } else if (score >= 1 && score <= 9) {
-        return (
-          <MessageNotification type="success">
-            You were <strong>{difference}</strong> away from the target number
-            <br />
-            <strong>{score}</strong> points
-          </MessageNotification>
-        );
-      } else {
-        return (
-          <MessageNotification type="error">
-            You were {difference} away from the target number
-            <br />
-            <strong>0</strong> points
-          </MessageNotification>
-        );
-      }
+      return (
+        <MessageNotification type="error">
+          You were {difference} away from the target number
+          <br />
+          <strong>0</strong> points
+        </MessageNotification>
+      );
     }
+  }
+
+  function displayBestSolution() {
+    const { score, difference } = determineScore(
+      props.closestGuessSoFar,
+      props.targetNumber,
+      props.gamemodeSettings.scoringMethod
+    );
+
+    // Don't need to show a best solution, the player got the target number
+    if (difference === 0) {
+      return;
+    }
+
+    // Too many operands to compute a solution
+    if (props.gamemodeSettings.numOperands > NUMBERPUZZLE_MAX_NUM_OPERANDS) {
+      return;
+    }
+
+    // Can just manage to find a solution with 7 operands, show a button to start finding the solution
+    else if (props.gamemodeSettings.numOperands === NUMBERPUZZLE_MAX_NUM_OPERANDS && solutions === null) {
+      return (
+        <Button
+          mode={"default"}
+          onClick={computeBestSolution}
+          settings={props.settings}
+          additionalProps={{ autoFocus: true }}
+        >
+          Find Best Solution
+        </Button>
+      );
+    }
+
+    // Show the best solution (only when it has been found)
+    return (
+      <div className="best-solution">
+        <MessageNotification type="default">
+          Best Solution:
+          <br />
+          <strong>
+            <br />
+            {solutions?.best.toListOfSteps().map((step) => (
+              <>
+                {step}
+                <br />
+              </>
+            ))}
+          </strong>
+        </MessageNotification>
+      </div>
+    );
   }
 
   function displayGameshowScore() {
@@ -431,12 +479,6 @@ const NumbersGame: React.FC<Props> = (props) => {
       </MessageNotification>
     );
   }
-
-  const { score, difference } = determineScore(
-    props.closestGuessSoFar,
-    props.targetNumber,
-    props.gamemodeSettings.scoringMethod
-  );
 
   return (
     <div
@@ -455,23 +497,7 @@ const NumbersGame: React.FC<Props> = (props) => {
         <>
           {displayOutcome()}
 
-          {difference !== 0 && (
-            <div className="best-solution">
-              <MessageNotification type="default">
-                Best Solution:
-                <br />
-                <strong>
-                  <br />
-                  {solutions?.best.toListOfSteps().map((step) => (
-                    <>
-                      {step}
-                      <br />
-                    </>
-                  ))}
-                </strong>
-              </MessageNotification>
-            </div>
-          )}
+          {displayBestSolution()}
 
           <Button
             mode={"accept"}
