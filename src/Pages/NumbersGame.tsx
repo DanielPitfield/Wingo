@@ -126,24 +126,13 @@ const NumbersGame: React.FC<Props> = (props) => {
       return null;
     }
 
-    // The four standard big numbers
-    const bigNumbers = [25, 50, 75, 100];
+    const bigNumbers = props.gamemodeSettings.hasScaryNumbers
+      ? // The numbers 1 to 99 (without multiples of 10 becuase they would be too easy)
+        Array.from({ length: 99 }, (_, i) => i + 1).filter((number) => number % 10 !== 0)
+      : // The four standard big numbers
+        [25, 50, 75, 100];
 
-    if (props.gamemodeSettings.hasScaryNumbers) {
-      let scaryNumber;
-      while (scaryNumber === undefined) {
-        // Random number between 11 and 99
-        const randomNumber = randomIntFromInterval(11, 99);
-        // A multiple of 10 is too easy!
-        if (randomNumber % 10 !== 0) {
-          scaryNumber = randomNumber;
-        }
-      }
-      return scaryNumber;
-    } else {
-      // Randomly select one of the four standard big numbers
-      return pickRandomElementFrom(bigNumbers);
-    }
+    return pickRandomElementFrom(bigNumbers);
   }
 
   // Automatically choose a selection of small or big numbers
