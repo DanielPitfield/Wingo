@@ -100,7 +100,7 @@ const Wingo: React.FC<Props> = (props) => {
 
   // Create grid of rows (for guessing words)
   function populateGrid(rowNumber: number, wordLength: number) {
-    var Grid = [];
+    let Grid = [];
 
     if (props.mode === "puzzle") {
       // Create read only WordRow that slowly reveals puzzle word

@@ -3,8 +3,8 @@ import { words_nine_targets } from "./WordArrays/Lengths/Words9";
 import { pickRandomElementFrom } from "../Pages/WingoConfig";
 
 export function checkAnagram(constructedWord: string, targetWord: string) {
-  var constructedWordLetters = constructedWord.split("").sort().join("");
-  var targetWordLetters = targetWord.split("").sort().join("");
+  const constructedWordLetters = constructedWord.split("").sort().join("");
+  const targetWordLetters = targetWord.split("").sort().join("");
 
   return constructedWordLetters === targetWordLetters;
 }

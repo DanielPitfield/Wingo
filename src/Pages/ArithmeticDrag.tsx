@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { arrayMove, OrderGroup } from "react-draggable-order";
 import { PageName } from "../PageNames";
 import { Button } from "../Components/Button";
-import { operators, operators_symbols } from "./NumbersGameConfig";
+import { operators, operators_symbols as operatorSymbols } from "./NumbersGameConfig";
 import GamemodeSettingsMenu from "../Components/GamemodeSettingsMenu";
 import LetterTile from "../Components/LetterTile";
 import { MessageNotification } from "../Components/MessageNotification";
@@ -197,7 +197,7 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
 
     for (let i = 0; i < expression.length; i++) {
       const character = expression.charAt(i);
-      if (operators_symbols.includes(character)) {
+      if (operatorSymbols.includes(character)) {
         operatorCount = operatorCount + 1;
       }
     }
@@ -211,11 +211,11 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
    */
   function generateTile(): { expression: string; total: number; status: "not set" } {
     // First number of the tile expression
-    const starting_number = randomIntFromInterval(1, getStartingNumberLimit());
+    const startingNumber = randomIntFromInterval(1, getStartingNumberLimit());
 
     // Begin the expression and total as this value (as string and as number)
-    let expression = starting_number.toString();
-    let total = starting_number;
+    let expression = startingNumber.toString();
+    let total = startingNumber;
 
     // Always one less operator than the number of operands in an expression
     const numOperators = gamemodeSettings.numOperands - 1;
@@ -224,37 +224,38 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
     while (countOperators(expression) < numOperators) {
       // Choose one of the four operators
       let operator = pickRandomElementFrom(operators);
-      let operator_symbol = operator.name;
+      let operatorSymbol = operator.name;
       let operand: number | undefined = undefined;
 
-      switch (operator_symbol) {
+      switch (operatorSymbol) {
         case "÷": {
           // Number of attempts to find a clean divisor
-          const max_limit = 10;
-          let fail_count = 0;
+          const maxLimit = 10;
+          
+          let failCount = 0;
 
           // Loop max_limit times in the attempt of finding a clean divisor
           do {
-            const random_divisor = randomIntFromInterval(2, getOperandLimit(operator_symbol)!);
+            const randomDivisor = randomIntFromInterval(2, getOperandLimit(operatorSymbol)!);
             // Clean division (result would be integer)
-            if (total % random_divisor === 0 && total > 0) {
+            if (total % randomDivisor === 0 && total > 0) {
               // Use that divisor as tile number
-              operand = random_divisor;
+              operand = randomDivisor;
             } else {
-              fail_count += 1;
+              failCount += 1;
             }
-          } while (operand === undefined && fail_count < max_limit); // Stop once an operand has been determined or after max_limit number of attempts to find an operator
+          } while (operand === undefined && failCount < maxLimit); // Stop once an operand has been determined or after max_limit number of attempts to find an operator
           break;
         }
 
         case "×": {
           // Lower threshold of 2 (no point multiplying by 1)
-          operand = randomIntFromInterval(2, getOperandLimit(operator_symbol)!);
+          operand = randomIntFromInterval(2, getOperandLimit(operatorSymbol)!);
           break;
         }
 
         case "+": {
-          operand = randomIntFromInterval(1, getOperandLimit(operator_symbol)!);
+          operand = randomIntFromInterval(1, getOperandLimit(operatorSymbol)!);
           break;
         }
 
@@ -266,12 +267,12 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
             break;
           }
           // The target number is smaller than the maximum value which can be subtracted
-          else if (total < getOperandLimit(operator_symbol)!) {
+          else if (total < getOperandLimit(operatorSymbol)!) {
             // Only subtract a random value which is smaller than targetNumber
             operand = randomIntFromInterval(1, total - 1);
           } else {
             // Proceed as normal
-            operand = randomIntFromInterval(1, getOperandLimit(operator_symbol)!);
+            operand = randomIntFromInterval(1, getOperandLimit(operatorSymbol)!);
           }
         }
       }
@@ -279,7 +280,7 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
       // An operator and operand were determined in this iteration
       if (operand !== undefined) {
         // Add both to expression string
-        expression = expression + operator_symbol + operand.toString();
+        expression = expression + operatorSymbol + operand.toString();
 
         // Insert closing bracket after operand following the first operator (when there are 3 operands)
         if (countOperators(expression) === 1 && gamemodeSettings.numOperands === 3) {
@@ -370,7 +371,7 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
    * @returns
    */
   function displayTiles() {
-    var Grid = [];
+    let Grid = [];
 
     Grid.push(
       <div className="draggable_expressions">

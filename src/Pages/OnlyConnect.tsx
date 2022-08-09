@@ -41,7 +41,7 @@ export function getPrettyWord(text: string): string {
 
   // Capitalise the first letter of every word
   if (words.length >= 1) {
-    for (var i = 0; i < words.length; i++) {
+    for (let i = 0; i < words.length; i++) {
       words[i] = words[i].charAt(0).toUpperCase() + words[i].slice(1);
     }
 
@@ -347,7 +347,7 @@ const OnlyConnect: React.FC<Props> = (props) => {
   }
 
   function displayGrid() {
-    var Grid = [];
+    let Grid = [];
 
     for (let i = 0; i < gamemodeSettings.numGroups; i++) {
       Grid.push(populateRow(i));

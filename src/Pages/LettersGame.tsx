@@ -83,120 +83,94 @@ const LettersGame: React.FC<Props> = (props) => {
       : DEFAULT_TIMER_VALUE
   );
 
+  function getWeightedLetter(letterWeightings: { letter: string; weighting: number }[]) {
+    let weightedArray: string[] = [];
+
+    // For each object in input array
+    for (let i = 0; i < letterWeightings.length; i++) {
+      // For the 'weighting' value number of times
+      for (let j = 0; j < letterWeightings[i].weighting; j++) {
+        // Push the related letter to the array
+        weightedArray.push(letterWeightings[i].letter);
+      }
+    }
+
+    // Select a random value from this array
+    return pickRandomElementFrom(weightedArray);
+  }
+
+  function getVowel(): string {
+    // Already have enough letters, don't add any more
+    if (props.lettersGameSelectionWord.length === props.gamemodeSettings.numLetters) {
+      return "";
+    }
+
+    // Scrabble distribution (https://en.wikipedia.org/wiki/Scrabble_letter_distributions)
+    let vowelWeightings = [
+      { letter: "a", weighting: 9 },
+      { letter: "e", weighting: 12 },
+      { letter: "i", weighting: 9 },
+      { letter: "o", weighting: 8 },
+      { letter: "u", weighting: 4 },
+    ];
+
+    return getWeightedLetter(vowelWeightings);
+  }
+
+  function getConsonant(): string {
+    // Already have enough letters, don't add any more
+    if (props.lettersGameSelectionWord.length === props.gamemodeSettings.numLetters) {
+      return "";
+    }
+
+    let consonantWeightings = [
+      { letter: "b", weighting: 2 },
+      { letter: "c", weighting: 2 },
+      { letter: "d", weighting: 4 },
+      { letter: "f", weighting: 2 },
+      { letter: "g", weighting: 3 },
+      { letter: "h", weighting: 2 },
+      { letter: "j", weighting: 1 },
+      { letter: "k", weighting: 1 },
+      { letter: "l", weighting: 4 },
+      { letter: "m", weighting: 2 },
+      { letter: "n", weighting: 6 },
+      { letter: "p", weighting: 2 },
+      { letter: "q", weighting: 1 },
+      { letter: "r", weighting: 6 },
+      { letter: "s", weighting: 4 },
+      { letter: "t", weighting: 6 },
+      { letter: "v", weighting: 2 },
+      { letter: "w", weighting: 2 },
+      { letter: "x", weighting: 1 },
+      { letter: "y", weighting: 2 },
+      { letter: "z", weighting: 1 },
+    ];
+
+    return getWeightedLetter(consonantWeightings);
+  }
+
+  function quickLetterSelection() {
+    let newLettersGameWord = "";
+
+    // Build word by randomly adding vowels and consonants
+    for (let i = 0; i < props.gamemodeSettings.numLetters; i++) {
+      let x = Math.floor(Math.random() * 2) === 0;
+      // Equal chance (to add a vowel or consonant)
+      if (x) {
+        newLettersGameWord += getVowel();
+      } else {
+        newLettersGameWord += getConsonant();
+      }
+    }
+
+    // Set the entire word at once
+    props.onSubmitLettersGameSelectionWord(newLettersGameWord);
+  }
+
   // Create grid of rows (for guessing words)
-  function populateGrid(wordLength: number) {
-    function getWeightedLetter(letter_weightings: { letter: string; weighting: number }[]) {
-      var weightedArray: string[] = [];
-
-      // For each object in input array
-      for (let i = 0; i < letter_weightings.length; i++) {
-        // For the 'weighting' value number of times
-        for (var j = 0; j < letter_weightings[i].weighting; j++) {
-          // Push the related letter to the array
-          weightedArray.push(letter_weightings[i].letter);
-        }
-      }
-
-      // Select a random value from this array
-      return pickRandomElementFrom(weightedArray);
-    }
-
-    function getVowel(): string {
-      // Already 9 picked letters, don't add any more
-      if (props.lettersGameSelectionWord.length === 9) {
-        return "";
-      }
-
-      // Scrabble distribution (https://en.wikipedia.org/wiki/Scrabble_letter_distributions)
-      let vowel_weightings = [
-        { letter: "a", weighting: 9 },
-        { letter: "e", weighting: 12 },
-        { letter: "i", weighting: 9 },
-        { letter: "o", weighting: 8 },
-        { letter: "u", weighting: 4 },
-      ];
-
-      /*
-      if (!useWeightings) {
-        const randomIndex = Math.round(
-          Math.random() * (vowel_weightings.length - 1)
-        );
-        const randomLetter = vowel_weightings[randomIndex].letter;
-        return randomLetter;
-      } else {
-        const weighted_vowel = getWeightedLetter(vowel_weightings);
-        return weighted_vowel;
-      }
-      */
-
-      const weighted_vowel = getWeightedLetter(vowel_weightings);
-      return weighted_vowel;
-    }
-
-    function getConsonant(): string {
-      if (props.lettersGameSelectionWord.length === 9) {
-        return "";
-      }
-
-      let consonant_weightings = [
-        { letter: "b", weighting: 2 },
-        { letter: "c", weighting: 2 },
-        { letter: "d", weighting: 4 },
-        { letter: "f", weighting: 2 },
-        { letter: "g", weighting: 3 },
-        { letter: "h", weighting: 2 },
-        { letter: "j", weighting: 1 },
-        { letter: "k", weighting: 1 },
-        { letter: "l", weighting: 4 },
-        { letter: "m", weighting: 2 },
-        { letter: "n", weighting: 6 },
-        { letter: "p", weighting: 2 },
-        { letter: "q", weighting: 1 },
-        { letter: "r", weighting: 6 },
-        { letter: "s", weighting: 4 },
-        { letter: "t", weighting: 6 },
-        { letter: "v", weighting: 2 },
-        { letter: "w", weighting: 2 },
-        { letter: "x", weighting: 1 },
-        { letter: "y", weighting: 2 },
-        { letter: "z", weighting: 1 },
-      ];
-
-      /*
-      if (!useWeightings) {
-        const randomIndex = Math.round(
-          Math.random() * (consonant_weightings.length - 1)
-        );
-        const randomLetter = consonant_weightings[randomIndex].letter;
-        return randomLetter;
-      } else {
-        const weighted_consonant = getWeightedLetter(consonant_weightings);
-        return weighted_consonant;
-      }
-      */
-
-      const weighted_consonant = getWeightedLetter(consonant_weightings);
-      return weighted_consonant;
-    }
-
-    function quickLetterSelection() {
-      let newLettersGameWord = "";
-
-      // Build word by randomly adding vowels and consonants
-      for (let i = 0; i < wordLength; i++) {
-        let x = Math.floor(Math.random() * 2) === 0;
-        // Equal chance (to add a vowel or consonant)
-        if (x) {
-          newLettersGameWord += getVowel();
-        } else {
-          newLettersGameWord += getConsonant();
-        }
-      }
-      // Set the entire word at once
-      props.onSubmitLettersGameSelectionWord(newLettersGameWord);
-    }
-
-    var Grid = [];
+  function populateGrid() {
+    let Grid = [];
 
     // Read only letter selection WordRow
     Grid.push(
@@ -208,7 +182,7 @@ const LettersGame: React.FC<Props> = (props) => {
           inProgress={props.inProgress}
           word={props.lettersGameSelectionWord}
           isVertical={false}
-          length={wordLength}
+          length={props.gamemodeSettings.numLetters}
           targetWord={""}
           hasSubmit={false}
           inDictionary={props.inDictionary}
@@ -253,7 +227,7 @@ const LettersGame: React.FC<Props> = (props) => {
         inProgress={props.inProgress}
         isVertical={false}
         word={props.currentWord}
-        length={wordLength}
+        length={props.gamemodeSettings.numLetters}
         targetWord={props.targetWord}
         hasSubmit={!props.inProgress}
         inDictionary={props.inDictionary}
@@ -458,12 +432,14 @@ const LettersGame: React.FC<Props> = (props) => {
           >
             {props.gameshowScore !== undefined
               ? "Next round"
-              : props.campaignConfig.isCampaignLevel ? LEVEL_FINISHING_TEXT : "Restart"}
+              : props.campaignConfig.isCampaignLevel
+              ? LEVEL_FINISHING_TEXT
+              : "Restart"}
           </Button>
         )}
       </div>
 
-      <div className="letters-game-word-grid">{populateGrid(props.gamemodeSettings.numLetters)}</div>
+      <div className="letters-game-word-grid">{populateGrid()}</div>
 
       <div className="keyboard">
         <Keyboard

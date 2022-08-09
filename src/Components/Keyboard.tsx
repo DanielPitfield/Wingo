@@ -42,32 +42,32 @@ export const Keyboard: React.FC<Props> = (props) => {
     }
 
     const handleKeyDown = (event: KeyboardEvent) => {
-      const input_key = event.key.toString().toLowerCase();
+      const inputKey = event.key.toString().toLowerCase();
 
-      if (["f1", "f2", "f3", "f4", "f5", "f6", "f7", "f8", "f9", "f10", "f11", "f12"].includes(input_key)) {
+      if (["f1", "f2", "f3", "f4", "f5", "f6", "f7", "f8", "f9", "f10", "f11", "f12"].includes(inputKey)) {
         return;
       }
 
       event.preventDefault();
       event.stopPropagation();
 
-      if (input_key === "enter") {
+      if (inputKey === "enter") {
         props.onEnter();
-      } else if (input_key === "backspace") {
+      } else if (inputKey === "backspace") {
         props.onBackspace();
         playClickSoundEffect();
-      } else if (alphabet.map((x) => x.toLowerCase()).includes(input_key)) {
+      } else if (alphabet.map((x) => x.toLowerCase()).includes(inputKey)) {
         // Any letter on the keyboard
-        props.onSubmitLetter(input_key);
+        props.onSubmitLetter(inputKey);
         playClickSoundEffect();
       } else if (modesWithSpaces.includes(props.mode) || props.allowSpaces) {
         // Space or dash pressed, submit dash
-        if (input_key === " " || input_key === "-") {
+        if (inputKey === " " || inputKey === "-") {
           props.onSubmitLetter("-");
           playClickSoundEffect();
         }
-        if (input_key === "'") {
-          props.onSubmitLetter(input_key);
+        if (inputKey === "'") {
+          props.onSubmitLetter(inputKey);
           playClickSoundEffect();
         }
       }
@@ -131,7 +131,7 @@ export const Keyboard: React.FC<Props> = (props) => {
 
   function populateKeyboard(RowString: string) {
     // Adds a button for every letter within the provided string
-    var KeyboardButtons = [];
+    let KeyboardButtons = [];
     const RowLetters = RowString.split("");
     // Assign array to variable for quicker access
     const keyboardStatuses = getKeyboardStatuses();

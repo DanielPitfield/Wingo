@@ -110,7 +110,7 @@ const NumbersGame: React.FC<Props> = (props) => {
     /*
     if (window.Worker) {
       // Start Web Worker
-      var worker = new Worker("NumbersGameWebWorkerSolver.ts");
+      let worker = new Worker("NumbersGameWebWorkerSolver.ts");
       // Send data
       worker.postMessage({
         targetNumber: props.targetNumber,
@@ -192,7 +192,7 @@ const NumbersGame: React.FC<Props> = (props) => {
   }
   // Create grid of rows (for guessing numbers)
   function populateGrid() {
-    var Grid = [];
+    let Grid = [];
 
     const isSelectionFinished = hasNumberSelectionFinished(
       props.numberTileStatuses,
@@ -374,7 +374,11 @@ const NumbersGame: React.FC<Props> = (props) => {
       return;
     }
 
-    const {score, difference} = determineScore(props.closestGuessSoFar, props.targetNumber, props.gamemodeSettings.scoringMethod);
+    const { score, difference } = determineScore(
+      props.closestGuessSoFar,
+      props.targetNumber,
+      props.gamemodeSettings.scoringMethod
+    );
 
     if (score === null) {
       return (
@@ -428,7 +432,11 @@ const NumbersGame: React.FC<Props> = (props) => {
     );
   }
 
-  const {score, difference} = determineScore(props.closestGuessSoFar, props.targetNumber, props.gamemodeSettings.scoringMethod);
+  const { score, difference } = determineScore(
+    props.closestGuessSoFar,
+    props.targetNumber,
+    props.gamemodeSettings.scoringMethod
+  );
 
   return (
     <div

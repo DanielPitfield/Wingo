@@ -86,7 +86,8 @@ export const WordRow: React.FC<Props> = (props) => {
   }
 
   function CreateRow() {
-    var TileArray = [];
+    let TileArray = [];
+    
     for (let i = 0; i < props.length; i++) {
       const allCorrect = wordSummary.every((letter) => letter.status === "correct");
 

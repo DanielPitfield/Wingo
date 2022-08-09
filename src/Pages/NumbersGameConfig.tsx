@@ -239,12 +239,15 @@ const NumbersGameConfig: React.FC<Props> = (props) => {
     };
   }, [setRemainingSeconds, remainingSeconds, gamemodeSettings.timerConfig.isTimed, numberTileStatuses]);
 
+  // When the guesses (or expressions made along a row) of the playable grid are changed
   React.useEffect(() => {
+    // For each guess in currentGuesses...
     const intermediaryNumbers: typeof numberTileStatuses = currentGuesses.map((guess, index) => {
       const existingNumbersGameStatus = numberTileStatuses.find(
         (x) => x.type === "intermediary" && x.wordIndex === index
       );
 
+      // Create an intermediary tile of the result of the two operands (for the row)
       return {
         type: "intermediary",
         wordIndex: index,
@@ -253,6 +256,7 @@ const NumbersGameConfig: React.FC<Props> = (props) => {
       };
     });
 
+    // Add (keep track of) these new tiles
     setNumberTileStatuses(numberTileStatuses.filter((x) => x.type !== "intermediary").concat(intermediaryNumbers));
   }, [currentGuesses]);
 

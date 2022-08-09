@@ -509,7 +509,7 @@ const WordCodes: React.FC<Props> = (props) => {
       return;
     }
 
-    var Grid = [];
+    let Grid = [];
 
     Grid.push(
       <div className="draggable_words">

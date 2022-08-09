@@ -20,16 +20,16 @@ export const Campaign: React.FC<{
   setPage: (page: PageName) => void;
 }> = (props) => {
   /** */
-  function onAreaClick(area: AreaConfig, unlock_status: CampaignSaveData["areas"][0]["status"]) {
+  function onAreaClick(area: AreaConfig, unlockStatus: CampaignSaveData["areas"][0]["status"]) {
     // Button should be disabled, but just in case
-    if (unlock_status === "locked") {
+    if (unlockStatus === "locked") {
       return;
     }
 
     props.setTheme(area.theme);
 
     // Go straight to level to unlock/discover the theme
-    if (unlock_status === "unlockable") {
+    if (unlockStatus === "unlockable") {
       props.setSelectedArea(area);
       props.setSelectedCampaignLevel(area.unlock_level);
       props.setPage("campaign/area/level");
@@ -58,42 +58,42 @@ export const Campaign: React.FC<{
           : campaignProgress.areas.find((x) => x.name === AllCampaignAreas[index - 1].name);
 
         // Get the unlock status from the save data, or if not found, determine if all levels from the previous area are completed (unless this is the first area)
-        const unlock_status =
+        const unlockStatus =
           areaInfo?.status ||
           (isFirstArea ||
           AllCampaignAreas[index - 1].levels.every((l) => previousAreaInfo?.completedLevelIds.includes(getId(l.level)))
             ? "unlockable"
             : "locked");
 
-        const current_level_count = areaInfo?.completedLevelIds.filter((x) => x !== "unlock").length || 0;
+        const currentLevelCount = areaInfo?.completedLevelIds.filter((x) => x !== "unlock").length || 0;
         const isCompleted = area.levels.every((l) => areaInfo?.completedLevelIds.includes(getId(l.level)));
 
-        if (props.onlyShowCurrentArea && (unlock_status === "locked" || isCompleted)) {
+        if (props.onlyShowCurrentArea && (unlockStatus === "locked" || isCompleted)) {
           return null;
         }
 
         return (
           <div
             className="widget area-button"
-            data-unlock-status={unlock_status}
+            data-unlock-status={unlockStatus}
             key={area.name}
             style={{
               backgroundImage: `url(${
-                unlock_status === "unlockable" ? BackgroundImageSrc : area.theme.backgroundImageSrc
+                unlockStatus === "unlockable" ? BackgroundImageSrc : area.theme.backgroundImageSrc
               })`,
               backgroundSize: "100%",
             }}
           >
             <strong className="area-name widget-subtitle">Area {index + 1}</strong>
-            <strong className="area-name widget-title">{unlock_status === "unlocked" ? area.name : `???`}</strong>
+            <strong className="area-name widget-title">{unlockStatus === "unlocked" ? area.name : `???`}</strong>
             <span className="level-count widget-button-wrapper">
               <Button
-                mode={unlock_status === "locked" || isCompleted ? "default" : "accept"}
-                disabled={unlock_status === "locked"}
+                mode={unlockStatus === "locked" || isCompleted ? "default" : "accept"}
+                disabled={unlockStatus === "locked"}
                 settings={props.settings}
-                onClick={() => onAreaClick(area, unlock_status)}
+                onClick={() => onAreaClick(area, unlockStatus)}
               >
-                {unlock_status === "locked" ? (
+                {unlockStatus === "locked" ? (
                   <>
                     <FiLock /> Unlock
                   </>
@@ -111,8 +111,8 @@ export const Campaign: React.FC<{
                   </>
                 )}
               </Button>
-              {unlock_status === "unlocked"
-                ? `${Math.max(0, current_level_count - 1)} / ${area.levels.length}`
+              {unlockStatus === "unlocked"
+                ? `${Math.max(0, currentLevelCount - 1)} / ${area.levels.length}`
                 : "? / ?"}
             </span>
           </div>

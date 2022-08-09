@@ -64,7 +64,7 @@ const LetterCategories: React.FC<Props> = (props) => {
 
   // Create grid of rows (for guessing words)
   function populateGrid(rowNumber: number, wordLength: number) {
-    var Grid = [];
+    let Grid = [];
 
     for (let i = 0; i < rowNumber; i++) {
       let word;

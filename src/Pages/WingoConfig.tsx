@@ -139,7 +139,7 @@ export function getLetterStatus(
   targetWord: string,
   inDictionary: boolean
 ): "incorrect" | "contains" | "correct" | "not set" | "not in word" {
-  var status: "incorrect" | "contains" | "correct" | "not set" | "not in word";
+  let status: "incorrect" | "contains" | "correct" | "not set" | "not in word";
 
   if (!inDictionary) {
     // Red
@@ -937,7 +937,7 @@ const WingoConfig: React.FC<Props> = (props) => {
     numGuesses: number
   ) {
     // Base amount by gamemode
-    const gamemode_Gold_Mappings = [
+    const gamemodeGoldMappings = [
       { mode: "daily", value: 1000 },
       { mode: "repeat", value: 50 },
       { mode: "increasing", value: 50 },
@@ -948,10 +948,10 @@ const WingoConfig: React.FC<Props> = (props) => {
       { mode: "interlinked", value: 125 },
     ];
 
-    const gamemode_value = gamemode_Gold_Mappings.find((x) => x.mode === props.mode)?.value!;
+    const gamemodeValue = gamemodeGoldMappings.find((x) => x.mode === props.mode)?.value!;
 
     // Incremental multiplier with wordLength
-    const wordLength_Gold_Mappings = [
+    const wordLengthGoldMappings = [
       { value: 4, multiplier: 1 },
       { value: 5, multiplier: 1.05 },
       { value: 6, multiplier: 1.25 },
@@ -962,10 +962,10 @@ const WingoConfig: React.FC<Props> = (props) => {
       { value: 11, multiplier: 7.5 },
     ];
 
-    const wordLength_multiplier = wordLength_Gold_Mappings.find((x) => x.value === wordLength)?.multiplier!;
+    const wordLengthMultiplier = wordLengthGoldMappings.find((x) => x.value === wordLength)?.multiplier!;
 
     // Small bonus for early guesses
-    const numGuesses_Gold_Mappings = [
+    const numGuessesGoldMappings = [
       {
         guesses: 1,
         value: 250,
@@ -977,9 +977,9 @@ const WingoConfig: React.FC<Props> = (props) => {
       { guesses: 6, value: 0 },
     ];
 
-    const numGuesses_bonus = numGuesses_Gold_Mappings.find((x) => x.guesses === numGuesses)?.value!;
+    const numGuessesBonus = numGuessesGoldMappings.find((x) => x.guesses === numGuesses)?.value!;
 
-    const goldTotal = Math.round(gamemode_value * wordLength_multiplier + numGuesses_bonus);
+    const goldTotal = Math.round(gamemodeValue * wordLengthMultiplier + numGuessesBonus);
     return goldTotal;
   }
 

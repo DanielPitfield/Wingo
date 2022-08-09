@@ -24,27 +24,27 @@ export const NumPad: React.FC<Props> = (props) => {
     }
 
     const handleKeyDown = (event: KeyboardEvent) => {
-      const input_key = event.key.toString().toLowerCase();
+      const inputKey = event.key.toString().toLowerCase();
 
-      if (["f1", "f2", "f3", "f4", "f5", "f6", "f7", "f8", "f9", "f10", "f11", "f12"].includes(input_key)) {
+      if (["f1", "f2", "f3", "f4", "f5", "f6", "f7", "f8", "f9", "f10", "f11", "f12"].includes(inputKey)) {
         return;
       }
 
       event.preventDefault();
       event.stopPropagation();
 
-      if (input_key === "enter") {
+      if (inputKey === "enter") {
         props.onEnter();
         return;
       }
 
-      if (input_key === "backspace") {
+      if (inputKey === "backspace") {
         props.onBackspace();
         playClickSoundEffect();
         return;
       }
 
-      const keyAsInt = parseInt(input_key);
+      const keyAsInt = parseInt(inputKey);
 
       if (Numbers.includes(keyAsInt)) {
         props.onSubmitNumber(keyAsInt);

@@ -108,11 +108,11 @@ interface Props {
   determinePointColourMappings: () => { points: number; colour: string }[];
   determineSquareAdjacentMappings: () => {
     pin: number;
-    adjacent_pins: number[];
+    adjacentPins: number[];
   }[];
   determineHexagonAdjacentMappings: () => {
     pin: number;
-    adjacent_pins: HexagonPinAdjacency;
+    adjacentPins: HexagonPinAdjacency;
   }[];
 
   theme: Theme;
@@ -337,7 +337,7 @@ const Numble: React.FC<Props> = (props) => {
       // Pin adjacency information
       const adjacentMappings = props.determineSquareAdjacentMappings();
       // Adjacent pins of the clicked pin
-      const adjacentPins = adjacentMappings.find((x) => x.pin === pinNumber)?.adjacent_pins;
+      const adjacentPins = adjacentMappings.find((x) => x.pin === pinNumber)?.adjacentPins;
 
       if (!adjacentPins) {
         return false;
@@ -356,7 +356,7 @@ const Numble: React.FC<Props> = (props) => {
       // Pin adjacency information
       const adjacentMappings = props.determineHexagonAdjacentMappings();
       // Adjacent pins of the clicked pin
-      const adjacentPins = adjacentMappings.find((x) => x.pin === pinNumber)?.adjacent_pins;
+      const adjacentPins = adjacentMappings.find((x) => x.pin === pinNumber)?.adjacentPins;
 
       if (!adjacentPins) {
         return false;
@@ -602,7 +602,7 @@ const Numble: React.FC<Props> = (props) => {
    * @returns
    */
   function populateGrid() {
-    var Grid = [];
+    let Grid = [];
 
     const rowLength = Math.sqrt(props.gamemodeSettings.gridSize);
 

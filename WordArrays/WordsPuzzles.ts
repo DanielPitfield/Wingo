@@ -102,14 +102,6 @@ export const wordHintMappings = [
     { word: "enthusiasm", hint: "This answer is full of energy" }, 
   ];
 
-  /*
-  function CheckWordLength(inputArray: { word: string, hint: string}[]) {
-    // Find objects where the word is not 10 character long or a hint is not provided
-    const puzzle_errors = inputArray.filter(x => x.word.length != 10 || !x.hint)
-    return puzzle_errors;
-  }
-  */
-
   export const words_ten = [
     "equivalent",
     "evaluation",

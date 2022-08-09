@@ -683,22 +683,22 @@ const NumbleConfig: React.FC<Props> = (props) => {
   // Returns the adjacent pins of every pin (for square grid shape)
   function determineSquareAdjacentMappings(): {
     pin: number;
-    adjacent_pins: number[];
+    adjacentPins: number[];
   }[] {
     return Array.from({ length: gamemodeSettings.gridSize }).map((_, i) => ({
       pin: i + 1,
-      adjacent_pins: getSquareAdjacentPins(i + 1, gamemodeSettings.gridSize),
+      adjacentPins: getSquareAdjacentPins(i + 1, gamemodeSettings.gridSize),
     }));
   }
 
   // Returns the adjacent pins of every pin (for hexagon grid shape)
   function determineHexagonAdjacentMappings(): {
     pin: number;
-    adjacent_pins: HexagonPinAdjacency;
+    adjacentPins: HexagonPinAdjacency;
   }[] {
     return Array.from({ length: gamemodeSettings.gridSize }).map((_, i) => ({
       pin: i + 1,
-      adjacent_pins: getHexagonAdjacentPins(i + 1),
+      adjacentPins: getHexagonAdjacentPins(i + 1),
     }));
   }
 

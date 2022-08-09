@@ -206,10 +206,10 @@ export class SaveData {
    * @returns Campaign progress (default campaign start if not found in save data).
    */
   public static getCampaignProgress(): CampaignSaveData {
-    const campaign_progress = localStorage.getItem("campaign_progress");
+    const campaignProgress = localStorage.getItem("campaign_progress");
 
-    if (campaign_progress) {
-      return JSON.parse(campaign_progress) as CampaignSaveData;
+    if (campaignProgress) {
+      return JSON.parse(campaignProgress) as CampaignSaveData;
     }
 
     return { areas: [] };
