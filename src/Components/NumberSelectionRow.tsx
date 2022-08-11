@@ -15,10 +15,6 @@ interface Props {
 }
 
 export const NumberSelectionRow: React.FC<Props> = (props) => {
-  /**
-   *
-   * @returns
-   */
   function CreateRow() {
     const tileArray = [];
     const originalNumbers = props.numberTileStatuses.filter((x) => x.type === "original");

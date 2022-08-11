@@ -18,6 +18,7 @@ import {
 } from "../Data/DefaultGamemodeSettings";
 import { shuffleArray } from "./ArithmeticDrag";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
+import { LetterSelectionRow } from "../LetterSelectionRow";
 
 interface Props {
   campaignConfig:
@@ -33,18 +34,18 @@ interface Props {
     timerConfig: { isTimed: true; seconds: number } | { isTimed: false };
   };
 
-  remainingSeconds: number;
+  letterTileStatuses: {
+    letter: string | null;
+    picked: boolean;
+  }[];
+
   guesses: string[];
-  lettersGameSelectionWord: string;
   currentWord: string;
   inProgress: boolean;
   inDictionary: boolean;
   hasSubmitLetter: boolean;
   targetWord: string;
-  letterStatuses: {
-    letter: string;
-    status: "" | "contains" | "correct" | "not set" | "not in word";
-  }[];
+  remainingSeconds: number;
 
   page: PageName;
   theme: Theme;
@@ -55,7 +56,7 @@ interface Props {
   onEnter: () => void;
   onSubmitLettersGameLetter: (letter: string) => void;
   onSubmitLettersGameSelectionWord: (word: string) => void;
-  onSubmitLetter: (letter: string) => void;
+  onSubmitLetter: (letter: string | null) => void;
   onBackspace: () => void;
 
   updateGamemodeSettings: (newGamemodeSettings: {
@@ -73,8 +74,12 @@ interface Props {
 const LettersGame: React.FC<Props> = (props) => {
   // Currently selected guess, to be used as the final guess when time runs out
   const [bestGuess, setBestGuess] = useState("");
+
+  const SELECTION_WORD_NUM_LETTERS = props.letterTileStatuses.filter(
+    (letterStatus) => letterStatus.letter !== null
+  ).length;
   // Check if letter selection has finished
-  const IS_SELECTION_FINISHED = props.lettersGameSelectionWord.length === props.gamemodeSettings.numLetters;
+  const IS_SELECTION_FINISHED = SELECTION_WORD_NUM_LETTERS === props.gamemodeSettings.numLetters;
 
   const DEFAULT_TIMER_VALUE = 30;
   const [mostRecentTotalSeconds, setMostRecentTotalSeconds] = useState(
@@ -101,7 +106,7 @@ const LettersGame: React.FC<Props> = (props) => {
 
   function getVowel(): string {
     // Already have enough letters, don't add any more
-    if (props.lettersGameSelectionWord.length === props.gamemodeSettings.numLetters) {
+    if (SELECTION_WORD_NUM_LETTERS === props.gamemodeSettings.numLetters) {
       return "";
     }
 
@@ -119,7 +124,7 @@ const LettersGame: React.FC<Props> = (props) => {
 
   function getConsonant(): string {
     // Already have enough letters, don't add any more
-    if (props.lettersGameSelectionWord.length === props.gamemodeSettings.numLetters) {
+    if (SELECTION_WORD_NUM_LETTERS === props.gamemodeSettings.numLetters) {
       return "";
     }
 
@@ -175,19 +180,12 @@ const LettersGame: React.FC<Props> = (props) => {
     // Read only letter selection WordRow
     Grid.push(
       <div className="letters-game-wrapper" key={"letter_selection"}>
-        <WordRow
+        <LetterSelectionRow
           key={"letters-game/read-only"}
-          page={props.page}
-          isReadOnly={true}
-          inProgress={props.inProgress}
-          word={props.lettersGameSelectionWord}
-          isVertical={false}
-          length={props.gamemodeSettings.numLetters}
-          targetWord={""}
-          hasSubmit={false}
-          inDictionary={props.inDictionary}
+          letterTileStatuses={props.letterTileStatuses}
           settings={props.settings}
-          applyAnimation={false}
+          disabled={!props.inProgress}
+          onClick={props.onSubmitLetter}
         />
         <div className="add-letter-buttons-wrapper">
           <Button
@@ -208,7 +206,7 @@ const LettersGame: React.FC<Props> = (props) => {
           </Button>
           <Button
             mode={"default"}
-            disabled={props.lettersGameSelectionWord.length !== 0 || IS_SELECTION_FINISHED}
+            disabled={SELECTION_WORD_NUM_LETTERS !== 0 || IS_SELECTION_FINISHED}
             settings={props.settings}
             onClick={quickLetterSelection}
           >
@@ -340,7 +338,12 @@ const LettersGame: React.FC<Props> = (props) => {
     }
 
     // Create a list of the longest words that can be made with the available letters
-    const bestWords = getBestWords(props.lettersGameSelectionWord);
+    const bestWords = getBestWords(
+      props.letterTileStatuses
+        .filter((letterStatus) => letterStatus.letter !== null)
+        .map((letterStatus) => letterStatus.letter)
+        .join("")
+    );
     const bestWordsList = (
       <ul className="best_words_list">
         {bestWords.map((bestWord) => (
@@ -450,7 +453,7 @@ const LettersGame: React.FC<Props> = (props) => {
           guesses={props.guesses}
           targetWord={props.targetWord}
           inDictionary={props.inDictionary}
-          letterStatuses={props.letterStatuses}
+          letterStatuses={[]}
           settings={props.settings}
           disabled={!props.inProgress}
           showKeyboard={props.settings.gameplay.keyboard}

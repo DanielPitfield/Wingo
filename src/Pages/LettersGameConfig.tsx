@@ -15,6 +15,7 @@ export interface LettersGameConfigProps {
     | { isCampaignLevel: false };
 
   guesses?: string[];
+  // Define the letters to choose from (player won't randomly select letters)
   lettersGameSelectionWord?: string;
 
   gamemodeSettings?: {
@@ -64,11 +65,10 @@ const LettersGameConfig: React.FC<Props> = (props) => {
   const DEFAULT_TIMER_VALUE = 30;
 
   const [guesses, setGuesses] = useState<string[]>([]);
-  const [lettersGameSelectionWord, setLettersGameSelectionWord] = useState("");
   const [currentWord, setCurrentWord] = useState("");
-  const [inProgress, setinProgress] = useState(true);
-  const [inDictionary, setinDictionary] = useState(true);
-  const [targetWord, settargetWord] = useState<string>();
+  const [inProgress, setInProgress] = useState(true);
+  const [inDictionary, setInDictionary] = useState(true);
+  const [targetWord, setTargetWord] = useState<string>();
   const [hasSubmitLetter, sethasSubmitLetter] = useState(false);
 
   const defaultGamemodeSettings = {
@@ -87,44 +87,20 @@ const LettersGameConfig: React.FC<Props> = (props) => {
       : DEFAULT_TIMER_VALUE
   );
 
-  const defaultLetterStatuses: {
-    letter: string;
-    status: "" | "contains" | "correct" | "not set" | "not in word";
-  }[] = [
-    { letter: "a", status: "" },
-    { letter: "b", status: "" },
-    { letter: "c", status: "" },
-    { letter: "d", status: "" },
-    { letter: "e", status: "" },
-    { letter: "f", status: "" },
-    { letter: "g", status: "" },
-    { letter: "h", status: "" },
-    { letter: "i", status: "" },
-    { letter: "j", status: "" },
-    { letter: "k", status: "" },
-    { letter: "l", status: "" },
-    { letter: "m", status: "" },
-    { letter: "n", status: "" },
-    { letter: "o", status: "" },
-    { letter: "p", status: "" },
-    { letter: "q", status: "" },
-    { letter: "r", status: "" },
-    { letter: "s", status: "" },
-    { letter: "t", status: "" },
-    { letter: "u", status: "" },
-    { letter: "v", status: "" },
-    { letter: "w", status: "" },
-    { letter: "x", status: "" },
-    { letter: "y", status: "" },
-    { letter: "z", status: "" },
-  ];
+  const defaultLetterTileStatuses: {
+    letter: string | null;
+    picked: boolean;
+  }[] = Array.from({ length: gamemodeSettings.numLetters }).map((_) => ({
+    letter: null,
+    picked: false,
+  }));
 
-  const [letterStatuses, setletterStatuses] = useState<
+  const [letterTileStatuses, setLetterTileStatuses] = useState<
     {
-      letter: string;
-      status: "" | "contains" | "correct" | "not set" | "not in word";
+      letter: string | null;
+      picked: boolean;
     }[]
-  >(defaultLetterStatuses);
+  >(defaultLetterTileStatuses);
 
   // Timer Setup
   React.useEffect(() => {
@@ -132,7 +108,9 @@ const LettersGameConfig: React.FC<Props> = (props) => {
       return;
     }
 
-    if (lettersGameSelectionWord.length !== gamemodeSettings.numLetters) {
+    if (
+      letterTileStatuses.filter((letterStatus) => letterStatus.letter !== null).length !== gamemodeSettings.numLetters
+    ) {
       return;
     }
 
@@ -140,13 +118,13 @@ const LettersGameConfig: React.FC<Props> = (props) => {
       if (remainingSeconds > 0) {
         setRemainingSeconds(remainingSeconds - 1);
       } else {
-        setinProgress(false);
+        setInProgress(false);
       }
     }, 1000);
     return () => {
       clearInterval(timer);
     };
-  }, [setRemainingSeconds, remainingSeconds, gamemodeSettings.timerConfig.isTimed, lettersGameSelectionWord]);
+  }, [setRemainingSeconds, remainingSeconds, gamemodeSettings.timerConfig.isTimed]);
 
   // Reset game after change of settings (stops cheating by changing settings partway through a game)
   React.useEffect(() => {
@@ -170,7 +148,9 @@ const LettersGameConfig: React.FC<Props> = (props) => {
       const score = longestWord.length ?? 0;
 
       // Achieved target score if a campaign level, otherwise just any length word was guessed
-      const wasCorrect = props.campaignConfig.isCampaignLevel ? score >= Math.min(props.campaignConfig.targetScore, gamemodeSettings.numLetters) : score > 0;
+      const wasCorrect = props.campaignConfig.isCampaignLevel
+        ? score >= Math.min(props.campaignConfig.targetScore, gamemodeSettings.numLetters)
+        : score > 0;
 
       if (props.gameshowScore === undefined) {
         props.onComplete(wasCorrect);
@@ -180,13 +160,12 @@ const LettersGameConfig: React.FC<Props> = (props) => {
     }
 
     setGuesses([]);
-    setLettersGameSelectionWord("");
+    setLetterTileStatuses(defaultLetterTileStatuses);
     setCurrentWord("");
-    settargetWord("");
-    setinProgress(true);
-    setinDictionary(true);
+    setTargetWord("");
+    setInProgress(true);
+    setInDictionary(true);
     sethasSubmitLetter(false);
-    setletterStatuses(defaultLetterStatuses);
 
     if (gamemodeSettings.timerConfig.isTimed) {
       // Reset the timer if it is enabled in the game options
@@ -195,13 +174,12 @@ const LettersGameConfig: React.FC<Props> = (props) => {
   }
 
   function ContinueGame() {
-    setinProgress(true);
-    setinDictionary(false);
+    setInProgress(true);
+    setInDictionary(false);
     setCurrentWord("");
-    setinProgress(true);
-    setinDictionary(true);
+    setInProgress(true);
+    setInDictionary(true);
     sethasSubmitLetter(false);
-    setletterStatuses(defaultLetterStatuses);
   }
 
   function onEnter() {
@@ -210,7 +188,9 @@ const LettersGameConfig: React.FC<Props> = (props) => {
     }
 
     // The vowels and consonants available have not all been picked
-    if (lettersGameSelectionWord.length !== gamemodeSettings.numLetters) {
+    if (
+      letterTileStatuses.filter((letterStatus) => letterStatus.letter !== null).length !== gamemodeSettings.numLetters
+    ) {
       return;
     }
 
@@ -227,24 +207,29 @@ const LettersGameConfig: React.FC<Props> = (props) => {
     // A guess can be from etiher guessable or target word arrays (just checking it is an actual word)
     const wordArray: string[] = firstWordArray.concat(secondTargetArray);
 
-    // Accepted word (known word in dictionary)
-    const wordInDictionary = wordArray?.includes(currentWord.toLowerCase());
-    // Word can be made with available letters
-    const isValidWord = isLettersGameGuessValid(currentWord, lettersGameSelectionWord);
+    // Is the word an accepted word (known word in dictionary)?
+    const isWordInDictionary = wordArray?.includes(currentWord.toLowerCase());
+
+    // Can the word be made with the available letters?
+    const letterSelectionWord = letterTileStatuses
+      .filter((letterStatus) => letterStatus.letter !== null)
+      .map((letterStatus) => letterStatus.letter)
+      .join("");
+    const isValidWord = isLettersGameGuessValid(currentWord, letterSelectionWord);
 
     // Check the validity of the word for the player
-    if (wordInDictionary && isValidWord) {
-      setinDictionary(true);
+    if (isWordInDictionary && isValidWord) {
+      setInDictionary(true);
       // Set the target word to the guessed word so all letters show as green
-      settargetWord(currentWord);
+      setTargetWord(currentWord);
       // Only add word to guesses if valid
       setGuesses(guesses.concat(currentWord)); // Add word to guesses
     } else {
-      setinDictionary(false);
+      setInDictionary(false);
     }
 
     // Stop progress so the status of tiles shows briefly
-    setinProgress(false);
+    setInProgress(false);
 
     // Wait half a second to show validity of word, then continue
     setTimeout(() => {
@@ -253,25 +238,66 @@ const LettersGameConfig: React.FC<Props> = (props) => {
   }
 
   function onSubmitLettersGameLetter(letter: string) {
-    if (lettersGameSelectionWord.length < gamemodeSettings.numLetters && inProgress) {
-      setLettersGameSelectionWord(lettersGameSelectionWord + letter); // Append chosen letter to lettersGameSelectionWord
+    if (
+      letterTileStatuses.filter((letterStatus) => letterStatus.letter !== null).length < gamemodeSettings.numLetters &&
+      inProgress
+    ) {
+      // Find the index of the first status without a letter
+      const freeSlotIndex = letterTileStatuses.findIndex((letterStatus) => letterStatus.letter === null);
+      if (freeSlotIndex === -1) {
+        return;
+      }
+
+      let newLetterTileStatuses = letterTileStatuses.slice();
+      // Put in the letter in this free slot
+      newLetterTileStatuses[freeSlotIndex] = {
+        letter: letter,
+        picked: false,
+      };
+      setLetterTileStatuses(newLetterTileStatuses);
     }
   }
 
   function onSubmitLettersGameSelectionWord(word: string) {
-    if (lettersGameSelectionWord.length === 0 && inProgress) {
-      setLettersGameSelectionWord(word);
+    if (!inProgress) {
+      return;
     }
+
+    if (word.length !== gamemodeSettings.numLetters) {
+      return;
+    }
+
+    // A vowel or consonant has already been picked
+    if (letterTileStatuses.filter((letterStatus) => letterStatus.letter !== null).length !== 0) {
+      return;
+    }
+
+    // Create a letterStatus with each letter of word with the picked flag as false
+    const newLetterTileStatuses = word.split("").map((letter) => {
+      return { letter: letter, picked: false };
+    });
+
+    setLetterTileStatuses(newLetterTileStatuses);
   }
 
-  function onSubmitLetter(letter: string) {
-    // Additional condition of all letters having been selected
+  function onSubmitLetter(letter: string | null) {
+    if (letter === null) {
+      return;
+    }
+
+    // Still more letters need to be chosen for selection
     if (
-      currentWord.length < gamemodeSettings.numLetters &&
-      lettersGameSelectionWord.length === gamemodeSettings.numLetters &&
-      inProgress
+      letterTileStatuses.filter((letterStatus) => letterStatus.letter !== null).length !== gamemodeSettings.numLetters
     ) {
-      setCurrentWord(currentWord + letter); // Append chosen letter to currentWord
+      return;
+    }
+
+    // TODO: Set letterTileStatuses, change picked flag to true
+
+    // The current word is not yet as long as the number of letters in the selection
+    if (currentWord.length < gamemodeSettings.numLetters && inProgress) {
+      // Append chosen letter to currentWord
+      setCurrentWord(currentWord + letter);
       sethasSubmitLetter(true);
     }
   }
@@ -301,12 +327,11 @@ const LettersGameConfig: React.FC<Props> = (props) => {
       remainingSeconds={remainingSeconds}
       guesses={guesses}
       currentWord={currentWord}
-      lettersGameSelectionWord={lettersGameSelectionWord}
+      letterTileStatuses={letterTileStatuses}
       inProgress={inProgress}
       inDictionary={inDictionary}
       hasSubmitLetter={hasSubmitLetter}
       targetWord={targetWord || ""}
-      letterStatuses={letterStatuses}
       page={props.page}
       theme={props.theme}
       settings={props.settings}

@@ -6,6 +6,7 @@ interface Props {
   status: "incorrect" | "contains" | "correct" | "not set" | "not in word";
   settings: SettingsData;
   onClick?: () => void;
+  disabled?: boolean;
   indexInWord?: number;
   animationDelayMultiplier?: number;
   applyAnimation?: boolean;
@@ -74,13 +75,13 @@ const LetterTile: React.FC<Props> = (props) => {
     // [data-has-been-submitted="true"] - Reveal animation is applied to LetterTile
     <div
       className="letter_tile"
-      onClick={() => props.onClick?.()}
+      onClick={props.onClick}
       data-animation-setting={props.settings.graphics.animation}
       data-apply-animation={props.applyAnimation}
       data-new-letter-added={props.status === "not set" && props.letter !== undefined}
       data-has-been-submitted={props.status !== "not set" && props.status !== "incorrect" && props.letter !== undefined}
       data-status={delayedStatus}
-      data-is-clickable={props.onClick !== undefined}
+      data-is-clickable={props.disabled !== false || props.onClick !== undefined}
       style={
         delayForThisLetterSeconds() !== undefined ? { animationDelay: `${delayForThisLetterSeconds()}s` } : undefined
       }

@@ -318,12 +318,15 @@ input {
 }
 
 // The letter tiles of Letters Game
-.letters-game-wrapper .word_row .letter_tile {
-  border: none;
-  border-radius: 0px;
-  background-color: #2c2cb8;
-  color: white;
-  text-shadow: none;
+.letters-game-wrapper {
+  .word_row .letter_tile,
+  .letter_row .letter_tile {
+    border: none;
+    border-radius: 0px;
+    background-color: #2c2cb8;
+    color: white;
+    text-shadow: none;
+  }
 }
 
 $data-statuses: (
@@ -408,7 +411,7 @@ $data-statuses: (
   }
 }
 
-.word_row {
+.word_row, .letter_row {
   display: flex;
   align-items: center;
   justify-content: center;

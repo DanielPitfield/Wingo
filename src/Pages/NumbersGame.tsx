@@ -11,7 +11,6 @@ import { Theme } from "../Data/Themes";
 import { NumberPuzzle, NumberPuzzleValue } from "../Data/NumbersGameSolver";
 import { SettingsData } from "../Data/SaveData";
 import GamemodeSettingsMenu from "../Components/GamemodeSettingsMenu";
-import { randomIntFromInterval } from "./Numble";
 import { pickRandomElementFrom } from "./WingoConfig";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
 
@@ -96,7 +95,7 @@ const NumbersGame: React.FC<Props> = (props) => {
       : DEFAULT_TIMER_VALUE
   );
 
-  const [computeSolutionButtonClicked, setComputeSolutionButtonClicked] = useState(false);
+  const [isComputeSolutionButtonClicked, setIsComputeSolutionButtonClicked] = useState(false);
 
   // Finding a solution (once the targetNumber is known)
   React.useEffect(() => {
@@ -408,7 +407,7 @@ const NumbersGame: React.FC<Props> = (props) => {
   }
 
   function displayBestSolution() {
-    const { score, difference } = determineScore(
+    const { difference } = determineScore(
       props.closestGuessSoFar,
       props.targetNumber,
       props.gamemodeSettings.scoringMethod
@@ -430,14 +429,14 @@ const NumbersGame: React.FC<Props> = (props) => {
         <Button
           mode={"default"}
           onClick={() => {
-            setComputeSolutionButtonClicked(true);
+            setIsComputeSolutionButtonClicked(true);
             window.setTimeout(() => computeBestSolution(), 0);
           }}
           settings={props.settings}
           additionalProps={{ autoFocus: true }}
-          disabled={computeSolutionButtonClicked}
+          disabled={isComputeSolutionButtonClicked}
         >
-          {computeSolutionButtonClicked && solutions === null ? "Calculating..." : "Find Best Solution"}
+          {isComputeSolutionButtonClicked && solutions === null ? "Calculating..." : "Find Best Solution"}
         </Button>
       );
     }
@@ -499,7 +498,7 @@ const NumbersGame: React.FC<Props> = (props) => {
             onClick={() => {
               props.ResetGame();
               setSolutions(null);
-              setComputeSolutionButtonClicked(false);
+              setIsComputeSolutionButtonClicked(false);
             }}
             settings={props.settings}
             additionalProps={{ autoFocus: true }}
