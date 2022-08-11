@@ -281,6 +281,10 @@ const LettersGameConfig: React.FC<Props> = (props) => {
   }
 
   function onSubmitLetter(letter: string | null) {
+    if (!inProgress) {
+      return;
+    }
+
     if (letter === null) {
       return;
     }
@@ -292,14 +296,34 @@ const LettersGameConfig: React.FC<Props> = (props) => {
       return;
     }
 
-    // TODO: Set letterTileStatuses, change picked flag to true
-
-    // The current word is not yet as long as the number of letters in the selection
-    if (currentWord.length < gamemodeSettings.numLetters && inProgress) {
-      // Append chosen letter to currentWord
-      setCurrentWord(currentWord + letter);
-      sethasSubmitLetter(true);
+    // The current word is already as long as the number of letters in the selection
+    if (currentWord.length >= gamemodeSettings.numLetters) {
+      return;
     }
+
+    // Find the first index in letterTileStatuses (where the letter is the letter clicked and the picked flag is false)
+    const currentLetterIndex = letterTileStatuses.findIndex(
+      (letterStatus) => !letterStatus.picked && letterStatus.letter === letter
+    );
+
+    // The letter that was clicked is not present in the tileStatuses
+    if (currentLetterIndex === -1) {
+      return;
+    }
+
+    // Append chosen letter to currentWord
+    setCurrentWord(currentWord + letter);
+    sethasSubmitLetter(true);
+    
+    // Keep track this letter has now been picked
+    // TODO: Use indexes, two of same letter, the first occurence can be clicked twice
+    let newLetterTileStatuses = letterTileStatuses.slice();
+    newLetterTileStatuses[currentLetterIndex] = {
+      letter: letter,
+      picked: true,
+    }
+
+    setLetterTileStatuses(newLetterTileStatuses);
   }
 
   function onBackspace() {

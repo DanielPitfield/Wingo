@@ -18,6 +18,8 @@ export const LetterSelectionRow: React.FC<Props> = (props) => {
   function CreateRow() {
     let tileArray = [];
 
+    // TODO: Disabled CSS
+
     for (let i = 0; i < props.letterTileStatuses.length; i++) {
       tileArray.push(
         <LetterTile
