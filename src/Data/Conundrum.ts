@@ -1,14 +1,14 @@
 import { wordLengthMappingsGuessable, wordLengthMappingsTargets } from "./DefaultGamemodeSettings";
 import { pickRandomElementFrom } from "../Pages/WingoConfig";
 
-export function checkAnagram(constructedWord: string, targetWord: string) {
+export function checkAnagram(constructedWord: string, targetWord: string): boolean {
   const constructedWordLetters = constructedWord.split("").sort().join("");
   const targetWordLetters = targetWord.split("").sort().join("");
 
   return constructedWordLetters === targetWordLetters;
 }
 
-export function getAllWordsOfLength(wordLength: number) {
+export function getAllWordsOfLength(wordLength: number): string[] {
   const guessableWordArray: string[] = wordLengthMappingsGuessable.find((x) => x.value === wordLength)?.array ?? [];
   const targetWordArray: string[] = wordLengthMappingsTargets.find((x) => x.value === wordLength)?.array ?? [];
 
@@ -32,6 +32,7 @@ export function generateConundrum() {
   ];
 
   const MAX_ATTEMPTS_PER_COMBINATON = 100;
+  const MAX_NUM_ANAGRAMS = 3;
 
   // Get a random word length combination
   let wordLengthCombination = pickRandomElementFrom(wordLengthCombinations);
@@ -55,13 +56,13 @@ export function generateConundrum() {
     // Expected length of the conundrum (sum of the lengths from the wordLength combination)
     const conundrumLength = wordLengthCombination.reduce((a: number, b: number) => a + b, 0);
 
-    if (constructedWord.length === conundrumLength) {
+    if (conundrumLength > 0 && (constructedWord.length === conundrumLength)) {
       // Find words which are anagrams of constructedWord
       const anagrams = getAllWordsOfLength(conundrumLength).filter((word) => checkAnagram(constructedWord, word));
 
-      // Only one unique anagram
-      if (anagrams.length === 1) {
-        conundrum = { question: constructedWord, answer: anagrams[0] };
+      // Very few number of anagrams
+      if (anagrams.length <= MAX_NUM_ANAGRAMS) {
+        conundrum = { question: constructedWord, answer: pickRandomElementFrom(anagrams) };
         return conundrum;
       }
     }

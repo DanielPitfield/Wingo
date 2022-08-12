@@ -131,7 +131,7 @@ const Wingo: React.FC<Props> = (props) => {
           applyAnimation={false}
         />
       );
-    } else if (props.mode === "conundrum" && props.conundrum) {
+    } else if (props.mode === "conundrum" && props.conundrum !== undefined) {
       // Create read only WordRow that reveals conundrum
       Grid.push(
         <div className="letters-game-wrapper" key={"conundrum/reveal"}>
