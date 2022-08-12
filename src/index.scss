@@ -217,7 +217,7 @@ input {
   transition: transform 0.8s;
   transform-style: preserve-3d;
   */
-  &[data-is-clickable="true"] {
+  &[data-disabled="false"] {
     cursor: pointer;
     &:hover {
       background-color: #fff;
@@ -317,15 +317,23 @@ input {
   }
 }
 
-// The letter tiles of Letters Game
-.letters-game-wrapper {
-  .word_row .letter_tile,
-  .letter_row .letter_tile {
-    border: none;
-    border-radius: 0px;
-    background-color: #2c2cb8;
-    color: white;
-    text-shadow: none;
+// The letter tiles of Letters Game (read only selection row and input row)
+.letters-game-wrapper .letter_row .letter_tile,
+.letters-game-wrapper .word_row .letter_tile {
+  border: none;
+  border-radius: 0px;
+  background-color: #2c2cb8;
+  color: white;
+  text-shadow: none;
+  &[data-disabled="true"] {
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+  &[data-disabled="false"] {
+    cursor: pointer;
+    &:hover {
+      background-color: darken(#2c2cb8, 10%);
+    }
   }
 }
 
@@ -376,7 +384,7 @@ $data-statuses: (
   background-color: map.get($data-statuses, "correct");
   box-shadow: 0px 3px 2px 0px darken(map.get($data-statuses, "correct"), 20%);
   text-shadow: 0 4px 1px darken(map.get($data-statuses, "correct"), 12%);
-  &[data-is-clickable="true"]:hover {
+  &[data-disabled="false"]:hover {
     background-color: lighten(map.get($data-statuses, "correct"), 10%);
   }
 }
@@ -386,7 +394,7 @@ $data-statuses: (
   background-color: map.get($data-statuses, "contains");
   box-shadow: 0px 3px 2px 0px darken(map.get($data-statuses, "contains"), 20%);
   text-shadow: 0 4px 1px darken(map.get($data-statuses, "contains"), 12%);
-  &[data-is-clickable="true"]:hover {
+  &[data-disabled="false"]:hover {
     background-color: lighten(map.get($data-statuses, "contains"), 10%);
   }
 }
@@ -396,7 +404,7 @@ $data-statuses: (
   background-color: map.get($data-statuses, "incorrect");
   box-shadow: 0px 3px 2px 0px darken(map.get($data-statuses, "incorrect"), 20%);
   text-shadow: 0 4px 1px darken(map.get($data-statuses, "incorrect"), 12%);
-  &[data-is-clickable="true"]:hover {
+  &[data-disabled="false"]:hover {
     background-color: lighten(map.get($data-statuses, "incorrect"), 10%);
   }
 }
@@ -406,12 +414,13 @@ $data-statuses: (
   background-color: map.get($data-statuses, "not in word");
   box-shadow: 0px 3px 2px 0px darken(map.get($data-statuses, "not in word"), 20%);
   text-shadow: 0 4px 1px darken(map.get($data-statuses, "not in word"), 12%);
-  &[data-is-clickable="true"]:hover {
+  &[data-disabled="false"]:hover {
     background-color: lighten(map.get($data-statuses, "not in word"), 10%);
   }
 }
 
-.word_row, .letter_row {
+.word_row,
+.letter_row {
   display: flex;
   align-items: center;
   justify-content: center;

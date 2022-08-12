@@ -81,7 +81,7 @@ const LetterTile: React.FC<Props> = (props) => {
       data-new-letter-added={props.status === "not set" && props.letter !== undefined}
       data-has-been-submitted={props.status !== "not set" && props.status !== "incorrect" && props.letter !== undefined}
       data-status={delayedStatus}
-      data-is-clickable={props.disabled !== false || props.onClick !== undefined}
+      data-disabled={props.disabled || props.onClick === undefined}
       style={
         delayForThisLetterSeconds() !== undefined ? { animationDelay: `${delayForThisLetterSeconds()}s` } : undefined
       }
