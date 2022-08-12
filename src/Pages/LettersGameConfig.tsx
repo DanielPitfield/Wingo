@@ -3,7 +3,7 @@ import { PageName } from "../PageNames";
 import LettersGame from "./LettersGame";
 import { Theme } from "../Data/Themes";
 import { SaveData, SettingsData } from "../Data/SaveData";
-import { wordLengthMappingsGuessable, wordLengthMappingsTargets } from "../Data/DefaultGamemodeSettings";
+import { getAllWordsOfLength } from "../Data/Conundrum";
 
 export interface LettersGameConfigProps {
   campaignConfig:
@@ -199,16 +199,8 @@ const LettersGameConfig: React.FC<Props> = (props) => {
       return;
     }
 
-    const firstWordArray: string[] =
-      wordLengthMappingsGuessable.find((x) => x.value === currentWord.length)?.array ?? [];
-    const secondTargetArray: string[] =
-      wordLengthMappingsTargets.find((x) => x.value === currentWord.length)?.array ?? [];
-
-    // A guess can be from etiher guessable or target word arrays (just checking it is an actual word)
-    const wordArray: string[] = firstWordArray.concat(secondTargetArray);
-
     // Is the word an accepted word (known word in dictionary)?
-    const isWordInDictionary = wordArray?.includes(currentWord.toLowerCase());
+    const isWordInDictionary = getAllWordsOfLength(currentWord.length).includes(currentWord.toLowerCase());
 
     // Can the word be made with the available letters?
     const letterSelectionWord = letterTileStatuses
@@ -314,14 +306,14 @@ const LettersGameConfig: React.FC<Props> = (props) => {
     // Append chosen letter to currentWord
     setCurrentWord(currentWord + letter);
     sethasSubmitLetter(true);
-    
+
     // Keep track this letter has now been picked
     // TODO: Use indexes, two of same letter, the first occurence can be clicked twice
     let newLetterTileStatuses = letterTileStatuses.slice();
     newLetterTileStatuses[currentLetterIndex] = {
       letter: letter,
       picked: true,
-    }
+    };
 
     setLetterTileStatuses(newLetterTileStatuses);
   }

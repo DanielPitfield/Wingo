@@ -13,12 +13,11 @@ import GamemodeSettingsMenu from "../Components/GamemodeSettingsMenu";
 import {
   MIN_TARGET_WORD_LENGTH,
   MAX_TARGET_WORD_LENGTH,
-  wordLengthMappingsGuessable,
-  wordLengthMappingsTargets,
 } from "../Data/DefaultGamemodeSettings";
 import { shuffleArray } from "./ArithmeticDrag";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
 import { LetterSelectionRow } from "../LetterSelectionRow";
+import { getAllWordsOfLength } from "../Data/Conundrum";
 
 interface Props {
   campaignConfig:
@@ -308,14 +307,8 @@ const LettersGame: React.FC<Props> = (props) => {
 
     // Start with bigger words first
     for (let wordLength = lettersGameSelectionWord.length; wordLength >= 4; wordLength--) {
-      const firstWordArray: string[] = wordLengthMappingsGuessable.find((x) => x.value === wordLength)?.array ?? [];
-      const secondTargetArray: string[] = wordLengthMappingsTargets.find((x) => x.value === wordLength)?.array ?? [];
-
-      // Get all words of current wordLength
-      const wordArray: string[] = firstWordArray.concat(secondTargetArray);
-
       // The words which can be made with the selected letters
-      const validWords: string[] = wordArray.filter((word) => isLettersGameGuessValid(word, lettersGameSelectionWord));
+      const validWords: string[] = getAllWordsOfLength(wordLength).filter((word) => isLettersGameGuessValid(word, lettersGameSelectionWord));
 
       bestWords = bestWords.concat(validWords);
 

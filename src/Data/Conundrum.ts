@@ -1,5 +1,4 @@
-import { wordLengthMappingsTargets } from "./DefaultGamemodeSettings";
-import { words_nine_targets } from "./WordArrays/Lengths/Words9";
+import { wordLengthMappingsGuessable, wordLengthMappingsTargets } from "./DefaultGamemodeSettings";
 import { pickRandomElementFrom } from "../Pages/WingoConfig";
 
 export function checkAnagram(constructedWord: string, targetWord: string) {
@@ -9,9 +8,16 @@ export function checkAnagram(constructedWord: string, targetWord: string) {
   return constructedWordLetters === targetWordLetters;
 }
 
+export function getAllWordsOfLength(wordLength: number) {
+  const guessableWordArray: string[] = wordLengthMappingsGuessable.find((x) => x.value === wordLength)?.array ?? [];
+  const targetWordArray: string[] = wordLengthMappingsTargets.find((x) => x.value === wordLength)?.array ?? [];
+
+  return guessableWordArray.concat(targetWordArray) ?? [];
+}
+
 export function generateConundrum() {
   /*
-  Combinations of word lengths that could make up a 9 letter conundrum
+  Combinations of word lengths that could make up a conundrum
   There are probably more combinations, but these should make the best conundrums
   */
 
@@ -24,54 +30,48 @@ export function generateConundrum() {
     [4, 2, 3],
     [3, 2, 4],
   ];
+
+  const MAX_ATTEMPTS_PER_COMBINATON = 100;
+
   // Get a random word length combination
   let wordLengthCombination = pickRandomElementFrom(wordLengthCombinations);
 
+  let failCount = 0;
   let conundrum;
 
-  let failCount = 0;
-  const MAX_FAIL_COUNT = 100;
-
   // Loop until a conundrum is found
-  while (conundrum === undefined && failCount < MAX_FAIL_COUNT) {
+  while (conundrum === undefined && failCount < MAX_ATTEMPTS_PER_COMBINATON) {
     let constructedWord = "";
 
     for (const wordLength of wordLengthCombination) {
-      const wordArray = wordLengthMappingsTargets.find((mapping) => mapping.value === wordLength)?.array;
-      if (!wordArray) {
-        break;
-      }
-
+      // Get all words of  wordLength (can be from either guessable or target)
+      const wordArray = getAllWordsOfLength(wordLength);
       // Find a word of the wordLength
-      const word = pickRandomElementFrom(wordArray);
-      if (!word) {
-        break;
-      }
-
+      const word = pickRandomElementFrom(wordArray) ?? "";
       // Append the word to constructedWord
       constructedWord += word;
     }
 
-    // Find 9 letter words which are anagrams of constructedWord
-    const anagrams = words_nine_targets.filter((word) => checkAnagram(constructedWord, word));
+    // Expected length of the conundrum (sum of the lengths from the wordLength combination)
+    const conundrumLength = wordLengthCombination.reduce((a: number, b: number) => a + b, 0);
 
-    // Only one unique anagram
-    if (anagrams.length === 1) {
-      conundrum = { question: constructedWord, answer: anagrams[0] };
-    }
-    // Failed to find unique anagram
-    else {
-      failCount += 1;
-      if (failCount === MAX_FAIL_COUNT) {
-        // Try a different wordLengthCombination
-        wordLengthCombination = pickRandomElementFrom(wordLengthCombinations);
-        failCount = 0;
+    if (constructedWord.length === conundrumLength) {
+      // Find words which are anagrams of constructedWord
+      const anagrams = getAllWordsOfLength(conundrumLength).filter((word) => checkAnagram(constructedWord, word));
+
+      // Only one unique anagram
+      if (anagrams.length === 1) {
+        conundrum = { question: constructedWord, answer: anagrams[0] };
+        return conundrum;
       }
     }
-  }
 
-  // Once found, return the conundrum
-  if (conundrum !== undefined) {
-    return conundrum;
+    // Failed to find conundrum
+    failCount += 1;
+    if (failCount === MAX_ATTEMPTS_PER_COMBINATON) {
+      // Try a different wordLengthCombination
+      wordLengthCombination = pickRandomElementFrom(wordLengthCombinations);
+      failCount = 0;
+    }
   }
 }
