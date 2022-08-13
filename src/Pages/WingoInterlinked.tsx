@@ -654,6 +654,13 @@ export const WingoInterlinked: React.FC<Props> = (props) => {
       return;
     }
 
+    const correctWordInfo = gridConfig.words[currentWordIndex];
+
+    // Get the current status of the first tile in the 'focussed' word
+    const startingTileStatus = tileStatuses.find(
+      (tileStatus) => tileStatus.x === correctWordInfo.startingXPos && tileStatus.y === correctWordInfo.startingYPos
+    )?.status;
+
     const newCurrentWords = currentWords.map((word, i) => {
       // If this is not the currently 'focussed' word
       if (i !== currentWordIndex) {
@@ -661,14 +668,21 @@ export const WingoInterlinked: React.FC<Props> = (props) => {
         return word;
       }
 
-      const correctWordInfo = gridConfig.words[currentWordIndex];
+      /*
+        The word is to be updated, meaning the current statuses of the tiles are no longer valid (but will still be shown)
+        Therefore, update the status of all tiles of the word to "not set"
+        The player must use another guess to check the status of the new word
+      */
+      const newTileStatuses = tileStatuses.map((position) => {
+        if (isWordAtPosition(correctWordInfo, position)) {
+          position.status = "not set";
+        }
+        return position;
+      });
 
-      // Get the current status of the first tile in the focussed word
-      const startingTileStatus = tileStatuses.find(
-        (tileStatus) => tileStatus.x === correctWordInfo.startingXPos && tileStatus.y === correctWordInfo.startingYPos
-      )?.status;
+      setTileStatuses(newTileStatuses);
 
-      // If the focussed is already of full length (and has been previously checked), overwrite with letter
+      // If the 'focussed' word is already of full length (and has been previously checked), overwrite with letter
       if (Boolean(word.length >= correctWordInfo.word.length && startingTileStatus !== "not set")) {
         return letter;
       }
