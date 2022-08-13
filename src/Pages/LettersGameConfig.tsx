@@ -279,8 +279,8 @@ const LettersGameConfig: React.FC<Props> = (props) => {
     setLetterTileStatuses(newLetterTileStatuses);
   }
 
-  // Passed through as onClick function for LetterTile within the LetterSelectionRow
-  function addLetterToGuess(letter: string | null, index: number) {
+  // Passed through as onClick function for the LetterTile(s) within the LetterSelectionRow
+  function onClickSelectionLetter(letter: string | null, index: number) {
     if (!inProgress) {
       return;
     }
@@ -320,7 +320,7 @@ const LettersGameConfig: React.FC<Props> = (props) => {
   }
 
   // Used the keyboard to add a new letter
-  function onSubmitLetter(letter: string) {
+  function onSubmitKeyboardLetter(letter: string) {
     // Find the first index in letterTileStatuses (where the letter is the letter clicked and the picked flag is false)
     const currentLetterIndex = letterTileStatuses.findIndex(
       (letterStatus) => !letterStatus.picked && letterStatus.letter === letter.toLowerCase()
@@ -346,8 +346,28 @@ const LettersGameConfig: React.FC<Props> = (props) => {
   }
 
   function onBackspace() {
+    // If there is a letter to remove
     if (currentWord.length > 0 && inProgress) {
-      // If there is a letter to remove
+      const letterToRemove = currentWord.slice(-1);
+
+      // Find the first index in letterTileStatuses (where the letter is the letter being removed and the picked flag is true)
+      const currentLetterIndex = letterTileStatuses.findIndex(
+        (letterStatus) => letterStatus.picked && letterStatus.letter === letterToRemove.toLowerCase()
+      );
+
+      if (currentLetterIndex === -1) {
+        return;
+      }
+
+      // Keep track this letter is now available to select again
+      let newLetterTileStatuses = letterTileStatuses.slice();
+      newLetterTileStatuses[currentLetterIndex] = {
+        letter: letterToRemove,
+        picked: false,
+      };
+
+      setLetterTileStatuses(newLetterTileStatuses);
+
       setCurrentWord(currentWord.substring(0, currentWord.length - 1));
     }
   }
@@ -382,8 +402,8 @@ const LettersGameConfig: React.FC<Props> = (props) => {
       onEnter={onEnter}
       onSubmitSelectionLetter={onSubmitSelectionLetter}
       onSubmitSelectionWord={onSubmitSelectionWord}
-      addLetterToGuess={addLetterToGuess}
-      onSubmitLetter={onSubmitLetter}
+      onClickSelectionLetter={onClickSelectionLetter}
+      onSubmitKeyboardLetter={onSubmitKeyboardLetter}
       onBackspace={onBackspace}
       updateGamemodeSettings={updateGamemodeSettings}
       updateRemainingSeconds={updateRemainingSeconds}
