@@ -3,7 +3,7 @@ import LetterTile from "./Components/LetterTile";
 import { SettingsData } from "./Data/SaveData";
 
 interface Props {
-  onClick: (value: string | null) => void;
+  onClick: (value: string | null, index: number) => void;
   disabled: boolean;
 
   letterTileStatuses: {
@@ -26,7 +26,7 @@ export const LetterSelectionRow: React.FC<Props> = (props) => {
           status={"not set"}
           settings={props.settings}
           disabled={props.disabled || props.letterTileStatuses[i].picked}
-          onClick={() => props.onClick(props.letterTileStatuses[i].letter)}
+          onClick={() => props.onClick(props.letterTileStatuses[i].letter, i)}
         />
       );
     }

@@ -53,9 +53,11 @@ interface Props {
   setPage: (page: PageName) => void;
   addGold: (gold: number) => void;
   onEnter: () => void;
+
   onSubmitSelectionLetter: (letter: string) => void;
   onSubmitSelectionWord: (word: string) => void;
-  onSubmitLetter: (letter: string | null) => void;
+  addLetterToGuess: (letter: string | null, index: number) => void;
+  onSubmitLetter: (letter: string) => void;
   onBackspace: () => void;
 
   updateGamemodeSettings: (newGamemodeSettings: {
@@ -184,7 +186,7 @@ const LettersGame: React.FC<Props> = (props) => {
           letterTileStatuses={props.letterTileStatuses}
           settings={props.settings}
           disabled={!props.inProgress}
-          onClick={props.onSubmitLetter}
+          onClick={props.addLetterToGuess}
         />
         <div className="add-letter-buttons-wrapper">
           <Button

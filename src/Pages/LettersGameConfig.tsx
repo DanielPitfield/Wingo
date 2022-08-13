@@ -174,6 +174,13 @@ const LettersGameConfig: React.FC<Props> = (props) => {
   }
 
   function ContinueGame() {
+    // Re-enable all letters in the selection
+    setLetterTileStatuses(
+      letterTileStatuses.map((letterTileStatus) => {
+        letterTileStatus.picked = false;
+        return letterTileStatus;
+      })
+    );
     setInProgress(true);
     setInDictionary(false);
     setCurrentWord("");
@@ -272,12 +279,17 @@ const LettersGameConfig: React.FC<Props> = (props) => {
     setLetterTileStatuses(newLetterTileStatuses);
   }
 
-  function onSubmitLetter(letter: string | null) {
+  // Passed through as onClick function for LetterTile within the LetterSelectionRow
+  function addLetterToGuess(letter: string | null, index: number) {
     if (!inProgress) {
       return;
     }
 
     if (letter === null) {
+      return;
+    }
+
+    if (letterTileStatuses[index].picked) {
       return;
     }
 
@@ -293,22 +305,33 @@ const LettersGameConfig: React.FC<Props> = (props) => {
       return;
     }
 
-    // Find the first index in letterTileStatuses (where the letter is the letter clicked and the picked flag is false)
-    const currentLetterIndex = letterTileStatuses.findIndex(
-      (letterStatus) => !letterStatus.picked && letterStatus.letter === letter
-    );
+    // Keep track this letter has now been picked
+    let newLetterTileStatuses = letterTileStatuses.slice();
+    newLetterTileStatuses[index] = {
+      letter: letter,
+      picked: true,
+    };
 
-    // The letter that was clicked is not present in the tileStatuses
-    if (currentLetterIndex === -1) {
-      return;
-    }
+    setLetterTileStatuses(newLetterTileStatuses);
 
     // Append chosen letter to currentWord
     setCurrentWord(currentWord + letter);
     sethasSubmitLetter(true);
+  }
+
+  // Used the keyboard to add a new letter
+  function onSubmitLetter(letter: string) {
+    // Find the first index in letterTileStatuses (where the letter is the letter clicked and the picked flag is false)
+    const currentLetterIndex = letterTileStatuses.findIndex(
+      (letterStatus) => !letterStatus.picked && letterStatus.letter === letter.toLowerCase()
+    );
+
+    // The letter that was clicked is not a letter in the selection (not present in the tileStatuses)
+    if (currentLetterIndex === -1) {
+      return;
+    }
 
     // Keep track this letter has now been picked
-    // TODO: Use indexes, two of same letter, the first occurence can be clicked twice
     let newLetterTileStatuses = letterTileStatuses.slice();
     newLetterTileStatuses[currentLetterIndex] = {
       letter: letter,
@@ -316,6 +339,10 @@ const LettersGameConfig: React.FC<Props> = (props) => {
     };
 
     setLetterTileStatuses(newLetterTileStatuses);
+
+    // Append chosen letter to currentWord
+    setCurrentWord(currentWord + letter);
+    sethasSubmitLetter(true);
   }
 
   function onBackspace() {
@@ -355,6 +382,7 @@ const LettersGameConfig: React.FC<Props> = (props) => {
       onEnter={onEnter}
       onSubmitSelectionLetter={onSubmitSelectionLetter}
       onSubmitSelectionWord={onSubmitSelectionWord}
+      addLetterToGuess={addLetterToGuess}
       onSubmitLetter={onSubmitLetter}
       onBackspace={onBackspace}
       updateGamemodeSettings={updateGamemodeSettings}
