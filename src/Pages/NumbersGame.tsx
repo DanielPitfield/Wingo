@@ -59,7 +59,10 @@ interface Props {
   onSubmitNumbersGameNumber: (number: number) => void;
   onSubmitNumbersGameSelection: (numberExpression: number[]) => void;
   onSubmitNumber: (number: number) => void;
-  onBackspace: () => void;
+  onBackspace: (
+    number: number | null,
+    id: { type: "original"; index: number } | { type: "intermediary"; rowIndex: number }
+  ) => void;
 
   updateGamemodeSettings: (newGamemodeSettings: {
     hasScaryNumbers: boolean;
@@ -516,6 +519,9 @@ const NumbersGame: React.FC<Props> = (props) => {
 
       {props.inProgress && (
         <>
+          <Button mode="destructive" onClick={() => {} /* TODO: Most recently added number (number, index) */ /* props.onBackspace() */} settings={props.settings}>
+            Undo
+          </Button>
           <Button mode="destructive" onClick={props.clearGrid} settings={props.settings}>
             Clear
           </Button>

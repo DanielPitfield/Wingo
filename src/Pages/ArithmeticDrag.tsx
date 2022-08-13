@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { arrayMove, OrderGroup } from "react-draggable-order";
 import { PageName } from "../PageNames";
 import { Button } from "../Components/Button";
-import { operators, operators_symbols as operatorSymbols } from "./NumbersGameConfig";
+import { operators, operatorSymbols as operatorSymbols } from "./NumbersGameConfig";
 import GamemodeSettingsMenu from "../Components/GamemodeSettingsMenu";
 import LetterTile from "../Components/LetterTile";
 import { MessageNotification } from "../Components/MessageNotification";

@@ -56,13 +56,7 @@ export const operators: { name: "÷" | "-" | "+" | "×"; function: (num1: number
   },
 ];
 
-export const operators_symbols = ["÷", "-", "+", "×"];
-
-export function isNumberValid(currentExpression: string) {
-  if (!currentExpression) {
-    return false;
-  }
-}
+export const operatorSymbols = ["÷", "-", "+", "×"];
 
 export function hasNumberSelectionStarted(
   statuses: {
@@ -392,7 +386,7 @@ const NumbersGameConfig: React.FC<Props> = (props) => {
   }
 
   function onSubmitNumber(number: number) {
-    // Additional condition of all 6 numbers having been selected
+    // Additional condition of all numbers having been selected
     if (
       currentGuess.operand1 !== null &&
       currentGuess.operand2 !== null &&
@@ -424,21 +418,15 @@ const NumbersGameConfig: React.FC<Props> = (props) => {
     setRemainingSeconds(newSeconds);
   }
 
-  // TODO: QOL: Numbers Game - undo
-  function onBackspace() {
-    /*
-    if (currentExpression.length > 0 && inProgress) {
-      // If there is a letter to remove
-      setCurrentExpression(currentExpression.substring(0, currentExpression.length - 1));
-    }
-    */
-  }
-
   function addOperandToGuess(
     number: number | null,
     id: { type: "original"; index: number } | { type: "intermediary"; rowIndex: number }
   ) {
-    if (!number) {
+    if (!inProgress) {
+      return;
+    }
+
+    if (number === null) {
       return;
     }
 
@@ -450,11 +438,8 @@ const NumbersGameConfig: React.FC<Props> = (props) => {
       return;
     }
 
-    // Find all the elements of the respective number (where picked is also false)
-    const numberStatus = numberTileStatuses.filter((x) => x.number === number && !x.picked);
-
     // No suitable element in numberTileStatuses to accomodate adding this new number
-    if (numberStatus.length <= 0) {
+    if (numberTileStatuses.findIndex((x) => x.number === number && !x.picked) === -1) {
       return;
     }
 
@@ -462,10 +447,8 @@ const NumbersGameConfig: React.FC<Props> = (props) => {
 
     const bothOperandsEmpty = currentGuess.operand1 === null && currentGuess.operand2 === null;
     const onlyFirstOperand = currentGuess.operand1 !== null && currentGuess.operand2 === null;
-    const onlySecondOperand = currentGuess.operand1 === null && currentGuess.operand2 !== null;
-    // const bothOperands = currentGuess.operand1 !== null && currentGuess.operand2 !== null;
 
-    if (bothOperandsEmpty || onlySecondOperand) {
+    if (bothOperandsEmpty) {
       // Set operand1 to number
       updatedGuess = { ...currentGuess, operand1: number };
     } else if (onlyFirstOperand) {
@@ -474,13 +457,6 @@ const NumbersGameConfig: React.FC<Props> = (props) => {
     } else {
       updatedGuess = currentGuess;
     }
-    /* else if (bothOperands) {
-      // Remove the second operand
-      removeOperandFromGuess(currentGuess.operand2);
-      // Replace with (add) new second operand
-      updatedGuess({ ...currentGuess, operand2: number });
-    }
-    */
 
     // If guess is now full
     if (updatedGuess.operand1 !== null && updatedGuess.operand2 !== null) {
@@ -495,13 +471,15 @@ const NumbersGameConfig: React.FC<Props> = (props) => {
       if (wordIndex + 1 >= numGuesses) {
         setNumGuesses(numGuesses + 1);
       }
-    } else {
+    }
+    // Update the guess shown at the current row
+    else {
       setCurrentGuess(updatedGuess);
     }
 
     const newNumbersGameStatuses = numberTileStatuses.slice();
+    // Flag newly added operand as picked so it can't be added again
     if (id.type === "original") {
-      // Flag as picked so it can't be added again
       newNumbersGameStatuses[id.index].picked = true;
     } else if (id.type === "intermediary") {
       newNumbersGameStatuses[numberTileStatuses.filter((x) => x.type === "original").length + id.rowIndex].picked =
@@ -511,14 +489,19 @@ const NumbersGameConfig: React.FC<Props> = (props) => {
   }
 
   // TODO: QOL: Numbers Game - undo
-  function removeOperandFromGuess(number: number | null, index: number) {
-    // Tile that was right clicked had no value (empty)
-    if (!number) {
+  function onBackspace(
+    number: number | null,
+    id: { type: "original"; index: number } | { type: "intermediary"; rowIndex: number }
+  ) {
+    if (!inProgress) {
       return;
     }
 
-    // If not an operand
-    if (index !== 0 && index !== 2) {
+    if (number === null) {
+      return;
+    }
+
+    if (!hasNumberSelectionFinished(numberTileStatuses, gamemodeSettings.numOperands)) {
       return;
     }
 
@@ -526,18 +509,22 @@ const NumbersGameConfig: React.FC<Props> = (props) => {
       return;
     }
 
+    const bothOperandsEmpty = currentGuess.operand1 === null && currentGuess.operand2 === null;
+    const bothOperandsFull = currentGuess.operand1 !== null && currentGuess.operand2 !== null;
+    const onlyFirstOperand = currentGuess.operand1 !== null && currentGuess.operand2 === null;
+
+    // Nothing to remove
+    if (bothOperandsEmpty && wordIndex === 0) {
+      return;
+    }
+
     let updatedGuess: Guess;
 
-    // If both operands are the same number
-    if (currentGuess.operand1 === number && currentGuess.operand2 === number) {
-      // TODO: Is there way of determining which (of the two operands with the same numbers) was right clicked?
-      // Remove the second occurence of the number
-      updatedGuess = { ...currentGuess, operand2: null };
-    }
-    // If the first operand was (right) clicked
-    else if (currentGuess.operand1 === number) {
+    if (onlyFirstOperand) {
+      // Remove operand1
       updatedGuess = { ...currentGuess, operand1: null };
-    } else if (currentGuess.operand2 === number) {
+    } else if (bothOperandsFull) {
+      // Remove operand2
       updatedGuess = { ...currentGuess, operand2: null };
     } else {
       updatedGuess = currentGuess;
@@ -562,7 +549,13 @@ const NumbersGameConfig: React.FC<Props> = (props) => {
 
     const newNumbersGameStatuses = numberTileStatuses.slice();
     // Flag as not picked so it can be added again
-    newNumbersGameStatuses[index].picked = false;
+    if (id.type === "original") {
+      newNumbersGameStatuses[id.index].picked = false;
+    } else if (id.type === "intermediary") {
+      newNumbersGameStatuses[numberTileStatuses.filter((x) => x.type === "original").length + id.rowIndex].picked =
+        false;
+    }
+
     setNumberTileStatuses(newNumbersGameStatuses);
   }
 
