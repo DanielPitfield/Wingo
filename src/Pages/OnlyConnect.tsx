@@ -321,10 +321,7 @@ const OnlyConnect: React.FC<Props> = (props) => {
       gridWords = gridWords.concat(categorySubset);
     }
 
-    const newGridWords = shuffleArray(gridWords);
-    console.log(newGridWords);
-
-    return newGridWords;
+    return shuffleArray(gridWords);
   }
 
   function populateRow(rowNumber: number) {
