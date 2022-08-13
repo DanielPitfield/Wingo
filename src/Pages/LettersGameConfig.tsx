@@ -124,7 +124,13 @@ const LettersGameConfig: React.FC<Props> = (props) => {
     return () => {
       clearInterval(timer);
     };
-  }, [setRemainingSeconds, remainingSeconds, gamemodeSettings.timerConfig.isTimed]);
+  }, [
+    setRemainingSeconds,
+    remainingSeconds,
+    gamemodeSettings.timerConfig.isTimed,
+    // When the selection of letters has been completed
+    letterTileStatuses.filter((letterStatus) => letterStatus.letter !== null).length === gamemodeSettings.numLetters,
+  ]);
 
   // Reset game after change of settings (stops cheating by changing settings partway through a game)
   React.useEffect(() => {
