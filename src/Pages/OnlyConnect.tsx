@@ -292,14 +292,20 @@ const OnlyConnect: React.FC<Props> = (props) => {
     const numCategories = Math.min(gamemodeSettings.numGroups, categoryMappings.length);
     // Filter the categories which have enough enough words in their word list
     const suitableCategories = categoryMappings.filter(
-      (category) => category.array.length >= gamemodeSettings.groupSize
+      (category) => category.array.length >= gamemodeSettings.groupSize /* TODO: Leeway for word replacements? */
     );
     // Randomly select the required number of categories
     const chosenCategories = shuffleArray(suitableCategories).slice(0, numCategories);
 
-    for (let i = 0; i < chosenCategories.length; i++) {
-      const category = chosenCategories[i];
-      const wordList: string[] = shuffleArray(category.array).map((x) => x.word);
+    for (const category of chosenCategories) {
+      /* 
+      Words from this category (which aren't already included in gridWords from other categories)
+      e.g The word 'Duck' can be from both the 'Meats and Fish' and 'Animals' categories
+      May need to add leeway to the condition of suitableCategories to accomodate for these kinds of replacements
+      */
+      const wordList: string[] = shuffleArray(category.array)
+        .map((x) => x.word)
+        .filter((word) => !gridWords.map((x) => x.word).includes(word));
       // The subset of words chosen from this category
       const wordSubset = wordList.slice(0, gamemodeSettings.groupSize);
 
@@ -315,7 +321,10 @@ const OnlyConnect: React.FC<Props> = (props) => {
       gridWords = gridWords.concat(categorySubset);
     }
 
-    return shuffleArray(gridWords);
+    const newGridWords = shuffleArray(gridWords);
+    console.log(newGridWords);
+
+    return newGridWords;
   }
 
   function populateRow(rowNumber: number) {
