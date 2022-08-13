@@ -33,23 +33,17 @@ interface Props extends GroupWallProps {
 }
 
 export function getPrettyWord(text: string): string {
-  // Put spaces back in (instead of dashes)
-  let newText = text.replaceAll("-", " ");
-
-  // Get each individual word in the provided text
-  const words = newText.split(" ");
-
-  // Capitalise the first letter of every word
-  if (words.length >= 1) {
-    for (let i = 0; i < words.length; i++) {
-      words[i] = words[i].charAt(0).toUpperCase() + words[i].slice(1);
-    }
-
-    // Join all the elements of the array back into a string
-    newText = words.join(" ");
-  }
-
-  return newText;
+  return (
+    text
+      // Replace dashes with spaces
+      .replaceAll("-", " ")
+      // Get each individual word
+      .split(" ")
+      // Capitalise the first letter of each word
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      // Join the words together with spaces (as one string)
+      .join(" ")
+  );
 }
 
 /** */
@@ -260,6 +254,11 @@ const OnlyConnect: React.FC<Props> = (props) => {
       return;
     }
 
+    // Already part of a group
+    if (gridItem.inCompleteGroup) {
+      return;
+    }
+
     let newSelectedWords = selectedWords.slice();
 
     // Word is already selected
@@ -425,7 +424,7 @@ const OnlyConnect: React.FC<Props> = (props) => {
   function ResetGame() {
     if (!inProgress) {
       // ALl groups correctly found
-      const wasCorrect = numCompletedGroups === gamemodeSettings.numGroups;   
+      const wasCorrect = numCompletedGroups === gamemodeSettings.numGroups;
       props.onComplete(wasCorrect);
     }
 

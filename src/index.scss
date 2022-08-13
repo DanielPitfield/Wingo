@@ -1847,6 +1847,7 @@ $numble-colors-names: (
   font-family: "Ubuntu", sans-serif;
   // Only Connect Wall button
   .only-connect-button {
+    cursor: pointer;
     width: 12em;
     min-height: 7em;
     padding: 1em;
