@@ -53,8 +53,8 @@ interface Props {
   setPage: (page: PageName) => void;
   addGold: (gold: number) => void;
   onEnter: () => void;
-  onSubmitLettersGameLetter: (letter: string) => void;
-  onSubmitLettersGameSelectionWord: (word: string) => void;
+  onSubmitSelectionLetter: (letter: string) => void;
+  onSubmitSelectionWord: (word: string) => void;
   onSubmitLetter: (letter: string | null) => void;
   onBackspace: () => void;
 
@@ -169,7 +169,7 @@ const LettersGame: React.FC<Props> = (props) => {
     }
 
     // Set the entire word at once
-    props.onSubmitLettersGameSelectionWord(newLettersGameWord);
+    props.onSubmitSelectionWord(newLettersGameWord);
   }
 
   // Create grid of rows (for guessing words)
@@ -191,7 +191,7 @@ const LettersGame: React.FC<Props> = (props) => {
             mode={"default"}
             disabled={IS_SELECTION_FINISHED}
             settings={props.settings}
-            onClick={() => props.onSubmitLettersGameLetter(getVowel())}
+            onClick={() => props.onSubmitSelectionLetter(getVowel())}
           >
             Vowel
           </Button>
@@ -199,7 +199,7 @@ const LettersGame: React.FC<Props> = (props) => {
             mode={"default"}
             disabled={IS_SELECTION_FINISHED}
             settings={props.settings}
-            onClick={() => props.onSubmitLettersGameLetter(getConsonant())}
+            onClick={() => props.onSubmitSelectionLetter(getConsonant())}
           >
             Consonant
           </Button>

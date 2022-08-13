@@ -229,7 +229,7 @@ const LettersGameConfig: React.FC<Props> = (props) => {
     }, 500);
   }
 
-  function onSubmitLettersGameLetter(letter: string) {
+  function onSubmitSelectionLetter(letter: string) {
     if (
       letterTileStatuses.filter((letterStatus) => letterStatus.letter !== null).length < gamemodeSettings.numLetters &&
       inProgress
@@ -250,7 +250,7 @@ const LettersGameConfig: React.FC<Props> = (props) => {
     }
   }
 
-  function onSubmitLettersGameSelectionWord(word: string) {
+  function onSubmitSelectionWord(word: string) {
     if (!inProgress) {
       return;
     }
@@ -353,8 +353,8 @@ const LettersGameConfig: React.FC<Props> = (props) => {
       settings={props.settings}
       setTheme={props.setTheme}
       onEnter={onEnter}
-      onSubmitLettersGameLetter={onSubmitLettersGameLetter}
-      onSubmitLettersGameSelectionWord={onSubmitLettersGameSelectionWord}
+      onSubmitSelectionLetter={onSubmitSelectionLetter}
+      onSubmitSelectionWord={onSubmitSelectionWord}
       onSubmitLetter={onSubmitLetter}
       onBackspace={onBackspace}
       updateGamemodeSettings={updateGamemodeSettings}
