@@ -663,24 +663,17 @@ export const WingoInterlinked: React.FC<Props> = (props) => {
 
       const correctWordInfo = gridConfig.words[currentWordIndex];
 
-      // If the entered word is already of full length
-      if (word.length >= correctWordInfo.word.length) {
-        const startingTileStatus = tileStatuses.find(
-          (tileStatus) => tileStatus.x === correctWordInfo.startingXPos && tileStatus.y === correctWordInfo.startingYPos
-        )?.status;
+      // Get the current status of the first tile in the focussed word
+      const startingTileStatus = tileStatuses.find(
+        (tileStatus) => tileStatus.x === correctWordInfo.startingXPos && tileStatus.y === correctWordInfo.startingYPos
+      )?.status;
 
-        console.log(startingTileStatus);
-
-        if (startingTileStatus !== "not set") {
-          // Word has been checked, Overwrite (clear word and add letter)
-          return letter;
-        } else {
-          // Don't accept any more characters
-          return word;
-        }
+      // If the focussed is already of full length (and has been previously checked), overwrite with letter
+      if (Boolean(word.length >= correctWordInfo.word.length && startingTileStatus !== "not set")) {
+        return letter;
       }
 
-      // Add the letter to the word
+      // Otherwise, add the letter to the word
       return `${word}${letter}`;
     });
 
@@ -699,13 +692,13 @@ export const WingoInterlinked: React.FC<Props> = (props) => {
         return word;
       }
 
-      // If the entered word is empty
+      // If the 'focussed' word is empty
       if (word.length === 0) {
         // Don't remove any more characters
         return word;
       }
 
-      // Information about the correct word that the removed tile should be one of the letters of
+      // Information about the correct word (that the removed tile should be one of the letters of)
       const correctWordInfo = gridConfig.words[currentWordIndex];
       // Find the location of the removed/backspaced tile
       const removedTilePosX =
