@@ -3,9 +3,9 @@ import { SettingsData } from "../Data/SaveData";
 import { PageName } from "../PageNames";
 import { Theme } from "../Data/Themes";
 import { pageDescription, pageDescriptions } from "../PageDescriptions";
-import { arrayMove, OrderGroup } from "react-draggable-order";
-import { DraggableItem } from "../Components/DraggableItem";
-import { Button } from "../Components/Button";
+import { OrderGroup } from "react-draggable-order";
+import { GameshowToolboxItem } from "../Components/GameshowToolboxItem";
+import { GameshowOrderItem } from "../Components/GameshowOrderItem";
 
 export interface CustomGameshowProps {
   campaignConfig:
@@ -58,14 +58,21 @@ export const CustomGameshow: React.FC<Props> = (props) => {
     setQueuedModes(newQueuedModes);
   }
 
+  // Delete the mode from the current queue
+  function removeModeFromQueue(index: number) {
+    // Take copy
+    const newQueuedModes = queuedModes.slice();
+    // Remove clicked mode
+    newQueuedModes.splice(index, 1);
+    setQueuedModes(newQueuedModes);
+  }
+
   // List of buttons (which add to the queue when clicked)
   function displayAvailableModes() {
     return (
       <div className="gameshow-available-modes-wrapper">
         {availableModes.map((gameshowMode) => (
-          <Button className="gameshow-available-gamemode" mode={"default"} onClick={() => addModeToQueue(gameshowMode)}>
-            {gameshowMode.title}
-          </Button>
+          <GameshowToolboxItem gameshowMode={gameshowMode} onClick={addModeToQueue}></GameshowToolboxItem>
         ))}
       </div>
     );
@@ -77,13 +84,13 @@ export const CustomGameshow: React.FC<Props> = (props) => {
       <div className="gameshow-queued-modes-wrapper">
         <OrderGroup mode={"between"}>
           {queuedModes?.map((gameshowMode, index) => (
-            <DraggableItem
-              key={index}
+            <GameshowOrderItem
+              gameshowMode={gameshowMode}
               index={index}
-              onMove={(toIndex) => setQueuedModes(arrayMove(queuedModes, index, toIndex))}
-            >
-              <div className="gameshow-queued-gamemode">{gameshowMode.title}</div>
-            </DraggableItem>
+              queuedModes={queuedModes}
+              setQueuedModes={setQueuedModes}
+              onClick={removeModeFromQueue}
+            ></GameshowOrderItem>
           ))}
         </OrderGroup>
       </div>
