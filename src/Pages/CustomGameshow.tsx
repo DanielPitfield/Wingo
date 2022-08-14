@@ -80,17 +80,17 @@ export const CustomGameshow: React.FC<Props> = (props) => {
 
   // The order of gamemodes (the CustomGameshow will have)
   function displayQueuedModes() {
+    const draggableItemProps = {
+      queuedModes: queuedModes,
+      setQueuedModes: setQueuedModes,
+      onClick: removeModeFromQueue,
+    };
+
     return (
       <div className="gameshow-queued-modes-wrapper">
         <OrderGroup mode={"between"}>
           {queuedModes?.map((gameshowMode, index) => (
-            <GameshowOrderItem
-              gameshowMode={gameshowMode}
-              index={index}
-              queuedModes={queuedModes}
-              setQueuedModes={setQueuedModes}
-              onClick={removeModeFromQueue}
-            ></GameshowOrderItem>
+            <GameshowOrderItem {...draggableItemProps} gameshowMode={gameshowMode} index={index}></GameshowOrderItem>
           ))}
         </OrderGroup>
       </div>

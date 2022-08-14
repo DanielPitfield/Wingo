@@ -5,7 +5,6 @@ import { pageDescription } from "../PageDescriptions";
 import { DraggableItem } from "./DraggableItem";
 
 interface Props {
-  // TODO: Really have to pass entire queuedModes to every one of these items?
   gameshowMode: pageDescription;
   index: number;
   queuedModes: pageDescription[];
