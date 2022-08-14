@@ -56,6 +56,7 @@ import {
 import { PageName } from "./PageNames";
 import { pageDescriptions } from "./PageDescriptions";
 import SequencePuzzle from "./Pages/SequencePuzzle";
+import { CustomGameshow } from "./Pages/CustomGameshow";
 
 export const App: React.FC = () => {
   // App wide listener for right click event
@@ -319,7 +320,7 @@ export const App: React.FC = () => {
 
     const commonProps = {
       isCampaignLevel: isCampaignLevel(page),
-      campaignConfig: { isCampaignLevel: false as false},
+      campaignConfig: { isCampaignLevel: false as false },
       gamemodeSettings: pageGamemodeSettings,
       page: page,
       theme: theme,
@@ -459,12 +460,7 @@ export const App: React.FC = () => {
         return <LetterCategoriesConfig {...commonProps} enforceFullLengthGuesses={false} />;
 
       case "LettersGame":
-        return (
-          <LettersGameConfig
-            {...commonProps}
-            theme={Themes.GenericLettersGame}
-          />
-        );
+        return <LettersGameConfig {...commonProps} theme={Themes.GenericLettersGame} />;
 
       case "NumbersGame":
         return (
@@ -555,6 +551,9 @@ export const App: React.FC = () => {
             hasFinalRound={true}
           />
         );
+
+      case "Custom/Gameshow":
+        return <CustomGameshow {...commonProps} />;
     }
   })();
 

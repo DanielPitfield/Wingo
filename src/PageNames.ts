@@ -1,5 +1,3 @@
-// TODO: Simplify string literals (names of pages)
-
 export type PageName =
   | "splash-screen"
   | "TitlePage"
@@ -37,4 +35,5 @@ export type PageName =
   | "settings"
   | "random"
   | "LettersNumbersGameshow"
-  | "Wingo/Gameshow";
+  | "Wingo/Gameshow"
+  | "Custom/Gameshow";

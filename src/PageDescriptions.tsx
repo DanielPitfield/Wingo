@@ -1,14 +1,16 @@
 import React from "react";
 import { PageName } from "./PageNames";
+import { gameshowType } from "./Pages/CustomGameshow";
 
 // This is needed for runtime; make sure it matches the Page type
 
 export const pageDescriptions: {
   page: PageName;
   title: string;
-  description?: string;
   shortTitle?: string;
   isPlayable: boolean;
+  gameshowType?: gameshowType;
+  description?: string;
   helpInfo?: JSX.Element;
 }[] = [
   { page: "splash-screen", title: "Wingo", isPlayable: false },
@@ -17,9 +19,9 @@ export const pageDescriptions: {
   {
     page: "wingo/daily",
     title: "Daily Wingo",
-    description: "Guess today's word",
     shortTitle: "Daily",
     isPlayable: false,
+    description: "Guess today's word",
     helpInfo: (
       <>
         <p>Only one attempt (a set of up to 6 guesses) allowed</p>
@@ -31,9 +33,10 @@ export const pageDescriptions: {
   {
     page: "wingo/repeat",
     title: "Standard/Normal Wingo",
-    description: "Guess a word",
     shortTitle: "Standard",
     isPlayable: true,
+    gameshowType: "Wingo",
+    description: "Guess a word",
     helpInfo: (
       <>
         <p>Press the 'Restart' button after an attempt for a new target word</p>
@@ -43,9 +46,10 @@ export const pageDescriptions: {
   {
     page: "wingo/category",
     title: "Wingo Categories",
-    description: "Guess a word related to a category",
     shortTitle: "Categories",
     isPlayable: true,
+    gameshowType: "Wingo",
+    description: "Guess a word related to a category",
     helpInfo: (
       <>
         <p>The target word is a word from the currently selected category</p>
@@ -60,9 +64,10 @@ export const pageDescriptions: {
   {
     page: "wingo/increasing",
     title: "Wingo Increasing Length",
-    description: "Increase the word length to guess with every correct answer",
     shortTitle: "Increasing",
     isPlayable: true,
+    gameshowType: "Wingo",
+    description: "Increase the word length to guess with every correct answer",
     helpInfo: (
       <>
         <p>The target word will increase in length (one letter longer) after each successful guess</p>
@@ -72,9 +77,10 @@ export const pageDescriptions: {
   {
     page: "wingo/limitless",
     title: "Wingo Limitless/Survival",
-    description: "Gain lives with correct, early answers; how long can you survive?",
     shortTitle: "Limitless",
     isPlayable: true,
+    gameshowType: "Wingo",
+    description: "Gain lives with correct, early answers; how long can you survive?",
     helpInfo: (
       <>
         <p>Gain extra guesses (up to a maximum of 5) by guessing a word with guesses to spare</p>
@@ -86,9 +92,10 @@ export const pageDescriptions: {
   {
     page: "wingo/puzzle",
     title: "Wingo Puzzle",
-    description: "Use a cryptic clue to guess the word as fast as possible!",
     shortTitle: "Puzzle",
     isPlayable: true,
+    gameshowType: "Wingo",
+    description: "Use a cryptic clue to guess the word as fast as possible!",
     helpInfo: (
       <>
         <p>Guess the target word from the hint provided</p>
@@ -100,9 +107,10 @@ export const pageDescriptions: {
   {
     page: "wingo/interlinked",
     title: "Wingo Interlinked",
-    description: "Guess two words interlinked by a shared letter",
     shortTitle: "Interlinked",
     isPlayable: true,
+    gameshowType: "Wingo",
+    description: "Guess two words interlinked by a shared letter",
     helpInfo: (
       <>
         <p>Guess the two target words, using the shared letter as a hint</p>
@@ -115,9 +123,10 @@ export const pageDescriptions: {
   {
     page: "wingo/crossword",
     title: "Wingo Crossword",
-    description: "Guess a crossword of words",
     shortTitle: "Crossword",
     isPlayable: true,
+    gameshowType: "Wingo",
+    description: "Guess a crossword of words",
     helpInfo: (
       <>
         <p>Guess the many target words, using the shared letters as hints</p>
@@ -131,9 +140,10 @@ export const pageDescriptions: {
   {
     page: "wingo/crossword/fit",
     title: "Wingo Crossword Fit",
-    description: "Fill the crossword with the provided words",
     shortTitle: "Crossword Fit",
     isPlayable: true,
+    gameshowType: "Wingo",
+    description: "Fill the crossword with the provided words",
     helpInfo: (
       <>
         <p>Fill each word with one of the provided words, using the revealed letters as hints</p>
@@ -146,9 +156,9 @@ export const pageDescriptions: {
   {
     page: "wingo/crossword/weekly",
     title: "Wingo Crossword (Weekly)",
-    description: "Guess a crossword for this week",
     shortTitle: "Weekly Crossword",
     isPlayable: false,
+    description: "Guess a crossword for this week",
     helpInfo: (
       <>
         <p>Complete a crossword specifically for this week</p>
@@ -163,9 +173,9 @@ export const pageDescriptions: {
   {
     page: "wingo/crossword/daily",
     title: "Wingo Crossword (Daily)",
-    description: "Guess a crossword for today",
     shortTitle: "Daily Crossword",
     isPlayable: false,
+    description: "Guess a crossword for today",
     helpInfo: (
       <>
         <p>Complete a crossword specifically for today only!</p>
@@ -180,9 +190,9 @@ export const pageDescriptions: {
   {
     page: "LettersCategories",
     title: "Letters Categories",
-    description: "Guess the word for each category",
     shortTitle: "Categories (5)",
     isPlayable: true,
+    description: "Guess the word for each category",
     helpInfo: (
       <>
         <p>Select a category</p>
@@ -194,100 +204,103 @@ export const pageDescriptions: {
   {
     page: "LettersGame",
     title: "Letters Game",
-    description: "Find the highest scoring word from the list of random letters",
     shortTitle: "Letters Game",
     isPlayable: true,
+    gameshowType: "LettersNumbers",
+    description: "Find the highest scoring word from the list of random letters",
   },
   {
     page: "NumbersGame",
     title: "Numbers Game",
-    description: "Get the target number using a list of random numbers",
     shortTitle: "Numbers Game",
     isPlayable: true,
+    gameshowType: "LettersNumbers",
+    description: "Get the target number using a list of random numbers",
   },
   {
     page: "Conundrum",
     title: "Conundrum",
-    description: "Find the single word which uses all the letters",
     shortTitle: "Conundrum",
     isPlayable: true,
+    gameshowType: "LettersNumbers",
+    description: "Find the single word which uses all the letters",
   },
   {
     page: "ArithmeticReveal",
     title: "Quick Maths",
-    description: "Test your arithmetic with quickfire calculations",
     shortTitle: "Quick Maths",
     isPlayable: true,
+    description: "Test your arithmetic with quickfire calculations",
   },
   {
     page: "ArithmeticDrag/Order",
     title: "Arithmetic (Order)",
-    description: "Put the arithmetic expressions in order from smallest to largest",
     shortTitle: "Arithmetic (Order)",
     isPlayable: true,
+    description: "Put the arithmetic expressions in order from smallest to largest",
   },
   {
     page: "ArithmeticDrag/Match",
     title: "Arithmetic (Match)",
-    description: "Match the arithmetic expressions with the results they evaluate to",
     shortTitle: "Arithmetic (Match)",
     isPlayable: true,
+    description: "Match the arithmetic expressions with the results they evaluate to",
   },
   {
     page: "numble",
     title: "Numble",
-    description: "Find the highest scoring number from a list of random numbers",
     shortTitle: "Numble",
     isPlayable: true,
+    description: "Find the highest scoring number from a list of random numbers",
   },
   {
     page: "OnlyConnect",
     title: "Only Connect",
-    description: "Find groups of words from a scrambled word grid",
     shortTitle: "Only Connect",
     isPlayable: true,
+    description: "Find groups of words from a scrambled word grid",
   },
   {
     page: "SameLetters",
     title: "Same Letter Words",
-    description: "Find the words which are made from the same letters",
     shortTitle: "Same Letter Words",
     isPlayable: true,
+    description: "Find the words which are made from the same letters",
   },
   {
     page: "NumberSets",
     title: "Number Sets",
-    description: "Find the answer to a unique number set",
     shortTitle: "Number Sets",
     isPlayable: true,
+    description: "Find the answer to a unique number set",
   },
   {
     page: "Algebra",
     title: "Algebra",
-    description: "Find the answer to a unique number set",
     shortTitle: "Algebra",
     isPlayable: true,
+    description: "Find the answer to a unique number set",
   },
   {
     page: "WordCodes/Question",
     title: "Word Codes",
-    description: "Decipher codes to find words (and vice versa)",
     shortTitle: "Word Codes",
     isPlayable: true,
+    description: "Decipher codes to find words (and vice versa)",
   },
   {
     page: "WordCodes/Match",
     title: "Word Codes (Match)",
-    description: "Match the words to their codes",
     shortTitle: "Word Codes (Match)",
     isPlayable: true,
+    description: "Match the words to their codes",
   },
   {
     page: "PuzzleSequence",
     title: "Sequence Puzzle",
-    description: "Find what comes next in the sequence",
     shortTitle: "Sequence",
     isPlayable: true,
+    description: "Find what comes next in the sequence",
   },
   { page: "campaign", title: "Campaign", shortTitle: "Campaign", isPlayable: false },
   { page: "campaign/area", title: "Campaign Areas", shortTitle: "Areas", isPlayable: false },
@@ -302,4 +315,5 @@ export const pageDescriptions: {
     isPlayable: false,
   },
   { page: "Wingo/Gameshow", title: "Wingo Gameshow", shortTitle: "Wingo Gameshow", isPlayable: false },
+  { page: "Custom/Gameshow", title: "Custom Gameshow", shortTitle: "Custom Gameshow", isPlayable: false },
 ];
