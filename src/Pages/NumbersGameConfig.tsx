@@ -489,15 +489,8 @@ const NumbersGameConfig: React.FC<Props> = (props) => {
   }
 
   // TODO: QOL: Numbers Game - undo
-  function onBackspace(
-    number: number | null,
-    id: { type: "original"; index: number } | { type: "intermediary"; rowIndex: number }
-  ) {
+  function onBackspace() {
     if (!inProgress) {
-      return;
-    }
-
-    if (number === null) {
       return;
     }
 
@@ -547,16 +540,26 @@ const NumbersGameConfig: React.FC<Props> = (props) => {
       setWordIndex(wordIndex - 1);
     }
 
-    const newNumbersGameStatuses = numberTileStatuses.slice();
-    // Flag as not picked so it can be added again
-    if (id.type === "original") {
-      newNumbersGameStatuses[id.index].picked = false;
-    } else if (id.type === "intermediary") {
-      newNumbersGameStatuses[numberTileStatuses.filter((x) => x.type === "original").length + id.rowIndex].picked =
-        false;
+    // The most recent tile
+    const tileToRemove = numberTileStatuses[numberTileStatuses.length - 1];
+
+    const newNumberTileStatuses = numberTileStatuses.slice();
+
+    if (tileToRemove.type === "intermediary") {
+      for (let i = numberTileStatuses.length - 1; i >= numberTileStatuses.length - 3; i--) {
+        if (numberTileStatuses[i].type === "original") {
+          // In the copy, make the tile available again
+          newNumberTileStatuses[i].picked = false;
+        } else if (numberTileStatuses[i].type === "intermediary")
+          // Remove intermedairies
+          newNumberTileStatuses.splice(i, 1);
+      }
+    } else if (tileToRemove.type === "original") {
+      // In the copy, make the tile available again
+      
     }
 
-    setNumberTileStatuses(newNumbersGameStatuses);
+    setNumberTileStatuses(newNumberTileStatuses);
   }
 
   function clearGrid() {
