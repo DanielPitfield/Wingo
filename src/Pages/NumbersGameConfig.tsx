@@ -525,6 +525,8 @@ const NumbersGameConfig: React.FC<Props> = (props) => {
 
     setCurrentGuess(updatedGuess);
 
+    let guessBeingRemoved: Guess;
+
     // If guess is now empty
     if (
       updatedGuess.operand1 === null &&
@@ -532,12 +534,16 @@ const NumbersGameConfig: React.FC<Props> = (props) => {
       wordIndex > 0 &&
       currentGuesses.length > 0
     ) {
+      guessBeingRemoved = currentGuesses.slice()[currentGuesses.length - 1];
+
       // Remove the guessed expression from recorded guesses
       setCurrentGuesses(currentGuesses.slice(0, currentGuesses.length - 1));
       // Clear current guess
       setCurrentGuess({ operand1: null, operator: "+", operand2: null });
       // Move back to previous row
       setWordIndex(wordIndex - 1);
+    } else {
+      guessBeingRemoved = currentGuess;
     }
 
     // The most recent tile
@@ -545,18 +551,29 @@ const NumbersGameConfig: React.FC<Props> = (props) => {
 
     const newNumberTileStatuses = numberTileStatuses.slice();
 
+    // Remove intermediaries
     if (tileToRemove.type === "intermediary") {
       for (let i = numberTileStatuses.length - 1; i >= numberTileStatuses.length - 3; i--) {
-        if (numberTileStatuses[i].type === "original") {
-          // In the copy, make the tile available again
-          newNumberTileStatuses[i].picked = false;
-        } else if (numberTileStatuses[i].type === "intermediary")
+        if (numberTileStatuses[i].type === "intermediary")
           // Remove intermedairies
           newNumberTileStatuses.splice(i, 1);
       }
-    } else if (tileToRemove.type === "original") {
-      // In the copy, make the tile available again
-      
+    }
+
+    if (guessBeingRemoved) {
+      // Find the indexes of the original statuses
+      const i1 = newNumberTileStatuses.findIndex((x) => x.picked && x.number === guessBeingRemoved?.operand1);
+      const i2 = newNumberTileStatuses.findIndex((x) => x.picked && x.number === guessBeingRemoved?.operand2);
+
+      if (i1 !== -1) {
+        // In the copy, make the tile available again
+        newNumberTileStatuses[i1].picked = false;
+      }
+
+      if (i2 !== -1) {
+        // In the copy, make the tile available again
+        newNumberTileStatuses[i2].picked = false;
+      }
     }
 
     setNumberTileStatuses(newNumberTileStatuses);
