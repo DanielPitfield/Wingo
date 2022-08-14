@@ -143,10 +143,6 @@ const NumbersGameConfig: React.FC<Props> = (props) => {
   const DEFAULT_NUM_OPERANDS = 6;
   const DEFAULT_TIMER_VALUE = 30;
 
-  const [closestGuessSoFar, setClosestGuessSoFar] = useState<number | null>(null);
-  const [currentGuesses, setCurrentGuesses] = useState<Guess[]>([]);
-  const [numGuesses, setNumGuesses] = useState(props.defaultNumGuesses);
-
   const defaultGamemodeSettings = {
     hasScaryNumbers: props.gamemodeSettings?.hasScaryNumbers ?? false,
     scoringMethod: props.gamemodeSettings?.scoringMethod ?? "standard",
@@ -166,6 +162,18 @@ const NumbersGameConfig: React.FC<Props> = (props) => {
       ? props.gamemodeSettings?.timerConfig.seconds
       : DEFAULT_TIMER_VALUE
   );
+
+  const [inProgress, setinProgress] = useState(true);
+
+  const [guesses, setGuesses] = useState<Guess[]>([]);
+  const [currentGuess, setCurrentGuess] = useState<Guess>({ operand1: null, operand2: null, operator: "+" });
+  const [closestGuessSoFar, setClosestGuessSoFar] = useState<number | null>(null);
+
+  const [targetNumber, settargetNumber] = useState<number | null>(null);
+  const [wordIndex, setWordIndex] = useState(0);
+  const [numGuesses, setNumGuesses] = useState(props.defaultNumGuesses);
+  const [hasTimerEnded, sethasTimerEnded] = useState(false);
+  const [hasSubmitNumber, sethasSubmitNumber] = useState(false);
 
   // Just numOperands number of original type numbers (all not yet picked)
   const defaultNumberTileStatuses: (
@@ -202,13 +210,6 @@ const NumbersGameConfig: React.FC<Props> = (props) => {
     )[]
   >(defaultNumberTileStatuses);
 
-  const [currentGuess, setCurrentGuess] = useState<Guess>({ operand1: null, operand2: null, operator: "+" });
-  const [inProgress, setinProgress] = useState(true);
-  const [hasTimerEnded, sethasTimerEnded] = useState(false);
-  const [targetNumber, settargetNumber] = useState<number | null>(null);
-  const [hasSubmitNumber, sethasSubmitNumber] = useState(false);
-  const [wordIndex, setWordIndex] = useState(0);
-
   // Timer Setup
   React.useEffect(() => {
     if (!gamemodeSettings.timerConfig.isTimed) {
@@ -236,7 +237,7 @@ const NumbersGameConfig: React.FC<Props> = (props) => {
   // When the guesses (or expressions made along a row) of the playable grid are changed
   React.useEffect(() => {
     // For each guess in currentGuesses...
-    const intermediaryNumbers: typeof numberTileStatuses = currentGuesses.map((guess, index) => {
+    const intermediaryNumbers: typeof numberTileStatuses = guesses.map((guess, index) => {
       const existingNumbersGameStatus = numberTileStatuses.find(
         (x) => x.type === "intermediary" && x.wordIndex === index
       );
@@ -252,7 +253,7 @@ const NumbersGameConfig: React.FC<Props> = (props) => {
 
     // Add (keep track of) these new tiles
     setNumberTileStatuses(numberTileStatuses.filter((x) => x.type !== "intermediary").concat(intermediaryNumbers));
-  }, [currentGuesses]);
+  }, [guesses]);
 
   React.useEffect(() => {
     if (!hasTimerEnded) {
@@ -319,7 +320,7 @@ const NumbersGameConfig: React.FC<Props> = (props) => {
       }
     }
 
-    setCurrentGuesses([]);
+    setGuesses([]);
     setClosestGuessSoFar(null);
     setNumberTileStatuses(defaultNumberTileStatuses);
     setCurrentGuess({ operand1: null, operand2: null, operator: "+" });
@@ -461,7 +462,7 @@ const NumbersGameConfig: React.FC<Props> = (props) => {
     // If guess is now full
     if (updatedGuess.operand1 !== null && updatedGuess.operand2 !== null) {
       // Record the guessed expression
-      setCurrentGuesses(currentGuesses.concat(updatedGuess));
+      setGuesses(guesses.concat(updatedGuess));
       // Clear current guess
       setCurrentGuess({ operand1: null, operator: "+", operand2: null });
       // Move to next row
@@ -488,7 +489,21 @@ const NumbersGameConfig: React.FC<Props> = (props) => {
     setNumberTileStatuses(newNumbersGameStatuses);
   }
 
-  // TODO: QOL: Numbers Game - undo
+  const getNumPositionsToBacktrack = (rowBeingEdited: Guess) => {
+    // Both operands (and the intemediary result)
+    if (rowBeingEdited.operand1 !== null && rowBeingEdited.operand2 !== null) {
+      return 3;
+    }
+    // Just the first operand
+    else if (rowBeingEdited.operand1 !== null && rowBeingEdited.operand2 === null) {
+      return 1;
+    }
+    // Unexpected guess state
+    else {
+      return 0;
+    }
+  };
+
   function onBackspace() {
     if (!inProgress) {
       return;
@@ -502,71 +517,72 @@ const NumbersGameConfig: React.FC<Props> = (props) => {
       return;
     }
 
-    const bothOperandsEmpty = currentGuess.operand1 === null && currentGuess.operand2 === null;
-    const bothOperandsFull = currentGuess.operand1 !== null && currentGuess.operand2 !== null;
-    const onlyFirstOperand = currentGuess.operand1 !== null && currentGuess.operand2 === null;
+    const currentRowEmpty = currentGuess.operand1 === null && currentGuess.operand2 === null;
 
     // Nothing to remove
-    if (bothOperandsEmpty && wordIndex === 0) {
+    if (currentRowEmpty && wordIndex === 0) {
       return;
     }
 
-    let updatedGuess: Guess;
+    // If the current row is empty, undo should be applied on previous row, otherwise the current row
+    let rowBeingEdited: Guess = currentRowEmpty ? guesses[Math.max(0, wordIndex - 1)] : currentGuess;
+
+    const onlyFirstOperand = rowBeingEdited.operand1 !== null && rowBeingEdited.operand2 === null;
+    const bothOperands = rowBeingEdited.operand1 !== null && rowBeingEdited.operand2 !== null;
+
+    let newGuess: Guess;
 
     if (onlyFirstOperand) {
       // Remove operand1
-      updatedGuess = { ...currentGuess, operand1: null };
-    } else if (bothOperandsFull) {
+      newGuess = { ...rowBeingEdited, operand1: null };
+    } else if (bothOperands) {
       // Remove operand2
-      updatedGuess = { ...currentGuess, operand2: null };
+      newGuess = { ...rowBeingEdited, operand2: null };
     } else {
-      updatedGuess = currentGuess;
+      newGuess = rowBeingEdited;
     }
 
-    setCurrentGuess(updatedGuess);
+    // TODO: Undoing on empty row, edits the previous row, but the current row (currentGuess) is set to newGuess
+    // TODO: Undoing sometimes does not correctly update picked status of original tileStatuses
 
-    let rowBeingEdited: Guess;
+    setCurrentGuess(newGuess);
 
-    // If guess is now empty
-    if (
-      updatedGuess.operand1 === null &&
-      updatedGuess.operand2 === null &&
-      wordIndex > 0 &&
-      currentGuesses.length > 0
-    ) {
-      // Keep a reference to the most recent row (to use later in deciding which tiles become available again)
-      rowBeingEdited = currentGuesses.slice()[currentGuesses.length - 1];
-
-      // Remove the guessed expression from recorded guesses
-      setCurrentGuesses(currentGuesses.slice(0, currentGuesses.length - 1));
-      // Clear current guess
-      setCurrentGuess({ operand1: null, operator: "+", operand2: null });
+    // If guess will become empty after undo
+    if (newGuess.operand1 === null && newGuess.operand2 === null && wordIndex > 0 && guesses.length > 0) {
+      // Remove a guess from the recorded guesses
+      setGuesses(guesses.slice(0, Math.max(0, guesses.length - 1)) ?? []);
+      // The current guess becomes the most recent guess (before the one that has just been removed)
+      setCurrentGuess(guesses[Math.max(0, wordIndex - 1)] ?? { operand1: null, operator: "+", operand2: null });
       // Move back to previous row
-      setWordIndex(wordIndex - 1);
-    } else {
-      // The row isn't empty and isn't being deleted, it's the current row with a partial guess (no ending intermediary)
-      rowBeingEdited = currentGuess;
+      setWordIndex(Math.max(0, wordIndex - 1) ?? 0);
     }
-
-    // The most recent tile
-    const tileToRemove = numberTileStatuses[numberTileStatuses.length - 1];
 
     const newNumberTileStatuses = numberTileStatuses.slice();
 
+    // New tiles are always appended to the end of numberTileStatuses
+    const mostRecentTile = numberTileStatuses[numberTileStatuses.length - 1];
+
     // Remove intermediaries
-    if (tileToRemove.type === "intermediary") {
-      for (let i = numberTileStatuses.length - 1; i >= numberTileStatuses.length - 3; i--) {
+    if (mostRecentTile.type === "intermediary") {
+      for (
+        let i = numberTileStatuses.length - 1;
+        i >= numberTileStatuses.length - 1 - getNumPositionsToBacktrack(rowBeingEdited);
+        i--
+      ) {
+        // Look for any other intermedairies on the row
         if (numberTileStatuses[i].type === "intermediary")
           // Remove the tileStatus
           newNumberTileStatuses.splice(i, 1);
       }
     }
 
-    // TODO: Undoing partial guesses where intermediaries are not at the end
-
     // Find the indexes of the original statuses
-    const i1 = newNumberTileStatuses.findIndex((x) => x.type === "original" && x.picked && x.number === rowBeingEdited?.operand1);
-    const i2 = newNumberTileStatuses.findIndex((x) => x.type === "original" && x.picked && x.number === rowBeingEdited?.operand2);
+    const i1 = newNumberTileStatuses.findIndex(
+      (x) => x.type === "original" && x.picked && x.number === rowBeingEdited?.operand1
+    );
+    const i2 = newNumberTileStatuses.findIndex(
+      (x) => x.type === "original" && x.picked && x.number === rowBeingEdited?.operand2
+    );
 
     if (i1 !== -1) {
       // In the copy, make the tile available again
@@ -584,7 +600,7 @@ const NumbersGameConfig: React.FC<Props> = (props) => {
   function clearGrid() {
     if (inProgress) {
       setWordIndex(0);
-      setCurrentGuesses([]);
+      setGuesses([]);
       setCurrentGuess({ operand1: null, operator: "+", operand2: null });
       setNumberTileStatuses(numberTileStatuses.map((x) => ({ ...x, picked: false })));
       setNumGuesses(props.defaultNumGuesses);
@@ -625,7 +641,7 @@ const NumbersGameConfig: React.FC<Props> = (props) => {
       gamemodeSettings={gamemodeSettings}
       remainingSeconds={remainingSeconds}
       wordIndex={wordIndex}
-      guesses={currentGuesses}
+      guesses={guesses}
       closestGuessSoFar={closestGuessSoFar}
       numGuesses={numGuesses}
       currentGuess={currentGuess}
