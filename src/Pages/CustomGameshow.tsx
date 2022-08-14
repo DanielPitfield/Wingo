@@ -2,9 +2,10 @@ import React, { useState } from "react";
 import { SettingsData } from "../Data/SaveData";
 import { PageName } from "../PageNames";
 import { Theme } from "../Data/Themes";
-import { pageDescriptions } from "../PageDescriptions";
+import { pageDescription, pageDescriptions } from "../PageDescriptions";
 import { arrayMove, OrderGroup } from "react-draggable-order";
 import { DraggableItem } from "../Components/DraggableItem";
+import { Button } from "../Components/Button";
 
 export interface CustomGameshowProps {
   campaignConfig:
@@ -31,33 +32,49 @@ export type gameshowType = typeof gameshowTypes[number];
 
 export const CustomGameshow: React.FC<Props> = (props) => {
   const [currentGameshowType, setCurrentGameshowType] = useState<gameshowType>("Custom");
-  const [queuedModes, setQueuedModes] = useState<
-    | {
-        page: PageName;
-        title: string;
-        shortTitle?: string;
-        isPlayable: boolean;
-        gameshowType?: gameshowType;
-        description?: string;
-        helpInfo?: JSX.Element;
-      }[]
-    | null
-  >(null);
+  const [availableModes, setAvailableModes] = useState<pageDescription[]>(getAvailableModes());
+  const [queuedModes, setQueuedModes] = useState<pageDescription[]>([]);
 
   React.useEffect(() => {
-    const newQueuedModes =
-      currentGameshowType === "Custom"
-        ? // Any playable mode
-          pageDescriptions.filter((page) => page.isPlayable)
-        : // Any mode tagged with the current gameshow type
-          pageDescriptions.filter((page) => page.gameshowType === currentGameshowType && page.isPlayable);
-          
-    setQueuedModes(newQueuedModes);
+    // The type of gameshow has now changed, start with an empty queue
+    setQueuedModes([]);
+    // Update the modes which can be added to the queue
+    setAvailableModes(getAvailableModes());
   }, [currentGameshowType]);
 
-  function displayGamemodes() {
+  // Which gamemodes can be added to the CustomGameshow queue (based on the gameshow type)?
+  function getAvailableModes(): pageDescription[] {
+    return currentGameshowType === "Custom"
+      ? // Any playable mode
+        pageDescriptions.filter((page) => page.isPlayable)
+      : // Any mode tagged with the current gameshow type
+        pageDescriptions.filter((page) => page.gameshowType === currentGameshowType && page.isPlayable);
+  }
+
+  // Append mode (the available mode which was clicked) to queue
+  function addModeToQueue(gameshowMode: pageDescription) {
+    const newQueuedModes = queuedModes.slice();
+    newQueuedModes.push(gameshowMode);
+    setQueuedModes(newQueuedModes);
+  }
+
+  // List of buttons (which add to the queue when clicked)
+  function displayAvailableModes() {
     return (
-      <div className="gameshow-mode-wrapper">
+      <div className="gameshow-available-modes-wrapper">
+        {availableModes.map((gameshowMode) => (
+          <Button className="gameshow-available-gamemode" mode={"default"} onClick={() => addModeToQueue(gameshowMode)}>
+            {gameshowMode.title}
+          </Button>
+        ))}
+      </div>
+    );
+  }
+
+  // The order of gamemodes (the CustomGameshow will have)
+  function displayQueuedModes() {
+    return (
+      <div className="gameshow-queued-modes-wrapper">
         <OrderGroup mode={"between"}>
           {queuedModes?.map((gameshowMode, index) => (
             <DraggableItem
@@ -65,7 +82,7 @@ export const CustomGameshow: React.FC<Props> = (props) => {
               index={index}
               onMove={(toIndex) => setQueuedModes(arrayMove(queuedModes, index, toIndex))}
             >
-              <div className="gameshow-gamemode">{gameshowMode.title}</div>
+              <div className="gameshow-queued-gamemode">{gameshowMode.title}</div>
             </DraggableItem>
           ))}
         </OrderGroup>
@@ -93,7 +110,10 @@ export const CustomGameshow: React.FC<Props> = (props) => {
         Gameshow type
       </label>
 
-      <div>{displayGamemodes()}</div>
+      <div className="custom-gameshow-wrapper">
+        {displayQueuedModes()}
+        {displayAvailableModes()}
+      </div>
     </>
   );
 };

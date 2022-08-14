@@ -1,10 +1,9 @@
-import React from "react";
 import { PageName } from "./PageNames";
 import { gameshowType } from "./Pages/CustomGameshow";
 
 // This is needed for runtime; make sure it matches the Page type
 
-export const pageDescriptions: {
+export type pageDescription = {
   page: PageName;
   title: string;
   shortTitle?: string;
@@ -12,7 +11,9 @@ export const pageDescriptions: {
   gameshowType?: gameshowType;
   description?: string;
   helpInfo?: JSX.Element;
-}[] = [
+}
+
+export const pageDescriptions: pageDescription[] = [
   { page: "splash-screen", title: "Wingo", isPlayable: false },
   { page: "TitlePage", title: "Home", isPlayable: false },
   //{ page: "home", title: "", isPlayable: false },
