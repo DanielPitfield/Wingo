@@ -308,6 +308,9 @@ const NumbersGameConfig: React.FC<Props> = (props) => {
 
     // Current guess always becomes the guess at the row of the current wordIndex
     setCurrentGuess(guesses[wordIndex]);
+
+    // Remove any guesses after the current row (that may still linger)
+    setGuesses(guesses.slice(0, wordIndex));
   }, [wordIndex]);
 
   function getTargetNumber(min: number, max: number) {
@@ -545,7 +548,7 @@ const NumbersGameConfig: React.FC<Props> = (props) => {
     // Undoing when the current row is empty/blank
     if (currentRowEmpty) {
       // Just go back a row (the current guess will automatically the guess at this previous row)
-      setWordIndex(wordIndex - 1);
+      setWordIndex(Math.max(0, wordIndex - 1));
       return;
     }
 
@@ -572,12 +575,8 @@ const NumbersGameConfig: React.FC<Props> = (props) => {
 
     // If guess will become empty after undo
     if (newGuess.operand1 === null && newGuess.operand2 === null && wordIndex > 0 && guesses.length > 0) {
-      // Remove a guess from the recorded guesses
-      setGuesses(guesses.slice(0, Math.max(0, guesses.length - 1)) ?? []);
-      // The current guess becomes the most recent guess (before the one that has just been removed)
-      setCurrentGuess(guesses[Math.max(0, wordIndex - 1)] ?? { operand1: null, operator: "+", operand2: null });
       // Move back to previous row
-      setWordIndex(Math.max(0, wordIndex - 1) ?? 0);
+      setWordIndex(Math.max(0, wordIndex - 1));
     }
 
     const newNumberTileStatuses = numberTileStatuses.slice();
