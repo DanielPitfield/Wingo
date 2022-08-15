@@ -293,21 +293,16 @@ const NumbersGameConfig: React.FC<Props> = (props) => {
   }, [numberTileStatuses]);
 
   React.useEffect(() => {
-    // New row at word index is empty guess
-    if (guesses[wordIndex] === { operand1: null, operand2: null, operator: "+" }) {
-      return;
-    }
-
     if (wordIndex < 0) {
       return;
     }
 
-    if (guesses[wordIndex] === undefined) {
-      return;
-    }
-
-    // Current guess always becomes the guess at the row of the current wordIndex
-    setCurrentGuess(guesses[wordIndex]);
+    /*
+    Current guess always becomes either:
+    The guess at the row of the current wordIndex (when going back to a previous row)
+    An empty guess (going to a new row)
+    */
+    setCurrentGuess(guesses[wordIndex] ?? { operand1: null, operand2: null, operator: "+" });
 
     // Remove any guesses after the current row (that may still linger)
     setGuesses(guesses.slice(0, wordIndex));
@@ -574,7 +569,7 @@ const NumbersGameConfig: React.FC<Props> = (props) => {
     setCurrentGuess(newGuess);
 
     // If guess will become empty after undo
-    if (newGuess.operand1 === null && newGuess.operand2 === null && wordIndex > 0 && guesses.length > 0) {
+    if (newGuess.operand1 === null && newGuess.operand2 === null) {
       // Move back to previous row
       setWordIndex(Math.max(0, wordIndex - 1));
     }
