@@ -564,8 +564,6 @@ const NumbersGameConfig: React.FC<Props> = (props) => {
       newGuess = rowBeingEdited;
     }
 
-    // TODO: Undoing sometimes does not correctly update picked status of original tileStatuses
-
     setCurrentGuess(newGuess);
 
     // If guess will become empty after undo
@@ -581,34 +579,39 @@ const NumbersGameConfig: React.FC<Props> = (props) => {
 
     // Remove intermediaries
     if (mostRecentTile.type === "intermediary") {
+      // Look for any other intermediaries on the row
       for (
         let i = numberTileStatuses.length - 1;
         i >= numberTileStatuses.length - 1 - getNumPositionsToBacktrack(rowBeingEdited);
         i--
       ) {
-        // Look for any other intermedairies on the row
         if (numberTileStatuses[i].type === "intermediary")
           // Remove the tileStatus
           newNumberTileStatuses.splice(i, 1);
       }
     }
 
-    // Find the indexes of the original statuses
-    const i1 = newNumberTileStatuses.findIndex(
-      (x) => x.type === "original" && x.picked && x.number === rowBeingEdited?.operand1
-    );
-    const i2 = newNumberTileStatuses.findIndex(
-      (x) => x.type === "original" && x.picked && x.number === rowBeingEdited?.operand2
-    );
-
-    if (i1 !== -1) {
-      // In the copy, make the tile available again
-      newNumberTileStatuses[i1].picked = false;
+    // The first operand is being removed (was present in rowBeingEdited but won't be in newGuess)
+    if (rowBeingEdited.operand1 !== null && newGuess.operand1 === null) {
+      // Find the indexes of the original statuses
+      const i1 = newNumberTileStatuses.findIndex(
+        (x) => x.type === "original" && x.picked && x.number === rowBeingEdited?.operand1
+      );
+      if (i1 !== -1) {
+        // In the copy, make the tile available again
+        newNumberTileStatuses[i1].picked = false;
+      }
     }
 
-    if (i2 !== -1) {
-      // In the copy, make the tile available again
-      newNumberTileStatuses[i2].picked = false;
+    // The second operand is being removed
+    if (rowBeingEdited.operand2 !== null && newGuess.operand2 === null) {
+      const i2 = newNumberTileStatuses.findIndex(
+        (x) => x.type === "original" && x.picked && x.number === rowBeingEdited?.operand2
+      );
+      if (i2 !== -1) {
+        // In the copy, make the tile available again
+        newNumberTileStatuses[i2].picked = false;
+      }
     }
 
     setNumberTileStatuses(newNumberTileStatuses);

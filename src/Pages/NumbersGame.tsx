@@ -248,7 +248,7 @@ const NumbersGame: React.FC<Props> = (props) => {
           setOperator={props.setOperator}
           disabled={!isSelectionFinished || i > props.wordIndex}
           rowIndex={i}
-          indetermediaryGuessStatuses={props.numberTileStatuses.filter((x) => x.type === "intermediary") as any}
+          intermediaryGuessStatuses={props.numberTileStatuses.filter((x) => x.type === "intermediary") as any}
         />
       );
     }

@@ -14,7 +14,7 @@ interface Props {
   targetNumber: number | null;
   hasSubmit: boolean;
   disabled: boolean;
-  indetermediaryGuessStatuses: {
+  intermediaryGuessStatuses: {
     type: "intermediary";
     wordIndex: number;
     number: number | null;
@@ -97,7 +97,7 @@ export const NumberRow: React.FC<Props> = (props) => {
         number={calculateTotal(props.expression) || null}
         disabled={
           props.disabled ||
-          props.indetermediaryGuessStatuses.find((x) => x.wordIndex === props.rowIndex)?.picked === true ||
+          props.intermediaryGuessStatuses.find((x) => x.wordIndex === props.rowIndex)?.picked === true ||
           calculateTotal(props.expression) === null
         }
         onClick={() =>
