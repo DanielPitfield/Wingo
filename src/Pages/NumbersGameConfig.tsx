@@ -292,6 +292,24 @@ const NumbersGameConfig: React.FC<Props> = (props) => {
     }
   }, [numberTileStatuses]);
 
+  React.useEffect(() => {
+    // New row at word index is empty guess
+    if (guesses[wordIndex] === { operand1: null, operand2: null, operator: "+" }) {
+      return;
+    }
+
+    if (wordIndex < 0) {
+      return;
+    }
+
+    if (guesses[wordIndex] === undefined) {
+      return;
+    }
+
+    // Current guess always becomes the guess at the row of the current wordIndex
+    setCurrentGuess(guesses[wordIndex]);
+  }, [wordIndex]);
+
   function getTargetNumber(min: number, max: number) {
     min = Math.ceil(min);
     max = Math.floor(max);
@@ -524,8 +542,14 @@ const NumbersGameConfig: React.FC<Props> = (props) => {
       return;
     }
 
-    // If the current row is empty, undo should be applied on previous row, otherwise the current row
-    let rowBeingEdited: Guess = currentRowEmpty ? guesses[Math.max(0, wordIndex - 1)] : currentGuess;
+    // Undoing when the current row is empty/blank
+    if (currentRowEmpty) {
+      // Just go back a row (the current guess will automatically the guess at this previous row)
+      setWordIndex(wordIndex - 1);
+      return;
+    }
+
+    let rowBeingEdited: Guess = currentGuess;
 
     const onlyFirstOperand = rowBeingEdited.operand1 !== null && rowBeingEdited.operand2 === null;
     const bothOperands = rowBeingEdited.operand1 !== null && rowBeingEdited.operand2 !== null;
@@ -542,7 +566,6 @@ const NumbersGameConfig: React.FC<Props> = (props) => {
       newGuess = rowBeingEdited;
     }
 
-    // TODO: Undoing on empty row, edits the previous row, but the current row (currentGuess) is set to newGuess
     // TODO: Undoing sometimes does not correctly update picked status of original tileStatuses
 
     setCurrentGuess(newGuess);
