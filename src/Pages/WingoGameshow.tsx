@@ -27,7 +27,7 @@ export interface WingoGameshowProps {
     numberPuzzles: number;
   };
   hasFinalRound: boolean;
-  defaultnumGuesses: number;
+  defaultNumGuesses: number;
 }
 
 interface Props extends WingoGameshowProps {
@@ -315,7 +315,7 @@ export const WingoGameshow: React.FC<Props> = (props) => {
           {...commonProps}
           mode="puzzle"
           defaultWordLength={wordLength}
-          defaultnumGuesses={1}
+          defaultNumGuesses={1}
           enforceFullLengthGuesses={true}
           roundScoringInfo={roundScoringInfo}
           gameshowScore={gameshowScore}
@@ -327,7 +327,7 @@ export const WingoGameshow: React.FC<Props> = (props) => {
           {...commonProps}
           mode="repeat"
           defaultWordLength={wordLength}
-          defaultnumGuesses={5}
+          defaultNumGuesses={5}
           enforceFullLengthGuesses={true}
           roundScoringInfo={roundScoringInfo}
           gameshowScore={gameshowScore}

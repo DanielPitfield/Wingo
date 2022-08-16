@@ -14,7 +14,7 @@ export const area: AreaConfig = {
         mode: "repeat",
         targetWord: "travel",
         enforceFullLengthGuesses: true,
-        defaultnumGuesses: 6,
+        defaultNumGuesses: 6,
         gamemodeSettings: {
           isFirstLetterProvided: true,
           puzzleLeaveNumBlanks: 0,
@@ -41,7 +41,7 @@ export const area: AreaConfig = {
           mode: "repeat",
           targetWord: "canada",
           enforceFullLengthGuesses: true,
-          defaultnumGuesses: 6,
+          defaultNumGuesses: 6,
           gamemodeSettings: {
             isFirstLetterProvided: true,
             puzzleLeaveNumBlanks: 0,
@@ -65,7 +65,7 @@ export const area: AreaConfig = {
           mode: "repeat",
           targetWord: "poutine",
           enforceFullLengthGuesses: true,
-          defaultnumGuesses: 6,
+          defaultNumGuesses: 6,
           gamemodeSettings: {
             isFirstLetterProvided: true,
             puzzleLeaveNumBlanks: 0,
@@ -89,7 +89,7 @@ export const area: AreaConfig = {
           mode: "repeat",
           targetWord: "moose",
           enforceFullLengthGuesses: true,
-          defaultnumGuesses: 6,
+          defaultNumGuesses: 6,
           gamemodeSettings: {
             isFirstLetterProvided: false,
             puzzleLeaveNumBlanks: 3,
@@ -113,7 +113,7 @@ export const area: AreaConfig = {
           mode: "repeat",
           targetWord: "maple-syrup",
           enforceFullLengthGuesses: true,
-          defaultnumGuesses: 5,
+          defaultNumGuesses: 5,
           gamemodeSettings: {
             isFirstLetterProvided: false,
             puzzleLeaveNumBlanks: 0,
@@ -137,7 +137,7 @@ export const area: AreaConfig = {
           mode: "repeat",
           targetWord: "polar-bear",
           enforceFullLengthGuesses: true,
-          defaultnumGuesses: 6,
+          defaultNumGuesses: 6,
           gamemodeSettings: {
             isFirstLetterProvided: false,
             puzzleLeaveNumBlanks: 3,
@@ -161,7 +161,7 @@ export const area: AreaConfig = {
           mode: "repeat",
           targetWord: "usa",
           enforceFullLengthGuesses: true,
-          defaultnumGuesses: 6,
+          defaultNumGuesses: 6,
           gamemodeSettings: {
             isFirstLetterProvided: false,
             puzzleLeaveNumBlanks: 0,
@@ -185,7 +185,7 @@ export const area: AreaConfig = {
           mode: "repeat",
           targetWord: "constitution",
           enforceFullLengthGuesses: true,
-          defaultnumGuesses: 7,
+          defaultNumGuesses: 7,
           gamemodeSettings: {
             isFirstLetterProvided: true,
             puzzleLeaveNumBlanks: 3,
@@ -209,7 +209,7 @@ export const area: AreaConfig = {
           mode: "repeat",
           targetWord: "cheeseburger",
           enforceFullLengthGuesses: true,
-          defaultnumGuesses: 7,
+          defaultNumGuesses: 7,
           gamemodeSettings: {
             isFirstLetterProvided: false,
             puzzleLeaveNumBlanks: 3,
@@ -233,7 +233,7 @@ export const area: AreaConfig = {
           mode: "repeat",
           targetWord: "baseball",
           enforceFullLengthGuesses: true,
-          defaultnumGuesses: 5,
+          defaultNumGuesses: 5,
           gamemodeSettings: {
             isFirstLetterProvided: false,
             puzzleLeaveNumBlanks: 3,
@@ -257,7 +257,7 @@ export const area: AreaConfig = {
           mode: "repeat",
           targetWord: "mexico",
           enforceFullLengthGuesses: true,
-          defaultnumGuesses: 5,
+          defaultNumGuesses: 5,
           gamemodeSettings: {
             isFirstLetterProvided: true,
             puzzleLeaveNumBlanks: 3,
@@ -281,7 +281,7 @@ export const area: AreaConfig = {
           mode: "repeat",
           targetWord: "mariachi",
           enforceFullLengthGuesses: true,
-          defaultnumGuesses: 7,
+          defaultNumGuesses: 7,
           gamemodeSettings: {
             isFirstLetterProvided: true,
             puzzleLeaveNumBlanks: 3,
@@ -305,7 +305,7 @@ export const area: AreaConfig = {
           mode: "repeat",
           targetWord: "brazil",
           enforceFullLengthGuesses: true,
-          defaultnumGuesses: 5,
+          defaultNumGuesses: 5,
           gamemodeSettings: {
             isFirstLetterProvided: true,
             puzzleLeaveNumBlanks: 3,
@@ -329,7 +329,7 @@ export const area: AreaConfig = {
           mode: "repeat",
           targetWord: "carnival",
           enforceFullLengthGuesses: true,
-          defaultnumGuesses: 6,
+          defaultNumGuesses: 6,
           gamemodeSettings: {
             isFirstLetterProvided: false,
             puzzleLeaveNumBlanks: 3,
@@ -353,7 +353,7 @@ export const area: AreaConfig = {
           mode: "repeat",
           targetWord: "samba",
           enforceFullLengthGuesses: true,
-          defaultnumGuesses: 4,
+          defaultNumGuesses: 4,
           gamemodeSettings: {
             isFirstLetterProvided: false,
             puzzleLeaveNumBlanks: 3,
@@ -377,7 +377,7 @@ export const area: AreaConfig = {
           mode: "repeat",
           targetWord: "football",
           enforceFullLengthGuesses: true,
-          defaultnumGuesses: 6,
+          defaultNumGuesses: 6,
           gamemodeSettings: {
             isFirstLetterProvided: false,
             puzzleLeaveNumBlanks: 3,
@@ -401,7 +401,7 @@ export const area: AreaConfig = {
           mode: "repeat",
           targetWord: "chile",
           enforceFullLengthGuesses: true,
-          defaultnumGuesses: 7,
+          defaultNumGuesses: 7,
           gamemodeSettings: {
             isFirstLetterProvided: true,
             puzzleLeaveNumBlanks: 3,
@@ -425,7 +425,7 @@ export const area: AreaConfig = {
           mode: "repeat",
           targetWord: "argentina",
           enforceFullLengthGuesses: true,
-          defaultnumGuesses: 7,
+          defaultNumGuesses: 7,
           gamemodeSettings: {
             isFirstLetterProvided: true,
             puzzleLeaveNumBlanks: 3,
@@ -449,7 +449,7 @@ export const area: AreaConfig = {
           mode: "repeat",
           targetWord: "south-africa",
           enforceFullLengthGuesses: true,
-          defaultnumGuesses: 7,
+          defaultNumGuesses: 7,
           gamemodeSettings: {
             isFirstLetterProvided: true,
             puzzleLeaveNumBlanks: 3,
@@ -473,7 +473,7 @@ export const area: AreaConfig = {
           mode: "repeat",
           targetWord: "a",
           enforceFullLengthGuesses: true,
-          defaultnumGuesses: 7,
+          defaultNumGuesses: 7,
           gamemodeSettings: {
             isFirstLetterProvided: true,
             puzzleLeaveNumBlanks: 3,
@@ -497,7 +497,7 @@ export const area: AreaConfig = {
           mode: "repeat",
           targetWord: "a",
           enforceFullLengthGuesses: true,
-          defaultnumGuesses: 7,
+          defaultNumGuesses: 7,
           gamemodeSettings: {
             isFirstLetterProvided: true,
             puzzleLeaveNumBlanks: 3,
@@ -521,7 +521,7 @@ export const area: AreaConfig = {
           mode: "repeat",
           targetWord: "a",
           enforceFullLengthGuesses: true,
-          defaultnumGuesses: 7,
+          defaultNumGuesses: 7,
           gamemodeSettings: {
             isFirstLetterProvided: true,
             puzzleLeaveNumBlanks: 3,
@@ -545,7 +545,7 @@ export const area: AreaConfig = {
           mode: "repeat",
           targetWord: "a",
           enforceFullLengthGuesses: true,
-          defaultnumGuesses: 7,
+          defaultNumGuesses: 7,
           gamemodeSettings: {
             isFirstLetterProvided: true,
             puzzleLeaveNumBlanks: 3,
@@ -569,7 +569,7 @@ export const area: AreaConfig = {
           mode: "repeat",
           targetWord: "a",
           enforceFullLengthGuesses: true,
-          defaultnumGuesses: 7,
+          defaultNumGuesses: 7,
           gamemodeSettings: {
             isFirstLetterProvided: true,
             puzzleLeaveNumBlanks: 3,
@@ -593,7 +593,7 @@ export const area: AreaConfig = {
           mode: "repeat",
           targetWord: "a",
           enforceFullLengthGuesses: true,
-          defaultnumGuesses: 7,
+          defaultNumGuesses: 7,
           gamemodeSettings: {
             isFirstLetterProvided: true,
             puzzleLeaveNumBlanks: 3,
@@ -617,7 +617,7 @@ export const area: AreaConfig = {
           mode: "repeat",
           targetWord: "a",
           enforceFullLengthGuesses: true,
-          defaultnumGuesses: 7,
+          defaultNumGuesses: 7,
           gamemodeSettings: {
             isFirstLetterProvided: true,
             puzzleLeaveNumBlanks: 3,
@@ -641,7 +641,7 @@ export const area: AreaConfig = {
           mode: "repeat",
           targetWord: "a",
           enforceFullLengthGuesses: true,
-          defaultnumGuesses: 7,
+          defaultNumGuesses: 7,
           gamemodeSettings: {
             isFirstLetterProvided: true,
             puzzleLeaveNumBlanks: 3,
@@ -665,7 +665,7 @@ export const area: AreaConfig = {
           mode: "repeat",
           targetWord: "a",
           enforceFullLengthGuesses: true,
-          defaultnumGuesses: 7,
+          defaultNumGuesses: 7,
           gamemodeSettings: {
             isFirstLetterProvided: true,
             puzzleLeaveNumBlanks: 3,
@@ -689,7 +689,7 @@ export const area: AreaConfig = {
           mode: "repeat",
           targetWord: "a",
           enforceFullLengthGuesses: true,
-          defaultnumGuesses: 7,
+          defaultNumGuesses: 7,
           gamemodeSettings: {
             isFirstLetterProvided: true,
             puzzleLeaveNumBlanks: 3,
@@ -713,7 +713,7 @@ export const area: AreaConfig = {
           mode: "repeat",
           targetWord: "a",
           enforceFullLengthGuesses: true,
-          defaultnumGuesses: 7,
+          defaultNumGuesses: 7,
           gamemodeSettings: {
             isFirstLetterProvided: true,
             puzzleLeaveNumBlanks: 3,
@@ -737,7 +737,7 @@ export const area: AreaConfig = {
           mode: "repeat",
           targetWord: "a",
           enforceFullLengthGuesses: true,
-          defaultnumGuesses: 7,
+          defaultNumGuesses: 7,
           gamemodeSettings: {
             isFirstLetterProvided: true,
             puzzleLeaveNumBlanks: 3,
@@ -761,7 +761,7 @@ export const area: AreaConfig = {
           mode: "repeat",
           targetWord: "a",
           enforceFullLengthGuesses: true,
-          defaultnumGuesses: 7,
+          defaultNumGuesses: 7,
           gamemodeSettings: {
             isFirstLetterProvided: true,
             puzzleLeaveNumBlanks: 3,
@@ -785,7 +785,7 @@ export const area: AreaConfig = {
           mode: "repeat",
           targetWord: "a",
           enforceFullLengthGuesses: true,
-          defaultnumGuesses: 7,
+          defaultNumGuesses: 7,
           gamemodeSettings: {
             isFirstLetterProvided: true,
             puzzleLeaveNumBlanks: 3,
@@ -809,7 +809,7 @@ export const area: AreaConfig = {
           mode: "repeat",
           targetWord: "a",
           enforceFullLengthGuesses: true,
-          defaultnumGuesses: 7,
+          defaultNumGuesses: 7,
           gamemodeSettings: {
             isFirstLetterProvided: true,
             puzzleLeaveNumBlanks: 3,
@@ -833,7 +833,7 @@ export const area: AreaConfig = {
           mode: "repeat",
           targetWord: "a",
           enforceFullLengthGuesses: true,
-          defaultnumGuesses: 7,
+          defaultNumGuesses: 7,
           gamemodeSettings: {
             isFirstLetterProvided: true,
             puzzleLeaveNumBlanks: 3,
@@ -857,7 +857,7 @@ export const area: AreaConfig = {
           mode: "repeat",
           targetWord: "a",
           enforceFullLengthGuesses: true,
-          defaultnumGuesses: 7,
+          defaultNumGuesses: 7,
           gamemodeSettings: {
             isFirstLetterProvided: true,
             puzzleLeaveNumBlanks: 3,

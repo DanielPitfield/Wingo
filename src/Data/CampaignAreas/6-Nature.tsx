@@ -15,7 +15,7 @@ export const area: AreaConfig = {
         targetWord: "nature",
         enforceFullLengthGuesses: true,
         defaultWordLength: 6,
-        defaultnumGuesses: 6,
+        defaultNumGuesses: 6,
         gamemodeSettings: {
           isFirstLetterProvided: true,
           puzzleLeaveNumBlanks: 0,

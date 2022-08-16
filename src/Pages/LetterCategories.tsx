@@ -8,8 +8,8 @@ import ProgressBar, { GreenToRedColorTransition } from "../Components/ProgressBa
 import { Theme } from "../Data/Themes";
 import { SettingsData } from "../Data/SaveData";
 import GamemodeSettingsMenu from "../Components/GamemodeSettingsMenu";
-import { MAX_NUM_CATEGORIES } from "../Data/DefaultGamemodeSettings";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
+import { MAX_NUM_CATEGORIES } from "../Data/GamemodeSettingsInputLimits";
 
 interface Props {
   campaignConfig:

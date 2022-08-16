@@ -9,15 +9,13 @@ import { Chance } from "chance";
 import { generateConundrum } from "../Data/Conundrum";
 import { PageName } from "../PageNames";
 import {
-  categoryMappings,
   defaultWingoInterlinkedGamemodeSettings,
   DEFAULT_PUZZLE_LEAVE_NUM_BLANKS,
   DEFAULT_PUZZLE_REVEAL_MS,
-  DEFAULT_WORD_LENGTH,
-  MAX_TARGET_WORD_LENGTH,
-  wordLengthMappingsGuessable,
-  wordLengthMappingsTargets,
 } from "../Data/DefaultGamemodeSettings";
+import { getGamemodeDefaultWordLength } from "../Data/DefaultWordLengths";
+import { MAX_TARGET_WORD_LENGTH } from "../Data/GamemodeSettingsInputLimits";
+import { categoryMappings, wordLengthMappingsGuessable, wordLengthMappingsTargets } from "../Data/WordArrayMappings";
 
 export interface WingoConfigProps {
   mode:
@@ -46,7 +44,7 @@ export interface WingoConfigProps {
     timerConfig?: { isTimed: true; seconds: number } | { isTimed: false };
   };
 
-  defaultnumGuesses: number;
+  defaultNumGuesses: number;
   // TODO: All gets a bit confusing with gamemodeSettings wordLength, defaultWordLength, targetWordLength
   defaultWordLength?: number;
   enforceFullLengthGuesses: boolean;
@@ -235,15 +233,15 @@ function getDeterministicArrayItems<T>(
 
 const WingoConfig: React.FC<Props> = (props) => {
   const [guesses, setGuesses] = useState<string[]>(props.guesses ?? []);
-  const [numGuesses, setNumGuesses] = useState(props.defaultnumGuesses);
+  const [numGuesses, setNumGuesses] = useState(props.defaultNumGuesses);
   const [gameId, setGameId] = useState<string | null>(null);
 
-  // Take highest of targetWord, gamemodeSettings value, defaultWordLength (or failing those, a default value)
+  // Take highest of targetWord, gamemodeSettings value and defaultWordLength (or failing those, use a fallback value)
   const defaultWordLength =
     Math.max.apply(
       undefined,
       [props.targetWord?.length!, props.gamemodeSettings?.wordLength!, props.defaultWordLength!].filter((x) => x)
-    ) ?? DEFAULT_WORD_LENGTH;
+    ) ?? getGamemodeDefaultWordLength(props.page);
 
   const defaultGamemodeSettings = {
     wordLength: defaultWordLength,
@@ -608,6 +606,7 @@ const WingoConfig: React.FC<Props> = (props) => {
       setCurrentWord(targetWord.charAt(0));
     }
 
+    // TODO: Refacotr - determining this wordArray
     let wordArray: string[] = [];
 
     // Valid word array directly specified
@@ -808,7 +807,7 @@ const WingoConfig: React.FC<Props> = (props) => {
         },
         targetWord,
         defaultWordLength: props.defaultWordLength,
-        defaultnumGuesses: props.defaultnumGuesses,
+        defaultNumGuesses: props.defaultNumGuesses,
         enforceFullLengthGuesses: props.enforceFullLengthGuesses,
         checkInDictionary: props.checkInDictionary,
         wordArray: props.wordArray,
@@ -883,7 +882,7 @@ const WingoConfig: React.FC<Props> = (props) => {
 
     // Don't reset to defaultNumGuesses when there are lives remaining in limitless mode
     if (!limitlessAndLivesRemaining) {
-      setNumGuesses(props.defaultnumGuesses);
+      setNumGuesses(props.defaultNumGuesses);
     }
   }
 
@@ -1086,7 +1085,7 @@ const WingoConfig: React.FC<Props> = (props) => {
           },
           targetWord,
           defaultWordLength: props.defaultWordLength,
-          defaultnumGuesses: props.defaultnumGuesses,
+          defaultNumGuesses: props.defaultNumGuesses,
           enforceFullLengthGuesses: props.enforceFullLengthGuesses,
           checkInDictionary: props.checkInDictionary,
           wordArray: props.wordArray,

@@ -38,25 +38,20 @@ import {
   defaultArithmeticRevealGamemodeSettings,
   defaultLettersGameGamemodeSettings,
   defaultNumbersGameGamemodeSettings,
-  defaultGroupWallGamemodeSettings,
+  defaultOnlyConnectGamemodeSettings,
   defaultLetterCategoriesGamemodeSettings,
   defaultNumbleGamemodeSettings,
   defaultNumberSetsGamemodeSettings,
   defaultSameLetterWordsGamemodeSettings,
   defaultWordCodesGamemodeSettings,
   defaultWingoGamemodeSettings,
-  DEFAULT_NUM_GUESSES,
-  DEFAULT_NUM_GUESSES_NUMBERS_GAME,
-  DEFAULT_NUM_GUESSES_PUZZLE,
-  DEFAULT_WORD_LENGTH,
-  DEFAULT_WORD_LENGTH_CONUNDRUM,
-  DEFAULT_WORD_LENGTH_INCREASING,
-  DEFAULT_WORD_LENGTH_PUZZLE,
 } from "./Data/DefaultGamemodeSettings";
 import { PageName } from "./PageNames";
 import { pageDescriptions } from "./PageDescriptions";
 import SequencePuzzle from "./Pages/SequencePuzzle";
 import { CustomGameshow } from "./Pages/CustomGameshow";
+import { getGamemodeDefaultNumGuesses } from "./Data/DefaultNumGuesses";
+import { getGamemodeDefaultWordLength } from "./Data/DefaultWordLengths";
 
 export const App: React.FC = () => {
   // App wide listener for right click event
@@ -283,7 +278,7 @@ export const App: React.FC = () => {
           );
 
         case "OnlyConnect":
-          return SaveData.getGroupWallGamemodeSettings() || defaultGroupWallGamemodeSettings;
+          return SaveData.getGroupWallGamemodeSettings() || defaultOnlyConnectGamemodeSettings;
 
         case "SameLetters":
           return SaveData.getSameLetterWordsGamemodeSettings() || defaultSameLetterWordsGamemodeSettings;
@@ -329,12 +324,12 @@ export const App: React.FC = () => {
       addGold: addGold,
       settings: settings,
       onComplete: onComplete,
+      defaultNumGuesses: getGamemodeDefaultNumGuesses(page),
     };
 
     // Overwrite properties for specific modes where required
     const commonWingoProps = {
-      defaultWordLength: DEFAULT_WORD_LENGTH,
-      defaultnumGuesses: DEFAULT_NUM_GUESSES,
+      defaultWordLength: getGamemodeDefaultWordLength(page),
       enforceFullLengthGuesses: true,
     };
 
@@ -410,35 +405,13 @@ export const App: React.FC = () => {
         return <WingoConfig {...commonProps} {...commonWingoProps} mode="category" enforceFullLengthGuesses={false} />;
 
       case "wingo/increasing":
-        return (
-          <WingoConfig
-            {...commonProps}
-            {...commonWingoProps}
-            mode="increasing"
-            defaultWordLength={DEFAULT_WORD_LENGTH_INCREASING}
-          />
-        );
+        return <WingoConfig {...commonProps} {...commonWingoProps} mode="increasing" />;
 
       case "wingo/limitless":
-        return (
-          <WingoConfig
-            {...commonProps}
-            {...commonWingoProps}
-            mode="limitless"
-            defaultWordLength={DEFAULT_WORD_LENGTH_INCREASING}
-          />
-        );
+        return <WingoConfig {...commonProps} {...commonWingoProps} mode="limitless" />;
 
       case "wingo/puzzle":
-        return (
-          <WingoConfig
-            {...commonProps}
-            {...commonWingoProps}
-            mode="puzzle"
-            defaultWordLength={DEFAULT_WORD_LENGTH_PUZZLE}
-            defaultnumGuesses={DEFAULT_NUM_GUESSES_PUZZLE}
-          />
-        );
+        return <WingoConfig {...commonProps} {...commonWingoProps} mode="puzzle" />;
 
       case "wingo/interlinked":
         // TODO: Directly return WingoInterlinked component?
@@ -463,24 +436,10 @@ export const App: React.FC = () => {
         return <LettersGameConfig {...commonProps} theme={Themes.GenericLettersGame} />;
 
       case "NumbersGame":
-        return (
-          <NumbersGameConfig
-            {...commonProps}
-            defaultNumGuesses={DEFAULT_NUM_GUESSES_NUMBERS_GAME}
-            theme={Themes.GenericNumbersGame}
-          />
-        );
+        return <NumbersGameConfig {...commonProps} theme={Themes.GenericNumbersGame} />;
 
       case "Conundrum":
-        return (
-          <WingoConfig
-            {...commonProps}
-            {...commonWingoProps}
-            mode="conundrum"
-            defaultWordLength={DEFAULT_WORD_LENGTH_CONUNDRUM}
-            defaultnumGuesses={DEFAULT_NUM_GUESSES_PUZZLE}
-          />
-        );
+        return <WingoConfig {...commonProps} {...commonWingoProps} mode="conundrum" />;
 
       case "ArithmeticReveal":
         return <ArithmeticReveal {...commonProps} />;

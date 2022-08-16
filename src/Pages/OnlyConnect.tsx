@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { PageName } from "../PageNames";
 import { Button } from "../Components/Button";
-import { categoryMappings } from "../Data/DefaultGamemodeSettings";
 import GamemodeSettingsMenu from "../Components/GamemodeSettingsMenu";
 import { MessageNotification } from "../Components/MessageNotification";
 import { shuffleArray } from "./ArithmeticDrag";
@@ -10,8 +9,9 @@ import { SaveData, SettingsData } from "../Data/SaveData";
 import { useClickChime, useCorrectChime, useFailureChime, useLightPingChime } from "../Data/Sounds";
 import { Theme } from "../Data/Themes";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
+import { categoryMappings } from "../Data/WordArrayMappings";
 
-export interface GroupWallProps {
+export interface OnlyConnectProps {
   gamemodeSettings?: {
     numGroups?: number;
     groupSize?: number;
@@ -21,7 +21,7 @@ export interface GroupWallProps {
   };
 }
 
-interface Props extends GroupWallProps {
+interface Props extends OnlyConnectProps {
   isCampaignLevel: boolean;
   page: PageName;
   theme: Theme;

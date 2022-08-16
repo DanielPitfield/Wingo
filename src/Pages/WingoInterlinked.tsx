@@ -11,15 +11,11 @@ import { MessageNotification } from "../Components/MessageNotification";
 import { CrosswordGenerationResult, crosswordGenerator as crossWordGenerator } from "../Data/CrossWordGenerator";
 import GamemodeSettingsMenu from "../Components/GamemodeSettingsMenu";
 import ProgressBar, { GreenToRedColorTransition } from "../Components/ProgressBar";
-import {
-  categoryMappings,
-  DEFAULT_WORD_LENGTH,
-  MAX_TARGET_WORD_LENGTH,
-  MIN_TARGET_WORD_LENGTH,
-  wordLengthMappingsTargets,
-} from "../Data/DefaultGamemodeSettings";
 import { PageName } from "../PageNames";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
+import { getGamemodeDefaultWordLength } from "../Data/DefaultWordLengths";
+import { categoryMappings, wordLengthMappingsTargets } from "../Data/WordArrayMappings";
+import { MAX_TARGET_WORD_LENGTH, MIN_TARGET_WORD_LENGTH } from "../Data/GamemodeSettingsInputLimits";
 
 type Orientation = "vertical" | "horizontal";
 
@@ -112,10 +108,11 @@ export const WingoInterlinked: React.FC<Props> = (props) => {
   const fallbackValue = STARTING_NUM_GRID_GUESSES === 0 ? DEFAULT_NUM_WORD_GUESSES : 0;
   const STARTING_NUM_WORD_GUESSES = specifiedValue ?? fallbackValue;
 
+  // TODO: What's the point of DefaultGamemodeSettings.ts, if most components define the settings within the component like this?
   const defaultGamemodeSettings = {
     numWords: STARTING_NUM_WORDS,
-    minWordLength: props.gamemodeSettings?.minWordLength ?? DEFAULT_WORD_LENGTH,
-    maxWordLength: props.gamemodeSettings?.maxWordLength ?? DEFAULT_WORD_LENGTH,
+    minWordLength: props.gamemodeSettings?.minWordLength ?? getGamemodeDefaultWordLength(props.page),
+    maxWordLength: props.gamemodeSettings?.maxWordLength ?? getGamemodeDefaultWordLength(props.page),
     fitRestrictionConfig: props.gamemodeSettings?.fitRestrictionConfig ?? { isRestricted: false },
 
     // Specified amount of grid guesses (either from initial config or gamemode settings), otherwise zero

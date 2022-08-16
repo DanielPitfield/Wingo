@@ -15,8 +15,8 @@ import { arrayMove, OrderGroup } from "react-draggable-order";
 import { DraggableItem } from "../Components/DraggableItem";
 import { getQuestionSetOutcome } from "./Algebra";
 import GamemodeSettingsMenu from "../Components/GamemodeSettingsMenu";
-import { wordLengthMappingsTargets } from "../Data/DefaultGamemodeSettings";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
+import { wordLengthMappingsTargets } from "../Data/WordArrayMappings";
 
 const wordCodesModes = ["match", "question"] as const;
 export type wordCodesMode = typeof wordCodesModes[number];
@@ -268,6 +268,7 @@ const WordCodes: React.FC<Props> = (props) => {
   }, [wordCodes]);
 
   // Determines whether a word can be made only using the specified valid letters
+  // TODO: Refactor using .every()?
   function isWordValid(validLetters: string[], word: string) {
     // Letters of the word
     const wordLetters = word.split("");
@@ -288,6 +289,7 @@ const WordCodes: React.FC<Props> = (props) => {
 
     // Single digit codes are given to each letter (so wordLength must be max of 9)
     if (!targetWordArray || gamemodeSettings.codeLength >= 10) {
+      // TODO: Set code length to 4?
       targetWordArray = wordLengthMappingsTargets.find((x) => x.value === DEFAULT_CODE_LENGTH)?.array!;
     }
 

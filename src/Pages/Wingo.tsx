@@ -10,7 +10,6 @@ import { Theme } from "../Data/Themes";
 import { SettingsData } from "../Data/SaveData";
 import { useCorrectChime, useFailureChime, useLightPingChime } from "../Data/Sounds";
 import GamemodeSettingsMenu from "../Components/GamemodeSettingsMenu";
-import { MAX_TARGET_WORD_LENGTH, MIN_TARGET_WORD_LENGTH, categoryMappings } from "../Data/DefaultGamemodeSettings";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
 import {
   MIN_PUZZLE_WORD_LENGTH,
@@ -18,7 +17,10 @@ import {
   MIN_PUZZLE_REVEAL_INTERVAL_SECONDS,
   MAX_PUZZLE_REVEAL_INTERVAL_SECONDS,
   MIN_PUZZLE_LEAVE_NUM_BLANKS,
+  MAX_TARGET_WORD_LENGTH,
+  MIN_TARGET_WORD_LENGTH,
 } from "../Data/GamemodeSettingsInputLimits";
+import { categoryMappings } from "../Data/WordArrayMappings";
 
 interface Props {
   isCampaignLevel: boolean;

@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { PageName } from "../PageNames";
 import { Button } from "../Components/Button";
-import { DEFAULT_WORD_LENGTH, wordLengthMappingsTargets } from "../Data/DefaultGamemodeSettings";
 import GamemodeSettingsMenu from "../Components/GamemodeSettingsMenu";
 import { MessageNotification } from "../Components/MessageNotification";
 import { shuffleArray } from "./ArithmeticDrag";
@@ -12,6 +11,8 @@ import { useClickChime, useCorrectChime, useFailureChime, useLightPingChime } fr
 import { Theme } from "../Data/Themes";
 import { pickRandomElementFrom } from "./WingoConfig";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
+import { getGamemodeDefaultWordLength } from "../Data/DefaultWordLengths";
+import { wordLengthMappingsTargets } from "../Data/WordArrayMappings";
 
 export interface SameLetterWordsProps {
   gamemodeSettings?: {
@@ -69,7 +70,7 @@ const SameLetterWords: React.FC<Props> = (props) => {
     numMatchingWordsFloor < STARTING_NUM_TOTAL_WORDS ? numMatchingWordsFloor : STARTING_NUM_TOTAL_WORDS - 1;
 
   const defaultGamemodeSettings = {
-    wordLength: props.gamemodeSettings?.wordLength ?? DEFAULT_WORD_LENGTH,
+    wordLength: props.gamemodeSettings?.wordLength ?? getGamemodeDefaultWordLength(props.page),
     numMatchingWords: STARTING_NUM_MATCHING_WORDS,
     numTotalWords: STARTING_NUM_TOTAL_WORDS,
     numGuesses: props.gamemodeSettings?.numGuesses ?? DEFAULT_NUM_GUESSES,

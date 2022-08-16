@@ -1,5 +1,5 @@
-import { wordLengthMappingsGuessable, wordLengthMappingsTargets } from "./DefaultGamemodeSettings";
 import { pickRandomElementFrom } from "../Pages/WingoConfig";
+import { wordLengthMappingsGuessable, wordLengthMappingsTargets } from "./WordArrayMappings";
 
 export function checkAnagram(constructedWord: string, targetWord: string): boolean {
   const constructedWordLetters = constructedWord.split("").sort().join("");

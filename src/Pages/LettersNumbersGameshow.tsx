@@ -177,7 +177,7 @@ export const LettersNumbersGameshow: React.FC<Props> = (props) => {
           isCampaignLevel={false}
           mode="conundrum"
           defaultWordLength={9}
-          defaultnumGuesses={1}
+          defaultNumGuesses={1}
           enforceFullLengthGuesses={true}
         />
       );

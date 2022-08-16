@@ -23,7 +23,7 @@ export const area: AreaConfig = {
         targetWord: "start",
         enforceFullLengthGuesses: true,
         defaultWordLength: 5,
-        defaultnumGuesses: 6,
+        defaultNumGuesses: 6,
 
         gamemodeSettings: {
           isFirstLetterProvided: true,
@@ -51,7 +51,7 @@ export const area: AreaConfig = {
           targetWord: "learn",
           enforceFullLengthGuesses: true,
           defaultWordLength: 5,
-          defaultnumGuesses: 6,
+          defaultNumGuesses: 6,
           /*
           These settings with their default values will be used for the campaign level
           Normally, declaring settings like this would mean they are configurable

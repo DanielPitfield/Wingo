@@ -5,7 +5,7 @@ import { SaveData, SettingsData } from "../Data/SaveData";
 import { DEFAULT_ALPHABET } from "../Components/Keyboard";
 import { pickRandomElementFrom } from "./WingoConfig";
 import { Theme } from "../Data/Themes";
-import { categoryMappings } from "../Data/DefaultGamemodeSettings";
+import { categoryMappings } from "../Data/WordArrayMappings";
 
 export interface LetterCategoriesConfigProps {
   campaignConfig:

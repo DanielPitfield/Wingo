@@ -7,7 +7,7 @@ import { MessageNotification } from "./MessageNotification";
 import NumbleConfig, { NumbleConfigProps } from "../Pages/NumbleConfig";
 import ArithmeticDrag, { ArithmeticDragProps } from "../Pages/ArithmeticDrag";
 import ArithmeticReveal, { ArithmeticRevealProps } from "../Pages/ArithmeticReveal";
-import OnlyConnect, { GroupWallProps } from "../Pages/OnlyConnect";
+import OnlyConnect, { OnlyConnectProps } from "../Pages/OnlyConnect";
 import { SettingsData } from "../Data/SaveData";
 import { Theme, Themes } from "../Data/Themes";
 import Algebra, { AlgebraProps } from "../Pages/Algebra";
@@ -56,7 +56,7 @@ export type LevelConfig = {
     | {
         gameCategory: "GroupWall";
         page: PageName;
-        levelProps: GroupWallProps;
+        levelProps: OnlyConnectProps;
       }
     | {
         gameCategory: "SameLetterWords";

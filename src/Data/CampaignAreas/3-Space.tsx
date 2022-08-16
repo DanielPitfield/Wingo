@@ -16,7 +16,7 @@ export const area: AreaConfig = {
         targetWord: "space",
         enforceFullLengthGuesses: true,
         defaultWordLength: 5,
-        defaultnumGuesses: 6,
+        defaultNumGuesses: 6,
         gamemodeSettings: {
           isFirstLetterProvided: false,
           puzzleLeaveNumBlanks: 0,
@@ -44,7 +44,7 @@ export const area: AreaConfig = {
           targetWord: "earth",
           enforceFullLengthGuesses: true,
           defaultWordLength: 5,
-          defaultnumGuesses: 6,
+          defaultNumGuesses: 6,
           gamemodeSettings: {
             isFirstLetterProvided: true,
             puzzleLeaveNumBlanks: 0,
@@ -69,7 +69,7 @@ export const area: AreaConfig = {
           targetWord: "mars",
           enforceFullLengthGuesses: true,
           defaultWordLength: 4,
-          defaultnumGuesses: 6,
+          defaultNumGuesses: 6,
           gamemodeSettings: {
             isFirstLetterProvided: false,
             puzzleLeaveNumBlanks: 0,
@@ -94,7 +94,7 @@ export const area: AreaConfig = {
           targetWord: "orbit",
           enforceFullLengthGuesses: true,
           defaultWordLength: 5,
-          defaultnumGuesses: 6,
+          defaultNumGuesses: 6,
           gamemodeSettings: {
             isFirstLetterProvided: true,
             puzzleLeaveNumBlanks: 0,
@@ -119,7 +119,7 @@ export const area: AreaConfig = {
           targetWord: "venus",
           enforceFullLengthGuesses: true,
           defaultWordLength: 5,
-          defaultnumGuesses: 6,
+          defaultNumGuesses: 6,
           gamemodeSettings: {
             isFirstLetterProvided: false,
             puzzleLeaveNumBlanks: 0,
@@ -144,7 +144,7 @@ export const area: AreaConfig = {
           targetWord: "mercury",
           enforceFullLengthGuesses: true,
           defaultWordLength: 7,
-          defaultnumGuesses: 6,
+          defaultNumGuesses: 6,
           gamemodeSettings: {
             isFirstLetterProvided: false,
             puzzleLeaveNumBlanks: 0,
@@ -169,7 +169,7 @@ export const area: AreaConfig = {
           targetWord: "gravity",
           enforceFullLengthGuesses: true,
           defaultWordLength: 7,
-          defaultnumGuesses: 6,
+          defaultNumGuesses: 6,
           gamemodeSettings: {
             isFirstLetterProvided: true,
             puzzleLeaveNumBlanks: 4,
@@ -194,7 +194,7 @@ export const area: AreaConfig = {
           targetWord: "jupiter",
           enforceFullLengthGuesses: true,
           defaultWordLength: 7,
-          defaultnumGuesses: 6,
+          defaultNumGuesses: 6,
           gamemodeSettings: {
             isFirstLetterProvided: true,
             puzzleLeaveNumBlanks: 0,
@@ -219,7 +219,7 @@ export const area: AreaConfig = {
           targetWord: "galaxy",
           enforceFullLengthGuesses: true,
           defaultWordLength: 6,
-          defaultnumGuesses: 6,
+          defaultNumGuesses: 6,
           gamemodeSettings: {
             isFirstLetterProvided: true,
             puzzleLeaveNumBlanks: 0,
@@ -244,7 +244,7 @@ export const area: AreaConfig = {
           targetWord: "neptune",
           enforceFullLengthGuesses: true,
           defaultWordLength: 7,
-          defaultnumGuesses: 6,
+          defaultNumGuesses: 6,
           gamemodeSettings: {
             isFirstLetterProvided: false,
             puzzleLeaveNumBlanks: 0,
@@ -269,7 +269,7 @@ export const area: AreaConfig = {
           targetWord: "flare",
           enforceFullLengthGuesses: true,
           defaultWordLength: 5,
-          defaultnumGuesses: 6,
+          defaultNumGuesses: 6,
           gamemodeSettings: {
             isFirstLetterProvided: false,
             puzzleLeaveNumBlanks: 3,
@@ -310,7 +310,7 @@ export const area: AreaConfig = {
           targetWord: "saturn",
           enforceFullLengthGuesses: true,
           defaultWordLength: 6,
-          defaultnumGuesses: 6,
+          defaultNumGuesses: 6,
           gamemodeSettings: {
             isFirstLetterProvided: false,
             puzzleLeaveNumBlanks: 0,
@@ -335,7 +335,7 @@ export const area: AreaConfig = {
           targetWord: "aurora",
           enforceFullLengthGuesses: true,
           defaultWordLength: 6,
-          defaultnumGuesses: 6,
+          defaultNumGuesses: 6,
           gamemodeSettings: {
             isFirstLetterProvided: false,
             puzzleLeaveNumBlanks: 3,
@@ -360,7 +360,7 @@ export const area: AreaConfig = {
           targetWord: "uranus",
           enforceFullLengthGuesses: true,
           defaultWordLength: 6,
-          defaultnumGuesses: 6,
+          defaultNumGuesses: 6,
           gamemodeSettings: {
             isFirstLetterProvided: false,
             puzzleLeaveNumBlanks: 0,
@@ -385,7 +385,7 @@ export const area: AreaConfig = {
           targetWord: "plasma",
           enforceFullLengthGuesses: true,
           defaultWordLength: 6,
-          defaultnumGuesses: 7,
+          defaultNumGuesses: 7,
           gamemodeSettings: {
             isFirstLetterProvided: true,
             puzzleLeaveNumBlanks: 3,

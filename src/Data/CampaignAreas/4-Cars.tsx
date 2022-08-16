@@ -15,7 +15,7 @@ export const area: AreaConfig = {
         targetWord: "cars",
         enforceFullLengthGuesses: true,
         defaultWordLength: 4,
-        defaultnumGuesses: 6,
+        defaultNumGuesses: 6,
         gamemodeSettings: {
           isFirstLetterProvided: true,
           puzzleLeaveNumBlanks: 0,

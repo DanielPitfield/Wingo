@@ -8,7 +8,7 @@ import { LetterCategoriesConfigProps } from "../Pages/LetterCategoriesConfig";
 import { NumbleConfigProps } from "../Pages/NumbleConfig";
 import { ArithmeticDragProps, arithmeticMode } from "../Pages/ArithmeticDrag";
 import { ArithmeticRevealProps } from "../Pages/ArithmeticReveal";
-import { GroupWallProps } from "../Pages/OnlyConnect";
+import { OnlyConnectProps } from "../Pages/OnlyConnect";
 import { Themes } from "./Themes";
 import { AlgebraProps } from "../Pages/Algebra";
 import { NumberSetsProps } from "../Pages/NumberSets";
@@ -558,15 +558,15 @@ export class SaveData {
     return null;
   }
 
-  public static setGroupWallGamemodeSettings(gameSettings: GroupWallProps["gamemodeSettings"]) {
+  public static setGroupWallGamemodeSettings(gameSettings: OnlyConnectProps["gamemodeSettings"]) {
     localStorage.setItem("groupWallGamemodeSettings", JSON.stringify(gameSettings));
   }
 
-  public static getGroupWallGamemodeSettings(): GroupWallProps["gamemodeSettings"] | null {
+  public static getGroupWallGamemodeSettings(): OnlyConnectProps["gamemodeSettings"] | null {
     const groupWallGamemodeSettings = localStorage.getItem("groupWallGamemodeSettings");
 
     if (groupWallGamemodeSettings) {
-      return JSON.parse(groupWallGamemodeSettings) as GroupWallProps["gamemodeSettings"];
+      return JSON.parse(groupWallGamemodeSettings) as OnlyConnectProps["gamemodeSettings"];
     }
 
     return null;
