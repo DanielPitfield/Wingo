@@ -267,20 +267,12 @@ const WordCodes: React.FC<Props> = (props) => {
     }
   }, [wordCodes]);
 
-  // Determines whether a word can be made only using the specified valid letters
-  // TODO: Refactor using .every()?
+  // Determines whether a word only contains the specified valid letters
   function isWordValid(validLetters: string[], word: string) {
-    // Letters of the word
+    // Letters of the word being checked
     const wordLetters = word.split("");
 
-    for (let i = 0; i < wordLetters.length; i++) {
-      const letter = wordLetters[i];
-      // Any of the word's letters are not a valid letter
-      if (!validLetters.includes(letter)) {
-        return false;
-      }
-    }
-    return true;
+    return wordLetters.every(letter => validLetters.includes(letter));
   }
 
   function determineWordCodes() {
@@ -300,7 +292,7 @@ const WordCodes: React.FC<Props> = (props) => {
     // How many valid letters at this point?
     const originalWordLength = validLetters.length;
 
-    // Add some additional letters the  other words will be able to be made from (more letters should make the game harder)
+    // Add some additional letters the other words will be able to be made from (more letters should make the game harder)
     while (validLetters.length < originalWordLength + gamemodeSettings.numAdditionalLetters) {
       const randomLetter = pickRandomElementFrom(DEFAULT_ALPHABET);
 
