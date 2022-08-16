@@ -17,6 +17,7 @@ import { getQuestionSetOutcome } from "./Algebra";
 import GamemodeSettingsMenu from "../Components/GamemodeSettingsMenu";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
 import { wordLengthMappingsTargets } from "../Data/WordArrayMappings";
+import { MAX_CODE_LENGTH } from "../Data/GamemodeSettingsInputLimits";
 
 const wordCodesModes = ["match", "question"] as const;
 export type wordCodesMode = typeof wordCodesModes[number];
@@ -109,13 +110,15 @@ const WordCodes: React.FC<Props> = (props) => {
     STARTING_NUM_DISPLAY_CODES
   );
 
+  const STARTING_CODE_LENGTH = Math.min(props.gamemodeSettings?.codeLength ?? DEFAULT_CODE_LENGTH, MAX_CODE_LENGTH)
+
   const defaultGamemodeSettings = {
     numDisplayWords: STARTING_NUM_DISPLAY_WORDS,
     numDisplayCodes: STARTING_NUM_DISPLAY_CODES,
     numWordToCodeQuestions: props.gamemodeSettings?.numWordToCodeQuestions ?? DEFAULT_NUM_WORD_TO_CODE_QUESTIONS,
     numCodeToWordQuestions: props.gamemodeSettings?.numCodeToWordQuestions ?? DEFAULT_NUM_CODE_TO_WORD_QUESTIONS,
 
-    codeLength: props.gamemodeSettings?.codeLength ?? DEFAULT_CODE_LENGTH,
+    codeLength: STARTING_CODE_LENGTH,
     numCodesToMatch: props.gamemodeSettings?.numCodesToMatch ?? DEFAULT_NUM_CODES_TO_MATCH,
     numAdditionalLetters: props.gamemodeSettings?.numAdditionalLetters ?? DEFAULT_NUM_ADDITIONAL_LETTERS,
     numGuesses: props.gamemodeSettings?.numGuesses ?? DEFAULT_NUM_GUESSES,
@@ -281,7 +284,8 @@ const WordCodes: React.FC<Props> = (props) => {
 
     // Single digit codes are given to each letter (so wordLength must be max of 9)
     if (!targetWordArray || gamemodeSettings.codeLength >= 10) {
-      // TODO: Set code length to 4?
+      const newGamemodeSettings = {...gamemodeSettings, codeLength: DEFAULT_CODE_LENGTH};
+      setGamemodeSettings(newGamemodeSettings);
       targetWordArray = wordLengthMappingsTargets.find((x) => x.value === DEFAULT_CODE_LENGTH)?.array!;
     }
 

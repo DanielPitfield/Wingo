@@ -23,4 +23,6 @@ export const MAX_PUZZLE_REVEAL_INTERVAL_SECONDS = 10;
 // Must be atleast 1 letter blank (otherwise entire word is revealed)
 export const MIN_PUZZLE_LEAVE_NUM_BLANKS = 1;
 
+export const MAX_CODE_LENGTH = 9;
+
 // TODO: All constants defined within generateSettingsOptions() functions, tha don't rely on state of components should be moved here
