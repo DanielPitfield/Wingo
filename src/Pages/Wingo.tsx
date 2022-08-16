@@ -12,6 +12,13 @@ import { useCorrectChime, useFailureChime, useLightPingChime } from "../Data/Sou
 import GamemodeSettingsMenu from "../Components/GamemodeSettingsMenu";
 import { MAX_TARGET_WORD_LENGTH, MIN_TARGET_WORD_LENGTH, categoryMappings } from "../Data/DefaultGamemodeSettings";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
+import {
+  MIN_PUZZLE_WORD_LENGTH,
+  MAX_PUZZLE_WORD_LENGTH,
+  MIN_PUZZLE_REVEAL_INTERVAL_SECONDS,
+  MAX_PUZZLE_REVEAL_INTERVAL_SECONDS,
+  MIN_PUZZLE_LEAVE_NUM_BLANKS,
+} from "../Data/GamemodeSettingsInputLimits";
 
 interface Props {
   isCampaignLevel: boolean;
@@ -48,7 +55,7 @@ interface Props {
   revealedLetterIndexes: number[];
 
   page: PageName;
-  theme?: Theme;  
+  theme?: Theme;
   settings: SettingsData;
   setPage: (page: PageName) => void;
   onEnter: () => void;
@@ -202,16 +209,48 @@ const Wingo: React.FC<Props> = (props) => {
     return Grid;
   }
 
+  const handleGamemodeSettingsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { type, name } = e.target;
+
+    if (!type) {
+      return;
+    }
+
+    if (!name) {
+      return;
+    }
+
+    // TODO: Move this out to its own function, export it, so it can be used within any component
+    const getNewGamemodeSettingValue = (e: React.ChangeEvent<HTMLInputElement>) => {
+      if (type === "number" && name === "puzzleRevealMs") {
+        return e.target.valueAsNumber * 1000;
+      } else if (type === "number") {
+        return e.target.valueAsNumber;
+      } else if (type === "checkbox" && name === "maxLivesConfig") {
+        return e.target.checked ? { isLimited: true, maxLives: mostRecentMaxLives } : { isLimited: false };
+      } else if (type === "checkbox" && name === "timerConfig") {
+        // If currently timed, on change, make the game not timed and vice versa
+        return e.target.checked ? { isTimed: true, seconds: mostRecentTotalSeconds } : { isTimed: false };
+      } else if (type === "number" && name === "maxLivesConfig") {
+        return { isLimited: true, maxLives: e.target.valueAsNumber };
+      } else if (type === "number" && name === "timerConfig") {
+        return { isTimed: true, seconds: e.target.valueAsNumber };
+      } else if (type === "checkbox") {
+        return e.target.checked;
+      } else {
+        return e.target.value;
+      }
+    };
+
+    const newGamemodeSettings: typeof props.gamemodeSettings = {
+      ...props.gamemodeSettings,
+      [name]: getNewGamemodeSettingValue(e),
+    };
+
+    props.updateGamemodeSettings(newGamemodeSettings);
+  };
+
   function generateSettingsOptions(): React.ReactNode {
-    // TODO: PuzzleWordMappings? There are currently only 10 length puzzle words
-    const MIN_PUZZLE_WORD_LENGTH = 9;
-    const MAX_PUZZLE_WORD_LENGTH = 11;
-
-    const MIN_PUZZLE_REVEAL_INTERVAL_SECONDS = 1;
-    const MAX_PUZZLE_REVEAL_INTERVAL_SECONDS = 10;
-
-    // Leave atleast 1 letter blank (otherwise entire word is revealed)
-    const MIN_PUZZLE_LEAVE_NUM_BLANKS = 1;
     // Show atleast 1 letter (can't all be blank!)
     const MAX_PUZZLE_LEAVE_NUM_BLANKS = props.targetWord.length - 1;
 
@@ -219,7 +258,7 @@ const Wingo: React.FC<Props> = (props) => {
     const continuationMode = props.mode === "increasing" || props.mode === "limitless";
     const MIN_WORD_LENGTH_LABEL = continuationMode ? "Starting Word Length" : "Word Length";
 
-    // The starting word length must be atleast one below the maximum target word length (for continuation modes)
+    // The starting word length must be atleast one below the maximum target word length (for 'increasing' mode), otherwise it would just be a mode of guessing one long word
     const MIN_WORD_LENGTH_MAX_BOUNDARY =
       props.mode === "increasing" ? MAX_TARGET_WORD_LENGTH - 1 : MAX_TARGET_WORD_LENGTH;
 
@@ -232,16 +271,11 @@ const Wingo: React.FC<Props> = (props) => {
           <label>
             <input
               type="number"
+              name="wordLength"
               value={props.gamemodeSettings.wordLength}
               min={MIN_PUZZLE_WORD_LENGTH}
               max={MAX_PUZZLE_WORD_LENGTH}
-              onChange={(e) => {
-                const newGamemodeSettings = {
-                  ...props.gamemodeSettings,
-                  wordLength: e.target.valueAsNumber,
-                };
-                props.updateGamemodeSettings(newGamemodeSettings);
-              }}
+              onChange={handleGamemodeSettingsChange}
             ></input>
             Word Length
           </label>
@@ -249,18 +283,12 @@ const Wingo: React.FC<Props> = (props) => {
           <label>
             <input
               type="number"
+              name="puzzleRevealMs"
               // Show value in seconds (divide by 1000)
               value={props.gamemodeSettings.puzzleRevealMs / 1000}
               min={MIN_PUZZLE_REVEAL_INTERVAL_SECONDS}
               max={MAX_PUZZLE_REVEAL_INTERVAL_SECONDS}
-              onChange={(e) => {
-                const newGamemodeSettings = {
-                  ...props.gamemodeSettings,
-                  // Update gamemode settings with milliseconds (multiply by 1000)
-                  puzzleRevealMs: e.target.valueAsNumber * 1000,
-                };
-                props.updateGamemodeSettings(newGamemodeSettings);
-              }}
+              onChange={handleGamemodeSettingsChange}
             ></input>
             Reveal Interval (seconds)
           </label>
@@ -268,16 +296,11 @@ const Wingo: React.FC<Props> = (props) => {
           <label>
             <input
               type="number"
+              name="puzzleLeaveNumBlanks"
               value={props.gamemodeSettings.puzzleLeaveNumBlanks}
               min={MIN_PUZZLE_LEAVE_NUM_BLANKS}
               max={MAX_PUZZLE_LEAVE_NUM_BLANKS}
-              onChange={(e) => {
-                const newGamemodeSettings = {
-                  ...props.gamemodeSettings,
-                  puzzleLeaveNumBlanks: e.target.valueAsNumber,
-                };
-                props.updateGamemodeSettings(newGamemodeSettings);
-              }}
+              onChange={handleGamemodeSettingsChange}
             ></input>
             Number of letters left blank
           </label>
@@ -289,16 +312,11 @@ const Wingo: React.FC<Props> = (props) => {
           <label>
             <input
               type="number"
+              name="wordLength"
               value={props.gamemodeSettings.wordLength}
               min={MIN_TARGET_WORD_LENGTH}
               max={MIN_WORD_LENGTH_MAX_BOUNDARY}
-              onChange={(e) => {
-                const newGamemodeSettings = {
-                  ...props.gamemodeSettings,
-                  wordLength: e.target.valueAsNumber,
-                };
-                props.updateGamemodeSettings(newGamemodeSettings);
-              }}
+              onChange={handleGamemodeSettingsChange}
             ></input>
             {MIN_WORD_LENGTH_LABEL}
           </label>
@@ -307,16 +325,11 @@ const Wingo: React.FC<Props> = (props) => {
             <label>
               <input
                 type="number"
+                name="wordLengthMaxLimit"
                 value={props.gamemodeSettings.wordLengthMaxLimit}
                 min={props.gamemodeSettings.wordLength + 1}
                 max={MAX_TARGET_WORD_LENGTH}
-                onChange={(e) => {
-                  const newGamemodeSettings = {
-                    ...props.gamemodeSettings,
-                    wordLengthMaxLimit: e.target.valueAsNumber,
-                  };
-                  props.updateGamemodeSettings(newGamemodeSettings);
-                }}
+                onChange={handleGamemodeSettingsChange}
               ></input>
               Ending Word Length
             </label>
@@ -328,15 +341,8 @@ const Wingo: React.FC<Props> = (props) => {
                 <input
                   checked={props.gamemodeSettings.maxLivesConfig.isLimited}
                   type="checkbox"
-                  onChange={() => {
-                    // If currently limited, on change, make the game not limited and vice versa
-                    const newmaxLivesConfig: { isLimited: true; maxLives: number } | { isLimited: false } = props
-                      .gamemodeSettings.maxLivesConfig.isLimited
-                      ? { isLimited: false }
-                      : { isLimited: true, maxLives: mostRecentMaxLives };
-                    const newGamemodeSettings = { ...props.gamemodeSettings, maxLivesConfig: newmaxLivesConfig };
-                    props.updateGamemodeSettings(newGamemodeSettings);
-                  }}
+                  name="maxLivesConfig"
+                  onChange={handleGamemodeSettingsChange}
                 ></input>
                 Cap max number of extra lives
               </label>
@@ -344,16 +350,13 @@ const Wingo: React.FC<Props> = (props) => {
                 <label>
                   <input
                     type="number"
+                    name="maxLivesConfig"
                     value={props.gamemodeSettings.maxLivesConfig.maxLives}
                     min={1}
                     max={50}
                     onChange={(e) => {
                       setMostRecentMaxLives(e.target.valueAsNumber);
-                      const newGamemodeSettings = {
-                        ...props.gamemodeSettings,
-                        maxLivesConfig: { isLimited: true, maxLives: e.target.valueAsNumber },
-                      };
-                      props.updateGamemodeSettings(newGamemodeSettings);
+                      handleGamemodeSettingsChange(e);
                     }}
                   ></input>
                   Max number of extra lives
@@ -366,13 +369,8 @@ const Wingo: React.FC<Props> = (props) => {
             <input
               checked={props.gamemodeSettings.isFirstLetterProvided}
               type="checkbox"
-              onChange={() => {
-                const newGamemodeSettings = {
-                  ...props.gamemodeSettings,
-                  isFirstLetterProvided: !props.gamemodeSettings.isFirstLetterProvided,
-                };
-                props.updateGamemodeSettings(newGamemodeSettings);
-              }}
+              name="isFirstLetterProvided"
+              onChange={handleGamemodeSettingsChange}
             ></input>
             First Letter Provided
           </label>
@@ -381,13 +379,8 @@ const Wingo: React.FC<Props> = (props) => {
             <input
               checked={props.gamemodeSettings.isHintShown}
               type="checkbox"
-              onChange={() => {
-                const newGamemodeSettings = {
-                  ...props.gamemodeSettings,
-                  isHintShown: !props.gamemodeSettings.isHintShown,
-                };
-                props.updateGamemodeSettings(newGamemodeSettings);
-              }}
+              name="isHintShown"
+              onChange={handleGamemodeSettingsChange}
             ></input>
             Hints
           </label>
@@ -397,15 +390,8 @@ const Wingo: React.FC<Props> = (props) => {
               <input
                 checked={props.gamemodeSettings.timerConfig.isTimed}
                 type="checkbox"
-                onChange={() => {
-                  // If currently timed, on change, make the game not timed and vice versa
-                  const newTimer: { isTimed: true; seconds: number } | { isTimed: false } = props.gamemodeSettings
-                    .timerConfig.isTimed
-                    ? { isTimed: false }
-                    : { isTimed: true, seconds: mostRecentTotalSeconds };
-                  const newGamemodeSettings = { ...props.gamemodeSettings, timerConfig: newTimer };
-                  props.updateGamemodeSettings(newGamemodeSettings);
-                }}
+                name="timerConfig"
+                onChange={handleGamemodeSettingsChange}
               ></input>
               Timer
             </label>
@@ -413,17 +399,14 @@ const Wingo: React.FC<Props> = (props) => {
               <label>
                 <input
                   type="number"
+                  name="timerConfig"
                   value={props.gamemodeSettings.timerConfig.seconds}
                   min={10}
                   max={120}
                   step={5}
                   onChange={(e) => {
                     setMostRecentTotalSeconds(e.target.valueAsNumber);
-                    const newGamemodeSettings = {
-                      ...props.gamemodeSettings,
-                      timer: { isTimed: true, seconds: e.target.valueAsNumber },
-                    };
-                    props.updateGamemodeSettings(newGamemodeSettings);
+                    handleGamemodeSettingsChange(e);
                   }}
                 ></input>
                 Seconds
@@ -437,7 +420,7 @@ const Wingo: React.FC<Props> = (props) => {
     return settings;
   }
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (props.inProgress) {
       return;
     }
@@ -600,7 +583,7 @@ const Wingo: React.FC<Props> = (props) => {
   }
 
   // Render the timer to the next daily wingo
-  useEffect(() => {
+  React.useEffect(() => {
     if (props.mode !== "daily") {
       return;
     }
@@ -652,7 +635,11 @@ const Wingo: React.FC<Props> = (props) => {
           >
             {props.gameshowScore !== undefined
               ? "Next round"
-              : props.isCampaignLevel ? LEVEL_FINISHING_TEXT : (isOutcomeContinue() ? "Continue" : "Restart")}
+              : props.isCampaignLevel
+              ? LEVEL_FINISHING_TEXT
+              : isOutcomeContinue()
+              ? "Continue"
+              : "Restart"}
           </Button>
         )}
       </div>

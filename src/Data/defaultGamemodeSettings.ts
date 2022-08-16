@@ -89,6 +89,7 @@ export const MIN_TARGET_WORD_LENGTH = Math.min(...targetWordLengths);
 export const MAX_TARGET_WORD_LENGTH = Math.max(...targetWordLengths);
 export const DEFAULT_WORD_LENGTH = 5;
 
+// TODO: Better readability for this to be an array of objects {mode: PageName, wordLength: number}[]
 export const DEFAULT_WORD_LENGTH_INCREASING = 4;
 export const DEFAULT_WORD_LENGTH_CONUNDRUM = 9;
 export const DEFAULT_WORD_LENGTH_PUZZLE = 10;
