@@ -6,7 +6,7 @@ import { Theme } from "../Data/Themes";
 import { WingoInterlinked } from "./WingoInterlinked";
 
 import { Chance } from "chance";
-import { generateConundrum } from "../Data/Conundrum";
+import { generateConundrum, getAllWordsOfLength } from "../Data/Conundrum";
 import { PageName } from "../PageNames";
 import {
   defaultWingoInterlinkedGamemodeSettings,
@@ -14,7 +14,7 @@ import {
   DEFAULT_PUZZLE_REVEAL_MS,
 } from "../Data/DefaultGamemodeSettings";
 import { getGamemodeDefaultWordLength } from "../Data/DefaultWordLengths";
-import { MAX_TARGET_WORD_LENGTH } from "../Data/GamemodeSettingsInputLimits";
+import { MAX_TARGET_WORD_LENGTH, MIN_TARGET_WORD_LENGTH } from "../Data/GamemodeSettingsInputLimits";
 import { categoryMappings, wordLengthMappingsGuessable, wordLengthMappingsTargets } from "../Data/WordArrayMappings";
 
 export interface WingoConfigProps {
@@ -587,6 +587,33 @@ const WingoConfig: React.FC<Props> = (props) => {
     }
   }, [targetWord, currentWord, guesses, wordIndex, inProgress, inDictionary]);
 
+  const getValidWordArray = (targetWord: string) => {
+    // Valid word array directly specified
+    if (props.wordArray) {
+      return props.wordArray;
+    }
+    // Category mode - Find the array which includes the target word
+    else if (props.mode === "category") {
+      return categoryMappings
+        .find((categoryMapping) => categoryMapping.array.some(({ word }) => word === targetWord))
+        ?.array.map((x) => x.word)!;
+    }
+    // All words that are the same length as the target word
+    else if (props.enforceFullLengthGuesses) {
+      return getAllWordsOfLength(targetWord.length);
+    }
+    // All words of length up to and including the wordLength (partial and full length guesses)
+    else {
+      let newWordArray: string[] = [];
+      for (let i = MIN_TARGET_WORD_LENGTH; i <= targetWord.length; i++) {
+        // Find array containing words of i length
+        const currentLengthWordArray = getAllWordsOfLength(i);
+        newWordArray = newWordArray.concat(currentLengthWordArray);
+      }
+      return newWordArray;
+    }
+  };
+
   React.useEffect(() => {
     if (!targetWord) {
       return;
@@ -606,39 +633,8 @@ const WingoConfig: React.FC<Props> = (props) => {
       setCurrentWord(targetWord.charAt(0));
     }
 
-    // TODO: Refacotr - determining this wordArray
-    let wordArray: string[] = [];
-
-    // Valid word array directly specified
-    if (props.wordArray) {
-      wordArray = props.wordArray;
-    }
-    // Category mode - Find the array which includes the target word
-    else if (props.mode === "category") {
-      wordArray = categoryMappings
-        .find((categoryMapping) => categoryMapping.array.some(({ word }) => word === targetWord))
-        ?.array.map((x) => x.word)!;
-    }
-    // Find the valid array using wordLength
-    else {
-      // All arrays containing words of length up to and including the wordLength combined together (full and partial length guesses)
-      for (let i = 3; i <= gamemodeSettings.wordLength; i++) {
-        // Find array containing words of i length
-        const currentLengthWordArray = wordLengthMappingsGuessable.find((x) => x.value === i)?.array!;
-        if (currentLengthWordArray) {
-          // Add array to valid words
-          wordArray = wordArray.concat(currentLengthWordArray);
-        }
-      }
-    }
-
-    // When full length guesses is enforced, to be a valid guess, the guess must be of the current wordLength
-    if (props.enforceFullLengthGuesses) {
-      wordArray = wordArray.filter((word) => word.length === gamemodeSettings.wordLength);
-    }
-
     // Update the currently valid guesses which can be made
-    setWordArray(wordArray);
+    setWordArray(getValidWordArray(targetWord));
   }, [targetWord]);
 
   // Reset game after change of settings (stops cheating by changing settings partway through a game)
@@ -835,7 +831,7 @@ const WingoConfig: React.FC<Props> = (props) => {
           ? (revealedLetterIndexes.length - 1) * pointsLostPerGuess
           : numGuesses * pointsLostPerGuess;
 
-      const score = (props.roundScoringInfo.basePoints - pointsLost) ?? 0;
+      const score = props.roundScoringInfo.basePoints - pointsLost ?? 0;
 
       return score;
     }
