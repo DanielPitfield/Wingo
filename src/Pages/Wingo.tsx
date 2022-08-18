@@ -21,6 +21,7 @@ import {
   MIN_TARGET_WORD_LENGTH,
 } from "../Data/GamemodeSettingsInputLimits";
 import { categoryMappings } from "../Data/WordArrayMappings";
+import { getNewGamemodeSettingValue } from "../Data/GamemodeSettingsNewValue";
 
 interface Props {
   isCampaignLevel: boolean;
@@ -211,42 +212,12 @@ const Wingo: React.FC<Props> = (props) => {
     return Grid;
   }
 
-  const handleGamemodeSettingsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { type, name } = e.target;
-
-    if (!type) {
-      return;
-    }
-
-    if (!name) {
-      return;
-    }
-
-    // TODO: Move this out to its own function, export it, so it can be used within any component
-    const getNewGamemodeSettingValue = (e: React.ChangeEvent<HTMLInputElement>) => {
-      if (type === "number" && name === "puzzleRevealMs") {
-        return e.target.valueAsNumber * 1000;
-      } else if (type === "number") {
-        return e.target.valueAsNumber;
-      } else if (type === "checkbox" && name === "maxLivesConfig") {
-        return e.target.checked ? { isLimited: true, maxLives: mostRecentMaxLives } : { isLimited: false };
-      } else if (type === "checkbox" && name === "timerConfig") {
-        // If currently timed, on change, make the game not timed and vice versa
-        return e.target.checked ? { isTimed: true, seconds: mostRecentTotalSeconds } : { isTimed: false };
-      } else if (type === "number" && name === "maxLivesConfig") {
-        return { isLimited: true, maxLives: e.target.valueAsNumber };
-      } else if (type === "number" && name === "timerConfig") {
-        return { isTimed: true, seconds: e.target.valueAsNumber };
-      } else if (type === "checkbox") {
-        return e.target.checked;
-      } else {
-        return e.target.value;
-      }
-    };
-
+  const handleGamemodeSettingsChange = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const newGamemodeSettings: typeof props.gamemodeSettings = {
       ...props.gamemodeSettings,
-      [name]: getNewGamemodeSettingValue(e),
+      [e.target.name]: getNewGamemodeSettingValue(e, { maxLives: mostRecentMaxLives, totalSeconds: mostRecentTotalSeconds }),
     };
 
     props.updateGamemodeSettings(newGamemodeSettings);
