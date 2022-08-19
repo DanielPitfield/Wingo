@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Keyboard } from "../Components/Keyboard";
 import { PageName } from "../PageNames";
 import { WordRow } from "../Components/WordRow";

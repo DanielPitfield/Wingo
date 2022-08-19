@@ -44,7 +44,9 @@ export const Keyboard: React.FC<Props> = (props) => {
     const handleKeyDown = (event: KeyboardEvent) => {
       const inputKey = event.key.toString().toLowerCase();
 
-      if (["f1", "f2", "f3", "f4", "f5", "f6", "f7", "f8", "f9", "f10", "f11", "f12"].includes(inputKey)) {
+      const fKeys = ["f1", "f2", "f3", "f4", "f5", "f6", "f7", "f8", "f9", "f10", "f11", "f12"];
+
+      if (fKeys.includes(inputKey)) {
         return;
       }
 

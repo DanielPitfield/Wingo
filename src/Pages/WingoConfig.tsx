@@ -15,7 +15,8 @@ import {
 } from "../Data/DefaultGamemodeSettings";
 import { getGamemodeDefaultWordLength } from "../Data/DefaultWordLengths";
 import { MAX_TARGET_WORD_LENGTH, MIN_TARGET_WORD_LENGTH } from "../Data/GamemodeSettingsInputLimits";
-import { categoryMappings, wordLengthMappingsGuessable, wordLengthMappingsTargets } from "../Data/WordArrayMappings";
+import { categoryMappings, wordLengthMappingsTargets } from "../Data/WordArrayMappings";
+import { DEFAULT_ALPHABET } from "../Components/Keyboard";
 
 export interface WingoConfigProps {
   mode:
@@ -301,39 +302,16 @@ const WingoConfig: React.FC<Props> = (props) => {
   const [hasSubmitLetter, sethasSubmitLetter] = useState(false);
   const [revealedLetterIndexes, setRevealedLetterIndexes] = useState<number[]>([]);
 
-  const defaultLetterStatuses: {
+  let defaultLetterStatuses: {
     letter: string;
     status: "" | "contains" | "correct" | "not set" | "not in word";
-  }[] = [
-    { letter: "a", status: "" },
-    { letter: "b", status: "" },
-    { letter: "c", status: "" },
-    { letter: "d", status: "" },
-    { letter: "e", status: "" },
-    { letter: "f", status: "" },
-    { letter: "g", status: "" },
-    { letter: "h", status: "" },
-    { letter: "i", status: "" },
-    { letter: "j", status: "" },
-    { letter: "k", status: "" },
-    { letter: "l", status: "" },
-    { letter: "m", status: "" },
-    { letter: "n", status: "" },
-    { letter: "o", status: "" },
-    { letter: "p", status: "" },
-    { letter: "q", status: "" },
-    { letter: "r", status: "" },
-    { letter: "s", status: "" },
-    { letter: "t", status: "" },
-    { letter: "u", status: "" },
-    { letter: "v", status: "" },
-    { letter: "w", status: "" },
-    { letter: "x", status: "" },
-    { letter: "y", status: "" },
-    { letter: "z", status: "" },
-    { letter: "-", status: "" },
-    { letter: "'", status: "" },
-  ];
+  }[] = DEFAULT_ALPHABET.map((x) => ({
+    letter: x,
+    status: "",
+  }));
+
+  defaultLetterStatuses.push({ letter: "-", status: "" });
+  defaultLetterStatuses.push({ letter: "'", status: "" });
 
   const [letterStatuses, setletterStatuses] = useState<
     {
