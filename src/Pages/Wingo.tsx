@@ -21,7 +21,7 @@ import {
   MIN_TARGET_WORD_LENGTH,
 } from "../Data/GamemodeSettingsInputLimits";
 import { categoryMappings } from "../Data/WordArrayMappings";
-import { getNewGamemodeSettingValue } from "../Data/GamemodeSettingsNewValue";
+import { getNewGamemodeSettingValue, handleGamemodeSettingsChange } from "../Data/GamemodeSettingsNewValue";
 
 interface Props {
   isCampaignLevel: boolean;
@@ -212,15 +212,11 @@ const Wingo: React.FC<Props> = (props) => {
     return Grid;
   }
 
-  const handleGamemodeSettingsChange = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const newGamemodeSettings: typeof props.gamemodeSettings = {
-      ...props.gamemodeSettings,
-      [e.target.name]: getNewGamemodeSettingValue(e, { maxLives: mostRecentMaxLives, totalSeconds: mostRecentTotalSeconds }),
-    };
-
-    props.updateGamemodeSettings(newGamemodeSettings);
+  const handleGamemodeSettings = (e: React.ChangeEvent<HTMLInputElement>) => {
+    handleGamemodeSettingsChange(e, props.gamemodeSettings, props.updateGamemodeSettings, {
+      maxLives: mostRecentMaxLives,
+      totalSeconds: mostRecentTotalSeconds,
+    });
   };
 
   function generateSettingsOptions(): React.ReactNode {
@@ -248,7 +244,7 @@ const Wingo: React.FC<Props> = (props) => {
               value={props.gamemodeSettings.wordLength}
               min={MIN_PUZZLE_WORD_LENGTH}
               max={MAX_PUZZLE_WORD_LENGTH}
-              onChange={handleGamemodeSettingsChange}
+              onChange={handleGamemodeSettings}
             ></input>
             Word Length
           </label>
@@ -261,7 +257,7 @@ const Wingo: React.FC<Props> = (props) => {
               value={props.gamemodeSettings.puzzleRevealMs / 1000}
               min={MIN_PUZZLE_REVEAL_INTERVAL_SECONDS}
               max={MAX_PUZZLE_REVEAL_INTERVAL_SECONDS}
-              onChange={handleGamemodeSettingsChange}
+              onChange={handleGamemodeSettings}
             ></input>
             Reveal Interval (seconds)
           </label>
@@ -273,7 +269,7 @@ const Wingo: React.FC<Props> = (props) => {
               value={props.gamemodeSettings.puzzleLeaveNumBlanks}
               min={MIN_PUZZLE_LEAVE_NUM_BLANKS}
               max={MAX_PUZZLE_LEAVE_NUM_BLANKS}
-              onChange={handleGamemodeSettingsChange}
+              onChange={handleGamemodeSettings}
             ></input>
             Number of letters left blank
           </label>
@@ -289,7 +285,7 @@ const Wingo: React.FC<Props> = (props) => {
               value={props.gamemodeSettings.wordLength}
               min={MIN_TARGET_WORD_LENGTH}
               max={MIN_WORD_LENGTH_MAX_BOUNDARY}
-              onChange={handleGamemodeSettingsChange}
+              onChange={handleGamemodeSettings}
             ></input>
             {MIN_WORD_LENGTH_LABEL}
           </label>
@@ -302,7 +298,7 @@ const Wingo: React.FC<Props> = (props) => {
                 value={props.gamemodeSettings.wordLengthMaxLimit}
                 min={props.gamemodeSettings.wordLength + 1}
                 max={MAX_TARGET_WORD_LENGTH}
-                onChange={handleGamemodeSettingsChange}
+                onChange={handleGamemodeSettings}
               ></input>
               Ending Word Length
             </label>
@@ -315,7 +311,7 @@ const Wingo: React.FC<Props> = (props) => {
                   checked={props.gamemodeSettings.maxLivesConfig.isLimited}
                   type="checkbox"
                   name="maxLivesConfig"
-                  onChange={handleGamemodeSettingsChange}
+                  onChange={handleGamemodeSettings}
                 ></input>
                 Cap max number of extra lives
               </label>
@@ -329,7 +325,7 @@ const Wingo: React.FC<Props> = (props) => {
                     max={50}
                     onChange={(e) => {
                       setMostRecentMaxLives(e.target.valueAsNumber);
-                      handleGamemodeSettingsChange(e);
+                      handleGamemodeSettings(e);
                     }}
                   ></input>
                   Max number of extra lives
@@ -343,7 +339,7 @@ const Wingo: React.FC<Props> = (props) => {
               checked={props.gamemodeSettings.isFirstLetterProvided}
               type="checkbox"
               name="isFirstLetterProvided"
-              onChange={handleGamemodeSettingsChange}
+              onChange={handleGamemodeSettings}
             ></input>
             First Letter Provided
           </label>
@@ -353,7 +349,7 @@ const Wingo: React.FC<Props> = (props) => {
               checked={props.gamemodeSettings.isHintShown}
               type="checkbox"
               name="isHintShown"
-              onChange={handleGamemodeSettingsChange}
+              onChange={handleGamemodeSettings}
             ></input>
             Hints
           </label>
@@ -364,7 +360,7 @@ const Wingo: React.FC<Props> = (props) => {
                 checked={props.gamemodeSettings.timerConfig.isTimed}
                 type="checkbox"
                 name="timerConfig"
-                onChange={handleGamemodeSettingsChange}
+                onChange={handleGamemodeSettings}
               ></input>
               Timer
             </label>
@@ -379,7 +375,7 @@ const Wingo: React.FC<Props> = (props) => {
                   step={5}
                   onChange={(e) => {
                     setMostRecentTotalSeconds(e.target.valueAsNumber);
-                    handleGamemodeSettingsChange(e);
+                    handleGamemodeSettings(e);
                   }}
                 ></input>
                 Seconds

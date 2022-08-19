@@ -1,6 +1,20 @@
+export function handleGamemodeSettingsChange<TGamemodeSettings>(
+  e: React.ChangeEvent<HTMLInputElement>,
+  currentGamemodeSettings: TGamemodeSettings,
+  updateGamemodeSettings: (newGamemodeSettings: TGamemodeSettings) => void,
+  optionalSettings: OptionalSettings
+) {
+  updateGamemodeSettings({
+    ...currentGamemodeSettings,
+    [e.target.name]: getNewGamemodeSettingValue(e, optionalSettings),
+  });
+}
+
+export type OptionalSettings = { maxLives?: number; totalSeconds?: number };
+
 export const getNewGamemodeSettingValue = (
   e: React.ChangeEvent<HTMLInputElement>,
-  mostRecentValues?: { maxLives?: number; totalSeconds?: number }
+  mostRecentValues?: OptionalSettings
 ) => {
   const { type, name } = e.target;
 
