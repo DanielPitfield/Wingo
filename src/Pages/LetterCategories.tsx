@@ -10,6 +10,7 @@ import { SettingsData } from "../Data/SaveData";
 import GamemodeSettingsMenu from "../Components/GamemodeSettingsMenu";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
 import { MAX_NUM_CATEGORIES } from "../Data/GamemodeSettingsInputLimits";
+import { getGamemodeDefaultTimerValue } from "../Data/DefaultTimerValues";
 
 interface Props {
   campaignConfig:
@@ -55,11 +56,10 @@ interface Props {
 }
 
 const LetterCategories: React.FC<Props> = (props) => {
-  const DEFAULT_TIMER_VALUE = 30;
   const [mostRecentTotalSeconds, setMostRecentTotalSeconds] = useState(
     props.gamemodeSettings?.timerConfig?.isTimed === true
       ? props.gamemodeSettings?.timerConfig.seconds
-      : DEFAULT_TIMER_VALUE
+      : getGamemodeDefaultTimerValue(props.page)
   );
 
   // Create grid of rows (for guessing words)

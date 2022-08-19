@@ -13,6 +13,8 @@ import { Theme } from "../Data/Themes";
 import { pickRandomElementFrom } from "./WingoConfig";
 import { DraggableItem } from "../Components/DraggableItem";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
+import { defaultArithmeticDragGamemodeSettings } from "../Data/DefaultGamemodeSettings";
+import { getGamemodeDefaultTimerValue } from "../Data/DefaultTimerValues";
 
 // Const Contexts: https://stackoverflow.com/questions/44497388/typescript-array-to-string-literal-type
 export const arithmeticNumberSizes = ["small", "medium", "large"] as const;
@@ -88,11 +90,6 @@ export function shuffleArray<T>(array: T[]): T[] {
 
 /** */
 const ArithmeticDrag: React.FC<Props> = (props) => {
-  const DEFAULT_NUM_TILES = 6;
-  const DEFAULT_NUM_GUESSES = 3;
-  const DEFAULT_NUM_OPERANDS = 2;
-  const DEFAULT_NUMBERSIZE = "medium";
-
   const [inProgress, setInProgress] = useState(true);
   const [expressionTiles, setExpressionTiles] = useState<
     { expression: string; total: number; status: "incorrect" | "correct" | "not set" }[]
@@ -101,11 +98,11 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
   const [resultTiles, setResultTiles] = useState<{ total: number; status: "incorrect" | "correct" | "not set" }[]>([]);
 
   const defaultGamemodeSettings = {
-    numTiles: props.gamemodeSettings?.numTiles ?? DEFAULT_NUM_TILES,
-    numberSize: props.gamemodeSettings?.numberSize ?? DEFAULT_NUMBERSIZE,
-    numOperands: props.gamemodeSettings?.numOperands ?? DEFAULT_NUM_OPERANDS,
-    numGuesses: props.gamemodeSettings?.numGuesses ?? DEFAULT_NUM_GUESSES,
-    timerConfig: props.gamemodeSettings?.timerConfig ?? { isTimed: false },
+    numTiles: props.gamemodeSettings?.numTiles ?? defaultArithmeticDragGamemodeSettings.find(x => x.mode === props.mode)?.settings?.numTiles!,
+    numberSize: props.gamemodeSettings?.numberSize ?? defaultArithmeticDragGamemodeSettings.find(x => x.mode === props.mode)?.settings?.numberSize!,
+    numOperands: props.gamemodeSettings?.numOperands ?? defaultArithmeticDragGamemodeSettings.find(x => x.mode === props.mode)?.settings?.numOperands!,
+    numGuesses: props.gamemodeSettings?.numGuesses ?? defaultArithmeticDragGamemodeSettings.find(x => x.mode === props.mode)?.settings?.numGuesses!,
+    timerConfig: props.gamemodeSettings?.timerConfig ?? defaultArithmeticDragGamemodeSettings.find(x => x.mode === props.mode)?.settings?.timerConfig!,
   };
 
   const [gamemodeSettings, setGamemodeSettings] = useState<{
@@ -118,17 +115,16 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
 
   const [remainingGuesses, setRemainingGuesses] = useState(gamemodeSettings.numGuesses);
 
-  const DEFAULT_TIMER_VALUE = 100;
   const [remainingSeconds, setRemainingSeconds] = useState(
     props.gamemodeSettings?.timerConfig?.isTimed === true
       ? props.gamemodeSettings?.timerConfig.seconds
-      : DEFAULT_TIMER_VALUE
+      : getGamemodeDefaultTimerValue(props.page)
   );
 
   const [mostRecentTotalSeconds, setMostRecentTotalSeconds] = useState(
     props.gamemodeSettings?.timerConfig?.isTimed === true
       ? props.gamemodeSettings?.timerConfig.seconds
-      : DEFAULT_TIMER_VALUE
+      : getGamemodeDefaultTimerValue(props.page)
   );
 
   // What is the maximum starting number which should be used (based on difficulty)?

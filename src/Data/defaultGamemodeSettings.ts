@@ -15,10 +15,20 @@ import { wordCodesMode, WordCodesProps } from "../Pages/WordCodes";
 import { MAX_TARGET_WORD_LENGTH, MIN_TARGET_WORD_LENGTH } from "./GamemodeSettingsInputLimits";
 import { getGamemodeDefaultWordLength } from "./DefaultWordLengths";
 import { getGamemodeDefaultNumGuesses } from "./DefaultNumGuesses";
+import { getGamemodeDefaultTimerValue } from "./DefaultTimerValues";
 
 export const DEFAULT_PUZZLE_REVEAL_MS = 2000;
 export const DEFAULT_PUZZLE_LEAVE_NUM_BLANKS = 3;
 
+export const DEFAULT_NUMBERS_GAME_NUM_ROWS = 5;
+
+export const DEFAULT_NUMBLE_GUESS_TIMER_VALUE = 20;
+
+export const DEFAULT_WINGO_INCREASING_MAX_NUM_LIVES = 5;
+
+export const DEFAULT_FIT_RESTRICTION = 0;
+
+// TODO: Create a folder for each mode, each mode has its own defaultGamemodeSettings.ts file
 export const defaultWingoGamemodeSettings: { page: PageName; settings: WingoConfigProps["gamemodeSettings"] }[] = [
   {
     page: "wingo/daily",
@@ -70,6 +80,7 @@ export const defaultWingoGamemodeSettings: { page: PageName; settings: WingoConf
   {
     page: "wingo/puzzle",
     settings: {
+      isHintShown: true,
       puzzleRevealMs: DEFAULT_PUZZLE_REVEAL_MS,
       puzzleLeaveNumBlanks: DEFAULT_PUZZLE_LEAVE_NUM_BLANKS,
       wordLength: getGamemodeDefaultWordLength("wingo/puzzle"),
@@ -79,7 +90,7 @@ export const defaultWingoGamemodeSettings: { page: PageName; settings: WingoConf
   {
     page: "Conundrum",
     settings: {
-      timerConfig: { isTimed: true, seconds: 30 },
+      timerConfig: { isTimed: true, seconds: getGamemodeDefaultTimerValue("wingo/puzzle") },
     },
   },
 ];
@@ -99,6 +110,7 @@ export const defaultWingoInterlinkedGamemodeSettings: {
       isFirstLetterProvided: false,
       isHintShown: true,
       timerConfig: { isTimed: false },
+      fitRestrictionConfig: {isRestricted: false}, 
     },
   },
   {
@@ -112,6 +124,7 @@ export const defaultWingoInterlinkedGamemodeSettings: {
       isFirstLetterProvided: false,
       isHintShown: true,
       timerConfig: { isTimed: false },
+      fitRestrictionConfig: {isRestricted: false}, 
     },
   },
   {
@@ -125,6 +138,7 @@ export const defaultWingoInterlinkedGamemodeSettings: {
       isFirstLetterProvided: false,
       isHintShown: false,
       timerConfig: { isTimed: false },
+      fitRestrictionConfig: {isRestricted: false}, 
     },
   },
   {
@@ -138,6 +152,7 @@ export const defaultWingoInterlinkedGamemodeSettings: {
       isFirstLetterProvided: false,
       isHintShown: true,
       timerConfig: { isTimed: false },
+      fitRestrictionConfig: {isRestricted: false}, 
     },
   },
   {
@@ -151,6 +166,7 @@ export const defaultWingoInterlinkedGamemodeSettings: {
       isFirstLetterProvided: false,
       isHintShown: true,
       timerConfig: { isTimed: false },
+      fitRestrictionConfig: {isRestricted: false}, 
     },
   },
 ];
@@ -162,14 +178,14 @@ export const defaultLetterCategoriesGamemodeSettings: LetterCategoriesConfigProp
 
 export const defaultLettersGameGamemodeSettings: LettersGameConfigProps["gamemodeSettings"] = {
   defaultNumLetters: getGamemodeDefaultWordLength("LettersGame"),
-  timerConfig: { isTimed: true, seconds: 30 },
+  timerConfig: { isTimed: true, seconds: getGamemodeDefaultTimerValue("LettersGame") },
 };
 
 export const defaultNumbersGameGamemodeSettings: NumbersGameConfigProps["gamemodeSettings"] = {
   hasScaryNumbers: false,
   scoringMethod: "standard",
   defaultNumOperands: 6,
-  timerConfig: { isTimed: true, seconds: 30 },
+  timerConfig: { isTimed: true, seconds: getGamemodeDefaultTimerValue("NumbersGame") },
 };
 
 export const defaultArithmeticRevealGamemodeSettings: ArithmeticRevealProps["gamemodeSettings"] = {
@@ -177,7 +193,7 @@ export const defaultArithmeticRevealGamemodeSettings: ArithmeticRevealProps["gam
   numTiles: 5,
   numberSize: "medium",
   revealIntervalSeconds: 3,
-  timerConfig: { isTimed: true, seconds: 10 },
+  timerConfig: { isTimed: true, seconds: getGamemodeDefaultTimerValue("ArithmeticReveal") },
 };
 
 export const defaultArithmeticDragGamemodeSettings: {
@@ -191,7 +207,7 @@ export const defaultArithmeticDragGamemodeSettings: {
       numGuesses: getGamemodeDefaultNumGuesses("ArithmeticDrag/Match"),
       numOperands: 2,
       numberSize: "medium",
-      timerConfig: { isTimed: true, seconds: 100 },
+      timerConfig: { isTimed: true, seconds: getGamemodeDefaultTimerValue("ArithmeticDrag/Match") },
     },
   },
   {
@@ -201,7 +217,7 @@ export const defaultArithmeticDragGamemodeSettings: {
       numGuesses: getGamemodeDefaultNumGuesses("ArithmeticDrag/Order"),
       numOperands: 2,
       numberSize: "medium",
-      timerConfig: { isTimed: true, seconds: 100 },
+      timerConfig: { isTimed: true, seconds: getGamemodeDefaultTimerValue("ArithmeticDrag/Order") },
     },
   },
 ];
@@ -241,6 +257,7 @@ export const defaultWordCodesGamemodeSettings: { mode: wordCodesMode; settings: 
         numWordToCodeQuestions: 2,
         numCodeToWordQuestions: 1,
         codeLength: 4,
+        numCodesToMatch: 4,
         numAdditionalLetters: 2,
         numGuesses: getGamemodeDefaultNumGuesses("WordCodes/Question"),
         timerConfig: { isTimed: false },
@@ -271,5 +288,5 @@ export const defaultNumbleGamemodeSettings: NumbleConfigProps["gamemodeSettings"
   // How long to make a guess after the dice have been rolled?
   guessTimerConfig: { isTimed: false },
   // How long overall until the game ends?
-  timerConfig: { isTimed: true, seconds: 600 },
+  timerConfig: { isTimed: true, seconds: getGamemodeDefaultTimerValue("numble") },
 };

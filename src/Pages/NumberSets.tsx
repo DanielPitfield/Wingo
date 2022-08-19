@@ -9,9 +9,11 @@ import ProgressBar, { GreenToRedColorTransition } from "../Components/ProgressBa
 import { SaveData, SettingsData } from "../Data/SaveData";
 import { useClickChime, useCorrectChime, useFailureChime, useLightPingChime } from "../Data/Sounds";
 import { Theme } from "../Data/Themes";
-import { DEFAULT_DIFFICULTY, algebraDifficulty, algebraDifficulties } from "./Algebra";
+import { algebraDifficulty, algebraDifficulties } from "./Algebra";
 import { generateSet } from "../Data/NumberSetsTemplates";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
+import { getGamemodeDefaultTimerValue } from "../Data/DefaultTimerValues";
+import { defaultNumberSetsGamemodeSettings } from "../Data/DefaultGamemodeSettings";
 
 /** Config for a specific number set (exported for config from campaign) */
 export type NumberSetConfigProps = {
@@ -66,8 +68,8 @@ const NumberSets: React.FC<Props> = (props) => {
   const [numberSet, setNumberSet] = useState<NumberSetConfigProps | undefined>(props.defaultSet);
 
   const defaultGamemodeSettings = {
-    difficulty: props.gamemodeSettings?.difficulty ?? DEFAULT_DIFFICULTY,
-    timerConfig: props.gamemodeSettings?.timerConfig ?? { isTimed: false },
+    difficulty: props.gamemodeSettings?.difficulty ?? defaultNumberSetsGamemodeSettings?.difficulty!,
+    timerConfig: props.gamemodeSettings?.timerConfig ?? defaultNumberSetsGamemodeSettings?.timerConfig!,
   };
 
   const [gamemodeSettings, setGamemodeSettings] = useState<{
@@ -75,17 +77,16 @@ const NumberSets: React.FC<Props> = (props) => {
     timerConfig: { isTimed: true; seconds: number } | { isTimed: false };
   }>(defaultGamemodeSettings);
 
-  const DEFAULT_TIMER_VALUE = 100;
   const [remainingSeconds, setRemainingSeconds] = useState(
     props.gamemodeSettings?.timerConfig?.isTimed === true
       ? props.gamemodeSettings?.timerConfig.seconds
-      : DEFAULT_TIMER_VALUE
+      : getGamemodeDefaultTimerValue(props.page)
   );
 
   const [mostRecentTotalSeconds, setMostRecentTotalSeconds] = useState(
     props.gamemodeSettings?.timerConfig?.isTimed === true
       ? props.gamemodeSettings?.timerConfig.seconds
-      : DEFAULT_TIMER_VALUE
+      : getGamemodeDefaultTimerValue(props.page)
   );
 
   // Sounds

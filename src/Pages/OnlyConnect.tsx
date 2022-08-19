@@ -10,6 +10,8 @@ import { useClickChime, useCorrectChime, useFailureChime, useLightPingChime } fr
 import { Theme } from "../Data/Themes";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
 import { categoryMappings } from "../Data/WordArrayMappings";
+import { getGamemodeDefaultTimerValue } from "../Data/DefaultTimerValues";
+import { defaultOnlyConnectGamemodeSettings } from "../Data/DefaultGamemodeSettings";
 
 export interface OnlyConnectProps {
   gamemodeSettings?: {
@@ -48,10 +50,6 @@ export function getPrettyWord(text: string): string {
 
 /** */
 const OnlyConnect: React.FC<Props> = (props) => {
-  const DEFAULT_NUM_GROUPS = 4;
-  const DEFAULT_GROUP_SIZE = 4;
-  const DEFAULT_NUM_GUESSES = 3;
-
   const [inProgress, setInProgress] = useState(true);
   const [gridWords, setGridWords] = useState<
     { word: string; categoryName: string; inCompleteGroup: boolean; rowNumber: number | null }[]
@@ -60,10 +58,10 @@ const OnlyConnect: React.FC<Props> = (props) => {
   const [numCompletedGroups, setNumCompletedGroups] = useState(0);
 
   const defaultGamemodeSettings = {
-    numGroups: props.gamemodeSettings?.numGroups ?? DEFAULT_NUM_GROUPS,
-    groupSize: props.gamemodeSettings?.groupSize ?? DEFAULT_GROUP_SIZE,
-    numGuesses: props.gamemodeSettings?.numGuesses ?? DEFAULT_NUM_GUESSES,
-    timerConfig: props.gamemodeSettings?.timerConfig ?? { isTimed: false },
+    numGroups: props.gamemodeSettings?.numGroups ?? defaultOnlyConnectGamemodeSettings?.numGroups!,
+    groupSize: props.gamemodeSettings?.groupSize ?? defaultOnlyConnectGamemodeSettings?.groupSize!,
+    numGuesses: props.gamemodeSettings?.numGuesses ?? defaultOnlyConnectGamemodeSettings?.numGuesses!,
+    timerConfig: props.gamemodeSettings?.timerConfig ?? defaultOnlyConnectGamemodeSettings?.timerConfig!,
   };
 
   const [gamemodeSettings, setGamemodeSettings] = useState<{
@@ -75,17 +73,16 @@ const OnlyConnect: React.FC<Props> = (props) => {
 
   const [remainingGuesses, setRemainingGuesses] = useState(gamemodeSettings.numGuesses);
 
-  const DEFAULT_TIMER_VALUE = 60;
   const [remainingSeconds, setRemainingSeconds] = useState(
     props.gamemodeSettings?.timerConfig?.isTimed === true
       ? props.gamemodeSettings?.timerConfig.seconds
-      : DEFAULT_TIMER_VALUE
+      : getGamemodeDefaultTimerValue(props.page)
   );
 
   const [mostRecentTotalSeconds, setMostRecentTotalSeconds] = useState(
     props.gamemodeSettings?.timerConfig?.isTimed === true
       ? props.gamemodeSettings?.timerConfig.seconds
-      : DEFAULT_TIMER_VALUE
+      : getGamemodeDefaultTimerValue(props.page)
   );
 
   // Sounds

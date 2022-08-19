@@ -6,6 +6,8 @@ import { DEFAULT_ALPHABET } from "../Components/Keyboard";
 import { pickRandomElementFrom } from "./WingoConfig";
 import { Theme } from "../Data/Themes";
 import { categoryMappings } from "../Data/WordArrayMappings";
+import { getGamemodeDefaultTimerValue } from "../Data/DefaultTimerValues";
+import { defaultLetterCategoriesGamemodeSettings } from "../Data/DefaultGamemodeSettings";
 
 export interface LetterCategoriesConfigProps {
   campaignConfig:
@@ -35,8 +37,6 @@ interface Props extends LetterCategoriesConfigProps {
 }
 
 const LetterCategoriesConfig: React.FC<Props> = (props) => {
-  const DEFAULT_NUM_CATEGORIES = 5;
-
   const [guesses, setGuesses] = useState<string[]>([]);
   const [currentWord, setCurrentWord] = useState("");
   const [wordIndex, setWordIndex] = useState(0);
@@ -49,8 +49,8 @@ const LetterCategoriesConfig: React.FC<Props> = (props) => {
   const [hasSubmitLetter, sethasSubmitLetter] = useState(false);
 
   const defaultGamemodeSettings = {
-    numCategories: props.gamemodeSettings?.defaultNumCategories ?? DEFAULT_NUM_CATEGORIES,
-    timerConfig: props.gamemodeSettings?.timerConfig ?? { isTimed: false },
+    numCategories: props.gamemodeSettings?.defaultNumCategories ?? defaultLetterCategoriesGamemodeSettings?.defaultNumCategories!,
+    timerConfig: props.gamemodeSettings?.timerConfig ?? defaultLetterCategoriesGamemodeSettings?.timerConfig!,
   };
 
   const [gamemodeSettings, setGamemodeSettings] = useState<{
@@ -58,11 +58,10 @@ const LetterCategoriesConfig: React.FC<Props> = (props) => {
     timerConfig: { isTimed: true; seconds: number } | { isTimed: false };
   }>(defaultGamemodeSettings);
 
-  const DEFAULT_TIMER_VALUE = 30;
   const [remainingSeconds, setRemainingSeconds] = useState(
     props.gamemodeSettings?.timerConfig?.isTimed === true
       ? props.gamemodeSettings?.timerConfig.seconds
-      : DEFAULT_TIMER_VALUE
+      : getGamemodeDefaultTimerValue(props.page)
   );
 
   // Timer Setup

@@ -13,6 +13,9 @@ import GamemodeSettingsMenu from "../Components/GamemodeSettingsMenu";
 import { arithmeticNumberSize, arithmeticNumberSizes } from "./ArithmeticDrag";
 import { pickRandomElementFrom } from "./WingoConfig";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
+import { MAX_NUMPAD_GUESS_LENGTH } from "../Data/GamemodeSettingsInputLimits";
+import { defaultArithmeticRevealGamemodeSettings } from "../Data/DefaultGamemodeSettings";
+import { getGamemodeDefaultTimerValue } from "../Data/DefaultTimerValues";
 
 export interface ArithmeticRevealProps {
   campaignConfig:
@@ -57,14 +60,6 @@ interface Props extends ArithmeticRevealProps {
 
 /** */
 const ArithmeticReveal: React.FC<Props> = (props) => {
-  const DEFAULT_NUM_CHECKPOINTS = 1;
-  const DEFAULT_NUM_TILES = 5;
-  const DEFAULT_NUMBERSIZE = "medium";
-  const DEFAULT_REVEAL_INTERVAL = 3;
-
-  // Max number of characters permitted in a guess
-  const MAX_LENGTH = 6;
-
   const [targetNumbers, setTargetNumbers] = useState<number[]>([]);
   const [revealState, setRevealState] = useState<{ type: "in-progress"; revealedTiles: number } | { type: "finished" }>(
     { type: "in-progress", revealedTiles: 0 }
@@ -76,15 +71,15 @@ const ArithmeticReveal: React.FC<Props> = (props) => {
   const [targetTransitioned, setTargetTransitioned] = useState(false);
 
   const defaultGamemodeSettings = {
-    numCheckpoints: props.gamemodeSettings?.numCheckpoints ?? DEFAULT_NUM_CHECKPOINTS,
-    numTiles: props.gamemodeSettings?.numTiles ?? DEFAULT_NUM_TILES,
-    numberSize: props.gamemodeSettings?.numberSize ?? DEFAULT_NUMBERSIZE,
+    numCheckpoints: props.gamemodeSettings?.numCheckpoints ?? defaultArithmeticRevealGamemodeSettings?.numCheckpoints!,
+    numTiles: props.gamemodeSettings?.numTiles ?? defaultArithmeticRevealGamemodeSettings?.numTiles!,
+    numberSize: props.gamemodeSettings?.numberSize ?? defaultArithmeticRevealGamemodeSettings?.numberSize!,
     /* TODO: Sync Flip animation with reveal animation
       The CSS to apply the flip tile animation assumes the reveal interval is always 3 seconds
       Perhaps use animationDelay to control when the animation happens
     */
-    revealIntervalSeconds: props.gamemodeSettings?.revealIntervalSeconds ?? DEFAULT_REVEAL_INTERVAL,
-    timerConfig: props.gamemodeSettings?.timerConfig ?? { isTimed: false },
+    revealIntervalSeconds: props.gamemodeSettings?.revealIntervalSeconds ?? defaultArithmeticRevealGamemodeSettings?.revealIntervalSeconds!,
+    timerConfig: props.gamemodeSettings?.timerConfig ?? defaultArithmeticRevealGamemodeSettings?.timerConfig!,
   };
 
   const [gamemodeSettings, setGamemodeSettings] = useState<{
@@ -95,17 +90,16 @@ const ArithmeticReveal: React.FC<Props> = (props) => {
     timerConfig: { isTimed: true; seconds: number } | { isTimed: false };
   }>(defaultGamemodeSettings);
 
-  const DEFAULT_TIMER_VALUE = 10;
   const [remainingSeconds, setRemainingSeconds] = useState(
     props.gamemodeSettings?.timerConfig?.isTimed === true
       ? props.gamemodeSettings?.timerConfig.seconds
-      : DEFAULT_TIMER_VALUE
+      : getGamemodeDefaultTimerValue(props.page)
   );
 
   const [mostRecentTotalSeconds, setMostRecentTotalSeconds] = useState(
     props.gamemodeSettings?.timerConfig?.isTimed === true
       ? props.gamemodeSettings?.timerConfig.seconds
-      : DEFAULT_TIMER_VALUE
+      : getGamemodeDefaultTimerValue(props.page)
   );
 
   // What is the maximum starting number which should be used (based on difficulty)?
@@ -501,7 +495,7 @@ const ArithmeticReveal: React.FC<Props> = (props) => {
   }
 
   function onSubmitNumber(number: number) {
-    if (guess.length >= MAX_LENGTH) {
+    if (guess.length >= MAX_NUMPAD_GUESS_LENGTH) {
       return;
     }
 

@@ -15,6 +15,7 @@ import { LEVEL_FINISHING_TEXT } from "../Components/Level";
 import { LetterSelectionRow } from "../LetterSelectionRow";
 import { getAllWordsOfLength } from "../Data/Conundrum";
 import { MAX_TARGET_WORD_LENGTH, MIN_TARGET_WORD_LENGTH } from "../Data/GamemodeSettingsInputLimits";
+import { getGamemodeDefaultTimerValue } from "../Data/DefaultTimerValues";
 
 interface Props {
   campaignConfig:
@@ -80,11 +81,10 @@ const LettersGame: React.FC<Props> = (props) => {
   // Check if letter selection has finished
   const IS_SELECTION_FINISHED = SELECTION_WORD_NUM_LETTERS === props.gamemodeSettings.numLetters;
 
-  const DEFAULT_TIMER_VALUE = 30;
   const [mostRecentTotalSeconds, setMostRecentTotalSeconds] = useState(
     props.gamemodeSettings?.timerConfig?.isTimed === true
       ? props.gamemodeSettings?.timerConfig.seconds
-      : DEFAULT_TIMER_VALUE
+      : getGamemodeDefaultTimerValue(props.page)
   );
 
   function getWeightedLetter(letterWeightings: { letter: string; weighting: number }[]) {

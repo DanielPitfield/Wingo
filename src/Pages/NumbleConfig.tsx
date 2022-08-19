@@ -11,15 +11,15 @@ import {
   square_64,
   square_25,
 } from "../Data/NumblePointColourMappings";
+import { defaultNumbleGamemodeSettings, DEFAULT_NUMBLE_GUESS_TIMER_VALUE } from "../Data/DefaultGamemodeSettings";
+import { getGamemodeDefaultTimerValue } from "../Data/DefaultTimerValues";
+import { MAX_NUMBLE_NUM_TEAMS } from "../Data/GamemodeSettingsInputLimits";
 
 export const numbleGridShapes = ["square", "hexagon"] as const;
 export type numbleGridShape = typeof numbleGridShapes[number];
 
 export const numbleGridSizes = [25, 64, 100] as const;
 export type numbleGridSize = typeof numbleGridSizes[number];
-
-export const DEFAULT_NUMBLE_GUESS_TIMER_VALUE = 20;
-export const DEFAULT_NUMBLE_TIMER_VALUE = 600;
 
 export interface NumbleConfigProps {
   campaignConfig:
@@ -105,23 +105,15 @@ export function getNextTeamNumberWithRemainingTime(
 }
 
 const NumbleConfig: React.FC<Props> = (props) => {
-  const DEFAULT_NUM_DICE = 4;
-  const DEFAULT_DICE_MIN = 1;
-  const DEFAULT_DICE_MAX = 6;
-  const DEFAULT_GRID_SHAPE = "hexagon" as numbleGridShape;
-  const DEFAULT_GRID_SIZE = 100;
-  const DEFAULT_NUM_TEAMS = 1;
-  const MAX_NUM_TEAMS = 4;
-
   const defaultGamemodeSettings = {
-    numDice: props.gamemodeSettings?.numDice ?? DEFAULT_NUM_DICE,
-    diceMin: props.gamemodeSettings?.diceMin ?? DEFAULT_DICE_MIN,
-    diceMax: props.gamemodeSettings?.diceMax ?? DEFAULT_DICE_MAX,
-    gridShape: props.gamemodeSettings?.gridShape ?? DEFAULT_GRID_SHAPE,
-    gridSize: props.gamemodeSettings?.gridSize ?? DEFAULT_GRID_SIZE,
+    numDice: props.gamemodeSettings?.numDice ?? defaultNumbleGamemodeSettings?.numDice!,
+    diceMin: props.gamemodeSettings?.diceMin ?? defaultNumbleGamemodeSettings?.diceMin!,
+    diceMax: props.gamemodeSettings?.diceMax ?? defaultNumbleGamemodeSettings?.diceMax!,
+    gridShape: props.gamemodeSettings?.gridShape ?? defaultNumbleGamemodeSettings?.gridShape!,
+    gridSize: props.gamemodeSettings?.gridSize ?? defaultNumbleGamemodeSettings?.gridSize!,
     numTeams: props.campaignConfig.isCampaignLevel
       ? 1
-      : Math.min(MAX_NUM_TEAMS, props.gamemodeSettings?.numTeams ?? DEFAULT_NUM_TEAMS),
+      : Math.min(MAX_NUMBLE_NUM_TEAMS, props.gamemodeSettings?.numTeams ?? defaultNumbleGamemodeSettings?.numTeams!),
     isGameOverOnIncorrectPick: props.gamemodeSettings?.isGameOverOnIncorrectPick ?? false,
     guessTimerConfig: props.gamemodeSettings?.guessTimerConfig ?? { isTimed: false },
     timerConfig: props.gamemodeSettings?.timerConfig ?? { isTimed: false },
@@ -193,7 +185,7 @@ const NumbleConfig: React.FC<Props> = (props) => {
   const INITIAL_TIMER_VALUE =
     props.gamemodeSettings?.timerConfig?.isTimed === true
       ? props.gamemodeSettings?.timerConfig.seconds
-      : DEFAULT_NUMBLE_TIMER_VALUE;
+      : getGamemodeDefaultTimerValue(props.page);
   // Each team starts with the same initial amount of time
   const initialTeamTimers = Array.from({ length: gamemodeSettings.numTeams }).map((_, i) => ({
     teamNumber: i,

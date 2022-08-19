@@ -13,6 +13,9 @@ import { pickRandomElementFrom } from "./WingoConfig";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
 import { getGamemodeDefaultWordLength } from "../Data/DefaultWordLengths";
 import { wordLengthMappingsTargets } from "../Data/WordArrayMappings";
+import { getGamemodeDefaultTimerValue } from "../Data/DefaultTimerValues";
+import { defaultSameLetterWordsGamemodeSettings } from "../Data/DefaultGamemodeSettings";
+import { MAX_NUM_SAME_LETTER_GUESSES, MAX_NUM_SAME_LETTER_MATCHING_WORDS, MAX_NUM_SAME_LETTER_TOTAL_WORDS, MIN_NUM_SAME_LETTER_GUESSES, MIN_NUM_SAME_LETTER_MATCHING_WORDS, MIN_NUM_SAME_LETTER_TOTAL_WORDS } from "../Data/GamemodeSettingsInputLimits";
 
 export interface SameLetterWordsProps {
   gamemodeSettings?: {
@@ -38,18 +41,6 @@ interface Props extends SameLetterWordsProps {
 
 /** */
 const SameLetterWords: React.FC<Props> = (props) => {
-  const DEFAULT_NUM_MATCHING_WORDS = 4;
-  const DEFAULT_NUM_TOTAL_WORDS = 16;
-  const DEFAULT_NUM_GUESSES = 20;
-
-  const MIN_NUM_MATCHING_WORDS = 2;
-  const MAX_NUM_MATCHING_WORDS = 10;
-
-  const MIN_NUM_TOTAL_WORDS = 4;
-  const MAX_NUM_TOTAL_WORDS = 20;
-
-  const MIN_NUM_GUESSES = 1;
-  const MAX_NUM_GUESSES = 100;
 
   const [inProgress, setInProgress] = useState(true);
   const [selectedWords, setSelectedWords] = useState<string[]>([]);
@@ -57,24 +48,24 @@ const SameLetterWords: React.FC<Props> = (props) => {
   const [gridWords, setGridWords] = useState<string[]>([]);
 
   const STARTING_NUM_TOTAL_WORDS = Math.max(
-    MIN_NUM_TOTAL_WORDS,
-    props.gamemodeSettings?.numTotalWords ?? DEFAULT_NUM_TOTAL_WORDS
+    MIN_NUM_SAME_LETTER_TOTAL_WORDS,
+    props.gamemodeSettings?.numTotalWords ?? defaultSameLetterWordsGamemodeSettings?.numTotalWords!
   );
 
   const numMatchingWordsFloor = Math.max(
-    MIN_NUM_MATCHING_WORDS,
-    props.gamemodeSettings?.numMatchingWords ?? DEFAULT_NUM_MATCHING_WORDS
+    MIN_NUM_SAME_LETTER_MATCHING_WORDS,
+    props.gamemodeSettings?.numMatchingWords ?? defaultSameLetterWordsGamemodeSettings?.numMatchingWords!
   );
   // Number of words to match can't be more than the total number of words
   const STARTING_NUM_MATCHING_WORDS =
     numMatchingWordsFloor < STARTING_NUM_TOTAL_WORDS ? numMatchingWordsFloor : STARTING_NUM_TOTAL_WORDS - 1;
 
   const defaultGamemodeSettings = {
-    wordLength: props.gamemodeSettings?.wordLength ?? getGamemodeDefaultWordLength(props.page),
+    wordLength: props.gamemodeSettings?.wordLength ?? defaultSameLetterWordsGamemodeSettings?.wordLength!,
     numMatchingWords: STARTING_NUM_MATCHING_WORDS,
     numTotalWords: STARTING_NUM_TOTAL_WORDS,
-    numGuesses: props.gamemodeSettings?.numGuesses ?? DEFAULT_NUM_GUESSES,
-    timerConfig: props.gamemodeSettings?.timerConfig ?? { isTimed: false },
+    numGuesses: props.gamemodeSettings?.numGuesses ?? defaultSameLetterWordsGamemodeSettings?.numGuesses!,
+    timerConfig: props.gamemodeSettings?.timerConfig ?? defaultSameLetterWordsGamemodeSettings?.timerConfig!,
   };
 
   const [gamemodeSettings, setGamemodeSettings] = useState<{
@@ -85,17 +76,16 @@ const SameLetterWords: React.FC<Props> = (props) => {
     timerConfig: { isTimed: true; seconds: number } | { isTimed: false };
   }>(defaultGamemodeSettings);
 
-  const DEFAULT_TIMER_VALUE = 100;
   const [remainingSeconds, setRemainingSeconds] = useState(
     props.gamemodeSettings?.timerConfig?.isTimed === true
       ? props.gamemodeSettings?.timerConfig.seconds
-      : DEFAULT_TIMER_VALUE
+      : getGamemodeDefaultTimerValue(props.page)
   );
   const [remainingGuesses, setRemainingGuesses] = useState(gamemodeSettings.numGuesses);
   const [mostRecentTotalSeconds, setMostRecentTotalSeconds] = useState(
     props.gamemodeSettings?.timerConfig?.isTimed === true
       ? props.gamemodeSettings?.timerConfig.seconds
-      : DEFAULT_TIMER_VALUE
+      : getGamemodeDefaultTimerValue(props.page)
   );
 
   // Sounds
@@ -433,8 +423,8 @@ const SameLetterWords: React.FC<Props> = (props) => {
           <input
             type="number"
             value={gamemodeSettings.numMatchingWords}
-            min={MIN_NUM_MATCHING_WORDS}
-            max={Math.min(MAX_NUM_MATCHING_WORDS, gamemodeSettings.numTotalWords - 1)}
+            min={MIN_NUM_SAME_LETTER_MATCHING_WORDS}
+            max={Math.min(MAX_NUM_SAME_LETTER_MATCHING_WORDS, gamemodeSettings.numTotalWords - 1)}
             onChange={(e) => {
               const newGamemodeSettings = {
                 ...gamemodeSettings,
@@ -449,8 +439,8 @@ const SameLetterWords: React.FC<Props> = (props) => {
           <input
             type="number"
             value={gamemodeSettings.numTotalWords}
-            min={Math.max(MIN_NUM_TOTAL_WORDS, gamemodeSettings.numMatchingWords + 1)}
-            max={MAX_NUM_TOTAL_WORDS}
+            min={Math.max(MIN_NUM_SAME_LETTER_TOTAL_WORDS, gamemodeSettings.numMatchingWords + 1)}
+            max={MAX_NUM_SAME_LETTER_TOTAL_WORDS}
             onChange={(e) => {
               const newGamemodeSettings = {
                 ...gamemodeSettings,
@@ -465,8 +455,8 @@ const SameLetterWords: React.FC<Props> = (props) => {
           <input
             type="number"
             value={gamemodeSettings.numGuesses}
-            min={MIN_NUM_GUESSES}
-            max={MAX_NUM_GUESSES}
+            min={MIN_NUM_SAME_LETTER_GUESSES}
+            max={MAX_NUM_SAME_LETTER_GUESSES}
             onChange={(e) => {
               setRemainingGuesses(e.target.valueAsNumber);
               const newGamemodeSettings = {

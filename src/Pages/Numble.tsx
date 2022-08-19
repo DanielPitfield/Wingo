@@ -8,8 +8,6 @@ import { SaveData, SettingsData } from "../Data/SaveData";
 import { Theme } from "../Data/Themes";
 import DiceGrid from "../Components/DiceGrid";
 import {
-  DEFAULT_NUMBLE_GUESS_TIMER_VALUE,
-  DEFAULT_NUMBLE_TIMER_VALUE,
   getNextTeamNumberWithRemainingTime,
   HexagonPinAdjacency,
   numbleGridShape,
@@ -18,6 +16,8 @@ import {
   numbleGridSizes,
 } from "./NumbleConfig";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
+import { DEFAULT_NUMBLE_GUESS_TIMER_VALUE } from "../Data/DefaultGamemodeSettings";
+import { getGamemodeDefaultTimerValue } from "../Data/DefaultTimerValues";
 
 interface Props {
   campaignConfig:
@@ -150,7 +150,7 @@ const Numble: React.FC<Props> = (props) => {
   const [mostRecentTotalSeconds, setMostRecentTotalSeconds] = useState(
     props.gamemodeSettings?.timerConfig?.isTimed === true
       ? props.gamemodeSettings?.timerConfig.seconds
-      : DEFAULT_NUMBLE_TIMER_VALUE
+      : getGamemodeDefaultTimerValue("numble")
   );
 
   const teamNumberColourMappings = [

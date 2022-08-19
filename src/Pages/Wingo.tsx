@@ -22,6 +22,8 @@ import {
 } from "../Data/GamemodeSettingsInputLimits";
 import { categoryMappings } from "../Data/WordArrayMappings";
 import { getNewGamemodeSettingValue } from "../Data/GamemodeSettingsNewValue";
+import { getGamemodeDefaultTimerValue } from "../Data/DefaultTimerValues";
+import { DEFAULT_WINGO_INCREASING_MAX_NUM_LIVES } from "../Data/DefaultGamemodeSettings";
 
 interface Props {
   isCampaignLevel: boolean;
@@ -94,18 +96,16 @@ const Wingo: React.FC<Props> = (props) => {
   So that the value can be used as the default value for the total seconds input element
   (even after the timer is enabled/disabled)
   */
-  const DEFAULT_TIMER_VALUE = 30;
   const [mostRecentTotalSeconds, setMostRecentTotalSeconds] = useState(
     props.gamemodeSettings?.timerConfig?.isTimed === true
       ? props.gamemodeSettings?.timerConfig.seconds
-      : DEFAULT_TIMER_VALUE
+      : getGamemodeDefaultTimerValue(props.page)
   );
 
-  const DEFAULT_MAX_NUM_LIVES = 5;
   const [mostRecentMaxLives, setMostRecentMaxLives] = useState(
     props.gamemodeSettings?.maxLivesConfig.isLimited === true
       ? props.gamemodeSettings.maxLivesConfig.maxLives
-      : DEFAULT_MAX_NUM_LIVES
+      : DEFAULT_WINGO_INCREASING_MAX_NUM_LIVES
   );
 
   // Create grid of rows (for guessing words)

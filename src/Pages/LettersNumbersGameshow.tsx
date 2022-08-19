@@ -8,6 +8,8 @@ import { displayGameshowSummary } from "./WingoGameshow";
 import { Button } from "../Components/Button";
 import WingoConfig from "./WingoConfig";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
+import { getGamemodeDefaultNumGuesses } from "../Data/DefaultNumGuesses";
+import { getGamemodeDefaultWordLength } from "../Data/DefaultWordLengths";
 
 export interface LettersNumbersGameshowProps {
   campaignConfig:
@@ -36,8 +38,6 @@ interface Props extends LettersNumbersGameshowProps {
 }
 
 export const LettersNumbersGameshow: React.FC<Props> = (props) => {
-  const DEFAULT_NUM_GUESSES = 5;
-
   const [inProgress, setInProgress] = useState(true);
   const [roundOrder, setRoundOrder] = useState<("number" | "letter" | "conundrum")[]>([]);
   const [roundNumber, setRoundNumber] = useState(0);
@@ -166,7 +166,6 @@ export const LettersNumbersGameshow: React.FC<Props> = (props) => {
         <NumbersGameConfig
           {...commonProps}
           theme={props.themes[1]}
-          defaultNumGuesses={DEFAULT_NUM_GUESSES}
           gameshowScore={gameshowScore}
         />
       );
@@ -176,8 +175,8 @@ export const LettersNumbersGameshow: React.FC<Props> = (props) => {
           {...commonProps}
           isCampaignLevel={false}
           mode="conundrum"
-          defaultWordLength={9}
-          defaultNumGuesses={1}
+          defaultWordLength={getGamemodeDefaultWordLength("Conundrum")}
+          defaultNumGuesses={getGamemodeDefaultNumGuesses("Conundrum")}
           enforceFullLengthGuesses={true}
         />
       );

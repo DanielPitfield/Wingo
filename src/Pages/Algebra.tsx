@@ -12,10 +12,12 @@ import { useClickChime, useCorrectChime, useFailureChime, useLightPingChime } fr
 import { Theme } from "../Data/Themes";
 import { AlgebraTemplates } from "../Data/AlgebraTemplates";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
+import { getGamemodeDefaultTimerValue } from "../Data/DefaultTimerValues";
+import { defaultAlgebraGamemodeSettings } from "../Data/DefaultGamemodeSettings";
+import { MAX_NUMPAD_GUESS_LENGTH } from "../Data/GamemodeSettingsInputLimits";
 
 export const algebraDifficulties = ["novice", "easy", "medium", "hard", "expert"] as const;
 export type algebraDifficulty = typeof algebraDifficulties[number];
-export const DEFAULT_DIFFICULTY: algebraDifficulty = "easy";
 
 export type AlgebraConfigProps = {
   difficulty: algebraDifficulty;
@@ -73,9 +75,6 @@ export function getQuestionSetOutcome(numCorrectAnswers: number, numQuestions: n
 
 /** */
 const Algebra: React.FC<Props> = (props) => {
-  // Max number of characters permitted in a guess
-  const MAX_LENGTH = 6;
-
   const [inProgress, setInProgress] = useState(true);
   const [guess, setGuess] = useState("");
   const [algebraTemplate, setAlgebraTemplate] = useState<AlgebraConfigProps | undefined>(props.defaultTemplate);
@@ -83,8 +82,8 @@ const Algebra: React.FC<Props> = (props) => {
   const [numCorrectAnswers, setNumCorrectAnswers] = useState(0);
 
   const defaultGamemodeSettings = {
-    difficulty: props.gamemodeSettings?.difficulty ?? DEFAULT_DIFFICULTY,
-    timerConfig: props.gamemodeSettings?.timerConfig ?? { isTimed: false },
+    difficulty: props.gamemodeSettings?.difficulty ?? defaultAlgebraGamemodeSettings?.difficulty!,
+    timerConfig: props.gamemodeSettings?.timerConfig ?? defaultAlgebraGamemodeSettings?.timerConfig!,
   };
 
   const [gamemodeSettings, setGamemodeSettings] = useState<{
@@ -92,17 +91,16 @@ const Algebra: React.FC<Props> = (props) => {
     timerConfig: { isTimed: true; seconds: number } | { isTimed: false };
   }>(defaultGamemodeSettings);
 
-  const DEFAULT_TIMER_VALUE = 100;
   const [remainingSeconds, setRemainingSeconds] = useState(
     props.gamemodeSettings?.timerConfig?.isTimed === true
       ? props.gamemodeSettings?.timerConfig.seconds
-      : DEFAULT_TIMER_VALUE
+      : getGamemodeDefaultTimerValue(props.page)
   );
 
   const [mostRecentTotalSeconds, setMostRecentTotalSeconds] = useState(
     props.gamemodeSettings?.timerConfig?.isTimed === true
       ? props.gamemodeSettings?.timerConfig.seconds
-      : DEFAULT_TIMER_VALUE
+      : getGamemodeDefaultTimerValue(props.page)
   );
 
   // Sounds
@@ -348,7 +346,7 @@ const Algebra: React.FC<Props> = (props) => {
       return;
     }
 
-    if (guess.length >= MAX_LENGTH) {
+    if (guess.length >= MAX_NUMPAD_GUESS_LENGTH) {
       return;
     }
 
@@ -360,7 +358,7 @@ const Algebra: React.FC<Props> = (props) => {
       return;
     }
 
-    if (guess.length >= MAX_LENGTH) {
+    if (guess.length >= MAX_NUMPAD_GUESS_LENGTH) {
       return;
     }
 

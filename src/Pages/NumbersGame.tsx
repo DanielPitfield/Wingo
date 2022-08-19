@@ -13,6 +13,8 @@ import { SettingsData } from "../Data/SaveData";
 import GamemodeSettingsMenu from "../Components/GamemodeSettingsMenu";
 import { pickRandomElementFrom } from "./WingoConfig";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
+import { getGamemodeDefaultTimerValue } from "../Data/DefaultTimerValues";
+import { DEFAULT_NUMBERS_GAME_NUM_ROWS } from "../Data/DefaultGamemodeSettings";
 
 interface Props {
   campaignConfig:
@@ -35,7 +37,6 @@ interface Props {
   wordIndex: number;
   guesses: Guess[];
   closestGuessSoFar: number | null;
-  numGuesses: number;
   currentGuess: Guess;
   numberTileStatuses: {
     type: "original" | "intermediary";
@@ -46,6 +47,8 @@ interface Props {
   hasTimerEnded: boolean;
   hasSubmitNumber: boolean;
   targetNumber: number | null;
+
+  page: PageName;
   theme: Theme;
   settings: SettingsData;
   onClick: (
@@ -87,12 +90,10 @@ const NumbersGame: React.FC<Props> = (props) => {
   const NUMBERPUZZLE_MAX_NUM_OPERANDS = 7;
 
   const [solutions, setSolutions] = useState<{ best: NumberPuzzleValue; all: NumberPuzzleValue[] } | null>(null);
-
-  const DEFAULT_TIMER_VALUE = 30;
   const [mostRecentTotalSeconds, setMostRecentTotalSeconds] = useState(
     props.gamemodeSettings?.timerConfig?.isTimed === true
       ? props.gamemodeSettings?.timerConfig.seconds
-      : DEFAULT_TIMER_VALUE
+      : getGamemodeDefaultTimerValue(props.page)
   );
 
   const [isComputeSolutionButtonClicked, setIsComputeSolutionButtonClicked] = useState(false);
@@ -211,7 +212,7 @@ const NumbersGame: React.FC<Props> = (props) => {
       </div>
     );
 
-    for (let i = 0; i < props.numGuesses; i++) {
+    for (let i = 0; i < Math.max(DEFAULT_NUMBERS_GAME_NUM_ROWS, props.wordIndex + 1); i++) {
       let guess: Guess;
 
       if (props.wordIndex === i) {

@@ -18,6 +18,8 @@ import GamemodeSettingsMenu from "../Components/GamemodeSettingsMenu";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
 import { wordLengthMappingsTargets } from "../Data/WordArrayMappings";
 import { MAX_CODE_LENGTH } from "../Data/GamemodeSettingsInputLimits";
+import { getGamemodeDefaultTimerValue } from "../Data/DefaultTimerValues";
+import { defaultWordCodesGamemodeSettings } from "../Data/DefaultGamemodeSettings";
 
 const wordCodesModes = ["match", "question"] as const;
 export type wordCodesMode = typeof wordCodesModes[number];
@@ -67,18 +69,6 @@ interface Props extends WordCodesProps {
 
 /** */
 const WordCodes: React.FC<Props> = (props) => {
-  // Question mode only
-  const DEFAULT_NUM_DISPLAY_WORDS = 4;
-  const DEFAULT_NUM_DISPLAY_CODES = 3;
-  const DEFAULT_NUM_WORD_TO_CODE_QUESTIONS = 2;
-  const DEFAULT_NUM_CODE_TO_WORD_QUESTIONS = 1;
-
-  // Both modes
-  const DEFAULT_CODE_LENGTH = 4;
-  const DEFAULT_NUM_CODES_TO_MATCH = 4;
-  const DEFAULT_NUM_ADDITIONAL_LETTERS = 2;
-  const DEFAULT_NUM_GUESSES = 3;
-
   const [inProgress, setInProgress] = useState(true);
   const [guess, setGuess] = useState("");
 
@@ -102,27 +92,44 @@ const WordCodes: React.FC<Props> = (props) => {
   const [questionNumber, setQuestionNumber] = useState(0);
   const [numCorrectAnswers, setNumCorrectAnswers] = useState(0);
 
-  const STARTING_NUM_DISPLAY_CODES = props.gamemodeSettings?.numDisplayCodes ?? DEFAULT_NUM_DISPLAY_CODES;
+  const STARTING_NUM_DISPLAY_CODES =
+    props.gamemodeSettings?.numDisplayCodes ??
+    defaultWordCodesGamemodeSettings.find((x) => x.mode)?.settings?.numDisplayCodes!;
 
   // Atleast the number of display codes
   const STARTING_NUM_DISPLAY_WORDS = Math.max(
-    props.gamemodeSettings?.numDisplayWords ?? DEFAULT_NUM_DISPLAY_WORDS,
+    props.gamemodeSettings?.numDisplayWords ??
+      defaultWordCodesGamemodeSettings.find((x) => x.mode)?.settings?.numDisplayWords!,
     STARTING_NUM_DISPLAY_CODES
   );
 
-  const STARTING_CODE_LENGTH = Math.min(props.gamemodeSettings?.codeLength ?? DEFAULT_CODE_LENGTH, MAX_CODE_LENGTH)
+  const STARTING_CODE_LENGTH = Math.min(
+    props.gamemodeSettings?.codeLength ?? defaultWordCodesGamemodeSettings.find((x) => x.mode)?.settings?.codeLength!,
+    MAX_CODE_LENGTH
+  );
 
   const defaultGamemodeSettings = {
     numDisplayWords: STARTING_NUM_DISPLAY_WORDS,
     numDisplayCodes: STARTING_NUM_DISPLAY_CODES,
-    numWordToCodeQuestions: props.gamemodeSettings?.numWordToCodeQuestions ?? DEFAULT_NUM_WORD_TO_CODE_QUESTIONS,
-    numCodeToWordQuestions: props.gamemodeSettings?.numCodeToWordQuestions ?? DEFAULT_NUM_CODE_TO_WORD_QUESTIONS,
+    numWordToCodeQuestions:
+      props.gamemodeSettings?.numWordToCodeQuestions ??
+      defaultWordCodesGamemodeSettings.find((x) => x.mode)?.settings?.numWordToCodeQuestions!,
+    numCodeToWordQuestions:
+      props.gamemodeSettings?.numCodeToWordQuestions ??
+      defaultWordCodesGamemodeSettings.find((x) => x.mode)?.settings?.numCodeToWordQuestions!,
 
     codeLength: STARTING_CODE_LENGTH,
-    numCodesToMatch: props.gamemodeSettings?.numCodesToMatch ?? DEFAULT_NUM_CODES_TO_MATCH,
-    numAdditionalLetters: props.gamemodeSettings?.numAdditionalLetters ?? DEFAULT_NUM_ADDITIONAL_LETTERS,
-    numGuesses: props.gamemodeSettings?.numGuesses ?? DEFAULT_NUM_GUESSES,
-    timerConfig: props.gamemodeSettings?.timerConfig ?? { isTimed: false },
+    numCodesToMatch:
+      props.gamemodeSettings?.numCodesToMatch ??
+      defaultWordCodesGamemodeSettings.find((x) => x.mode)?.settings?.numCodesToMatch!,
+    numAdditionalLetters:
+      props.gamemodeSettings?.numAdditionalLetters ??
+      defaultWordCodesGamemodeSettings.find((x) => x.mode)?.settings?.numAdditionalLetters!,
+    numGuesses:
+      props.gamemodeSettings?.numGuesses ?? defaultWordCodesGamemodeSettings.find((x) => x.mode)?.settings?.numGuesses!,
+    timerConfig:
+      props.gamemodeSettings?.timerConfig ??
+      defaultWordCodesGamemodeSettings.find((x) => x.mode)?.settings?.timerConfig!,
   };
 
   const [gamemodeSettings, setGamemodeSettings] = useState<{
@@ -143,17 +150,16 @@ const WordCodes: React.FC<Props> = (props) => {
 
   const [remainingGuesses, setRemainingGuesses] = useState(gamemodeSettings.numGuesses);
 
-  const DEFAULT_TIMER_VALUE = 100;
   const [remainingSeconds, setRemainingSeconds] = useState(
     props.gamemodeSettings?.timerConfig?.isTimed === true
       ? props.gamemodeSettings?.timerConfig.seconds
-      : DEFAULT_TIMER_VALUE
+      : getGamemodeDefaultTimerValue(props.page)
   );
 
   const [mostRecentTotalSeconds, setMostRecentTotalSeconds] = useState(
     props.gamemodeSettings?.timerConfig?.isTimed === true
       ? props.gamemodeSettings?.timerConfig.seconds
-      : DEFAULT_TIMER_VALUE
+      : getGamemodeDefaultTimerValue(props.page)
   );
 
   // Sounds
@@ -275,7 +281,7 @@ const WordCodes: React.FC<Props> = (props) => {
     // Letters of the word being checked
     const wordLetters = word.split("");
 
-    return wordLetters.every(letter => validLetters.includes(letter));
+    return wordLetters.every((letter) => validLetters.includes(letter));
   }
 
   function determineWordCodes() {
@@ -284,9 +290,14 @@ const WordCodes: React.FC<Props> = (props) => {
 
     // Single digit codes are given to each letter (so wordLength must be max of 9)
     if (!targetWordArray || gamemodeSettings.codeLength >= 10) {
-      const newGamemodeSettings = {...gamemodeSettings, codeLength: DEFAULT_CODE_LENGTH};
+      const newGamemodeSettings = {
+        ...gamemodeSettings,
+        codeLength: defaultWordCodesGamemodeSettings.find((x) => x.mode)?.settings?.codeLength!,
+      };
       setGamemodeSettings(newGamemodeSettings);
-      targetWordArray = wordLengthMappingsTargets.find((x) => x.value === DEFAULT_CODE_LENGTH)?.array!;
+      targetWordArray = wordLengthMappingsTargets.find(
+        (x) => x.value === defaultWordCodesGamemodeSettings.find((x) => x.mode)?.settings?.codeLength!
+      )?.array!;
     }
 
     // Choose a random word from this array

@@ -4,6 +4,8 @@ import LettersGame from "./LettersGame";
 import { Theme } from "../Data/Themes";
 import { SaveData, SettingsData } from "../Data/SaveData";
 import { getAllWordsOfLength } from "../Data/Conundrum";
+import { getGamemodeDefaultTimerValue } from "../Data/DefaultTimerValues";
+import { defaultLettersGameGamemodeSettings } from "../Data/DefaultGamemodeSettings";
 
 export interface LettersGameConfigProps {
   campaignConfig:
@@ -61,9 +63,6 @@ export function isLettersGameGuessValid(guessedWord: string, lettersGameSelectio
 }
 
 const LettersGameConfig: React.FC<Props> = (props) => {
-  const DEFAULT_NUM_LETTERS = 9;
-  const DEFAULT_TIMER_VALUE = 30;
-
   const [guesses, setGuesses] = useState<string[]>([]);
   const [currentWord, setCurrentWord] = useState("");
   const [inProgress, setInProgress] = useState(true);
@@ -72,8 +71,8 @@ const LettersGameConfig: React.FC<Props> = (props) => {
   const [hasSubmitLetter, sethasSubmitLetter] = useState(false);
 
   const defaultGamemodeSettings = {
-    numLetters: props.gamemodeSettings?.defaultNumLetters ?? DEFAULT_NUM_LETTERS,
-    timerConfig: props.gamemodeSettings?.timerConfig ?? { isTimed: true, seconds: DEFAULT_TIMER_VALUE },
+    numLetters: props.gamemodeSettings?.defaultNumLetters ?? defaultLettersGameGamemodeSettings?.defaultNumLetters!,
+    timerConfig: props.gamemodeSettings?.timerConfig ?? defaultLettersGameGamemodeSettings?.timerConfig!,
   };
 
   const [gamemodeSettings, setGamemodeSettings] = useState<{
@@ -84,7 +83,7 @@ const LettersGameConfig: React.FC<Props> = (props) => {
   const [remainingSeconds, setRemainingSeconds] = useState(
     props.gamemodeSettings?.timerConfig?.isTimed === true
       ? props.gamemodeSettings?.timerConfig.seconds
-      : DEFAULT_TIMER_VALUE
+      : getGamemodeDefaultTimerValue(props.page)
   );
 
   const defaultLetterTileStatuses: {

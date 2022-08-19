@@ -4,6 +4,8 @@ import NumbersGame from "./NumbersGame";
 import { calculateTotal } from "../Components/NumberRow";
 import { Theme } from "../Data/Themes";
 import { SaveData, SettingsData } from "../Data/SaveData";
+import { getGamemodeDefaultTimerValue } from "../Data/DefaultTimerValues";
+import { defaultNumbersGameGamemodeSettings } from "../Data/DefaultGamemodeSettings";
 
 export interface NumbersGameConfigProps {
   campaignConfig:
@@ -22,7 +24,6 @@ export interface NumbersGameConfigProps {
     timerConfig?: { isTimed: true; seconds: number } | { isTimed: false };
   };
 
-  defaultNumGuesses: number;
   gameshowScore?: number;
 }
 
@@ -140,14 +141,11 @@ export function determineScore(
 export type Guess = { operand1: number | null; operand2: number | null; operator: typeof operators[0]["name"] };
 
 const NumbersGameConfig: React.FC<Props> = (props) => {
-  const DEFAULT_NUM_OPERANDS = 6;
-  const DEFAULT_TIMER_VALUE = 30;
-
   const defaultGamemodeSettings = {
-    hasScaryNumbers: props.gamemodeSettings?.hasScaryNumbers ?? false,
-    scoringMethod: props.gamemodeSettings?.scoringMethod ?? "standard",
-    numOperands: props.gamemodeSettings?.defaultNumOperands ?? DEFAULT_NUM_OPERANDS,
-    timerConfig: props.gamemodeSettings?.timerConfig ?? { isTimed: true, seconds: DEFAULT_TIMER_VALUE },
+    hasScaryNumbers: props.gamemodeSettings?.hasScaryNumbers ?? defaultNumbersGameGamemodeSettings?.hasScaryNumbers!,
+    scoringMethod: props.gamemodeSettings?.scoringMethod ?? defaultNumbersGameGamemodeSettings?.scoringMethod!,
+    numOperands: props.gamemodeSettings?.defaultNumOperands ?? defaultNumbersGameGamemodeSettings?.defaultNumOperands!,
+    timerConfig: props.gamemodeSettings?.timerConfig ?? defaultNumbersGameGamemodeSettings?.timerConfig!,
   };
 
   const [gamemodeSettings, setGamemodeSettings] = useState<{
@@ -160,7 +158,7 @@ const NumbersGameConfig: React.FC<Props> = (props) => {
   const [remainingSeconds, setRemainingSeconds] = useState(
     props.gamemodeSettings?.timerConfig?.isTimed === true
       ? props.gamemodeSettings?.timerConfig.seconds
-      : DEFAULT_TIMER_VALUE
+      : getGamemodeDefaultTimerValue(props.page)
   );
 
   const [inProgress, setinProgress] = useState(true);
@@ -171,7 +169,6 @@ const NumbersGameConfig: React.FC<Props> = (props) => {
 
   const [targetNumber, settargetNumber] = useState<number | null>(null);
   const [wordIndex, setWordIndex] = useState(0);
-  const [numGuesses, setNumGuesses] = useState(props.defaultNumGuesses);
   const [hasTimerEnded, sethasTimerEnded] = useState(false);
   const [hasSubmitNumber, sethasSubmitNumber] = useState(false);
 
@@ -345,7 +342,6 @@ const NumbersGameConfig: React.FC<Props> = (props) => {
     setinProgress(true);
     sethasTimerEnded(false);
     sethasSubmitNumber(false);
-    setNumGuesses(props.defaultNumGuesses);
 
     if (gamemodeSettings.timerConfig.isTimed) {
       // Reset the timer if it is enabled in the game options
@@ -483,11 +479,6 @@ const NumbersGameConfig: React.FC<Props> = (props) => {
       setCurrentGuess({ operand1: null, operator: "+", operand2: null });
       // Move to next row
       setWordIndex(wordIndex + 1);
-
-      // Add a new row to use
-      if (wordIndex + 1 >= numGuesses) {
-        setNumGuesses(numGuesses + 1);
-      }
     }
     // Update the guess shown at the current row
     else {
@@ -623,7 +614,6 @@ const NumbersGameConfig: React.FC<Props> = (props) => {
       setGuesses([]);
       setCurrentGuess({ operand1: null, operator: "+", operand2: null });
       setNumberTileStatuses(numberTileStatuses.map((x) => ({ ...x, picked: false })));
-      setNumGuesses(props.defaultNumGuesses);
     }
   }
 
@@ -663,13 +653,13 @@ const NumbersGameConfig: React.FC<Props> = (props) => {
       wordIndex={wordIndex}
       guesses={guesses}
       closestGuessSoFar={closestGuessSoFar}
-      numGuesses={numGuesses}
       currentGuess={currentGuess}
       numberTileStatuses={numberTileStatuses}
       inProgress={inProgress}
       hasTimerEnded={hasTimerEnded}
       hasSubmitNumber={hasSubmitNumber}
       targetNumber={targetNumber}
+      page={props.page}
       theme={props.theme}
       settings={props.settings}
       setTheme={props.setTheme}

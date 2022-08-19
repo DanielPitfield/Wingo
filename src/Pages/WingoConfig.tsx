@@ -9,6 +9,7 @@ import { Chance } from "chance";
 import { generateConundrum, getAllWordsOfLength } from "../Data/Conundrum";
 import { PageName } from "../PageNames";
 import {
+  defaultWingoGamemodeSettings,
   defaultWingoInterlinkedGamemodeSettings,
   DEFAULT_PUZZLE_LEAVE_NUM_BLANKS,
   DEFAULT_PUZZLE_REVEAL_MS,
@@ -17,6 +18,7 @@ import { getGamemodeDefaultWordLength } from "../Data/DefaultWordLengths";
 import { MAX_TARGET_WORD_LENGTH, MIN_TARGET_WORD_LENGTH } from "../Data/GamemodeSettingsInputLimits";
 import { categoryMappings, wordLengthMappingsTargets } from "../Data/WordArrayMappings";
 import { DEFAULT_ALPHABET } from "../Components/Keyboard";
+import { getGamemodeDefaultTimerValue } from "../Data/DefaultTimerValues";
 
 export interface WingoConfigProps {
   mode:
@@ -248,13 +250,12 @@ const WingoConfig: React.FC<Props> = (props) => {
     wordLength: defaultWordLength,
     // At what word length should increasing and limitless go up to?
     wordLengthMaxLimit: props.gamemodeSettings?.wordLengthMaxLimit ?? MAX_TARGET_WORD_LENGTH,
-    isFirstLetterProvided: props.gamemodeSettings?.isHintShown ?? false,
-    // Use gamemode setting value if specified, otherwise default to true for puzzle mode and false for other modes
-    isHintShown: props.gamemodeSettings?.isHintShown ?? props.mode === "puzzle" ? true : false,
+    isFirstLetterProvided: props.gamemodeSettings?.isHintShown ?? defaultWingoGamemodeSettings.find(x => x.page === props.page)?.settings?.isFirstLetterProvided!,
+    isHintShown: props.gamemodeSettings?.isHintShown ?? defaultWingoGamemodeSettings.find(x => x.page === props.page)?.settings?.isHintShown!,
     puzzleRevealMs: props.gamemodeSettings?.puzzleRevealMs ?? DEFAULT_PUZZLE_REVEAL_MS,
     puzzleLeaveNumBlanks: props.gamemodeSettings?.puzzleLeaveNumBlanks ?? DEFAULT_PUZZLE_LEAVE_NUM_BLANKS,
     maxLivesConfig: props.gamemodeSettings?.maxLivesConfig ?? { isLimited: false },
-    timerConfig: props.gamemodeSettings?.timerConfig ?? { isTimed: false },
+    timerConfig: props.gamemodeSettings?.timerConfig ?? defaultWingoGamemodeSettings.find(x => x.page === props.page)?.settings?.timerConfig!,
   };
 
   const [gamemodeSettings, setGamemodeSettings] = useState<{
@@ -268,11 +269,10 @@ const WingoConfig: React.FC<Props> = (props) => {
     timerConfig: { isTimed: true; seconds: number } | { isTimed: false };
   }>(defaultGamemodeSettings);
 
-  const DEFAULT_TIMER_VALUE = 30;
   const [remainingSeconds, setRemainingSeconds] = useState(
     props.gamemodeSettings?.timerConfig?.isTimed === true
       ? props.gamemodeSettings?.timerConfig.seconds
-      : DEFAULT_TIMER_VALUE
+      : getGamemodeDefaultTimerValue(props.page)
   );
 
   /*
@@ -283,7 +283,7 @@ const WingoConfig: React.FC<Props> = (props) => {
   const [mostRecentTotalSeconds, setMostRecentTotalSeconds] = useState(
     props.gamemodeSettings?.timerConfig?.isTimed === true
       ? props.gamemodeSettings?.timerConfig.seconds
-      : DEFAULT_TIMER_VALUE
+      : getGamemodeDefaultTimerValue(props.page)
   );
 
   const [currentWord, setCurrentWord] = useState("");

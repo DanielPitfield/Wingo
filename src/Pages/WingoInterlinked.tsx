@@ -16,6 +16,8 @@ import { LEVEL_FINISHING_TEXT } from "../Components/Level";
 import { getGamemodeDefaultWordLength } from "../Data/DefaultWordLengths";
 import { categoryMappings, wordLengthMappingsTargets } from "../Data/WordArrayMappings";
 import { MAX_TARGET_WORD_LENGTH, MIN_TARGET_WORD_LENGTH } from "../Data/GamemodeSettingsInputLimits";
+import { getGamemodeDefaultTimerValue } from "../Data/DefaultTimerValues";
+import { defaultWingoInterlinkedGamemodeSettings, DEFAULT_FIT_RESTRICTION } from "../Data/DefaultGamemodeSettings";
 
 type Orientation = "vertical" | "horizontal";
 
@@ -91,39 +93,53 @@ interface Props extends WingoInterlinkedProps {
 }
 
 export const WingoInterlinked: React.FC<Props> = (props) => {
-  const DEFAULT_NUM_WORDS = 2;
-  const STARTING_NUM_WORDS = props.gamemodeSettings?.numWords ?? DEFAULT_NUM_WORDS;
+  const STARTING_NUM_WORDS =
+    props.gamemodeSettings?.numWords ??
+    defaultWingoInterlinkedGamemodeSettings.find((x) => x.page === props.page)?.settings?.numWords!;
 
   const IS_CROSSWORD = STARTING_NUM_WORDS > 2;
 
   const STARTING_NUM_GRID_GUESSES =
-    props.initialConfig?.remainingGridGuesses ?? props.gamemodeSettings?.numGridGuesses ?? 0;
+    props.initialConfig?.remainingGridGuesses ??
+    props.gamemodeSettings?.numGridGuesses ??
+    defaultWingoInterlinkedGamemodeSettings.find((x) => x.page === props.page)?.settings?.numGridGuesses!;
 
-  // TODO: Balancing
-  const DEFAULT_NUM_WORD_GUESSES = STARTING_NUM_WORDS * 3;
   // Specified amount of word guesses (either from initial config or gamemode settings)?
   const specifiedValue =
-    props.initialConfig?.remainingWordGuesses ?? props.gamemodeSettings?.numWordGuesses ?? undefined;
-  // In case of no specified value, if also no grid guesses, use default value, otherwise zero
-  const fallbackValue = STARTING_NUM_GRID_GUESSES === 0 ? DEFAULT_NUM_WORD_GUESSES : 0;
+    props.initialConfig?.remainingWordGuesses ??
+    props.gamemodeSettings?.numWordGuesses ??
+    defaultWingoInterlinkedGamemodeSettings.find((x) => x.page === props.page)?.settings?.numWordGuesses!;
+
+  // In case of no specified value, if also no grid guesses, use basis of 3 guesses per word, otherwise zero
+  const fallbackValue = STARTING_NUM_GRID_GUESSES === 0 ? STARTING_NUM_WORDS * 3 : 0;
   const STARTING_NUM_WORD_GUESSES = specifiedValue ?? fallbackValue;
 
   // TODO: What's the point of DefaultGamemodeSettings.ts, if most components define the settings within the component like this?
   const defaultGamemodeSettings = {
     numWords: STARTING_NUM_WORDS,
-    minWordLength: props.gamemodeSettings?.minWordLength ?? getGamemodeDefaultWordLength(props.page),
-    maxWordLength: props.gamemodeSettings?.maxWordLength ?? getGamemodeDefaultWordLength(props.page),
-    fitRestrictionConfig: props.gamemodeSettings?.fitRestrictionConfig ?? { isRestricted: false },
+    minWordLength:
+      props.gamemodeSettings?.minWordLength ??
+      defaultWingoInterlinkedGamemodeSettings.find((x) => x.page === props.page)?.settings?.minWordLength!,
+    maxWordLength:
+      props.gamemodeSettings?.maxWordLength ??
+      defaultWingoInterlinkedGamemodeSettings.find((x) => x.page === props.page)?.settings?.maxWordLength!,
+    fitRestrictionConfig:
+      props.gamemodeSettings?.fitRestrictionConfig ??
+      defaultWingoInterlinkedGamemodeSettings.find((x) => x.page === props.page)?.settings?.fitRestrictionConfig!,
 
     // Specified amount of grid guesses (either from initial config or gamemode settings), otherwise zero
     numGridGuesses: STARTING_NUM_GRID_GUESSES,
     numWordGuesses: STARTING_NUM_WORD_GUESSES,
 
-    isFirstLetterProvided: props.gamemodeSettings?.isFirstLetterProvided ?? false,
+    isFirstLetterProvided:
+      props.gamemodeSettings?.isFirstLetterProvided ??
+      defaultWingoInterlinkedGamemodeSettings.find((x) => x.page === props.page)?.settings?.isFirstLetterProvided!,
     // Use gamemode setting value if specified, otherwise default to true for large crosswords (more than 2 words)
     isHintShown: props.gamemodeSettings?.isHintShown ?? STARTING_NUM_WORDS > 2 ? true : false,
 
-    timerConfig: props.gamemodeSettings?.timerConfig ?? { isTimed: false },
+    timerConfig:
+      props.gamemodeSettings?.timerConfig ??
+      defaultWingoInterlinkedGamemodeSettings.find((x) => x.page === props.page)?.settings?.timerConfig!,
   };
 
   const [inProgress, setInProgress] = useState(props.initialConfig?.inProgress ?? true);
@@ -141,11 +157,10 @@ export const WingoInterlinked: React.FC<Props> = (props) => {
     timerConfig: { isTimed: true; seconds: number } | { isTimed: false };
   }>(defaultGamemodeSettings);
 
-  const DEFAULT_TIMER_VALUE = 30;
   const [remainingSeconds, setRemainingSeconds] = useState(
     props.gamemodeSettings?.timerConfig?.isTimed === true
       ? props.gamemodeSettings?.timerConfig.seconds
-      : DEFAULT_TIMER_VALUE
+      : getGamemodeDefaultTimerValue(props.page)
   );
 
   /*
@@ -156,10 +171,9 @@ export const WingoInterlinked: React.FC<Props> = (props) => {
   const [mostRecentTotalSeconds, setMostRecentTotalSeconds] = useState(
     props.gamemodeSettings?.timerConfig?.isTimed === true
       ? props.gamemodeSettings?.timerConfig.seconds
-      : DEFAULT_TIMER_VALUE
+      : getGamemodeDefaultTimerValue(props.page)
   );
 
-  const DEFAULT_FIT_RESTRICTION = 0;
   const [mostRecentFitRestriction, setMostRecentFitRestriction] = useState(
     props.gamemodeSettings?.fitRestrictionConfig?.isRestricted === true
       ? props.gamemodeSettings?.fitRestrictionConfig.fitRestriction
@@ -412,15 +426,15 @@ export const WingoInterlinked: React.FC<Props> = (props) => {
       }
     } else if (gamemodeSettings.fitRestrictionConfig.isRestricted) {
       // Height and width can't exceed this value (to begin with)
-      const DEFAULT_MAX_GRID_DIMENSION =
+      const MAX_GRID_DIMENSION =
         gamemodeSettings.maxWordLength + gamemodeSettings.fitRestrictionConfig.fitRestriction;
       // Try to find smallest fit restriction possible but allow additional leeway up to this amount
       const MAX_LEEWAY_INCREMENT = 10;
 
       // Start with DEFAULT_MAX_GRID_DIMENSION and slowly increment until a result is found
       for (
-        let maxGridDimension = DEFAULT_MAX_GRID_DIMENSION;
-        maxGridDimension < DEFAULT_MAX_GRID_DIMENSION + MAX_LEEWAY_INCREMENT;
+        let maxGridDimension = MAX_GRID_DIMENSION;
+        maxGridDimension < MAX_GRID_DIMENSION + MAX_LEEWAY_INCREMENT;
         maxGridDimension++
       ) {
         // Define the maximum number of times to find a gridConfig result with the current maxGridDimension
