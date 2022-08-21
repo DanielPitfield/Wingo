@@ -114,11 +114,7 @@ const NumbersGame: React.FC<Props> = (props) => {
       return null;
     }
 
-    // Array of numbers 1 through 10
-    const smallNumbers = [];
-    for (let i = 1; i <= 10; i++) {
-      smallNumbers.push(i);
-    }
+    const smallNumbers = Array.from({length: 10}, (_, i) => i + 1);
 
     return pickRandomElementFrom(smallNumbers);
   }
