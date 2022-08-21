@@ -18,15 +18,15 @@ export const LetterSelectionRow: React.FC<Props> = (props) => {
   function CreateRow() {
     let tileArray = [];
 
-    for (let i = 0; i < props.letterTileStatuses.length; i++) {
+    for (const [index, letterTileStatus] of props.letterTileStatuses.entries()) {
       tileArray.push(
         <LetterTile
-          key={`${props.letterTileStatuses[i].letter} - ${i}`}
-          letter={props.letterTileStatuses[i].letter ?? ""}
+          key={`${letterTileStatus.letter} - ${index}`}
+          letter={letterTileStatus.letter ?? ""}
           status={"not set"}
           settings={props.settings}
-          disabled={props.disabled || props.letterTileStatuses[i].picked}
-          onClick={() => props.onClick(props.letterTileStatuses[i].letter, i)}
+          disabled={props.disabled || letterTileStatus.picked}
+          onClick={() => props.onClick(letterTileStatus.letter, index)}
         />
       );
     }

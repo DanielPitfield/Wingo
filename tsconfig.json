@@ -1,6 +1,10 @@
 {
   "compilerOptions": {
-    "target": "es5",
+    /*
+    Electron uses its own browser (recent releases use Chromium versions only a few months old)
+    Therefore target the latest JavaScript language version (don't need to worry about supporting old/outdated browsers)
+    */
+    "target": "ES2022",
     "lib": [
       "dom",
       "dom.iterable",

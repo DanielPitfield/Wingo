@@ -86,12 +86,12 @@ export const WordRow: React.FC<Props> = (props) => {
   }
 
   function CreateRow() {
-    let TileArray = [];
+    let tileArray = [];
     
     for (let i = 0; i < props.length; i++) {
       const allCorrect = wordSummary.every((letter) => letter.status === "correct");
 
-      TileArray.push(
+      tileArray.push(
         <LetterTile
           key={i}
           indexInWord={props.revealedLetterIndexes ? props.revealedLetterIndexes.length : i}
@@ -111,7 +111,7 @@ export const WordRow: React.FC<Props> = (props) => {
       );
     }
 
-    return TileArray;
+    return tileArray;
   }
 
   return (

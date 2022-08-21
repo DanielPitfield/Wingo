@@ -138,15 +138,13 @@ export const Keyboard: React.FC<Props> = (props) => {
     // Assign array to variable for quicker access
     const keyboardStatuses = getKeyboardStatuses();
 
-    for (let i = 0; i < RowLetters.length; i++) {
-      // Individual letter from RowString
-      const letter = RowLetters[i];
+    for (const letter of RowLetters) {
       // Find status using keyboardStatuses (correct, not in word, wrong position)
       const letterStatus = keyboardStatuses.find((x) => x.letter.toUpperCase() === letter.toUpperCase())?.status;
 
       KeyboardButtons.push(
         <Button
-          key={i}
+          key={letter}
           className={letter === "-" ? "keyboard_space" : `keyboard_${letter}`}
           mode="default"
           // Data attribute used to colour button

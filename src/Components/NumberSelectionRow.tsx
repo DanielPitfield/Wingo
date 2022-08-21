@@ -16,16 +16,17 @@ interface Props {
 
 export const NumberSelectionRow: React.FC<Props> = (props) => {
   function CreateRow() {
-    const tileArray = [];
+    let tileArray = [];
+    
     const originalNumbers = props.numberTileStatuses.filter((x) => x.type === "original");
 
-    for (let i = 0; i < originalNumbers.length; i++) {
+    for (const [index, originalNumberInfo] of originalNumbers.entries()) {
       tileArray.push(
         <NumberTile
-          key={i}
-          number={originalNumbers?.[i].number}
-          disabled={props.disabled || originalNumbers?.[i].picked}
-          onClick={() => props.onClick(originalNumbers?.[i].number, { type: "original", index: i })}
+          key={index}
+          number={originalNumberInfo.number}
+          disabled={props.disabled || originalNumberInfo.picked}
+          onClick={() => props.onClick(originalNumberInfo.number, { type: "original", index: index })}
         />
       );
     }
