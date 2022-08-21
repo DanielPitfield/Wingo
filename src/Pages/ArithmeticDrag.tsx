@@ -309,14 +309,11 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
 
     // Result tiles (only needed in match mode)
     if (props.mode === "match") {
-      let newResultTiles: { total: number; status: "not set" }[] = [];
+      // Tiles displaying the expression totals, shuffled and all given the 'not set' status
+      const newResultTiles: { total: number; status: "not set" }[] = shuffleArray(
+        newExpressionTiles.map((x) => x.total)
+      ).map((total) => ({ total: total, status: "not set" }));
 
-      // Array of just the expression tile totals
-      const tileTotals = newExpressionTiles.map((x) => x.total);
-      // Shuffle them (so they don't appear in same order as expression tiles)
-      const shuffledTotals = shuffleArray(tileTotals);
-      // All tiles begin with 'not set' status
-      newResultTiles = shuffledTotals.map((total) => ({ total: total, status: "not set" }));
       setResultTiles(newResultTiles);
     }
   }
