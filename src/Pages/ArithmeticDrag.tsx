@@ -98,11 +98,21 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
   const [resultTiles, setResultTiles] = useState<{ total: number; status: "incorrect" | "correct" | "not set" }[]>([]);
 
   const defaultGamemodeSettings = {
-    numTiles: props.gamemodeSettings?.numTiles ?? defaultArithmeticDragGamemodeSettings.find(x => x.mode === props.mode)?.settings?.numTiles!,
-    numberSize: props.gamemodeSettings?.numberSize ?? defaultArithmeticDragGamemodeSettings.find(x => x.mode === props.mode)?.settings?.numberSize!,
-    numOperands: props.gamemodeSettings?.numOperands ?? defaultArithmeticDragGamemodeSettings.find(x => x.mode === props.mode)?.settings?.numOperands!,
-    numGuesses: props.gamemodeSettings?.numGuesses ?? defaultArithmeticDragGamemodeSettings.find(x => x.mode === props.mode)?.settings?.numGuesses!,
-    timerConfig: props.gamemodeSettings?.timerConfig ?? defaultArithmeticDragGamemodeSettings.find(x => x.mode === props.mode)?.settings?.timerConfig!,
+    numTiles:
+      props.gamemodeSettings?.numTiles ??
+      defaultArithmeticDragGamemodeSettings.find((x) => x.mode === props.mode)?.settings?.numTiles!,
+    numberSize:
+      props.gamemodeSettings?.numberSize ??
+      defaultArithmeticDragGamemodeSettings.find((x) => x.mode === props.mode)?.settings?.numberSize!,
+    numOperands:
+      props.gamemodeSettings?.numOperands ??
+      defaultArithmeticDragGamemodeSettings.find((x) => x.mode === props.mode)?.settings?.numOperands!,
+    numGuesses:
+      props.gamemodeSettings?.numGuesses ??
+      defaultArithmeticDragGamemodeSettings.find((x) => x.mode === props.mode)?.settings?.numGuesses!,
+    timerConfig:
+      props.gamemodeSettings?.timerConfig ??
+      defaultArithmeticDragGamemodeSettings.find((x) => x.mode === props.mode)?.settings?.timerConfig!,
   };
 
   const [gamemodeSettings, setGamemodeSettings] = useState<{
@@ -189,16 +199,8 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
 
   // How many operator symbols are there in the given expression string?
   function countOperators(expression: string): number {
-    let operatorCount = 0;
-
-    for (let i = 0; i < expression.length; i++) {
-      const character = expression.charAt(i);
-      if (operatorSymbols.includes(character)) {
-        operatorCount = operatorCount + 1;
-      }
-    }
-
-    return operatorCount;
+    const expressionSymbols = expression.split("");
+    return expressionSymbols.filter((character) => operatorSymbols.includes(character)).length;
   }
 
   /**
@@ -227,7 +229,7 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
         case "÷": {
           // Number of attempts to find a clean divisor
           const maxLimit = 10;
-          
+
           let failCount = 0;
 
           // Loop max_limit times in the attempt of finding a clean divisor
@@ -299,12 +301,9 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
 
   // Generate (all/numTiles number) of tiles
   function generateAllTiles() {
-    const newExpressionTiles: { expression: string; total: number; status: "not set" }[] = [];
-
-    for (let i = 0; i < gamemodeSettings.numTiles; i++) {
-      const tile = generateTile();
-      newExpressionTiles.push(tile);
-    }
+    const newExpressionTiles: { expression: string; total: number; status: "not set" }[] = Array.from({
+      length: gamemodeSettings.numTiles,
+    }).map((x) => generateTile());
 
     setExpressionTiles(newExpressionTiles);
 
