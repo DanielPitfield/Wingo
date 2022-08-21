@@ -349,13 +349,8 @@ const OnlyConnect: React.FC<Props> = (props) => {
   }
 
   function displayGrid() {
-    let Grid = [];
-
-    for (let i = 0; i < gamemodeSettings.numGroups; i++) {
-      Grid.push(populateRow(i));
-    }
-
-    return Grid;
+    // Create a grid (of a row for every group)
+    return Array.from({ length: gamemodeSettings.numGroups }).map((_, index) => populateRow(index));
   }
 
   function getCorrectGrid() {
