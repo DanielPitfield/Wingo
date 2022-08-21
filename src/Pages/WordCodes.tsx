@@ -16,10 +16,10 @@ import { DraggableItem } from "../Components/DraggableItem";
 import { getQuestionSetOutcome } from "./Algebra";
 import GamemodeSettingsMenu from "../Components/GamemodeSettingsMenu";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
-import { wordLengthMappingsTargets } from "../Data/WordArrayMappings";
 import { MAX_CODE_LENGTH } from "../Data/GamemodeSettingsInputLimits";
 import { getGamemodeDefaultTimerValue } from "../Data/DefaultTimerValues";
 import { defaultWordCodesGamemodeSettings } from "../Data/DefaultGamemodeSettings";
+import { getAllWordsOfLength } from "../Data/Conundrum";
 
 const wordCodesModes = ["match", "question"] as const;
 export type wordCodesMode = typeof wordCodesModes[number];
@@ -223,15 +223,23 @@ const WordCodes: React.FC<Props> = (props) => {
       return;
     }
 
+    // Single digit codes can only be given to a maximum of 9 letters
+    if (gamemodeSettings.codeLength > MAX_CODE_LENGTH) {
+      // Set code length to default gamemode settings value
+      const newGamemodeSettings = {
+        ...gamemodeSettings,
+        codeLength: defaultWordCodesGamemodeSettings.find((x) => x.mode)?.settings?.codeLength!,
+      };
+      setGamemodeSettings(newGamemodeSettings);
+    }
+
     // Sets display/information word codes (and question word codes if that gamemode)
     determineWordCodes();
   }, [ResetGame]);
 
   // Update tiles or display information (each time wordCodes changes)
   React.useEffect(() => {
-    //const expectedWordCodesLength = props.mode === "match" ? gamemodeSettings.numCodesToMatch : gamemodeSettings.numDisplayWords;
-
-    if (!wordCodes || wordCodes.length === 0 /*|| wordCodes.length !== expectedWordCodesLength*/) {
+    if (!wordCodes) {
       return;
     }
 
@@ -284,117 +292,85 @@ const WordCodes: React.FC<Props> = (props) => {
     return wordLetters.every((letter) => validLetters.includes(letter));
   }
 
-  function determineWordCodes() {
-    // The word array containing all the words of the specified length
-    let targetWordArray = wordLengthMappingsTargets.find((x) => x.value === gamemodeSettings.codeLength)?.array!;
+  function getValidLetters(wordArray: string[]) {
+    // Get the letters of a random word from the array
+    const validLetters = pickRandomElementFrom(wordArray).split("");
 
-    // Single digit codes are given to each letter (so wordLength must be max of 9)
-    if (!targetWordArray || gamemodeSettings.codeLength >= 10) {
-      const newGamemodeSettings = {
-        ...gamemodeSettings,
-        codeLength: defaultWordCodesGamemodeSettings.find((x) => x.mode)?.settings?.codeLength!,
-      };
-      setGamemodeSettings(newGamemodeSettings);
-      targetWordArray = wordLengthMappingsTargets.find(
-        (x) => x.value === defaultWordCodesGamemodeSettings.find((x) => x.mode)?.settings?.codeLength!
-      )?.array!;
+    if (validLetters.length < MAX_CODE_LENGTH) {
+      // How many more letters can be added beofre reaching the max limit?
+      const MAX_NUM_ADDITIONAL_LETTERS = Math.abs(MAX_CODE_LENGTH - validLetters.length);
+      const numAdditionalLetters = Math.min(gamemodeSettings.numAdditionalLetters, MAX_NUM_ADDITIONAL_LETTERS);
+      // The determined amount of new letters
+      const additionalLetters = shuffleArray(DEFAULT_ALPHABET.filter((letter) => !validLetters.includes(letter))).slice(
+        0,
+        numAdditionalLetters
+      );
+      validLetters.concat(additionalLetters);
     }
 
-    // Choose a random word from this array
-    const originalWord = pickRandomElementFrom(targetWordArray);
-    // The letters of this original word
-    let validLetters = originalWord.split("");
-    // How many valid letters at this point?
-    const originalWordLength = validLetters.length;
+    return validLetters;
+  }
 
-    // Add some additional letters the other words will be able to be made from (more letters should make the game harder)
-    while (validLetters.length < originalWordLength + gamemodeSettings.numAdditionalLetters) {
-      const randomLetter = pickRandomElementFrom(DEFAULT_ALPHABET);
-
-      if (!validLetters.includes(randomLetter)) {
-        validLetters.push(randomLetter);
-      }
-    }
-
+  function getLetterCodes(validLetters: string[]): { letter: string; code: number }[] {
     // Add a number code to each of the valid letters
-    let letterCodes = validLetters.map((letter: string, index: number) => {
+    const letterCodes = validLetters.map((letter: string, index: number) => {
       return { letter: letter, code: index };
     });
+    return letterCodes;
+  }
 
-    // Get only the words that can be made from these valid letters
+  // Finds the code for a given word
+  function getCode(word: string, letterCodes: { letter: string; code: number }[]): string {
+    const wordLetters = word.split("");
+    const wordLetterCodes = wordLetters.map((letter) =>
+      letterCodes
+        .find((letterCodeCombination: { letter: string; code: number }) => letterCodeCombination.letter === letter)
+        ?.code.toString()
+    );
+    return wordLetterCodes.join("");
+  }
+
+  function determineWordCodes() {
+    let targetWordArray = getAllWordsOfLength(gamemodeSettings.codeLength);
+
+    const validLetters = getValidLetters(targetWordArray);
+    const letterCodes = getLetterCodes(validLetters);
+
+    // Get only the words that can be made from the valid letters
     const originalMatches = targetWordArray.filter((word) => isWordValid(validLetters, word));
 
     const subsetSize = props.mode === "match" ? gamemodeSettings.numCodesToMatch : gamemodeSettings.numDisplayWords;
-    // Choose/determine a subset of these words
-    let wordSubset: string[] = [];
-    let failCount = 0;
-
-    while (wordSubset.length < subsetSize && failCount < 100) {
-      const randomWord = pickRandomElementFrom(originalMatches);
-
-      if (!wordSubset.includes(randomWord)) {
-        wordSubset.push(randomWord);
-      } else {
-        failCount += 1;
-      }
-    }
-
-    // Finds the code for a given word
-    function getCode(word: string): string {
-      const wordLetters = word.split("");
-      let codeString = "";
-
-      for (let i = 0; i < wordLetters.length; i++) {
-        // Current letter of word
-        const letter = wordLetters[i];
-        // Find code from lookup table
-        const letterCode = letterCodes
-          .find((letterCodeCombination: { letter: string; code: number }) => letterCodeCombination.letter === letter)
-          ?.code.toString();
-        // Append to code string for entire word
-        codeString += letterCode;
-      }
-
-      return codeString;
-    }
+    const wordSubset = shuffleArray(originalMatches).slice(0, subsetSize);
 
     // Determine the code for each of the chosen words
     const newWordCodes = wordSubset.map((word) => {
-      return { word: word, code: getCode(word) };
+      return { word: word, code: getCode(word, letterCodes) };
     });
 
     setWordCodes(newWordCodes);
 
     if (props.mode === "question") {
-      // Choose/determine a subset of valid words
-      let questionWordSubset: string[] = [];
+      /*
+      If there are going to be word to code questions,
+      Add 1 of the displayed words as a question (ask what the code for a displayed word is, instead of what the code for a new word is),
+      TODO: The number of these questions which ask what the code for a display word (instead of a new word) could be configurable
+      */
 
-      // Add one of the displayed words as a question (convert some of the provided information instead of new information)
-      if (gamemodeSettings.numWordToCodeQuestions > 0) {
-        const randomWord = pickRandomElementFrom(wordSubset);
-        questionWordSubset.push(randomWord);
-      }
+      const questionWordSubset = gamemodeSettings.numWordToCodeQuestions > 0 ? [pickRandomElementFrom(wordSubset)] : [];
 
-      // Number of word codes that need to be generated (for questions)
-      const numQuestions = gamemodeSettings.numCodeToWordQuestions + gamemodeSettings.numWordToCodeQuestions;
+      // How many more words for questions are needed?
+      const numQuestions =
+        gamemodeSettings.numCodeToWordQuestions + gamemodeSettings.numWordToCodeQuestions - questionWordSubset.length;
 
-      let failCount = 0;
-
-      while (questionWordSubset.length < numQuestions && failCount < 100) {
-        const randomWord = pickRandomElementFrom(originalMatches);
-
-        // Not a word used already (either for the information provided or already used for questions)
-        if (!questionWordSubset.includes(randomWord) && !wordSubset.includes(randomWord)) {
-          questionWordSubset.push(randomWord);
-        } else {
-          failCount += 1;
-        }
-      }
+      // Determined the additional words
+      const originalMatchesSubset = shuffleArray(originalMatches).slice(0, numQuestions);
+      // Add them to subset
+      questionWordSubset.concat(originalMatchesSubset);
 
       // Determine the code for each of the chosen words
       const newQuestionWordCodes = questionWordSubset.map((word, index) => {
         const isWordToCode = index < gamemodeSettings.numWordToCodeQuestions;
-        return { word: word, code: getCode(word), isWordToCode: isWordToCode };
+        return { word: word, code: getCode(word, letterCodes), isWordToCode: isWordToCode };
       });
 
       console.log(newQuestionWordCodes);
