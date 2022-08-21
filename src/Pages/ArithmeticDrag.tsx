@@ -372,9 +372,24 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
             <DraggableItem
               key={index}
               index={index}
-              onMove={(toIndex) =>
-                inProgress ? setExpressionTiles(arrayMove(expressionTiles, index, toIndex)) : undefined
-              }
+              onMove={(toIndex) => {
+                if (inProgress) {
+                  // The new order after the drag + all statuses reset
+                  const newExpressionTiles = arrayMove(expressionTiles, index, toIndex).map((tile) => {
+                    tile.status = "not set";
+                    return tile;
+                  });
+                  setExpressionTiles(newExpressionTiles);
+
+                  // Just statuses reset
+                  setResultTiles(
+                    resultTiles.map((tile) => {
+                      tile.status = "not set";
+                      return tile;
+                    })
+                  );
+                }
+              }}
             >
               <LetterTile letter={tile.expression} status={tile.status} settings={props.settings} />
             </DraggableItem>
@@ -391,7 +406,24 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
               <DraggableItem
                 key={index}
                 index={index}
-                onMove={(toIndex) => (inProgress ? setResultTiles(arrayMove(resultTiles, index, toIndex)) : undefined)}
+                onMove={(toIndex) => {
+                  if (inProgress) {
+                    // The new order after the drag + all statuses reset
+                    const newResultTiles = arrayMove(resultTiles, index, toIndex).map((tile) => {
+                      tile.status = "not set";
+                      return tile;
+                    });
+                    setResultTiles(newResultTiles);
+
+                    // Just statuses reset
+                    setExpressionTiles(
+                      expressionTiles.map((tile) => {
+                        tile.status = "not set";
+                        return tile;
+                      })
+                    );
+                  }
+                }}
               >
                 <LetterTile letter={tile.total.toString()} status={tile.status} settings={props.settings} />
               </DraggableItem>
