@@ -110,6 +110,7 @@ const Wingo: React.FC<Props> = (props) => {
 
   // Create grid of rows (for guessing words)
   function populateGrid(rowNumber: number, wordLength: number) {
+    // TODO: Refactor
     let Grid = [];
 
     if (props.mode === "puzzle") {

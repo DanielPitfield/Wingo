@@ -8,6 +8,7 @@ import { ChallengeReward } from "../Components/Challenge";
 import Success from "../Data/Images/success.svg";
 import Error from "../Data/Images/error.svg";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
+import { getGamemodeDefaultWordLength } from "../Data/DefaultWordLengths";
 
 export interface WingoGameshowProps {
   campaignConfig:
@@ -155,7 +156,7 @@ export const WingoGameshow: React.FC<Props> = (props) => {
     { isPuzzle: boolean; wordLength: number; basePoints: number; pointsLostPerGuess: number }[]
   >([]);
   const [roundNumber, setRoundNumber] = useState(0);
-  const [wordLength, setWordLength] = useState(4);
+  const [wordLength, setWordLength] = useState(getGamemodeDefaultWordLength(props.page));
   const [gameshowScore, setGameshowScore] = useState(0);
   const [summary, setSummary] = useState<
     {
@@ -170,6 +171,7 @@ export const WingoGameshow: React.FC<Props> = (props) => {
 
   // Determine round order (from props)
   React.useEffect(() => {
+    // TODO: Refactor: Export from own file
     const firstRoundWingo = { isPuzzle: false, wordLength: 4, basePoints: 200, pointsLostPerGuess: 0 };
     const firstRoundPuzzle = { isPuzzle: true, wordLength: 9, basePoints: 300, pointsLostPerGuess: 40 };
 

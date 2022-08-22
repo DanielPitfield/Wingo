@@ -288,9 +288,9 @@ const WingoConfig: React.FC<Props> = (props) => {
 
   const [currentWord, setCurrentWord] = useState("");
   const [wordIndex, setWordIndex] = useState(0);
-  const [inProgress, setinProgress] = useState(true);
-  const [inDictionary, setinDictionary] = useState(true);
-  const [isIncompleteWord, setisIncompleteWord] = useState(false);
+  const [inProgress, setInProgress] = useState(true);
+  const [inDictionary, setInDictionary] = useState(true);
+  const [isIncompleteWord, setIsIncompleteWord] = useState(false);
 
   const [conundrum, setConundrum] = useState("");
   const [targetWord, setTargetWord] = useState(props.targetWord ? props.targetWord : "");
@@ -321,6 +321,7 @@ const WingoConfig: React.FC<Props> = (props) => {
   >(defaultLetterStatuses);
 
   function generateTargetWord() {
+    // TODO: Refactor
     // Array of words to choose from
     let targetWordArray: { word: string; hint: string }[] = [];
     // The singular word chosen
@@ -360,9 +361,9 @@ const WingoConfig: React.FC<Props> = (props) => {
           // Display the sava data on the word grid
           setGuesses(daily_word_storage.guesses);
           setWordIndex(daily_word_storage.wordIndex);
-          setinProgress(daily_word_storage.inProgress);
+          setInProgress(daily_word_storage.inProgress);
           setCurrentWord(daily_word_storage.currentWord);
-          setinDictionary(daily_word_storage.inDictionary);
+          setInDictionary(daily_word_storage.inDictionary);
         }
 
         return;
@@ -549,8 +550,8 @@ const WingoConfig: React.FC<Props> = (props) => {
       if (remainingSeconds > 0) {
         setRemainingSeconds(remainingSeconds - 1);
       } else {
-        setinDictionary(false);
-        setinProgress(false);
+        setInDictionary(false);
+        setInProgress(false);
       }
     }, 1000);
     return () => {
@@ -831,7 +832,7 @@ const WingoConfig: React.FC<Props> = (props) => {
       }
     }
 
-    setisIncompleteWord(false);
+    setIsIncompleteWord(false);
 
     // Update word (when first letter provided setting is changed)
     const newCurrentWord = gamemodeSettings.isFirstLetterProvided ? targetWord.charAt(0) : "";
@@ -839,8 +840,8 @@ const WingoConfig: React.FC<Props> = (props) => {
 
     setGuesses([]);
     setWordIndex(0);
-    setinProgress(true);
-    setinDictionary(true);
+    setInProgress(true);
+    setInDictionary(true);
     sethasSubmitLetter(false);
     setConundrum("");
     setRevealedLetterIndexes([]);
@@ -867,8 +868,8 @@ const WingoConfig: React.FC<Props> = (props) => {
 
     setGuesses([]);
     setWordIndex(0);
-    setinProgress(true);
-    setinDictionary(true);
+    setInProgress(true);
+    setInDictionary(true);
 
     sethasSubmitLetter(false);
     setRevealedLetterIndexes([]);
@@ -978,7 +979,7 @@ const WingoConfig: React.FC<Props> = (props) => {
     }
 
     // Start as true until proven otherwise
-    setinDictionary(true);
+    setInDictionary(true);
 
     // Category mode but no target word (to determine the valid category)
     if (props.mode === "category" && !targetWord) {
@@ -987,12 +988,12 @@ const WingoConfig: React.FC<Props> = (props) => {
 
     // Don't allow incomplete words (if specified in props)
     if (props.enforceFullLengthGuesses && currentWord.length !== gamemodeSettings.wordLength) {
-      setisIncompleteWord(true);
+      setIsIncompleteWord(true);
       return;
     }
     // The word is complete or enforce full length guesses is off
     else {
-      setisIncompleteWord(false);
+      setIsIncompleteWord(false);
     }
 
     // Don't end game prematurely (before wordArray is determined)
@@ -1014,13 +1015,13 @@ const WingoConfig: React.FC<Props> = (props) => {
 
       if (currentWord.toUpperCase() === targetWord?.toUpperCase()) {
         // Exact match
-        setinProgress(false);
+        setInProgress(false);
         const goldBanked = calculateGoldAwarded(targetWord.length, wordIndex + 1);
         props.addGold(goldBanked);
         outcome = "success";
       } else if (wordIndex + 1 === numGuesses) {
         // Out of guesses
-        setinProgress(false);
+        setInProgress(false);
         outcome = "failure";
       } else {
         // Not yet guessed
@@ -1033,8 +1034,8 @@ const WingoConfig: React.FC<Props> = (props) => {
         //outcome = "in-progress";
       }
     } else {
-      setinDictionary(false);
-      setinProgress(false);
+      setInDictionary(false);
+      setInProgress(false);
       outcome = "failure";
     }
 

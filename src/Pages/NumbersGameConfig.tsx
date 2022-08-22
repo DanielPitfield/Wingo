@@ -161,7 +161,7 @@ const NumbersGameConfig: React.FC<Props> = (props) => {
       : getGamemodeDefaultTimerValue(props.page)
   );
 
-  const [inProgress, setinProgress] = useState(true);
+  const [inProgress, setInProgress] = useState(true);
 
   const [guesses, setGuesses] = useState<Guess[]>([]);
   const [currentGuess, setCurrentGuess] = useState<Guess>({ operand1: null, operand2: null, operator: "+" });
@@ -223,7 +223,7 @@ const NumbersGameConfig: React.FC<Props> = (props) => {
       } else {
         submitBestGuess();
         sethasTimerEnded(true);
-        setinProgress(false);
+        setInProgress(false);
       }
     }, 1000);
     return () => {
@@ -285,7 +285,7 @@ const NumbersGameConfig: React.FC<Props> = (props) => {
       setClosestGuessSoFar(targetNumber);
       setRemainingSeconds(0);
       sethasTimerEnded(true);
-      setinProgress(false);
+      setInProgress(false);
     }
   }, [numberTileStatuses]);
 
@@ -339,7 +339,7 @@ const NumbersGameConfig: React.FC<Props> = (props) => {
     setCurrentGuess({ operand1: null, operand2: null, operator: "+" });
     settargetNumber(null);
     setWordIndex(0);
-    setinProgress(true);
+    setInProgress(true);
     sethasTimerEnded(false);
     sethasSubmitNumber(false);
 
@@ -641,7 +641,7 @@ const NumbersGameConfig: React.FC<Props> = (props) => {
       // End the game prematurely
       setRemainingSeconds(0);
       sethasTimerEnded(true);
-      setinProgress(false);
+      setInProgress(false);
     }
   }
 

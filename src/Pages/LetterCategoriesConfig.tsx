@@ -10,6 +10,7 @@ import { getGamemodeDefaultTimerValue } from "../Data/DefaultTimerValues";
 import { defaultLetterCategoriesGamemodeSettings } from "../Data/DefaultGamemodeSettings";
 import { MAX_NUM_CATEGORIES } from "../Data/GamemodeSettingsInputLimits";
 import { shuffleArray } from "./ArithmeticDrag";
+import { getGamemodeDefaultWordLength } from "../Data/DefaultWordLengths";
 
 export interface LetterCategoriesConfigProps {
   campaignConfig:
@@ -39,19 +40,17 @@ interface Props extends LetterCategoriesConfigProps {
 }
 
 const LetterCategoriesConfig: React.FC<Props> = (props) => {
+  const [inProgress, setInProgress] = useState(true);
+  const [wordLength, setWordLength] = useState(getGamemodeDefaultWordLength(props.page));
   const [guesses, setGuesses] = useState<string[]>([]);
-  const [currentWord, setCurrentWord] = useState("");
   const [wordIndex, setWordIndex] = useState(0);
-  const [inProgress, setinProgress] = useState(true);
-  const [wordLength, setwordLength] = useState(4);
+  const [hasSubmitLetter, sethasSubmitLetter] = useState(false);
   const [correctGuessesCount, setCorrectGuessesCount] = useState(0);
-
+  const [currentWord, setCurrentWord] = useState("");
   const [requiredStartingLetter, setRequiredStartingLetter] = useState("");
   const [chosenCategoryMappings, setChosenCategoryMappings] = useState<{ name: string; targetWordArray: string[] }[]>(
     []
   );
-
-  const [hasSubmitLetter, sethasSubmitLetter] = useState(false);
 
   const defaultGamemodeSettings = {
     numCategories:
@@ -80,7 +79,7 @@ const LetterCategoriesConfig: React.FC<Props> = (props) => {
       if (remainingSeconds > 0) {
         setRemainingSeconds(remainingSeconds - 1);
       } else {
-        setinProgress(false);
+        setInProgress(false);
       }
     }, 1000);
     return () => {
@@ -98,6 +97,10 @@ const LetterCategoriesConfig: React.FC<Props> = (props) => {
   }, [inProgress]);
 
   React.useEffect(() => {
+    if (!chosenCategoryMappings || chosenCategoryMappings.length === 0) {
+      return;
+    }
+
     // Get the lengths of the longest word in each category's word array
     const longestWordLengths = chosenCategoryMappings
       // Just the targetWordArray for the category
@@ -110,7 +113,7 @@ const LetterCategoriesConfig: React.FC<Props> = (props) => {
       );
 
     // Set the word length to the longest word in any/all of the arrays of the chosen categories
-    setwordLength(Math.max(...longestWordLengths));
+    setWordLength(Math.max(...longestWordLengths));
   }, [chosenCategoryMappings]);
 
   // Reset game after change of settings (stops cheating by changing settings partway through a game)
@@ -169,7 +172,7 @@ const LetterCategoriesConfig: React.FC<Props> = (props) => {
     generateTargetWords();
     setGuesses([]);
     setWordIndex(0);
-    setinProgress(true);
+    setInProgress(true);
     sethasSubmitLetter(false);
     if (gamemodeSettings.timerConfig.isTimed) {
       // Reset the timer if it is enabled in the game options
@@ -246,7 +249,7 @@ const LetterCategoriesConfig: React.FC<Props> = (props) => {
 
     if (wordIndex + 1 === chosenCategoryMappings.length) {
       // Out of guesses
-      setinProgress(false);
+      setInProgress(false);
 
       // Calculate and add gold (only after all guesses have been made)
       const goldBanked = calculateGoldAwarded(correctGuessesCount);
