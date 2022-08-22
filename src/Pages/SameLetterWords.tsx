@@ -11,7 +11,6 @@ import { useClickChime, useCorrectChime, useFailureChime, useLightPingChime } fr
 import { Theme } from "../Data/Themes";
 import { pickRandomElementFrom } from "./WingoConfig";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
-import { getGamemodeDefaultWordLength } from "../Data/DefaultWordLengths";
 import { wordLengthMappingsTargets } from "../Data/WordArrayMappings";
 import { getGamemodeDefaultTimerValue } from "../Data/DefaultTimerValues";
 import { defaultSameLetterWordsGamemodeSettings } from "../Data/DefaultGamemodeSettings";

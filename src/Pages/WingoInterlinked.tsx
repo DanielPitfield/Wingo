@@ -13,7 +13,6 @@ import GamemodeSettingsMenu from "../Components/GamemodeSettingsMenu";
 import ProgressBar, { GreenToRedColorTransition } from "../Components/ProgressBar";
 import { PageName } from "../PageNames";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
-import { getGamemodeDefaultWordLength } from "../Data/DefaultWordLengths";
 import { categoryMappings, wordLengthMappingsTargets } from "../Data/WordArrayMappings";
 import { MAX_TARGET_WORD_LENGTH, MIN_TARGET_WORD_LENGTH } from "../Data/GamemodeSettingsInputLimits";
 import { getGamemodeDefaultTimerValue } from "../Data/DefaultTimerValues";

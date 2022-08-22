@@ -292,3 +292,10 @@ export const defaultNumbleGamemodeSettings: NumbleConfigProps["gamemodeSettings"
   // How long overall until the game ends?
   timerConfig: { isTimed: true, seconds: getGamemodeDefaultTimerValue("numble") },
 };
+
+export const defaultWingoGameshowRoundOrder = {
+  firstRoundConfig: { numWingos: 4, numPuzzles: 1 },
+  secondRoundConfig: { numWingos: 3, numPuzzles: 1 },
+  thirdRoundConfig: { numFourLengthWingos: 2, numPuzzles: 1, numFiveLengthWingos: 2, numberPuzzles: 1 },
+  hasFinalRound: true,
+};

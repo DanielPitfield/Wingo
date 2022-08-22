@@ -45,6 +45,7 @@ import {
   defaultSameLetterWordsGamemodeSettings,
   defaultWordCodesGamemodeSettings,
   defaultWingoGamemodeSettings,
+  defaultWingoGameshowRoundOrder,
 } from "./Data/DefaultGamemodeSettings";
 import { PageName } from "./PageNames";
 import { pageDescriptions } from "./PageDescriptions";
@@ -309,7 +310,6 @@ export const App: React.FC = () => {
       /*
         | "PuzzleSequence"
         | "LettersNumbersGameshow"
-        | "Wingo/Gameshow";
       */
     })();
 
@@ -504,10 +504,7 @@ export const App: React.FC = () => {
             {...commonProps}
             {...commonWingoProps}
             // TODO: Should WingoGameshow have gamemodeSettings like other gamemodes or an initial configuration page?
-            firstRoundConfig={{ numWingos: 4, numPuzzles: 1 }}
-            secondRoundConfig={{ numWingos: 3, numPuzzles: 1 }}
-            thirdRoundConfig={{ numFourLengthWingos: 2, numPuzzles: 1, numFiveLengthWingos: 2, numberPuzzles: 1 }}
-            hasFinalRound={true}
+            roundOrderConfig={defaultWingoGameshowRoundOrder}
           />
         );
 
