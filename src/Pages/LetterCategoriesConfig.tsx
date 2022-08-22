@@ -88,6 +88,10 @@ const LetterCategoriesConfig: React.FC<Props> = (props) => {
 
   // targetWord generation
   React.useEffect(() => {
+    if (categoryMappings.length > 0) {
+      return;
+    }
+
     generateTargetWords();
   }, [inProgress]);
 
@@ -102,6 +106,8 @@ const LetterCategoriesConfig: React.FC<Props> = (props) => {
       );
 
     console.log(longestWordLengths);
+
+    // TODO
 
     // Set the wordLength to the length of the largest valid word in any of the categories
     //setwordLength(Math.max(...longestWordLengths));
