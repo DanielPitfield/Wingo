@@ -108,13 +108,8 @@ const Wingo: React.FC<Props> = (props) => {
       : DEFAULT_WINGO_INCREASING_MAX_NUM_LIVES
   );
 
-  // Create grid of rows (for guessing words)
-  function populateGrid(rowNumber: number, wordLength: number) {
-    // TODO: Refactor
-    let Grid = [];
-
+  function getDisplayRow() {
     if (props.mode === "puzzle") {
-      // Create read only WordRow that slowly reveals puzzle word
       let displayWord = "";
 
       for (let i = 0; i < props.targetWord.length; i++) {
@@ -124,8 +119,8 @@ const Wingo: React.FC<Props> = (props) => {
           displayWord += " ";
         }
       }
-
-      Grid.push(
+      // Return a read only WordRow that slowly reveals puzzle word
+      return (
         <WordRow
           key={"wingo/read-only"}
           page={props.page}
@@ -133,7 +128,7 @@ const Wingo: React.FC<Props> = (props) => {
           inProgress={props.inProgress}
           word={displayWord}
           isVertical={false}
-          length={wordLength}
+          length={props.gamemodeSettings.wordLength}
           targetWord={props.targetWord}
           revealedLetterIndexes={props.revealedLetterIndexes}
           hasSubmit={true}
@@ -143,8 +138,8 @@ const Wingo: React.FC<Props> = (props) => {
         />
       );
     } else if (props.mode === "conundrum" && props.conundrum !== undefined) {
-      // Create read only WordRow that reveals conundrum
-      Grid.push(
+      // Return a read only WordRow that reveals conundrum
+      return (
         <div className="letters-game-wrapper" key={"conundrum/reveal"}>
           <WordRow
             key={"conundrum/read-only"}
@@ -153,7 +148,7 @@ const Wingo: React.FC<Props> = (props) => {
             inProgress={props.inProgress}
             word={props.conundrum}
             isVertical={false}
-            length={wordLength}
+            length={props.gamemodeSettings.wordLength}
             targetWord={props.targetWord}
             revealedLetterIndexes={props.revealedLetterIndexes}
             hasSubmit={true}
@@ -163,9 +158,24 @@ const Wingo: React.FC<Props> = (props) => {
           />
         </div>
       );
+    } else {
+      return null;
+    }
+  }
+
+  // Create grid of rows (for guessing words)
+  function populateGrid() {
+    let Grid = [];
+
+    // Add display row (if a mode which requires a display row)
+    const displayRow = getDisplayRow();
+
+    // TODO: Refactor?
+    if (displayRow !== null) {
+      Grid.push(displayRow);
     }
 
-    for (let i = 0; i < rowNumber; i++) {
+    for (let i = 0; i < props.numGuesses; i++) {
       let word;
 
       if (props.wordIndex === i) {
@@ -199,7 +209,7 @@ const Wingo: React.FC<Props> = (props) => {
           inProgress={props.inProgress}
           isVertical={false}
           word={word}
-          length={wordLength}
+          length={props.gamemodeSettings.wordLength}
           targetWord={props.targetWord}
           hasSubmit={props.wordIndex > i || !props.inProgress}
           inDictionary={props.inDictionary}
@@ -213,12 +223,13 @@ const Wingo: React.FC<Props> = (props) => {
     return Grid;
   }
 
-  const handleGamemodeSettingsChange = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
+  const handleGamemodeSettingsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newGamemodeSettings: typeof props.gamemodeSettings = {
       ...props.gamemodeSettings,
-      [e.target.name]: getNewGamemodeSettingValue(e, { maxLives: mostRecentMaxLives, totalSeconds: mostRecentTotalSeconds }),
+      [e.target.name]: getNewGamemodeSettingValue(e, {
+        maxLives: mostRecentMaxLives,
+        totalSeconds: mostRecentTotalSeconds,
+      }),
     };
 
     props.updateGamemodeSettings(newGamemodeSettings);
@@ -654,7 +665,7 @@ const Wingo: React.FC<Props> = (props) => {
           )
       }
 
-      <div className="word_grid">{populateGrid(props.numGuesses, props.gamemodeSettings.wordLength)}</div>
+      <div className="word_grid">{populateGrid()}</div>
 
       <div className="keyboard">
         <Keyboard
