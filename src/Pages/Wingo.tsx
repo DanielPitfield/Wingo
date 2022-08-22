@@ -108,7 +108,13 @@ const Wingo: React.FC<Props> = (props) => {
       : DEFAULT_WINGO_INCREASING_MAX_NUM_LIVES
   );
 
+  const MODES_WITH_DISPLAY_ROW: typeof props.mode[] = ["puzzle", "conundrum"];
+
   function getDisplayRow() {
+    if (!MODES_WITH_DISPLAY_ROW.includes(props.mode)) {
+      return;
+    }
+
     if (props.mode === "puzzle") {
       let displayWord = "";
 
@@ -167,31 +173,32 @@ const Wingo: React.FC<Props> = (props) => {
   function populateGrid() {
     let Grid = [];
 
-    // Add display row (if a mode which requires a display row)
-    const displayRow = getDisplayRow();
-
     // TODO: Refactor?
-    if (displayRow !== null) {
-      Grid.push(displayRow);
+    if (MODES_WITH_DISPLAY_ROW.includes(props.mode)) {
+      const displayRow = getDisplayRow();
+
+      if (displayRow !== null) {
+        Grid.push(displayRow);
+      }
     }
 
     for (let i = 0; i < props.numGuesses; i++) {
       let word;
 
-      if (props.wordIndex === i) {
-        /* 
-        If the wordIndex and the row number are the same
-        (i.e the row is currently being used)
-        Show the currentWord
-        */
-        word = props.currentWord;
-      } else if (props.wordIndex <= i) {
+      if (props.wordIndex < i || MODES_WITH_DISPLAY_ROW.includes(props.mode)) {
         /*
         If the wordIndex is behind the currently iterated row
         (i.e the row has not been used yet)
         Show an empty string 
         */
         word = "";
+      } else if (props.wordIndex === i) {
+        /* 
+        If the wordIndex and the row number are the same
+        (i.e the row is currently being used)
+        Show the currentWord
+        */
+        word = props.currentWord;
       } else {
         /* 
         If the wordIndex is ahead of the currently iterated row
