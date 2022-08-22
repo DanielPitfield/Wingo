@@ -65,17 +65,17 @@ const LetterCategories: React.FC<Props> = (props) => {
   function populateGrid() {
     let Grid = [];
 
-    for (let i = 0; i < props.chosenCategoryMappings.length; i++) {
+    for (const [index, categoryMapping] of props.chosenCategoryMappings.entries()) {
       let word;
 
-      if (props.wordIndex === i) {
+      if (props.wordIndex === index) {
         /* 
         If the wordIndex and the row number are the same
         (i.e the row is currently being used)
         Show the currentWord
         */
         word = props.currentWord;
-      } else if (props.wordIndex <= i) {
+      } else if (props.wordIndex <= index) {
         /*
         If the wordIndex is behind the currently iterated row
         (i.e the row has not been used yet)
@@ -88,14 +88,15 @@ const LetterCategories: React.FC<Props> = (props) => {
         (i.e the row has already been used)
         Show the respective guessed word
         */
-        word = props.guesses[i];
+        word = props.guesses[index];
       }
 
-      const row = props.chosenCategoryMappings[i].name ? (
-        <div className="word-row-category-wrapper" key={i}>
-          <div className="word-row-category-name">{props.chosenCategoryMappings[i].name}</div>
+      // If the name can be determined, show a lebel next to the WordRow
+      const row = categoryMapping.name ? (
+        <div className="word-row-category-wrapper" key={index}>
+          <div className="word-row-category-name">{categoryMapping.name}</div>
           <WordRow
-            key={`letters_categories/row/${i}`}
+            key={`letters_categories/row/${index}`}
             page={props.page}
             isReadOnly={false}
             inProgress={props.inProgress}
@@ -103,15 +104,15 @@ const LetterCategories: React.FC<Props> = (props) => {
             word={word}
             length={props.wordLength}
             targetWord={""}
-            targetArray={props.chosenCategoryMappings[i].targetWordArray}
-            hasSubmit={props.wordIndex > i || !props.inProgress}
+            targetArray={categoryMapping.targetWordArray}
+            hasSubmit={props.wordIndex > index || !props.inProgress}
             inDictionary={true}
             settings={props.settings}
           />
         </div>
-      ) : (
+      ) : /* Otherwise, just show the WordRow, without a label */ (
         <WordRow
-          key={`letters_categories/row/${i}`}
+          key={`letters_categories/row/${index}`}
           page={props.page}
           isReadOnly={false}
           inProgress={props.inProgress}
@@ -119,8 +120,8 @@ const LetterCategories: React.FC<Props> = (props) => {
           word={word}
           length={props.wordLength}
           targetWord={""}
-          targetArray={props.chosenCategoryMappings[i].targetWordArray}
-          hasSubmit={props.wordIndex > i || !props.inProgress}
+          targetArray={categoryMapping.targetWordArray}
+          hasSubmit={props.wordIndex > index || !props.inProgress}
           inDictionary={true}
           settings={props.settings}
         />
