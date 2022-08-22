@@ -47,7 +47,9 @@ const LetterCategoriesConfig: React.FC<Props> = (props) => {
   const [correctGuessesCount, setCorrectGuessesCount] = useState(0);
 
   const [requiredStartingLetter, setRequiredStartingLetter] = useState("");
-  const [chosenCategoryMappings, setChosenCategoryMappings] = useState<{ name: string; targetWordArray: string[] }[]>([]);
+  const [chosenCategoryMappings, setChosenCategoryMappings] = useState<{ name: string; targetWordArray: string[] }[]>(
+    []
+  );
 
   const [hasSubmitLetter, sethasSubmitLetter] = useState(false);
 
@@ -100,17 +102,15 @@ const LetterCategoriesConfig: React.FC<Props> = (props) => {
     const longestWordLengths = chosenCategoryMappings
       // Just the targetWordArray for the category
       .map((x) => x.targetWordArray)
-      // Length of the longest word in the targetWordArray
-      .map((x) =>
-        x.reduce((currentWord, nextWord) => (currentWord.length > nextWord.length ? currentWord : nextWord), "")
+      // The length of the longest word in the array
+      .map(
+        (array: string[]) =>
+          array.reduce((currentWord, nextWord) => (currentWord.length > nextWord.length ? currentWord : nextWord), "")
+            .length
       );
 
-    console.log(longestWordLengths);
-
-    // TODO
-
-    // Set the wordLength to the length of the largest valid word in any of the categories
-    //setwordLength(Math.max(...longestWordLengths));
+    // Set the word length to the longest word in any/all of the arrays of the chosen categories
+    setwordLength(Math.max(...longestWordLengths));
   }, [chosenCategoryMappings]);
 
   // Reset game after change of settings (stops cheating by changing settings partway through a game)
@@ -147,7 +147,9 @@ const LetterCategoriesConfig: React.FC<Props> = (props) => {
         return {
           name: category.name,
           // Just the words that start with the required starting letter
-          targetWordArray: category.array.map((x) => x.word).filter((word) => word.charAt(0) === requiredStartingLetter),
+          targetWordArray: category.array
+            .map((x) => x.word)
+            .filter((word) => word.charAt(0) === requiredStartingLetter),
         };
       });
 
