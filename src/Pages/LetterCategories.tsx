@@ -91,26 +91,7 @@ const LetterCategories: React.FC<Props> = (props) => {
         word = props.guesses[index];
       }
 
-      // If the name can be determined, show a lebel next to the WordRow
-      const row = categoryMapping.name ? (
-        <div className="word-row-category-wrapper" key={index}>
-          <div className="word-row-category-name">{categoryMapping.name}</div>
-          <WordRow
-            key={`letters_categories/row/${index}`}
-            page={props.page}
-            isReadOnly={false}
-            inProgress={props.inProgress}
-            isVertical={false}
-            word={word}
-            length={props.wordLength}
-            targetWord={""}
-            targetArray={categoryMapping.targetWordArray}
-            hasSubmit={props.wordIndex > index || !props.inProgress}
-            inDictionary={true}
-            settings={props.settings}
-          />
-        </div>
-      ) : /* Otherwise, just show the WordRow, without a label */ (
+      const wordRow = (
         <WordRow
           key={`letters_categories/row/${index}`}
           page={props.page}
@@ -125,6 +106,17 @@ const LetterCategories: React.FC<Props> = (props) => {
           inDictionary={true}
           settings={props.settings}
         />
+      );
+
+      // If the name can be determined, show a label next to the WordRow
+      const row = categoryMapping.name ? (
+        <div className="word-row-category-wrapper" key={index}>
+          <div className="word-row-category-name">{categoryMapping.name}</div>
+          {wordRow}
+        </div>
+      ) : (
+        // Otherwise, just show the WordRow, without a label
+        wordRow
       );
 
       Grid.push(row);
