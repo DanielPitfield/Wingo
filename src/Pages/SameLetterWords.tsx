@@ -343,16 +343,9 @@ const SameLetterWords: React.FC<Props> = (props) => {
   }
 
   function displayGrid() {
-    let Grid = [];
-
     // The number of total words divided by the number of words that make up the correct selection (rounded up)
     const numRows = Math.ceil(gamemodeSettings.numTotalWords / gamemodeSettings.numMatchingWords);
-
-    for (let i = 0; i < numRows; i++) {
-      Grid.push(populateRow(i));
-    }
-
-    return Grid;
+    return Array.from({ length: numRows }).map((_, index) => populateRow(index));
   }
 
   /**
