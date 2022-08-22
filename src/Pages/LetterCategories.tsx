@@ -34,9 +34,8 @@ interface Props {
   inProgress: boolean;
   hasSubmitLetter: boolean;
   correctGuessesCount: number;
-  categoryRequiredStartingLetter?: string;
-  categoryWordTargets?: string[][];
-  categoryNames?: string[];
+  categoryRequiredStartingLetter: string;
+  chosenCategoryMappings: { name: string; targetWordArray: string[] }[];
 
   page: PageName;
   theme: Theme;
@@ -63,10 +62,10 @@ const LetterCategories: React.FC<Props> = (props) => {
   );
 
   // Create grid of rows (for guessing words)
-  function populateGrid(rowNumber: number, wordLength: number) {
+  function populateGrid() {
     let Grid = [];
 
-    for (let i = 0; i < rowNumber; i++) {
+    for (let i = 0; i < props.chosenCategoryMappings.length; i++) {
       let word;
 
       if (props.wordIndex === i) {
@@ -92,9 +91,9 @@ const LetterCategories: React.FC<Props> = (props) => {
         word = props.guesses[i];
       }
 
-      const row = props.categoryNames?.[i] ? (
+      const row = props.chosenCategoryMappings[i].name ? (
         <div className="word-row-category-wrapper" key={i}>
-          <div className="word-row-category-name">{props.categoryNames?.[i]}</div>
+          <div className="word-row-category-name">{props.chosenCategoryMappings[i].name}</div>
           <WordRow
             key={`letters_categories/row/${i}`}
             page={props.page}
@@ -102,9 +101,9 @@ const LetterCategories: React.FC<Props> = (props) => {
             inProgress={props.inProgress}
             isVertical={false}
             word={word}
-            length={wordLength}
+            length={props.wordLength}
             targetWord={""}
-            targetArray={props.categoryWordTargets ? props.categoryWordTargets[i] : []}
+            targetArray={props.chosenCategoryMappings[i].targetWordArray}
             hasSubmit={props.wordIndex > i || !props.inProgress}
             inDictionary={true}
             settings={props.settings}
@@ -118,9 +117,9 @@ const LetterCategories: React.FC<Props> = (props) => {
           inProgress={props.inProgress}
           isVertical={false}
           word={word}
-          length={wordLength}
+          length={props.wordLength}
           targetWord={""}
-          targetArray={props.categoryWordTargets ? props.categoryWordTargets[i] : []}
+          targetArray={props.chosenCategoryMappings[i].targetWordArray}
           hasSubmit={props.wordIndex > i || !props.inProgress}
           inDictionary={true}
           settings={props.settings}
@@ -254,7 +253,7 @@ const LetterCategories: React.FC<Props> = (props) => {
         </div>
       )}
 
-      <div className="word_grid">{populateGrid(props.gamemodeSettings.numCategories, props.wordLength)}</div>
+      <div className="word_grid">{populateGrid()}</div>
 
       <div className="keyboard">
         <Keyboard

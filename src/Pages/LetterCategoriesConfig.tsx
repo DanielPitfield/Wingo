@@ -8,6 +8,8 @@ import { Theme } from "../Data/Themes";
 import { categoryMappings } from "../Data/WordArrayMappings";
 import { getGamemodeDefaultTimerValue } from "../Data/DefaultTimerValues";
 import { defaultLetterCategoriesGamemodeSettings } from "../Data/DefaultGamemodeSettings";
+import { MAX_NUM_CATEGORIES } from "../Data/GamemodeSettingsInputLimits";
+import { shuffleArray } from "./ArithmeticDrag";
 
 export interface LetterCategoriesConfigProps {
   campaignConfig:
@@ -43,13 +45,15 @@ const LetterCategoriesConfig: React.FC<Props> = (props) => {
   const [inProgress, setinProgress] = useState(true);
   const [wordLength, setwordLength] = useState(4);
   const [correctGuessesCount, setCorrectGuessesCount] = useState(0);
-  const [categoryRequiredStartingLetter, setCategoryRequiredStartingLetter] = useState("");
-  const [categoryNames, setCategoryNames] = useState<string[]>([]);
-  const [categoryWordTargets, setCategoryWordTargets] = useState<string[][]>([[]]);
+
+  const [requiredStartingLetter, setRequiredStartingLetter] = useState("");
+  const [chosenCategoryMappings, setChosenCategoryMappings] = useState<{ name: string; targetWordArray: string[] }[]>([]);
+
   const [hasSubmitLetter, sethasSubmitLetter] = useState(false);
 
   const defaultGamemodeSettings = {
-    numCategories: props.gamemodeSettings?.defaultNumCategories ?? defaultLetterCategoriesGamemodeSettings?.defaultNumCategories!,
+    numCategories:
+      props.gamemodeSettings?.defaultNumCategories ?? defaultLetterCategoriesGamemodeSettings?.defaultNumCategories!,
     timerConfig: props.gamemodeSettings?.timerConfig ?? defaultLetterCategoriesGamemodeSettings?.timerConfig!,
   };
 
@@ -87,6 +91,22 @@ const LetterCategoriesConfig: React.FC<Props> = (props) => {
     generateTargetWords();
   }, [inProgress]);
 
+  React.useEffect(() => {
+    // Get the lengths of the longest word in each category's word array
+    const longestWordLengths = chosenCategoryMappings
+      // Just the targetWordArray for the category
+      .map((x) => x.targetWordArray)
+      // Length of the longest word in the targetWordArray
+      .map((x) =>
+        x.reduce((currentWord, nextWord) => (currentWord.length > nextWord.length ? currentWord : nextWord), "")
+      );
+
+    console.log(longestWordLengths);
+
+    // Set the wordLength to the length of the largest valid word in any of the categories
+    //setwordLength(Math.max(...longestWordLengths));
+  }, [chosenCategoryMappings]);
+
   // Reset game after change of settings (stops cheating by changing settings partway through a game)
   React.useEffect(() => {
     if (props.page === "campaign/area/level") {
@@ -103,87 +123,29 @@ const LetterCategoriesConfig: React.FC<Props> = (props) => {
   function generateTargetWords() {
     if (inProgress) {
       // Get a random letter from the Alphabet
-      const isFirstLetterProvided = pickRandomElementFrom(DEFAULT_ALPHABET);
+      const requiredStartingLetter = pickRandomElementFrom(DEFAULT_ALPHABET);
       // Set this letter as the letter that all words must begin with
-      setCategoryRequiredStartingLetter(isFirstLetterProvided);
+      setRequiredStartingLetter(requiredStartingLetter);
       // Provide this letter as the start of guesses/words
-      setCurrentWord(isFirstLetterProvided);
+      setCurrentWord(requiredStartingLetter);
 
-      console.log(`%cStart Letter:%c ${isFirstLetterProvided}`, "font-weight: bold", "font-weight: normal");
+      console.log(`%cStart Letter:%c ${requiredStartingLetter}`, "font-weight: bold", "font-weight: normal");
 
-      // The names of the categories in play
-      let categoryNames: string[] = [];
-
-      // The valid words for each of the categories
-      let categoryTargetWords: string[][] = [];
-
-      let failedSearchCount = 0;
-      const MAX_NUM_FAILED_SEARCHES = 50;
-
-      do {
-        const randomCategory = pickRandomElementFrom(categoryMappings);
-        // Is the random category, a category which has not been used yet?
-        const isNewCategory = !categoryNames.includes(randomCategory.name);
-
-        // Already used this category, so loop around again
-        if (!isNewCategory) {
-          failedSearchCount += 1;
-          continue;
-        }
-
-        // Get all the words in the category starting with isFirstLetterProvided
-        const words = randomCategory.array
-          .map((wordHintCombination: { word: string; hint: string }) => wordHintCombination.word)
-          .filter((word: string) => word.charAt(0) === isFirstLetterProvided);
-
-        // No words starting with isFirstLetterProvided
-        if (!words || words.length <= 0) {
-          failedSearchCount += 1;
-          continue;
-        }
-
-        // Push these words as an array
-        categoryTargetWords.push(words);
-        // Keep track this category has been used
-        categoryNames.push(randomCategory.name);
-      } while (
-        // Until there are the specified number of categories (or MAX_NUM_FAILED_SEARCHES attempts were made at finding categories)
-        categoryNames.length < gamemodeSettings.numCategories &&
-        failedSearchCount <= MAX_NUM_FAILED_SEARCHES
+      // Randomly select the requiered number of categories
+      const chosenCategories = shuffleArray(categoryMappings).slice(
+        0,
+        Math.min(gamemodeSettings.numCategories, MAX_NUM_CATEGORIES)
       );
 
-      // Keep reference of which categories have been used
-      setCategoryNames(categoryNames);
+      const newChosenCategoryMappings = chosenCategories.map((category) => {
+        return {
+          name: category.name,
+          // Just the words that start with the required starting letter
+          targetWordArray: category.array.map((x) => x.word).filter((word) => word.charAt(0) === requiredStartingLetter),
+        };
+      });
 
-      for (let i = 0; i < categoryTargetWords.length; i++) {
-        console.log(
-          `%cCategory:%c ${categoryNames[i]}\n%cWords:%c ${categoryTargetWords[i].join(", ")}`,
-          "font-weight: bold",
-          "font-weight: normal",
-          "font-weight: bold",
-          "font-weight: normal"
-        );
-      }
-
-      setCategoryWordTargets(categoryTargetWords);
-
-      // Start longestValidLength (at 4)
-      let longestValidLength = wordLength;
-
-      // Find the longest word in the array of valid words for each category
-      for (let i = 0; i < categoryTargetWords.length; i++) {
-        const longestWordInArray = categoryTargetWords[i].reduce(
-          (currentWord, nextWord) => (currentWord.length > nextWord.length ? currentWord : nextWord),
-          ""
-        );
-        // Update longestValidLength (if there is a longer valid word)
-        if (longestWordInArray.length > longestValidLength) {
-          longestValidLength = longestWordInArray.length;
-        }
-      }
-
-      // Set the wordLength to the length of the largest valid word in any of the categories
-      setwordLength(longestValidLength);
+      setChosenCategoryMappings(newChosenCategoryMappings);
     }
   }
 
@@ -193,7 +155,7 @@ const LetterCategoriesConfig: React.FC<Props> = (props) => {
       const wasCorrect = props.campaignConfig.isCampaignLevel
         ? correctGuessesCount >= Math.min(props.campaignConfig.targetScore, gamemodeSettings.numCategories)
         : correctGuessesCount === gamemodeSettings.numCategories;
-        props.onComplete(wasCorrect);
+      props.onComplete(wasCorrect);
     }
 
     generateTargetWords();
@@ -255,13 +217,13 @@ const LetterCategoriesConfig: React.FC<Props> = (props) => {
       return;
     }
 
-    if (wordIndex >= categoryWordTargets.length) {
+    if (wordIndex >= chosenCategoryMappings.length) {
       // Made a guess in each row
       return;
     }
 
     // Array of valid words (for the row's category)
-    const wordArray = categoryWordTargets[wordIndex];
+    const wordArray = chosenCategoryMappings[wordIndex].targetWordArray;
 
     if (!wordArray || wordArray.length === 0) {
       return;
@@ -274,7 +236,7 @@ const LetterCategoriesConfig: React.FC<Props> = (props) => {
 
     setGuesses(guesses.concat(currentWord)); // Always show guess
 
-    if (wordIndex + 1 === categoryWordTargets.length) {
+    if (wordIndex + 1 === chosenCategoryMappings.length) {
       // Out of guesses
       setinProgress(false);
 
@@ -282,7 +244,7 @@ const LetterCategoriesConfig: React.FC<Props> = (props) => {
       const goldBanked = calculateGoldAwarded(correctGuessesCount);
       props.addGold(goldBanked);
     } else {
-      setCurrentWord(categoryRequiredStartingLetter);
+      setCurrentWord(requiredStartingLetter);
       setWordIndex(wordIndex + 1); // Increment index to indicate new word has been started
     }
   }
@@ -328,9 +290,8 @@ const LetterCategoriesConfig: React.FC<Props> = (props) => {
       inProgress={inProgress}
       hasSubmitLetter={hasSubmitLetter}
       correctGuessesCount={correctGuessesCount}
-      categoryRequiredStartingLetter={categoryRequiredStartingLetter || ""}
-      categoryNames={categoryNames || []}
-      categoryWordTargets={categoryWordTargets || [[]]}
+      categoryRequiredStartingLetter={requiredStartingLetter}
+      chosenCategoryMappings={chosenCategoryMappings}
       page={props.page}
       theme={props.theme}
       settings={props.settings}
