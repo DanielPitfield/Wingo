@@ -84,6 +84,8 @@ export const defaultWingoGamemodeSettings: { page: PageName; settings: WingoConf
       puzzleRevealMs: DEFAULT_PUZZLE_REVEAL_MS,
       puzzleLeaveNumBlanks: DEFAULT_PUZZLE_LEAVE_NUM_BLANKS,
       wordLength: getGamemodeDefaultWordLength("wingo/puzzle"),
+      isFirstLetterProvided: false,
+      timerConfig: { isTimed: false },
     },
   },
   // The conundrum mode is actually a mode of WingoConfig
@@ -110,7 +112,7 @@ export const defaultWingoInterlinkedGamemodeSettings: {
       isFirstLetterProvided: false,
       isHintShown: true,
       timerConfig: { isTimed: false },
-      fitRestrictionConfig: {isRestricted: false}, 
+      fitRestrictionConfig: { isRestricted: false },
     },
   },
   {
@@ -124,7 +126,7 @@ export const defaultWingoInterlinkedGamemodeSettings: {
       isFirstLetterProvided: false,
       isHintShown: true,
       timerConfig: { isTimed: false },
-      fitRestrictionConfig: {isRestricted: false}, 
+      fitRestrictionConfig: { isRestricted: false },
     },
   },
   {
@@ -138,7 +140,7 @@ export const defaultWingoInterlinkedGamemodeSettings: {
       isFirstLetterProvided: false,
       isHintShown: false,
       timerConfig: { isTimed: false },
-      fitRestrictionConfig: {isRestricted: false}, 
+      fitRestrictionConfig: { isRestricted: false },
     },
   },
   {
@@ -152,7 +154,7 @@ export const defaultWingoInterlinkedGamemodeSettings: {
       isFirstLetterProvided: false,
       isHintShown: true,
       timerConfig: { isTimed: false },
-      fitRestrictionConfig: {isRestricted: false}, 
+      fitRestrictionConfig: { isRestricted: false },
     },
   },
   {
@@ -166,7 +168,7 @@ export const defaultWingoInterlinkedGamemodeSettings: {
       isFirstLetterProvided: false,
       isHintShown: true,
       timerConfig: { isTimed: false },
-      fitRestrictionConfig: {isRestricted: false}, 
+      fitRestrictionConfig: { isRestricted: false },
     },
   },
 ];
