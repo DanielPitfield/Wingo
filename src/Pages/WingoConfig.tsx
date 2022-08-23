@@ -1118,32 +1118,9 @@ const WingoConfig: React.FC<Props> = (props) => {
   }) {
     setGamemodeSettings(newGamemodeSettings);
   }
-
-  // Get the gamemode settings for the specific page (WingoInterlinked mode)
-  const pageGamemodeSettings = (() => {
-    switch (props.page) {
-      // Daily/weekly modes should always use the same settings (never from SaveData)
-      case "wingo/crossword/daily":
-      case "wingo/crossword/weekly":
-        return defaultWingoInterlinkedGamemodeSettings.find((x) => x.page === props.page)?.settings;
-
-      // WingoInterlinked modes
-      case "wingo/interlinked":
-      case "wingo/crossword":
-      case "wingo/crossword/fit":
-        return (
-          SaveData.getWingoInterlinkedGamemodeSettings(props.page) ||
-          defaultWingoInterlinkedGamemodeSettings.find((x) => x.page === props.page)?.settings
-        );
-
-      default:
-        return gamemodeSettings;
-    }
-  })();
-
+  
   const commonWingoInterlinkedProps = {
     isCampaignLevel: props.isCampaignLevel,
-    gamemodeSettings: pageGamemodeSettings,
     page: props.page,
     theme: props.theme,
     setPage: props.setPage,
@@ -1155,6 +1132,8 @@ const WingoConfig: React.FC<Props> = (props) => {
 
   if (props.mode === "interlinked") {
     return (
+      // TODO: Setters and getters for WingoInterlinked gamemode settings (in SaveData)
+      // TODO: SaveData.getDefault() ?? defaultSettings when returning the components below
       <WingoInterlinked {...commonWingoInterlinkedProps} wordArrayConfig={{ type: "length" }} provideWords={false} />
     );
   }
