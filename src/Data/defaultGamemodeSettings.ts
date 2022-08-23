@@ -6,12 +6,12 @@ import { LetterCategoriesConfigProps } from "../Pages/LetterCategoriesConfig";
 import { LettersGameConfigProps } from "../Pages/LettersGameConfig";
 import { NumbersGameConfigProps } from "../Pages/NumbersGameConfig";
 import { ArithmeticRevealProps } from "../Pages/ArithmeticReveal";
-import { ArithmeticDragProps, arithmeticMode } from "../Pages/ArithmeticDrag";
+import { ArithmeticDragProps } from "../Pages/ArithmeticDrag";
 import { OnlyConnectProps } from "../Pages/OnlyConnect";
 import { SameLetterWordsProps } from "../Pages/SameLetterWords";
 import { NumberSetsProps } from "../Pages/NumberSets";
 import { AlgebraProps } from "../Pages/Algebra";
-import { wordCodesMode, WordCodesProps } from "../Pages/WordCodes";
+import { WordCodesProps } from "../Pages/WordCodes";
 import { MAX_TARGET_WORD_LENGTH, MIN_TARGET_WORD_LENGTH } from "./GamemodeSettingsInputLimits";
 import { getGamemodeDefaultWordLength } from "./DefaultWordLengths";
 import { getGamemodeDefaultNumGuesses } from "./DefaultNumGuesses";
@@ -40,8 +40,8 @@ const commonWingoSettings = {
 
 export const fallbackWingoSettings = {
   wordLength: 5,
-  ...commonWingoSettings
-}
+  ...commonWingoSettings,
+};
 
 export const defaultWingoGamemodeSettings: { page: PageName; settings: WingoConfigProps["gamemodeSettings"] }[] = [
   {
@@ -185,31 +185,21 @@ export const defaultArithmeticRevealGamemodeSettings: ArithmeticRevealProps["gam
   timerConfig: { isTimed: true, seconds: getGamemodeDefaultTimerValue("ArithmeticReveal") },
 };
 
-export const defaultArithmeticDragGamemodeSettings: {
-  mode: arithmeticMode;
-  settings: ArithmeticDragProps["gamemodeSettings"];
-}[] = [
-  {
-    mode: "match",
-    settings: {
-      numTiles: 6,
-      numGuesses: getGamemodeDefaultNumGuesses("ArithmeticDrag/Match"),
-      numOperands: 2,
-      numberSize: "medium",
-      timerConfig: { isTimed: true, seconds: getGamemodeDefaultTimerValue("ArithmeticDrag/Match") },
-    },
-  },
-  {
-    mode: "order",
-    settings: {
-      numTiles: 6,
-      numGuesses: getGamemodeDefaultNumGuesses("ArithmeticDrag/Order"),
-      numOperands: 2,
-      numberSize: "medium",
-      timerConfig: { isTimed: true, seconds: getGamemodeDefaultTimerValue("ArithmeticDrag/Order") },
-    },
-  },
-];
+export const defaultArithmeticDragOrderGamemodeSettings: ArithmeticDragProps["gamemodeSettings"] = {
+  numTiles: 6,
+  numGuesses: getGamemodeDefaultNumGuesses("ArithmeticDrag/Order"),
+  numOperands: 2,
+  numberSize: "medium",
+  timerConfig: { isTimed: true, seconds: getGamemodeDefaultTimerValue("ArithmeticDrag/Order") },
+};
+
+export const defaultArithmeticDragMatchGamemodeSettings: ArithmeticDragProps["gamemodeSettings"] = {
+  numTiles: 6,
+  numGuesses: getGamemodeDefaultNumGuesses("ArithmeticDrag/Match"),
+  numOperands: 2,
+  numberSize: "medium",
+  timerConfig: { isTimed: true, seconds: getGamemodeDefaultTimerValue("ArithmeticDrag/Match") },
+};
 
 export const defaultOnlyConnectGamemodeSettings: OnlyConnectProps["gamemodeSettings"] = {
   numGroups: 4,
@@ -236,37 +226,29 @@ export const defaultAlgebraGamemodeSettings: AlgebraProps["gamemodeSettings"] = 
   timerConfig: { isTimed: false },
 };
 
-export const defaultWordCodesGamemodeSettings: { mode: wordCodesMode; settings: WordCodesProps["gamemodeSettings"] }[] =
-  [
-    {
-      mode: "question",
-      settings: {
-        numDisplayWords: 4,
-        numDisplayCodes: 3,
-        numWordToCodeQuestions: 2,
-        numCodeToWordQuestions: 1,
-        codeLength: 4,
-        numCodesToMatch: 4,
-        numAdditionalLetters: 2,
-        numGuesses: getGamemodeDefaultNumGuesses("WordCodes/Question"),
-        timerConfig: { isTimed: false },
-      },
-    },
-    {
-      mode: "match",
-      settings: {
-        numDisplayWords: 4,
-        numDisplayCodes: 3,
-        numWordToCodeQuestions: 2,
-        numCodeToWordQuestions: 1,
-        codeLength: 4,
-        numCodesToMatch: 4,
-        numAdditionalLetters: 2,
-        numGuesses: getGamemodeDefaultNumGuesses("WordCodes/Match"),
-        timerConfig: { isTimed: false },
-      },
-    },
-  ];
+export const defaultWordCodesQuestionGamemodeSettings: WordCodesProps["gamemodeSettings"] = {
+  numDisplayWords: 4,
+  numDisplayCodes: 3,
+  numWordToCodeQuestions: 2,
+  numCodeToWordQuestions: 1,
+  codeLength: 4,
+  numCodesToMatch: 4,
+  numAdditionalLetters: 2,
+  numGuesses: getGamemodeDefaultNumGuesses("WordCodes/Question"),
+  timerConfig: { isTimed: false },
+};
+
+export const defaultWordCodesMatchGamemodeSettings: WordCodesProps["gamemodeSettings"] = {
+  numDisplayWords: 4,
+  numDisplayCodes: 3,
+  numWordToCodeQuestions: 2,
+  numCodeToWordQuestions: 1,
+  codeLength: 4,
+  numCodesToMatch: 4,
+  numAdditionalLetters: 2,
+  numGuesses: getGamemodeDefaultNumGuesses("WordCodes/Match"),
+  timerConfig: { isTimed: false },
+};
 
 export const defaultNumbleGamemodeSettings: NumbleConfigProps["gamemodeSettings"] = {
   numDice: 4,
@@ -290,3 +272,9 @@ export const defaultWingoGameshowRoundOrder = {
   thirdRoundConfig: { numFourLengthWingos: 2, numPuzzles: 1, numFiveLengthWingos: 2, numberPuzzles: 1 },
   hasFinalRound: true,
 };
+
+// TODO: Default gamemode settings (remaining unimplemented modes)
+/*
+  "PuzzleSequence"
+  "LettersNumbersGameshow"
+*/

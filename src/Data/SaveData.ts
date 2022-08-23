@@ -6,14 +6,14 @@ import { LettersGameConfigProps } from "../Pages/LettersGameConfig";
 import { NumbersGameConfigProps } from "../Pages/NumbersGameConfig";
 import { LetterCategoriesConfigProps } from "../Pages/LetterCategoriesConfig";
 import { NumbleConfigProps } from "../Pages/NumbleConfig";
-import { ArithmeticDragProps, arithmeticMode } from "../Pages/ArithmeticDrag";
+import { ArithmeticDragProps } from "../Pages/ArithmeticDrag";
 import { ArithmeticRevealProps } from "../Pages/ArithmeticReveal";
 import { OnlyConnectProps } from "../Pages/OnlyConnect";
 import { Themes } from "./Themes";
 import { AlgebraProps } from "../Pages/Algebra";
 import { NumberSetsProps } from "../Pages/NumberSets";
 import { SameLetterWordsProps } from "../Pages/SameLetterWords";
-import { wordCodesMode, WordCodesProps } from "../Pages/WordCodes";
+import { WordCodesProps } from "../Pages/WordCodes";
 import { WingoConfigProps } from "../Pages/WingoConfig";
 import { TileStatus, WingoInterlinkedProps } from "../Pages/WingoInterlinked";
 
@@ -533,35 +533,28 @@ export class SaveData {
   }
 
   public static setArithmeticDragMatchGamemodeSettings(gameSettings: ArithmeticDragProps["gamemodeSettings"]) {
-localStorage.setItem("arithmeticDragMatchGamemodeSettings", JSON.stringify(gameSettings));
-    }
-
-    public static getArithmeticDragMatchGamemodeSettings(): ArithmeticDragProps["gamemodeSettings"] {
-      // TODO:
-    }
-
-
-  public static setArithmeticDragGamemodeSettings(
-    mode: arithmeticMode,
-    gameSettings: ArithmeticDragProps["gamemodeSettings"]
-  ) {
-    if (mode === "match") {
-      
-    } else if (mode === "order") {
-      localStorage.setItem("arithmeticDragOrderGamemodeSettings", JSON.stringify(gameSettings));
-    }
+    localStorage.setItem("arithmeticDragMatchGamemodeSettings", JSON.stringify(gameSettings));
   }
 
-  public static getArithmeticDragGamemodeSettings(
-    mode: arithmeticMode
-  ): ArithmeticDragProps["gamemodeSettings"] | null {
-    const arithmeticDragGamemodeSettings =
-      mode === "match"
-        ? localStorage.getItem("arithmeticDragMatchGamemodeSettings")
-        : localStorage.getItem("arithmeticDragOrderGamemodeSettings");
+  public static getArithmeticDragMatchGamemodeSettings(): ArithmeticDragProps["gamemodeSettings"] | null {
+    const arithmeticDragMatchGamemodeSettings = localStorage.getItem("arithmeticDragMatchGamemodeSettings");
 
-    if (arithmeticDragGamemodeSettings) {
-      return JSON.parse(arithmeticDragGamemodeSettings) as ArithmeticDragProps["gamemodeSettings"];
+    if (arithmeticDragMatchGamemodeSettings) {
+      return JSON.parse(arithmeticDragMatchGamemodeSettings) as ArithmeticDragProps["gamemodeSettings"];
+    }
+
+    return null;
+  }
+
+  public static setArithmeticDragOrderGamemodeSettings(gameSettings: ArithmeticDragProps["gamemodeSettings"]) {
+    localStorage.setItem("arithmeticDragOrderGamemodeSettings", JSON.stringify(gameSettings));
+  }
+
+  public static getArithmeticDragOrderGamemodeSettings(): ArithmeticDragProps["gamemodeSettings"] | null {
+    const arithmeticDragOrderGamemodeSettings = localStorage.getItem("arithmeticDragOrderGamemodeSettings");
+
+    if (arithmeticDragOrderGamemodeSettings) {
+      return JSON.parse(arithmeticDragOrderGamemodeSettings) as ArithmeticDragProps["gamemodeSettings"];
     }
 
     return null;
@@ -623,22 +616,29 @@ localStorage.setItem("arithmeticDragMatchGamemodeSettings", JSON.stringify(gameS
     return null;
   }
 
-  public static setWordCodesGamemodeSettings(mode: wordCodesMode, gameSettings: WordCodesProps["gamemodeSettings"]) {
-    if (mode === "question") {
-      localStorage.setItem("wordCodesQuestionGamemodeSettings", JSON.stringify(gameSettings));
-    } else if (mode === "match") {
-      localStorage.setItem("wordCodesMatchGamemodeSettings", JSON.stringify(gameSettings));
-    }
+  public static setWordCodesQuestionGamemodeSettings(gameSettings: WordCodesProps["gamemodeSettings"]) {
+    localStorage.setItem("wordCodesQuestionGamemodeSettings", JSON.stringify(gameSettings));
   }
 
-  public static getWordCodesGamemodeSettings(mode: wordCodesMode): WordCodesProps["gamemodeSettings"] | null {
-    const wordCodesGamemodeSettings =
-      mode === "question"
-        ? localStorage.getItem("wordCodesQuestionGamemodeSettings")
-        : localStorage.getItem("wordCodesMatchGamemodeSettings");
+  public static getWordCodesQuestionGamemodeSettings(): WordCodesProps["gamemodeSettings"] | null {
+    const wordCodesQuestionGamemodeSettings = localStorage.getItem("wordCodesQuestionGamemodeSettings");
 
-    if (wordCodesGamemodeSettings) {
-      return JSON.parse(wordCodesGamemodeSettings) as WordCodesProps["gamemodeSettings"];
+    if (wordCodesQuestionGamemodeSettings) {
+      return JSON.parse(wordCodesQuestionGamemodeSettings) as WordCodesProps["gamemodeSettings"];
+    }
+
+    return null;
+  }
+
+  public static setWordCodesMatchGamemodeSettings(gameSettings: WordCodesProps["gamemodeSettings"]) {
+    localStorage.setItem("wordCodesMatchGamemodeSettings", JSON.stringify(gameSettings));
+  }
+
+  public static getWordCodesMatchGamemodeSettings(): WordCodesProps["gamemodeSettings"] | null {
+    const wordCodesMatchGamemodeSettings = localStorage.getItem("wordCodesMatchGamemodeSettings");
+
+    if (wordCodesMatchGamemodeSettings) {
+      return JSON.parse(wordCodesMatchGamemodeSettings) as WordCodesProps["gamemodeSettings"];
     }
 
     return null;

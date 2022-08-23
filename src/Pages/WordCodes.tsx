@@ -18,8 +18,11 @@ import GamemodeSettingsMenu from "../Components/GamemodeSettingsMenu";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
 import { MAX_CODE_LENGTH } from "../Data/GamemodeSettingsInputLimits";
 import { getGamemodeDefaultTimerValue } from "../Data/DefaultTimerValues";
-import { defaultWordCodesGamemodeSettings } from "../Data/DefaultGamemodeSettings";
 import { getAllWordsOfLength } from "../Data/Conundrum";
+import {
+  defaultWordCodesMatchGamemodeSettings,
+  defaultWordCodesQuestionGamemodeSettings,
+} from "../Data/DefaultGamemodeSettings";
 
 const wordCodesModes = ["match", "question"] as const;
 export type wordCodesMode = typeof wordCodesModes[number];
@@ -92,44 +95,33 @@ const WordCodes: React.FC<Props> = (props) => {
   const [questionNumber, setQuestionNumber] = useState(0);
   const [numCorrectAnswers, setNumCorrectAnswers] = useState(0);
 
-  const STARTING_NUM_DISPLAY_CODES =
-    props.gamemodeSettings?.numDisplayCodes ??
-    defaultWordCodesGamemodeSettings.find((x) => x.mode)?.settings?.numDisplayCodes!;
+  const DEFAULT_SETTINGS =
+    props.mode === "match" ? defaultWordCodesMatchGamemodeSettings : defaultWordCodesQuestionGamemodeSettings;
+
+  const STARTING_NUM_DISPLAY_CODES = props.gamemodeSettings?.numDisplayCodes ?? DEFAULT_SETTINGS.numDisplayCodes;
 
   // Atleast the number of display codes
   const STARTING_NUM_DISPLAY_WORDS = Math.max(
-    props.gamemodeSettings?.numDisplayWords ??
-      defaultWordCodesGamemodeSettings.find((x) => x.mode)?.settings?.numDisplayWords!,
+    props.gamemodeSettings?.numDisplayWords ?? DEFAULT_SETTINGS.numDisplayWords,
     STARTING_NUM_DISPLAY_CODES
   );
 
   const STARTING_CODE_LENGTH = Math.min(
-    props.gamemodeSettings?.codeLength ?? defaultWordCodesGamemodeSettings.find((x) => x.mode)?.settings?.codeLength!,
+    props.gamemodeSettings?.codeLength ?? DEFAULT_SETTINGS.codeLength,
     MAX_CODE_LENGTH
   );
 
   const defaultGamemodeSettings = {
     numDisplayWords: STARTING_NUM_DISPLAY_WORDS,
     numDisplayCodes: STARTING_NUM_DISPLAY_CODES,
-    numWordToCodeQuestions:
-      props.gamemodeSettings?.numWordToCodeQuestions ??
-      defaultWordCodesGamemodeSettings.find((x) => x.mode)?.settings?.numWordToCodeQuestions!,
-    numCodeToWordQuestions:
-      props.gamemodeSettings?.numCodeToWordQuestions ??
-      defaultWordCodesGamemodeSettings.find((x) => x.mode)?.settings?.numCodeToWordQuestions!,
+    numWordToCodeQuestions: props.gamemodeSettings?.numWordToCodeQuestions ?? DEFAULT_SETTINGS.numWordToCodeQuestions,
+    numCodeToWordQuestions: props.gamemodeSettings?.numCodeToWordQuestions ?? DEFAULT_SETTINGS.numCodeToWordQuestions,
 
     codeLength: STARTING_CODE_LENGTH,
-    numCodesToMatch:
-      props.gamemodeSettings?.numCodesToMatch ??
-      defaultWordCodesGamemodeSettings.find((x) => x.mode)?.settings?.numCodesToMatch!,
-    numAdditionalLetters:
-      props.gamemodeSettings?.numAdditionalLetters ??
-      defaultWordCodesGamemodeSettings.find((x) => x.mode)?.settings?.numAdditionalLetters!,
-    numGuesses:
-      props.gamemodeSettings?.numGuesses ?? defaultWordCodesGamemodeSettings.find((x) => x.mode)?.settings?.numGuesses!,
-    timerConfig:
-      props.gamemodeSettings?.timerConfig ??
-      defaultWordCodesGamemodeSettings.find((x) => x.mode)?.settings?.timerConfig!,
+    numCodesToMatch: props.gamemodeSettings?.numCodesToMatch ?? DEFAULT_SETTINGS.numCodesToMatch,
+    numAdditionalLetters: props.gamemodeSettings?.numAdditionalLetters ?? DEFAULT_SETTINGS.numAdditionalLetters,
+    numGuesses: props.gamemodeSettings?.numGuesses ?? DEFAULT_SETTINGS.numGuesses,
+    timerConfig: props.gamemodeSettings?.timerConfig ?? DEFAULT_SETTINGS.timerConfig,
   };
 
   const [gamemodeSettings, setGamemodeSettings] = useState<{
@@ -177,7 +169,9 @@ const WordCodes: React.FC<Props> = (props) => {
     ResetGame();
 
     // Save the latest gamemode settings for this mode
-    SaveData.setWordCodesGamemodeSettings(props.mode, gamemodeSettings);
+    props.mode === "match"
+      ? SaveData.setWordCodesMatchGamemodeSettings(gamemodeSettings)
+      : SaveData.setWordCodesQuestionGamemodeSettings(gamemodeSettings);
   }, [gamemodeSettings]);
 
   // (Guess) Timer Setup
@@ -228,7 +222,7 @@ const WordCodes: React.FC<Props> = (props) => {
       // Set code length to default gamemode settings value
       const newGamemodeSettings = {
         ...gamemodeSettings,
-        codeLength: defaultWordCodesGamemodeSettings.find((x) => x.mode)?.settings?.codeLength!,
+        codeLength: DEFAULT_SETTINGS.codeLength,
       };
       setGamemodeSettings(newGamemodeSettings);
     }

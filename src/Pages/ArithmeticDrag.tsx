@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { arrayMove, OrderGroup } from "react-draggable-order";
 import { PageName } from "../PageNames";
 import { Button } from "../Components/Button";
-import { operators, operatorSymbols as operatorSymbols } from "./NumbersGameConfig";
+import { operators, operatorSymbols } from "./NumbersGameConfig";
 import GamemodeSettingsMenu from "../Components/GamemodeSettingsMenu";
 import LetterTile from "../Components/LetterTile";
 import { MessageNotification } from "../Components/MessageNotification";
@@ -13,8 +13,11 @@ import { Theme } from "../Data/Themes";
 import { pickRandomElementFrom } from "./WingoConfig";
 import { DraggableItem } from "../Components/DraggableItem";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
-import { defaultArithmeticDragGamemodeSettings } from "../Data/DefaultGamemodeSettings";
 import { getGamemodeDefaultTimerValue } from "../Data/DefaultTimerValues";
+import {
+  defaultArithmeticDragMatchGamemodeSettings,
+  defaultArithmeticDragOrderGamemodeSettings,
+} from "../Data/DefaultGamemodeSettings";
 
 // Const Contexts: https://stackoverflow.com/questions/44497388/typescript-array-to-string-literal-type
 export const arithmeticNumberSizes = ["small", "medium", "large"] as const;
@@ -97,22 +100,15 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
   // For the match game mode type
   const [resultTiles, setResultTiles] = useState<{ total: number; status: "incorrect" | "correct" | "not set" }[]>([]);
 
+  const DEFAULT_SETTINGS =
+    props.mode === "match" ? defaultArithmeticDragMatchGamemodeSettings : defaultArithmeticDragOrderGamemodeSettings;
+
   const defaultGamemodeSettings = {
-    numTiles:
-      props.gamemodeSettings?.numTiles ??
-      defaultArithmeticDragGamemodeSettings.find((x) => x.mode === props.mode)?.settings?.numTiles!,
-    numberSize:
-      props.gamemodeSettings?.numberSize ??
-      defaultArithmeticDragGamemodeSettings.find((x) => x.mode === props.mode)?.settings?.numberSize!,
-    numOperands:
-      props.gamemodeSettings?.numOperands ??
-      defaultArithmeticDragGamemodeSettings.find((x) => x.mode === props.mode)?.settings?.numOperands!,
-    numGuesses:
-      props.gamemodeSettings?.numGuesses ??
-      defaultArithmeticDragGamemodeSettings.find((x) => x.mode === props.mode)?.settings?.numGuesses!,
-    timerConfig:
-      props.gamemodeSettings?.timerConfig ??
-      defaultArithmeticDragGamemodeSettings.find((x) => x.mode === props.mode)?.settings?.timerConfig!,
+    numTiles: props.gamemodeSettings?.numTiles ?? DEFAULT_SETTINGS.numTiles,
+    numberSize: props.gamemodeSettings?.numberSize ?? DEFAULT_SETTINGS.numberSize,
+    numOperands: props.gamemodeSettings?.numOperands ?? DEFAULT_SETTINGS.numOperands,
+    numGuesses: props.gamemodeSettings?.numGuesses ?? DEFAULT_SETTINGS.numGuesses,
+    timerConfig: props.gamemodeSettings?.timerConfig ?? DEFAULT_SETTINGS.timerConfig,
   };
 
   const [gamemodeSettings, setGamemodeSettings] = useState<{
@@ -327,7 +323,9 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
     ResetGame();
 
     // Save the latest gamemode settings for this mode
-    SaveData.setArithmeticDragGamemodeSettings(props.mode, gamemodeSettings);
+    props.mode === "match"
+      ? SaveData.setArithmeticDragMatchGamemodeSettings(gamemodeSettings)
+      : SaveData.setArithmeticDragOrderGamemodeSettings(gamemodeSettings);
   }, [gamemodeSettings]);
 
   // Create the tiles to be revealed (only once on start)

@@ -34,7 +34,6 @@ import HelpInformation from "./Components/HelpInformation";
 import { TitlePage } from "./Pages/TitlePage";
 import {
   defaultAlgebraGamemodeSettings,
-  defaultArithmeticDragGamemodeSettings,
   defaultArithmeticRevealGamemodeSettings,
   defaultLettersGameGamemodeSettings,
   defaultNumbersGameGamemodeSettings,
@@ -43,10 +42,13 @@ import {
   defaultNumbleGamemodeSettings,
   defaultNumberSetsGamemodeSettings,
   defaultSameLetterWordsGamemodeSettings,
-  defaultWordCodesGamemodeSettings,
   defaultWingoGamemodeSettings,
   defaultWingoGameshowRoundOrder,
   fallbackWingoSettings,
+  defaultArithmeticDragOrderGamemodeSettings,
+  defaultArithmeticDragMatchGamemodeSettings,
+  defaultWordCodesQuestionGamemodeSettings,
+  defaultWordCodesMatchGamemodeSettings,
 } from "./Data/DefaultGamemodeSettings";
 import { PageName } from "./PageNames";
 import { pageDescriptions } from "./PageDescriptions";
@@ -54,7 +56,6 @@ import SequencePuzzle from "./Pages/SequencePuzzle";
 import { CustomGameshow } from "./Pages/CustomGameshow";
 import { getGamemodeDefaultNumGuesses } from "./Data/DefaultNumGuesses";
 import { getGamemodeDefaultWordLength } from "./Data/DefaultWordLengths";
-import { getPageGamemodeSettings } from "./Data/getPageGamemodeSettings";
 
 export const App: React.FC = () => {
   // App wide listener for right click event
@@ -236,41 +237,6 @@ export const App: React.FC = () => {
   }
 
   const pageComponent = (() => {
-    // Get the gamemode settings for the specific page (gamemode)
-    const pageGamemodeSettings = (() => {
-      switch (page) {
-        case "ArithmeticDrag/Order":
-          return (
-            SaveData.getArithmeticDragGamemodeSettings("order") ||
-            defaultArithmeticDragGamemodeSettings.find((x) => x.mode === "order")?.settings
-          );
-
-        case "ArithmeticDrag/Match":
-          return (
-            SaveData.getArithmeticDragGamemodeSettings("match") ||
-            defaultArithmeticDragGamemodeSettings.find((x) => x.mode === "match")?.settings
-          );
-
-        case "WordCodes/Question":
-          return (
-            SaveData.getWordCodesGamemodeSettings("question") ||
-            defaultWordCodesGamemodeSettings.find((x) => x.mode === "question")?.settings
-          );
-
-        case "WordCodes/Match":
-          return (
-            SaveData.getWordCodesGamemodeSettings("match") ||
-            defaultWordCodesGamemodeSettings.find((x) => x.mode === "match")?.settings
-          );
-      }
-
-      // TODO: Default gamemode settings (remaining unimplemented modes)
-      /*
-        | "PuzzleSequence"
-        | "LettersNumbersGameshow"
-      */
-    })();
-
     const commonProps = {
       isCampaignLevel: isCampaignLevel(page),
       campaignConfig: { isCampaignLevel: false as false },
@@ -438,19 +404,58 @@ export const App: React.FC = () => {
 
       case "wingo/interlinked":
         // TODO: Directly return WingoInterlinked component?
-        return <WingoConfig {...commonProps} {...commonWingoProps} mode="interlinked" />;
+        return (
+          <WingoConfig
+            {...commonProps}
+            {...commonWingoProps}
+            mode="interlinked"
+            /*
+            The gamemode settings are redefined in WingoConfig (when rendering a WingoInterlinked component)
+            Just pass fallback settings through because gamemodeSettings can't be left undefined
+            */
+            gamemodeSettings={fallbackWingoSettings}
+          />
+        );
 
       case "wingo/crossword":
-        return <WingoConfig {...commonProps} {...commonWingoProps} mode="crossword" />;
+        return (
+          <WingoConfig
+            {...commonProps}
+            {...commonWingoProps}
+            mode="crossword"
+            gamemodeSettings={fallbackWingoSettings}
+          />
+        );
 
       case "wingo/crossword/fit":
-        return <WingoConfig {...commonProps} {...commonWingoProps} mode="crossword/fit" />;
+        return (
+          <WingoConfig
+            {...commonProps}
+            {...commonWingoProps}
+            mode="crossword/fit"
+            gamemodeSettings={fallbackWingoSettings}
+          />
+        );
 
       case "wingo/crossword/weekly":
-        return <WingoConfig {...commonProps} {...commonWingoProps} mode="crossword/weekly" />;
+        return (
+          <WingoConfig
+            {...commonProps}
+            {...commonWingoProps}
+            mode="crossword/weekly"
+            gamemodeSettings={fallbackWingoSettings}
+          />
+        );
 
       case "wingo/crossword/daily":
-        return <WingoConfig {...commonProps} {...commonWingoProps} mode="crossword/daily" />;
+        return (
+          <WingoConfig
+            {...commonProps}
+            {...commonWingoProps}
+            mode="crossword/daily"
+            gamemodeSettings={fallbackWingoSettings}
+          />
+        );
 
       case "LettersCategories":
         return (
@@ -504,10 +509,26 @@ export const App: React.FC = () => {
         );
 
       case "ArithmeticDrag/Order":
-        return <ArithmeticDrag {...commonProps} mode="order" />;
+        return (
+          <ArithmeticDrag
+            {...commonProps}
+            mode="order"
+            gamemodeSettings={
+              SaveData.getArithmeticDragOrderGamemodeSettings() ?? defaultArithmeticDragOrderGamemodeSettings
+            }
+          />
+        );
 
       case "ArithmeticDrag/Match":
-        return <ArithmeticDrag {...commonProps} mode="match" />;
+        return (
+          <ArithmeticDrag
+            {...commonProps}
+            mode="match"
+            gamemodeSettings={
+              SaveData.getArithmeticDragMatchGamemodeSettings() ?? defaultArithmeticDragMatchGamemodeSettings
+            }
+          />
+        );
 
       case "numble":
         return (
@@ -550,10 +571,24 @@ export const App: React.FC = () => {
         );
 
       case "WordCodes/Question":
-        return <WordCodes mode={"question"} {...commonProps} />;
+        return (
+          <WordCodes
+            {...commonProps}
+            mode={"question"}
+            gamemodeSettings={
+              SaveData.getWordCodesQuestionGamemodeSettings() ?? defaultWordCodesQuestionGamemodeSettings
+            }
+          />
+        );
 
       case "WordCodes/Match":
-        return <WordCodes mode={"match"} {...commonProps} />;
+        return (
+          <WordCodes
+            {...commonProps}
+            mode={"match"}
+            gamemodeSettings={SaveData.getWordCodesMatchGamemodeSettings() ?? defaultWordCodesMatchGamemodeSettings}
+          />
+        );
 
       case "PuzzleSequence":
         return <SequencePuzzle {...commonProps} />;
