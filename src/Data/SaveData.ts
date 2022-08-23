@@ -417,7 +417,7 @@ export class SaveData {
     const itemName = determineLocalStorageItemName(page);
 
     if (!itemName) {
-      return;
+      return null;
     }
 
     const wingoConfigGamemodeSettings = localStorage.getItem(itemName);
@@ -448,7 +448,7 @@ export class SaveData {
     const itemName = determineLocalStorageItemName(page);
 
     if (!itemName) {
-      return;
+      return null;
     }
 
     const wingoInterlinkedGamemodeSettings = localStorage.getItem(itemName);
@@ -532,12 +532,21 @@ export class SaveData {
     return null;
   }
 
+  public static setArithmeticDragMatchGamemodeSettings(gameSettings: ArithmeticDragProps["gamemodeSettings"]) {
+localStorage.setItem("arithmeticDragMatchGamemodeSettings", JSON.stringify(gameSettings));
+    }
+
+    public static getArithmeticDragMatchGamemodeSettings(): ArithmeticDragProps["gamemodeSettings"] {
+      // TODO:
+    }
+
+
   public static setArithmeticDragGamemodeSettings(
     mode: arithmeticMode,
     gameSettings: ArithmeticDragProps["gamemodeSettings"]
   ) {
     if (mode === "match") {
-      localStorage.setItem("arithmeticDragMatchGamemodeSettings", JSON.stringify(gameSettings));
+      
     } else if (mode === "order") {
       localStorage.setItem("arithmeticDragOrderGamemodeSettings", JSON.stringify(gameSettings));
     }
@@ -558,15 +567,15 @@ export class SaveData {
     return null;
   }
 
-  public static setGroupWallGamemodeSettings(gameSettings: OnlyConnectProps["gamemodeSettings"]) {
-    localStorage.setItem("groupWallGamemodeSettings", JSON.stringify(gameSettings));
+  public static setOnlyConnectGamemodeSettings(gameSettings: OnlyConnectProps["gamemodeSettings"]) {
+    localStorage.setItem("onlyConnectGamemodeSettings", JSON.stringify(gameSettings));
   }
 
-  public static getGroupWallGamemodeSettings(): OnlyConnectProps["gamemodeSettings"] | null {
-    const groupWallGamemodeSettings = localStorage.getItem("groupWallGamemodeSettings");
+  public static getOnlyConnectGamemodeSettings(): OnlyConnectProps["gamemodeSettings"] | null {
+    const onlyConnectGamemodeSettings = localStorage.getItem("onlyConnectGamemodeSettings");
 
-    if (groupWallGamemodeSettings) {
-      return JSON.parse(groupWallGamemodeSettings) as OnlyConnectProps["gamemodeSettings"];
+    if (onlyConnectGamemodeSettings) {
+      return JSON.parse(onlyConnectGamemodeSettings) as OnlyConnectProps["gamemodeSettings"];
     }
 
     return null;

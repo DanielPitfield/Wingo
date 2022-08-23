@@ -46,6 +46,7 @@ import {
   defaultWordCodesGamemodeSettings,
   defaultWingoGamemodeSettings,
   defaultWingoGameshowRoundOrder,
+  fallbackWingoSettings,
 } from "./Data/DefaultGamemodeSettings";
 import { PageName } from "./PageNames";
 import { pageDescriptions } from "./PageDescriptions";
@@ -53,6 +54,7 @@ import SequencePuzzle from "./Pages/SequencePuzzle";
 import { CustomGameshow } from "./Pages/CustomGameshow";
 import { getGamemodeDefaultNumGuesses } from "./Data/DefaultNumGuesses";
 import { getGamemodeDefaultWordLength } from "./Data/DefaultWordLengths";
+import { getPageGamemodeSettings } from "./Data/getPageGamemodeSettings";
 
 export const App: React.FC = () => {
   // App wide listener for right click event
@@ -237,35 +239,6 @@ export const App: React.FC = () => {
     // Get the gamemode settings for the specific page (gamemode)
     const pageGamemodeSettings = (() => {
       switch (page) {
-        // Daily mode should always use the same settings (never from SaveData)
-        case "wingo/daily":
-          return defaultWingoGamemodeSettings.find((x) => x.page === page)?.settings;
-
-        // WingoConfig modes
-        case "wingo/repeat":
-        case "wingo/puzzle":
-        case "wingo/increasing":
-        case "wingo/limitless":
-        case "wingo/category":
-        case "Conundrum":
-          // Use the saved Wingo Config gamemodeSettings, or the default setitngs (if no previous save was found)
-          return (
-            SaveData.getWingoConfigGamemodeSettings(page) ||
-            defaultWingoGamemodeSettings.find((x) => x.page === page)?.settings
-          );
-
-        case "LettersCategories":
-          return SaveData.getLetterCategoriesConfigGamemodeSettings() || defaultLetterCategoriesGamemodeSettings;
-
-        case "LettersGame":
-          return SaveData.getLettersGameConfigGamemodeSettings() || defaultLettersGameGamemodeSettings;
-
-        case "NumbersGame":
-          return SaveData.getNumbersGameConfigGamemodeSettings() || defaultNumbersGameGamemodeSettings;
-
-        case "ArithmeticReveal":
-          return SaveData.getArithmeticRevealGamemodeSettings() || defaultArithmeticRevealGamemodeSettings;
-
         case "ArithmeticDrag/Order":
           return (
             SaveData.getArithmeticDragGamemodeSettings("order") ||
@@ -278,18 +251,6 @@ export const App: React.FC = () => {
             defaultArithmeticDragGamemodeSettings.find((x) => x.mode === "match")?.settings
           );
 
-        case "OnlyConnect":
-          return SaveData.getGroupWallGamemodeSettings() || defaultOnlyConnectGamemodeSettings;
-
-        case "SameLetters":
-          return SaveData.getSameLetterWordsGamemodeSettings() || defaultSameLetterWordsGamemodeSettings;
-
-        case "NumberSets":
-          return SaveData.getNumberSetsGamemodeSettings() || defaultNumberSetsGamemodeSettings;
-
-        case "Algebra":
-          return SaveData.getAlgebraGamemodeSettings() || defaultAlgebraGamemodeSettings;
-
         case "WordCodes/Question":
           return (
             SaveData.getWordCodesGamemodeSettings("question") ||
@@ -301,9 +262,6 @@ export const App: React.FC = () => {
             SaveData.getWordCodesGamemodeSettings("match") ||
             defaultWordCodesGamemodeSettings.find((x) => x.mode === "match")?.settings
           );
-
-        case "numble":
-          return SaveData.getNumbleConfigGamemodeSettings() || defaultNumbleGamemodeSettings;
       }
 
       // TODO: Default gamemode settings (remaining unimplemented modes)
@@ -316,7 +274,6 @@ export const App: React.FC = () => {
     const commonProps = {
       isCampaignLevel: isCampaignLevel(page),
       campaignConfig: { isCampaignLevel: false as false },
-      gamemodeSettings: pageGamemodeSettings,
       page: page,
       theme: theme,
       setPage: setPage,
@@ -396,22 +353,88 @@ export const App: React.FC = () => {
         );
 
       case "wingo/daily":
-        return <WingoConfig {...commonProps} {...commonWingoProps} mode="daily" />;
+        return (
+          <WingoConfig
+            {...commonProps}
+            {...commonWingoProps}
+            mode="daily"
+            gamemodeSettings={
+              // Daily mode should always use the same settings (never from SaveData)
+              defaultWingoGamemodeSettings.find((x) => x.page === page)?.settings ?? fallbackWingoSettings
+            }
+          />
+        );
 
       case "wingo/repeat":
-        return <WingoConfig {...commonProps} {...commonWingoProps} mode="repeat" />;
+        return (
+          <WingoConfig
+            {...commonProps}
+            {...commonWingoProps}
+            gamemodeSettings={
+              SaveData.getWingoConfigGamemodeSettings(page) ??
+              defaultWingoGamemodeSettings.find((x) => x.page === page)?.settings ??
+              fallbackWingoSettings
+            }
+            mode="repeat"
+          />
+        );
 
       case "wingo/category":
-        return <WingoConfig {...commonProps} {...commonWingoProps} mode="category" enforceFullLengthGuesses={false} />;
+        return (
+          <WingoConfig
+            {...commonProps}
+            {...commonWingoProps}
+            mode="category"
+            gamemodeSettings={
+              SaveData.getWingoConfigGamemodeSettings(page) ??
+              defaultWingoGamemodeSettings.find((x) => x.page === page)?.settings ??
+              fallbackWingoSettings
+            }
+            enforceFullLengthGuesses={false}
+          />
+        );
 
       case "wingo/increasing":
-        return <WingoConfig {...commonProps} {...commonWingoProps} mode="increasing" />;
+        return (
+          <WingoConfig
+            {...commonProps}
+            {...commonWingoProps}
+            mode="increasing"
+            gamemodeSettings={
+              SaveData.getWingoConfigGamemodeSettings(page) ??
+              defaultWingoGamemodeSettings.find((x) => x.page === page)?.settings ??
+              fallbackWingoSettings
+            }
+          />
+        );
 
       case "wingo/limitless":
-        return <WingoConfig {...commonProps} {...commonWingoProps} mode="limitless" />;
+        return (
+          <WingoConfig
+            {...commonProps}
+            {...commonWingoProps}
+            mode="limitless"
+            gamemodeSettings={
+              SaveData.getWingoConfigGamemodeSettings(page) ??
+              defaultWingoGamemodeSettings.find((x) => x.page === page)?.settings ??
+              fallbackWingoSettings
+            }
+          />
+        );
 
       case "wingo/puzzle":
-        return <WingoConfig {...commonProps} {...commonWingoProps} mode="puzzle" />;
+        return (
+          <WingoConfig
+            {...commonProps}
+            {...commonWingoProps}
+            mode="puzzle"
+            gamemodeSettings={
+              SaveData.getWingoConfigGamemodeSettings(page) ??
+              defaultWingoGamemodeSettings.find((x) => x.page === page)?.settings ??
+              fallbackWingoSettings
+            }
+          />
+        );
 
       case "wingo/interlinked":
         // TODO: Directly return WingoInterlinked component?
@@ -430,19 +453,55 @@ export const App: React.FC = () => {
         return <WingoConfig {...commonProps} {...commonWingoProps} mode="crossword/daily" />;
 
       case "LettersCategories":
-        return <LetterCategoriesConfig {...commonProps} enforceFullLengthGuesses={false} />;
+        return (
+          <LetterCategoriesConfig
+            {...commonProps}
+            gamemodeSettings={
+              SaveData.getLetterCategoriesConfigGamemodeSettings() ?? defaultLetterCategoriesGamemodeSettings
+            }
+            enforceFullLengthGuesses={false}
+          />
+        );
 
       case "LettersGame":
-        return <LettersGameConfig {...commonProps} theme={Themes.GenericLettersGame} />;
+        return (
+          <LettersGameConfig
+            {...commonProps}
+            theme={Themes.GenericLettersGame}
+            gamemodeSettings={SaveData.getLettersGameConfigGamemodeSettings() ?? defaultLettersGameGamemodeSettings}
+          />
+        );
 
       case "NumbersGame":
-        return <NumbersGameConfig {...commonProps} theme={Themes.GenericNumbersGame} />;
+        return (
+          <NumbersGameConfig
+            {...commonProps}
+            theme={Themes.GenericNumbersGame}
+            gamemodeSettings={SaveData.getNumbersGameConfigGamemodeSettings() ?? defaultNumbersGameGamemodeSettings}
+          />
+        );
 
       case "Conundrum":
-        return <WingoConfig {...commonProps} {...commonWingoProps} mode="conundrum" />;
+        return (
+          <WingoConfig
+            {...commonProps}
+            {...commonWingoProps}
+            mode="conundrum"
+            gamemodeSettings={
+              SaveData.getWingoConfigGamemodeSettings(page) ??
+              defaultWingoGamemodeSettings.find((x) => x.page === page)?.settings ??
+              fallbackWingoSettings
+            }
+          />
+        );
 
       case "ArithmeticReveal":
-        return <ArithmeticReveal {...commonProps} />;
+        return (
+          <ArithmeticReveal
+            {...commonProps}
+            gamemodeSettings={SaveData.getArithmeticRevealGamemodeSettings() ?? defaultArithmeticRevealGamemodeSettings}
+          />
+        );
 
       case "ArithmeticDrag/Order":
         return <ArithmeticDrag {...commonProps} mode="order" />;
@@ -451,19 +510,44 @@ export const App: React.FC = () => {
         return <ArithmeticDrag {...commonProps} mode="match" />;
 
       case "numble":
-        return <NumbleConfig {...commonProps} />;
+        return (
+          <NumbleConfig
+            {...commonProps}
+            gamemodeSettings={SaveData.getNumbleConfigGamemodeSettings() ?? defaultNumbleGamemodeSettings}
+          />
+        );
 
       case "OnlyConnect":
-        return <OnlyConnect {...commonProps} />;
+        return (
+          <OnlyConnect
+            {...commonProps}
+            gamemodeSettings={SaveData.getOnlyConnectGamemodeSettings() ?? defaultOnlyConnectGamemodeSettings}
+          />
+        );
 
       case "SameLetters":
-        return <SameLetterWords {...commonProps} />;
+        return (
+          <SameLetterWords
+            {...commonProps}
+            gamemodeSettings={SaveData.getSameLetterWordsGamemodeSettings() ?? defaultSameLetterWordsGamemodeSettings}
+          />
+        );
 
       case "NumberSets":
-        return <NumberSets {...commonProps} />;
+        return (
+          <NumberSets
+            {...commonProps}
+            gamemodeSettings={SaveData.getNumberSetsGamemodeSettings() ?? defaultNumberSetsGamemodeSettings}
+          />
+        );
 
       case "Algebra":
-        return <Algebra {...commonProps} />;
+        return (
+          <Algebra
+            {...commonProps}
+            gamemodeSettings={SaveData.getAlgebraGamemodeSettings() ?? defaultAlgebraGamemodeSettings}
+          />
+        );
 
       case "WordCodes/Question":
         return <WordCodes mode={"question"} {...commonProps} />;

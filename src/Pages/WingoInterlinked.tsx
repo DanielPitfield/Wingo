@@ -41,23 +41,23 @@ export interface WingoInterlinkedProps {
   // Are the words of the crossword given to the player (in other words, is this crossword fit mode?)
   provideWords: boolean;
 
-  gamemodeSettings?: {
-    numWords?: number;
-    minWordLength?: number;
-    maxWordLength?: number;
+  gamemodeSettings: {
+    numWords: number;
+    minWordLength: number;
+    maxWordLength: number;
 
     /*
     Fit Restriction
     Not specified - the crossword's height and width is not restricted
     Value specified - the value is the additional units allowed in grid height or width (in addition to maxWordLength)
     */
-    fitRestrictionConfig?: { isRestricted: true; fitRestriction: number } | { isRestricted: false };
+    fitRestrictionConfig: { isRestricted: true; fitRestriction: number } | { isRestricted: false };
 
-    numWordGuesses?: number;
-    numGridGuesses?: number;
-    isFirstLetterProvided?: boolean;
-    isHintShown?: boolean;
-    timerConfig?: { isTimed: true; seconds: number } | { isTimed: false };
+    numWordGuesses: number;
+    numGridGuesses: number;
+    isFirstLetterProvided: boolean;
+    isHintShown: boolean;
+    timerConfig: { isTimed: true; seconds: number } | { isTimed: false };
   };
 
   initialConfig?: {
@@ -101,7 +101,7 @@ export const WingoInterlinked: React.FC<Props> = (props) => {
   const STARTING_NUM_GRID_GUESSES =
     props.initialConfig?.remainingGridGuesses ??
     props.gamemodeSettings?.numGridGuesses ??
-    defaultWingoInterlinkedGamemodeSettings.find((x) => x.page === props.page)?.settings?.numGridGuesses!;
+    defaultWingoInterlinkedGamemodeSettings.find((x) => x.page === props.page)?.settings?.numGridGuesses;
 
   // Specified amount of word guesses (either from initial config or gamemode settings)?
   const specifiedValue =

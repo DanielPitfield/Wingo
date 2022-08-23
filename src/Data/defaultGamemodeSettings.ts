@@ -28,70 +28,57 @@ export const DEFAULT_WINGO_INCREASING_MAX_NUM_LIVES = 5;
 
 export const DEFAULT_FIT_RESTRICTION = 0;
 
-// TODO: Create a folder for each mode, each mode has its own defaultGamemodeSettings.ts file
+const commonWingoSettings = {
+  isFirstLetterProvided: false,
+  isHintShown: false,
+  puzzleRevealMs: DEFAULT_PUZZLE_REVEAL_MS,
+  puzzleLeaveNumBlanks: DEFAULT_PUZZLE_LEAVE_NUM_BLANKS,
+  maxLivesConfig: { isLimited: true, maxLives: DEFAULT_WINGO_INCREASING_MAX_NUM_LIVES },
+  wordLengthMaxLimit: MAX_TARGET_WORD_LENGTH,
+  timerConfig: { isTimed: false as false },
+};
+
+export const fallbackWingoSettings = {
+  wordLength: 5,
+  ...commonWingoSettings
+}
+
 export const defaultWingoGamemodeSettings: { page: PageName; settings: WingoConfigProps["gamemodeSettings"] }[] = [
   {
     page: "wingo/daily",
-    settings: {
-      wordLength: getGamemodeDefaultWordLength("wingo/daily"),
-      isFirstLetterProvided: false,
-      isHintShown: false,
-      timerConfig: { isTimed: false },
-    },
+    settings: { ...commonWingoSettings, wordLength: getGamemodeDefaultWordLength("wingo/daily") },
   },
   {
     page: "wingo/repeat",
-    settings: {
-      wordLength: getGamemodeDefaultWordLength("wingo/repeat"),
-      isFirstLetterProvided: false,
-      isHintShown: false,
-      timerConfig: { isTimed: false },
-    },
+    settings: { ...commonWingoSettings, wordLength: getGamemodeDefaultWordLength("wingo/repeat") },
   },
   {
     page: "wingo/category",
-    settings: {
-      isFirstLetterProvided: false,
-      isHintShown: false,
-      timerConfig: { isTimed: false },
-    },
+    settings: { ...commonWingoSettings, wordLength: getGamemodeDefaultWordLength("wingo/category") },
   },
   {
     page: "wingo/increasing",
-    settings: {
-      wordLength: MIN_TARGET_WORD_LENGTH,
-      wordLengthMaxLimit: MAX_TARGET_WORD_LENGTH,
-      isFirstLetterProvided: false,
-      isHintShown: false,
-      timerConfig: { isTimed: false },
-    },
+    settings: { ...commonWingoSettings, wordLength: getGamemodeDefaultWordLength("wingo/increasing") },
   },
   {
     page: "wingo/limitless",
-    settings: {
-      wordLength: MIN_TARGET_WORD_LENGTH,
-      wordLengthMaxLimit: MAX_TARGET_WORD_LENGTH,
-      maxLivesConfig: { isLimited: false },
-      isFirstLetterProvided: false,
-      isHintShown: false,
-      timerConfig: { isTimed: false },
-    },
+    settings: { ...commonWingoSettings, wordLength: getGamemodeDefaultWordLength("wingo/limitless") },
   },
   {
     page: "wingo/puzzle",
     settings: {
-      isHintShown: true,
-      puzzleRevealMs: DEFAULT_PUZZLE_REVEAL_MS,
-      puzzleLeaveNumBlanks: DEFAULT_PUZZLE_LEAVE_NUM_BLANKS,
+      ...commonWingoSettings,
       wordLength: getGamemodeDefaultWordLength("wingo/puzzle"),
-      isFirstLetterProvided: false,
-      timerConfig: { isTimed: false },
+
+      isHintShown: true,
     },
   },
   // The conundrum mode is actually a mode of WingoConfig
   {
     page: "Conundrum",
     settings: {
+      ...commonWingoSettings,
+      wordLength: getGamemodeDefaultWordLength("Conundrum"),
       timerConfig: { isTimed: true, seconds: getGamemodeDefaultTimerValue("wingo/puzzle") },
     },
   },
@@ -174,19 +161,19 @@ export const defaultWingoInterlinkedGamemodeSettings: {
 ];
 
 export const defaultLetterCategoriesGamemodeSettings: LetterCategoriesConfigProps["gamemodeSettings"] = {
-  defaultNumCategories: 5,
+  numCategories: 5,
   timerConfig: { isTimed: false },
 };
 
 export const defaultLettersGameGamemodeSettings: LettersGameConfigProps["gamemodeSettings"] = {
-  defaultNumLetters: getGamemodeDefaultWordLength("LettersGame"),
+  numLetters: getGamemodeDefaultWordLength("LettersGame"),
   timerConfig: { isTimed: true, seconds: getGamemodeDefaultTimerValue("LettersGame") },
 };
 
 export const defaultNumbersGameGamemodeSettings: NumbersGameConfigProps["gamemodeSettings"] = {
   hasScaryNumbers: false,
   scoringMethod: "standard",
-  defaultNumOperands: 6,
+  numOperands: 6,
   timerConfig: { isTimed: true, seconds: getGamemodeDefaultTimerValue("NumbersGame") },
 };
 
@@ -268,8 +255,12 @@ export const defaultWordCodesGamemodeSettings: { mode: wordCodesMode; settings: 
     {
       mode: "match",
       settings: {
-        numCodesToMatch: 4,
+        numDisplayWords: 4,
+        numDisplayCodes: 3,
+        numWordToCodeQuestions: 2,
+        numCodeToWordQuestions: 1,
         codeLength: 4,
+        numCodesToMatch: 4,
         numAdditionalLetters: 2,
         numGuesses: getGamemodeDefaultNumGuesses("WordCodes/Match"),
         timerConfig: { isTimed: false },

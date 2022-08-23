@@ -16,12 +16,12 @@ export interface NumbersGameConfigProps {
       }
     | { isCampaignLevel: false };
 
-  gamemodeSettings?: {
-    hasScaryNumbers?: boolean;
-    scoringMethod?: "standard" | "pointLostPerDifference";
+  gamemodeSettings: {
+    hasScaryNumbers: boolean;
+    scoringMethod: "standard" | "pointLostPerDifference";
     // The number/amount of numbers (that make up the selection used to make the target number)
-    defaultNumOperands?: number;
-    timerConfig?: { isTimed: true; seconds: number } | { isTimed: false };
+    numOperands: number;
+    timerConfig: { isTimed: true; seconds: number } | { isTimed: false };
   };
 
   gameshowScore?: number;
@@ -144,7 +144,7 @@ const NumbersGameConfig: React.FC<Props> = (props) => {
   const defaultGamemodeSettings = {
     hasScaryNumbers: props.gamemodeSettings?.hasScaryNumbers ?? defaultNumbersGameGamemodeSettings?.hasScaryNumbers!,
     scoringMethod: props.gamemodeSettings?.scoringMethod ?? defaultNumbersGameGamemodeSettings?.scoringMethod!,
-    numOperands: props.gamemodeSettings?.defaultNumOperands ?? defaultNumbersGameGamemodeSettings?.defaultNumOperands!,
+    numOperands: props.gamemodeSettings?.numOperands ?? defaultNumbersGameGamemodeSettings?.numOperands!,
     timerConfig: props.gamemodeSettings?.timerConfig ?? defaultNumbersGameGamemodeSettings?.timerConfig!,
   };
 

@@ -34,7 +34,7 @@ export interface ArithmeticDragProps {
 
   mode: arithmeticMode;
 
-  gamemodeSettings?: {
+  gamemodeSettings: {
     /* TODO: Difficulty presets
     All these settings control the difficulty for this mode
 
@@ -46,14 +46,14 @@ export interface ArithmeticDragProps {
     */
 
     // How many expressions (to match or order)?
-    numTiles?: number;
+    numTiles: number;
     // How big/difficult are the numbers used in these expressions?
-    numberSize?: arithmeticNumberSize;
+    numberSize: arithmeticNumberSize;
     // How many operands/numbers in these expressions?
-    numOperands?: number;
+    numOperands: number;
     // How many times can you check your attempts?
-    numGuesses?: number;
-    timerConfig?: { isTimed: true; seconds: number } | { isTimed: false };
+    numGuesses: number;
+    timerConfig: { isTimed: true; seconds: number } | { isTimed: false };
   };
 }
 

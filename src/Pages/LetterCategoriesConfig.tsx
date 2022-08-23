@@ -21,9 +21,9 @@ export interface LetterCategoriesConfigProps {
       }
     | { isCampaignLevel: false };
 
-  gamemodeSettings?: {
-    defaultNumCategories?: number;
-    timerConfig?: { isTimed: true; seconds: number } | { isTimed: false };
+  gamemodeSettings: {
+    numCategories: number;
+    timerConfig: { isTimed: true; seconds: number } | { isTimed: false };
   };
 
   enforceFullLengthGuesses: boolean;
@@ -54,7 +54,7 @@ const LetterCategoriesConfig: React.FC<Props> = (props) => {
 
   const defaultGamemodeSettings = {
     numCategories:
-      props.gamemodeSettings?.defaultNumCategories ?? defaultLetterCategoriesGamemodeSettings?.defaultNumCategories!,
+      props.gamemodeSettings?.numCategories ?? defaultLetterCategoriesGamemodeSettings?.numCategories!,
     timerConfig: props.gamemodeSettings?.timerConfig ?? defaultLetterCategoriesGamemodeSettings?.timerConfig!,
   };
 

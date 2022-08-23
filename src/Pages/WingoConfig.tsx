@@ -34,17 +34,20 @@ export interface WingoConfigProps {
     | "crossword/weekly"
     | "crossword"
     | "conundrum";
-  gamemodeSettings?: {
-    wordLength?: number;
-    wordLengthMaxLimit?: number;
-    isFirstLetterProvided?: boolean;
-    isHintShown?: boolean;
+  gamemodeSettings: {
+    wordLength: number;
+    isFirstLetterProvided: boolean;
+    isHintShown: boolean;
+
     // Puzzle mode
-    puzzleRevealMs?: number;
-    puzzleLeaveNumBlanks?: number;
+    puzzleRevealMs: number;
+    puzzleLeaveNumBlanks: number;
+
     // Limitless mode
-    maxLivesConfig?: { isLimited: true; maxLives: number } | { isLimited: false };
-    timerConfig?: { isTimed: true; seconds: number } | { isTimed: false };
+    maxLivesConfig: { isLimited: true; maxLives: number } | { isLimited: false };    
+    wordLengthMaxLimit: number;
+
+    timerConfig: { isTimed: true; seconds: number } | { isTimed: false };
   };
 
   defaultNumGuesses: number;
@@ -776,6 +779,8 @@ const WingoConfig: React.FC<Props> = (props) => {
           isHintShown: gamemodeSettings.isHintShown,
           puzzleRevealMs: gamemodeSettings.puzzleRevealMs,
           puzzleLeaveNumBlanks: gamemodeSettings.puzzleLeaveNumBlanks,
+          maxLivesConfig: gamemodeSettings.maxLivesConfig,
+          wordLengthMaxLimit: gamemodeSettings.wordLengthMaxLimit,
           timerConfig: gamemodeSettings.timerConfig.isTimed
             ? { isTimed: true, seconds: remainingSeconds }
             : { isTimed: false },
@@ -1054,6 +1059,8 @@ const WingoConfig: React.FC<Props> = (props) => {
             isHintShown: gamemodeSettings.isHintShown,
             puzzleRevealMs: gamemodeSettings.puzzleRevealMs,
             puzzleLeaveNumBlanks: gamemodeSettings.puzzleLeaveNumBlanks,
+            maxLivesConfig: gamemodeSettings.maxLivesConfig,
+            wordLengthMaxLimit: gamemodeSettings.wordLengthMaxLimit,
             timerConfig: gamemodeSettings.timerConfig.isTimed
               ? { isTimed: true, seconds: remainingSeconds }
               : { isTimed: false },

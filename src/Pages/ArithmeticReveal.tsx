@@ -26,7 +26,7 @@ export interface ArithmeticRevealProps {
       }
     | { isCampaignLevel: false };
 
-  gamemodeSettings?: {
+  gamemodeSettings: {
     /* TODO: Difficulty presets
     All these settings control the difficulty for this mode
 
@@ -37,14 +37,14 @@ export interface ArithmeticRevealProps {
     (when the Custom option is selected, the inputs for the settings appear)
     */
 
-    numCheckpoints?: number;
+    numCheckpoints: number;
     // How many tiles appear EACH checkpoint?
-    numTiles?: number;
+    numTiles: number;
     // How big/difficult are the numbers used in these expressions?
-    numberSize?: arithmeticNumberSize;
+    numberSize: arithmeticNumberSize;
     // The time between tiles appearing
-    revealIntervalSeconds?: number;
-    timerConfig?: { isTimed: true; seconds: number } | { isTimed: false };
+    revealIntervalSeconds: number;
+    timerConfig: { isTimed: true; seconds: number } | { isTimed: false };
   };
 }
 

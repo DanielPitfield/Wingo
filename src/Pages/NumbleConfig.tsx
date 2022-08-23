@@ -32,18 +32,18 @@ export interface NumbleConfigProps {
       }
     | { isCampaignLevel: false };
 
-  gamemodeSettings?: {
-    numDice?: number;
+  gamemodeSettings: {
+    numDice: number;
     // The lowest value which can be the number shown on a dice
-    diceMin?: number;
-    diceMax?: number;
-    gridShape?: numbleGridShape;
-    gridSize?: numbleGridSize;
-    numTeams?: number;
+    diceMin: number;
+    diceMax: number;
+    gridShape: numbleGridShape;
+    gridSize: numbleGridSize;
+    numTeams: number;
     // When a number which can't be made with the dice numbers is picked, does the game end?
-    isGameOverOnIncorrectPick?: boolean;
+    isGameOverOnIncorrectPick: boolean;
     // How long to make a guess after the dice have been rolled?
-    guessTimerConfig?:
+    guessTimerConfig:
       | {
           isTimed: true;
           seconds: number;
@@ -52,7 +52,7 @@ export interface NumbleConfigProps {
         }
       | { isTimed: false };
     // How long overall until the game ends?
-    timerConfig?: { isTimed: true; seconds: number } | { isTimed: false };
+    timerConfig: { isTimed: true; seconds: number } | { isTimed: false };
   };
 }
 

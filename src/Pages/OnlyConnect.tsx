@@ -14,12 +14,12 @@ import { getGamemodeDefaultTimerValue } from "../Data/DefaultTimerValues";
 import { defaultOnlyConnectGamemodeSettings } from "../Data/DefaultGamemodeSettings";
 
 export interface OnlyConnectProps {
-  gamemodeSettings?: {
-    numGroups?: number;
-    groupSize?: number;
+  gamemodeSettings: {
+    numGroups: number;
+    groupSize: number;
     // How many times can you check your attempts, once there are only two groups remaining?
-    numGuesses?: number;
-    timerConfig?: { isTimed: true; seconds: number } | { isTimed: false };
+    numGuesses: number;
+    timerConfig: { isTimed: true; seconds: number } | { isTimed: false };
   };
 }
 
@@ -100,7 +100,7 @@ const OnlyConnect: React.FC<Props> = (props) => {
     ResetGame();
 
     // Save the latest gamemode settings for this mode
-    SaveData.setGroupWallGamemodeSettings(gamemodeSettings);
+    SaveData.setOnlyConnectGamemodeSettings(gamemodeSettings);
   }, [gamemodeSettings]);
 
   // (Guess) Timer Setup

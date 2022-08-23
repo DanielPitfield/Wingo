@@ -20,10 +20,10 @@ export interface LettersGameConfigProps {
   // Define the letters to choose from (player won't randomly select letters)
   lettersGameSelectionWord?: string;
 
-  gamemodeSettings?: {
+  gamemodeSettings: {
     // The number of letters (that make up the selection used to make a word)
-    defaultNumLetters?: number;
-    timerConfig?: { isTimed: true; seconds: number } | { isTimed: false };
+    numLetters: number;
+    timerConfig: { isTimed: true; seconds: number } | { isTimed: false };
   };
 
   gameshowScore?: number;
@@ -71,7 +71,7 @@ const LettersGameConfig: React.FC<Props> = (props) => {
   const [hasSubmitLetter, sethasSubmitLetter] = useState(false);
 
   const defaultGamemodeSettings = {
-    numLetters: props.gamemodeSettings?.defaultNumLetters ?? defaultLettersGameGamemodeSettings?.defaultNumLetters!,
+    numLetters: props.gamemodeSettings?.numLetters ?? defaultLettersGameGamemodeSettings?.numLetters!,
     timerConfig: props.gamemodeSettings?.timerConfig ?? defaultLettersGameGamemodeSettings?.timerConfig!,
   };
 

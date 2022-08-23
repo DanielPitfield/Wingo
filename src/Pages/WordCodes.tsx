@@ -39,21 +39,21 @@ export interface WordCodesProps {
   */
   mode: wordCodesMode;
 
-  gamemodeSettings?: {
+  gamemodeSettings: {
     // Question mode only settings
-    numDisplayWords?: number;
-    numDisplayCodes?: number;
-    numWordToCodeQuestions?: number;
-    numCodeToWordQuestions?: number;
+    numDisplayWords: number;
+    numDisplayCodes: number;
+    numWordToCodeQuestions: number;
+    numCodeToWordQuestions: number;
 
     // Match mode only setting
-    numCodesToMatch?: number;
+    numCodesToMatch: number;
 
     // Both modes
-    codeLength?: number;
-    numAdditionalLetters?: number;
-    numGuesses?: number;
-    timerConfig?: { isTimed: true; seconds: number } | { isTimed: false };
+    codeLength: number;
+    numAdditionalLetters: number;
+    numGuesses: number;
+    timerConfig: { isTimed: true; seconds: number } | { isTimed: false };
   };
 }
 

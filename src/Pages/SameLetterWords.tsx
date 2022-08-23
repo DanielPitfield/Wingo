@@ -17,13 +17,13 @@ import { defaultSameLetterWordsGamemodeSettings } from "../Data/DefaultGamemodeS
 import { MAX_NUM_SAME_LETTER_GUESSES, MAX_NUM_SAME_LETTER_MATCHING_WORDS, MAX_NUM_SAME_LETTER_TOTAL_WORDS, MIN_NUM_SAME_LETTER_GUESSES, MIN_NUM_SAME_LETTER_MATCHING_WORDS, MIN_NUM_SAME_LETTER_TOTAL_WORDS } from "../Data/GamemodeSettingsInputLimits";
 
 export interface SameLetterWordsProps {
-  gamemodeSettings?: {
-    wordLength?: number;
-    numMatchingWords?: number;
-    numTotalWords?: number;
+  gamemodeSettings: {
+    wordLength: number;
+    numMatchingWords: number;
+    numTotalWords: number;
     // How many times can you check your attempts?
-    numGuesses?: number;
-    timerConfig?: { isTimed: true; seconds: number } | { isTimed: false };
+    numGuesses: number;
+    timerConfig: { isTimed: true; seconds: number } | { isTimed: false };
   };
 }
 

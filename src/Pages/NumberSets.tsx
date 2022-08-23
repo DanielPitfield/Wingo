@@ -42,9 +42,9 @@ export interface NumberSetsProps {
 
   defaultSet?: NumberSetConfigProps;
 
-  gamemodeSettings?: {
-    difficulty?: algebraDifficulty;
-    timerConfig?: { isTimed: true; seconds: number } | { isTimed: false };
+  gamemodeSettings: {
+    difficulty: algebraDifficulty;
+    timerConfig: { isTimed: true; seconds: number } | { isTimed: false };
   };
 }
 
