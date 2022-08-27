@@ -9,6 +9,10 @@ import { Chance } from "chance";
 import { generateConundrum, getAllWordsOfLength } from "../Data/Conundrum";
 import { PageName } from "../PageNames";
 import {
+  defaultDailyCrosswordGamemodeSettings,
+  defaultWeeklyCrosswordGamemodeSettings,
+  defaultWingoCrosswordFitGamemodeSettings,
+  defaultWingoCrosswordGamemodeSettings,
   defaultWingoGamemodeSettings,
   defaultWingoInterlinkedGamemodeSettings,
   DEFAULT_PUZZLE_LEAVE_NUM_BLANKS,
@@ -44,7 +48,7 @@ export interface WingoConfigProps {
     puzzleLeaveNumBlanks: number;
 
     // Limitless mode
-    maxLivesConfig: { isLimited: true; maxLives: number } | { isLimited: false };    
+    maxLivesConfig: { isLimited: true; maxLives: number } | { isLimited: false };
     wordLengthMaxLimit: number;
 
     timerConfig: { isTimed: true; seconds: number } | { isTimed: false };
@@ -253,12 +257,18 @@ const WingoConfig: React.FC<Props> = (props) => {
     wordLength: defaultWordLength,
     // At what word length should increasing and limitless go up to?
     wordLengthMaxLimit: props.gamemodeSettings?.wordLengthMaxLimit ?? MAX_TARGET_WORD_LENGTH,
-    isFirstLetterProvided: props.gamemodeSettings?.isHintShown ?? defaultWingoGamemodeSettings.find(x => x.page === props.page)?.settings?.isFirstLetterProvided!,
-    isHintShown: props.gamemodeSettings?.isHintShown ?? defaultWingoGamemodeSettings.find(x => x.page === props.page)?.settings?.isHintShown!,
+    isFirstLetterProvided:
+      props.gamemodeSettings?.isHintShown ??
+      defaultWingoGamemodeSettings.find((x) => x.page === props.page)?.settings?.isFirstLetterProvided!,
+    isHintShown:
+      props.gamemodeSettings?.isHintShown ??
+      defaultWingoGamemodeSettings.find((x) => x.page === props.page)?.settings?.isHintShown!,
     puzzleRevealMs: props.gamemodeSettings?.puzzleRevealMs ?? DEFAULT_PUZZLE_REVEAL_MS,
     puzzleLeaveNumBlanks: props.gamemodeSettings?.puzzleLeaveNumBlanks ?? DEFAULT_PUZZLE_LEAVE_NUM_BLANKS,
     maxLivesConfig: props.gamemodeSettings?.maxLivesConfig ?? { isLimited: false },
-    timerConfig: props.gamemodeSettings?.timerConfig ?? defaultWingoGamemodeSettings.find(x => x.page === props.page)?.settings?.timerConfig!,
+    timerConfig:
+      props.gamemodeSettings?.timerConfig ??
+      defaultWingoGamemodeSettings.find((x) => x.page === props.page)?.settings?.timerConfig!,
   };
 
   const [gamemodeSettings, setGamemodeSettings] = useState<{
@@ -1118,7 +1128,7 @@ const WingoConfig: React.FC<Props> = (props) => {
   }) {
     setGamemodeSettings(newGamemodeSettings);
   }
-  
+
   const commonWingoInterlinkedProps = {
     isCampaignLevel: props.isCampaignLevel,
     page: props.page,
@@ -1134,13 +1144,23 @@ const WingoConfig: React.FC<Props> = (props) => {
     return (
       // TODO: Setters and getters for WingoInterlinked gamemode settings (in SaveData)
       // TODO: SaveData.getDefault() ?? defaultSettings when returning the components below
-      <WingoInterlinked {...commonWingoInterlinkedProps} wordArrayConfig={{ type: "length" }} provideWords={false} />
+      <WingoInterlinked
+        {...commonWingoInterlinkedProps}
+        wordArrayConfig={{ type: "length" }}
+        provideWords={false}
+        gamemodeSettings={SaveData.getWingoInterlinkedGamemodeSettings() ?? defaultWingoInterlinkedGamemodeSettings}
+      />
     );
   }
 
   if (props.mode === "crossword") {
     return (
-      <WingoInterlinked {...commonWingoInterlinkedProps} wordArrayConfig={{ type: "category" }} provideWords={false} />
+      <WingoInterlinked
+        {...commonWingoInterlinkedProps}
+        wordArrayConfig={{ type: "category" }}
+        provideWords={false}
+        gamemodeSettings={SaveData.getWingoCrosswordGamemodeSettings() ?? defaultWingoCrosswordGamemodeSettings}
+      />
     );
   }
 
@@ -1161,6 +1181,7 @@ const WingoConfig: React.FC<Props> = (props) => {
         onSave={SaveData.setDailyCrossWordGuesses}
         initialConfig={SaveData.getDailyCrossWordGuesses() || undefined}
         provideWords={false}
+        gamemodeSettings={defaultDailyCrosswordGamemodeSettings}
       />
     );
   }
@@ -1182,13 +1203,19 @@ const WingoConfig: React.FC<Props> = (props) => {
         onSave={SaveData.setWeeklyCrossWordGuesses}
         initialConfig={SaveData.getWeeklyCrossWordGuesses() || undefined}
         provideWords={false}
+        gamemodeSettings={defaultWeeklyCrosswordGamemodeSettings}
       />
     );
   }
 
   if (props.mode === "crossword/fit") {
     return (
-      <WingoInterlinked {...commonWingoInterlinkedProps} wordArrayConfig={{ type: "length" }} provideWords={true} />
+      <WingoInterlinked
+        {...commonWingoInterlinkedProps}
+        wordArrayConfig={{ type: "length" }}
+        provideWords={true}
+        gamemodeSettings={SaveData.getWingoCrosswordFitGamemodeSettings() ?? defaultWingoCrosswordFitGamemodeSettings}
+      />
     );
   }
 

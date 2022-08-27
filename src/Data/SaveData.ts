@@ -431,30 +431,43 @@ export class SaveData {
     return null;
   }
 
-  public static setWingoInterlinkedGamemodeSettings(
-    page: PageName,
-    gameSettings: WingoInterlinkedProps["gamemodeSettings"]
-  ) {
-    const itemName = determineLocalStorageItemName(page);
-
-    if (!itemName) {
-      return;
-    }
-
-    localStorage.setItem(itemName, JSON.stringify(gameSettings));
+  public static setWingoInterlinkedGamemodeSettings(gameSettings: WingoInterlinkedProps["gamemodeSettings"]) {
+    localStorage.setItem("wingoInterlinkedGamemodeSettings", JSON.stringify(gameSettings));
   }
 
-  public static getWingoInterlinkedGamemodeSettings(page: PageName): WingoInterlinkedProps["gamemodeSettings"] | null {
-    const itemName = determineLocalStorageItemName(page);
-
-    if (!itemName) {
-      return null;
-    }
-
-    const wingoInterlinkedGamemodeSettings = localStorage.getItem(itemName);
+  public static getWingoInterlinkedGamemodeSettings(): WingoInterlinkedProps["gamemodeSettings"] | null {
+    const wingoInterlinkedGamemodeSettings = localStorage.getItem("wingoInterlinkedGamemodeSettings");
 
     if (wingoInterlinkedGamemodeSettings) {
       return JSON.parse(wingoInterlinkedGamemodeSettings) as WingoInterlinkedProps["gamemodeSettings"];
+    }
+
+    return null;
+  }
+
+  public static setWingoCrosswordGamemodeSettings(gameSettings: WingoInterlinkedProps["gamemodeSettings"]) {
+    localStorage.setItem("wingoCrosswordGamemodeSettings", JSON.stringify(gameSettings));
+  }
+
+  public static getWingoCrosswordGamemodeSettings(): WingoInterlinkedProps["gamemodeSettings"] | null {
+    const wingoCrosswordGamemodeSettings = localStorage.getItem("wingoCrosswordGamemodeSettings");
+
+    if (wingoCrosswordGamemodeSettings) {
+      return JSON.parse(wingoCrosswordGamemodeSettings) as WingoInterlinkedProps["gamemodeSettings"];
+    }
+
+    return null;
+  }
+
+  public static setWingoCrosswordFitGamemodeSettings(gameSettings: WingoInterlinkedProps["gamemodeSettings"]) {
+    localStorage.setItem("wingoCrosswordFitGamemodeSettings", JSON.stringify(gameSettings));
+  }
+
+  public static getWingoCrosswordFitGamemodeSettings(): WingoInterlinkedProps["gamemodeSettings"] | null {
+    const wingoCrosswordFitGamemodeSettings = localStorage.getItem("wingoCrosswordFitGamemodeSettings");
+
+    if (wingoCrosswordFitGamemodeSettings) {
+      return JSON.parse(wingoCrosswordFitGamemodeSettings) as WingoInterlinkedProps["gamemodeSettings"];
     }
 
     return null;

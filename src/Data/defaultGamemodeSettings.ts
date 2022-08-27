@@ -108,6 +108,18 @@ export const defaultWingoCrosswordGamemodeSettings: WingoInterlinkedProps["gamem
   fitRestrictionConfig: { isRestricted: false },
 };
 
+export const defaultWingoCrosswordFitGamemodeSettings: WingoInterlinkedProps["gamemodeSettings"] = {
+  numWords: 6,
+  minWordLength: getGamemodeDefaultWordLength("wingo/crossword/fit"),
+  maxWordLength: getGamemodeDefaultWordLength("wingo/crossword/fit"),
+  numWordGuesses: 0,
+  numGridGuesses: 1,
+  isFirstLetterProvided: false,
+  isHintShown: true,
+  timerConfig: { isTimed: false },
+  fitRestrictionConfig: { isRestricted: false },
+};
+
 export const defaultDailyCrosswordGamemodeSettings: WingoInterlinkedProps["gamemodeSettings"] = {
   numWords: 6,
   minWordLength: MIN_TARGET_WORD_LENGTH,
@@ -132,17 +144,7 @@ export const defaultWeeklyCrosswordGamemodeSettings: WingoInterlinkedProps["game
   fitRestrictionConfig: { isRestricted: false },
 };
 
-export const defaultWingoCrosswordFitGamemodeSettings: WingoInterlinkedProps["gamemodeSettings"] = {
-  numWords: 6,
-  minWordLength: getGamemodeDefaultWordLength("wingo/crossword/fit"),
-  maxWordLength: getGamemodeDefaultWordLength("wingo/crossword/fit"),
-  numWordGuesses: 0,
-  numGridGuesses: 1,
-  isFirstLetterProvided: false,
-  isHintShown: true,
-  timerConfig: { isTimed: false },
-  fitRestrictionConfig: { isRestricted: false },
-};
+
 
 export const defaultLetterCategoriesGamemodeSettings: LetterCategoriesConfigProps["gamemodeSettings"] = {
   numCategories: 5,
