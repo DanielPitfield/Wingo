@@ -247,7 +247,7 @@ export const WingoInterlinked: React.FC<Props> = (props) => {
 
     ResetGame();
 
-    // TODO: The SaveData method to call differs with the mode (setWingoInterlinked is only for the interlinked mode)
+    // TODO: The SaveData method to call differs with the mode (setWingoInterlinked is only for the interlinked)
 
     // Save the latest gamemode settings for this mode
     SaveData.setWingoInterlinkedGamemodeSettings(props.page, gamemodeSettings);
@@ -353,11 +353,7 @@ export const WingoInterlinked: React.FC<Props> = (props) => {
       return;
     }
 
-    const gridCompleted = tileStatuses.every((tile) => {
-      if (tile.status === "correct") {
-        return true;
-      }
-    });
+    const gridCompleted = tileStatuses.every((tile) => tile.status === "correct");
 
     if (gridCompleted) {
       setInProgress(false);
@@ -1050,11 +1046,7 @@ export const WingoInterlinked: React.FC<Props> = (props) => {
   function ResetGame() {
     if (!inProgress) {
       // Every tile where a letter should be, has the correct status
-      const wasCorrect = tileStatuses.every((tile) => {
-        if (tile.status === "correct") {
-          return true;
-        }
-      });
+      const wasCorrect = tileStatuses.every((tile) => tile.status === "correct");
       props.onComplete(wasCorrect);
 
       /*
