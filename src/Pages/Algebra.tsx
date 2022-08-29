@@ -13,7 +13,6 @@ import { Theme } from "../Data/Themes";
 import { AlgebraTemplates } from "../Data/AlgebraTemplates";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
 import { getGamemodeDefaultTimerValue } from "../Data/DefaultTimerValues";
-import { defaultAlgebraGamemodeSettings } from "../Data/DefaultGamemodeSettings";
 import { MAX_NUMPAD_GUESS_LENGTH } from "../Data/GamemodeSettingsInputLimits";
 
 export const algebraDifficulties = ["novice", "easy", "medium", "hard", "expert"] as const;
@@ -81,15 +80,7 @@ const Algebra: React.FC<Props> = (props) => {
   const [questionNumber, setQuestionNumber] = useState(0);
   const [numCorrectAnswers, setNumCorrectAnswers] = useState(0);
 
-  const defaultGamemodeSettings = {
-    difficulty: props.gamemodeSettings?.difficulty ?? defaultAlgebraGamemodeSettings?.difficulty!,
-    timerConfig: props.gamemodeSettings?.timerConfig ?? defaultAlgebraGamemodeSettings?.timerConfig!,
-  };
-
-  const [gamemodeSettings, setGamemodeSettings] = useState<{
-    difficulty: algebraDifficulty;
-    timerConfig: { isTimed: true; seconds: number } | { isTimed: false };
-  }>(defaultGamemodeSettings);
+  const [gamemodeSettings, setGamemodeSettings] = useState<AlgebraProps["gamemodeSettings"]>(props.gamemodeSettings);
 
   const [remainingSeconds, setRemainingSeconds] = useState(
     props.gamemodeSettings?.timerConfig?.isTimed === true

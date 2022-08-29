@@ -5,7 +5,6 @@ import { Theme } from "../Data/Themes";
 import { SaveData, SettingsData } from "../Data/SaveData";
 import { getAllWordsOfLength } from "../Data/Conundrum";
 import { getGamemodeDefaultTimerValue } from "../Data/DefaultTimerValues";
-import { defaultLettersGameGamemodeSettings } from "../Data/DefaultGamemodeSettings";
 
 export interface LettersGameConfigProps {
   campaignConfig:
@@ -70,15 +69,7 @@ const LettersGameConfig: React.FC<Props> = (props) => {
   const [targetWord, setTargetWord] = useState<string>();
   const [hasSubmitLetter, sethasSubmitLetter] = useState(false);
 
-  const defaultGamemodeSettings = {
-    numLetters: props.gamemodeSettings?.numLetters ?? defaultLettersGameGamemodeSettings?.numLetters!,
-    timerConfig: props.gamemodeSettings?.timerConfig ?? defaultLettersGameGamemodeSettings?.timerConfig!,
-  };
-
-  const [gamemodeSettings, setGamemodeSettings] = useState<{
-    numLetters: number;
-    timerConfig: { isTimed: true; seconds: number } | { isTimed: false };
-  }>(defaultGamemodeSettings);
+  const [gamemodeSettings, setGamemodeSettings] = useState<LettersGameConfigProps["gamemodeSettings"]>(props.gamemodeSettings);
 
   const [remainingSeconds, setRemainingSeconds] = useState(
     props.gamemodeSettings?.timerConfig?.isTimed === true

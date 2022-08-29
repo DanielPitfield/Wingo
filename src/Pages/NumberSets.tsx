@@ -13,7 +13,6 @@ import { algebraDifficulty, algebraDifficulties } from "./Algebra";
 import { generateSet } from "../Data/NumberSetsTemplates";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
 import { getGamemodeDefaultTimerValue } from "../Data/DefaultTimerValues";
-import { defaultNumberSetsGamemodeSettings } from "../Data/DefaultGamemodeSettings";
 
 /** Config for a specific number set (exported for config from campaign) */
 export type NumberSetConfigProps = {
@@ -67,15 +66,7 @@ const NumberSets: React.FC<Props> = (props) => {
   const [guess, setGuess] = useState("");
   const [numberSet, setNumberSet] = useState<NumberSetConfigProps | undefined>(props.defaultSet);
 
-  const defaultGamemodeSettings = {
-    difficulty: props.gamemodeSettings?.difficulty ?? defaultNumberSetsGamemodeSettings?.difficulty!,
-    timerConfig: props.gamemodeSettings?.timerConfig ?? defaultNumberSetsGamemodeSettings?.timerConfig!,
-  };
-
-  const [gamemodeSettings, setGamemodeSettings] = useState<{
-    difficulty: algebraDifficulty;
-    timerConfig: { isTimed: true; seconds: number } | { isTimed: false };
-  }>(defaultGamemodeSettings);
+  const [gamemodeSettings, setGamemodeSettings] = useState<NumberSetsProps["gamemodeSettings"]>(props.gamemodeSettings);
 
   const [remainingSeconds, setRemainingSeconds] = useState(
     props.gamemodeSettings?.timerConfig?.isTimed === true

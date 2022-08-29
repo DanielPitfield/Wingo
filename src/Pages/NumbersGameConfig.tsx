@@ -5,7 +5,6 @@ import { calculateTotal } from "../Components/NumberRow";
 import { Theme } from "../Data/Themes";
 import { SaveData, SettingsData } from "../Data/SaveData";
 import { getGamemodeDefaultTimerValue } from "../Data/DefaultTimerValues";
-import { defaultNumbersGameGamemodeSettings } from "../Data/DefaultGamemodeSettings";
 
 export interface NumbersGameConfigProps {
   campaignConfig:
@@ -141,19 +140,9 @@ export function determineScore(
 export type Guess = { operand1: number | null; operand2: number | null; operator: typeof operators[0]["name"] };
 
 const NumbersGameConfig: React.FC<Props> = (props) => {
-  const defaultGamemodeSettings = {
-    hasScaryNumbers: props.gamemodeSettings?.hasScaryNumbers ?? defaultNumbersGameGamemodeSettings?.hasScaryNumbers!,
-    scoringMethod: props.gamemodeSettings?.scoringMethod ?? defaultNumbersGameGamemodeSettings?.scoringMethod!,
-    numOperands: props.gamemodeSettings?.numOperands ?? defaultNumbersGameGamemodeSettings?.numOperands!,
-    timerConfig: props.gamemodeSettings?.timerConfig ?? defaultNumbersGameGamemodeSettings?.timerConfig!,
-  };
-
-  const [gamemodeSettings, setGamemodeSettings] = useState<{
-    hasScaryNumbers: boolean;
-    scoringMethod: "standard" | "pointLostPerDifference";
-    numOperands: number;
-    timerConfig: { isTimed: true; seconds: number } | { isTimed: false };
-  }>(defaultGamemodeSettings);
+  const [gamemodeSettings, setGamemodeSettings] = useState<NumbersGameConfigProps["gamemodeSettings"]>(
+    props.gamemodeSettings
+  );
 
   const [remainingSeconds, setRemainingSeconds] = useState(
     props.gamemodeSettings?.timerConfig?.isTimed === true

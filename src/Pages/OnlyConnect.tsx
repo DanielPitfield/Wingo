@@ -11,7 +11,6 @@ import { Theme } from "../Data/Themes";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
 import { categoryMappings } from "../Data/WordArrayMappings";
 import { getGamemodeDefaultTimerValue } from "../Data/DefaultTimerValues";
-import { defaultOnlyConnectGamemodeSettings } from "../Data/DefaultGamemodeSettings";
 
 export interface OnlyConnectProps {
   gamemodeSettings: {
@@ -57,19 +56,7 @@ const OnlyConnect: React.FC<Props> = (props) => {
   const [selectedWords, setSelectedWords] = useState<{ word: string; categoryName: string }[]>([]);
   const [numCompletedGroups, setNumCompletedGroups] = useState(0);
 
-  const defaultGamemodeSettings = {
-    numGroups: props.gamemodeSettings?.numGroups ?? defaultOnlyConnectGamemodeSettings?.numGroups!,
-    groupSize: props.gamemodeSettings?.groupSize ?? defaultOnlyConnectGamemodeSettings?.groupSize!,
-    numGuesses: props.gamemodeSettings?.numGuesses ?? defaultOnlyConnectGamemodeSettings?.numGuesses!,
-    timerConfig: props.gamemodeSettings?.timerConfig ?? defaultOnlyConnectGamemodeSettings?.timerConfig!,
-  };
-
-  const [gamemodeSettings, setGamemodeSettings] = useState<{
-    numGroups: number;
-    groupSize: number;
-    numGuesses: number;
-    timerConfig: { isTimed: true; seconds: number } | { isTimed: false };
-  }>(defaultGamemodeSettings);
+  const [gamemodeSettings, setGamemodeSettings] = useState<OnlyConnectProps["gamemodeSettings"]>(props.gamemodeSettings);
 
   const [remainingGuesses, setRemainingGuesses] = useState(gamemodeSettings.numGuesses);
 

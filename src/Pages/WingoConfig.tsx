@@ -13,16 +13,13 @@ import {
   defaultWeeklyCrosswordGamemodeSettings,
   defaultWingoCrosswordFitGamemodeSettings,
   defaultWingoCrosswordGamemodeSettings,
-  defaultWingoGamemodeSettings,
   defaultWingoInterlinkedGamemodeSettings,
-  DEFAULT_PUZZLE_LEAVE_NUM_BLANKS,
-  DEFAULT_PUZZLE_REVEAL_MS,
 } from "../Data/DefaultGamemodeSettings";
-import { getGamemodeDefaultWordLength } from "../Data/DefaultWordLengths";
-import { MAX_TARGET_WORD_LENGTH, MIN_TARGET_WORD_LENGTH } from "../Data/GamemodeSettingsInputLimits";
+import { MIN_TARGET_WORD_LENGTH } from "../Data/GamemodeSettingsInputLimits";
 import { categoryMappings, wordLengthMappingsTargets } from "../Data/WordArrayMappings";
 import { DEFAULT_ALPHABET } from "../Components/Keyboard";
 import { getGamemodeDefaultTimerValue } from "../Data/DefaultTimerValues";
+import { getGamemodeDefaultWordLength } from "../Data/DefaultWordLengths";
 
 export interface WingoConfigProps {
   mode:
@@ -38,6 +35,7 @@ export interface WingoConfigProps {
     | "crossword/weekly"
     | "crossword"
     | "conundrum";
+
   gamemodeSettings: {
     wordLength: number;
     isFirstLetterProvided: boolean;
@@ -246,41 +244,9 @@ const WingoConfig: React.FC<Props> = (props) => {
   const [numGuesses, setNumGuesses] = useState(props.defaultNumGuesses);
   const [gameId, setGameId] = useState<string | null>(null);
 
-  // Take highest of targetWord, gamemodeSettings value and defaultWordLength (or failing those, use a fallback value)
-  const defaultWordLength =
-    Math.max.apply(
-      undefined,
-      [props.targetWord?.length!, props.gamemodeSettings?.wordLength!, props.defaultWordLength!].filter((x) => x)
-    ) ?? getGamemodeDefaultWordLength(props.page);
-
-  const defaultGamemodeSettings = {
-    wordLength: defaultWordLength,
-    // At what word length should increasing and limitless go up to?
-    wordLengthMaxLimit: props.gamemodeSettings?.wordLengthMaxLimit ?? MAX_TARGET_WORD_LENGTH,
-    isFirstLetterProvided:
-      props.gamemodeSettings?.isHintShown ??
-      defaultWingoGamemodeSettings.find((x) => x.page === props.page)?.settings?.isFirstLetterProvided!,
-    isHintShown:
-      props.gamemodeSettings?.isHintShown ??
-      defaultWingoGamemodeSettings.find((x) => x.page === props.page)?.settings?.isHintShown!,
-    puzzleRevealMs: props.gamemodeSettings?.puzzleRevealMs ?? DEFAULT_PUZZLE_REVEAL_MS,
-    puzzleLeaveNumBlanks: props.gamemodeSettings?.puzzleLeaveNumBlanks ?? DEFAULT_PUZZLE_LEAVE_NUM_BLANKS,
-    maxLivesConfig: props.gamemodeSettings?.maxLivesConfig ?? { isLimited: false },
-    timerConfig:
-      props.gamemodeSettings?.timerConfig ??
-      defaultWingoGamemodeSettings.find((x) => x.page === props.page)?.settings?.timerConfig!,
-  };
-
-  const [gamemodeSettings, setGamemodeSettings] = useState<{
-    wordLength: number;
-    wordLengthMaxLimit: number;
-    isFirstLetterProvided: boolean;
-    isHintShown: boolean;
-    puzzleRevealMs: number;
-    puzzleLeaveNumBlanks: number;
-    maxLivesConfig: { isLimited: true; maxLives: number } | { isLimited: false };
-    timerConfig: { isTimed: true; seconds: number } | { isTimed: false };
-  }>(defaultGamemodeSettings);
+  const [gamemodeSettings, setGamemodeSettings] = useState<WingoConfigProps["gamemodeSettings"]>(
+    props.gamemodeSettings
+  );
 
   const [remainingSeconds, setRemainingSeconds] = useState(
     props.gamemodeSettings?.timerConfig?.isTimed === true
@@ -473,12 +439,12 @@ const WingoConfig: React.FC<Props> = (props) => {
           // Don't reset otherwise the number of lives would be lost, just go back to starting wordLength
           const newGamemodeSettings = {
             ...gamemodeSettings,
-            wordLength: defaultWordLength,
+            wordLength: getGamemodeDefaultWordLength("wingo/limitless"),
           };
           setGamemodeSettings(newGamemodeSettings);
 
           targetWordArray = wordLengthMappingsTargets
-            .find((x) => x.value === defaultWordLength)
+            .find((x) => x.value === getGamemodeDefaultWordLength("wingo/limitless"))
             ?.array.map((x) => ({ word: x, hint: "" }))!;
         }
 

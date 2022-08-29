@@ -14,10 +14,6 @@ import { pickRandomElementFrom } from "./WingoConfig";
 import { DraggableItem } from "../Components/DraggableItem";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
 import { getGamemodeDefaultTimerValue } from "../Data/DefaultTimerValues";
-import {
-  defaultArithmeticDragMatchGamemodeSettings,
-  defaultArithmeticDragOrderGamemodeSettings,
-} from "../Data/DefaultGamemodeSettings";
 
 // Const Contexts: https://stackoverflow.com/questions/44497388/typescript-array-to-string-literal-type
 export const arithmeticNumberSizes = ["small", "medium", "large"] as const;
@@ -100,24 +96,7 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
   // For the match game mode type
   const [resultTiles, setResultTiles] = useState<{ total: number; status: "incorrect" | "correct" | "not set" }[]>([]);
 
-  const DEFAULT_SETTINGS =
-    props.mode === "match" ? defaultArithmeticDragMatchGamemodeSettings : defaultArithmeticDragOrderGamemodeSettings;
-
-  const defaultGamemodeSettings = {
-    numTiles: props.gamemodeSettings?.numTiles ?? DEFAULT_SETTINGS.numTiles,
-    numberSize: props.gamemodeSettings?.numberSize ?? DEFAULT_SETTINGS.numberSize,
-    numOperands: props.gamemodeSettings?.numOperands ?? DEFAULT_SETTINGS.numOperands,
-    numGuesses: props.gamemodeSettings?.numGuesses ?? DEFAULT_SETTINGS.numGuesses,
-    timerConfig: props.gamemodeSettings?.timerConfig ?? DEFAULT_SETTINGS.timerConfig,
-  };
-
-  const [gamemodeSettings, setGamemodeSettings] = useState<{
-    numTiles: number;
-    numberSize: arithmeticNumberSize;
-    numOperands: number;
-    numGuesses: number;
-    timerConfig: { isTimed: true; seconds: number } | { isTimed: false };
-  }>(defaultGamemodeSettings);
+  const [gamemodeSettings, setGamemodeSettings] = useState<ArithmeticDragProps["gamemodeSettings"]>(props.gamemodeSettings);
 
   const [remainingGuesses, setRemainingGuesses] = useState(gamemodeSettings.numGuesses);
 

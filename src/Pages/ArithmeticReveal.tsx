@@ -14,7 +14,6 @@ import { arithmeticNumberSize, arithmeticNumberSizes } from "./ArithmeticDrag";
 import { pickRandomElementFrom } from "./WingoConfig";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
 import { MAX_NUMPAD_GUESS_LENGTH } from "../Data/GamemodeSettingsInputLimits";
-import { defaultArithmeticRevealGamemodeSettings } from "../Data/DefaultGamemodeSettings";
 import { getGamemodeDefaultTimerValue } from "../Data/DefaultTimerValues";
 
 export interface ArithmeticRevealProps {
@@ -70,25 +69,13 @@ const ArithmeticReveal: React.FC<Props> = (props) => {
   const [tiles, setTiles] = useState<string[][]>([]);
   const [targetTransitioned, setTargetTransitioned] = useState(false);
 
-  const defaultGamemodeSettings = {
-    numCheckpoints: props.gamemodeSettings?.numCheckpoints ?? defaultArithmeticRevealGamemodeSettings?.numCheckpoints!,
-    numTiles: props.gamemodeSettings?.numTiles ?? defaultArithmeticRevealGamemodeSettings?.numTiles!,
-    numberSize: props.gamemodeSettings?.numberSize ?? defaultArithmeticRevealGamemodeSettings?.numberSize!,
-    /* TODO: Sync Flip animation with reveal animation
-      The CSS to apply the flip tile animation assumes the reveal interval is always 3 seconds
-      Perhaps use animationDelay to control when the animation happens
-    */
-    revealIntervalSeconds: props.gamemodeSettings?.revealIntervalSeconds ?? defaultArithmeticRevealGamemodeSettings?.revealIntervalSeconds!,
-    timerConfig: props.gamemodeSettings?.timerConfig ?? defaultArithmeticRevealGamemodeSettings?.timerConfig!,
-  };
-
-  const [gamemodeSettings, setGamemodeSettings] = useState<{
-    numCheckpoints: number;
-    numTiles: number;
-    numberSize: arithmeticNumberSize;
-    revealIntervalSeconds: number;
-    timerConfig: { isTimed: true; seconds: number } | { isTimed: false };
-  }>(defaultGamemodeSettings);
+  /* TODO: Sync Flip animation with reveal animation
+    The CSS to apply the flip tile animation assumes the reveal interval is always 3 seconds
+    Perhaps use animationDelay to control when the animation happens
+  */
+  const [gamemodeSettings, setGamemodeSettings] = useState<ArithmeticRevealProps["gamemodeSettings"]>(
+    props.gamemodeSettings
+  );
 
   const [remainingSeconds, setRemainingSeconds] = useState(
     props.gamemodeSettings?.timerConfig?.isTimed === true

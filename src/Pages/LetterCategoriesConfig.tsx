@@ -7,7 +7,6 @@ import { pickRandomElementFrom } from "./WingoConfig";
 import { Theme } from "../Data/Themes";
 import { categoryMappings } from "../Data/WordArrayMappings";
 import { getGamemodeDefaultTimerValue } from "../Data/DefaultTimerValues";
-import { defaultLetterCategoriesGamemodeSettings } from "../Data/DefaultGamemodeSettings";
 import { MAX_NUM_CATEGORIES } from "../Data/GamemodeSettingsInputLimits";
 import { shuffleArray } from "./ArithmeticDrag";
 import { getGamemodeDefaultWordLength } from "../Data/DefaultWordLengths";
@@ -52,16 +51,7 @@ const LetterCategoriesConfig: React.FC<Props> = (props) => {
     []
   );
 
-  const defaultGamemodeSettings = {
-    numCategories:
-      props.gamemodeSettings?.numCategories ?? defaultLetterCategoriesGamemodeSettings?.numCategories!,
-    timerConfig: props.gamemodeSettings?.timerConfig ?? defaultLetterCategoriesGamemodeSettings?.timerConfig!,
-  };
-
-  const [gamemodeSettings, setGamemodeSettings] = useState<{
-    numCategories: number;
-    timerConfig: { isTimed: true; seconds: number } | { isTimed: false };
-  }>(defaultGamemodeSettings);
+  const [gamemodeSettings, setGamemodeSettings] = useState<LetterCategoriesConfigProps["gamemodeSettings"]>(props.gamemodeSettings);
 
   const [remainingSeconds, setRemainingSeconds] = useState(
     props.gamemodeSettings?.timerConfig?.isTimed === true
