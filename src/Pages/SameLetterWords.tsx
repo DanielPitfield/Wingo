@@ -13,8 +13,14 @@ import { pickRandomElementFrom } from "./WingoConfig";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
 import { wordLengthMappingsTargets } from "../Data/WordArrayMappings";
 import { getGamemodeDefaultTimerValue } from "../Data/DefaultTimerValues";
-import { defaultSameLetterWordsGamemodeSettings } from "../Data/DefaultGamemodeSettings";
-import { MAX_NUM_SAME_LETTER_GUESSES, MAX_NUM_SAME_LETTER_MATCHING_WORDS, MAX_NUM_SAME_LETTER_TOTAL_WORDS, MIN_NUM_SAME_LETTER_GUESSES, MIN_NUM_SAME_LETTER_MATCHING_WORDS, MIN_NUM_SAME_LETTER_TOTAL_WORDS } from "../Data/GamemodeSettingsInputLimits";
+import {
+  MAX_NUM_SAME_LETTER_GUESSES,
+  MAX_NUM_SAME_LETTER_MATCHING_WORDS,
+  MAX_NUM_SAME_LETTER_TOTAL_WORDS,
+  MIN_NUM_SAME_LETTER_GUESSES,
+  MIN_NUM_SAME_LETTER_MATCHING_WORDS,
+  MIN_NUM_SAME_LETTER_TOTAL_WORDS,
+} from "../Data/GamemodeSettingsInputLimits";
 
 export interface SameLetterWordsProps {
   gamemodeSettings: {
@@ -40,40 +46,14 @@ interface Props extends SameLetterWordsProps {
 
 /** */
 const SameLetterWords: React.FC<Props> = (props) => {
-
   const [inProgress, setInProgress] = useState(true);
   const [selectedWords, setSelectedWords] = useState<string[]>([]);
   const [validWords, setValidWords] = useState<string[]>([]);
   const [gridWords, setGridWords] = useState<string[]>([]);
 
-  const STARTING_NUM_TOTAL_WORDS = Math.max(
-    MIN_NUM_SAME_LETTER_TOTAL_WORDS,
-    props.gamemodeSettings?.numTotalWords ?? defaultSameLetterWordsGamemodeSettings?.numTotalWords!
+  const [gamemodeSettings, setGamemodeSettings] = useState<SameLetterWordsProps["gamemodeSettings"]>(
+    props.gamemodeSettings
   );
-
-  const numMatchingWordsFloor = Math.max(
-    MIN_NUM_SAME_LETTER_MATCHING_WORDS,
-    props.gamemodeSettings?.numMatchingWords ?? defaultSameLetterWordsGamemodeSettings?.numMatchingWords!
-  );
-  // Number of words to match can't be more than the total number of words
-  const STARTING_NUM_MATCHING_WORDS =
-    numMatchingWordsFloor < STARTING_NUM_TOTAL_WORDS ? numMatchingWordsFloor : STARTING_NUM_TOTAL_WORDS - 1;
-
-  const defaultGamemodeSettings = {
-    wordLength: props.gamemodeSettings?.wordLength ?? defaultSameLetterWordsGamemodeSettings?.wordLength!,
-    numMatchingWords: STARTING_NUM_MATCHING_WORDS,
-    numTotalWords: STARTING_NUM_TOTAL_WORDS,
-    numGuesses: props.gamemodeSettings?.numGuesses ?? defaultSameLetterWordsGamemodeSettings?.numGuesses!,
-    timerConfig: props.gamemodeSettings?.timerConfig ?? defaultSameLetterWordsGamemodeSettings?.timerConfig!,
-  };
-
-  const [gamemodeSettings, setGamemodeSettings] = useState<{
-    wordLength: number;
-    numMatchingWords: number;
-    numTotalWords: number;
-    numGuesses: number;
-    timerConfig: { isTimed: true; seconds: number } | { isTimed: false };
-  }>(defaultGamemodeSettings);
 
   const [remainingSeconds, setRemainingSeconds] = useState(
     props.gamemodeSettings?.timerConfig?.isTimed === true
@@ -104,6 +84,25 @@ const SameLetterWords: React.FC<Props> = (props) => {
     // Save the latest gamemode settings for this mode
     SaveData.setSameLetterWordsGamemodeSettings(gamemodeSettings);
   }, [gamemodeSettings]);
+
+  // Validate the values of the number of matching words and the number of total words
+  React.useEffect(() => {
+    // No less than 4 total words
+    const newNumTotalWords = Math.max(MIN_NUM_SAME_LETTER_TOTAL_WORDS, props.gamemodeSettings.numTotalWords);
+
+    // Minimum number of matching words
+    const numMatchingWordsFloor = Math.max(MIN_NUM_SAME_LETTER_MATCHING_WORDS, props.gamemodeSettings.numMatchingWords);
+
+    // But the number of words to match can't be more than the total number of words
+    const newNumMatchingWords = numMatchingWordsFloor < newNumTotalWords ? numMatchingWordsFloor : newNumTotalWords - 1;
+
+    const newGamemodeSettings = {
+      ...gamemodeSettings,
+      numTotalWords: newNumTotalWords,
+      numMatchingWords: newNumMatchingWords,
+    };
+    setGamemodeSettings(newGamemodeSettings);
+  }, [props.gamemodeSettings.numTotalWords, props.gamemodeSettings.numMatchingWords]);
 
   // (Guess) Timer Setup
   React.useEffect(() => {
@@ -358,7 +357,8 @@ const SameLetterWords: React.FC<Props> = (props) => {
     }
 
     // Every valid word is within the selected words
-    const successCondition = validWords.every((word) => selectedWords.includes(word)) && validWords.length > 0 && selectedWords.length > 0;
+    const successCondition =
+      validWords.every((word) => selectedWords.includes(word)) && validWords.length > 0 && selectedWords.length > 0;
 
     let messageNotification;
 
@@ -392,7 +392,8 @@ const SameLetterWords: React.FC<Props> = (props) => {
   function ResetGame() {
     if (!inProgress) {
       // Every valid word is within the selected words (all same letter words found)
-      const wasCorrect = validWords.every((word) => selectedWords.includes(word)) && validWords.length > 0 && selectedWords.length > 0;    
+      const wasCorrect =
+        validWords.every((word) => selectedWords.includes(word)) && validWords.length > 0 && selectedWords.length > 0;
       props.onComplete(wasCorrect);
     }
 

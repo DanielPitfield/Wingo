@@ -105,37 +105,9 @@ export function getNextTeamNumberWithRemainingTime(
 }
 
 const NumbleConfig: React.FC<Props> = (props) => {
-  const defaultGamemodeSettings = {
-    numDice: props.gamemodeSettings?.numDice ?? defaultNumbleGamemodeSettings?.numDice!,
-    diceMin: props.gamemodeSettings?.diceMin ?? defaultNumbleGamemodeSettings?.diceMin!,
-    diceMax: props.gamemodeSettings?.diceMax ?? defaultNumbleGamemodeSettings?.diceMax!,
-    gridShape: props.gamemodeSettings?.gridShape ?? defaultNumbleGamemodeSettings?.gridShape!,
-    gridSize: props.gamemodeSettings?.gridSize ?? defaultNumbleGamemodeSettings?.gridSize!,
-    numTeams: props.campaignConfig.isCampaignLevel
-      ? 1
-      : Math.min(MAX_NUMBLE_NUM_TEAMS, props.gamemodeSettings?.numTeams ?? defaultNumbleGamemodeSettings?.numTeams!),
-    isGameOverOnIncorrectPick: props.gamemodeSettings?.isGameOverOnIncorrectPick ?? false,
-    guessTimerConfig: props.gamemodeSettings?.guessTimerConfig ?? { isTimed: false },
-    timerConfig: props.gamemodeSettings?.timerConfig ?? { isTimed: false },
-  };
-
-  const [gamemodeSettings, setGamemodeSettings] = useState<{
-    numDice: number;
-    diceMin: number;
-    diceMax: number;
-    gridShape: numbleGridShape;
-    gridSize: numbleGridSize;
-    numTeams: number;
-    isGameOverOnIncorrectPick: boolean;
-    guessTimerConfig:
-      | {
-          isTimed: true;
-          seconds: number;
-          timerBehaviour: { isGameOverWhenNoTimeLeft: true } | { isGameOverWhenNoTimeLeft: false; pointsLost: number };
-        }
-      | { isTimed: false };
-    timerConfig: { isTimed: true; seconds: number } | { isTimed: false };
-  }>(defaultGamemodeSettings);
+  const [gamemodeSettings, setGamemodeSettings] = useState<NumbleConfigProps["gamemodeSettings"]>(
+    props.gamemodeSettings
+  );
 
   // The team number of the team that is choosing a pin next
   const [currentTeamNumber, setCurrentTeamNumber] = useState(0);
@@ -241,6 +213,19 @@ const NumbleConfig: React.FC<Props> = (props) => {
     // Save the latest gamemode settings
     SaveData.setNumbleConfigGamemodeSettings(gamemodeSettings);
   }, [gamemodeSettings]);
+
+  // Validate the value of the numTeams prop
+  React.useEffect(() => {
+    const newGamemodeSettings = {
+      ...gamemodeSettings,
+      numTeams: props.campaignConfig.isCampaignLevel
+        ? // Always 1 team when a campaign level
+          1
+        : // No more than 4 teams
+          Math.min(MAX_NUMBLE_NUM_TEAMS, props.gamemodeSettings.numTeams),
+    };
+    setGamemodeSettings(newGamemodeSettings);
+  }, [props.gamemodeSettings.numTeams, props.campaignConfig.isCampaignLevel]);
 
   function updateTeamTimers(
     newTeamTimers: {
