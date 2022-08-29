@@ -16,7 +16,7 @@ import { LEVEL_FINISHING_TEXT } from "../Components/Level";
 import { categoryMappings, wordLengthMappingsTargets } from "../Data/WordArrayMappings";
 import { MAX_TARGET_WORD_LENGTH, MIN_TARGET_WORD_LENGTH } from "../Data/GamemodeSettingsInputLimits";
 import { getGamemodeDefaultTimerValue } from "../Data/DefaultTimerValues";
-import { defaultWingoInterlinkedGamemodeSettings, DEFAULT_FIT_RESTRICTION } from "../Data/DefaultGamemodeSettings";
+import { DEFAULT_FIT_RESTRICTION } from "../Data/DefaultGamemodeSettings";
 
 type Orientation = "vertical" | "horizontal";
 
@@ -38,6 +38,7 @@ export interface WingoInterlinkedProps {
     | { type: "custom"; array: string[]; useExact: boolean; canRestart: boolean }
     | { type: "category" }
     | { type: "length" };
+
   // Are the words of the crossword given to the player (in other words, is this crossword fit mode?)
   provideWords: boolean;
 
@@ -92,69 +93,15 @@ interface Props extends WingoInterlinkedProps {
 }
 
 export const WingoInterlinked: React.FC<Props> = (props) => {
-  const STARTING_NUM_WORDS =
-    props.gamemodeSettings?.numWords ??
-    defaultWingoInterlinkedGamemodeSettings.find((x) => x.page === props.page)?.settings?.numWords!;
-
-  const IS_CROSSWORD = STARTING_NUM_WORDS > 2;
-
-  const STARTING_NUM_GRID_GUESSES =
-    props.initialConfig?.remainingGridGuesses ??
-    props.gamemodeSettings?.numGridGuesses ??
-    defaultWingoInterlinkedGamemodeSettings.find((x) => x.page === props.page)?.settings?.numGridGuesses;
-
-  // Specified amount of word guesses (either from initial config or gamemode settings)?
-  const specifiedValue =
-    props.initialConfig?.remainingWordGuesses ??
-    props.gamemodeSettings?.numWordGuesses ??
-    defaultWingoInterlinkedGamemodeSettings.find((x) => x.page === props.page)?.settings?.numWordGuesses!;
-
-  // In case of no specified value, if also no grid guesses, use basis of 3 guesses per word, otherwise zero
-  const fallbackValue = STARTING_NUM_GRID_GUESSES === 0 ? STARTING_NUM_WORDS * 3 : 0;
-  const STARTING_NUM_WORD_GUESSES = specifiedValue ?? fallbackValue;
-
-  // TODO: What's the point of DefaultGamemodeSettings.ts, if most components define the settings within the component like this?
-  const defaultGamemodeSettings = {
-    numWords: STARTING_NUM_WORDS,
-    minWordLength:
-      props.gamemodeSettings?.minWordLength ??
-      defaultWingoInterlinkedGamemodeSettings.find((x) => x.page === props.page)?.settings?.minWordLength!,
-    maxWordLength:
-      props.gamemodeSettings?.maxWordLength ??
-      defaultWingoInterlinkedGamemodeSettings.find((x) => x.page === props.page)?.settings?.maxWordLength!,
-    fitRestrictionConfig:
-      props.gamemodeSettings?.fitRestrictionConfig ??
-      defaultWingoInterlinkedGamemodeSettings.find((x) => x.page === props.page)?.settings?.fitRestrictionConfig!,
-
-    // Specified amount of grid guesses (either from initial config or gamemode settings), otherwise zero
-    numGridGuesses: STARTING_NUM_GRID_GUESSES,
-    numWordGuesses: STARTING_NUM_WORD_GUESSES,
-
-    isFirstLetterProvided:
-      props.gamemodeSettings?.isFirstLetterProvided ??
-      defaultWingoInterlinkedGamemodeSettings.find((x) => x.page === props.page)?.settings?.isFirstLetterProvided!,
-    // Use gamemode setting value if specified, otherwise default to true for large crosswords (more than 2 words)
-    isHintShown: props.gamemodeSettings?.isHintShown ?? STARTING_NUM_WORDS > 2 ? true : false,
-
-    timerConfig:
-      props.gamemodeSettings?.timerConfig ??
-      defaultWingoInterlinkedGamemodeSettings.find((x) => x.page === props.page)?.settings?.timerConfig!,
-  };
+  // Specified amount of word guesses from initialConfig takes precedence
+  const STARTING_NUM_WORD_GUESSES = props.initialConfig?.remainingWordGuesses ?? props.gamemodeSettings.numWordGuesses;
 
   const [inProgress, setInProgress] = useState(props.initialConfig?.inProgress ?? true);
   const [allowSpaces, setAllowSpaces] = useState(false);
 
-  const [gamemodeSettings, setGamemodeSettings] = useState<{
-    numWords: number;
-    minWordLength: number;
-    maxWordLength: number;
-    fitRestrictionConfig: { isRestricted: true; fitRestriction: number } | { isRestricted: false };
-    numGridGuesses: number;
-    numWordGuesses: number;
-    isFirstLetterProvided: boolean;
-    isHintShown: boolean;
-    timerConfig: { isTimed: true; seconds: number } | { isTimed: false };
-  }>(defaultGamemodeSettings);
+  const [gamemodeSettings, setGamemodeSettings] = useState<WingoInterlinkedProps["gamemodeSettings"]>(
+    props.gamemodeSettings
+  );
 
   const [remainingSeconds, setRemainingSeconds] = useState(
     props.gamemodeSettings?.timerConfig?.isTimed === true
@@ -179,8 +126,8 @@ export const WingoInterlinked: React.FC<Props> = (props) => {
       : DEFAULT_FIT_RESTRICTION
   );
 
-  const [remainingGridGuesses, setRemainingGridGuesses] = useState(STARTING_NUM_GRID_GUESSES);
-  const [remainingWordGuesses, setRemainingWordGuesses] = useState(STARTING_NUM_WORD_GUESSES);
+  const [remainingGridGuesses, setRemainingGridGuesses] = useState(0);
+  const [remainingWordGuesses, setRemainingWordGuesses] = useState(0);
 
   // The entered words of the crossword
   const [currentWords, setCurrentWords] = useState<string[]>(
@@ -292,8 +239,6 @@ export const WingoInterlinked: React.FC<Props> = (props) => {
     return wordHints;
   }
 
-  // TODO: Handling mid-game changes - apply this to other modes
-
   // Reset game after change of settings (stops cheating by changing settings partway through a game)
   React.useEffect(() => {
     if (props.isCampaignLevel) {
@@ -302,9 +247,39 @@ export const WingoInterlinked: React.FC<Props> = (props) => {
 
     ResetGame();
 
+    // TODO: The SaveData method to call differs with the mode (setWingoInterlinked is only for the interlinked mode)
+
     // Save the latest gamemode settings for this mode
     SaveData.setWingoInterlinkedGamemodeSettings(props.page, gamemodeSettings);
   }, [gamemodeSettings]);
+
+  // Validate the value of the props.gamemodeSettings.numGridGuesses prop
+  React.useEffect(() => {
+    // Specified amount of grid guesses from initialConfig takes precedence
+    const newNumGridGuesses = props.initialConfig?.remainingGridGuesses ?? props.gamemodeSettings.numGridGuesses;
+
+    const newGamemodeSettings = {
+      ...gamemodeSettings,
+      numGridGuesses: newNumGridGuesses,
+    };
+
+    setGamemodeSettings(newGamemodeSettings);
+    setRemainingGridGuesses(newNumGridGuesses);
+  }, [props.gamemodeSettings.numGridGuesses]);
+
+  // Validate the value of the props.gamemodeSettings.numWordGuesses prop
+  React.useEffect(() => {
+    // Specified amount of word guesses from initialConfig takes precedence
+    const newNumWordGuesses = props.initialConfig?.remainingWordGuesses ?? props.gamemodeSettings.numWordGuesses;
+
+    const newGamemodeSettings = {
+      ...gamemodeSettings,
+      numWordGuesses: newNumWordGuesses,
+    };
+
+    setGamemodeSettings(newGamemodeSettings);
+    setRemainingWordGuesses(newNumWordGuesses);
+  }, [props.gamemodeSettings.numWordGuesses]);
 
   React.useEffect(() => {
     // Update information about which letters should be at which grid positions
@@ -425,8 +400,7 @@ export const WingoInterlinked: React.FC<Props> = (props) => {
       }
     } else if (gamemodeSettings.fitRestrictionConfig.isRestricted) {
       // Height and width can't exceed this value (to begin with)
-      const MAX_GRID_DIMENSION =
-        gamemodeSettings.maxWordLength + gamemodeSettings.fitRestrictionConfig.fitRestriction;
+      const MAX_GRID_DIMENSION = gamemodeSettings.maxWordLength + gamemodeSettings.fitRestrictionConfig.fitRestriction;
       // Try to find smallest fit restriction possible but allow additional leeway up to this amount
       const MAX_LEEWAY_INCREMENT = 10;
 
@@ -843,6 +817,9 @@ export const WingoInterlinked: React.FC<Props> = (props) => {
     return grid;
   }
 
+  // Started with more than 2 words (so not basic WingoInterlinked of two interlinked words but a fully fledged crossword)
+  const IS_CROSSWORD = props.gamemodeSettings.numWords > 2;
+
   function generateSettingsOptions(): React.ReactNode {
     return (
       <>
@@ -1128,7 +1105,7 @@ export const WingoInterlinked: React.FC<Props> = (props) => {
       {inProgress && (
         <MessageNotification type="default">
           Grid guesses left: <strong>{remainingGridGuesses}</strong>
-          {STARTING_NUM_GRID_GUESSES > 0 && (
+          {(props.initialConfig?.remainingGridGuesses ?? props.gamemodeSettings.numGridGuesses) > 0 && (
             <>
               <br />
               Current word guesses left: <strong>{remainingWordGuesses}</strong>
