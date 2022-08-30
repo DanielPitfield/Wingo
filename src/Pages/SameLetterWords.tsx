@@ -85,7 +85,7 @@ const SameLetterWords: React.FC<Props> = (props) => {
     SaveData.setSameLetterWordsGamemodeSettings(gamemodeSettings);
   }, [gamemodeSettings]);
 
-  // Validate the values of the number of matching words and the number of total words
+  // Validate the values of props.gamemodeSettings.numTotalWords and props.gamemodeSettings.numMatchingWords
   React.useEffect(() => {
     // No less than 4 total words
     const newNumTotalWords = Math.max(MIN_NUM_SAME_LETTER_TOTAL_WORDS, props.gamemodeSettings.numTotalWords);

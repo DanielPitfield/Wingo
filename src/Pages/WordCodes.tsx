@@ -128,7 +128,7 @@ const WordCodes: React.FC<Props> = (props) => {
       : SaveData.setWordCodesQuestionGamemodeSettings(gamemodeSettings);
   }, [gamemodeSettings]);
 
-  // Validate the value of the props.gamemodeSettings.numDisplayWords prop
+  // Validate the value of props.gamemodeSettings.numDisplayWords
   React.useEffect(() => {
     // Atleast the number of display codes
     const newNumDisplayWords = Math.max(props.gamemodeSettings.numDisplayWords, props.gamemodeSettings.numDisplayCodes);
@@ -141,7 +141,7 @@ const WordCodes: React.FC<Props> = (props) => {
     setGamemodeSettings(newGamemodeSettings);
   }, [props.gamemodeSettings.numDisplayWords, props.gamemodeSettings.numDisplayCodes]);
 
-  // Validate the value of the props.gamemodeSettings.codeLength prop
+  // Validate the value of props.gamemodeSettings.codeLength
   React.useEffect(() => {
     const newCodeLength = Math.min(props.gamemodeSettings.codeLength, MAX_CODE_LENGTH);
 

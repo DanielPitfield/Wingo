@@ -214,7 +214,7 @@ const NumbleConfig: React.FC<Props> = (props) => {
     SaveData.setNumbleConfigGamemodeSettings(gamemodeSettings);
   }, [gamemodeSettings]);
 
-  // Validate the value of the numTeams prop
+  // Validate the value of props.gamemodeSettings.numTeams
   React.useEffect(() => {
     const newGamemodeSettings = {
       ...gamemodeSettings,

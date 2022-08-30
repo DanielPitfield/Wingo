@@ -247,13 +247,11 @@ export const WingoInterlinked: React.FC<Props> = (props) => {
 
     ResetGame();
 
-    // TODO: The SaveData method to call differs with the mode (setWingoInterlinked is only for the interlinked)
-
     // Save the latest gamemode settings for this mode
     SaveData.setWingoInterlinkedGamemodeSettings(props.page, gamemodeSettings);
   }, [gamemodeSettings]);
 
-  // Validate the value of the props.gamemodeSettings.numGridGuesses prop
+  // Validate the value of props.gamemodeSettings.numGridGuesses
   React.useEffect(() => {
     // Specified amount of grid guesses from initialConfig takes precedence
     const newNumGridGuesses = props.initialConfig?.remainingGridGuesses ?? props.gamemodeSettings.numGridGuesses;
@@ -267,7 +265,7 @@ export const WingoInterlinked: React.FC<Props> = (props) => {
     setRemainingGridGuesses(newNumGridGuesses);
   }, [props.gamemodeSettings.numGridGuesses]);
 
-  // Validate the value of the props.gamemodeSettings.numWordGuesses prop
+  // Validate the value of props.gamemodeSettings.numWordGuesses
   React.useEffect(() => {
     // Specified amount of word guesses from initialConfig takes precedence
     const newNumWordGuesses = props.initialConfig?.remainingWordGuesses ?? props.gamemodeSettings.numWordGuesses;
