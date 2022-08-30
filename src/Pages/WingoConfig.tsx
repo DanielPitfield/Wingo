@@ -459,13 +459,7 @@ const WingoConfig: React.FC<Props> = (props) => {
     // Category may be changed mid-game (so clear anything from before)
     ResetGame();
 
-    const wordArray = categoryMappings.find((x) => x.name === targetCategory)?.array;
-
-    if (!wordArray) {
-      return;
-    }
-
-    const newTarget = pickRandomElementFrom(wordArray);
+    const newTarget = pickRandomElementFrom(categoryMappings.find((x) => x.name === targetCategory)?.array ?? []);
 
     console.log(
       `%cMode:%c ${props.mode}\n%cHint:%c ${newTarget.hint}\n%cWord:%c ${newTarget.word}`,
