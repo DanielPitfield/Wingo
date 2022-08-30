@@ -278,10 +278,12 @@ const WingoConfig: React.FC<Props> = (props) => {
           const targetWordArray = categoryMappings.find((x) => x.name === targetCategory)?.array!;
           return pickRandomElementFrom(targetWordArray);
         } else {
+          const randomCategory = pickRandomElementFrom(categoryMappings);
           // Otherwise, randomly choose a category (can be changed afterwards)
-          setTargetCategory(pickRandomElementFrom(categoryMappings).name);
-          // A random word from this category is set in a useEffect(), so return
-          return;
+          setTargetCategory(randomCategory.name);
+
+          const targetWordArray = randomCategory.array;
+          return pickRandomElementFrom(targetWordArray);
         }
 
       case "increasing":
@@ -421,6 +423,7 @@ const WingoConfig: React.FC<Props> = (props) => {
     }
 
     // Update word length every time the target word changes
+    /*
     if (targetWord) {
       const newGamemodeSettings = {
         ...gamemodeSettings,
@@ -428,6 +431,7 @@ const WingoConfig: React.FC<Props> = (props) => {
       };
       setGamemodeSettings(newGamemodeSettings);
     }
+    */
 
     // Show first letter of the target word (if enabled)
     if (gamemodeSettings.isFirstLetterProvided) {
@@ -448,38 +452,7 @@ const WingoConfig: React.FC<Props> = (props) => {
 
     // Save the latest gamemode settings for this mode
     SaveData.setWingoConfigGamemodeSettings(props.page, gamemodeSettings);
-  }, [gamemodeSettings]);
-
-  // Update targetWord every time the targetCategory changes
-  React.useEffect(() => {
-    if (props.mode !== "category") {
-      return;
-    }
-
-    // Category may be changed mid-game (so clear anything from before)
-    ResetGame();
-
-    const wordArray = categoryMappings.find((x) => x.name === targetCategory)?.array;
-
-    if (!wordArray) {
-      return;
-    }
-
-    const newTarget = pickRandomElementFrom(wordArray);
-
-    console.log(
-      `%cMode:%c ${props.mode}\n%cHint:%c ${newTarget.hint}\n%cWord:%c ${newTarget.word}`,
-      "font-weight: bold",
-      "font-weight: normal",
-      "font-weight: bold",
-      "font-weight: normal",
-      "font-weight: bold",
-      "font-weight: normal"
-    );
-
-    setTargetWord(newTarget.word);
-    setTargetHint(newTarget.hint);
-  }, [targetCategory]);
+  }, [gamemodeSettings, targetCategory]);
 
   // Updates letter status (which is passed through to Keyboard to update button colours)
   React.useEffect(() => {
@@ -559,30 +532,6 @@ const WingoConfig: React.FC<Props> = (props) => {
       window.clearInterval(intervalId);
     };
   }, [props.mode, targetWord, revealedLetterIndexes, hasSubmitLetter]);
-
-  // targetWord generation
-  React.useEffect(() => {
-    // Don't need to determine a target word, if it is explicitly specified
-    if (!inProgress || props.targetWord) {
-      return;
-    }
-
-    if (!gamemodeSettings.wordLength) {
-      return;
-    }
-
-    // TODO: This function call is put inside either the ResetGame() function or the useEffect with gamemodeSettings as a dependency
-    updateTargetWord();
-  }, [
-    // Always when category mode (short circuit) or when word length is changed
-    props.mode === "category" || gamemodeSettings.wordLength,
-    // Puzzle settings are changed
-    gamemodeSettings.puzzleLeaveNumBlanks,
-    gamemodeSettings.puzzleRevealMs,
-    // Game ends or mode is changed
-    inProgress,
-    props.mode,
-  ]);
 
   // Save the game
   React.useEffect(() => {
@@ -688,6 +637,8 @@ const WingoConfig: React.FC<Props> = (props) => {
     if (!limitlessAndLivesRemaining) {
       setNumGuesses(props.defaultNumGuesses);
     }
+
+    updateTargetWord();
   }
 
   function ContinueGame() {
@@ -720,7 +671,6 @@ const WingoConfig: React.FC<Props> = (props) => {
 
     // Remove row for failiure in limitless mode
     if (props.mode === "limitless" && numGuesses > 1 && !isCorrectAnswer) {
-      // TODO: Fix how when you change settings, a row gets removed every time
       setNumGuesses(numGuesses - 1); // Remove a row
     }
 
