@@ -1,32 +1,32 @@
 import React, { useState } from "react";
 import { SplashScreen } from "./Pages/SplashScreen";
 import { LobbyMenu } from "./Pages/LobbyMenu";
-import WingoConfig, { pickRandomElementFrom } from "./Pages/WingoConfig";
+import WingoConfig, { pickRandomElementFrom, WingoConfigProps } from "./Pages/WingoConfig";
 import { Button } from "./Components/Button";
-import NumbleConfig from "./Pages/NumbleConfig";
+import NumbleConfig, { NumbleConfigProps } from "./Pages/NumbleConfig";
 import GoldCoin from "./Data/Images/gold.png";
 import { SaveData, SettingsData } from "./Data/SaveData";
-import LettersGameConfig from "./Pages/LettersGameConfig";
-import NumbersGameConfig from "./Pages/NumbersGameConfig";
+import LettersGameConfig, { LettersGameConfigProps } from "./Pages/LettersGameConfig";
+import NumbersGameConfig, { NumbersGameConfigProps } from "./Pages/NumbersGameConfig";
 import { Campaign } from "./Pages/Campaign";
 import { Area, AreaConfig } from "./Pages/Area";
 import { getId, Level, LevelConfig } from "./Components/Level";
-import LetterCategoriesConfig from "./Pages/LetterCategoriesConfig";
-import ArithmeticReveal from "./Pages/ArithmeticReveal";
-import ArithmeticDrag from "./Pages/ArithmeticDrag";
+import LetterCategoriesConfig, { LetterCategoriesConfigProps } from "./Pages/LetterCategoriesConfig";
+import ArithmeticReveal, { ArithmeticRevealProps } from "./Pages/ArithmeticReveal";
+import ArithmeticDrag, { ArithmeticDragProps } from "./Pages/ArithmeticDrag";
 import { Theme, Themes } from "./Data/Themes";
 import { AllCampaignAreas } from "./Data/CampaignAreas/AllCampaignAreas";
 import { Settings } from "./Pages/Settings";
-import OnlyConnect from "./Pages/OnlyConnect";
+import OnlyConnect, { OnlyConnectProps } from "./Pages/OnlyConnect";
 import { useBackgroundMusic } from "./Data/Sounds";
 import { VERSION } from "./Data/Version";
 import { ErrorBoundary } from "react-error-boundary";
 import { ErrorFallback } from "./Pages/ErrorFallback";
-import SameLetterWords from "./Pages/SameLetterWords";
-import NumberSets from "./Pages/NumberSets";
-import Algebra from "./Pages/Algebra";
+import SameLetterWords, { SameLetterWordsProps } from "./Pages/SameLetterWords";
+import NumberSets, { NumberSetsProps } from "./Pages/NumberSets";
+import Algebra, { AlgebraProps } from "./Pages/Algebra";
 import { ChallengesInfo } from "./Components/ChallengesInfo";
-import WordCodes from "./Pages/WordCodes";
+import WordCodes, { WordCodesProps } from "./Pages/WordCodes";
 import { LettersNumbersGameshow } from "./Pages/LettersNumbersGameshow";
 import { WingoGameshow } from "./Pages/WingoGameshow";
 import { FiArrowLeft, FiHelpCircle, FiSettings } from "react-icons/fi";
@@ -40,6 +40,7 @@ import { CustomGameshow } from "./Pages/CustomGameshow";
 import { getGamemodeDefaultNumGuesses } from "./Data/DefaultNumGuesses";
 import { getGamemodeDefaultWordLength } from "./Data/DefaultWordLengths";
 import { getPageGamemodeSettings } from "./Data/getPageGamemodeSettings";
+import { WingoInterlinkedProps } from "./Pages/WingoInterlinked";
 
 export const App: React.FC = () => {
   // App wide listener for right click event
@@ -224,8 +225,6 @@ export const App: React.FC = () => {
     const commonProps = {
       isCampaignLevel: isCampaignLevel(page),
       campaignConfig: { isCampaignLevel: false as false },
-      // TODO: Fix errors
-      gamemodeSettings: getPageGamemodeSettings(page),
       defaultNumGuesses: getGamemodeDefaultNumGuesses(page),
       page: page,
       theme: theme,
@@ -305,80 +304,237 @@ export const App: React.FC = () => {
         );
 
       case "wingo/daily":
-        return <WingoConfig {...commonProps} {...commonWingoProps} mode="daily" />;
+        return (
+          <WingoConfig
+            {...commonProps}
+            {...commonWingoProps}
+            mode="daily"
+            gamemodeSettings={getPageGamemodeSettings(page) as WingoConfigProps["gamemodeSettings"]}
+          />
+        );
 
       case "wingo/repeat":
-        return <WingoConfig {...commonProps} {...commonWingoProps} mode="repeat" />;
+        return (
+          <WingoConfig
+            {...commonProps}
+            {...commonWingoProps}
+            mode="repeat"
+            gamemodeSettings={getPageGamemodeSettings(page) as WingoConfigProps["gamemodeSettings"]}
+          />
+        );
 
       case "wingo/category":
-        return <WingoConfig {...commonProps} {...commonWingoProps} mode="category" enforceFullLengthGuesses={false} />;
+        return (
+          <WingoConfig
+            {...commonProps}
+            {...commonWingoProps}
+            mode="category"
+            enforceFullLengthGuesses={false}
+            gamemodeSettings={getPageGamemodeSettings(page) as WingoConfigProps["gamemodeSettings"]}
+          />
+        );
 
       case "wingo/increasing":
-        return <WingoConfig {...commonProps} {...commonWingoProps} mode="increasing" />;
+        return (
+          <WingoConfig
+            {...commonProps}
+            {...commonWingoProps}
+            mode="increasing"
+            gamemodeSettings={getPageGamemodeSettings(page) as WingoConfigProps["gamemodeSettings"]}
+          />
+        );
 
       case "wingo/limitless":
-        return <WingoConfig {...commonProps} {...commonWingoProps} mode="limitless" />;
+        return (
+          <WingoConfig
+            {...commonProps}
+            {...commonWingoProps}
+            mode="limitless"
+            gamemodeSettings={getPageGamemodeSettings(page) as WingoConfigProps["gamemodeSettings"]}
+          />
+        );
 
       case "wingo/puzzle":
-        return <WingoConfig {...commonProps} {...commonWingoProps} mode="puzzle" />;
+        return (
+          <WingoConfig
+            {...commonProps}
+            {...commonWingoProps}
+            mode="puzzle"
+            gamemodeSettings={getPageGamemodeSettings(page) as WingoConfigProps["gamemodeSettings"]}
+          />
+        );
 
       case "Conundrum":
-        return <WingoConfig {...commonProps} {...commonWingoProps} mode="conundrum" />;
+        return (
+          <WingoConfig
+            {...commonProps}
+            {...commonWingoProps}
+            mode="conundrum"
+            gamemodeSettings={getPageGamemodeSettings(page) as WingoConfigProps["gamemodeSettings"]}
+          />
+        );
 
       case "wingo/interlinked":
         // TODO: Directly return WingoInterlinked component?
-        return <WingoConfig {...commonProps} {...commonWingoProps} mode="interlinked" />;
+        return (
+          <WingoConfig
+            {...commonProps}
+            {...commonWingoProps}
+            mode="interlinked"
+            gamemodeSettings={getPageGamemodeSettings(page) as WingoConfigProps["gamemodeSettings"]}
+          />
+        );
 
       case "wingo/crossword":
-        return <WingoConfig {...commonProps} {...commonWingoProps} mode="crossword" />;
+        return (
+          <WingoConfig
+            {...commonProps}
+            {...commonWingoProps}
+            mode="crossword"
+            gamemodeSettings={getPageGamemodeSettings(page) as WingoConfigProps["gamemodeSettings"]}
+          />
+        );
 
       case "wingo/crossword/fit":
-        return <WingoConfig {...commonProps} {...commonWingoProps} mode="crossword/fit" />;
+        return (
+          <WingoConfig
+            {...commonProps}
+            {...commonWingoProps}
+            mode="crossword/fit"
+            gamemodeSettings={getPageGamemodeSettings(page) as WingoConfigProps["gamemodeSettings"]}
+          />
+        );
 
       case "wingo/crossword/daily":
-        return <WingoConfig {...commonProps} {...commonWingoProps} mode="crossword/daily" />;
+        return (
+          <WingoConfig
+            {...commonProps}
+            {...commonWingoProps}
+            mode="crossword/daily"
+            gamemodeSettings={getPageGamemodeSettings(page) as WingoConfigProps["gamemodeSettings"]}
+          />
+        );
 
       case "wingo/crossword/weekly":
-        return <WingoConfig {...commonProps} {...commonWingoProps} mode="crossword/weekly" />;
+        return (
+          <WingoConfig
+            {...commonProps}
+            {...commonWingoProps}
+            mode="crossword/weekly"
+            gamemodeSettings={getPageGamemodeSettings(page) as WingoConfigProps["gamemodeSettings"]}
+          />
+        );
 
       case "LettersCategories":
-        return <LetterCategoriesConfig {...commonProps} enforceFullLengthGuesses={false} />;
+        return (
+          <LetterCategoriesConfig
+            {...commonProps}
+            enforceFullLengthGuesses={false}
+            gamemodeSettings={getPageGamemodeSettings(page) as LetterCategoriesConfigProps["gamemodeSettings"]}
+          />
+        );
 
       case "LettersGame":
-        return <LettersGameConfig {...commonProps} theme={Themes.GenericLettersGame} />;
+        return (
+          <LettersGameConfig
+            {...commonProps}
+            theme={Themes.GenericLettersGame}
+            gamemodeSettings={getPageGamemodeSettings(page) as LettersGameConfigProps["gamemodeSettings"]}
+          />
+        );
 
       case "NumbersGame":
-        return <NumbersGameConfig {...commonProps} theme={Themes.GenericNumbersGame} />;
+        return (
+          <NumbersGameConfig
+            {...commonProps}
+            theme={Themes.GenericNumbersGame}
+            gamemodeSettings={getPageGamemodeSettings(page) as NumbersGameConfigProps["gamemodeSettings"]}
+          />
+        );
 
       case "ArithmeticReveal":
-        return <ArithmeticReveal {...commonProps} />;
+        return (
+          <ArithmeticReveal
+            {...commonProps}
+            gamemodeSettings={getPageGamemodeSettings(page) as ArithmeticRevealProps["gamemodeSettings"]}
+          />
+        );
 
       case "ArithmeticDrag/Order":
-        return <ArithmeticDrag {...commonProps} mode="order" />;
+        return (
+          <ArithmeticDrag
+            {...commonProps}
+            mode="order"
+            gamemodeSettings={getPageGamemodeSettings(page) as ArithmeticDragProps["gamemodeSettings"]}
+          />
+        );
 
       case "ArithmeticDrag/Match":
-        return <ArithmeticDrag {...commonProps} mode="match" />;
+        return (
+          <ArithmeticDrag
+            {...commonProps}
+            mode="match"
+            gamemodeSettings={getPageGamemodeSettings(page) as ArithmeticDragProps["gamemodeSettings"]}
+          />
+        );
 
       case "Numble":
-        return <NumbleConfig {...commonProps} />;
+        return (
+          <NumbleConfig
+            {...commonProps}
+            gamemodeSettings={getPageGamemodeSettings(page) as NumbleConfigProps["gamemodeSettings"]}
+          />
+        );
 
       case "OnlyConnect":
-        return <OnlyConnect {...commonProps} />;
+        return (
+          <OnlyConnect
+            {...commonProps}
+            gamemodeSettings={getPageGamemodeSettings(page) as OnlyConnectProps["gamemodeSettings"]}
+          />
+        );
 
       case "SameLetters":
-        return <SameLetterWords {...commonProps} />;
+        return (
+          <SameLetterWords
+            {...commonProps}
+            gamemodeSettings={getPageGamemodeSettings(page) as SameLetterWordsProps["gamemodeSettings"]}
+          />
+        );
 
       case "NumberSets":
-        return <NumberSets {...commonProps} />;
+        return (
+          <NumberSets
+            {...commonProps}
+            gamemodeSettings={getPageGamemodeSettings(page) as NumberSetsProps["gamemodeSettings"]}
+          />
+        );
 
       case "Algebra":
-        return <Algebra {...commonProps} />;
+        return (
+          <Algebra
+            {...commonProps}
+            gamemodeSettings={getPageGamemodeSettings(page) as AlgebraProps["gamemodeSettings"]}
+          />
+        );
 
       case "WordCodes/Question":
-        return <WordCodes {...commonProps} mode={"question"} />;
+        return (
+          <WordCodes
+            {...commonProps}
+            mode={"question"}
+            gamemodeSettings={getPageGamemodeSettings(page) as WordCodesProps["gamemodeSettings"]}
+          />
+        );
 
       case "WordCodes/Match":
-        return <WordCodes {...commonProps} mode={"match"} />;
+        return (
+          <WordCodes
+            {...commonProps}
+            mode={"match"}
+            gamemodeSettings={getPageGamemodeSettings(page) as WordCodesProps["gamemodeSettings"]}
+          />
+        );
 
       case "PuzzleSequence":
         return <SequencePuzzle {...commonProps} />;

@@ -173,13 +173,9 @@ const Wingo: React.FC<Props> = (props) => {
   function populateGrid() {
     let Grid = [];
 
-    // TODO: Refactor?
+    // Puzzle/Conundrum display row
     if (MODES_WITH_DISPLAY_ROW.includes(props.mode)) {
-      const displayRow = getDisplayRow();
-
-      if (displayRow !== null) {
-        Grid.push(displayRow);
-      }
+      Grid.push(getDisplayRow() ?? <></>)
     }
 
     for (let i = 0; i < props.numGuesses; i++) {

@@ -1,11 +1,9 @@
 import React, { useState } from "react";
 import Wingo from "./Wingo";
-import { words_puzzles } from "../Data/WordArrays/WordsPuzzles";
 import { SaveData, SettingsData } from "../Data/SaveData";
 import { Theme } from "../Data/Themes";
 import { WingoInterlinked } from "./WingoInterlinked";
 
-import { Chance } from "chance";
 import { generateConundrum, getAllWordsOfLength } from "../Data/Conundrum";
 import { PageName } from "../PageNames";
 import {
@@ -19,7 +17,9 @@ import { MIN_TARGET_WORD_LENGTH } from "../Data/GamemodeSettingsInputLimits";
 import { categoryMappings, wordLengthMappingsTargets } from "../Data/WordArrayMappings";
 import { DEFAULT_ALPHABET } from "../Components/Keyboard";
 import { getGamemodeDefaultTimerValue } from "../Data/DefaultTimerValues";
+import { getDeterministicArrayItems } from "../Data/DeterministicSeeding";
 import { getGamemodeDefaultWordLength } from "../Data/DefaultWordLengths";
+import { words_puzzles } from "../Data/WordArrays/WordsPuzzles";
 
 export interface WingoConfigProps {
   mode:
@@ -181,64 +181,6 @@ export function getNewLives(
   return Math.min(extraRows, maxLivesConfig.maxLives);
 }
 
-/**
- * Gets a number guaranteed to be the same throughout today, and guaranteed to change every day.
- * @returns Seed value.
- */
-function todaySeed(): number {
-  return Number(
-    new Date().toLocaleDateString("en-GB", { year: "numeric", month: "2-digit", day: "2-digit" }).replace(/[^\d]/g, "")
-  );
-}
-
-/**
- * Gets a number guaranteed to be the same for all days of this week, and guaranteed to change every Monday.
- * @returns Seed value.
- */
-function thisWeekSeed(): number {
-  const mondayThisWeek = new Date();
-
-  while (mondayThisWeek.getDay() !== 1) {
-    mondayThisWeek.setDate(mondayThisWeek.getDate() - 1);
-  }
-
-  return Number(
-    mondayThisWeek
-      .toLocaleDateString("en-GB", { year: "numeric", month: "2-digit", day: "2-digit" })
-      .replace(/[^\d]/g, "")
-  );
-}
-
-/**
- * Gets a number of items from an array, guaranteed to be deterministic based on the seed.
- * @param seed Seed of the returned items.
- * @param numItems Number of items to return.
- * @param array Array of possible items.
- * @returns Deterministic items from array as per the seed.
- */
-function getDeterministicArrayItems<T>(
-  seed: { seedType: "today" } | { seedType: "this-week" } | { seedType: "custom"; value: number },
-  numItems: number,
-  array: T[]
-): T[] {
-  const seedValue = (() => {
-    switch (seed.seedType) {
-      case "today":
-        return todaySeed();
-
-      case "this-week":
-        return thisWeekSeed();
-
-      case "custom":
-        return seed.value;
-    }
-  })();
-
-  const chance = new Chance(seedValue);
-
-  return chance.shuffle(array.slice()).slice(0, numItems);
-}
-
 const WingoConfig: React.FC<Props> = (props) => {
   const [guesses, setGuesses] = useState<string[]>(props.guesses ?? []);
   const [numGuesses, setNumGuesses] = useState(props.defaultNumGuesses);
@@ -299,39 +241,16 @@ const WingoConfig: React.FC<Props> = (props) => {
     }[]
   >(defaultLetterStatuses);
 
-  function generateTargetWord() {
-    // TODO: Refactor
-    // Array of words to choose from
-    let targetWordArray: { word: string; hint: string }[] = [];
-    // The singular word chosen
-    let newTarget;
+  // Returns the newly determined target word
+  function getTargetWord() {
+    // Array of words of the current gamemode length (most modes will choose a word from this array)
+    let targetLengthWordArray: { word: string; hint: string }[] = wordLengthMappingsTargets
+      .find((x) => x.value === gamemodeSettings.wordLength)
+      ?.array.map((x) => ({ word: x, hint: "" }))!;
 
     switch (props.mode) {
       case "daily":
-        // Choose a target word based on length
-        targetWordArray = wordLengthMappingsTargets
-          .find((x) => x.value === gamemodeSettings.wordLength)
-          ?.array.map((x) => ({ word: x, hint: "" }))!;
-
-        newTarget = getDeterministicArrayItems({ seedType: "today" }, 1, targetWordArray)[0];
-        console.log(
-          `%cMode:%c ${props.mode}\n%cHint:%c ${newTarget.hint || "-"}\n%cWord:%c ${newTarget.word || "-"}`,
-          "font-weight: bold",
-          "font-weight: normal",
-          "font-weight: bold",
-          "font-weight: normal",
-          "font-weight: bold",
-          "font-weight: normal"
-        );
-
-        if (newTarget.word) {
-          setTargetWord(newTarget.word);
-        }
-
-        if (gamemodeSettings.isHintShown && newTarget.hint) {
-          setTargetHint(newTarget.hint);
-        }
-
+        const newTarget = getDeterministicArrayItems({ seedType: "today" }, 1, targetLengthWordArray)[0];
         // Load previous attempts at daily (if applicable)
         const daily_word_storage = SaveData.getDailyWordGuesses();
 
@@ -345,97 +264,44 @@ const WingoConfig: React.FC<Props> = (props) => {
           setInDictionary(daily_word_storage.inDictionary);
         }
 
-        return;
+        return newTarget;
 
       case "puzzle":
         // Get a random puzzle (from words_puzzles.ts)
         // TODO: Expand to have 9, 10 and 11 length puzzles
-        const puzzle = pickRandomElementFrom(words_puzzles);
-
-        // Log the current gamemode and the target word
-        console.log(
-          `%cMode:%c ${props.mode}\n%cHint:%c ${puzzle.hint || "-"}\n%cWord:%c ${puzzle.word || "-"}`,
-          "font-weight: bold",
-          "font-weight: normal",
-          "font-weight: bold",
-          "font-weight: normal",
-          "font-weight: bold",
-          "font-weight: normal"
-        );
-
-        if (puzzle.word) {
-          setTargetWord(puzzle.word);
-        }
-
-        if (gamemodeSettings.isHintShown && puzzle.hint) {
-          setTargetHint(puzzle.hint);
-        }
-
-        return;
+        return pickRandomElementFrom(words_puzzles);
 
       case "category":
         // A target category has been manually selected from dropdown
         if (hasSelectedTargetCategory) {
           // Continue using that category
-          targetWordArray = categoryMappings.find((x) => x.name === targetCategory)?.array!;
+          const targetWordArray = categoryMappings.find((x) => x.name === targetCategory)?.array!;
+          return pickRandomElementFrom(targetWordArray);
         } else {
           // Otherwise, randomly choose a category (can be changed afterwards)
-          const randomCategory = pickRandomElementFrom(categoryMappings);
-          setTargetCategory(randomCategory.name);
+          setTargetCategory(pickRandomElementFrom(categoryMappings).name);
           // A random word from this category is set in a useEffect(), so return
           return;
         }
-        break;
 
       case "increasing":
         // There is already a targetWord which is of the needed wordLength
         if (targetWord && targetWord.length === gamemodeSettings.wordLength) {
-          return;
+          return targetWord;
         }
-
-        // Choose a target word based on length
-        targetWordArray = wordLengthMappingsTargets
-          .find((x) => x.value === gamemodeSettings.wordLength)
-          ?.array.map((x) => ({ word: x, hint: "" }))!;
-
         // There is no array for the current wordLength
-        if (!targetWordArray || targetWordArray?.length <= 0) {
+        else if (!targetLengthWordArray || targetLengthWordArray?.length <= 0) {
           // Just reset (reached the end)
           ResetGame();
           return;
+        } else {
+          // Choose random word
+          return pickRandomElementFrom(targetLengthWordArray);
         }
-
-        // Choose random word
-        newTarget = pickRandomElementFrom(targetWordArray);
-
-        console.log(
-          `%cMode:%c ${props.mode}\n%cHint:%c ${newTarget.hint || "-"}\n%cWord:%c ${newTarget.word || "-"}`,
-          "font-weight: bold",
-          "font-weight: normal",
-          "font-weight: bold",
-          "font-weight: normal",
-          "font-weight: bold",
-          "font-weight: normal"
-        );
-
-        if (newTarget.word) {
-          setTargetWord(newTarget.word);
-        }
-
-        if (newTarget.hint) {
-          setTargetHint(newTarget.hint);
-        }
-
-        break;
 
       case "limitless":
-        // Choose a target word based on length
-        targetWordArray = wordLengthMappingsTargets
-          .find((x) => x.value === gamemodeSettings.wordLength)
-          ?.array.map((x) => ({ word: x, hint: "" }))!;
-
         // There is no array for the current wordLength
-        if (!targetWordArray || targetWordArray.length <= 0) {
+        if (!targetLengthWordArray || targetLengthWordArray.length <= 0) {
           // Don't reset otherwise the number of lives would be lost, just go back to starting wordLength
           const newGamemodeSettings = {
             ...gamemodeSettings,
@@ -443,79 +309,56 @@ const WingoConfig: React.FC<Props> = (props) => {
           };
           setGamemodeSettings(newGamemodeSettings);
 
-          targetWordArray = wordLengthMappingsTargets
+          targetLengthWordArray = wordLengthMappingsTargets
             .find((x) => x.value === getGamemodeDefaultWordLength("wingo/limitless"))
             ?.array.map((x) => ({ word: x, hint: "" }))!;
         }
 
         // Choose random word
-        newTarget = pickRandomElementFrom(targetWordArray);
-
-        console.log(
-          `%cMode:%c ${props.mode}\n%cHint:%c ${newTarget.hint || "-"}\n%cWord:%c ${newTarget.word || "-"}`,
-          "font-weight: bold",
-          "font-weight: normal",
-          "font-weight: bold",
-          "font-weight: normal",
-          "font-weight: bold",
-          "font-weight: normal"
-        );
-
-        if (newTarget.word) {
-          setTargetWord(newTarget.word);
-        }
-
-        if (newTarget.hint) {
-          setTargetHint(newTarget.hint);
-        }
-
-        break;
+        return pickRandomElementFrom(targetLengthWordArray);
 
       case "conundrum":
         const newConundrum = generateConundrum();
         if (newConundrum) {
-          console.log(
-            `%cMode:%c ${props.mode}\n%cWord:%c ${newConundrum.answer || "-"}`,
-            "font-weight: bold",
-            "font-weight: normal",
-            "font-weight: bold",
-            "font-weight: normal"
-          );
-
           setConundrum(newConundrum.question);
           setTargetWord(newConundrum.answer);
           // All letters revealed from start
           setRevealedLetterIndexes(Array.from({ length: newConundrum.answer.length }).map((_, index) => index));
-
-          return;
         }
-        break;
+
+        return { word: newConundrum?.answer, hint: newConundrum?.question };
 
       default:
-        // Other modes choose a target word based on length
-        targetWordArray = wordLengthMappingsTargets
-          .find((x) => x.value === gamemodeSettings.wordLength)
-          ?.array.map((x) => ({ word: x, hint: "" }))!;
         // Choose random word
-        newTarget = pickRandomElementFrom(targetWordArray);
+        return pickRandomElementFrom(targetLengthWordArray);
+    }
+  }
 
-        console.log(
-          `%cMode:%c ${props.mode}\n%cHint:%c ${newTarget.hint || "-"}\n%cWord:%c ${newTarget.word || "-"}`,
-          "font-weight: bold",
-          "font-weight: normal",
-          "font-weight: bold",
-          "font-weight: normal",
-          "font-weight: bold",
-          "font-weight: normal"
-        );
+  // Log and set the newly determined target word
+  function updateTargetWord() {
+    const newTargetWord = getTargetWord();
 
-        if (newTarget.word) {
-          setTargetWord(newTarget.word);
-        }
+    if (!newTargetWord) {
+      return;
+    }
 
-        if (newTarget.hint) {
-          setTargetHint(newTarget.hint);
-        }
+    // Log the mode, hint and word
+    console.log(
+      `%cMode:%c ${props.mode}\n%cHint:%c ${newTargetWord.hint || "-"}\n%cWord:%c ${newTargetWord.word || "-"}`,
+      "font-weight: bold",
+      "font-weight: normal",
+      "font-weight: bold",
+      "font-weight: normal",
+      "font-weight: bold",
+      "font-weight: normal"
+    );
+
+    if (newTargetWord.word) {
+      setTargetWord(newTargetWord.word);
+    }
+
+    if (gamemodeSettings.isHintShown && newTargetWord.hint) {
+      setTargetHint(newTargetWord.hint);
     }
   }
 
@@ -609,29 +452,33 @@ const WingoConfig: React.FC<Props> = (props) => {
 
   // Update targetWord every time the targetCategory changes
   React.useEffect(() => {
-    if (props.mode === "category") {
-      // Category may be changed mid-game (so clear anything from before)
-      ResetGame();
-
-      const wordArray = categoryMappings.find((x) => x.name === targetCategory)?.array;
-
-      if (!wordArray) {
-        return;
-      }
-
-      const newTarget = pickRandomElementFrom(wordArray);
-      console.log(
-        `%cMode:%c ${props.mode}\n%cHint:%c ${newTarget.hint}\n%cWord:%c ${newTarget.word}`,
-        "font-weight: bold",
-        "font-weight: normal",
-        "font-weight: bold",
-        "font-weight: normal",
-        "font-weight: bold",
-        "font-weight: normal"
-      );
-      setTargetWord(newTarget.word);
-      setTargetHint(newTarget.hint);
+    if (props.mode !== "category") {
+      return;
     }
+
+    // Category may be changed mid-game (so clear anything from before)
+    ResetGame();
+
+    const wordArray = categoryMappings.find((x) => x.name === targetCategory)?.array;
+
+    if (!wordArray) {
+      return;
+    }
+
+    const newTarget = pickRandomElementFrom(wordArray);
+
+    console.log(
+      `%cMode:%c ${props.mode}\n%cHint:%c ${newTarget.hint}\n%cWord:%c ${newTarget.word}`,
+      "font-weight: bold",
+      "font-weight: normal",
+      "font-weight: bold",
+      "font-weight: normal",
+      "font-weight: bold",
+      "font-weight: normal"
+    );
+
+    setTargetWord(newTarget.word);
+    setTargetHint(newTarget.hint);
   }, [targetCategory]);
 
   // Updates letter status (which is passed through to Keyboard to update button colours)
@@ -724,7 +571,8 @@ const WingoConfig: React.FC<Props> = (props) => {
       return;
     }
 
-    generateTargetWord();
+    // TODO: This function call is put inside either the ResetGame() function or the useEffect with gamemodeSettings as a dependency
+    updateTargetWord();
   }, [
     // Always when category mode (short circuit) or when word length is changed
     props.mode === "category" || gamemodeSettings.wordLength,
@@ -1108,13 +956,13 @@ const WingoConfig: React.FC<Props> = (props) => {
 
   if (props.mode === "interlinked") {
     return (
-      // TODO: Setters and getters for WingoInterlinked gamemode settings (in SaveData)
-      // TODO: SaveData.getDefault() ?? defaultSettings when returning the components below
       <WingoInterlinked
         {...commonWingoInterlinkedProps}
         wordArrayConfig={{ type: "length" }}
         provideWords={false}
-        gamemodeSettings={SaveData.getWingoInterlinkedGamemodeSettings() ?? defaultWingoInterlinkedGamemodeSettings}
+        gamemodeSettings={
+          SaveData.getWingoInterlinkedGamemodeSettings("wingo/interlinked") ?? defaultWingoInterlinkedGamemodeSettings
+        }
       />
     );
   }
@@ -1125,7 +973,9 @@ const WingoConfig: React.FC<Props> = (props) => {
         {...commonWingoInterlinkedProps}
         wordArrayConfig={{ type: "category" }}
         provideWords={false}
-        gamemodeSettings={SaveData.getWingoCrosswordGamemodeSettings() ?? defaultWingoCrosswordGamemodeSettings}
+        gamemodeSettings={
+          SaveData.getWingoInterlinkedGamemodeSettings("wingo/crossword") ?? defaultWingoCrosswordGamemodeSettings
+        }
       />
     );
   }
@@ -1180,7 +1030,10 @@ const WingoConfig: React.FC<Props> = (props) => {
         {...commonWingoInterlinkedProps}
         wordArrayConfig={{ type: "length" }}
         provideWords={true}
-        gamemodeSettings={SaveData.getWingoCrosswordFitGamemodeSettings() ?? defaultWingoCrosswordFitGamemodeSettings}
+        gamemodeSettings={
+          SaveData.getWingoInterlinkedGamemodeSettings("wingo/crossword/fit") ??
+          defaultWingoCrosswordFitGamemodeSettings
+        }
       />
     );
   }
