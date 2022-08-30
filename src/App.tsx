@@ -514,7 +514,8 @@ export const App: React.FC = () => {
             {...commonProps}
             mode="order"
             gamemodeSettings={
-              SaveData.getArithmeticDragOrderGamemodeSettings() ?? defaultArithmeticDragOrderGamemodeSettings
+              SaveData.getArithmeticDragGamemodeSettings("ArithmeticDrag/Order") ??
+              defaultArithmeticDragOrderGamemodeSettings
             }
           />
         );
@@ -525,7 +526,8 @@ export const App: React.FC = () => {
             {...commonProps}
             mode="match"
             gamemodeSettings={
-              SaveData.getArithmeticDragMatchGamemodeSettings() ?? defaultArithmeticDragMatchGamemodeSettings
+              SaveData.getArithmeticDragGamemodeSettings("ArithmeticDrag/Match") ??
+              defaultArithmeticDragMatchGamemodeSettings
             }
           />
         );
@@ -576,7 +578,7 @@ export const App: React.FC = () => {
             {...commonProps}
             mode={"question"}
             gamemodeSettings={
-              SaveData.getWordCodesQuestionGamemodeSettings() ?? defaultWordCodesQuestionGamemodeSettings
+              SaveData.getWordCodesGamemodeSettings("WordCodes/Question") ?? defaultWordCodesQuestionGamemodeSettings
             }
           />
         );
@@ -586,7 +588,9 @@ export const App: React.FC = () => {
           <WordCodes
             {...commonProps}
             mode={"match"}
-            gamemodeSettings={SaveData.getWordCodesMatchGamemodeSettings() ?? defaultWordCodesMatchGamemodeSettings}
+            gamemodeSettings={
+              SaveData.getWordCodesGamemodeSettings("WordCodes/Match") ?? defaultWordCodesMatchGamemodeSettings
+            }
           />
         );
 

@@ -123,9 +123,7 @@ const WordCodes: React.FC<Props> = (props) => {
     ResetGame();
 
     // Save the latest gamemode settings for this mode
-    props.mode === "match"
-      ? SaveData.setWordCodesMatchGamemodeSettings(gamemodeSettings)
-      : SaveData.setWordCodesQuestionGamemodeSettings(gamemodeSettings);
+    SaveData.setWordCodesGamemodeSettings(props.page, gamemodeSettings);
   }, [gamemodeSettings]);
 
   // Validate the value of props.gamemodeSettings.numDisplayWords

@@ -431,7 +431,10 @@ export class SaveData {
     return null;
   }
 
-  public static setWingoInterlinkedGamemodeSettings(page: PageName, gameSettings: WingoInterlinkedProps["gamemodeSettings"]) {
+  public static setWingoInterlinkedGamemodeSettings(
+    page: PageName,
+    gameSettings: WingoInterlinkedProps["gamemodeSettings"]
+  ) {
     const itemName = determineLocalStorageItemName(page);
 
     if (!itemName) {
@@ -531,31 +534,34 @@ export class SaveData {
     return null;
   }
 
-  public static setArithmeticDragMatchGamemodeSettings(gameSettings: ArithmeticDragProps["gamemodeSettings"]) {
-    localStorage.setItem("arithmeticDragMatchGamemodeSettings", JSON.stringify(gameSettings));
-  }
+  public static setArithmeticDragGamemodeSettings(
+    page: PageName,
+    gameSettings: ArithmeticDragProps["gamemodeSettings"]
+  ) {
+    const itemName = determineLocalStorageItemName(page);
 
-  public static getArithmeticDragMatchGamemodeSettings(): ArithmeticDragProps["gamemodeSettings"] | null {
-    const arithmeticDragMatchGamemodeSettings = localStorage.getItem("arithmeticDragMatchGamemodeSettings");
-
-    if (arithmeticDragMatchGamemodeSettings) {
-      return JSON.parse(arithmeticDragMatchGamemodeSettings) as ArithmeticDragProps["gamemodeSettings"];
+    if (!itemName) {
+      return;
     }
 
-    return null;
+    localStorage.setItem(itemName, JSON.stringify(gameSettings));
   }
 
-  public static setArithmeticDragOrderGamemodeSettings(gameSettings: ArithmeticDragProps["gamemodeSettings"]) {
-    localStorage.setItem("arithmeticDragOrderGamemodeSettings", JSON.stringify(gameSettings));
-  }
+  public static getArithmeticDragGamemodeSettings(page: PageName): ArithmeticDragProps["gamemodeSettings"] | null {
+    const itemName = determineLocalStorageItemName(page);
 
-  public static getArithmeticDragOrderGamemodeSettings(): ArithmeticDragProps["gamemodeSettings"] | null {
-    const arithmeticDragOrderGamemodeSettings = localStorage.getItem("arithmeticDragOrderGamemodeSettings");
-
-    if (arithmeticDragOrderGamemodeSettings) {
-      return JSON.parse(arithmeticDragOrderGamemodeSettings) as ArithmeticDragProps["gamemodeSettings"];
+    if (!itemName) {
+      return null;
     }
 
+    const arithmeticDragGamemodeSettings = localStorage.getItem(itemName);
+
+    // If saved gamemode settings were found
+    if (arithmeticDragGamemodeSettings) {
+      return JSON.parse(arithmeticDragGamemodeSettings) as ArithmeticDragProps["gamemodeSettings"];
+    }
+
+    // Else if not found; return null
     return null;
   }
 
@@ -615,31 +621,34 @@ export class SaveData {
     return null;
   }
 
-  public static setWordCodesQuestionGamemodeSettings(gameSettings: WordCodesProps["gamemodeSettings"]) {
-    localStorage.setItem("wordCodesQuestionGamemodeSettings", JSON.stringify(gameSettings));
-  }
+  public static setWordCodesGamemodeSettings(
+    page: PageName,
+    gameSettings: WordCodesProps["gamemodeSettings"]
+  ) {
+    const itemName = determineLocalStorageItemName(page);
 
-  public static getWordCodesQuestionGamemodeSettings(): WordCodesProps["gamemodeSettings"] | null {
-    const wordCodesQuestionGamemodeSettings = localStorage.getItem("wordCodesQuestionGamemodeSettings");
-
-    if (wordCodesQuestionGamemodeSettings) {
-      return JSON.parse(wordCodesQuestionGamemodeSettings) as WordCodesProps["gamemodeSettings"];
+    if (!itemName) {
+      return;
     }
 
-    return null;
+    localStorage.setItem(itemName, JSON.stringify(gameSettings));
   }
 
-  public static setWordCodesMatchGamemodeSettings(gameSettings: WordCodesProps["gamemodeSettings"]) {
-    localStorage.setItem("wordCodesMatchGamemodeSettings", JSON.stringify(gameSettings));
-  }
+  public static getWordCodesGamemodeSettings(page: PageName): WordCodesProps["gamemodeSettings"] | null {
+    const itemName = determineLocalStorageItemName(page);
 
-  public static getWordCodesMatchGamemodeSettings(): WordCodesProps["gamemodeSettings"] | null {
-    const wordCodesMatchGamemodeSettings = localStorage.getItem("wordCodesMatchGamemodeSettings");
-
-    if (wordCodesMatchGamemodeSettings) {
-      return JSON.parse(wordCodesMatchGamemodeSettings) as WordCodesProps["gamemodeSettings"];
+    if (!itemName) {
+      return null;
     }
 
+    const wordCodesGamemodeSettings = localStorage.getItem(itemName);
+
+    // If saved gamemode settings were found
+    if (wordCodesGamemodeSettings) {
+      return JSON.parse(wordCodesGamemodeSettings) as WordCodesProps["gamemodeSettings"];
+    }
+
+    // Else if not found; return null
     return null;
   }
 

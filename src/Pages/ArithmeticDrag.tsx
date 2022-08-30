@@ -302,9 +302,7 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
     ResetGame();
 
     // Save the latest gamemode settings for this mode
-    props.mode === "match"
-      ? SaveData.setArithmeticDragMatchGamemodeSettings(gamemodeSettings)
-      : SaveData.setArithmeticDragOrderGamemodeSettings(gamemodeSettings);
+    SaveData.setArithmeticDragGamemodeSettings(props.page, gamemodeSettings)
   }, [gamemodeSettings]);
 
   // Create the tiles to be revealed (only once on start)
