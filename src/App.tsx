@@ -32,30 +32,14 @@ import { WingoGameshow } from "./Pages/WingoGameshow";
 import { FiArrowLeft, FiHelpCircle, FiSettings } from "react-icons/fi";
 import HelpInformation from "./Components/HelpInformation";
 import { TitlePage } from "./Pages/TitlePage";
-import {
-  defaultAlgebraGamemodeSettings,
-  defaultArithmeticRevealGamemodeSettings,
-  defaultLettersGameGamemodeSettings,
-  defaultNumbersGameGamemodeSettings,
-  defaultOnlyConnectGamemodeSettings,
-  defaultLetterCategoriesGamemodeSettings,
-  defaultNumbleGamemodeSettings,
-  defaultNumberSetsGamemodeSettings,
-  defaultSameLetterWordsGamemodeSettings,
-  defaultWingoGamemodeSettings,
-  defaultWingoGameshowRoundOrder,
-  fallbackWingoSettings,
-  defaultArithmeticDragOrderGamemodeSettings,
-  defaultArithmeticDragMatchGamemodeSettings,
-  defaultWordCodesQuestionGamemodeSettings,
-  defaultWordCodesMatchGamemodeSettings,
-} from "./Data/DefaultGamemodeSettings";
+import { defaultWingoGameshowRoundOrder } from "./Data/DefaultGamemodeSettings";
 import { PageName } from "./PageNames";
 import { pageDescriptions } from "./PageDescriptions";
 import SequencePuzzle from "./Pages/SequencePuzzle";
 import { CustomGameshow } from "./Pages/CustomGameshow";
 import { getGamemodeDefaultNumGuesses } from "./Data/DefaultNumGuesses";
 import { getGamemodeDefaultWordLength } from "./Data/DefaultWordLengths";
+import { getPageGamemodeSettings } from "./Data/getPageGamemodeSettings";
 
 export const App: React.FC = () => {
   // App wide listener for right click event
@@ -240,6 +224,9 @@ export const App: React.FC = () => {
     const commonProps = {
       isCampaignLevel: isCampaignLevel(page),
       campaignConfig: { isCampaignLevel: false as false },
+      // TODO: Fix errors
+      gamemodeSettings: getPageGamemodeSettings(page),
+      defaultNumGuesses: getGamemodeDefaultNumGuesses(page),
       page: page,
       theme: theme,
       setPage: setPage,
@@ -247,7 +234,6 @@ export const App: React.FC = () => {
       addGold: addGold,
       settings: settings,
       onComplete: onComplete,
-      defaultNumGuesses: getGamemodeDefaultNumGuesses(page),
     };
 
     // Overwrite properties for specific modes where required
@@ -319,280 +305,80 @@ export const App: React.FC = () => {
         );
 
       case "wingo/daily":
-        return (
-          <WingoConfig
-            {...commonProps}
-            {...commonWingoProps}
-            mode="daily"
-            gamemodeSettings={
-              // Daily mode should always use the same settings (never from SaveData)
-              defaultWingoGamemodeSettings.find((x) => x.page === page)?.settings ?? fallbackWingoSettings
-            }
-          />
-        );
+        return <WingoConfig {...commonProps} {...commonWingoProps} mode="daily" />;
 
       case "wingo/repeat":
-        return (
-          <WingoConfig
-            {...commonProps}
-            {...commonWingoProps}
-            gamemodeSettings={
-              SaveData.getWingoConfigGamemodeSettings(page) ??
-              defaultWingoGamemodeSettings.find((x) => x.page === page)?.settings ??
-              fallbackWingoSettings
-            }
-            mode="repeat"
-          />
-        );
+        return <WingoConfig {...commonProps} {...commonWingoProps} mode="repeat" />;
 
       case "wingo/category":
-        return (
-          <WingoConfig
-            {...commonProps}
-            {...commonWingoProps}
-            mode="category"
-            gamemodeSettings={
-              SaveData.getWingoConfigGamemodeSettings(page) ??
-              defaultWingoGamemodeSettings.find((x) => x.page === page)?.settings ??
-              fallbackWingoSettings
-            }
-            enforceFullLengthGuesses={false}
-          />
-        );
+        return <WingoConfig {...commonProps} {...commonWingoProps} mode="category" enforceFullLengthGuesses={false} />;
 
       case "wingo/increasing":
-        return (
-          <WingoConfig
-            {...commonProps}
-            {...commonWingoProps}
-            mode="increasing"
-            gamemodeSettings={
-              SaveData.getWingoConfigGamemodeSettings(page) ??
-              defaultWingoGamemodeSettings.find((x) => x.page === page)?.settings ??
-              fallbackWingoSettings
-            }
-          />
-        );
+        return <WingoConfig {...commonProps} {...commonWingoProps} mode="increasing" />;
 
       case "wingo/limitless":
-        return (
-          <WingoConfig
-            {...commonProps}
-            {...commonWingoProps}
-            mode="limitless"
-            gamemodeSettings={
-              SaveData.getWingoConfigGamemodeSettings(page) ??
-              defaultWingoGamemodeSettings.find((x) => x.page === page)?.settings ??
-              fallbackWingoSettings
-            }
-          />
-        );
+        return <WingoConfig {...commonProps} {...commonWingoProps} mode="limitless" />;
 
       case "wingo/puzzle":
-        return (
-          <WingoConfig
-            {...commonProps}
-            {...commonWingoProps}
-            mode="puzzle"
-            gamemodeSettings={
-              SaveData.getWingoConfigGamemodeSettings(page) ??
-              defaultWingoGamemodeSettings.find((x) => x.page === page)?.settings ??
-              fallbackWingoSettings
-            }
-          />
-        );
+        return <WingoConfig {...commonProps} {...commonWingoProps} mode="puzzle" />;
+
+      case "Conundrum":
+        return <WingoConfig {...commonProps} {...commonWingoProps} mode="conundrum" />;
 
       case "wingo/interlinked":
         // TODO: Directly return WingoInterlinked component?
-        return (
-          <WingoConfig
-            {...commonProps}
-            {...commonWingoProps}
-            mode="interlinked"
-            /*
-            The gamemode settings are redefined in WingoConfig (when rendering a WingoInterlinked component)
-            Just pass fallback settings through because gamemodeSettings can't be left undefined
-            */
-            gamemodeSettings={fallbackWingoSettings}
-          />
-        );
+        return <WingoConfig {...commonProps} {...commonWingoProps} mode="interlinked" />;
 
       case "wingo/crossword":
-        return (
-          <WingoConfig
-            {...commonProps}
-            {...commonWingoProps}
-            mode="crossword"
-            gamemodeSettings={fallbackWingoSettings}
-          />
-        );
+        return <WingoConfig {...commonProps} {...commonWingoProps} mode="crossword" />;
 
       case "wingo/crossword/fit":
-        return (
-          <WingoConfig
-            {...commonProps}
-            {...commonWingoProps}
-            mode="crossword/fit"
-            gamemodeSettings={fallbackWingoSettings}
-          />
-        );
-
-      case "wingo/crossword/weekly":
-        return (
-          <WingoConfig
-            {...commonProps}
-            {...commonWingoProps}
-            mode="crossword/weekly"
-            gamemodeSettings={fallbackWingoSettings}
-          />
-        );
+        return <WingoConfig {...commonProps} {...commonWingoProps} mode="crossword/fit" />;
 
       case "wingo/crossword/daily":
-        return (
-          <WingoConfig
-            {...commonProps}
-            {...commonWingoProps}
-            mode="crossword/daily"
-            gamemodeSettings={fallbackWingoSettings}
-          />
-        );
+        return <WingoConfig {...commonProps} {...commonWingoProps} mode="crossword/daily" />;
+
+      case "wingo/crossword/weekly":
+        return <WingoConfig {...commonProps} {...commonWingoProps} mode="crossword/weekly" />;
 
       case "LettersCategories":
-        return (
-          <LetterCategoriesConfig
-            {...commonProps}
-            gamemodeSettings={
-              SaveData.getLetterCategoriesConfigGamemodeSettings() ?? defaultLetterCategoriesGamemodeSettings
-            }
-            enforceFullLengthGuesses={false}
-          />
-        );
+        return <LetterCategoriesConfig {...commonProps} enforceFullLengthGuesses={false} />;
 
       case "LettersGame":
-        return (
-          <LettersGameConfig
-            {...commonProps}
-            theme={Themes.GenericLettersGame}
-            gamemodeSettings={SaveData.getLettersGameConfigGamemodeSettings() ?? defaultLettersGameGamemodeSettings}
-          />
-        );
+        return <LettersGameConfig {...commonProps} theme={Themes.GenericLettersGame} />;
 
       case "NumbersGame":
-        return (
-          <NumbersGameConfig
-            {...commonProps}
-            theme={Themes.GenericNumbersGame}
-            gamemodeSettings={SaveData.getNumbersGameConfigGamemodeSettings() ?? defaultNumbersGameGamemodeSettings}
-          />
-        );
-
-      case "Conundrum":
-        return (
-          <WingoConfig
-            {...commonProps}
-            {...commonWingoProps}
-            mode="conundrum"
-            gamemodeSettings={
-              SaveData.getWingoConfigGamemodeSettings(page) ??
-              defaultWingoGamemodeSettings.find((x) => x.page === page)?.settings ??
-              fallbackWingoSettings
-            }
-          />
-        );
+        return <NumbersGameConfig {...commonProps} theme={Themes.GenericNumbersGame} />;
 
       case "ArithmeticReveal":
-        return (
-          <ArithmeticReveal
-            {...commonProps}
-            gamemodeSettings={SaveData.getArithmeticRevealGamemodeSettings() ?? defaultArithmeticRevealGamemodeSettings}
-          />
-        );
+        return <ArithmeticReveal {...commonProps} />;
 
       case "ArithmeticDrag/Order":
-        return (
-          <ArithmeticDrag
-            {...commonProps}
-            mode="order"
-            gamemodeSettings={
-              SaveData.getArithmeticDragGamemodeSettings("ArithmeticDrag/Order") ??
-              defaultArithmeticDragOrderGamemodeSettings
-            }
-          />
-        );
+        return <ArithmeticDrag {...commonProps} mode="order" />;
 
       case "ArithmeticDrag/Match":
-        return (
-          <ArithmeticDrag
-            {...commonProps}
-            mode="match"
-            gamemodeSettings={
-              SaveData.getArithmeticDragGamemodeSettings("ArithmeticDrag/Match") ??
-              defaultArithmeticDragMatchGamemodeSettings
-            }
-          />
-        );
+        return <ArithmeticDrag {...commonProps} mode="match" />;
 
-      case "numble":
-        return (
-          <NumbleConfig
-            {...commonProps}
-            gamemodeSettings={SaveData.getNumbleConfigGamemodeSettings() ?? defaultNumbleGamemodeSettings}
-          />
-        );
+      case "Numble":
+        return <NumbleConfig {...commonProps} />;
 
       case "OnlyConnect":
-        return (
-          <OnlyConnect
-            {...commonProps}
-            gamemodeSettings={SaveData.getOnlyConnectGamemodeSettings() ?? defaultOnlyConnectGamemodeSettings}
-          />
-        );
+        return <OnlyConnect {...commonProps} />;
 
       case "SameLetters":
-        return (
-          <SameLetterWords
-            {...commonProps}
-            gamemodeSettings={SaveData.getSameLetterWordsGamemodeSettings() ?? defaultSameLetterWordsGamemodeSettings}
-          />
-        );
+        return <SameLetterWords {...commonProps} />;
 
       case "NumberSets":
-        return (
-          <NumberSets
-            {...commonProps}
-            gamemodeSettings={SaveData.getNumberSetsGamemodeSettings() ?? defaultNumberSetsGamemodeSettings}
-          />
-        );
+        return <NumberSets {...commonProps} />;
 
       case "Algebra":
-        return (
-          <Algebra
-            {...commonProps}
-            gamemodeSettings={SaveData.getAlgebraGamemodeSettings() ?? defaultAlgebraGamemodeSettings}
-          />
-        );
+        return <Algebra {...commonProps} />;
 
       case "WordCodes/Question":
-        return (
-          <WordCodes
-            {...commonProps}
-            mode={"question"}
-            gamemodeSettings={
-              SaveData.getWordCodesGamemodeSettings("WordCodes/Question") ?? defaultWordCodesQuestionGamemodeSettings
-            }
-          />
-        );
+        return <WordCodes {...commonProps} mode={"question"} />;
 
       case "WordCodes/Match":
-        return (
-          <WordCodes
-            {...commonProps}
-            mode={"match"}
-            gamemodeSettings={
-              SaveData.getWordCodesGamemodeSettings("WordCodes/Match") ?? defaultWordCodesMatchGamemodeSettings
-            }
-          />
-        );
+        return <WordCodes {...commonProps} mode={"match"} />;
 
       case "PuzzleSequence":
         return <SequencePuzzle {...commonProps} />;

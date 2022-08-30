@@ -20,7 +20,7 @@ export type PageName =
   | "ArithmeticReveal"
   | "ArithmeticDrag/Order"
   | "ArithmeticDrag/Match"
-  | "numble"
+  | "Numble"
   | "OnlyConnect"
   | "SameLetters"
   | "NumberSets"

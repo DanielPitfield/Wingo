@@ -248,7 +248,7 @@ export const pageDescriptions: pageDescription[] = [
     description: "Match the arithmetic expressions with the results they evaluate to",
   },
   {
-    page: "numble",
+    page: "Numble",
     title: "Numble",
     shortTitle: "Numble",
     isPlayable: true,

@@ -16,7 +16,7 @@ const defaultTimerValues: { page: PageName; timerValue: number }[] = [
   { page: "wingo/interlinked", timerValue: 30 },
   { page: "WordCodes/Match", timerValue: 100 },
   { page: "WordCodes/Question", timerValue: 100 },
-  { page: "numble", timerValue: 600 },
+  { page: "Numble", timerValue: 600 },
 ];
 
 export const getGamemodeDefaultTimerValue = (page: PageName) => {
