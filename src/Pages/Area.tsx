@@ -13,7 +13,7 @@ export interface AreaConfig {
   theme: Theme;
 }
 
-type AreaProps = {
+interface AreaProps {
   area: AreaConfig;
   settings: SettingsData;
   setTheme: (theme: Theme) => void;

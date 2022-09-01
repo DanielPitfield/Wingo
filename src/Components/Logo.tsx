@@ -1,7 +1,7 @@
 import LetterTile from "./LetterTile";
 import { SettingsData } from "../Data/SaveData";
 
-type LogoProps = {
+interface LogoProps {
   settings: SettingsData;
 }
 

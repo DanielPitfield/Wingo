@@ -5,7 +5,7 @@ import { WordRow } from "../Components/WordRow";
 import { Button } from "../Components/Button";
 import { MessageNotification } from "../Components/MessageNotification";
 import ProgressBar, { GreenToRedColorTransition } from "../Components/ProgressBar";
-import { getNewLives } from "./WingoConfig";
+import { getNewLives, WingoConfigProps } from "./WingoConfig";
 import { Theme } from "../Data/Themes";
 import { SettingsData } from "../Data/SaveData";
 import { useCorrectChime, useFailureChime, useLightPingChime } from "../Data/Sounds";
@@ -227,7 +227,7 @@ const Wingo = (props: Props) => {
   }
 
   const handleGamemodeSettingsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newGamemodeSettings: typeof props.gamemodeSettings = {
+    const newGamemodeSettings: WingoConfigProps["gamemodeSettings"] = {
       ...props.gamemodeSettings,
       [e.target.name]: getNewGamemodeSettingValue(e, {
         maxLives: mostRecentMaxLives,

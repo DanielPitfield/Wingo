@@ -2,7 +2,7 @@ import React, { MouseEventHandler } from "react";
 import { SaveData, SettingsData } from "../Data/SaveData";
 import { useClickChime } from "../Data/Sounds";
 
-type Props = {
+interface ButtonProps {
   mode: "destructive" | "accept" | "default";
   children?: React.ReactNode;
   settings?: SettingsData;
@@ -14,7 +14,7 @@ type Props = {
   additionalProps?: React.DetailedHTMLProps<React.ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement>;
 };
 
-export const Button = (props: Props) => {
+export const Button = (props: ButtonProps) => {
   const [playClickSoundEffect] = useClickChime(props.settings || SaveData.DISABLED_SETTINGS);
 
   return (

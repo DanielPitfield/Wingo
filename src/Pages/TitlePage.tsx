@@ -5,7 +5,7 @@ import { SettingsData } from "../Data/SaveData";
 import BackgroundSrc from "../Data/Images/background.png";
 import { FiCodesandbox, FiPlay, FiSettings, FiShuffle } from "react-icons/fi";
 
-type TitlePageProps = {
+interface TitlePageProps {
   setPage: (page: PageName) => void;
   settings: SettingsData;
 };

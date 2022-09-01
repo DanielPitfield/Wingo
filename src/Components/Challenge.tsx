@@ -6,7 +6,7 @@ import { BaseChallenge } from "../Data/Challenges/BaseChallenge";
 import { Button } from "./Button";
 import { useNotificationChime } from "../Data/Sounds";
 
-type ChallengeProps = {
+interface ChallengeProps {
   mode: "enhanced" | "default";
   challenge: BaseChallenge;
   settings: SettingsData;
@@ -64,7 +64,7 @@ export const Challenge = (props: ChallengeProps) => {
   );
 };
 
-type ChallengeRewardProps = {
+interface ChallengeRewardProps {
   goldCoins: number;
 }
 

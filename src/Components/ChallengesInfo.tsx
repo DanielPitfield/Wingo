@@ -4,7 +4,7 @@ import { Challenge, ChallengeReward } from "./Challenge";
 import { useState } from "react";
 import { BaseChallenge } from "../Data/Challenges/BaseChallenge";
 
-type ChallengesInfoProps = {
+interface ChallengesInfoProps {
   settings: SettingsData;
   addGold: (gold: number) => void;
 };

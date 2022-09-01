@@ -8,7 +8,7 @@ import { usePopper } from "react-popper";
 import { useClickChime } from "../Data/Sounds";
 import { AreaConfig } from "../Pages/Area";
 
-type LevelNodeProps = {
+interface LevelNodeProps {
   level: LevelConfig;
   isSelected: boolean;
   index: number;
@@ -18,7 +18,7 @@ type LevelNodeProps = {
   setTheme: (theme: Theme) => void;
   setSelectedCampaignLevel: (level: LevelConfig) => void;
   setPage: (page: PageName) => void;
-};
+}
 
 export const LevelNode = (props: LevelNodeProps) => {
   const [referenceElement, setReferenceElement] = useState(null);

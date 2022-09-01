@@ -8,7 +8,7 @@ import { AllCampaignAreas } from "../Data/CampaignAreas/AllCampaignAreas";
 import BackgroundImageSrc from "../Data/Images/background.png";
 import { FiCheck, FiLock, FiPlay } from "react-icons/fi";
 
-type CampaignProps = {
+interface CampaignProps {
   theme: Theme;
   settings: SettingsData;
   onlyShowCurrentArea?: boolean;

@@ -170,7 +170,7 @@ export function getId(level: LevelConfig["level"]): string {
 
 export const LEVEL_FINISHING_TEXT = "Back to area";
 
-type LevelProps = {
+interface LevelProps {
   area: AreaConfig;
   level: LevelConfig;
   page: PageName;

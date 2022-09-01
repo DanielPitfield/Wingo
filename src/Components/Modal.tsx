@@ -1,7 +1,7 @@
 import React from "react";
 import { Button } from "./Button";
 
-type ModalProps = {
+interface ModalProps {
   name: string;
   mode: "default" | "info" | "success" | "error";
   title: React.ReactNode;

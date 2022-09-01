@@ -5,7 +5,7 @@ import { useIntroMusic } from "../Data/Sounds";
 import { SettingsData } from "../Data/SaveData";
 import { StudioLogo } from "../Components/StudioLogo";
 
-type SplashScreenProps = {
+interface SplashScreenProps {
   loadingState: "loading" | "loaded";
   settings: SettingsData;
 };
