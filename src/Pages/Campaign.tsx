@@ -1,4 +1,3 @@
-import React from "react";
 import { PageName } from "../PageNames";
 import { AreaConfig } from "./Area";
 import { Button } from "../Components/Button";
@@ -9,8 +8,7 @@ import { AllCampaignAreas } from "../Data/CampaignAreas/AllCampaignAreas";
 import BackgroundImageSrc from "../Data/Images/background.png";
 import { FiCheck, FiLock, FiPlay } from "react-icons/fi";
 
-/** The entire campaign, showing the list of areas */
-export const Campaign = (props: {
+type CampaignProps = {
   theme: Theme;
   settings: SettingsData;
   onlyShowCurrentArea?: boolean;
@@ -18,7 +16,10 @@ export const Campaign = (props: {
   setSelectedArea: (areaConfig: AreaConfig) => void;
   setSelectedCampaignLevel: (level: LevelConfig) => void;
   setPage: (page: PageName) => void;
-}) => {
+};
+
+/** The entire campaign, showing the list of areas */
+export const Campaign = (props: CampaignProps) => {
   /** */
   function onAreaClick(area: AreaConfig, unlockStatus: CampaignSaveData["areas"][0]["status"]) {
     // Button should be disabled, but just in case

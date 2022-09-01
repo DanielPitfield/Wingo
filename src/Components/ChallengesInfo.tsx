@@ -4,7 +4,12 @@ import { Challenge, ChallengeReward } from "./Challenge";
 import { useState } from "react";
 import { BaseChallenge } from "../Data/Challenges/BaseChallenge";
 
-export const ChallengesInfo = (props: { settings: SettingsData; addGold: (gold: number) => void }) => {
+type ChallengesInfoProps = {
+  settings: SettingsData;
+  addGold: (gold: number) => void;
+};
+
+export const ChallengesInfo = (props: ChallengesInfoProps) => {
   const history = SaveData.getHistory();
   const [selectedChallenge, setSelectedChallenge] = useState<BaseChallenge | null>();
 

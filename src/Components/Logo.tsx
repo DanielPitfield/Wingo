@@ -1,8 +1,11 @@
-import React from "react";
 import LetterTile from "./LetterTile";
 import { SettingsData } from "../Data/SaveData";
 
-export const Logo = (props: { settings: SettingsData }) => {
+type LogoProps = {
+  settings: SettingsData;
+}
+
+export const Logo = (props: LogoProps) => {
   return (
     <div className="logo" data-automation-id="logo">
       <LetterTile letter={"W"} status={"not set"} settings={props.settings} applyAnimation={false}></LetterTile>

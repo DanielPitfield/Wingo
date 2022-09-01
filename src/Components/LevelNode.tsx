@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { pageDescriptions } from "../PageDescriptions";
 import { PageName } from "../PageNames";
 import { getId, LevelConfig } from "./Level";
@@ -8,7 +8,7 @@ import { usePopper } from "react-popper";
 import { useClickChime } from "../Data/Sounds";
 import { AreaConfig } from "../Pages/Area";
 
-export const LevelNode = (props: {
+type LevelNodeProps = {
   level: LevelConfig;
   isSelected: boolean;
   index: number;
@@ -18,7 +18,9 @@ export const LevelNode = (props: {
   setTheme: (theme: Theme) => void;
   setSelectedCampaignLevel: (level: LevelConfig) => void;
   setPage: (page: PageName) => void;
-}) => {
+};
+
+export const LevelNode = (props: LevelNodeProps) => {
   const [referenceElement, setReferenceElement] = useState(null);
   const [popperElement, setPopperElement] = useState(null);
   const [arrowElement, setArrowElement] = useState(null);

@@ -5,7 +5,12 @@ import { useIntroMusic } from "../Data/Sounds";
 import { SettingsData } from "../Data/SaveData";
 import { StudioLogo } from "../Components/StudioLogo";
 
-export const SplashScreen = (props: { loadingState: "loading" | "loaded"; settings: SettingsData }) => {
+type SplashScreenProps = {
+  loadingState: "loading" | "loaded";
+  settings: SettingsData;
+};
+
+export const SplashScreen = (props: SplashScreenProps) => {
   const [playIntroSrc] = useIntroMusic(props.settings);
 
   useEffect(() => playIntroSrc(), [playIntroSrc]);

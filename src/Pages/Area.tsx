@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { PageName } from "../PageNames";
 import { LevelConfig } from "../Components/Level";
 import { MessageNotification } from "../Components/MessageNotification";
@@ -13,14 +13,16 @@ export interface AreaConfig {
   theme: Theme;
 }
 
-/** Portion of the campaign, with many levels */
-export const Area = (props: {
+type AreaProps = {
   area: AreaConfig;
   settings: SettingsData;
   setTheme: (theme: Theme) => void;
   setSelectedCampaignLevel: (level: LevelConfig) => void;
   setPage: (page: PageName) => void;
-}) => {
+};
+
+/** Portion of the campaign, with many levels */
+export const Area = (props: AreaProps) => {
   const [selectedLevel, setSelectedLevel] = useState<LevelConfig | null>(null);
 
   // LEVEL SELECTION

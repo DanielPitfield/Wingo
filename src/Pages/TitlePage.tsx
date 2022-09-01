@@ -1,4 +1,3 @@
-import React from "react";
 import { PageName } from "../PageNames";
 import { Button } from "../Components/Button";
 import { Logo } from "../Components/Logo";
@@ -6,7 +5,12 @@ import { SettingsData } from "../Data/SaveData";
 import BackgroundSrc from "../Data/Images/background.png";
 import { FiCodesandbox, FiPlay, FiSettings, FiShuffle } from "react-icons/fi";
 
-export const TitlePage = (props: { setPage: (page: PageName) => void; settings: SettingsData }) => {
+type TitlePageProps = {
+  setPage: (page: PageName) => void;
+  settings: SettingsData;
+};
+
+export const TitlePage = (props: TitlePageProps) => {
   return (
     <div className="title-page" style={{ backgroundImage: `url(${BackgroundSrc})` }}>
       <div className="sidebar">

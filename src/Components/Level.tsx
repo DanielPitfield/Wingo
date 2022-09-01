@@ -170,8 +170,7 @@ export function getId(level: LevelConfig["level"]): string {
 
 export const LEVEL_FINISHING_TEXT = "Back to area";
 
-/** A level within an area (e.g. one game) */
-export const Level = (props: {
+type LevelProps = {
   area: AreaConfig;
   level: LevelConfig;
   page: PageName;
@@ -181,7 +180,10 @@ export const Level = (props: {
   setPage: (page: PageName) => void;
   addGold: (gold: number) => void;
   onCompleteCampaignLevel: (isUnlockLevel: boolean, level: LevelConfig) => void;
-}) => {
+}
+
+/** A level within an area (e.g. one game) */
+export const Level = (props: LevelProps) => {
   function renderGame() {
     const commonProps = {
       isCampaignLevel: true,
