@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { SettingsData } from "../Data/SaveData";
 import { PageName } from "../PageNames";
 import { Theme } from "../Data/Themes";
-import WingoConfig from "./WingoConfig";
+import WingoConfig, { WingoConfigProps } from "./WingoConfig";
 import { Button } from "../Components/Button";
 import { ChallengeReward } from "../Components/Challenge";
 import Success from "../Data/Images/success.svg";
@@ -10,6 +10,7 @@ import Error from "../Data/Images/error.svg";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
 import { getGamemodeDefaultWordLength } from "../Data/DefaultWordLengths";
 import { getWingoGameshowRoundOrder } from "../Data/getWingoGameshowRoundOrder";
+import { getPageGamemodeSettings } from "../Data/getPageGamemodeSettings";
 
 export interface WingoGameshowProps {
   campaignConfig:
@@ -289,6 +290,7 @@ export const WingoGameshow = (props: Props) => {
         <WingoConfig
           {...commonProps}
           mode="puzzle"
+          gamemodeSettings={getPageGamemodeSettings("wingo/puzzle") as WingoConfigProps["gamemodeSettings"]}
           defaultWordLength={wordLength}
           defaultNumGuesses={1}
           enforceFullLengthGuesses={true}
@@ -301,6 +303,7 @@ export const WingoGameshow = (props: Props) => {
         <WingoConfig
           {...commonProps}
           mode="repeat"
+          gamemodeSettings={getPageGamemodeSettings("wingo/repeat") as WingoConfigProps["gamemodeSettings"]}
           defaultWordLength={wordLength}
           defaultNumGuesses={5}
           enforceFullLengthGuesses={true}

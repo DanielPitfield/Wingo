@@ -1,15 +1,16 @@
 import React, { useState } from "react";
 import { SettingsData } from "../Data/SaveData";
 import { PageName } from "../PageNames";
-import LettersGameConfig from "./LettersGameConfig";
-import NumbersGameConfig from "./NumbersGameConfig";
+import LettersGameConfig, { LettersGameConfigProps } from "./LettersGameConfig";
+import NumbersGameConfig, { NumbersGameConfigProps } from "./NumbersGameConfig";
 import { Theme } from "../Data/Themes";
 import { displayGameshowSummary } from "./WingoGameshow";
 import { Button } from "../Components/Button";
-import WingoConfig from "./WingoConfig";
+import WingoConfig, { WingoConfigProps } from "./WingoConfig";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
 import { getGamemodeDefaultNumGuesses } from "../Data/DefaultNumGuesses";
 import { getGamemodeDefaultWordLength } from "../Data/DefaultWordLengths";
+import { getPageGamemodeSettings } from "../Data/getPageGamemodeSettings";
 
 export interface LettersNumbersGameshowProps {
   campaignConfig:
@@ -160,15 +161,23 @@ export const LettersNumbersGameshow = (props: Props) => {
     };
 
     if (roundType === "letter") {
-      return <LettersGameConfig {...commonProps} theme={props.themes[0]} gameshowScore={gameshowScore} />;
+      return (
+        <LettersGameConfig
+          {...commonProps}
+          theme={props.themes[0]}
+          gameshowScore={gameshowScore}
+          gamemodeSettings={getPageGamemodeSettings("LettersGame") as LettersGameConfigProps["gamemodeSettings"]}
+        />
+      );
     } else if (roundType === "number") {
-      return <NumbersGameConfig {...commonProps} theme={props.themes[1]} gameshowScore={gameshowScore} />;
+      return <NumbersGameConfig {...commonProps} theme={props.themes[1]} gameshowScore={gameshowScore} gamemodeSettings={getPageGamemodeSettings("NumbersGame") as NumbersGameConfigProps["gamemodeSettings"]}/>;
     } else if (roundType === "conundrum") {
       return (
         <WingoConfig
           {...commonProps}
           isCampaignLevel={false}
           mode="conundrum"
+          gamemodeSettings={getPageGamemodeSettings("Conundrum") as WingoConfigProps["gamemodeSettings"]}
           defaultWordLength={getGamemodeDefaultWordLength("Conundrum")}
           defaultNumGuesses={getGamemodeDefaultNumGuesses("Conundrum")}
           enforceFullLengthGuesses={true}
