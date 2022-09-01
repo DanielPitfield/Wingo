@@ -40,9 +40,8 @@ import { CustomGameshow } from "./Pages/CustomGameshow";
 import { getGamemodeDefaultNumGuesses } from "./Data/DefaultNumGuesses";
 import { getGamemodeDefaultWordLength } from "./Data/DefaultWordLengths";
 import { getPageGamemodeSettings } from "./Data/getPageGamemodeSettings";
-import { WingoInterlinkedProps } from "./Pages/WingoInterlinked";
 
-export const App: React.FC = () => {
+export const App = () => {
   // App wide listener for right click event
   // TODO: Decide whether right click should be enabled
   //document.addEventListener("contextmenu", handleRightClick);

@@ -104,7 +104,7 @@ export function getNextTeamNumberWithRemainingTime(
   }
 }
 
-const NumbleConfig: React.FC<Props> = (props) => {
+const NumbleConfig = (props: Props) => {
   const [gamemodeSettings, setGamemodeSettings] = useState<NumbleConfigProps["gamemodeSettings"]>(
     props.gamemodeSettings
   );

@@ -6,7 +6,7 @@ import { SettingsData } from "../Data/SaveData";
 import BackgroundSrc from "../Data/Images/background.png";
 import { FiCodesandbox, FiPlay, FiSettings, FiShuffle } from "react-icons/fi";
 
-export const TitlePage: React.FC<{ setPage: (page: PageName) => void; settings: SettingsData }> = (props) => {
+export const TitlePage = (props: { setPage: (page: PageName) => void; settings: SettingsData }) => {
   return (
     <div className="title-page" style={{ backgroundImage: `url(${BackgroundSrc})` }}>
       <div className="sidebar">

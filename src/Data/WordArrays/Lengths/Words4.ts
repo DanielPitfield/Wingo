@@ -8,7 +8,6 @@ const words_four = [
   { word: "abas", canBeTargetWord: true },
   { word: "abba", canBeTargetWord: true },
   // Temporarily moved; copy from WordArrays folder at root of repo if needed
-
 ];
 
 export const words_four_guessable = words_four.map((x) => x.word);

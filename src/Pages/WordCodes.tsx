@@ -68,7 +68,7 @@ interface Props extends WordCodesProps {
 }
 
 /** */
-const WordCodes: React.FC<Props> = (props) => {
+const WordCodes = (props: Props) => {
   const [inProgress, setInProgress] = useState(true);
   const [guess, setGuess] = useState("");
 

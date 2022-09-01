@@ -92,7 +92,7 @@ interface Props extends WingoInterlinkedProps {
   onComplete: (wasCorrect: boolean) => void;
 }
 
-export const WingoInterlinked: React.FC<Props> = (props) => {
+export const WingoInterlinked = (props: Props) => {
   // Specified amount of word guesses from initialConfig takes precedence
   const STARTING_NUM_WORD_GUESSES = props.initialConfig?.remainingWordGuesses ?? props.gamemodeSettings.numWordGuesses;
 

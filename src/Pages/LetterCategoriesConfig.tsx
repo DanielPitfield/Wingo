@@ -38,7 +38,7 @@ interface Props extends LetterCategoriesConfigProps {
   onComplete: (wasCorrect: boolean) => void;
 }
 
-const LetterCategoriesConfig: React.FC<Props> = (props) => {
+const LetterCategoriesConfig = (props: Props) => {
   const [inProgress, setInProgress] = useState(true);
   const [wordLength, setWordLength] = useState(getGamemodeDefaultWordLength(props.page));
   const [guesses, setGuesses] = useState<string[]>([]);
@@ -51,7 +51,9 @@ const LetterCategoriesConfig: React.FC<Props> = (props) => {
     []
   );
 
-  const [gamemodeSettings, setGamemodeSettings] = useState<LetterCategoriesConfigProps["gamemodeSettings"]>(props.gamemodeSettings);
+  const [gamemodeSettings, setGamemodeSettings] = useState<LetterCategoriesConfigProps["gamemodeSettings"]>(
+    props.gamemodeSettings
+  );
 
   const [remainingSeconds, setRemainingSeconds] = useState(
     props.gamemodeSettings?.timerConfig?.isTimed === true

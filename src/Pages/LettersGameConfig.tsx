@@ -61,7 +61,7 @@ export function isLettersGameGuessValid(guessedWord: string, lettersGameSelectio
   });
 }
 
-const LettersGameConfig: React.FC<Props> = (props) => {
+const LettersGameConfig = (props: Props) => {
   const [guesses, setGuesses] = useState<string[]>([]);
   const [currentWord, setCurrentWord] = useState("");
   const [inProgress, setInProgress] = useState(true);
@@ -69,7 +69,9 @@ const LettersGameConfig: React.FC<Props> = (props) => {
   const [targetWord, setTargetWord] = useState<string>();
   const [hasSubmitLetter, sethasSubmitLetter] = useState(false);
 
-  const [gamemodeSettings, setGamemodeSettings] = useState<LettersGameConfigProps["gamemodeSettings"]>(props.gamemodeSettings);
+  const [gamemodeSettings, setGamemodeSettings] = useState<LettersGameConfigProps["gamemodeSettings"]>(
+    props.gamemodeSettings
+  );
 
   const [remainingSeconds, setRemainingSeconds] = useState(
     props.gamemodeSettings?.timerConfig?.isTimed === true

@@ -71,7 +71,7 @@ interface Props {
   gameshowScore?: number;
 }
 
-const LettersGame: React.FC<Props> = (props) => {
+const LettersGame = (props: Props) => {
   // Currently selected guess, to be used as the final guess when time runs out
   const [bestGuess, setBestGuess] = useState("");
 
@@ -308,7 +308,9 @@ const LettersGame: React.FC<Props> = (props) => {
     // Start with bigger words first
     for (let wordLength = lettersGameSelectionWord.length; wordLength >= 4; wordLength--) {
       // The words which can be made with the selected letters
-      const validWords: string[] = getAllWordsOfLength(wordLength).filter((word) => isLettersGameGuessValid(word, lettersGameSelectionWord));
+      const validWords: string[] = getAllWordsOfLength(wordLength).filter((word) =>
+        isLettersGameGuessValid(word, lettersGameSelectionWord)
+      );
 
       bestWords = bestWords.concat(validWords);
 

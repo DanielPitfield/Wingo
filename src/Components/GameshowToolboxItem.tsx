@@ -8,13 +8,9 @@ interface Props {
   onClick: (gameshowMode: pageDescription) => void;
 }
 
-export const GameshowToolboxItem: React.FC<Props> = (props) => {
+export const GameshowToolboxItem = (props: Props) => {
   return (
-    <Button
-      className="gameshow-available-gamemode"
-      mode={"default"}
-      onClick={() => props.onClick(props.gameshowMode)}
-    >
+    <Button className="gameshow-available-gamemode" mode={"default"} onClick={() => props.onClick(props.gameshowMode)}>
       <AiOutlinePlus /> {props.gameshowMode.title}
     </Button>
   );

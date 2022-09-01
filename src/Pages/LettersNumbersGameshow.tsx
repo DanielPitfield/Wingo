@@ -37,7 +37,7 @@ interface Props extends LettersNumbersGameshowProps {
   onComplete: (wasCorrect: boolean) => void;
 }
 
-export const LettersNumbersGameshow: React.FC<Props> = (props) => {
+export const LettersNumbersGameshow = (props: Props) => {
   const [inProgress, setInProgress] = useState(true);
   const [roundOrder, setRoundOrder] = useState<("number" | "letter" | "conundrum")[]>([]);
   const [roundNumber, setRoundNumber] = useState(0);
@@ -150,7 +150,7 @@ export const LettersNumbersGameshow: React.FC<Props> = (props) => {
       The pass criteria for a gameshow campaign level is that the gameshow score has reached the target score
       */
       campaignConfig: { isCampaignLevel: false as false },
-      page: props.page,      
+      page: props.page,
       settings: props.settings,
       setPage: props.setPage,
       setTheme: props.setTheme,
@@ -162,13 +162,7 @@ export const LettersNumbersGameshow: React.FC<Props> = (props) => {
     if (roundType === "letter") {
       return <LettersGameConfig {...commonProps} theme={props.themes[0]} gameshowScore={gameshowScore} />;
     } else if (roundType === "number") {
-      return (
-        <NumbersGameConfig
-          {...commonProps}
-          theme={props.themes[1]}
-          gameshowScore={gameshowScore}
-        />
-      );
+      return <NumbersGameConfig {...commonProps} theme={props.themes[1]} gameshowScore={gameshowScore} />;
     } else if (roundType === "conundrum") {
       return (
         <WingoConfig

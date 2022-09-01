@@ -11,7 +11,7 @@ export type pageDescription = {
   gameshowType?: gameshowType;
   description?: string;
   helpInfo?: JSX.Element;
-}
+};
 
 export const pageDescriptions: pageDescription[] = [
   { page: "splash-screen", title: "Wingo", isPlayable: false },

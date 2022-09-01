@@ -88,7 +88,7 @@ export function shuffleArray<T>(array: T[]): T[] {
 }
 
 /** */
-const ArithmeticDrag: React.FC<Props> = (props) => {
+const ArithmeticDrag = (props: Props) => {
   const [inProgress, setInProgress] = useState(true);
   const [expressionTiles, setExpressionTiles] = useState<
     { expression: string; total: number; status: "incorrect" | "correct" | "not set" }[]
@@ -96,7 +96,9 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
   // For the match game mode type
   const [resultTiles, setResultTiles] = useState<{ total: number; status: "incorrect" | "correct" | "not set" }[]>([]);
 
-  const [gamemodeSettings, setGamemodeSettings] = useState<ArithmeticDragProps["gamemodeSettings"]>(props.gamemodeSettings);
+  const [gamemodeSettings, setGamemodeSettings] = useState<ArithmeticDragProps["gamemodeSettings"]>(
+    props.gamemodeSettings
+  );
 
   const [remainingGuesses, setRemainingGuesses] = useState(gamemodeSettings.numGuesses);
 
@@ -302,7 +304,7 @@ const ArithmeticDrag: React.FC<Props> = (props) => {
     ResetGame();
 
     // Save the latest gamemode settings for this mode
-    SaveData.setArithmeticDragGamemodeSettings(props.page, gamemodeSettings)
+    SaveData.setArithmeticDragGamemodeSettings(props.page, gamemodeSettings);
   }, [gamemodeSettings]);
 
   // Create the tiles to be revealed (only once on start)

@@ -6,7 +6,7 @@ interface Props {
   settings: SettingsData;
 }
 
-const Dice: React.FC<Props> = (props) => {
+const Dice = (props: Props) => {
   const [applyAnimation, setApplyAnimation] = useState(false);
 
   React.useEffect(() => {
@@ -16,7 +16,7 @@ const Dice: React.FC<Props> = (props) => {
 
     return () => window.clearTimeout(timeoutId);
   }, [props.value]);
-  
+
   return (
     <div
       className="dice_square"

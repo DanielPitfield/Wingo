@@ -139,7 +139,7 @@ export function determineScore(
 
 export type Guess = { operand1: number | null; operand2: number | null; operator: typeof operators[0]["name"] };
 
-const NumbersGameConfig: React.FC<Props> = (props) => {
+const NumbersGameConfig = (props: Props) => {
   const [gamemodeSettings, setGamemodeSettings] = useState<NumbersGameConfigProps["gamemodeSettings"]>(
     props.gamemodeSettings
   );

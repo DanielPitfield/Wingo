@@ -2,12 +2,13 @@ import React from "react";
 import { Button } from "./Button";
 
 /** Represents a popup modal dialog */
-export const Modal: React.FC<{
+export const Modal = (props: {
   name: string;
   mode: "default" | "info" | "success" | "error";
   title: React.ReactNode;
+  children?: React.ReactNode;
   onClose: () => void;
-}> = (props) => {
+}) => {
   return (
     <div className="modal" data-modal-name={props.name}>
       <div className="modal-wrapper">

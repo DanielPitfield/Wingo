@@ -48,7 +48,7 @@ export function getPrettyWord(text: string): string {
 }
 
 /** */
-const OnlyConnect: React.FC<Props> = (props) => {
+const OnlyConnect = (props: Props) => {
   const [inProgress, setInProgress] = useState(true);
   const [gridWords, setGridWords] = useState<
     { word: string; categoryName: string; inCompleteGroup: boolean; rowNumber: number | null }[]
@@ -56,7 +56,9 @@ const OnlyConnect: React.FC<Props> = (props) => {
   const [selectedWords, setSelectedWords] = useState<{ word: string; categoryName: string }[]>([]);
   const [numCompletedGroups, setNumCompletedGroups] = useState(0);
 
-  const [gamemodeSettings, setGamemodeSettings] = useState<OnlyConnectProps["gamemodeSettings"]>(props.gamemodeSettings);
+  const [gamemodeSettings, setGamemodeSettings] = useState<OnlyConnectProps["gamemodeSettings"]>(
+    props.gamemodeSettings
+  );
 
   const [remainingGuesses, setRemainingGuesses] = useState(gamemodeSettings.numGuesses);
 

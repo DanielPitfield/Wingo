@@ -1,5 +1,3 @@
-import React from "react";
-
 export const GreenToRedColorTransition: ColorTransition = {
   hexColorAt100: "#208c08",
   hexColorAt90: "#0da319",
@@ -27,12 +25,13 @@ interface ColorTransition {
 }
 
 interface Props {
+  children?: React.ReactNode;
   progress: number;
   total: number;
   display: { type: "transition"; colorTransition: ColorTransition } | { type: "solid"; color: string };
 }
 
-const ProgressBar: React.FC<Props> = (props) => {
+const ProgressBar = (props: Props) => {
   const percentage = (props.progress / props.total) * 100;
 
   const backgroundColor =

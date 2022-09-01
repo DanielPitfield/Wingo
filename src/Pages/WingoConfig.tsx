@@ -181,7 +181,7 @@ export function getNewLives(
   return Math.min(extraRows, maxLivesConfig.maxLives);
 }
 
-const WingoConfig: React.FC<Props> = (props) => {
+const WingoConfig = (props: Props) => {
   const [guesses, setGuesses] = useState<string[]>(props.guesses ?? []);
   const [numGuesses, setNumGuesses] = useState(props.defaultNumGuesses);
   const [gameId, setGameId] = useState<string | null>(null);

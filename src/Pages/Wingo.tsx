@@ -85,7 +85,7 @@ interface Props {
   gameshowScore?: number;
 }
 
-const Wingo: React.FC<Props> = (props) => {
+const Wingo = (props: Props) => {
   const [secondsUntilNextDailyWingo, setSecondsUntilNextDailyWingo] = useState(getSecondsUntilMidnight());
   const [playCorrectChimeSoundEffect] = useCorrectChime(props.settings);
   const [playFailureChimeSoundEffect] = useFailureChime(props.settings);
@@ -175,7 +175,7 @@ const Wingo: React.FC<Props> = (props) => {
 
     // Puzzle/Conundrum display row
     if (MODES_WITH_DISPLAY_ROW.includes(props.mode)) {
-      Grid.push(getDisplayRow() ?? <></>)
+      Grid.push(getDisplayRow() ?? <></>);
     }
 
     for (let i = 0; i < props.numGuesses; i++) {

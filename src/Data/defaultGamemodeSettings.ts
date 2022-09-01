@@ -144,8 +144,6 @@ export const defaultWeeklyCrosswordGamemodeSettings: WingoInterlinkedProps["game
   fitRestrictionConfig: { isRestricted: false },
 };
 
-
-
 export const defaultLetterCategoriesGamemodeSettings: LetterCategoriesConfigProps["gamemodeSettings"] = {
   numCategories: 5,
   timerConfig: { isTimed: false },

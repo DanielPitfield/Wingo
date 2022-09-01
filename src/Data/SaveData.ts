@@ -621,10 +621,7 @@ export class SaveData {
     return null;
   }
 
-  public static setWordCodesGamemodeSettings(
-    page: PageName,
-    gameSettings: WordCodesProps["gamemodeSettings"]
-  ) {
+  public static setWordCodesGamemodeSettings(page: PageName, gameSettings: WordCodesProps["gamemodeSettings"]) {
     const itemName = determineLocalStorageItemName(page);
 
     if (!itemName) {

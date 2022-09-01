@@ -8,8 +8,7 @@ const words_eight = [
   { word: "abaculus", canBeTargetWord: true },
   { word: "abacuses", canBeTargetWord: true },
   { word: "abadengo", canBeTargetWord: true },
-    // Temporarily moved; copy from WordArrays folder at root of repo if needed
-
+  // Temporarily moved; copy from WordArrays folder at root of repo if needed
 ];
 
 export const words_eight_guessable = words_eight.map((x) => x.word);

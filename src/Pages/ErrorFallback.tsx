@@ -12,7 +12,7 @@ interface Props {
   version: string;
 }
 
-export const ErrorFallback: React.FC<Props> = (props) => {
+export const ErrorFallback = (props: Props) => {
   // TODO: Save data/local storage, window.naviagtor, prompt/ask for dxDiag file or system specs?
 
   // The error information, settings and version number (formatted)

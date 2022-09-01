@@ -56,7 +56,7 @@ export function generateConundrum() {
     // Expected length of the conundrum (sum of the lengths from the wordLength combination)
     const conundrumLength = wordLengthCombination.reduce((a: number, b: number) => a + b, 0);
 
-    if (conundrumLength > 0 && (constructedWord.length === conundrumLength)) {
+    if (conundrumLength > 0 && constructedWord.length === conundrumLength) {
       // Find words which are anagrams of constructedWord
       const anagrams = getAllWordsOfLength(conundrumLength).filter((word) => checkAnagram(constructedWord, word));
 

@@ -12,7 +12,7 @@ interface Props {
   onClick: (index: number) => void;
 }
 
-export const GameshowOrderItem: React.FC<Props> = (props) => {
+export const GameshowOrderItem = (props: Props) => {
   // TODO: Elements that allow configuration of the properties of the gamemode (e.g wordLength)
   return (
     <DraggableItem

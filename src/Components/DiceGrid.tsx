@@ -4,13 +4,14 @@ import { SettingsData } from "../Data/SaveData";
 import Dice from "./Dice";
 
 interface Props {
+  children?: React.ReactNode;
   diceValues: number[];
   rollDice: () => void;
   settings: SettingsData;
   disabled: boolean;
 }
 
-const DiceGrid: React.FC<Props> = (props) => {
+const DiceGrid = (props: Props) => {
   const numDice = props.diceValues.length;
   const isEvenNumDice = numDice % 2 === 0;
 

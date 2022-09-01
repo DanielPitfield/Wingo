@@ -29,7 +29,7 @@ type Setting =
   | { type: "decimal"; name: string; value: number; onChange: (value: number) => SettingsData }
   | { type: "boolean"; name: string; value: boolean; onChange: (value: boolean) => SettingsData };
 
-export const Settings: React.FC<Props> = (props) => {
+export const Settings = (props: Props) => {
   const [selectedSettingAreaName, setSelectedSettingAreaName] = useState<SettingArea>("Sound");
   const { settings } = props;
 

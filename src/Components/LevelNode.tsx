@@ -8,7 +8,7 @@ import { usePopper } from "react-popper";
 import { useClickChime } from "../Data/Sounds";
 import { AreaConfig } from "../Pages/Area";
 
-export const LevelNode: React.FC<{
+export const LevelNode = (props: {
   level: LevelConfig;
   isSelected: boolean;
   index: number;
@@ -18,7 +18,7 @@ export const LevelNode: React.FC<{
   setTheme: (theme: Theme) => void;
   setSelectedCampaignLevel: (level: LevelConfig) => void;
   setPage: (page: PageName) => void;
-}> = (props) => {
+}) => {
   const [referenceElement, setReferenceElement] = useState(null);
   const [popperElement, setPopperElement] = useState(null);
   const [arrowElement, setArrowElement] = useState(null);

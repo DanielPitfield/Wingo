@@ -2,8 +2,9 @@ import React, { MouseEventHandler } from "react";
 import { SaveData, SettingsData } from "../Data/SaveData";
 import { useClickChime } from "../Data/Sounds";
 
-export const Button: React.FC<{
+type Props = {
   mode: "destructive" | "accept" | "default";
+  children?: React.ReactNode;
   settings?: SettingsData;
   className?: string;
   status?: string;
@@ -11,7 +12,9 @@ export const Button: React.FC<{
   disabled?: boolean;
   useSoundEffect?: boolean;
   additionalProps?: React.DetailedHTMLProps<React.ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement>;
-}> = (props) => {
+};
+
+export const Button = (props: Props) => {
   const [playClickSoundEffect] = useClickChime(props.settings || SaveData.DISABLED_SETTINGS);
 
   return (

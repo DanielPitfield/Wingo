@@ -73,7 +73,7 @@ export function getQuestionSetOutcome(numCorrectAnswers: number, numQuestions: n
 }
 
 /** */
-const Algebra: React.FC<Props> = (props) => {
+const Algebra = (props: Props) => {
   const [inProgress, setInProgress] = useState(true);
   const [guess, setGuess] = useState("");
   const [algebraTemplate, setAlgebraTemplate] = useState<AlgebraConfigProps | undefined>(props.defaultTemplate);
@@ -292,7 +292,7 @@ const Algebra: React.FC<Props> = (props) => {
   function ResetGame() {
     // After last question in template set
     if (!inProgress && algebraTemplate && questionNumber === algebraTemplate.questions.length - 1) {
-    // Achieved target score if a campaign level, otherwise just all answers were correct
+      // Achieved target score if a campaign level, otherwise just all answers were correct
       const wasCorrect = props.campaignConfig.isCampaignLevel
         ? numCorrectAnswers >= Math.min(props.campaignConfig.targetScore, algebraTemplate.questions.length)
         : numCorrectAnswers === algebraTemplate.questions.length;

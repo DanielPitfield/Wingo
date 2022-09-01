@@ -13,7 +13,7 @@ interface Props {
   additionalProps?: React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement>;
 }
 
-const LetterTile: React.FC<Props> = (props) => {
+const LetterTile = (props: Props) => {
   const DELAY_BETWEEN_TILE_REVEAL_SECONDS = 0.4;
 
   /**

@@ -7,7 +7,7 @@ interface Props {
   disabled: boolean;
 }
 
-const NumberTile: React.FC<Props> = (props) => {
+const NumberTile = (props: Props) => {
   return (
     <div
       className="number_tile"

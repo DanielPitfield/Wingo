@@ -14,10 +14,10 @@ interface Props {
   }[];
 }
 
-export const NumberSelectionRow: React.FC<Props> = (props) => {
+export const NumberSelectionRow = (props: Props) => {
   function CreateRow() {
     let tileArray = [];
-    
+
     const originalNumbers = props.numberTileStatuses.filter((x) => x.type === "original");
 
     for (const [index, originalNumberInfo] of originalNumbers.entries()) {

@@ -20,19 +20,18 @@ export interface WingoGameshowProps {
       }
     | { isCampaignLevel: false };
 
-    roundOrderConfig: {
-      firstRoundConfig: { numWingos: number; numPuzzles: number };
-  secondRoundConfig: { numWingos: number; numPuzzles: number };
-  thirdRoundConfig: {
-    numFourLengthWingos: number;
-    numPuzzles: number;
-    numFiveLengthWingos: number;
-    numberPuzzles: number;
+  roundOrderConfig: {
+    firstRoundConfig: { numWingos: number; numPuzzles: number };
+    secondRoundConfig: { numWingos: number; numPuzzles: number };
+    thirdRoundConfig: {
+      numFourLengthWingos: number;
+      numPuzzles: number;
+      numFiveLengthWingos: number;
+      numberPuzzles: number;
+    };
+    hasFinalRound: boolean;
   };
-  hasFinalRound: boolean;
-    }
 
-  
   defaultNumGuesses: number;
 }
 
@@ -155,7 +154,7 @@ export function displayGameshowSummary(summary: RoundInfo[], settings: SettingsD
   );
 }
 
-export const WingoGameshow: React.FC<Props> = (props) => {
+export const WingoGameshow = (props: Props) => {
   const [inProgress, setInProgress] = useState(true);
   const [roundOrder, setRoundOrder] = useState<
     { isPuzzle: boolean; wordLength: number; basePoints: number; pointsLostPerGuess: number }[]

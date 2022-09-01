@@ -61,6 +61,3 @@ export const square_25 = [
   { points: 300, colour: "purple" },
   { points: 500, colour: "red" },
 ];
-
-
-  

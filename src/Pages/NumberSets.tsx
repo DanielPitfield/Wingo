@@ -58,7 +58,7 @@ interface Props extends NumberSetsProps {
 }
 
 /** */
-const NumberSets: React.FC<Props> = (props) => {
+const NumberSets = (props: Props) => {
   // Max number of characters permitted in a guess
   const MAX_LENGTH = 6;
 
@@ -240,7 +240,7 @@ const NumberSets: React.FC<Props> = (props) => {
       const wasCorrect = guess === numberSet?.question.correctAnswer.toString();
       props.onComplete(wasCorrect);
 
-    /*
+      /*
     // TODO: wasCorrect campaign pass criteria with multiple questions
     // Achieved target score if a campaign level, otherwise just all answers were correct
     const wasCorrect = props.campaignConfig.isCampaignLevel

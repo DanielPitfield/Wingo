@@ -10,7 +10,7 @@ interface Props {
 }
 
 /** */
-const OperatorTile: React.FC<Props> = (props) => {
+const OperatorTile = (props: Props) => {
   /** */
   function cycleOperator() {
     // Allow changing operator after a target number has been decided and before the timer runs out

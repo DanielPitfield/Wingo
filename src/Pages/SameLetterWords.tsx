@@ -45,7 +45,7 @@ interface Props extends SameLetterWordsProps {
 }
 
 /** */
-const SameLetterWords: React.FC<Props> = (props) => {
+const SameLetterWords = (props: Props) => {
   const [inProgress, setInProgress] = useState(true);
   const [selectedWords, setSelectedWords] = useState<string[]>([]);
   const [validWords, setValidWords] = useState<string[]>([]);

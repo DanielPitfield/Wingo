@@ -4,10 +4,7 @@ import { Challenge, ChallengeReward } from "./Challenge";
 import { useState } from "react";
 import { BaseChallenge } from "../Data/Challenges/BaseChallenge";
 
-export const ChallengesInfo: React.FC<{
-  settings: SettingsData;
-  addGold: (gold: number) => void;
-}> = (props) => {
+export const ChallengesInfo = (props: { settings: SettingsData; addGold: (gold: number) => void }) => {
   const history = SaveData.getHistory();
   const [selectedChallenge, setSelectedChallenge] = useState<BaseChallenge | null>();
 

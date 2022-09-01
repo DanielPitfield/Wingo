@@ -2,11 +2,12 @@ import React, { MutableRefObject, useRef } from "react";
 import { useOrder } from "react-draggable-order";
 
 interface Props {
+  children?: React.ReactNode;
   index: number;
   onMove: (toIndex: number) => void;
 }
 
-export const DraggableItem: React.FC<Props> = (props) => {
+export const DraggableItem = (props: Props) => {
   const elementRef = useRef<HTMLDivElement>() as MutableRefObject<HTMLDivElement>;
   const wrapperRef = useRef<HTMLDivElement>() as MutableRefObject<HTMLDivElement>;
 
@@ -37,7 +38,8 @@ export const DraggableItem: React.FC<Props> = (props) => {
     <div ref={wrapperRef} className="draggable-item-wrapper" data-is-hovered-over={isHover}>
       <div
         ref={elementRef}
-        className="draggable-item" data-is-grabbed={isGrabbing}
+        className="draggable-item"
+        data-is-grabbed={isGrabbing}
         style={{ ...elementStyle }}
         onMouseMove={mouseMove}
         onTouchMove={touchMove}

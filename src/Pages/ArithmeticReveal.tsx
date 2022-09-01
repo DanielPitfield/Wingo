@@ -58,7 +58,7 @@ interface Props extends ArithmeticRevealProps {
 }
 
 /** */
-const ArithmeticReveal: React.FC<Props> = (props) => {
+const ArithmeticReveal = (props: Props) => {
   const [targetNumbers, setTargetNumbers] = useState<number[]>([]);
   const [revealState, setRevealState] = useState<{ type: "in-progress"; revealedTiles: number } | { type: "finished" }>(
     { type: "in-progress", revealedTiles: 0 }

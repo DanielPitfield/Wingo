@@ -46,7 +46,7 @@ interface Props extends SequencePuzzleProps {
 }
 
 /** Puzzle config */
-export const SequencePuzzle: React.FC<Props> = (props) => {
+export const SequencePuzzle = (props: Props) => {
   // Result of the guess
   const [result, setResult] = useState<"in-progress" | "correct" | "incorrect">("in-progress");
 

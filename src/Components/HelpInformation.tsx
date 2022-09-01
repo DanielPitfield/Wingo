@@ -8,7 +8,7 @@ interface Props {
   onClose: () => void;
 }
 
-export const HelpInformation: React.FC<Props> = (props) => {
+export const HelpInformation = (props: Props) => {
   const pageInfo = pageDescriptions.find((x) => x.page === props.page);
 
   return (

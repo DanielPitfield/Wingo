@@ -10,7 +10,7 @@ import BackgroundImageSrc from "../Data/Images/background.png";
 import { FiCheck, FiLock, FiPlay } from "react-icons/fi";
 
 /** The entire campaign, showing the list of areas */
-export const Campaign: React.FC<{
+export const Campaign = (props: {
   theme: Theme;
   settings: SettingsData;
   onlyShowCurrentArea?: boolean;
@@ -18,7 +18,7 @@ export const Campaign: React.FC<{
   setSelectedArea: (areaConfig: AreaConfig) => void;
   setSelectedCampaignLevel: (level: LevelConfig) => void;
   setPage: (page: PageName) => void;
-}> = (props) => {
+}) => {
   /** */
   function onAreaClick(area: AreaConfig, unlockStatus: CampaignSaveData["areas"][0]["status"]) {
     // Button should be disabled, but just in case
@@ -111,9 +111,7 @@ export const Campaign: React.FC<{
                   </>
                 )}
               </Button>
-              {unlockStatus === "unlocked"
-                ? `${Math.max(0, currentLevelCount - 1)} / ${area.levels.length}`
-                : "? / ?"}
+              {unlockStatus === "unlocked" ? `${Math.max(0, currentLevelCount - 1)} / ${area.levels.length}` : "? / ?"}
             </span>
           </div>
         );

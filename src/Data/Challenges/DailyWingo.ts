@@ -14,7 +14,7 @@ export class DailyWingo extends BaseChallenge {
 
   /** @inheritdoc */
   public unit = "";
-  
+
   /** @inheritdoc */
   public reward = () => ({ goldCoins: 500, xp: 0 });
 

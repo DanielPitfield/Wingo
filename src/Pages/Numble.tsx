@@ -124,7 +124,7 @@ export function randomIntFromInterval(min: number, max: number) {
   return Math.floor(Math.random() * (max - min + 1) + min);
 }
 
-const Numble: React.FC<Props> = (props) => {
+const Numble = (props: Props) => {
   const [diceValues, setdiceValues] = useState<number[]>(
     Array.from({ length: props.gamemodeSettings.numDice }).map((x) => randomDiceNumber())
   );

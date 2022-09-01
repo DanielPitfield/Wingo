@@ -1,12 +1,12 @@
-import React from "react";
 import Collapsible from "react-collapsible";
 import { MessageNotification } from "./MessageNotification";
 
 interface Props {
+  children?: React.ReactNode;
   //onClick?: () => void;
 }
 
-const GamemodeSettingsMenu: React.FC<Props> = (props) => {
+const GamemodeSettingsMenu = (props: Props) => {
   return (
     <Collapsible
       className="gamemode-settings-wrapper"

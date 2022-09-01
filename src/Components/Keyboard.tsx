@@ -29,7 +29,7 @@ interface Props {
 export const DEFAULT_ALPHABET_STRING = "abcdefghijklmnopqrstuvwxyz";
 export const DEFAULT_ALPHABET = DEFAULT_ALPHABET_STRING.split("");
 
-export const Keyboard: React.FC<Props> = (props) => {
+export const Keyboard = (props: Props) => {
   const [playClickSoundEffect] = useClickChime(props.settings);
   const alphabet = props.customAlphabet || DEFAULT_ALPHABET;
 

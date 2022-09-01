@@ -14,7 +14,7 @@ interface Props {
   settings: SettingsData;
 }
 
-export const LetterSelectionRow: React.FC<Props> = (props) => {
+export const LetterSelectionRow = (props: Props) => {
   function CreateRow() {
     let tileArray = [];
 

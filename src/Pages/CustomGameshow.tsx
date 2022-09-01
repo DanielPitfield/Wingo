@@ -30,7 +30,7 @@ interface Props extends CustomGameshowProps {
 const gameshowTypes = ["Custom", "Wingo", "LettersNumbers"] as const;
 export type gameshowType = typeof gameshowTypes[number];
 
-export const CustomGameshow: React.FC<Props> = (props) => {
+export const CustomGameshow = (props: Props) => {
   const [currentGameshowType, setCurrentGameshowType] = useState<gameshowType>("Custom");
   const [availableModes, setAvailableModes] = useState<pageDescription[]>(getAvailableModes());
   const [queuedModes, setQueuedModes] = useState<pageDescription[]>([]);

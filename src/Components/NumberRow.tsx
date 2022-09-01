@@ -64,7 +64,7 @@ export function calculateTotal(guess: Guess): number | null {
   return result;
 }
 
-export const NumberRow: React.FC<Props> = (props) => {
+export const NumberRow = (props: Props) => {
   return (
     <div className="number_row">
       <NumberTile

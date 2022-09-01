@@ -83,7 +83,7 @@ interface Props {
  * @param props
  * @returns
  */
-const NumbersGame: React.FC<Props> = (props) => {
+const NumbersGame = (props: Props) => {
   // The number of operands the numberPuzzle can compute a solution for (with no noticeable delay)
   const NUMBERPUZZLE_MAX_NUM_OPERANDS_WITHHOUT_DELAY = 6;
   // The maximum possible number of operands the numberPuzzle can a compute solution for (without the browser crashing)
@@ -114,7 +114,7 @@ const NumbersGame: React.FC<Props> = (props) => {
       return null;
     }
 
-    const smallNumbers = Array.from({length: 10}, (_, i) => i + 1);
+    const smallNumbers = Array.from({ length: 10 }, (_, i) => i + 1);
 
     return pickRandomElementFrom(smallNumbers);
   }

@@ -14,13 +14,13 @@ export interface AreaConfig {
 }
 
 /** Portion of the campaign, with many levels */
-export const Area: React.FC<{
+export const Area = (props: {
   area: AreaConfig;
   settings: SettingsData;
   setTheme: (theme: Theme) => void;
   setSelectedCampaignLevel: (level: LevelConfig) => void;
   setPage: (page: PageName) => void;
-}> = (props) => {
+}) => {
   const [selectedLevel, setSelectedLevel] = useState<LevelConfig | null>(null);
 
   // LEVEL SELECTION

@@ -5,7 +5,7 @@ import { useIntroMusic } from "../Data/Sounds";
 import { SettingsData } from "../Data/SaveData";
 import { StudioLogo } from "../Components/StudioLogo";
 
-export const SplashScreen: React.FC<{ loadingState: "loading" | "loaded"; settings: SettingsData }> = (props) => {
+export const SplashScreen = (props: { loadingState: "loading" | "loaded"; settings: SettingsData }) => {
   const [playIntroSrc] = useIntroMusic(props.settings);
 
   useEffect(() => playIntroSrc(), [playIntroSrc]);

@@ -6,13 +6,13 @@ import { BaseChallenge } from "../Data/Challenges/BaseChallenge";
 import { Button } from "./Button";
 import { useNotificationChime } from "../Data/Sounds";
 
-export const Challenge: React.FC<{
+export const Challenge = (props: {
   mode: "enhanced" | "default";
   challenge: BaseChallenge;
   settings: SettingsData;
   addGold: (gold: number) => void;
   onClick?: () => void;
-}> = (props) => {
+}) => {
   const [playNotificationChime] = useNotificationChime(props.settings);
 
   const { challenge } = props;
@@ -62,7 +62,7 @@ export const Challenge: React.FC<{
   );
 };
 
-export const ChallengeReward: React.FC<{ goldCoins: number }> = (props) => {
+export const ChallengeReward = (props: { goldCoins: number }) => {
   return (
     <span className="challenge-reward">
       <img className="challenge-reward-icon" height={18} width={18} src={GoldCoin} alt="" />

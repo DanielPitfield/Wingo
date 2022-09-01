@@ -21,7 +21,7 @@ interface Props {
   applyAnimation?: boolean;
 }
 
-export const WordRow: React.FC<Props> = (props) => {
+export const WordRow = (props: Props) => {
   let wordSummary: {
     character: string;
     status: "incorrect" | "contains" | "correct" | "not set" | "not in word";
@@ -87,7 +87,7 @@ export const WordRow: React.FC<Props> = (props) => {
 
   function CreateRow() {
     let tileArray = [];
-    
+
     for (let i = 0; i < props.length; i++) {
       const allCorrect = wordSummary.every((letter) => letter.status === "correct");
 

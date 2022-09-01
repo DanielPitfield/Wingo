@@ -22,7 +22,7 @@ interface Props {
   addGold: (gold: number) => void;
 }
 
-export const LobbyMenu: React.FC<Props> = (props) => {
+export const LobbyMenu = (props: Props) => {
   const history = SaveData.getHistory();
 
   function renderGameModeTile(page: PageName) {

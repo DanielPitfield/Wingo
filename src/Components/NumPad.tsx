@@ -15,7 +15,7 @@ interface Props {
 
 export const Numbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
 
-export const NumPad: React.FC<Props> = (props) => {
+export const NumPad = (props: Props) => {
   const [playClickSoundEffect] = useClickChime(props.settings);
 
   React.useEffect(() => {
