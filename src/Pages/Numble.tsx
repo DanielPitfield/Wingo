@@ -150,7 +150,7 @@ const Numble = (props: Props) => {
   const [mostRecentTotalSeconds, setMostRecentTotalSeconds] = useState(
     props.gamemodeSettings?.timerConfig?.isTimed === true
       ? props.gamemodeSettings?.timerConfig.seconds
-      : getGamemodeDefaultTimerValue("numble")
+      : getGamemodeDefaultTimerValue("Numble")
   );
 
   const teamNumberColourMappings = [
