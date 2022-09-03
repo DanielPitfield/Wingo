@@ -247,7 +247,7 @@ export const defaultNumbleGamemodeSettings: NumbleConfigProps["gamemodeSettings"
   // How long to make a guess after the dice have been rolled?
   guessTimerConfig: { isTimed: false },
   // How long overall until the game ends?
-  timerConfig: { isTimed: true, seconds: getGamemodeDefaultTimerValue("numble") },
+  timerConfig: { isTimed: true, seconds: getGamemodeDefaultTimerValue("Numble") },
 };
 
 export const defaultWingoGameshowRoundOrder = {
