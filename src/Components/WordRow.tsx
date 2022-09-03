@@ -1,4 +1,3 @@
-import React from "react";
 import { PageName } from "../PageNames";
 import LetterTile from "./LetterTile";
 import { SettingsData } from "../Data/SaveData";

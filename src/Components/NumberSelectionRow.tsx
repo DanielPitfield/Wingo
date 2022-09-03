@@ -1,4 +1,3 @@
-import React from "react";
 import NumberTile from "./NumberTile";
 
 interface Props {

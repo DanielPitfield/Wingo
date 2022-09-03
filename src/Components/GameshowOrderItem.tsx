@@ -1,6 +1,5 @@
-import React from "react";
 import { arrayMove } from "react-draggable-order";
-import { AiFillCloseSquare, AiOutlinePlus } from "react-icons/ai";
+import { AiFillCloseSquare } from "react-icons/ai";
 import { pageDescription } from "../PageDescriptions";
 import { DraggableItem } from "./DraggableItem";
 

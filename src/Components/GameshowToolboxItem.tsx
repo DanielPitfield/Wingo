@@ -1,4 +1,3 @@
-import React from "react";
 import { AiOutlinePlus } from "react-icons/ai";
 import { pageDescription } from "../PageDescriptions";
 import { Button } from "./Button";

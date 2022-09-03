@@ -1,4 +1,3 @@
-import React from "react";
 import NumberTile from "./NumberTile";
 import OperatorTile from "./OperatorTile";
 import { Guess, operators } from "../Pages/NumbersGameConfig";

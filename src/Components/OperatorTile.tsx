@@ -1,4 +1,3 @@
-import React from "react";
 import { operators } from "../Pages/NumbersGameConfig";
 
 interface Props {
