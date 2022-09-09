@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Button } from "../Components/Button";
 import { NumberPuzzle } from "../Data/NumbersGameSolver";
 import GamemodeSettingsMenu from "../Components/GamemodeSettingsMenu";
-import { MessageNotification } from "../Components/MessageNotification";
+import { MessageNotification, MessageNotificationProps } from "../Components/MessageNotification";
 import ProgressBar, { GreenToRedColorTransition } from "../Components/ProgressBar";
 import { SaveData, SettingsData } from "../Data/SaveData";
 import { Theme } from "../Data/Themes";
@@ -669,114 +669,100 @@ const Numble = (props: Props) => {
     }
   }
 
+  // The type of message and the displayed message for each singleplayer end game status
+  function getOutcomeNotificationMessage(): { messageType: MessageNotificationProps["type"]; message: string } {
+    // Can only end with this status in singleplayer
+    if (props.status === "game-over-incorrect-tile") {
+      return { messageType: "error", message: "Incorrect pin chosen" };
+    }
+    // Reached the target score for a campaign level
+    if (props.campaignConfig.isCampaignLevel && props.status === "game-over-target-score") {
+      return { messageType: "success", message: `Reached target score of ${props.campaignConfig.targetScore}` };
+    }
+    if (props.status === "game-over-timer-ended") {
+      return { messageType: "default", message: "No remaining time" };
+    }
+    if (props.status === "game-over-no-more-pins") {
+      return { messageType: "default", message: "All pins picked" };
+    }
+    return { messageType: "default", message: "" };
+  }
+
   function displayOutcome(): React.ReactNode {
     if (isGameInProgress()) {
       return;
     }
 
+    if (props.gamemodeSettings.numTeams <= 0) {
+      return;
+    }
+
     // Singleplayer
     if (props.gamemodeSettings.numTeams === 1) {
+      const outcomeMessageInfo = getOutcomeNotificationMessage();
       const finalScore = totalPoints[0].total;
 
-      if (props.status === "game-over-incorrect-tile") {
-        // Can only end with this status in singleplayer
-        return (
-          <MessageNotification type="error">
+      return (
+        <MessageNotification type={outcomeMessageInfo.messageType}>
+          <>
             <strong>Game over</strong>
             <br />
-            Incorrect pin
+            {outcomeMessageInfo.message}
             <br />
             Final Score: {finalScore ?? 0}
-          </MessageNotification>
-        );
-      } else if (props.campaignConfig.isCampaignLevel && props.status === "game-over-target-score") {
-        return (
-          <MessageNotification type="success">
-            <strong>Game Over</strong>
-            <br />
-            Reached target score of {props.campaignConfig.targetScore}
-            <br />
-            Final Score: {finalScore ?? 0}
-          </MessageNotification>
-        );
-      } else if (props.status === "game-over-timer-ended") {
-        return (
-          <MessageNotification type="default">
-            <strong>Game Over</strong>
-            <br />
-            No remaining time
-            <br />
-            Final Score: {finalScore ?? 0}
-          </MessageNotification>
-        );
-      } else if (props.status === "game-over-no-more-pins") {
-        return (
-          <MessageNotification type="default">
-            <strong>Game over</strong>
-            <br />
-            All pins picked
-            <br />
-            Final Score: {finalScore ?? 0}
-          </MessageNotification>
-        );
-      }
+          </>
+        </MessageNotification>
+      );
     }
-    // Multiplayer
-    else if (props.gamemodeSettings.numTeams > 1) {
-      // TODO: Better way of doing all this, reduce()?
-      const teamScores = totalPoints.map((team) => team.total);
-      const winningScore = Math.max(...teamScores);
 
-      // There may be a draw and so more than one team number (and name)
+    // Multiplayer
+    if (props.gamemodeSettings.numTeams > 1) {
+      // Why has the game ended?
+      const gameStatusMessage = props.status === "game-over-timer-ended" ? "No remaining time" : "All pins picked";
+
+      // Determine the winner(s)
+      const teamScores = totalPoints.map((team) => team.total);
+      const highestScore = Math.max(...teamScores);
+
+      // There may be a draw and so more than one team with this highest score
       const winningTeamNumbers = totalPoints
-        .filter((team) => team.total === winningScore)
+        .filter((team) => team.total === highestScore)
         .map((team) => team.teamNumber);
+
+      // Find the team colour(s) of the winning team(s)
       const winningTeamNames = teamNumberColourMappings
         .filter((team) => winningTeamNumbers.includes(team.teamNumber))
         .map((team) => team.teamName);
 
-      const outcomeString =
+      // The message stating the winner of the game
+      const winningTeamMessage =
         winningTeamNames.length === 1 ? `${winningTeamNames[0]} team wins!` : `Draw - ${winningTeamNames.join(", ")}`;
 
-      if (props.status === "game-over-timer-ended") {
-        return (
-          <MessageNotification type="default">
-            <strong>Game Over</strong>
-            <br />
-            No remaining time
-            <br />
-            {outcomeString}
-            <br />
-            {totalPoints.map((teamPoints) => (
-              <>
-                <br></br>
-                <>{`${teamNumberColourMappings.find((x) => x.teamNumber === teamPoints.teamNumber)?.teamName}: ${
-                  totalPoints.find((x) => x.teamNumber === teamPoints.teamNumber)?.total
-                }`}</>
-              </>
-            ))}
-          </MessageNotification>
-        );
-      } else if (props.status === "game-over-no-more-pins") {
-        return (
-          <MessageNotification type="default">
-            <strong>Game Over</strong>
-            <br />
-            All pins picked
-            <br />
-            {outcomeString}
-            <br />
-            {totalPoints.map((teamPoints) => (
-              <>
-                <br></br>
-                <>{`${teamNumberColourMappings.find((x) => x.teamNumber === teamPoints.teamNumber)?.teamName}: ${
-                  totalPoints.find((x) => x.teamNumber === teamPoints.teamNumber)?.total
-                }`}</>
-              </>
-            ))}
-          </MessageNotification>
-        );
-      }
+      // Every team's score shown next to their team colour name
+      const formattedScores = (
+        <>
+          {totalPoints.map((teamPoints) => (
+            <>
+              <br />
+              {`${teamNumberColourMappings.find((x) => x.teamNumber === teamPoints.teamNumber)?.teamName}: ${
+                totalPoints.find((x) => x.teamNumber === teamPoints.teamNumber)?.total
+              }`}
+            </>
+          ))}
+        </>
+      );
+
+      return (
+        <MessageNotification type="default">
+          <strong>Game Over</strong>
+          <br />
+          {gameStatusMessage}
+          <br />
+          {winningTeamMessage}
+          <br />
+          {formattedScores}
+        </MessageNotification>
+      );
     }
   }
 

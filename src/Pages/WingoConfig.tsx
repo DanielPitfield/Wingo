@@ -714,7 +714,6 @@ const WingoConfig = (props: Props) => {
 
     // Remove row for failiure in limitless mode
     if (props.mode === "limitless" && numGuesses > 1 && !isCorrectAnswer) {
-      // TODO: Fix how when you change settings, a row gets removed every time
       setNumGuesses(numGuesses - 1); // Remove a row
     }
 

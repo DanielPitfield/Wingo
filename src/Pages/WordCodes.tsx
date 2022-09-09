@@ -557,14 +557,14 @@ const WordCodes = (props: Props) => {
       return;
     }
 
-    let messageNotification;
+    let outcomeNotification;
 
     if (props.mode === "match") {
       const numCorrectTiles = wordTiles.filter((x) => x.status === "correct").length;
       const successCondition = numCorrectTiles === wordTiles.length;
 
       // Show how many tiles are in correct position
-      messageNotification = (
+      outcomeNotification = (
         <>
           <MessageNotification type={successCondition ? "success" : "error"}>
             <strong>{successCondition ? "All tiles in the correct order!" : `${numCorrectTiles} tiles correct`}</strong>
@@ -590,7 +590,7 @@ const WordCodes = (props: Props) => {
       // Question was the last in the set of questions
       const lastQuestion = questionNumber === numQuestions - 1;
 
-      messageNotification = (
+      outcomeNotification = (
         <>
           {/* Show number of correct answers and restart button after last question */}
           {lastQuestion && (
@@ -638,7 +638,7 @@ const WordCodes = (props: Props) => {
       );
     }
 
-    return messageNotification;
+    return outcomeNotification;
   }
 
   // Restart with new word codes and set of questions

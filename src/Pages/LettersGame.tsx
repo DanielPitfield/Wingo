@@ -346,9 +346,10 @@ const LettersGame = (props: Props) => {
         ))}
       </ul>
     );
-
-    let outcomeNotification;
+    
     const GOLD_PER_LETTER = 30;
+    
+    let outcomeNotification;
 
     if (bestGuess) {
       // Reward gold based on how long the selected guess is

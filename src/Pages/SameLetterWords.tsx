@@ -360,16 +360,16 @@ const SameLetterWords = (props: Props) => {
     const successCondition =
       validWords.every((word) => selectedWords.includes(word)) && validWords.length > 0 && selectedWords.length > 0;
 
-    let messageNotification;
+    let outcomeNotification;
 
     if (successCondition) {
-      messageNotification = (
+      outcomeNotification = (
         <MessageNotification type="success">
           All <strong>{validWords.length}</strong> words with the same letters found!
         </MessageNotification>
       );
     } else {
-      messageNotification = (
+      outcomeNotification = (
         <MessageNotification type="error">
           You didn't find the <strong>{validWords.length}</strong> words with the same letters
         </MessageNotification>
@@ -378,7 +378,7 @@ const SameLetterWords = (props: Props) => {
 
     return (
       <>
-        {messageNotification}
+        {outcomeNotification}
 
         <br></br>
 

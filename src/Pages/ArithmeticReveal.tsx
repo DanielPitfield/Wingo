@@ -373,11 +373,11 @@ const ArithmeticReveal = (props: Props) => {
     // Last checkpoint
     const lastCheckpoint = currentCheckpoint === gamemodeSettings.numCheckpoints - 1;
 
-    let messageNotification;
+    let outcomeNotification;
 
     // Current checkpoint guess correct and more checkpoints to go
     if (successCondition && !lastCheckpoint) {
-      messageNotification = (
+      outcomeNotification = (
         <>
           <MessageNotification type="success">
             <strong>Correct!</strong>
@@ -400,7 +400,7 @@ const ArithmeticReveal = (props: Props) => {
     }
     // Last checkpoint guess correct
     else if (successCondition && lastCheckpoint) {
-      messageNotification = (
+      outcomeNotification = (
         <>
           <MessageNotification type="success">
             <strong>Correct!</strong>
@@ -423,7 +423,7 @@ const ArithmeticReveal = (props: Props) => {
     }
     // Incorrect guess
     else if (!successCondition) {
-      messageNotification = (
+      outcomeNotification = (
         <>
           <MessageNotification type="error">
             <strong>Incorrect!</strong>
@@ -449,7 +449,7 @@ const ArithmeticReveal = (props: Props) => {
       );
     }
 
-    return <>{messageNotification}</>;
+    return <>{outcomeNotification}</>;
   }
 
   function ResetGame() {

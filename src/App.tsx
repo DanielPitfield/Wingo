@@ -374,7 +374,6 @@ export const App = () => {
         );
 
       case "wingo/interlinked":
-        // TODO: Directly return WingoInterlinked component?
         return (
           <WingoConfig
             {...commonProps}
