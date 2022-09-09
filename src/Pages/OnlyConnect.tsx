@@ -369,7 +369,7 @@ const OnlyConnect = (props: Props) => {
           else {
             const categoryWords: string[] = gridWords
               .filter((word) => word.categoryName === categoryNames[i])
-              .map((x) => x.word);
+              .map((x) => getPrettyWord(x.word));
 
             // Show the name and words of the category
             // TODO: Formatting of correct words
@@ -395,12 +395,17 @@ const OnlyConnect = (props: Props) => {
       return;
     }
 
+    // All groups were found
+    const gridCompleted = numCompletedGroups === gamemodeSettings.numGroups;
+
     return (
       <>
-        <MessageNotification type={numCompletedGroups === gamemodeSettings.numGroups ? "success" : "error"}>
+        <MessageNotification type={gridCompleted ? "success" : "error"}>
           <strong>
-            {numCompletedGroups === gamemodeSettings.numGroups
+            {gridCompleted
               ? "All groups found!"
+              : numCompletedGroups === 1
+              ? "1 group found"
               : `${numCompletedGroups} groups found`}
           </strong>
           <br />
@@ -418,7 +423,7 @@ const OnlyConnect = (props: Props) => {
 
   function ResetGame() {
     if (!inProgress) {
-      // ALl groups correctly found
+      // All groups correctly found
       const wasCorrect = numCompletedGroups === gamemodeSettings.numGroups;
       props.onComplete(wasCorrect);
     }
