@@ -219,7 +219,7 @@ const NumberSets = (props: Props) => {
           )}
         </MessageNotification>
 
-        <br></br>
+        <br />
 
         {!inProgress && (
           <Button

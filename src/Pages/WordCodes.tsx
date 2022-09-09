@@ -570,7 +570,7 @@ const WordCodes = (props: Props) => {
             <strong>{successCondition ? "All tiles in the correct order!" : `${numCorrectTiles} tiles correct`}</strong>
           </MessageNotification>
 
-          <br></br>
+          <br />
 
           <Button
             mode="accept"
@@ -599,7 +599,7 @@ const WordCodes = (props: Props) => {
                 <strong>{`${numCorrectAnswers} / ${numQuestions} correct`}</strong>
               </MessageNotification>
 
-              <br></br>
+              <br />
 
               <Button
                 mode="accept"
@@ -610,18 +610,18 @@ const WordCodes = (props: Props) => {
                 {props.campaignConfig.isCampaignLevel ? LEVEL_FINISHING_TEXT : "Restart"}
               </Button>
 
-              <br></br>
+              <br />
             </>
           )}
 
           {/* Show outcome of current question (and how many questions are left) */}
           <MessageNotification type={successCondition ? "success" : "error"}>
             <strong>{successCondition ? "Correct!" : "Incorrect!"}</strong>
-            <br></br>
+            <br />
             <span>{`${questionNumber + 1} / ${numQuestions} questions completed`}</span>
           </MessageNotification>
 
-          <br></br>
+          <br />
 
           {/* Show next button if there are more questions */}
           {!lastQuestion && (

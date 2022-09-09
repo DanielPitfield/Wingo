@@ -381,11 +381,11 @@ const ArithmeticReveal = (props: Props) => {
         <>
           <MessageNotification type="success">
             <strong>Correct!</strong>
-            <br></br>
+            <br />
             <span>{`${currentCheckpoint + 1} / ${gamemodeSettings.numCheckpoints} checkpoints completed`}</span>
           </MessageNotification>
 
-          <br></br>
+          <br />
 
           <Button
             mode="accept"
@@ -404,11 +404,11 @@ const ArithmeticReveal = (props: Props) => {
         <>
           <MessageNotification type="success">
             <strong>Correct!</strong>
-            <br></br>
+            <br />
             <span>{`Completed all ${gamemodeSettings.numCheckpoints} checkpoints!`}</span>
           </MessageNotification>
 
-          <br></br>
+          <br />
 
           <Button
             mode="accept"
@@ -435,7 +435,7 @@ const ArithmeticReveal = (props: Props) => {
             {tiles[currentCheckpoint].join(" ")}
           </MessageNotification>
 
-          <br></br>
+          <br />
 
           <Button
             mode="accept"

@@ -380,7 +380,7 @@ const SameLetterWords = (props: Props) => {
       <>
         {outcomeNotification}
 
-        <br></br>
+        <br />
 
         <Button mode="accept" settings={props.settings} onClick={() => ResetGame()}>
           {props.isCampaignLevel ? LEVEL_FINISHING_TEXT : "Restart"}

@@ -356,11 +356,12 @@ const OnlyConnect = (props: Props) => {
             // Player completed this category, just show what the name of the category was
             return (
               <>
-                {categoryNames[i]}
-                <br></br>
+                {categoryNames[i] ?? ""}
+                <br />
               </>
             );
-          } else {
+          } 
+          else {
             // Player did NOT complete the category, show the name and words of the category
             const categoryWords: string[] = gridWords
               .filter((word) => word.categoryName === categoryNames[i])
@@ -369,7 +370,7 @@ const OnlyConnect = (props: Props) => {
             return (
               <>
                 <>{`${categoryNames[i]} (${categoryWords.join(", ")})`}</>
-                <br></br>
+                <br />
               </>
             );
           }
@@ -399,7 +400,7 @@ const OnlyConnect = (props: Props) => {
           </strong>
         </MessageNotification>
 
-        <br></br>
+        <br />
 
         <Button mode="accept" settings={props.settings} onClick={() => ResetGame()}>
           {props.isCampaignLevel ? LEVEL_FINISHING_TEXT : "Restart"}

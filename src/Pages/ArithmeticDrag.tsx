@@ -499,7 +499,7 @@ const ArithmeticDrag = (props: Props) => {
           </strong>
         </MessageNotification>
 
-        <br></br>
+        <br />
 
         <Button mode="accept" settings={props.settings} onClick={() => ResetGame()}>
           {props.campaignConfig.isCampaignLevel ? LEVEL_FINISHING_TEXT : "Restart"}

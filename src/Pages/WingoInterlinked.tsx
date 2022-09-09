@@ -1021,9 +1021,9 @@ export const WingoInterlinked = (props: Props) => {
           <strong>{gridCompleted ? "Correct!" : "Incorrect"}</strong>
           {!gridCompleted && (
             <>
-              <br></br>
+              <br />
               <>The correct answers were:</>
-              <br></br>
+              <br />
               <>{gridConfig.words.map((x) => x.word.toUpperCase()).join(", ")}</>
             </>
           )}

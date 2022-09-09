@@ -448,13 +448,13 @@ const Wingo = (props: Props) => {
             <strong>{props.currentWord.toUpperCase()}</strong> is not a valid word
             {!props.isCampaignLevel && (
               <>
-                <br></br>
+                <br />
                 The word was: <strong>{props.targetWord.toUpperCase()}</strong>
               </>
             )}
             {props.mode === "limitless" && (
               <>
-                <br></br>
+                <br />
                 <strong>-1 life</strong>
               </>
             )}
@@ -488,7 +488,7 @@ const Wingo = (props: Props) => {
             {!props.isCampaignLevel && (
               <>
                 The word was: <strong>{props.targetWord.toUpperCase()}</strong>
-                <br></br>
+                <br />
               </>
             )}
             <strong>-1 life</strong>
