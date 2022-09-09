@@ -59,8 +59,6 @@ export const categoryMappings = [
   { name: "Herbs and Spices", array: words_herbs_and_spices },
   { name: "Meats and Fish", array: words_meats_and_fish },
   { name: "Pizza Toppings", array: words_pizza_toppings },
-  // TODO: Should puzzles be here? The puzzles are mostly unrelated to each other and aren't really a category
-  { name: "Puzzles", array: words_puzzles },
   { name: "Sports", array: words_sports },
   { name: "Vegetables", array: words_vegetables },
 ];

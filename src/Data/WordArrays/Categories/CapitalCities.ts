@@ -1,4 +1,4 @@
-// TODO: https://www.worlddata.info/capital-cities.php#europa
+// https://www.worlddata.info/capital-cities.php#europa
 
 export const words_capital_cities = [
   { hint: "Capital of Åland Islands", word: "mariehamn" },
