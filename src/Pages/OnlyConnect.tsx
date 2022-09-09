@@ -359,10 +359,10 @@ const OnlyConnect = (props: Props) => {
           if (completeCategoryNames.includes(categoryNames[i])) {
             // Just show what the name of the category was
             return (
-              <>
+              <React.Fragment key={displayedCategoryName}>
                 <br />
                 {displayedCategoryName}
-              </>
+              </React.Fragment>
             );
           }
           // Player did NOT complete the category
@@ -372,12 +372,11 @@ const OnlyConnect = (props: Props) => {
               .map((x) => getPrettyWord(x.word));
 
             // Show the name and words of the category
-            // TODO: Formatting of correct words
             return (
-              <>
+              <React.Fragment key={displayedCategoryName}>
                 <br />
                 <>{`${displayedCategoryName} (${categoryWords.join(", ")})`}</>
-              </>
+              </React.Fragment>
             );
           }
         })}
