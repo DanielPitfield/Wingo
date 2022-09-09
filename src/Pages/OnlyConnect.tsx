@@ -352,25 +352,31 @@ const OnlyConnect = (props: Props) => {
     return (
       <div className="only-connect-correct-answer">
         {categoryNames.map((_, i) => {
+          // The name of the category (or a generic name if the name can't be found)
+          const displayedCategoryName = categoryNames[i] ?? `Category ${i + 1}`;
+
+          // Player completed this category
           if (completeCategoryNames.includes(categoryNames[i])) {
-            // Player completed this category, just show what the name of the category was
+            // Just show what the name of the category was
             return (
               <>
-                {categoryNames[i] ?? ""}
                 <br />
+                {displayedCategoryName}
               </>
             );
-          } 
+          }
+          // Player did NOT complete the category
           else {
-            // Player did NOT complete the category, show the name and words of the category
             const categoryWords: string[] = gridWords
               .filter((word) => word.categoryName === categoryNames[i])
               .map((x) => x.word);
+
+            // Show the name and words of the category
             // TODO: Formatting of correct words
             return (
               <>
-                <>{`${categoryNames[i]} (${categoryWords.join(", ")})`}</>
                 <br />
+                <>{`${displayedCategoryName} (${categoryWords.join(", ")})`}</>
               </>
             );
           }
@@ -396,8 +402,9 @@ const OnlyConnect = (props: Props) => {
             {numCompletedGroups === gamemodeSettings.numGroups
               ? "All groups found!"
               : `${numCompletedGroups} groups found`}
-            {getCorrectGrid()}
           </strong>
+          <br />
+          {getCorrectGrid()}
         </MessageNotification>
 
         <br />
