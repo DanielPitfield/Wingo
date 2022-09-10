@@ -20,6 +20,7 @@ import { getGamemodeDefaultTimerValue } from "../Data/DefaultTimerValues";
 import { getDeterministicArrayItems } from "../Data/DeterministicSeeding";
 import { getGamemodeDefaultWordLength } from "../Data/DefaultWordLengths";
 import { words_puzzles } from "../Data/WordArrays/WordsPuzzles";
+import { LetterStatus } from "../Components/LetterTile";
 
 export interface WingoConfigProps {
   mode:
@@ -94,7 +95,15 @@ export function pickRandomElementFrom(array: any[]) {
   return array[Math.floor(Math.random() * array.length)];
 }
 
-export function getWordSummary(page: PageName, word: string, targetWord: string, inDictionary: boolean) {
+export function getWordSummary(
+  page: PageName,
+  word: string,
+  targetWord: string,
+  inDictionary: boolean
+): {
+  character: string;
+  status: LetterStatus;
+}[] {
   const isSimpleStatusMode = () => {
     // The modes where the letter statuses should be either correct or incorrect (green or red statuses) and nothing inbetween
     const simpleStatusModes: PageName[] = ["LettersCategories"];
@@ -147,24 +156,20 @@ export function getLetterStatus(
   index: number,
   targetWord: string,
   inDictionary: boolean
-): "incorrect" | "contains" | "correct" | "not set" | "not in word" {
-  let status: "incorrect" | "contains" | "correct" | "not set" | "not in word";
-
+): LetterStatus {
   if (!inDictionary) {
     // Red
-    status = "incorrect";
+    return "incorrect";
   } else if (targetWord?.[index]?.toUpperCase() === letter?.toUpperCase()) {
     // Green
-    status = "correct";
+    return "correct";
   } else if (targetWord?.toUpperCase().includes(letter?.toUpperCase())) {
     // Yellow
-    status = "contains";
+    return "contains";
   } else {
     // Grey
-    status = "not in word";
+    return "not in word";
   }
-
-  return status;
 }
 
 export function getNewLives(

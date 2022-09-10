@@ -21,15 +21,10 @@ interface Props {
 }
 
 export const WordRow = (props: Props) => {
-  let wordSummary: {
-    character: string;
-    status: "incorrect" | "contains" | "correct" | "not set" | "not in word";
-  }[] = [];
-
   // NOTE: The targetWord will be "" (empty string) with the WordRow that handles guessed words during the 'Letters Game' mode
 
   // Array of (character, status) for every letter
-  wordSummary = getWordSummary(props.page, props.word, props.targetWord, props.inDictionary);
+  const wordSummary = getWordSummary(props.page, props.word, props.targetWord, props.inDictionary);
 
   // Overwrite wordSummary if LettersCategories mode
   if (props.page === "LettersCategories" && props.targetArray) {

@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import { SettingsData } from "../Data/SaveData";
 
+export type LetterStatus = "incorrect" | "contains" | "correct" | "not set" | "not in word";
+
 interface Props {
   letter: string;
-  status: "incorrect" | "contains" | "correct" | "not set" | "not in word";
+  status: LetterStatus;
   settings: SettingsData;
   onClick?: () => void;
   disabled?: boolean;

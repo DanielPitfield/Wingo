@@ -1,4 +1,4 @@
-import LetterTile from "../Components/LetterTile";
+import LetterTile, { LetterStatus } from "../Components/LetterTile";
 import { SaveData, SettingsData } from "../Data/SaveData";
 import { useState } from "react";
 import { shuffleArray } from "./ArithmeticDrag";
@@ -29,7 +29,7 @@ type GridConfig = {
 export type TileStatus = {
   x: number;
   y: number;
-  status: "incorrect" | "contains" | "correct" | "not set" | "not in word";
+  status: LetterStatus;
 };
 
 export interface WingoInterlinkedProps {
