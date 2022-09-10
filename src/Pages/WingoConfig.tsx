@@ -95,8 +95,11 @@ export function pickRandomElementFrom(array: any[]) {
 }
 
 export function getWordSummary(page: PageName, word: string, targetWord: string, inDictionary: boolean) {
-  // Either correct or incorrect (green or red statuses) and nothing inbetween
-  const simpleStatusModes: PageName[] = ["LettersCategories"];
+  const isSimpleStatusMode = () => {
+    // The modes where the letter statuses should be either correct or incorrect (green or red statuses) and nothing inbetween
+    const simpleStatusModes: PageName[] = ["LettersCategories"];
+    return simpleStatusModes.includes(page);
+  };
 
   // Character and status array
   let defaultCharacterStatuses = (word || "").split("").map((character, index) => ({
@@ -104,13 +107,13 @@ export function getWordSummary(page: PageName, word: string, targetWord: string,
     status: getLetterStatus(character, index, targetWord, inDictionary),
   }));
 
-  if (simpleStatusModes.includes(page) && word === targetWord) {
+  if (isSimpleStatusMode() && word === targetWord) {
     let finalCharacterStatuses = defaultCharacterStatuses.map((x) => {
       x.status = "correct";
       return x;
     });
     return finalCharacterStatuses;
-  } else if (simpleStatusModes.includes(page) && word !== targetWord) {
+  } else if (isSimpleStatusMode() && word !== targetWord) {
     let finalCharacterStatuses = defaultCharacterStatuses.map((x) => {
       x.status = "incorrect";
       return x;

@@ -242,9 +242,14 @@ const Wingo = (props: Props) => {
     // Show atleast 1 letter (can't all be blank!)
     const MAX_PUZZLE_LEAVE_NUM_BLANKS = props.targetWord.length - 1;
 
-    // These modes can be continued and aren't always just reset
-    const continuationMode = props.mode === "increasing" || props.mode === "limitless";
-    const MIN_WORD_LENGTH_LABEL = continuationMode ? "Starting Word Length" : "Word Length";
+    // Can the current mode be continued?
+    const isContinuationMode = () => {
+      // The modes which can be continued (they aren't always just reset)
+      const continuationModes: typeof props.mode[] = ["increasing", "limitless"];
+      return continuationModes.includes(props.mode);
+    };
+
+    const MIN_WORD_LENGTH_LABEL = isContinuationMode() ? "Starting Word Length" : "Word Length";
 
     // The starting word length must be atleast one below the maximum target word length (for 'increasing' mode), otherwise it would just be a mode of guessing one long word
     const MIN_WORD_LENGTH_MAX_BOUNDARY =
@@ -309,7 +314,7 @@ const Wingo = (props: Props) => {
             {MIN_WORD_LENGTH_LABEL}
           </label>
 
-          {continuationMode && (
+          {isContinuationMode() && (
             <label>
               <input
                 type="number"
