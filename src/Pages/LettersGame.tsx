@@ -346,9 +346,9 @@ const LettersGame = (props: Props) => {
         ))}
       </ul>
     );
-    
+
     const GOLD_PER_LETTER = 30;
-    
+
     let outcomeNotification;
 
     if (bestGuess) {
@@ -440,21 +440,22 @@ const LettersGame = (props: Props) => {
 
       <div className="letters-game-word-grid">{populateGrid()}</div>
 
-      <div className="keyboard">
-        <Keyboard
-          mode={"LettersGame"}
-          onEnter={props.onEnter}
-          onSubmitLetter={props.onSubmitKeyboardLetter}
-          onBackspace={props.onBackspace}
-          guesses={props.guesses}
-          targetWord={props.targetWord}
-          inDictionary={props.inDictionary}
-          letterStatuses={[]}
-          settings={props.settings}
-          disabled={!props.inProgress}
-          showKeyboard={props.settings.gameplay.keyboard}
-        />
-      </div>
+      {props.settings.gameplay.keyboard && (
+        <div className="keyboard">
+          <Keyboard
+            page={props.page}
+            onEnter={props.onEnter}
+            onSubmitLetter={props.onSubmitKeyboardLetter}
+            onBackspace={props.onBackspace}
+            guesses={props.guesses}
+            targetWord={props.targetWord}
+            inDictionary={props.inDictionary}
+            letterStatuses={[]}
+            settings={props.settings}
+            disabled={!props.inProgress}
+          />
+        </div>
+      )}
 
       <div>
         {props.gamemodeSettings.timerConfig.isTimed && (

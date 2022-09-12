@@ -371,14 +371,15 @@ const NumberSets = (props: Props) => {
           settings={props.settings}
         ></LetterTile>
       </div>
-      <NumPad
-        onEnter={() => setInProgress(false)}
-        onBackspace={onBackspace}
-        onSubmitNumber={onSubmitNumber}
-        settings={props.settings}
-        disabled={!inProgress}
-        showKeyboard={props.settings.gameplay.keyboard}
-      />
+      {props.settings.gameplay.keyboard && (
+        <NumPad
+          onEnter={() => setInProgress(false)}
+          onBackspace={onBackspace}
+          onSubmitNumber={onSubmitNumber}
+          settings={props.settings}
+          disabled={!inProgress}
+        />
+      )}
       <div>
         {gamemodeSettings.timerConfig.isTimed && (
           <ProgressBar

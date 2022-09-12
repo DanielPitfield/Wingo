@@ -24,6 +24,7 @@ import { categoryMappings } from "../Data/WordArrayMappings";
 import { getNewGamemodeSettingValue } from "../Data/GamemodeSettingsNewValue";
 import { getGamemodeDefaultTimerValue } from "../Data/DefaultTimerValues";
 import { DEFAULT_WINGO_INCREASING_MAX_NUM_LIVES } from "../Data/DefaultGamemodeSettings";
+import { LetterStatus } from "../Components/LetterTile";
 
 interface Props {
   isCampaignLevel: boolean;
@@ -55,7 +56,7 @@ interface Props {
   targetCategory?: string;
   letterStatuses: {
     letter: string;
-    status: "" | "contains" | "correct" | "not set" | "not in word";
+    status: LetterStatus;
   }[];
   revealedLetterIndexes: number[];
 
@@ -675,25 +676,25 @@ const Wingo = (props: Props) => {
 
       <div className="word_grid">{populateGrid()}</div>
 
-      <div className="keyboard">
-        <Keyboard
-          mode={`wingo/${props.mode}` as PageName}
-          onEnter={props.onEnter}
-          onSubmitLetter={(letter) => {
-            props.onSubmitLetter(letter);
-            playLightPingSoundEffect();
-          }}
-          onBackspace={props.onBackspace}
-          guesses={props.guesses}
-          targetWord={props.targetWord}
-          inDictionary={props.inDictionary}
-          letterStatuses={props.letterStatuses}
-          settings={props.settings}
-          disabled={!props.inProgress}
-          showKeyboard={props.settings.gameplay.keyboard}
-          allowSpaces={props.targetWord.includes("-") || props.targetWord.includes(" ") || undefined}
-        />
-      </div>
+      {props.settings.gameplay.keyboard && (
+        <div className="keyboard">
+          <Keyboard
+            page={props.page}
+            onEnter={props.onEnter}
+            onSubmitLetter={(letter) => {
+              props.onSubmitLetter(letter);
+              playLightPingSoundEffect();
+            }}
+            onBackspace={props.onBackspace}
+            guesses={props.guesses}
+            targetWord={props.targetWord}
+            inDictionary={props.inDictionary}
+            letterStatuses={props.letterStatuses}
+            settings={props.settings}
+            disabled={!props.inProgress}
+          />
+        </div>
+      )}
 
       <div>
         {props.gamemodeSettings.timerConfig.isTimed && (

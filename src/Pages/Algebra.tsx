@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { PageName } from "../PageNames";
 import { Button } from "../Components/Button";
 import GamemodeSettingsMenu from "../Components/GamemodeSettingsMenu";
-import { DEFAULT_ALPHABET, Keyboard } from "../Components/Keyboard";
+import { Keyboard } from "../Components/Keyboard";
 import LetterTile from "../Components/LetterTile";
 import { MessageNotification } from "../Components/MessageNotification";
 import { NumPad } from "../Components/NumPad";
@@ -14,6 +14,7 @@ import { AlgebraTemplates } from "../Data/AlgebraTemplates";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
 import { getGamemodeDefaultTimerValue } from "../Data/DefaultTimerValues";
 import { MAX_NUMPAD_GUESS_LENGTH } from "../Data/GamemodeSettingsInputLimits";
+import { DEFAULT_ALPHABET, DEFAULT_ALPHABET_STRING } from "./WingoConfig";
 
 export const algebraDifficulties = ["novice", "easy", "medium", "hard", "expert"] as const;
 export type algebraDifficulty = typeof algebraDifficulties[number];
@@ -449,32 +450,33 @@ const Algebra = (props: Props) => {
           settings={props.settings}
         ></LetterTile>
       </div>
-      {algebraTemplate?.questions[questionNumber].answerType === "number" && (
+      {props.settings.gameplay.keyboard && algebraTemplate?.questions[questionNumber].answerType === "number" && (
         <NumPad
           onEnter={() => setInProgress(false)}
           onBackspace={onBackspace}
           onSubmitNumber={onSubmitNumber}
           settings={props.settings}
-          showKeyboard={props.settings.gameplay.keyboard}
         />
       )}
-      {algebraTemplate?.questions[questionNumber].answerType === "letter" && inProgress && (
-        <Keyboard
-          onEnter={() => setInProgress(false)}
-          onBackspace={onBackspace}
-          settings={props.settings}
-          onSubmitLetter={onSubmitLetter}
-          customAlphabet={"ABCDEFGHIJKLMNOPQRSTUVWXYZ".slice(0, algebraTemplate?.inputs.length).split("")}
-          showBackspace={false}
-          targetWord=""
-          mode="Algebra"
-          guesses={[]}
-          letterStatuses={[]}
-          inDictionary
-          disabled={!inProgress}
-          showKeyboard={props.settings.gameplay.keyboard}
-        />
-      )}
+      {props.settings.gameplay.keyboard &&
+        algebraTemplate?.questions[questionNumber].answerType === "letter" &&
+        inProgress && (
+          <Keyboard
+            onEnter={() => setInProgress(false)}
+            onBackspace={onBackspace}
+            settings={props.settings}
+            onSubmitLetter={onSubmitLetter}
+            customAlphabet={DEFAULT_ALPHABET_STRING.toLocaleUpperCase()
+              .slice(0, algebraTemplate?.inputs.length)
+              .split("")}
+            targetWord=""
+            page="Algebra"
+            guesses={[]}
+            letterStatuses={[]}
+            inDictionary
+            disabled={!inProgress}
+          />
+        )}
       <div>
         {gamemodeSettings.timerConfig.isTimed && (
           <ProgressBar

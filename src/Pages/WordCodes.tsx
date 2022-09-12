@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { shuffleArray } from "./ArithmeticDrag";
-import { pickRandomElementFrom } from "./WingoConfig";
+import { DEFAULT_ALPHABET, pickRandomElementFrom } from "./WingoConfig";
 import { PageName } from "../PageNames";
 import { Button } from "../Components/Button";
-import { DEFAULT_ALPHABET, Keyboard } from "../Components/Keyboard";
+import { Keyboard } from "../Components/Keyboard";
 import LetterTile from "../Components/LetterTile";
 import { MessageNotification } from "../Components/MessageNotification";
 import { NumPad } from "../Components/NumPad";
@@ -957,29 +957,31 @@ const WordCodes = (props: Props) => {
           ></LetterTile>
         </div>
       )}
-      {Boolean(props.mode !== "match" && questionWordCodes[questionNumber]?.isWordToCode) && (
+      {Boolean(
+        props.settings.gameplay.keyboard && props.mode !== "match" && questionWordCodes[questionNumber]?.isWordToCode
+      ) && (
         <NumPad
           onEnter={() => setInProgress(false)}
           onBackspace={onBackspace}
           onSubmitNumber={onSubmitNumber}
           settings={props.settings}
           disabled={!inProgress}
-          showKeyboard={props.settings.gameplay.keyboard}
         />
       )}
-      {Boolean(props.mode !== "match" && !questionWordCodes[questionNumber]?.isWordToCode) && (
+      {Boolean(
+        props.settings.gameplay.keyboard && props.mode !== "match" && !questionWordCodes[questionNumber]?.isWordToCode
+      ) && (
         <Keyboard
           onEnter={() => setInProgress(false)}
           onBackspace={onBackspace}
           settings={props.settings}
           onSubmitLetter={onSubmitLetter}
-          targetWord=""
-          mode={"WordCodes/Match"}
+          targetWord={""}
+          page={props.page}
           guesses={[]}
           letterStatuses={[]}
           inDictionary
           disabled={!inProgress}
-          showKeyboard={props.settings.gameplay.keyboard}
         />
       )}
       <div>

@@ -9,7 +9,6 @@ interface Props {
   onSubmitNumber: (number: number) => void;
   onEnter: () => void;
   onBackspace: () => void;
-  showKeyboard: boolean;
   disabled?: boolean;
 }
 
@@ -70,10 +69,6 @@ export const NumPad = (props: Props) => {
         {number}
       </Button>
     ));
-  }
-
-  if (!props.showKeyboard) {
-    return <></>;
   }
 
   return (
