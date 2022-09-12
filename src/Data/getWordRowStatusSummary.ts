@@ -8,19 +8,53 @@ const isSimpleStatusMode = (page: PageName) => {
   return simpleStatusModes.includes(page);
 };
 
-type WordSummary = {
+// The status of every letter in the word of a WordRow
+export type WordRowStatusSummary = {
   character: string;
   status: LetterStatus;
 }[];
 
-export function getWordSummary(page: PageName, word: string, targetWord: string, inDictionary: boolean): WordSummary {
-  // TODO: Refactor
+// The information which determine/influence the LetterStatuses within WordRowStatusSummary
+export type WordRowStatusChecks = {
+  isReadOnly: boolean;
+  page: PageName;
+  word: string;
+  targetWord: string;
+  inDictionary: boolean;
+  wordArray: string[];
+};
+
+export function getWordRowStatusSummary(statusChecks: WordRowStatusChecks): WordRowStatusSummary {
+  const { isReadOnly, page, word, targetWord, inDictionary, wordArray } = statusChecks;
 
   // Character and status array
   const defaultCharacterStatuses = (word || "").split("").map((character, index) => ({
     character: character,
     status: getLetterStatus(character, index, targetWord, inDictionary),
   }));
+
+  if (isReadOnly) {
+    return defaultCharacterStatuses.map((characterStatus) => {
+      // A letter/character is present (not a blank character)
+      const hasCharacter =
+        characterStatus.character !== undefined &&
+        characterStatus.character !== "" &&
+        characterStatus.character !== " ";
+
+      // The read only WordRow in puzzle mode slowly reveals the correct answer (signify this by showing the status as correct)
+      if (hasCharacter && page === "wingo/puzzle") {
+        characterStatus.status = "correct";
+        return characterStatus;
+      }
+
+      // Otherwise, read only WordRows should have letters with the 'not set' status
+      if (hasCharacter) {
+        characterStatus.status = "not set";
+      }
+
+      return characterStatus;
+    });
+  }
 
   if (isSimpleStatusMode(page) && word === targetWord) {
     return defaultCharacterStatuses.map((characterStatus) => ({ ...characterStatus, status: "correct" }));
