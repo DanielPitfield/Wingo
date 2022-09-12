@@ -17,6 +17,9 @@ import { getGamemodeDefaultWordLength } from "./DefaultWordLengths";
 import { getGamemodeDefaultNumGuesses } from "./DefaultNumGuesses";
 import { getGamemodeDefaultTimerValue } from "./DefaultTimerValues";
 
+export const difficultyOptions = ["novice", "easy", "medium", "hard", "expert"] as const;
+export type Difficulty = typeof difficultyOptions[number];
+
 export const DEFAULT_PUZZLE_REVEAL_MS = 2000;
 export const DEFAULT_PUZZLE_LEAVE_NUM_BLANKS = 3;
 
@@ -201,11 +204,13 @@ export const defaultSameLetterWordsGamemodeSettings: SameLetterWordsProps["gamem
 };
 
 export const defaultNumberSetsGamemodeSettings: NumberSetsProps["gamemodeSettings"] = {
+  numSets: 3,
   difficulty: "easy",
   timerConfig: { isTimed: false },
 };
 
 export const defaultAlgebraGamemodeSettings: AlgebraProps["gamemodeSettings"] = {
+  numTemplates: 1,
   difficulty: "easy",
   timerConfig: { isTimed: false },
 };
