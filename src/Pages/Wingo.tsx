@@ -109,10 +109,13 @@ const Wingo = (props: Props) => {
       : DEFAULT_WINGO_INCREASING_MAX_NUM_LIVES
   );
 
-  const MODES_WITH_DISPLAY_ROW: typeof props.mode[] = ["puzzle", "conundrum"];
+  const isModeWithDisplayRow = () => {
+    const modesWithDisplayRow: typeof props.mode[] = ["puzzle", "conundrum"];
+    return modesWithDisplayRow.includes(props.mode);
+  };
 
   function getDisplayRow() {
-    if (!MODES_WITH_DISPLAY_ROW.includes(props.mode)) {
+    if (!isModeWithDisplayRow()) {
       return;
     }
 
@@ -144,7 +147,9 @@ const Wingo = (props: Props) => {
           applyAnimation={false}
         />
       );
-    } else if (props.mode === "conundrum" && props.conundrum !== undefined) {
+    }
+
+    if (props.mode === "conundrum" && props.conundrum !== undefined) {
       // Return a read only WordRow that reveals conundrum
       return (
         <div className="letters-game-wrapper" key={"conundrum/reveal"}>
@@ -165,9 +170,9 @@ const Wingo = (props: Props) => {
           />
         </div>
       );
-    } else {
-      return null;
     }
+
+    return;
   }
 
   // Create grid of rows (for guessing words)
@@ -175,14 +180,14 @@ const Wingo = (props: Props) => {
     let Grid = [];
 
     // Puzzle/Conundrum display row
-    if (MODES_WITH_DISPLAY_ROW.includes(props.mode)) {
-      Grid.push(getDisplayRow() ?? <></>);
+    if (isModeWithDisplayRow()) {
+      Grid.push(getDisplayRow());
     }
 
     for (let i = 0; i < props.numGuesses; i++) {
       let word;
 
-      if (props.wordIndex < i || MODES_WITH_DISPLAY_ROW.includes(props.mode)) {
+      if (props.wordIndex < i) {
         /*
         If the wordIndex is behind the currently iterated row
         (i.e the row has not been used yet)
