@@ -4,7 +4,6 @@ import { useState } from "react";
 import { shuffleArray } from "./ArithmeticDrag";
 import { Theme } from "../Data/Themes";
 import { Keyboard } from "../Components/Keyboard";
-import { getWordSummary } from "./WingoConfig";
 import { Button } from "../Components/Button";
 import React from "react";
 import { MessageNotification } from "../Components/MessageNotification";
@@ -17,6 +16,7 @@ import { categoryMappings, wordLengthMappingsTargets } from "../Data/WordArrayMa
 import { MAX_TARGET_WORD_LENGTH, MIN_TARGET_WORD_LENGTH } from "../Data/GamemodeSettingsInputLimits";
 import { getGamemodeDefaultTimerValue } from "../Data/DefaultTimerValues";
 import { DEFAULT_FIT_RESTRICTION } from "../Data/DefaultGamemodeSettings";
+import { getWordRowStatusSummary, WordRowStatusChecks } from "../Data/getWordRowStatusSummary";
 
 type Orientation = "vertical" | "horizontal";
 
@@ -591,11 +591,20 @@ export const WingoInterlinked = (props: Props) => {
 
     // For each guessed word
     for (let i = 0; i < currentWordsOrdered.length; i++) {
-      const wordGuessed = currentWordsOrdered[i];
+      const guess = currentWordsOrdered[i];
       const targetWordInfo = gridWordsOrdered[i];
 
+      const statusChecks: WordRowStatusChecks = {
+        isReadOnly: false,
+        page: props.page,
+        word: guess,
+        targetWord: targetWordInfo.word,
+        inDictionary: true,
+        wordArray: [],
+      };
+
       // Returns summary of each letter's status in the guess
-      const wordSummary = getWordSummary("wingo/interlinked", wordGuessed, targetWordInfo.word, true);
+      const guessSummary = getWordRowStatusSummary(statusChecks);
 
       newTileStatuses = newTileStatuses.map((position) => {
         // Status has already been changed from a previous (higher precedence) word comparison
@@ -607,14 +616,14 @@ export const WingoInterlinked = (props: Props) => {
           return position;
         }
         // Guess hasn't been made for this word yet
-        else if (wordGuessed === "") {
+        else if (guess === "") {
           return position;
         } else if (targetWordInfo.orientation === "horizontal") {
           const xOffset = position.x - targetWordInfo.startingXPos;
-          position.status = wordSummary[xOffset]?.status;
+          position.status = guessSummary[xOffset]?.status;
         } else if (targetWordInfo.orientation === "vertical") {
           const yOffset = position.y - targetWordInfo.startingYPos;
-          position.status = wordSummary[yOffset]?.status;
+          position.status = guessSummary[yOffset]?.status;
         }
         return position;
       });
@@ -1129,22 +1138,24 @@ export const WingoInterlinked = (props: Props) => {
           Check crossword
         </Button>
       )}
-      <div className="keyboard">
-        <Keyboard
-          mode={"wingo/interlinked"}
-          onEnter={onEnter}
-          onSubmitLetter={onSubmitLetter}
-          onBackspace={onBackspace}
-          guesses={[]}
-          targetWord={""}
-          inDictionary={true}
-          letterStatuses={[]}
-          settings={props.settings}
-          disabled={!inProgress}
-          showKeyboard={props.settings.gameplay.keyboard}
-          allowSpaces={allowSpaces}
-        />
-      </div>
+
+      {props.settings.gameplay.keyboard && (
+        <div className="keyboard">
+          <Keyboard
+            page={props.page}
+            onEnter={onEnter}
+            onSubmitLetter={onSubmitLetter}
+            onBackspace={onBackspace}
+            guesses={[]}
+            targetWord={""}
+            inDictionary={true}
+            letterStatuses={[]}
+            settings={props.settings}
+            disabled={!inProgress}
+          />
+        </div>
+      )}
+
       <div>
         {gamemodeSettings.timerConfig.isTimed && (
           <ProgressBar

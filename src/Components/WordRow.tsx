@@ -1,7 +1,7 @@
 import { PageName } from "../PageNames";
 import LetterTile from "./LetterTile";
 import { SettingsData } from "../Data/SaveData";
-import { getWordSummary } from "../Data/getWordSummary";
+import { getWordRowStatusSummary, WordRowStatusChecks } from "../Data/getWordRowStatusSummary";
 
 interface Props {
   page: PageName;
@@ -21,70 +21,48 @@ interface Props {
 }
 
 export const WordRow = (props: Props) => {
-  // NOTE: The targetWord will be "" (empty string) with the WordRow that handles guessed words during the 'Letters Game' mode
+  const statusChecks: WordRowStatusChecks = {
+    isReadOnly: props.isReadOnly,
+    page: props.page,
+    word: props.word,
+    targetWord: props.targetWord,
+    inDictionary: props.inDictionary,
+    wordArray: props.targetArray ?? [],
+  };
 
   // Array of (character, status) for every letter
-  const wordSummary = getWordSummary(props.page, props.word, props.targetWord, props.inDictionary);
-
-  // Overwrite wordSummary if LettersCategories mode
-  // TODO: Refactor
-  if (props.page === "LettersCategories" && props.targetArray) {
-    if (props.targetArray.includes(props.word)) {
-      wordSummary.map((x) => {
-        x.status = "correct";
-        return x;
-      });
-    } else {
-      wordSummary.map((x) => {
-        x.status = "incorrect";
-        return x;
-      });
-    }
-  }
-
-  // Tile status for read only WordRows
-  if (props.isReadOnly) {
-    wordSummary.map((x) => {
-      // There is a letter
-      if (x.character !== undefined && x.character !== "" && x.character !== " ") {
-        x.status = "correct";
-      } else {
-        x.status = "not set";
-      }
-
-      return x;
-    });
-  }
+  const guessSummary = getWordRowStatusSummary(statusChecks);
 
   function isAnimationEnabled(letterIndex: number): boolean {
-    // Puzzle and conundrum read only WordRows
-    if (props.revealedLetterIndexes !== undefined && props.isReadOnly) {
-      // The letter is revealed
-      if (props.revealedLetterIndexes.includes(letterIndex)) {
-        return true;
-      } else {
-        return false;
-      }
-    }
-    // Don't apply animation for LetterTiles in Letters Game mode
-    else if (props.page === "LettersGame") {
+    if (props.page === "LettersGame") {
       return false;
     }
-    // Don't apply animation for LetterTiles in daily mode, when the game reports as having ended
-    else if (props.page === "wingo/daily" && !props.inProgress && props.word && props.hasSubmit) {
+
+    // Daily mode, when the game reports as having ended
+    const dailyModeEnd = props.page === "wingo/daily" && !props.inProgress && props.word && props.hasSubmit;
+
+    if (dailyModeEnd) {
       return false;
     }
-    // Other modes and everything is suitable for animation
-    else {
-      return true;
+
+    const letterRevealed =
+      props.revealedLetterIndexes !== undefined &&
+      props.isReadOnly &&
+      props.revealedLetterIndexes.includes(letterIndex);
+
+    // Letter hasn't been revealed yet, only show animation when it does become revealed
+    if (!letterRevealed) {
+      return false;
     }
+
+    return true;
   }
 
   function CreateRow() {
     let tileArray = [];
 
     for (let i = 0; i < props.length; i++) {
-      const allCorrect = wordSummary.every((letter) => letter.status === "correct");
+      const allCorrect = guessSummary.every((letter) => letter.status === "correct");
 
       tileArray.push(
         <LetterTile
@@ -101,7 +79,7 @@ export const WordRow = (props: Props) => {
           */
           animationDelayMultiplier={props.revealedLetterIndexes ? 0 : allCorrect ? 0.3 : undefined}
           settings={props.settings}
-          status={!props.hasSubmit || !props.word ? "not set" : wordSummary[i]?.status}
+          status={!props.hasSubmit || !props.word ? "not set" : guessSummary[i]?.status}
         ></LetterTile>
       );
     }

@@ -1,40 +1,47 @@
 import React from "react";
 import { Button } from "./Button";
-import { getWordSummary } from "../Pages/WingoConfig";
 import { SettingsData } from "../Data/SaveData";
 import { useClickChime } from "../Data/Sounds";
 import { PageName } from "../PageNames";
 import { FiChevronLeft, FiCornerDownLeft } from "react-icons/fi";
+import { getWordRowStatusSummary, WordRowStatusChecks } from "../Data/getWordRowStatusSummary";
+import { LetterStatus } from "./LetterTile";
+import { DEFAULT_ALPHABET } from "../Pages/WingoConfig";
 
 interface Props {
   settings: SettingsData;
   onSubmitLetter: (letter: string) => void;
   onEnter: () => void;
   onBackspace: () => void;
-  mode: PageName;
+  page: PageName;
   guesses: string[];
   targetWord: string;
   inDictionary: boolean;
-  showKeyboard: boolean;
   letterStatuses: {
     letter: string;
-    status: "" | "contains" | "correct" | "not set" | "not in word";
+    status: LetterStatus;
   }[];
-  allowSpaces?: boolean;
   customAlphabet?: string[];
-  showBackspace?: boolean;
   disabled?: boolean;
 }
 
-export const DEFAULT_ALPHABET_STRING = "abcdefghijklmnopqrstuvwxyz";
-export const DEFAULT_ALPHABET = DEFAULT_ALPHABET_STRING.split("");
+const DEFAULT_KEYBOARD_FIRST_ROW = "QWERTYUIOP";
+const DEFAULT_KEYBOARD_SECOND_ROW = "ASDFGHJKL";
+const DEFAULT_KEYBOARD_THIRD_ROW = "ZXCVBNM";
+
+const isModeWithoutKeyboardStatuses = (page: PageName) => {
+  // Don't need updated keyboard statuses for some modes
+  const modesWithoutKeyboardStatuses: PageName[] = ["LettersCategories", "LettersGame", "wingo/interlinked"];
+  return modesWithoutKeyboardStatuses.includes(page);
+};
 
 export const Keyboard = (props: Props) => {
-  const [playClickSoundEffect] = useClickChime(props.settings);
-  const alphabet = props.customAlphabet || DEFAULT_ALPHABET;
+  const alphabet = props.customAlphabet ?? DEFAULT_ALPHABET;
 
-  const modesWithSpaces: PageName[] = ["wingo/category", "LettersCategories", "wingo/interlinked"];
-  const modesWithoutKeyboardStatuses: PageName[] = ["LettersCategories", "LettersGame", "wingo/interlinked"];
+  const hasApostrophe = props.targetWord.includes("'");
+  const hasSpaces = props.targetWord.includes(" ");
+
+  const [playClickSoundEffect] = useClickChime(props.settings);
 
   React.useEffect(() => {
     if (props.disabled) {
@@ -42,37 +49,50 @@ export const Keyboard = (props: Props) => {
     }
 
     const handleKeyDown = (event: KeyboardEvent) => {
-      const inputKey = event.key.toString().toLowerCase();
-
-      const fKeys = ["f1", "f2", "f3", "f4", "f5", "f6", "f7", "f8", "f9", "f10", "f11", "f12"];
-
-      if (fKeys.includes(inputKey)) {
-        return;
-      }
-
       event.preventDefault();
       event.stopPropagation();
 
+      const inputKey = event.key.toString().toLowerCase();
+
+      // Enter
       if (inputKey === "enter") {
         props.onEnter();
-      } else if (inputKey === "backspace") {
+        return;
+      }
+
+      // Backspace
+      if (inputKey === "backspace") {
         props.onBackspace();
         playClickSoundEffect();
-      } else if (alphabet.map((x) => x.toLowerCase()).includes(inputKey)) {
-        // Any letter on the keyboard
+        return;
+      }
+
+      // Any letter on the keyboard
+      if (alphabet.map((x) => x.toLowerCase()).includes(inputKey)) {
         props.onSubmitLetter(inputKey);
         playClickSoundEffect();
-      } else if (modesWithSpaces.includes(props.mode) || props.allowSpaces) {
-        // Space or dash pressed, submit dash
-        if (inputKey === " " || inputKey === "-") {
-          props.onSubmitLetter("-");
-          playClickSoundEffect();
-        }
-        if (inputKey === "'") {
-          props.onSubmitLetter(inputKey);
-          playClickSoundEffect();
-        }
+        return;
       }
+
+      // Apostrophe
+      if (hasApostrophe && inputKey === "'") {
+        props.onSubmitLetter(inputKey);
+        playClickSoundEffect();
+        return;
+      }
+
+      // Space or dash
+      const spacePressed = inputKey === " " || inputKey === "-";
+
+      if (hasSpaces && spacePressed) {
+        // Submit dash
+        props.onSubmitLetter("-");
+        playClickSoundEffect();
+        return;
+      }
+
+      // Otherwise ignore
+      return;
     };
 
     window.addEventListener("keydown", handleKeyDown);
@@ -89,23 +109,29 @@ export const Keyboard = (props: Props) => {
       status: "not set",
     }));
 
-    if (modesWithSpaces.includes(props.mode) || props.allowSpaces) {
-      // There may be multiples spaces in a word, best not to create a status (always be shown as "not set")
-
-      // Unlikely a word has multiple apostrophes, so showing a keyboard status is useful
-      keyboardStatuses.push({ letter: "'", status: "not set" });
-    }
-
-    // Don't need updated keyboard statuses for some modes
-    if (modesWithoutKeyboardStatuses.includes(props.mode)) {
+    if (isModeWithoutKeyboardStatuses(props.page)) {
       // Just use standard statuses (where all are "not set")
       return keyboardStatuses;
     }
 
+    // Add apostrophe (if there is one within the target word)
+    if (hasApostrophe) {
+      keyboardStatuses.push({ letter: "'", status: "not set" });
+    }
+
     // For each guess
     for (const guess of props.guesses) {
+      const statusChecks: WordRowStatusChecks = {
+        isReadOnly: false,
+        page: props.page,
+        word: guess,
+        targetWord: props.targetWord,
+        inDictionary: props.inDictionary,
+        wordArray: [],
+      };
+
       // Returns summary of each letter's status in the guess
-      const guessSummary = getWordSummary(props.mode, guess, props.targetWord, props.inDictionary);
+      const guessSummary = getWordRowStatusSummary(statusChecks);
 
       for (const letterSummary of guessSummary) {
         // Find element in keyboardStatuses for the letter in question
@@ -132,25 +158,24 @@ export const Keyboard = (props: Props) => {
   }
 
   function populateKeyboard(RowString: string) {
-    // Adds a button for every letter within the provided string
-    let KeyboardButtons = [];
-    const RowLetters = RowString.split("");
-    // Assign array to variable for quicker access
     const keyboardStatuses = getKeyboardStatuses();
 
-    for (const letter of RowLetters) {
-      // Find status using keyboardStatuses (correct, not in word, wrong position)
+    if (!keyboardStatuses || keyboardStatuses.length <= 0) {
+      return;
+    }
+
+     return RowString.split("").map((letter) => {
       const letterStatus = keyboardStatuses.find((x) => x.letter.toUpperCase() === letter.toUpperCase())?.status;
 
-      KeyboardButtons.push(
+      return (
         <Button
           key={letter}
           className={letter === "-" ? "keyboard_space" : `keyboard_${letter}`}
           mode="default"
           // Data attribute used to colour button
-          status={letterStatus ? letterStatus : "not set"}
+          status={letterStatus ?? "not set"}
           settings={props.settings}
-          onClick={(e) => {
+          onClick={() => {
             // Letter of button is used within a callback function
             props.onSubmitLetter(letter);
           }}
@@ -159,13 +184,7 @@ export const Keyboard = (props: Props) => {
           {letter}
         </Button>
       );
-    }
-
-    return KeyboardButtons;
-  }
-
-  if (!props.showKeyboard) {
-    return <></>;
+    });
   }
 
   return (
@@ -173,36 +192,37 @@ export const Keyboard = (props: Props) => {
       <div className="keyboard_row_top">
         <>
           {props.customAlphabet
-            ? populateKeyboard(props.customAlphabet.slice(0, Math.round(props.customAlphabet.length / 2)).join(""))
-            : populateKeyboard("QWERTYUIOP")}
+            ? // Half the custom alphabet
+              populateKeyboard(props.customAlphabet.slice(0, Math.round(props.customAlphabet.length / 2)).join(""))
+            : // The default top row of the keyboard
+              populateKeyboard(DEFAULT_KEYBOARD_FIRST_ROW)}
         </>
       </div>
+
       <div className="keyboard_row_middle">
         <>
           {props.customAlphabet
             ? populateKeyboard(props.customAlphabet.slice(Math.round(props.customAlphabet.length / 2)).join(""))
-            : populateKeyboard(
-                !modesWithSpaces.includes(props.mode) && !props.allowSpaces ? "ASDFGHJKL" : "ASDFGHJKL'"
-              )}
+            : populateKeyboard(hasApostrophe ? DEFAULT_KEYBOARD_SECOND_ROW + "'" : DEFAULT_KEYBOARD_SECOND_ROW)}
         </>
       </div>
+
       <div className="keyboard_row_bottom">
-        <>{props.customAlphabet ? null : populateKeyboard("ZXCVBNM")}</>
-        {props.showBackspace !== false && (
-          <Button
-            mode="destructive"
-            settings={props.settings}
-            onClick={props.onBackspace}
-            disabled={props.disabled}
-            additionalProps={{ title: "Backspace" }}
-          >
-            <FiChevronLeft />
-          </Button>
-        )}
+        {!props.customAlphabet && <>{populateKeyboard(DEFAULT_KEYBOARD_THIRD_ROW)}</>}
+
+        <Button
+          mode="destructive"
+          settings={props.settings}
+          onClick={props.onBackspace}
+          disabled={props.disabled}
+          additionalProps={{ title: "Backspace" }}
+        >
+          <FiChevronLeft />
+        </Button>
       </div>
-      <div className="keyboard_space">
-        {(modesWithSpaces.includes(props.mode) || props.allowSpaces) && <>{populateKeyboard("-")}</>}
-      </div>
+
+      <div className="keyboard_space">{hasSpaces && <>{populateKeyboard("-")}</>}</div>
+
       <div className="keyboard_enter">
         <Button mode="accept" settings={props.settings} onClick={props.onEnter} disabled={props.disabled}>
           <FiCornerDownLeft /> Enter
