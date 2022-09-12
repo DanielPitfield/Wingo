@@ -95,62 +95,6 @@ export function pickRandomElementFrom(array: any[]) {
   return array[Math.floor(Math.random() * array.length)];
 }
 
-export function getWordSummary(
-  page: PageName,
-  word: string,
-  targetWord: string,
-  inDictionary: boolean
-): {
-  character: string;
-  status: LetterStatus;
-}[] {
-  const isSimpleStatusMode = () => {
-    // The modes where the letter statuses should be either correct or incorrect (green or red statuses) and nothing inbetween
-    const simpleStatusModes: PageName[] = ["LettersCategories"];
-    return simpleStatusModes.includes(page);
-  };
-
-  // Character and status array
-  let defaultCharacterStatuses = (word || "").split("").map((character, index) => ({
-    character: character,
-    status: getLetterStatus(character, index, targetWord, inDictionary),
-  }));
-
-  if (isSimpleStatusMode() && word === targetWord) {
-    let finalCharacterStatuses = defaultCharacterStatuses.map((x) => {
-      x.status = "correct";
-      return x;
-    });
-    return finalCharacterStatuses;
-  } else if (isSimpleStatusMode() && word !== targetWord) {
-    let finalCharacterStatuses = defaultCharacterStatuses.map((x) => {
-      x.status = "incorrect";
-      return x;
-    });
-    return finalCharacterStatuses;
-  } else {
-    // Changing status because of repeated letters
-    let finalCharacterStatuses = defaultCharacterStatuses.map((x, index) => {
-      // If there is a green tile of a letter, don't show any orange tiles
-      if (
-        x.status === "contains" &&
-        defaultCharacterStatuses.some((y) => y.character === x.character && y.status === "correct")
-      ) {
-        x.status = "not in word";
-      }
-      // Only ever show 1 orange tile of each letter
-      if (
-        x.status === "contains" &&
-        defaultCharacterStatuses.findIndex((y) => y.character === x.character && y.status === "contains") !== index
-      ) {
-        x.status = "not in word";
-      }
-      return x;
-    });
-    return finalCharacterStatuses;
-  }
-}
-
 export function getLetterStatus(
   letter: string,
   index: number,
@@ -160,16 +104,17 @@ export function getLetterStatus(
   if (!inDictionary) {
     // Red
     return "incorrect";
-  } else if (targetWord?.[index]?.toUpperCase() === letter?.toUpperCase()) {
+  }
+  if (targetWord?.[index]?.toUpperCase() === letter?.toUpperCase()) {
     // Green
     return "correct";
-  } else if (targetWord?.toUpperCase().includes(letter?.toUpperCase())) {
+  }
+  if (targetWord?.toUpperCase().includes(letter?.toUpperCase())) {
     // Yellow
     return "contains";
-  } else {
-    // Grey
-    return "not in word";
   }
+  // Grey
+  return "not in word";
 }
 
 export function getNewLives(

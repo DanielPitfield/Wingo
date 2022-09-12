@@ -1,7 +1,7 @@
 import { PageName } from "../PageNames";
 import LetterTile from "./LetterTile";
 import { SettingsData } from "../Data/SaveData";
-import { getWordSummary } from "../Pages/WingoConfig";
+import { getWordSummary } from "../Data/getWordSummary";
 
 interface Props {
   page: PageName;
@@ -27,6 +27,7 @@ export const WordRow = (props: Props) => {
   const wordSummary = getWordSummary(props.page, props.word, props.targetWord, props.inDictionary);
 
   // Overwrite wordSummary if LettersCategories mode
+  // TODO: Refactor
   if (props.page === "LettersCategories" && props.targetArray) {
     if (props.targetArray.includes(props.word)) {
       wordSummary.map((x) => {
