@@ -9,17 +9,17 @@ import ProgressBar, { GreenToRedColorTransition } from "../Components/ProgressBa
 import { SaveData, SettingsData } from "../Data/SaveData";
 import { useClickChime, useCorrectChime, useFailureChime, useLightPingChime } from "../Data/Sounds";
 import { Theme } from "../Data/Themes";
-import { algebraDifficulty, algebraDifficulties } from "./Algebra";
-import { generateSet } from "../Data/NumberSetsTemplates";
+import { getNumberSets } from "../Data/NumberSetsTemplates";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
 import { getGamemodeDefaultTimerValue } from "../Data/DefaultTimerValues";
+import { Difficulty, difficultyOptions } from "../Data/DefaultGamemodeSettings";
+import { MAX_NUMPAD_GUESS_LENGTH } from "../Data/GamemodeSettingsInputLimits";
 
 /** Config for a specific number set (exported for config from campaign) */
 export type NumberSetConfigProps = {
-  difficulty: algebraDifficulty;
+  difficulty: Difficulty;
   correctAnswerDescription: string;
   examples: NumberSetTemplate[];
-  // TODO: Multiple questions like algebra gamemode?
   question: NumberSetTemplate;
 };
 
@@ -39,10 +39,11 @@ export interface NumberSetsProps {
       }
     | { isCampaignLevel: false };
 
-  defaultSet?: NumberSetConfigProps;
+  defaultNumberSets?: NumberSetConfigProps[];
 
   gamemodeSettings: {
-    difficulty: algebraDifficulty;
+    numSets: number;
+    difficulty: Difficulty;
     timerConfig: { isTimed: true; seconds: number } | { isTimed: false };
   };
 }
@@ -59,14 +60,14 @@ interface Props extends NumberSetsProps {
 
 /** */
 const NumberSets = (props: Props) => {
-  // Max number of characters permitted in a guess
-  const MAX_LENGTH = 6;
-
+  const [gamemodeSettings, setGamemodeSettings] = useState<NumberSetsProps["gamemodeSettings"]>(props.gamemodeSettings);
   const [inProgress, setInProgress] = useState(true);
   const [guess, setGuess] = useState("");
-  const [numberSet, setNumberSet] = useState<NumberSetConfigProps | undefined>(props.defaultSet);
 
-  const [gamemodeSettings, setGamemodeSettings] = useState<NumberSetsProps["gamemodeSettings"]>(props.gamemodeSettings);
+  const [numberSets, setNumberSets] = useState<NumberSetConfigProps[]>(
+    props.defaultNumberSets ?? getNumberSets(gamemodeSettings.numSets, gamemodeSettings.difficulty)
+  );
+  const [currentNumberSetIndex, setCurrentNumberSetIndex] = useState(0);
 
   const [remainingSeconds, setRemainingSeconds] = useState(
     props.gamemodeSettings?.timerConfig?.isTimed === true
@@ -96,21 +97,6 @@ const NumberSets = (props: Props) => {
     SaveData.setNumberSetsGamemodeSettings(gamemodeSettings);
   }, [gamemodeSettings]);
 
-  // Evaluate each guess
-  React.useEffect(() => {
-    if (inProgress) {
-      return;
-    }
-
-    const successCondition = guess === numberSet?.question.correctAnswer.toString();
-
-    if (successCondition) {
-      playCorrectChimeSoundEffect();
-    } else {
-      playFailureChimeSoundEffect();
-    }
-  }, [guess, inProgress]);
-
   // (Guess) Timer Setup
   React.useEffect(() => {
     if (!gamemodeSettings.timerConfig.isTimed || !inProgress) {
@@ -131,60 +117,41 @@ const NumberSets = (props: Props) => {
     };
   }, [setRemainingSeconds, remainingSeconds, gamemodeSettings.timerConfig.isTimed]);
 
-  // Picks a random set if one was not passed in through the props
+  const getCurrentNumberSet = (): NumberSetConfigProps => {
+    return numberSets[currentNumberSetIndex];
+  };
+
+  // Evaluate each guess
   React.useEffect(() => {
-    if (props.defaultSet) {
-      setNumberSet(props.defaultSet);
-    } else {
-      // TODO: Choose set of current difficulty
-      const numberSet = generateSet();
-      setNumberSet(numberSet);
-      console.log(numberSet);
+    if (inProgress) {
+      return;
     }
-  }, [props.defaultSet]);
+
+    const successCondition = guess === getCurrentNumberSet().question.correctAnswer.toString();
+
+    if (successCondition) {
+      playCorrectChimeSoundEffect();
+    } else {
+      playFailureChimeSoundEffect();
+    }
+  }, [guess, inProgress]);
 
   function displayExamples() {
-    if (!numberSet || !numberSet.examples) {
-      return;
-    }
-
-    const numExamples = numberSet?.examples.length;
-
-    if (numExamples === undefined || numExamples <= 0) {
-      return;
-    }
-
-    return (
-      <div className="number_set_wrapper">
-        {Array.from({ length: numExamples }).map((_, i) => {
-          const example = numberSet?.examples[i];
-
-          if (!example) {
-            return;
-          }
-
-          return (
-            <div key={`example ${i}`} className="number_set_example">
-              <span>
-                {example.numbersLeft} ( <strong>{example.correctAnswer}</strong> ) {example.numbersRight}
-              </span>
-            </div>
-          );
-        })}
-      </div>
-    );
+    <div className="number_set_wrapper">
+      {getCurrentNumberSet().examples.map((example, index) => {
+        return (
+          <div key={`example ${index}`} className="number_set_example">
+            <span>
+              {example.numbersLeft} ( <strong>{example.correctAnswer}</strong> ) {example.numbersRight}
+            </span>
+          </div>
+        );
+      })}
+    </div>;
   }
 
   function displayQuestion() {
-    if (!numberSet) {
-      return;
-    }
-
-    const question = numberSet?.question;
-
-    if (!question) {
-      return;
-    }
+    const question = getCurrentNumberSet().question;
 
     return (
       <div className="number_set_question">
@@ -201,23 +168,32 @@ const NumberSets = (props: Props) => {
       return;
     }
 
-    if (!numberSet) {
-      return;
-    }
+    const answer = getCurrentNumberSet().question.correctAnswer.toString();
+    const successCondition = guess === answer;
 
-    const answer = numberSet?.question.correctAnswer.toString();
+    let outcomeNotification;
+
+    if (successCondition) {
+      outcomeNotification = (
+        <MessageNotification type={"success"}>
+          <strong>{"Correct!"}</strong>
+        </MessageNotification>
+      );
+    } else {
+      outcomeNotification = (
+        <MessageNotification type={"error"}>
+          <strong>{"Incorrect"}</strong>
+          <br />
+          <span>
+            The answer was <strong>{answer}</strong>
+          </span>
+        </MessageNotification>
+      );
+    }
 
     return (
       <>
-        <MessageNotification type={guess === answer ? "success" : "error"}>
-          <strong>{guess === answer ? "Correct!" : "Incorrect"}</strong>
-          <br />
-          {guess !== answer && (
-            <span>
-              The answer was <strong>{answer}</strong>
-            </span>
-          )}
-        </MessageNotification>
+        {outcomeNotification}
 
         <br />
 
@@ -237,7 +213,7 @@ const NumberSets = (props: Props) => {
 
   function ResetGame() {
     if (!inProgress) {
-      const wasCorrect = guess === numberSet?.question.correctAnswer.toString();
+      const wasCorrect = guess === getCurrentNumberSet().question.correctAnswer.toString();
       props.onComplete(wasCorrect);
 
       /*
@@ -251,7 +227,8 @@ const NumberSets = (props: Props) => {
 
     setInProgress(true);
     setGuess("");
-    setNumberSet(generateSet());
+    setNumberSets(getNumberSets(gamemodeSettings.numSets, gamemodeSettings.difficulty));
+    setCurrentNumberSetIndex(0);
 
     if (gamemodeSettings.timerConfig.isTimed) {
       // Reset the timer if it is enabled in the game options
@@ -276,7 +253,7 @@ const NumberSets = (props: Props) => {
       return;
     }
 
-    if (guess.length >= MAX_LENGTH) {
+    if (guess.length >= MAX_NUMPAD_GUESS_LENGTH) {
       return;
     }
 
@@ -291,7 +268,7 @@ const NumberSets = (props: Props) => {
             onChange={(e) => {
               const newGamemodeSettings = {
                 ...gamemodeSettings,
-                difficulty: e.target.value as algebraDifficulty,
+                difficulty: e.target.value as Difficulty,
               };
               setGamemodeSettings(newGamemodeSettings);
             }}
@@ -299,7 +276,7 @@ const NumberSets = (props: Props) => {
             name="difficulty"
             value={gamemodeSettings.difficulty}
           >
-            {algebraDifficulties.map((difficultyOption) => (
+            {difficultyOptions.map((difficultyOption) => (
               <option key={difficultyOption} value={difficultyOption}>
                 {difficultyOption}
               </option>
@@ -354,41 +331,52 @@ const NumberSets = (props: Props) => {
       className="App number_sets"
       style={{ backgroundImage: `url(${props.theme.backgroundImageSrc})`, backgroundSize: "100% 100%" }}
     >
-      {!props.campaignConfig.isCampaignLevel && (
-        <div className="gamemodeSettings">
-          <GamemodeSettingsMenu>{generateSettingsOptions()}</GamemodeSettingsMenu>
-        </div>
-      )}
-      <div className="outcome">{displayOutcome()}</div>
-      {displayExamples()}
-      {displayQuestion()}
-      <div className="guess">
-        <LetterTile
-          letter={guess}
-          status={
-            inProgress ? "not set" : guess === numberSet?.question.correctAnswer.toString() ? "correct" : "incorrect"
-          }
-          settings={props.settings}
-        ></LetterTile>
-      </div>
-      {props.settings.gameplay.keyboard && (
-        <NumPad
-          onEnter={() => setInProgress(false)}
-          onBackspace={onBackspace}
-          onSubmitNumber={onSubmitNumber}
-          settings={props.settings}
-          disabled={!inProgress}
-        />
-      )}
-      <div>
-        {gamemodeSettings.timerConfig.isTimed && (
-          <ProgressBar
-            progress={remainingSeconds}
-            total={gamemodeSettings.timerConfig.seconds}
-            display={{ type: "transition", colorTransition: GreenToRedColorTransition }}
-          ></ProgressBar>
+      <>
+        {!props.campaignConfig.isCampaignLevel && (
+          <div className="gamemodeSettings">
+            <GamemodeSettingsMenu>{generateSettingsOptions()}</GamemodeSettingsMenu>
+          </div>
         )}
-      </div>
+
+        <div className="outcome">{displayOutcome()}</div>
+
+        {displayExamples()}
+        {displayQuestion()}
+
+        <div className="guess">
+          <LetterTile
+            letter={guess}
+            status={
+              inProgress
+                ? "not set"
+                : guess === getCurrentNumberSet().question.correctAnswer.toString()
+                ? "correct"
+                : "incorrect"
+            }
+            settings={props.settings}
+          ></LetterTile>
+        </div>
+
+        {props.settings.gameplay.keyboard && (
+          <NumPad
+            onEnter={() => setInProgress(false)}
+            onBackspace={onBackspace}
+            onSubmitNumber={onSubmitNumber}
+            settings={props.settings}
+            disabled={!inProgress}
+          />
+        )}
+
+        <div>
+          {gamemodeSettings.timerConfig.isTimed && (
+            <ProgressBar
+              progress={remainingSeconds}
+              total={gamemodeSettings.timerConfig.seconds}
+              display={{ type: "transition", colorTransition: GreenToRedColorTransition }}
+            ></ProgressBar>
+          )}
+        </div>
+      </>
     </div>
   );
 };
