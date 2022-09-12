@@ -15,7 +15,6 @@ import {
 } from "../Data/DefaultGamemodeSettings";
 import { MIN_TARGET_WORD_LENGTH } from "../Data/GamemodeSettingsInputLimits";
 import { categoryMappings, wordLengthMappingsTargets } from "../Data/WordArrayMappings";
-import { DEFAULT_ALPHABET } from "../Components/Keyboard";
 import { getGamemodeDefaultTimerValue } from "../Data/DefaultTimerValues";
 import { getDeterministicArrayItems } from "../Data/DeterministicSeeding";
 import { getGamemodeDefaultWordLength } from "../Data/DefaultWordLengths";
@@ -95,7 +94,11 @@ export function pickRandomElementFrom(array: any[]) {
   return array[Math.floor(Math.random() * array.length)];
 }
 
+export const DEFAULT_ALPHABET_STRING = "abcdefghijklmnopqrstuvwxyz";
+export const DEFAULT_ALPHABET = DEFAULT_ALPHABET_STRING.split("");
+
 export function getLetterStatus(
+  // TODO: Refactor
   letter: string,
   index: number,
   targetWord: string,
@@ -167,30 +170,30 @@ const WingoConfig = (props: Props) => {
   const [isIncompleteWord, setIsIncompleteWord] = useState(false);
 
   const [conundrum, setConundrum] = useState("");
-  const [targetWord, setTargetWord] = useState(props.targetWord ? props.targetWord : "");
+  const [targetWord, setTargetWord] = useState(props.targetWord ?? "");
   // The words which are valid to be used as guesses
-  const [wordArray, setWordArray] = useState(props.wordArray ? props.wordArray : []);
+  const [wordArray, setWordArray] = useState(props.wordArray ?? []);
   const [targetHint, setTargetHint] = useState("");
   const [targetCategory, setTargetCategory] = useState("");
   const [hasSelectedTargetCategory, sethasSelectedTargetCategory] = useState(false);
   const [hasSubmitLetter, sethasSubmitLetter] = useState(false);
   const [revealedLetterIndexes, setRevealedLetterIndexes] = useState<number[]>([]);
 
-  let defaultLetterStatuses: {
+  const defaultLetterStatuses: {
     letter: string;
-    status: "" | "contains" | "correct" | "not set" | "not in word";
+    status: LetterStatus;
   }[] = DEFAULT_ALPHABET.map((x) => ({
     letter: x,
-    status: "",
+    status: "not set",
   }));
 
-  defaultLetterStatuses.push({ letter: "-", status: "" });
-  defaultLetterStatuses.push({ letter: "'", status: "" });
+  defaultLetterStatuses.push({ letter: "-", status: "not set" });
+  defaultLetterStatuses.push({ letter: "'", status: "not set" });
 
-  const [letterStatuses, setletterStatuses] = useState<
+  const [letterStatuses, setLetterStatuses] = useState<
     {
       letter: string;
-      status: "" | "contains" | "correct" | "not set" | "not in word";
+      status: LetterStatus;
     }[]
   >(defaultLetterStatuses);
 
@@ -445,7 +448,7 @@ const WingoConfig = (props: Props) => {
       }
     }
 
-    setletterStatuses(letterStatusesCopy);
+    setLetterStatuses(letterStatusesCopy);
   }, [guesses, wordIndex]);
 
   // Reveals letters of read only puzzle row periodically
@@ -621,7 +624,7 @@ const WingoConfig = (props: Props) => {
     sethasSubmitLetter(false);
     setConundrum("");
     setRevealedLetterIndexes([]);
-    setletterStatuses(defaultLetterStatuses);
+    setLetterStatuses(defaultLetterStatuses);
 
     const newRemainingSeconds = gamemodeSettings.timerConfig.isTimed
       ? gamemodeSettings.timerConfig.seconds
@@ -649,7 +652,7 @@ const WingoConfig = (props: Props) => {
 
     sethasSubmitLetter(false);
     setRevealedLetterIndexes([]);
-    setletterStatuses(defaultLetterStatuses);
+    setLetterStatuses(defaultLetterStatuses);
 
     const newRemainingSeconds = gamemodeSettings.timerConfig.isTimed
       ? gamemodeSettings.timerConfig.seconds
