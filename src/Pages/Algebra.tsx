@@ -10,17 +10,15 @@ import ProgressBar, { GreenToRedColorTransition } from "../Components/ProgressBa
 import { SaveData, SettingsData } from "../Data/SaveData";
 import { useClickChime, useCorrectChime, useFailureChime, useLightPingChime } from "../Data/Sounds";
 import { Theme } from "../Data/Themes";
-import { AlgebraTemplates } from "../Data/AlgebraTemplates";
+import { getAlgebraTemplates } from "../Data/AlgebraTemplates";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
 import { getGamemodeDefaultTimerValue } from "../Data/DefaultTimerValues";
 import { MAX_NUMPAD_GUESS_LENGTH } from "../Data/GamemodeSettingsInputLimits";
 import { DEFAULT_ALPHABET, DEFAULT_ALPHABET_STRING } from "./WingoConfig";
-
-export const algebraDifficulties = ["novice", "easy", "medium", "hard", "expert"] as const;
-export type algebraDifficulty = typeof algebraDifficulties[number];
+import { Difficulty, difficultyOptions } from "../Data/DefaultGamemodeSettings";
 
 export type AlgebraConfigProps = {
-  difficulty: algebraDifficulty;
+  difficulty: Difficulty;
   inputs: number[];
   questions: QuestionTemplate[];
 };
@@ -40,10 +38,11 @@ export interface AlgebraProps {
       }
     | { isCampaignLevel: false };
 
-  defaultTemplate?: AlgebraConfigProps;
+  defaultTemplates?: AlgebraConfigProps[];
 
   gamemodeSettings: {
-    difficulty: algebraDifficulty;
+    numTemplates: number;
+    difficulty: Difficulty;
     timerConfig: { isTimed: true; seconds: number } | { isTimed: false };
   };
 }
@@ -63,25 +62,33 @@ export function getQuestionSetOutcome(numCorrectAnswers: number, numQuestions: n
   if (numCorrectAnswers === numQuestions) {
     return "success";
   }
+
   // No answers correct
-  else if (numCorrectAnswers === 0) {
+  if (numCorrectAnswers === 0) {
     return "error";
   }
+
   // Some answers correct
-  else {
-    return "default";
-  }
+  return "default";
 }
 
 /** */
 const Algebra = (props: Props) => {
+  const [gamemodeSettings, setGamemodeSettings] = useState<AlgebraProps["gamemodeSettings"]>(props.gamemodeSettings);
+
   const [inProgress, setInProgress] = useState(true);
   const [guess, setGuess] = useState("");
-  const [algebraTemplate, setAlgebraTemplate] = useState<AlgebraConfigProps | undefined>(props.defaultTemplate);
-  const [questionNumber, setQuestionNumber] = useState(0);
-  const [numCorrectAnswers, setNumCorrectAnswers] = useState(0);
 
-  const [gamemodeSettings, setGamemodeSettings] = useState<AlgebraProps["gamemodeSettings"]>(props.gamemodeSettings);
+  // All the algebra templates (usually multiple templates each with multiple questions)
+  const [algebraTemplates, setAlgebraTemplates] = useState<AlgebraConfigProps[]>(
+    props.defaultTemplates ?? getAlgebraTemplates(gamemodeSettings.numTemplates, gamemodeSettings.difficulty)
+  );
+  // What algebra template is currently being used?
+  const [currentAlgebraTemplateIndex, setCurrentAlgebraTemplateIndex] = useState(0);
+  // What question from the current algebra template is being presented?
+  const [questionNumber, setQuestionNumber] = useState(0);
+  // How many questions (across all templates) have been answered correctly?
+  const [numCorrectAnswers, setNumCorrectAnswers] = useState(0);
 
   const [remainingSeconds, setRemainingSeconds] = useState(
     props.gamemodeSettings?.timerConfig?.isTimed === true
@@ -133,31 +140,23 @@ const Algebra = (props: Props) => {
     };
   }, [setRemainingSeconds, remainingSeconds, gamemodeSettings.timerConfig.isTimed]);
 
-  // Picks a random template if one was not passed in through the props
-  React.useEffect(() => {
-    // TODO: Pick a random template which has the currently set difficulty
-    const template = props.defaultTemplate || {
-      ...Object.values(AlgebraTemplates)[Math.round(Math.random() * (Object.values(AlgebraTemplates).length - 1))],
-    };
+  const getCurrentAlgebraTemplate = (): AlgebraConfigProps => {
+    return algebraTemplates[currentAlgebraTemplateIndex];
+  };
 
-    setAlgebraTemplate(template);
-    console.log(template);
-  }, [props.defaultTemplate]);
+  const getCurrentQuestionTemplate = (): QuestionTemplate => {
+    return getCurrentAlgebraTemplate().questions[questionNumber];
+  };
 
-  // Each time a guess is submitted
+  // Evaluate each guess
   React.useEffect(() => {
     if (inProgress) {
       return;
     }
 
-    if (!guess || guess.length < 1) {
-      return;
-    }
-
-    // The correct answer for the current question
-    const answer = algebraTemplate?.questions[questionNumber].correctAnswer.toString();
-    // Guess matches the answer
-    const successCondition = guess.toString().toUpperCase() === answer?.toUpperCase();
+    // The correct answer for the current question in the current template
+    const answer = getCurrentQuestionTemplate().correctAnswer.toString();
+    const successCondition = guess === answer;
 
     if (successCondition) {
       playCorrectChimeSoundEffect();
@@ -167,30 +166,15 @@ const Algebra = (props: Props) => {
     }
   }, [inProgress, guess]);
 
-  function displayInputs() {
-    if (!algebraTemplate || !algebraTemplate.inputs) {
-      return;
-    }
-
-    const numInputs = algebraTemplate.inputs.length;
-
-    if (numInputs === undefined || numInputs <= 0) {
-      return;
-    }
-
+  function displayInputs(): React.ReactNode {
     return (
       <div className="algebra_inputs_wrapper">
-        {Array.from({ length: numInputs }).map((_, i) => {
-          const letter = DEFAULT_ALPHABET[i];
-          const number = algebraTemplate.inputs[i];
-
-          if (!letter || !number) {
-            return;
-          }
+        {getCurrentAlgebraTemplate().inputs.map((input, index) => {
+          const letter = DEFAULT_ALPHABET[index];
 
           return (
-            <div key={`algebra_input ${letter}${number}`} className="algebra_input">
-              <strong>{letter}</strong> = {number}
+            <div key={`algebra_input ${letter}${input}`} className="algebra_input">
+              <strong>{letter}</strong> = {input}
             </div>
           );
         })}
@@ -198,16 +182,8 @@ const Algebra = (props: Props) => {
     );
   }
 
-  function displayQuestion() {
-    if (!algebraTemplate) {
-      return;
-    }
-
-    const question = algebraTemplate.questions[questionNumber];
-
-    if (!question || !question.expression || !question.answerType || !question.correctAnswer) {
-      return;
-    }
+  function displayQuestion(): React.ReactNode {
+    const question = getCurrentQuestionTemplate();
 
     return (
       <div className="algebra_questions_wrapper">
@@ -227,86 +203,96 @@ const Algebra = (props: Props) => {
       return;
     }
 
-    if (!algebraTemplate) {
-      return;
-    }
-
     // The correct answer for the current question
-    const answer = algebraTemplate.questions[questionNumber].correctAnswer.toString();
+    const answer = getCurrentQuestionTemplate().correctAnswer.toString();
     // Guess matches the answer
     const successCondition = guess.toString().toUpperCase() === answer.toUpperCase();
 
-    // The number of questgions in this set of questions
-    const numQuestions = algebraTemplate.questions.length;
-    // Question was the last in the set of questions
-    const lastQuestion = questionNumber === numQuestions - 1;
-
-    return (
+    // Show outcome of current question (and how many questions are left)
+    const currentQuestionOutcome = (
       <>
-        {/* Show number of correct answers and restart button after last question */}
-        {lastQuestion && (
-          <>
-            <MessageNotification type={getQuestionSetOutcome(numCorrectAnswers, numQuestions)}>
-              <strong>{`${numCorrectAnswers} / ${numQuestions} correct`}</strong>
-            </MessageNotification>
-
-            <br />
-
-            <Button
-              mode="accept"
-              onClick={() => ResetGame()}
-              settings={props.settings}
-              additionalProps={{ autoFocus: true }}
-            >
-              {props.campaignConfig.isCampaignLevel ? LEVEL_FINISHING_TEXT : "Restart"}
-            </Button>
-
-            <br />
-          </>
-        )}
-
-        {/* Show outcome of current question (and how many questions are left) */}
         <MessageNotification type={successCondition ? "success" : "error"}>
           <strong>{successCondition ? "Correct!" : "Incorrect!"}</strong>
           <br />
-          <span>{`${questionNumber + 1} / ${numQuestions} questions completed`}</span>
+          <span>{`${questionNumber + 1} / ${getTotalNumQuestions()} questions completed`}</span>
         </MessageNotification>
-
         <br />
-
-        {/* Show next button if there are more questions */}
-        {!lastQuestion && (
-          <Button
-            mode="accept"
-            onClick={() => ContinueGame()}
-            settings={props.settings}
-            additionalProps={{ autoFocus: true }}
-          >
-            Next
-          </Button>
-        )}
       </>
     );
+
+    // When the game has finished, show the number of correct answers
+    const overallOutcome = (
+      <>
+        <MessageNotification type={getQuestionSetOutcome(numCorrectAnswers, getTotalNumQuestions())}>
+          <strong>{`${numCorrectAnswers} / ${getTotalNumQuestions()} correct`}</strong>
+        </MessageNotification>
+        <br />
+      </>
+    );
+
+    const restartButton = (
+      <Button mode="accept" onClick={() => ResetGame()} settings={props.settings} additionalProps={{ autoFocus: true }}>
+        {props.campaignConfig.isCampaignLevel ? LEVEL_FINISHING_TEXT : "Restart"}
+      </Button>
+    );
+
+    const continueButton = (
+      <Button
+        mode="accept"
+        onClick={() => ContinueGame()}
+        settings={props.settings}
+        additionalProps={{ autoFocus: true }}
+      >
+        Next
+      </Button>
+    );
+
+    // If no more questions, show restart button, otherwise show continue button
+    const nextButton = isGameOver() ? restartButton : continueButton;
+
+    const outcome = (
+      <>
+        {isGameOver() && overallOutcome}
+        {currentQuestionOutcome}
+        {nextButton}
+      </>
+    );
+
+    return outcome;
   }
+
+  const getTotalNumQuestions = () => {
+    // A number array with values of the number of questions in each template
+    const templatesNumQuestions = algebraTemplates.map((template) => template.questions.length);
+    // Sum of these values
+    return templatesNumQuestions.reduce((previousValue, currentValue) => previousValue + currentValue, 0);
+  };
+
+  // Has the last question in the last template been guessed (all questions have been answered and there are no more questions)?
+  const isGameOver = () => {
+    const isLastQuestion = (questionNumber + 1) >= getTotalNumQuestions();
+    return !inProgress && isLastQuestion;
+  };
 
   // Restart with new set of questions
   function ResetGame() {
-    // After last question in template set
-    if (!inProgress && algebraTemplate && questionNumber === algebraTemplate.questions.length - 1) {
+    if (isGameOver()) {
+      const totalNumQuestions = getTotalNumQuestions();
+
       // Achieved target score if a campaign level, otherwise just all answers were correct
       const wasCorrect = props.campaignConfig.isCampaignLevel
-        ? numCorrectAnswers >= Math.min(props.campaignConfig.targetScore, algebraTemplate.questions.length)
-        : numCorrectAnswers === algebraTemplate.questions.length;
+        ? numCorrectAnswers >= Math.min(props.campaignConfig.targetScore, totalNumQuestions)
+        : numCorrectAnswers === totalNumQuestions;
       props.onComplete(wasCorrect);
     }
 
     setInProgress(true);
     setGuess("");
-    setAlgebraTemplate({
-      ...Object.values(AlgebraTemplates)[Math.round(Math.random() * (Object.values(AlgebraTemplates).length - 1))],
-    });
-    setQuestionNumber(0);
     setNumCorrectAnswers(0);
+
+    setAlgebraTemplates(getAlgebraTemplates(gamemodeSettings.numTemplates, gamemodeSettings.difficulty));
+    setCurrentAlgebraTemplateIndex(0);
+    setQuestionNumber(0);
 
     if (gamemodeSettings.timerConfig.isTimed) {
       // Reset the timer if it is enabled in the game options
@@ -365,7 +351,7 @@ const Algebra = (props: Props) => {
             onChange={(e) => {
               const newGamemodeSettings = {
                 ...gamemodeSettings,
-                difficulty: e.target.value as algebraDifficulty,
+                difficulty: e.target.value as Difficulty,
               };
               setGamemodeSettings(newGamemodeSettings);
             }}
@@ -373,7 +359,7 @@ const Algebra = (props: Props) => {
             name="difficulty"
             value={gamemodeSettings.difficulty}
           >
-            {algebraDifficulties.map((difficultyOption) => (
+            {difficultyOptions.map((difficultyOption) => (
               <option key={difficultyOption} value={difficultyOption}>
                 {difficultyOption}
               </option>
@@ -442,15 +428,14 @@ const Algebra = (props: Props) => {
           status={
             inProgress
               ? "not set"
-              : guess.toUpperCase() ===
-                algebraTemplate?.questions[questionNumber].correctAnswer.toString().toUpperCase()
+              : guess.toUpperCase() === getCurrentQuestionTemplate().correctAnswer.toString().toUpperCase()
               ? "correct"
               : "incorrect"
           }
           settings={props.settings}
         ></LetterTile>
       </div>
-      {props.settings.gameplay.keyboard && algebraTemplate?.questions[questionNumber].answerType === "number" && (
+      {props.settings.gameplay.keyboard && getCurrentQuestionTemplate().answerType === "number" && (
         <NumPad
           onEnter={() => setInProgress(false)}
           onBackspace={onBackspace}
@@ -458,25 +443,23 @@ const Algebra = (props: Props) => {
           settings={props.settings}
         />
       )}
-      {props.settings.gameplay.keyboard &&
-        algebraTemplate?.questions[questionNumber].answerType === "letter" &&
-        inProgress && (
-          <Keyboard
-            onEnter={() => setInProgress(false)}
-            onBackspace={onBackspace}
-            settings={props.settings}
-            onSubmitLetter={onSubmitLetter}
-            customAlphabet={DEFAULT_ALPHABET_STRING.toLocaleUpperCase()
-              .slice(0, algebraTemplate?.inputs.length)
-              .split("")}
-            targetWord=""
-            page="Algebra"
-            guesses={[]}
-            letterStatuses={[]}
-            inDictionary
-            disabled={!inProgress}
-          />
-        )}
+      {props.settings.gameplay.keyboard && getCurrentQuestionTemplate().answerType === "letter" && inProgress && (
+        <Keyboard
+          onEnter={() => setInProgress(false)}
+          onBackspace={onBackspace}
+          settings={props.settings}
+          onSubmitLetter={onSubmitLetter}
+          customAlphabet={DEFAULT_ALPHABET_STRING.toLocaleUpperCase()
+            .slice(0, getCurrentAlgebraTemplate().inputs.length)
+            .split("")}
+          targetWord=""
+          page="Algebra"
+          guesses={[]}
+          letterStatuses={[]}
+          inDictionary
+          disabled={!inProgress}
+        />
+      )}
       <div>
         {gamemodeSettings.timerConfig.isTimed && (
           <ProgressBar
