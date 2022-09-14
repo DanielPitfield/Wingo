@@ -271,8 +271,15 @@ const OnlyConnect = (props: Props) => {
     inCompleteGroup: boolean;
     rowNumber: number | null;
   }[] {
+    type GridWord = {
+      word: string;
+      categoryName: string;
+      inCompleteGroup: boolean;
+      rowNumber: number | null;
+    };
+
     // Array to hold all the words for the grid (along with their categories)
-    let gridWords: { word: string; categoryName: string; inCompleteGroup: boolean; rowNumber: number | null }[] = [];
+    let gridWords: GridWord[] = [];
 
     // Use the specified number of categories (but never exceed the number of category word lists)
     const numCategories = Math.min(gamemodeSettings.numGroups, categoryMappings.length);
@@ -306,8 +313,17 @@ const OnlyConnect = (props: Props) => {
       // Add group of words
       gridWords = gridWords.concat(categorySubset);
     }
+    const isFirstRowSameCategory = (shuffledWords: GridWord[]) => {
+      return shuffledWords.slice(0, 3).every((word) => word.categoryName === shuffledWords[0].categoryName);
+    };
 
-    return shuffleArray(gridWords);
+    let shuffledWords = shuffleArray(gridWords);
+
+    while (isFirstRowSameCategory(shuffledWords)) {
+      shuffledWords = shuffleArray(gridWords);
+    }
+
+    return shuffledWords;
   }
 
   function populateRow(rowNumber: number) {
