@@ -83,10 +83,12 @@ const Algebra = (props: Props) => {
   const [algebraTemplates, setAlgebraTemplates] = useState<AlgebraConfigProps[]>(
     props.defaultTemplates ?? getAlgebraTemplates(gamemodeSettings.numTemplates, gamemodeSettings.difficulty)
   );
+
   // What algebra template is currently being used?
-  const [currentAlgebraTemplateIndex, setCurrentAlgebraTemplateIndex] = useState(0);
+  const [templateIndex, setTemplateIndex] = useState(0);
   // What question from the current algebra template is being presented?
-  const [questionNumber, setQuestionNumber] = useState(0);
+  const [questionIndex, setQuestionIndex] = useState(0);
+
   // How many questions (across all templates) have been answered correctly?
   const [numCorrectAnswers, setNumCorrectAnswers] = useState(0);
 
@@ -141,11 +143,20 @@ const Algebra = (props: Props) => {
   }, [setRemainingSeconds, remainingSeconds, gamemodeSettings.timerConfig.isTimed]);
 
   const getCurrentAlgebraTemplate = (): AlgebraConfigProps => {
-    return algebraTemplates[currentAlgebraTemplateIndex];
+    return algebraTemplates[templateIndex];
   };
 
   const getCurrentQuestionTemplate = (): QuestionTemplate => {
-    return getCurrentAlgebraTemplate().questions[questionNumber];
+    return getCurrentAlgebraTemplate().questions[questionIndex];
+  };
+
+  const isGuessCorrect = (): Boolean => {
+    return guess.toUpperCase() === getCurrentQuestionTemplate().correctAnswer.toString().toUpperCase();
+  }
+
+  const isLastQuestionInTemplate = (): Boolean => {
+    const currentTemplateQuestions = getCurrentAlgebraTemplate().questions;
+    return getCurrentQuestionTemplate() === currentTemplateQuestions[currentTemplateQuestions.length - 1];
   };
 
   // Evaluate each guess
@@ -154,11 +165,7 @@ const Algebra = (props: Props) => {
       return;
     }
 
-    // The correct answer for the current question in the current template
-    const answer = getCurrentQuestionTemplate().correctAnswer.toString();
-    const successCondition = guess === answer;
-
-    if (successCondition) {
+    if (isGuessCorrect()) {
       playCorrectChimeSoundEffect();
       setNumCorrectAnswers(numCorrectAnswers + 1);
     } else {
@@ -203,18 +210,13 @@ const Algebra = (props: Props) => {
       return;
     }
 
-    // The correct answer for the current question
-    const answer = getCurrentQuestionTemplate().correctAnswer.toString();
-    // Guess matches the answer
-    const successCondition = guess.toString().toUpperCase() === answer.toUpperCase();
-
     // Show outcome of current question (and how many questions are left)
     const currentQuestionOutcome = (
       <>
-        <MessageNotification type={successCondition ? "success" : "error"}>
-          <strong>{successCondition ? "Correct!" : "Incorrect!"}</strong>
+        <MessageNotification type={isGuessCorrect() ? "success" : "error"}>
+          <strong>{isGuessCorrect() ? "Correct!" : "Incorrect!"}</strong>
           <br />
-          <span>{`${questionNumber + 1} / ${getTotalNumQuestions()} questions completed`}</span>
+          <span>{`${getCompletedNumQuestions()} / ${getTotalNumQuestions()} questions completed`}</span>
         </MessageNotification>
         <br />
       </>
@@ -261,6 +263,37 @@ const Algebra = (props: Props) => {
     return outcome;
   }
 
+  const getCompletedNumQuestions = () => {
+    // Only as far as completing questions in the first template
+    if (templateIndex === 0) {
+      return questionIndex + 1;
+    }
+
+    let count = 0;
+
+    for (let i = 0; i < templateIndex; i++) {
+      count += algebraTemplates[templateIndex].questions.length;
+    }
+
+    count += questionIndex + 1;
+
+    return count;
+
+
+    /*
+    const completedTemplateLengths = algebraTemplates
+      .slice(0, templateIndex + 1)
+      .map((template) => template.questions.length);
+
+    const numPrevSetQuestions = completedTemplateLengths.reduce(
+      (previousValue, currentValue) => previousValue + currentValue,
+      0
+    );
+
+    return numPrevSetQuestions + questionNumber;
+    */
+  };
+
   const getTotalNumQuestions = () => {
     // A number array with values of the number of questions in each template
     const templatesNumQuestions = algebraTemplates.map((template) => template.questions.length);
@@ -268,9 +301,9 @@ const Algebra = (props: Props) => {
     return templatesNumQuestions.reduce((previousValue, currentValue) => previousValue + currentValue, 0);
   };
 
-  // Has the last question in the last template been guessed (all questions have been answered and there are no more questions)?
+  // Have all the questions been answered (there are no more questions)?
   const isGameOver = () => {
-    const isLastQuestion = (questionNumber + 1) >= getTotalNumQuestions();
+    const isLastQuestion = getCompletedNumQuestions() >= getTotalNumQuestions();
     return !inProgress && isLastQuestion;
   };
 
@@ -288,11 +321,12 @@ const Algebra = (props: Props) => {
 
     setInProgress(true);
     setGuess("");
-    setNumCorrectAnswers(0);
 
     setAlgebraTemplates(getAlgebraTemplates(gamemodeSettings.numTemplates, gamemodeSettings.difficulty));
-    setCurrentAlgebraTemplateIndex(0);
-    setQuestionNumber(0);
+
+    setTemplateIndex(0);
+    setQuestionIndex(0);
+    setNumCorrectAnswers(0);
 
     if (gamemodeSettings.timerConfig.isTimed) {
       // Reset the timer if it is enabled in the game options
@@ -304,7 +338,18 @@ const Algebra = (props: Props) => {
   function ContinueGame() {
     setInProgress(true);
     setGuess("");
-    setQuestionNumber(questionNumber + 1);
+
+    // Just completed last question in a template
+    if (isLastQuestionInTemplate()) {
+      // Use next template and start from first question
+      setTemplateIndex(templateIndex + 1);
+      setQuestionIndex(0);
+    }
+    // More questions from this template
+    else {
+      // Just use next question
+      setQuestionIndex(questionIndex + 1);
+    }
   }
 
   function onBackspace() {
@@ -428,7 +473,7 @@ const Algebra = (props: Props) => {
           status={
             inProgress
               ? "not set"
-              : guess.toUpperCase() === getCurrentQuestionTemplate().correctAnswer.toString().toUpperCase()
+              : isGuessCorrect()
               ? "correct"
               : "incorrect"
           }
@@ -443,7 +488,7 @@ const Algebra = (props: Props) => {
           settings={props.settings}
         />
       )}
-      {props.settings.gameplay.keyboard && getCurrentQuestionTemplate().answerType === "letter" && inProgress && (
+      {props.settings.gameplay.keyboard && getCurrentQuestionTemplate().answerType === "letter" && (
         <Keyboard
           onEnter={() => setInProgress(false)}
           onBackspace={onBackspace}

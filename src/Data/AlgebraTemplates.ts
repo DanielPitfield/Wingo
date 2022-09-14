@@ -1,11 +1,11 @@
 import { AlgebraConfigProps } from "../Pages/Algebra";
-import { shuffleArray } from "../Pages/ArithmeticDrag";
 import { Difficulty } from "./DefaultGamemodeSettings";
+import { shuffleArray } from "./shuffleArray";
 
 /* All templates */
 const AlgebraTemplates = {
-  MediumSmall: {
-    difficulty: "medium",
+  SmallEasy1: {
+    difficulty: "easy",
     inputs: [3, 7, 5, 8, 4, 2],
     questions: [
       {
