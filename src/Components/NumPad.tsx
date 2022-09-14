@@ -23,20 +23,18 @@ export const NumPad = (props: Props) => {
     }
 
     const handleKeyDown = (event: KeyboardEvent) => {
-      const inputKey = event.key.toString().toLowerCase();
-
-      if (["f1", "f2", "f3", "f4", "f5", "f6", "f7", "f8", "f9", "f10", "f11", "f12"].includes(inputKey)) {
-        return;
-      }
-
       event.preventDefault();
       event.stopPropagation();
 
+      const inputKey = event.key.toString().toLowerCase();
+
+      // Enter
       if (inputKey === "enter") {
         props.onEnter();
         return;
       }
 
+      // Backsapce
       if (inputKey === "backspace") {
         props.onBackspace();
         playClickSoundEffect();
@@ -45,11 +43,15 @@ export const NumPad = (props: Props) => {
 
       const keyAsInt = parseInt(inputKey);
 
+      // Any number on the keyboard
       if (Numbers.includes(keyAsInt)) {
         props.onSubmitNumber(keyAsInt);
         playClickSoundEffect();
         return;
       }
+
+      // Otherwise ignore
+      return;
     };
 
     window.addEventListener("keydown", handleKeyDown);
