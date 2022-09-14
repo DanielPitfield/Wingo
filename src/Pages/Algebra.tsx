@@ -152,7 +152,7 @@ const Algebra = (props: Props) => {
 
   const isGuessCorrect = (): Boolean => {
     return guess.toUpperCase() === getCurrentQuestionTemplate().correctAnswer.toString().toUpperCase();
-  }
+  };
 
   const isLastQuestionInTemplate = (): Boolean => {
     const currentTemplateQuestions = getCurrentAlgebraTemplate().questions;
@@ -264,21 +264,19 @@ const Algebra = (props: Props) => {
   }
 
   const getCompletedNumQuestions = () => {
-    // Only as far as completing questions in the first template
+    // The number of completed questions from current template
+    let count = questionIndex + 1;
+
     if (templateIndex === 0) {
-      return questionIndex + 1;
+      return count;
     }
 
-    let count = 0;
-
+    // Add on the number of completed questions from previous sets
     for (let i = 0; i < templateIndex; i++) {
       count += algebraTemplates[templateIndex].questions.length;
     }
 
-    count += questionIndex + 1;
-
     return count;
-
 
     /*
     const completedTemplateLengths = algebraTemplates
@@ -470,13 +468,7 @@ const Algebra = (props: Props) => {
       <div className="guess">
         <LetterTile
           letter={guess}
-          status={
-            inProgress
-              ? "not set"
-              : isGuessCorrect()
-              ? "correct"
-              : "incorrect"
-          }
+          status={inProgress ? "not set" : isGuessCorrect() ? "correct" : "incorrect"}
           settings={props.settings}
         ></LetterTile>
       </div>

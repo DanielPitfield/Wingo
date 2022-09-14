@@ -10,12 +10,12 @@ import { pickRandomElementFrom } from "./WingoConfig";
 import { Theme } from "../Data/Themes";
 import { SettingsData } from "../Data/SaveData";
 import GamemodeSettingsMenu from "../Components/GamemodeSettingsMenu";
-import { shuffleArray } from "./ArithmeticDrag";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
 import { LetterSelectionRow } from "../LetterSelectionRow";
 import { getAllWordsOfLength } from "../Data/Conundrum";
 import { MAX_TARGET_WORD_LENGTH, MIN_TARGET_WORD_LENGTH } from "../Data/GamemodeSettingsInputLimits";
 import { getGamemodeDefaultTimerValue } from "../Data/DefaultTimerValues";
+import { shuffleArray } from "../Data/shuffleArray";
 
 interface Props {
   campaignConfig:

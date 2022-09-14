@@ -1,7 +1,6 @@
 import LetterTile, { LetterStatus } from "../Components/LetterTile";
 import { SaveData, SettingsData } from "../Data/SaveData";
 import { useState } from "react";
-import { shuffleArray } from "./ArithmeticDrag";
 import { Theme } from "../Data/Themes";
 import { Keyboard } from "../Components/Keyboard";
 import { Button } from "../Components/Button";
@@ -17,6 +16,7 @@ import { MAX_TARGET_WORD_LENGTH, MIN_TARGET_WORD_LENGTH } from "../Data/Gamemode
 import { getGamemodeDefaultTimerValue } from "../Data/DefaultTimerValues";
 import { DEFAULT_FIT_RESTRICTION } from "../Data/DefaultGamemodeSettings";
 import { getWordRowStatusSummary, WordRowStatusChecks } from "../Data/getWordRowStatusSummary";
+import { shuffleArray } from "../Data/shuffleArray";
 
 type Orientation = "vertical" | "horizontal";
 

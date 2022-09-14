@@ -3,7 +3,6 @@ import { PageName } from "../PageNames";
 import { Button } from "../Components/Button";
 import GamemodeSettingsMenu from "../Components/GamemodeSettingsMenu";
 import { MessageNotification } from "../Components/MessageNotification";
-import { shuffleArray } from "./ArithmeticDrag";
 import ProgressBar, { GreenToRedColorTransition } from "../Components/ProgressBar";
 import { SaveData, SettingsData } from "../Data/SaveData";
 import { useClickChime, useCorrectChime, useFailureChime, useLightPingChime } from "../Data/Sounds";
@@ -11,6 +10,7 @@ import { Theme } from "../Data/Themes";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
 import { categoryMappings } from "../Data/WordArrayMappings";
 import { getGamemodeDefaultTimerValue } from "../Data/DefaultTimerValues";
+import { shuffleArray } from "../Data/shuffleArray";
 
 export interface OnlyConnectProps {
   gamemodeSettings: {

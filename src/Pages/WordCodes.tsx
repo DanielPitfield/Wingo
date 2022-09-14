@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { shuffleArray } from "./ArithmeticDrag";
 import { DEFAULT_ALPHABET, pickRandomElementFrom } from "./WingoConfig";
 import { PageName } from "../PageNames";
 import { Button } from "../Components/Button";
@@ -20,6 +19,7 @@ import { MAX_CODE_LENGTH } from "../Data/GamemodeSettingsInputLimits";
 import { getGamemodeDefaultTimerValue } from "../Data/DefaultTimerValues";
 import { getAllWordsOfLength } from "../Data/Conundrum";
 import { getGamemodeDefaultWordLength } from "../Data/DefaultWordLengths";
+import { shuffleArray } from "../Data/shuffleArray";
 
 const wordCodesModes = ["match", "question"] as const;
 export type wordCodesMode = typeof wordCodesModes[number];

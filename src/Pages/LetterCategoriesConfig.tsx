@@ -7,8 +7,8 @@ import { Theme } from "../Data/Themes";
 import { categoryMappings } from "../Data/WordArrayMappings";
 import { getGamemodeDefaultTimerValue } from "../Data/DefaultTimerValues";
 import { MAX_NUM_CATEGORIES } from "../Data/GamemodeSettingsInputLimits";
-import { shuffleArray } from "./ArithmeticDrag";
 import { getGamemodeDefaultWordLength } from "../Data/DefaultWordLengths";
+import { shuffleArray } from "../Data/shuffleArray";
 
 export interface LetterCategoriesConfigProps {
   campaignConfig:

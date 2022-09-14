@@ -3,7 +3,6 @@ import { PageName } from "../PageNames";
 import { Button } from "../Components/Button";
 import GamemodeSettingsMenu from "../Components/GamemodeSettingsMenu";
 import { MessageNotification } from "../Components/MessageNotification";
-import { shuffleArray } from "./ArithmeticDrag";
 import { getPrettyWord } from "./OnlyConnect";
 import ProgressBar, { GreenToRedColorTransition } from "../Components/ProgressBar";
 import { SaveData, SettingsData } from "../Data/SaveData";
@@ -21,6 +20,7 @@ import {
   MIN_NUM_SAME_LETTER_MATCHING_WORDS,
   MIN_NUM_SAME_LETTER_TOTAL_WORDS,
 } from "../Data/GamemodeSettingsInputLimits";
+import { shuffleArray } from "../Data/shuffleArray";
 
 export interface SameLetterWordsProps {
   gamemodeSettings: {
