@@ -22,6 +22,13 @@ export interface OnlyConnectProps {
   };
 }
 
+type GridWord = {
+  word: string;
+  categoryName: string;
+  inCompleteGroup: boolean;
+  rowNumber: number | null;
+};
+
 interface Props extends OnlyConnectProps {
   isCampaignLevel: boolean;
   page: PageName;
@@ -50,9 +57,7 @@ export function getPrettyWord(text: string): string {
 /** */
 const OnlyConnect = (props: Props) => {
   const [inProgress, setInProgress] = useState(true);
-  const [gridWords, setGridWords] = useState<
-    { word: string; categoryName: string; inCompleteGroup: boolean; rowNumber: number | null }[]
-  >([]);
+  const [gridWords, setGridWords] = useState<GridWord[]>([]);
   const [selectedWords, setSelectedWords] = useState<{ word: string; categoryName: string }[]>([]);
   const [numCompletedGroups, setNumCompletedGroups] = useState(0);
 
@@ -103,6 +108,19 @@ const OnlyConnect = (props: Props) => {
         setRemainingSeconds(remainingSeconds - 1);
       } else {
         playFailureChimeSoundEffect();
+
+        // Clear selection
+        setGridWords(
+          gridWords.map((gridWord) => {
+            if (selectedWords.some((x) => x.word === gridWord.word)) {
+              gridWord.rowNumber = null;
+            }
+
+            return gridWord;
+          })
+        );
+        setSelectedWords([]);
+        
         setInProgress(false);
         clearInterval(timerGuess);
       }
@@ -231,7 +249,7 @@ const OnlyConnect = (props: Props) => {
     setSelectedWords([]);
   }, [selectedWords]);
 
-  function handleSelection(gridItem: { word: string; categoryName: string; inCompleteGroup: boolean }) {
+  function handleSelection(gridItem: GridWord) {
     if (!inProgress) {
       return;
     }
@@ -265,19 +283,7 @@ const OnlyConnect = (props: Props) => {
   }
 
   // (gamemodeSettings.groupSize) words from (gamemodeSettings.numGroups) categories, shuffled
-  function getGridWords(): {
-    word: string;
-    categoryName: string;
-    inCompleteGroup: boolean;
-    rowNumber: number | null;
-  }[] {
-    type GridWord = {
-      word: string;
-      categoryName: string;
-      inCompleteGroup: boolean;
-      rowNumber: number | null;
-    };
-
+  function getGridWords(): GridWord[] {
     // Array to hold all the words for the grid (along with their categories)
     let gridWords: GridWord[] = [];
 
