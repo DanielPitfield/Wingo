@@ -10,24 +10,12 @@ import ProgressBar, { GreenToRedColorTransition } from "../Components/ProgressBa
 import { SaveData, SettingsData } from "../Data/SaveData";
 import { useClickChime, useCorrectChime, useFailureChime, useLightPingChime } from "../Data/Sounds";
 import { Theme } from "../Data/Themes";
-import { getAlgebraTemplates } from "../Data/AlgebraTemplates";
+import { AlgebraTemplate, answerType, getAlgebraTemplates, QuestionTemplate } from "../Data/AlgebraTemplates";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
 import { getGamemodeDefaultTimerValue } from "../Data/DefaultTimerValues";
 import { MAX_NUMPAD_GUESS_LENGTH } from "../Data/GamemodeSettingsInputLimits";
 import { DEFAULT_ALPHABET, DEFAULT_ALPHABET_STRING } from "./WingoConfig";
 import { Difficulty, difficultyOptions } from "../Data/DefaultGamemodeSettings";
-
-export type AlgebraConfigProps = {
-  difficulty: Difficulty;
-  inputs: number[];
-  questions: QuestionTemplate[];
-};
-
-export type QuestionTemplate = {
-  expression: string;
-  answerType: "letter" | "number";
-  correctAnswer: string;
-};
 
 export interface AlgebraProps {
   campaignConfig:
@@ -38,7 +26,7 @@ export interface AlgebraProps {
       }
     | { isCampaignLevel: false };
 
-  defaultTemplates?: AlgebraConfigProps[];
+  defaultTemplates?: AlgebraTemplate[];
 
   gamemodeSettings: {
     numTemplates: number;
@@ -80,7 +68,7 @@ const Algebra = (props: Props) => {
   const [guess, setGuess] = useState("");
 
   // All the algebra templates (usually multiple templates each with multiple questions)
-  const [algebraTemplates, setAlgebraTemplates] = useState<AlgebraConfigProps[]>(
+  const [algebraTemplates, setAlgebraTemplates] = useState<AlgebraTemplate[]>(
     props.defaultTemplates ?? getAlgebraTemplates(gamemodeSettings.numTemplates, gamemodeSettings.difficulty)
   );
 
@@ -142,7 +130,7 @@ const Algebra = (props: Props) => {
     };
   }, [setRemainingSeconds, remainingSeconds, gamemodeSettings.timerConfig.isTimed]);
 
-  const getCurrentAlgebraTemplate = (): AlgebraConfigProps => {
+  const getCurrentAlgebraTemplate = (): AlgebraTemplate => {
     return algebraTemplates[templateIndex];
   };
 
@@ -151,7 +139,8 @@ const Algebra = (props: Props) => {
   };
 
   const isGuessCorrect = (): Boolean => {
-    return guess.toUpperCase() === getCurrentQuestionTemplate().correctAnswer.toString().toUpperCase();
+    const correctAnswers = getCurrentQuestionTemplate().correctAnswers.map((answer) => answer.toUpperCase());
+    return correctAnswers.includes(guess.toUpperCase());
   };
 
   const isLastQuestionInTemplate = (): Boolean => {
@@ -367,11 +356,25 @@ const Algebra = (props: Props) => {
       return;
     }
 
+    const currentAnswerType: answerType = getCurrentQuestionTemplate().answerType;
+
+    // Letters not allowed when answer type is "number" (numPad shouldn't appear anyway, but just in case)
+    if (currentAnswerType === "number") {
+      return;
+    }
+
     if (guess.length >= MAX_NUMPAD_GUESS_LENGTH) {
       return;
     }
 
-    setGuess(letter);
+    // Append
+    if (currentAnswerType === "combination") {
+      setGuess(`${guess}${letter}`);
+    }
+    // Replace
+    else {
+      setGuess(letter);
+    }
   }
 
   function onSubmitNumber(number: number) {
@@ -379,10 +382,16 @@ const Algebra = (props: Props) => {
       return;
     }
 
+    // Numbers not allowed when answer type is "letter" (keyboard shouldn't appear anyway, but just in case)
+    if (getCurrentQuestionTemplate().answerType === "letter") {
+      return;
+    }
+
     if (guess.length >= MAX_NUMPAD_GUESS_LENGTH) {
       return;
     }
 
+    // Always append
     setGuess(`${guess}${number}`);
   }
 
@@ -452,6 +461,58 @@ const Algebra = (props: Props) => {
     );
   }
 
+  function displayKeyboard(): React.ReactNode {
+    if (!props.settings.gameplay.keyboard) {
+      return;
+    }
+
+    const answerType: answerType = getCurrentQuestionTemplate().answerType;
+
+    const letterKeyboard = (
+      <Keyboard
+        onEnter={() => setInProgress(false)}
+        onBackspace={onBackspace}
+        settings={props.settings}
+        onSubmitLetter={onSubmitLetter}
+        customAlphabet={DEFAULT_ALPHABET_STRING.toLocaleUpperCase()
+          .slice(0, getCurrentAlgebraTemplate().inputs.length)
+          .split("")}
+        targetWord=""
+        page="Algebra"
+        guesses={[]}
+        letterStatuses={[]}
+        inDictionary
+        disabled={!inProgress}
+      />
+    );
+
+    const numPad = (
+      <NumPad
+        onEnter={() => setInProgress(false)}
+        onBackspace={onBackspace}
+        onSubmitNumber={onSubmitNumber}
+        settings={props.settings}
+      />
+    );
+
+    if (answerType === "letter") {
+      return letterKeyboard;
+    }
+
+    if (answerType === "number") {
+      return numPad;
+    }
+
+    if (answerType === "combination") {
+      return (
+        <>
+          {letterKeyboard}
+          {numPad}
+        </>
+      );
+    }
+  }
+
   return (
     <div
       className="App algebra"
@@ -472,31 +533,7 @@ const Algebra = (props: Props) => {
           settings={props.settings}
         ></LetterTile>
       </div>
-      {props.settings.gameplay.keyboard && getCurrentQuestionTemplate().answerType === "number" && (
-        <NumPad
-          onEnter={() => setInProgress(false)}
-          onBackspace={onBackspace}
-          onSubmitNumber={onSubmitNumber}
-          settings={props.settings}
-        />
-      )}
-      {props.settings.gameplay.keyboard && getCurrentQuestionTemplate().answerType === "letter" && (
-        <Keyboard
-          onEnter={() => setInProgress(false)}
-          onBackspace={onBackspace}
-          settings={props.settings}
-          onSubmitLetter={onSubmitLetter}
-          customAlphabet={DEFAULT_ALPHABET_STRING.toLocaleUpperCase()
-            .slice(0, getCurrentAlgebraTemplate().inputs.length)
-            .split("")}
-          targetWord=""
-          page="Algebra"
-          guesses={[]}
-          letterStatuses={[]}
-          inDictionary
-          disabled={!inProgress}
-        />
-      )}
+      {displayKeyboard()}
       <div>
         {gamemodeSettings.timerConfig.isTimed && (
           <ProgressBar
