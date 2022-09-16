@@ -15,8 +15,8 @@ interface Props {
 }
 
 export const NumPad = (props: Props) => {
-  // The numbers 1 through 9
-  const Numbers = Array.from({ length: 10 }, (_, i) => i + 1);
+  // The numbers 0 through 9
+  const Numbers = Array.from({ length: 10 }, (_, i) => i);
 
   const [playClickSoundEffect] = useClickChime(props.settings);
 
