@@ -9,26 +9,12 @@ import ProgressBar, { GreenToRedColorTransition } from "../Components/ProgressBa
 import { SaveData, SettingsData } from "../Data/SaveData";
 import { useClickChime, useCorrectChime, useFailureChime, useLightPingChime } from "../Data/Sounds";
 import { Theme } from "../Data/Themes";
-import { getNumberSets } from "../Data/NumberSetsTemplates";
+import { getNumberSets, NumberSetQuestion, NumberSetTemplate } from "../Data/NumberSetsTemplates";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
 import { getGamemodeDefaultTimerValue } from "../Data/DefaultTimerValues";
 import { Difficulty, difficultyOptions } from "../Data/DefaultGamemodeSettings";
 import { MAX_NUMPAD_GUESS_LENGTH } from "../Data/GamemodeSettingsInputLimits";
-
-/** Config for a specific number set (exported for config from campaign) */
-export type NumberSetConfigProps = {
-  difficulty: Difficulty;
-  correctAnswerDescription: string;
-  examples: NumberSetTemplate[];
-  question: NumberSetTemplate;
-};
-
-/** Config for a specific number set (exported for config from campaign) */
-export type NumberSetTemplate = {
-  numbersLeft: number[];
-  numbersRight: number[];
-  correctAnswer: number;
-};
+import { getQuestionSetOutcome } from "./Algebra";
 
 export interface NumberSetsProps {
   campaignConfig:
@@ -39,7 +25,7 @@ export interface NumberSetsProps {
       }
     | { isCampaignLevel: false };
 
-  defaultNumberSets?: NumberSetConfigProps[];
+  defaultNumberSets?: NumberSetTemplate[];
 
   gamemodeSettings: {
     numSets: number;
@@ -61,13 +47,15 @@ interface Props extends NumberSetsProps {
 /** */
 const NumberSets = (props: Props) => {
   const [gamemodeSettings, setGamemodeSettings] = useState<NumberSetsProps["gamemodeSettings"]>(props.gamemodeSettings);
+
   const [inProgress, setInProgress] = useState(true);
   const [guess, setGuess] = useState("");
 
-  const [numberSets, setNumberSets] = useState<NumberSetConfigProps[]>(
+  const [numberSets, setNumberSets] = useState<NumberSetTemplate[]>(
     props.defaultNumberSets ?? getNumberSets(gamemodeSettings.numSets, gamemodeSettings.difficulty)
   );
   const [currentNumberSetIndex, setCurrentNumberSetIndex] = useState(0);
+  const [numCorrectAnswers, setNumCorrectAnswers] = useState(0);
 
   const [remainingSeconds, setRemainingSeconds] = useState(
     props.gamemodeSettings?.timerConfig?.isTimed === true
@@ -117,8 +105,13 @@ const NumberSets = (props: Props) => {
     };
   }, [setRemainingSeconds, remainingSeconds, gamemodeSettings.timerConfig.isTimed]);
 
-  const getCurrentNumberSet = (): NumberSetConfigProps => {
+  const getCurrentNumberSetTemplate = (): NumberSetTemplate => {
     return numberSets[currentNumberSetIndex];
+  };
+
+  const isGuessCorrect = (): Boolean => {
+    const correctAnswer = getCurrentNumberSetTemplate().question.correctAnswer.toString().toUpperCase();
+    return guess === correctAnswer;
   };
 
   // Evaluate each guess
@@ -127,31 +120,32 @@ const NumberSets = (props: Props) => {
       return;
     }
 
-    const successCondition = guess === getCurrentNumberSet().question.correctAnswer.toString();
-
-    if (successCondition) {
+    if (isGuessCorrect()) {
       playCorrectChimeSoundEffect();
+      setNumCorrectAnswers(numCorrectAnswers + 1);
     } else {
       playFailureChimeSoundEffect();
     }
   }, [guess, inProgress]);
 
-  function displayExamples() {
-    <div className="number_set_wrapper">
-      {getCurrentNumberSet().examples.map((example, index) => {
-        return (
-          <div key={`example ${index}`} className="number_set_example">
-            <span>
-              {example.numbersLeft} ( <strong>{example.correctAnswer}</strong> ) {example.numbersRight}
-            </span>
-          </div>
-        );
-      })}
-    </div>;
+  function displayExamples(): React.ReactNode {
+    return (
+      <div className="number_set_wrapper">
+        {getCurrentNumberSetTemplate().examples.map((example, index) => {
+          return (
+            <div key={`example ${index}`} className="number_set_example">
+              <span>
+                {example.numbersLeft} ( <strong>{example.correctAnswer}</strong> ) {example.numbersRight}
+              </span>
+            </div>
+          );
+        })}
+      </div>
+    );
   }
 
-  function displayQuestion() {
-    const question = getCurrentNumberSet().question;
+  function displayQuestion(): React.ReactNode {
+    const question = getCurrentNumberSetTemplate().question;
 
     return (
       <div className="number_set_question">
@@ -162,78 +156,109 @@ const NumberSets = (props: Props) => {
     );
   }
 
+  // Has the last numberSet been guessed/attempted?
+  const isGameOver = () => {
+    // Is the current numberSet the last numberSet?
+    const isLastNumberSet = currentNumberSetIndex === numberSets.length - 1;
+
+    return !inProgress && isLastNumberSet;
+  };
+
   function displayOutcome(): React.ReactNode {
     // Game still in progress, don't display anything
     if (inProgress) {
       return;
     }
 
-    const answer = getCurrentNumberSet().question.correctAnswer.toString();
-    const successCondition = guess === answer;
-
-    let outcomeNotification;
-
-    if (successCondition) {
-      outcomeNotification = (
-        <MessageNotification type={"success"}>
-          <strong>{"Correct!"}</strong>
-        </MessageNotification>
-      );
-    } else {
-      outcomeNotification = (
-        <MessageNotification type={"error"}>
-          <strong>{"Incorrect"}</strong>
-          <br />
-          <span>
-            The answer was <strong>{answer}</strong>
-          </span>
-        </MessageNotification>
-      );
-    }
-
-    return (
+    // Show outcome of current question (and how many questions are left)
+    const currentQuestionOutcome = (
       <>
-        {outcomeNotification}
+        <MessageNotification type={isGuessCorrect() ? "success" : "error"}>
+          <strong>{isGuessCorrect() ? "Correct!" : "Incorrect!"}</strong>
+          <br />
 
+          {!isGuessCorrect() && (
+            <span>
+              The answer was <strong>{getCurrentNumberSetTemplate().question.correctAnswer}</strong>
+            </span>
+          )}
+          <br />
+
+          <span>{`${currentNumberSetIndex + 1} / ${gamemodeSettings.numSets} questions completed`}</span>
+        </MessageNotification>
         <br />
-
-        {!inProgress && (
-          <Button
-            mode="accept"
-            onClick={() => ResetGame()}
-            settings={props.settings}
-            additionalProps={{ autoFocus: true }}
-          >
-            {props.campaignConfig.isCampaignLevel ? LEVEL_FINISHING_TEXT : "Restart"}
-          </Button>
-        )}
       </>
     );
+
+    // When the game has finished, show the number of correct answers
+    const overallOutcome = (
+      <>
+        <MessageNotification type={getQuestionSetOutcome(numCorrectAnswers, gamemodeSettings.numSets)}>
+          <strong>{`${numCorrectAnswers} / ${gamemodeSettings.numSets} correct`}</strong>
+        </MessageNotification>
+        <br />
+      </>
+    );
+
+    const restartButton = (
+      <Button mode="accept" onClick={() => ResetGame()} settings={props.settings} additionalProps={{ autoFocus: true }}>
+        {props.campaignConfig.isCampaignLevel ? LEVEL_FINISHING_TEXT : "Restart"}
+      </Button>
+    );
+
+    const continueButton = (
+      <Button
+        mode="accept"
+        onClick={() => ContinueGame()}
+        settings={props.settings}
+        additionalProps={{ autoFocus: true }}
+      >
+        Next
+      </Button>
+    );
+
+    // If no more questions, show restart button, otherwise show continue button
+    const nextButton = isGameOver() ? restartButton : continueButton;
+
+    const outcome = (
+      <>
+        {isGameOver() && overallOutcome}
+        {currentQuestionOutcome}
+        {nextButton}
+      </>
+    );
+
+    return outcome;
   }
 
   function ResetGame() {
-    if (!inProgress) {
-      const wasCorrect = guess === getCurrentNumberSet().question.correctAnswer.toString();
+    if (isGameOver()) {
+      // Achieved target score if a campaign level, otherwise just all answers were correct
+      const wasCorrect = props.campaignConfig.isCampaignLevel
+        ? numCorrectAnswers >= Math.min(props.campaignConfig.targetScore, gamemodeSettings.numSets)
+        : numCorrectAnswers === gamemodeSettings.numSets;
       props.onComplete(wasCorrect);
-
-      /*
-    // TODO: wasCorrect campaign pass criteria with multiple questions
-    // Achieved target score if a campaign level, otherwise just all answers were correct
-    const wasCorrect = props.campaignConfig.isCampaignLevel
-    ? numCorrectAnswers >= Math.min(props.campaignConfig.targetScore, gamemodeSettings.numQuestions)
-    : numCorrectAnswers === gamemodeSettings.numQuestions;
-    */
     }
 
     setInProgress(true);
     setGuess("");
+
     setNumberSets(getNumberSets(gamemodeSettings.numSets, gamemodeSettings.difficulty));
+
     setCurrentNumberSetIndex(0);
+    setNumCorrectAnswers(0);
 
     if (gamemodeSettings.timerConfig.isTimed) {
       // Reset the timer if it is enabled in the game options
       setRemainingSeconds(gamemodeSettings.timerConfig.seconds);
     }
+  }
+
+  // Next question
+  function ContinueGame() {
+    setInProgress(true);
+    setGuess("");
+    setCurrentNumberSetIndex(currentNumberSetIndex + 1);
   }
 
   function onBackspace() {
@@ -331,52 +356,46 @@ const NumberSets = (props: Props) => {
       className="App number_sets"
       style={{ backgroundImage: `url(${props.theme.backgroundImageSrc})`, backgroundSize: "100% 100%" }}
     >
-      <>
-        {!props.campaignConfig.isCampaignLevel && (
-          <div className="gamemodeSettings">
-            <GamemodeSettingsMenu>{generateSettingsOptions()}</GamemodeSettingsMenu>
-          </div>
-        )}
-
-        <div className="outcome">{displayOutcome()}</div>
-
-        {displayExamples()}
-        {displayQuestion()}
-
-        <div className="guess">
-          <LetterTile
-            letter={guess}
-            status={
-              inProgress
-                ? "not set"
-                : guess === getCurrentNumberSet().question.correctAnswer.toString()
-                ? "correct"
-                : "incorrect"
-            }
-            settings={props.settings}
-          ></LetterTile>
+      {!props.campaignConfig.isCampaignLevel && (
+        <div className="gamemodeSettings">
+          <GamemodeSettingsMenu>{generateSettingsOptions()}</GamemodeSettingsMenu>
         </div>
+      )}
 
-        {props.settings.gameplay.keyboard && (
-          <NumPad
-            onEnter={() => setInProgress(false)}
-            onBackspace={onBackspace}
-            onSubmitNumber={onSubmitNumber}
-            settings={props.settings}
-            disabled={!inProgress}
-          />
+      <div className="outcome">{displayOutcome()}</div>
+
+      {displayExamples()}
+      {displayQuestion()}
+
+      <div className="guess">
+        <LetterTile
+          letter={guess}
+          status={inProgress ? "not set" : isGuessCorrect() ? "correct" : "incorrect"}
+          settings={props.settings}
+        ></LetterTile>
+      </div>
+
+      {props.settings.gameplay.keyboard && (
+        <NumPad
+          onEnter={() => setInProgress(false)}
+          onBackspace={onBackspace}
+          onSubmitNumber={onSubmitNumber}
+          settings={props.settings}
+          disabled={!inProgress}
+          hasBackspace={true}
+          hasEnter={true}
+        />
+      )}
+
+      <div>
+        {gamemodeSettings.timerConfig.isTimed && (
+          <ProgressBar
+            progress={remainingSeconds}
+            total={gamemodeSettings.timerConfig.seconds}
+            display={{ type: "transition", colorTransition: GreenToRedColorTransition }}
+          ></ProgressBar>
         )}
-
-        <div>
-          {gamemodeSettings.timerConfig.isTimed && (
-            <ProgressBar
-              progress={remainingSeconds}
-              total={gamemodeSettings.timerConfig.seconds}
-              display={{ type: "transition", colorTransition: GreenToRedColorTransition }}
-            ></ProgressBar>
-          )}
-        </div>
-      </>
+      </div>
     </div>
   );
 };

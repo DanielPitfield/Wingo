@@ -1,8 +1,22 @@
 import { operators } from "../Pages/NumbersGameConfig";
 import { randomIntFromInterval } from "../Pages/Numble";
-import { NumberSetConfigProps, NumberSetTemplate } from "../Pages/NumberSets";
 import { Difficulty } from "./DefaultGamemodeSettings";
-import { shuffleArray } from "../Pages/ArithmeticDrag";
+import { shuffleArray } from "./shuffleArray";
+
+/** Config for a specific number set (exported for config from campaign) */
+export type NumberSetTemplate = {
+  difficulty: Difficulty;
+  correctAnswerDescription: string;
+  examples: NumberSetQuestion[];
+  question: NumberSetQuestion;
+};
+
+/** Config for a specific number set (exported for config from campaign) */
+export type NumberSetQuestion = {
+  numbersLeft: number[];
+  numbersRight: number[];
+  correctAnswer: number;
+};
 
 // TODO: Examples and finding of operator are hardcoded
 // TODO: The correctAnswer must be an integer
@@ -10,7 +24,7 @@ import { shuffleArray } from "../Pages/ArithmeticDrag";
 const smallNumbers: number[] = Array.from({ length: 10 }).map((_) => randomIntFromInterval(2, 10));
 
 /* All number sets */
-const sets = {
+const NumberSetsTemplates = {
   Multiply: {
     difficulty: "easy",
     correctAnswerDescription: "Multiply left number by right number",
@@ -25,13 +39,13 @@ const sets = {
         numbersRight: [smallNumbers[3]],
         correctAnswer: operators.find((operator) => operator.name === "×")?.function(smallNumbers[2], smallNumbers[3]),
       },
-    ] as NumberSetTemplate[],
+    ],
     question: {
       numbersLeft: [smallNumbers[4]],
       numbersRight: [smallNumbers[5]],
       correctAnswer: operators.find((operator) => operator.name === "×")?.function(smallNumbers[4], smallNumbers[5]),
     },
-  } as NumberSetConfigProps,
+  } as NumberSetTemplate,
 
   Add: {
     difficulty: "easy",
@@ -53,7 +67,7 @@ const sets = {
       numbersRight: [smallNumbers[5]],
       correctAnswer: operators.find((operator) => operator.name === "+")?.function(smallNumbers[4], smallNumbers[5]),
     },
-  } as NumberSetConfigProps,
+  } as NumberSetTemplate,
 
   Minus: {
     difficulty: "easy",
@@ -75,7 +89,7 @@ const sets = {
       numbersRight: [smallNumbers[5]],
       correctAnswer: operators.find((operator) => operator.name === "-")?.function(smallNumbers[4], smallNumbers[5]),
     },
-  } as NumberSetConfigProps,
+  } as NumberSetTemplate,
 
   Divide: {
     difficulty: "easy",
@@ -103,12 +117,14 @@ const sets = {
         .find((operator) => operator.name === "÷")
         ?.function(smallNumbers[4] * smallNumbers[5], smallNumbers[5]),
     },
-  } as NumberSetConfigProps,
+  } as NumberSetTemplate,
 };
 
-export function getNumberSets(numSets: number, difficulty: Difficulty): NumberSetConfigProps[] {
+export function getNumberSets(numSets: number, difficulty: Difficulty): NumberSetTemplate[] {
   // Sets that have the specified difficulty
-  const filteredNumberSets = Object.values(sets).filter((numberSet) => numberSet.difficulty === difficulty);
+  const filteredNumberSets = Object.values(NumberSetsTemplates).filter(
+    (numberSet) => numberSet.difficulty === difficulty
+  );
   // Randomly select the required amount of sets
   return shuffleArray(filteredNumberSets).slice(0, numSets);
 }
