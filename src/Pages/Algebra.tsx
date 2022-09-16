@@ -10,7 +10,7 @@ import ProgressBar, { GreenToRedColorTransition } from "../Components/ProgressBa
 import { SaveData, SettingsData } from "../Data/SaveData";
 import { useClickChime, useCorrectChime, useFailureChime, useLightPingChime } from "../Data/Sounds";
 import { Theme } from "../Data/Themes";
-import { AlgebraTemplate, answerType, getAlgebraTemplates, QuestionTemplate } from "../Data/AlgebraTemplates";
+import { AlgebraTemplate, answerType, getAlgebraTemplates, AlgebraQuestion } from "../Data/AlgebraTemplates";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
 import { getGamemodeDefaultTimerValue } from "../Data/DefaultTimerValues";
 import { MAX_NUMPAD_GUESS_LENGTH } from "../Data/GamemodeSettingsInputLimits";
@@ -134,7 +134,7 @@ const Algebra = (props: Props) => {
     return algebraTemplates[templateIndex];
   };
 
-  const getCurrentQuestionTemplate = (): QuestionTemplate => {
+  const getCurrentQuestionTemplate = (): AlgebraQuestion => {
     return getCurrentAlgebraTemplate().questions[questionIndex];
   };
 
@@ -193,6 +193,12 @@ const Algebra = (props: Props) => {
     );
   }
 
+  // Have all the questions been answered (there are no more questions)?
+  const isGameOver = () => {
+    const isLastQuestion = getCompletedNumQuestions() >= getTotalNumQuestions();
+    return !inProgress && isLastQuestion;
+  };
+
   function displayOutcome(): React.ReactNode {
     // Game still in progress, don't display anything
     if (inProgress) {
@@ -205,6 +211,14 @@ const Algebra = (props: Props) => {
         <MessageNotification type={isGuessCorrect() ? "success" : "error"}>
           <strong>{isGuessCorrect() ? "Correct!" : "Incorrect!"}</strong>
           <br />
+
+          {!isGuessCorrect() && (
+            <span>
+              The answers were: <strong>{getCurrentQuestionTemplate().correctAnswers.join(" , ")}</strong>
+            </span>
+          )}
+          <br />
+
           <span>{`${getCompletedNumQuestions()} / ${getTotalNumQuestions()} questions completed`}</span>
         </MessageNotification>
         <br />
@@ -266,19 +280,6 @@ const Algebra = (props: Props) => {
     }
 
     return count;
-
-    /*
-    const completedTemplateLengths = algebraTemplates
-      .slice(0, templateIndex + 1)
-      .map((template) => template.questions.length);
-
-    const numPrevSetQuestions = completedTemplateLengths.reduce(
-      (previousValue, currentValue) => previousValue + currentValue,
-      0
-    );
-
-    return numPrevSetQuestions + questionNumber;
-    */
   };
 
   const getTotalNumQuestions = () => {
@@ -286,12 +287,6 @@ const Algebra = (props: Props) => {
     const templatesNumQuestions = algebraTemplates.map((template) => template.questions.length);
     // Sum of these values
     return templatesNumQuestions.reduce((previousValue, currentValue) => previousValue + currentValue, 0);
-  };
-
-  // Have all the questions been answered (there are no more questions)?
-  const isGameOver = () => {
-    const isLastQuestion = getCompletedNumQuestions() >= getTotalNumQuestions();
-    return !inProgress && isLastQuestion;
   };
 
   // Restart with new set of questions
@@ -528,9 +523,12 @@ const Algebra = (props: Props) => {
           <GamemodeSettingsMenu>{generateSettingsOptions()}</GamemodeSettingsMenu>
         </div>
       )}
+
       <div className="outcome">{displayOutcome()}</div>
+
       {displayInputs()}
       {displayQuestion()}
+
       <div className="guess">
         <LetterTile
           letter={guess}
@@ -538,7 +536,9 @@ const Algebra = (props: Props) => {
           settings={props.settings}
         ></LetterTile>
       </div>
+
       {displayInputMethods()}
+
       <div>
         {gamemodeSettings.timerConfig.isTimed && (
           <ProgressBar

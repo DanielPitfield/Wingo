@@ -4,10 +4,10 @@ import { shuffleArray } from "./shuffleArray";
 export type AlgebraTemplate = {
   difficulty: Difficulty;
   inputs: number[];
-  questions: QuestionTemplate[];
+  questions: AlgebraQuestion[];
 };
 
-export type QuestionTemplate = {
+export type AlgebraQuestion = {
   expression: string;
   answerType: answerType;
   correctAnswers: string[];
@@ -68,10 +68,10 @@ const AlgebraTemplates = {
 };
 
 export function getAlgebraTemplates(numTemplates: number, difficulty: Difficulty): AlgebraTemplate[] {
-  // Sets that have the specified difficulty
+  // Templates that have the specified difficulty
   const filteredAlgebraTemplates = Object.values(AlgebraTemplates).filter(
     (algebraTemplate) => algebraTemplate.difficulty === difficulty
   );
-  // Randomly select the required amount of sets
+  // Randomly select the required amount of templates
   return shuffleArray(filteredAlgebraTemplates).slice(0, numTemplates);
 }
