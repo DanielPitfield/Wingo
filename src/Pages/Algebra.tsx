@@ -219,7 +219,9 @@ const Algebra = (props: Props) => {
           )}
           <br />
 
-          <span>{`${getCompletedNumQuestions()} / ${getTotalNumQuestions()} questions completed`}</span>
+          {getCompletedNumQuestions() < getTotalNumQuestions() && (
+            <span>{`${getCompletedNumQuestions()} / ${getTotalNumQuestions()} questions completed`}</span>
+          )}
         </MessageNotification>
         <br />
       </>

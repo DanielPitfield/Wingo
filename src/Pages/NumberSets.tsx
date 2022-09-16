@@ -184,7 +184,9 @@ const NumberSets = (props: Props) => {
           )}
           <br />
 
-          <span>{`${currentNumberSetIndex + 1} / ${gamemodeSettings.numSets} questions completed`}</span>
+          {(currentNumberSetIndex + 1) < gamemodeSettings.numSets && (
+            <span>{`${currentNumberSetIndex + 1} / ${gamemodeSettings.numSets} questions completed`}</span>
+          )}
         </MessageNotification>
         <br />
       </>
