@@ -461,7 +461,7 @@ const Algebra = (props: Props) => {
     );
   }
 
-  function displayKeyboard(): React.ReactNode {
+  function displayInputMethods(): React.ReactNode {
     if (!props.settings.gameplay.keyboard) {
       return;
     }
@@ -538,7 +538,7 @@ const Algebra = (props: Props) => {
           settings={props.settings}
         ></LetterTile>
       </div>
-      {displayKeyboard()}
+      {displayInputMethods()}
       <div>
         {gamemodeSettings.timerConfig.isTimed && (
           <ProgressBar

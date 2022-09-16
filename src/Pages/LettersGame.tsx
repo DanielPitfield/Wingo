@@ -441,22 +441,20 @@ const LettersGame = (props: Props) => {
       <div className="letters-game-word-grid">{populateGrid()}</div>
 
       {props.settings.gameplay.keyboard && (
-        <div className="keyboard">
-          <Keyboard
-            page={props.page}
-            onEnter={props.onEnter}
-            onSubmitLetter={props.onSubmitKeyboardLetter}
-            onBackspace={props.onBackspace}
-            guesses={props.guesses}
-            targetWord={props.targetWord}
-            inDictionary={props.inDictionary}
-            letterStatuses={[]}
-            settings={props.settings}
-            disabled={!props.inProgress}
-            hasBackspace={true}
-            hasEnter={true}
-          />
-        </div>
+        <Keyboard
+          page={props.page}
+          onEnter={props.onEnter}
+          onSubmitLetter={props.onSubmitKeyboardLetter}
+          onBackspace={props.onBackspace}
+          guesses={props.guesses}
+          targetWord={props.targetWord}
+          inDictionary={props.inDictionary}
+          letterStatuses={[]}
+          settings={props.settings}
+          disabled={!props.inProgress}
+          hasBackspace={true}
+          hasEnter={true}
+        />
       )}
 
       <div>
