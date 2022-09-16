@@ -1152,6 +1152,8 @@ export const WingoInterlinked = (props: Props) => {
             letterStatuses={[]}
             settings={props.settings}
             disabled={!inProgress}
+            hasBackspace={true}
+            hasEnter={true}
           />
         </div>
       )}

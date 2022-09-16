@@ -483,6 +483,8 @@ const Algebra = (props: Props) => {
         letterStatuses={[]}
         inDictionary
         disabled={!inProgress}
+        hasBackspace={true}
+        hasEnter={true}
       />
     );
 
@@ -492,6 +494,9 @@ const Algebra = (props: Props) => {
         onBackspace={onBackspace}
         onSubmitNumber={onSubmitNumber}
         settings={props.settings}
+        disabled={!inProgress}
+        hasBackspace={answerType === "number"}
+        hasEnter={answerType === "number"}
       />
     );
 
@@ -506,8 +511,8 @@ const Algebra = (props: Props) => {
     if (answerType === "combination") {
       return (
         <>
-          {letterKeyboard}
           {numPad}
+          {letterKeyboard}
         </>
       );
     }

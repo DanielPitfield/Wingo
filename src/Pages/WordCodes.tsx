@@ -966,6 +966,8 @@ const WordCodes = (props: Props) => {
           onSubmitNumber={onSubmitNumber}
           settings={props.settings}
           disabled={!inProgress}
+          hasBackspace={true}
+          hasEnter={true}
         />
       )}
       {Boolean(
@@ -982,6 +984,8 @@ const WordCodes = (props: Props) => {
           letterStatuses={[]}
           inDictionary
           disabled={!inProgress}
+          hasBackspace={true}
+          hasEnter={true}
         />
       )}
       <div>

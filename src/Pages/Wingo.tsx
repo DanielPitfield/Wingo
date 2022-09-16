@@ -697,6 +697,8 @@ const Wingo = (props: Props) => {
             letterStatuses={props.letterStatuses}
             settings={props.settings}
             disabled={!props.inProgress}
+            hasBackspace={true}
+            hasEnter={true}
           />
         </div>
       )}

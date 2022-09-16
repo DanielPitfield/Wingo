@@ -261,6 +261,8 @@ const LetterCategories = (props: Props) => {
             letterStatuses={[]}
             settings={props.settings}
             disabled={!props.inProgress}
+            hasBackspace={true}
+            hasEnter={true}
           />
         </div>
       )}

@@ -655,6 +655,8 @@ const ArithmeticReveal = (props: Props) => {
           onSubmitNumber={onSubmitNumber}
           settings={props.settings}
           disabled={!inProgress}
+          hasBackspace={true}
+          hasEnter={true}
         />
       )}
       {revealState.type === "finished" && (
