@@ -9,12 +9,15 @@ interface Props {
   onSubmitNumber: (number: number) => void;
   onEnter: () => void;
   onBackspace: () => void;
-  disabled?: boolean;
+  disabled: boolean;
+  hasBackspace: boolean;
+  hasEnter: boolean;
 }
 
-export const Numbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
-
 export const NumPad = (props: Props) => {
+  // The numbers 1 through 9
+  const Numbers = Array.from({ length: 10 }, (_, i) => i + 1);
+
   const [playClickSoundEffect] = useClickChime(props.settings);
 
   React.useEffect(() => {
@@ -63,6 +66,7 @@ export const NumPad = (props: Props) => {
     return numbers.map((number) => (
       <Button
         key={number}
+        className="numPad_button"
         mode="default"
         settings={props.settings}
         onClick={() => props.onSubmitNumber(number)}
@@ -74,27 +78,26 @@ export const NumPad = (props: Props) => {
   }
 
   return (
-    <div className="keyboard_wrapper">
-      <div className="keyboard_row_top">
-        <>{populateNumpad([7, 8, 9])}</>
+    <div className="numPad_wrapper">
+      <div className="numPad_row">{populateNumpad([7, 8, 9])}</div>
+      <div className="numPad_row">{populateNumpad([4, 5, 6])}</div>
+      <div className="numPad_row">{populateNumpad([1, 2, 3])}</div>
+
+      <div className="numPad_row">
+        {populateNumpad([0])}
+
+        {props.hasBackspace && (
+          <Button mode="destructive" settings={props.settings} onClick={props.onBackspace} disabled={props.disabled}>
+            <FiChevronLeft />
+          </Button>
+        )}
       </div>
-      <div className="keyboard_row_middle">
-        <>{populateNumpad([4, 5, 6])}</>
-      </div>
-      <div className="keyboard_row_bottom">
-        <>{populateNumpad([1, 2, 3])}</>
-      </div>
-      <div className="keyboard_row_bottom">
-        <>{populateNumpad([0])}</>
-        <Button mode="destructive" settings={props.settings} onClick={props.onBackspace} disabled={props.disabled}>
-          <FiChevronLeft />
-        </Button>
-      </div>
-      <div className="keyboard_enter">
+
+      {props.hasEnter && (
         <Button mode="accept" settings={props.settings} onClick={props.onEnter} disabled={props.disabled}>
           <FiCornerDownLeft /> Enter
         </Button>
-      </div>
+      )}
     </div>
   );
 };

@@ -22,7 +22,9 @@ interface Props {
     status: LetterStatus;
   }[];
   customAlphabet?: string[];
-  disabled?: boolean;
+  disabled: boolean;
+  hasBackspace: boolean;
+  hasEnter: boolean;
 }
 
 const DEFAULT_KEYBOARD_FIRST_ROW = "QWERTYUIOP";
@@ -164,19 +166,19 @@ export const Keyboard = (props: Props) => {
       return;
     }
 
-     return RowString.split("").map((letter) => {
+    return RowString.split("").map((letter) => {
       const letterStatus = keyboardStatuses.find((x) => x.letter.toUpperCase() === letter.toUpperCase())?.status;
+      // The space key uses a different className (as it needs to be styled to be wider)
+      const isSpaceKey = letter === "-";
 
       return (
         <Button
           key={letter}
-          className={letter === "-" ? "keyboard_space" : `keyboard_${letter}`}
+          className={isSpaceKey ? "keyboard_space" : "keyboard_button"}
           mode="default"
-          // Data attribute used to colour button
           status={letterStatus ?? "not set"}
           settings={props.settings}
           onClick={() => {
-            // Letter of button is used within a callback function
             props.onSubmitLetter(letter);
           }}
           disabled={props.disabled}
@@ -189,45 +191,43 @@ export const Keyboard = (props: Props) => {
 
   return (
     <div className="keyboard_wrapper">
-      <div className="keyboard_row_top">
-        <>
-          {props.customAlphabet
-            ? // Half the custom alphabet
-              populateKeyboard(props.customAlphabet.slice(0, Math.round(props.customAlphabet.length / 2)).join(""))
-            : // The default top row of the keyboard
-              populateKeyboard(DEFAULT_KEYBOARD_FIRST_ROW)}
-        </>
+      <div className="keyboard_row">
+        {props.customAlphabet
+          ? // Half the custom alphabet
+            populateKeyboard(props.customAlphabet.slice(0, Math.round(props.customAlphabet.length / 2)).join(""))
+          : // The default top row of the keyboard
+            populateKeyboard(DEFAULT_KEYBOARD_FIRST_ROW)}
       </div>
 
-      <div className="keyboard_row_middle">
-        <>
-          {props.customAlphabet
-            ? populateKeyboard(props.customAlphabet.slice(Math.round(props.customAlphabet.length / 2)).join(""))
-            : populateKeyboard(hasApostrophe ? DEFAULT_KEYBOARD_SECOND_ROW + "'" : DEFAULT_KEYBOARD_SECOND_ROW)}
-        </>
+      <div className="keyboard_row">
+        {props.customAlphabet
+          ? populateKeyboard(props.customAlphabet.slice(Math.round(props.customAlphabet.length / 2)).join(""))
+          : populateKeyboard(hasApostrophe ? DEFAULT_KEYBOARD_SECOND_ROW + "'" : DEFAULT_KEYBOARD_SECOND_ROW)}
       </div>
 
-      <div className="keyboard_row_bottom">
+      <div className="keyboard_row">
         {!props.customAlphabet && <>{populateKeyboard(DEFAULT_KEYBOARD_THIRD_ROW)}</>}
 
-        <Button
-          mode="destructive"
-          settings={props.settings}
-          onClick={props.onBackspace}
-          disabled={props.disabled}
-          additionalProps={{ title: "Backspace" }}
-        >
-          <FiChevronLeft />
-        </Button>
+        {props.hasBackspace && (
+          <Button
+            mode="destructive"
+            settings={props.settings}
+            onClick={props.onBackspace}
+            disabled={props.disabled}
+            additionalProps={{ title: "Backspace" }}
+          >
+            <FiChevronLeft />
+          </Button>
+        )}
       </div>
 
-      <div className="keyboard_space">{hasSpaces && <>{populateKeyboard("-")}</>}</div>
+      {hasSpaces && <div className="keyboard_row">{populateKeyboard("-")}</div>}
 
-      <div className="keyboard_enter">
+      {props.hasEnter && (
         <Button mode="accept" settings={props.settings} onClick={props.onEnter} disabled={props.disabled}>
           <FiCornerDownLeft /> Enter
         </Button>
-      </div>
+      )}
     </div>
   );
 };

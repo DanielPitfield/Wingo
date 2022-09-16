@@ -349,13 +349,26 @@ $data-statuses: (
   min-width: 15em;
 }
 
-.keyboard_wrapper {
+.keyboard_wrapper, .numPad_wrapper {
   display: flex;
   flex-direction: column;
   align-items: center;
   & > * {
     display: flex;
   }
+  margin: 0.5em;
+}
+
+.keyboard_row, .numPad_row {
+
+}
+
+.keyboard_button, .numPad_button {
+
+}
+
+.keyboard_space {
+  min-width: 15em;
 }
 
 .btn.default[data-status="correct"] {
