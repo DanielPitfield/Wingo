@@ -67,6 +67,8 @@ interface Props extends WordCodesProps {
   onComplete: (wasCorrect: boolean) => void;
 }
 
+// TODO: Refactor
+
 /** */
 const WordCodes = (props: Props) => {
   const [inProgress, setInProgress] = useState(true);
@@ -227,8 +229,8 @@ const WordCodes = (props: Props) => {
       newCodeTiles = shuffleArray(newCodeTiles);
       setCodeTiles(newCodeTiles);
     }
-    // Question gamemode
-    else {
+
+    if (props.mode === "question") {
       let newDisplayWords = wordCodes.map((wordCode) => {
         return wordCode.word.toUpperCase();
       });
@@ -253,6 +255,8 @@ const WordCodes = (props: Props) => {
 
       setDisplayCodes(newDisplayCodes);
     }
+
+    return;
   }, [wordCodes]);
 
   // Determines whether a word only contains the specified valid letters
@@ -365,7 +369,7 @@ const WordCodes = (props: Props) => {
     }
 
     // Word code for the current question
-    const currentQuestion = questionWordCodes[questionNumber];
+    const currentQuestion = getCurrentQuestion();
 
     if (!currentQuestion) {
       return;
@@ -395,69 +399,51 @@ const WordCodes = (props: Props) => {
     }
 
     // Word code for the current question
-    const currentQuestion = questionWordCodes[questionNumber];
+    const currentQuestion = getCurrentQuestion();
 
     if (!currentQuestion) {
       return;
     }
 
-    let question;
     // Word to Code questions first
     if (currentQuestion.isWordToCode) {
-      question = (
+      return (
         <div className="word_codes_question">
           Find the code for the word <strong>{currentQuestion.word.toUpperCase()}</strong>
         </div>
       );
     }
+
     // Code to Word
-    else if (!currentQuestion.isWordToCode) {
-      question = (
+    if (!currentQuestion.isWordToCode) {
+      return (
         <div className="word_codes_question">
           Find the word that has the number code <strong>{currentQuestion.code}</strong>
         </div>
       );
     }
-
-    return question;
   }
 
-  function isGuessCorrect() {
-    if (inProgress) {
-      return false;
+  const getCurrentQuestion = () => {
+    return questionWordCodes[questionNumber];
+  };
+
+  const isGuessCorrect = () => {
+    if (props.mode === "match") {
+      const numCorrectTiles = wordTiles.filter((x) => x.status === "correct").length;
+      return numCorrectTiles === getTotalNumQuestions();
     }
 
-    if (props.mode !== "question") {
-      return false;
+    const currentQuestion = getCurrentQuestion();
+
+    if (props.mode === "question" && currentQuestion.isWordToCode) {
+      return guess.toUpperCase() === currentQuestion.code.toUpperCase();
     }
 
-    if (!guess || guess.length < 1) {
-      return false;
+    if (props.mode === "question" && !currentQuestion.isWordToCode) {
+      return guess.toUpperCase() === currentQuestion.word.toUpperCase();
     }
-
-    // Questions (and answers) couldn't be found
-    if (!questionWordCodes) {
-      return false;
-    }
-
-    const currentQuestion = questionWordCodes[questionNumber];
-
-    if (!currentQuestion) {
-      return false;
-    }
-    // Word to Code (guess is correct code?)
-    else if (currentQuestion.isWordToCode && guess.toUpperCase() === currentQuestion.code.toUpperCase()) {
-      return true;
-    }
-    // Code to Word (guess is correct word?)
-    else if (!currentQuestion.isWordToCode && guess.toUpperCase() === currentQuestion.word.toUpperCase()) {
-      return true;
-    }
-    // Incorrect answer
-    else {
-      return false;
-    }
-  }
+  };
 
   // Draggable tiles for match gamemode
   function displayTiles() {
@@ -535,7 +521,7 @@ const WordCodes = (props: Props) => {
     setCodeTiles(newCodeTiles);
 
     // Are all the tiles in the correct position?
-    const allCorrect = newWordTiles.filter((x) => x.status === "correct").length === wordTiles.length;
+    const allCorrect = newWordTiles.filter((x) => x.status === "correct").length === getTotalNumQuestions();
 
     // Or on last remaining guess
     if (allCorrect || remainingGuesses <= 1) {
@@ -547,128 +533,126 @@ const WordCodes = (props: Props) => {
     }
   }
 
+  const getTotalNumQuestions = () => {
+    if (props.mode === "match") {
+      return wordTiles.length ?? 0;
+    }
+    if (props.mode === "question") {
+      return gamemodeSettings.numWordToCodeQuestions + gamemodeSettings.numCodeToWordQuestions;
+    }
+
+    return 0;
+  };
+
+  // Has the last wordCode been guessed/attempted?
+  const isGameOver = () => {
+    // Is the current question the last question?
+    const isLastQuestion = questionNumber === getTotalNumQuestions() - 1;
+
+    return !inProgress && isLastQuestion;
+  };
+
   function displayOutcome(): React.ReactNode {
     // Game still in progress, don't display anything
     if (inProgress) {
       return;
     }
 
-    if (props.mode === "question" && !questionWordCodes) {
-      return;
-    }
-
-    let outcomeNotification;
+    const restartButton = (
+      <Button mode="accept" settings={props.settings} onClick={() => ResetGame()} additionalProps={{ autoFocus: true }}>
+        {props.campaignConfig.isCampaignLevel ? LEVEL_FINISHING_TEXT : "Restart"}
+      </Button>
+    );
 
     if (props.mode === "match") {
       const numCorrectTiles = wordTiles.filter((x) => x.status === "correct").length;
-      const successCondition = numCorrectTiles === wordTiles.length;
 
       // Show how many tiles are in correct position
-      outcomeNotification = (
+      return (
         <>
-          <MessageNotification type={successCondition ? "success" : "error"}>
-            <strong>{successCondition ? "All tiles in the correct order!" : `${numCorrectTiles} tiles correct`}</strong>
+          <MessageNotification type={isGuessCorrect() ? "success" : "error"}>
+            <strong>{isGuessCorrect() ? "All tiles in the correct order!" : `${numCorrectTiles} tiles correct`}</strong>
           </MessageNotification>
-
           <br />
 
-          <Button
-            mode="accept"
-            settings={props.settings}
-            onClick={() => ResetGame()}
-            additionalProps={{ autoFocus: true }}
-          >
-            {props.campaignConfig.isCampaignLevel ? LEVEL_FINISHING_TEXT : "Restart"}
-          </Button>
-        </>
-      );
-    } else if (props.mode === "question") {
-      const successCondition = isGuessCorrect();
-
-      // The number of questions in this set of questions
-      const numQuestions = gamemodeSettings.numWordToCodeQuestions + gamemodeSettings.numCodeToWordQuestions;
-      // Question was the last in the set of questions
-      const lastQuestion = questionNumber === numQuestions - 1;
-
-      outcomeNotification = (
-        <>
-          {/* Show number of correct answers and restart button after last question */}
-          {lastQuestion && (
-            <>
-              <MessageNotification type={getQuestionSetOutcome(numCorrectAnswers, numQuestions)}>
-                <strong>{`${numCorrectAnswers} / ${numQuestions} correct`}</strong>
-              </MessageNotification>
-
-              <br />
-
-              <Button
-                mode="accept"
-                onClick={() => ResetGame()}
-                settings={props.settings}
-                additionalProps={{ autoFocus: true }}
-              >
-                {props.campaignConfig.isCampaignLevel ? LEVEL_FINISHING_TEXT : "Restart"}
-              </Button>
-
-              <br />
-            </>
-          )}
-
-          {/* Show outcome of current question (and how many questions are left) */}
-          <MessageNotification type={successCondition ? "success" : "error"}>
-            <strong>{successCondition ? "Correct!" : "Incorrect!"}</strong>
-            <br />
-            <span>{`${questionNumber + 1} / ${numQuestions} questions completed`}</span>
-          </MessageNotification>
-
-          <br />
-
-          {/* Show next button if there are more questions */}
-          {!lastQuestion && (
-            <Button
-              mode="accept"
-              onClick={() => ContinueGame()}
-              settings={props.settings}
-              additionalProps={{ autoFocus: true }}
-            >
-              Next
-            </Button>
-          )}
+          {restartButton}
         </>
       );
     }
 
-    return outcomeNotification;
+    const currentQuestionOutcome = (
+      <MessageNotification type={isGuessCorrect() ? "success" : "error"}>
+        <strong>{isGuessCorrect() ? "Correct!" : "Incorrect!"}</strong>
+        <br />
+        <span>{`${questionNumber + 1} / ${getTotalNumQuestions()} questions completed`}</span>
+      </MessageNotification>
+    );
+
+    // When the game has finished, show the number of correct answers
+    const overallOutcome = (
+      <>
+        <MessageNotification type={getQuestionSetOutcome(numCorrectAnswers, getTotalNumQuestions())}>
+          <strong>{`${numCorrectAnswers} / ${getTotalNumQuestions()} correct`}</strong>
+        </MessageNotification>
+        <br />
+      </>
+    );
+
+    const continueButton = (
+      <Button
+        mode="accept"
+        onClick={() => ContinueGame()}
+        settings={props.settings}
+        additionalProps={{ autoFocus: true }}
+      >
+        Next
+      </Button>
+    );
+
+    // If no more questions, show restart button, otherwise show continue button
+    const nextButton = isGameOver() ? restartButton : continueButton;
+
+    if (props.mode === "question") {
+      return (
+        <>
+          {isGameOver() && overallOutcome}
+          {currentQuestionOutcome}
+          {nextButton}
+        </>
+      );
+    }
+
+    return;
   }
 
   // Restart with new word codes and set of questions
   function ResetGame() {
     if (!inProgress) {
       const score = props.mode === "match" ? wordTiles.filter((x) => x.status === "correct").length : numCorrectAnswers;
-      const numQuestions =
-        props.mode === "match"
-          ? wordTiles.length
-          : gamemodeSettings.numWordToCodeQuestions + gamemodeSettings.numCodeToWordQuestions;
 
       // Achieved target score if a campaign level, otherwise just all answers were correct
       const wasCorrect = props.campaignConfig.isCampaignLevel
-        ? score >= Math.min(props.campaignConfig.targetScore, numQuestions)
-        : score === numQuestions;
+        ? score >= Math.min(props.campaignConfig.targetScore, getTotalNumQuestions())
+        : score === getTotalNumQuestions();
 
       props.onComplete(wasCorrect);
     }
 
     setGuess("");
     setInProgress(true);
+
     setWordTiles([]);
     setCodeTiles([]);
+
     setWordCodes([]);
-    setRemainingGuesses(gamemodeSettings.numGuesses);
+    setQuestionWordCodes([]);
+
     setDisplayCodes([]);
     setDisplayWords([]);
+
     setNumCorrectAnswers(0);
+    setRemainingGuesses(gamemodeSettings.numGuesses);
     setQuestionNumber(0);
-    setQuestionWordCodes([]);
 
     if (gamemodeSettings.timerConfig.isTimed) {
       // Reset the timer if it is enabled in the game options
@@ -957,9 +941,7 @@ const WordCodes = (props: Props) => {
           ></LetterTile>
         </div>
       )}
-      {Boolean(
-        props.settings.gameplay.keyboard && props.mode !== "match" && questionWordCodes[questionNumber]?.isWordToCode
-      ) && (
+      {Boolean(props.settings.gameplay.keyboard && props.mode !== "match" && getCurrentQuestion()?.isWordToCode) && (
         <NumPad
           onEnter={() => setInProgress(false)}
           onBackspace={onBackspace}
@@ -970,9 +952,7 @@ const WordCodes = (props: Props) => {
           hasEnter={true}
         />
       )}
-      {Boolean(
-        props.settings.gameplay.keyboard && props.mode !== "match" && !questionWordCodes[questionNumber]?.isWordToCode
-      ) && (
+      {Boolean(props.settings.gameplay.keyboard && props.mode !== "match" && !getCurrentQuestion()?.isWordToCode) && (
         <Keyboard
           onEnter={() => setInProgress(false)}
           onBackspace={onBackspace}
