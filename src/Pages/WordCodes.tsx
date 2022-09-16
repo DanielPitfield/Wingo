@@ -667,6 +667,47 @@ const WordCodes = (props: Props) => {
     setQuestionNumber(questionNumber + 1);
   }
 
+  function displayInputMethod() {
+    if (!props.settings.gameplay.keyboard) {
+      return;
+    }
+
+    if (props.mode === "match") {
+      return;
+    }
+
+    if (getCurrentQuestion().isWordToCode) {
+      return (
+        <NumPad
+          onEnter={() => setInProgress(false)}
+          onBackspace={onBackspace}
+          onSubmitNumber={onSubmitNumber}
+          settings={props.settings}
+          disabled={!inProgress}
+          hasBackspace={true}
+          hasEnter={true}
+        />
+      );
+    }
+
+    return (
+      <Keyboard
+        onEnter={() => setInProgress(false)}
+        onBackspace={onBackspace}
+        settings={props.settings}
+        onSubmitLetter={onSubmitLetter}
+        targetWord={""}
+        page={props.page}
+        guesses={[]}
+        letterStatuses={[]}
+        inDictionary
+        disabled={!inProgress}
+        hasBackspace={true}
+        hasEnter={true}
+      />
+    );
+  }
+
   function onBackspace() {
     if (!inProgress) {
       return;
@@ -920,6 +961,7 @@ const WordCodes = (props: Props) => {
       )}
 
       {props.mode === "match" && <div className="tile_row">{displayTiles()}</div>}
+
       {Boolean(props.mode === "match" && inProgress) && (
         <Button
           mode={remainingGuesses <= 1 ? "accept" : "default"}
@@ -930,44 +972,22 @@ const WordCodes = (props: Props) => {
         </Button>
       )}
 
-      {props.mode !== "match" && <div className="word_codes_information">{displayInformation()}</div>}
-      {props.mode !== "match" && displayQuestion()}
       {props.mode !== "match" && (
-        <div className="guess">
-          <LetterTile
-            letter={guess}
-            status={inProgress ? "not set" : isGuessCorrect() ? "correct" : "incorrect"}
-            settings={props.settings}
-          ></LetterTile>
-        </div>
+        <>
+          <div className="word_codes_information">{displayInformation()}</div>
+          {displayQuestion()}
+          <div className="guess">
+            <LetterTile
+              letter={guess}
+              status={inProgress ? "not set" : isGuessCorrect() ? "correct" : "incorrect"}
+              settings={props.settings}
+            ></LetterTile>
+          </div>
+        </>
       )}
-      {Boolean(props.settings.gameplay.keyboard && props.mode !== "match" && getCurrentQuestion()?.isWordToCode) && (
-        <NumPad
-          onEnter={() => setInProgress(false)}
-          onBackspace={onBackspace}
-          onSubmitNumber={onSubmitNumber}
-          settings={props.settings}
-          disabled={!inProgress}
-          hasBackspace={true}
-          hasEnter={true}
-        />
-      )}
-      {Boolean(props.settings.gameplay.keyboard && props.mode !== "match" && !getCurrentQuestion()?.isWordToCode) && (
-        <Keyboard
-          onEnter={() => setInProgress(false)}
-          onBackspace={onBackspace}
-          settings={props.settings}
-          onSubmitLetter={onSubmitLetter}
-          targetWord={""}
-          page={props.page}
-          guesses={[]}
-          letterStatuses={[]}
-          inDictionary
-          disabled={!inProgress}
-          hasBackspace={true}
-          hasEnter={true}
-        />
-      )}
+
+      <>{displayInputMethod()}</>
+
       <div>
         {gamemodeSettings.timerConfig.isTimed && (
           <ProgressBar
