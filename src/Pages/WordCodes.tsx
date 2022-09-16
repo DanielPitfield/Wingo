@@ -572,7 +572,25 @@ const WordCodes = (props: Props) => {
         <>
           <MessageNotification type={isGuessCorrect() ? "success" : "error"}>
             <strong>{isGuessCorrect() ? "All tiles in the correct order!" : `${numCorrectTiles} tiles correct`}</strong>
+            <br />
+
+            {!isGuessCorrect() && (
+              <span>
+                The answers were:
+                <strong>
+                  {wordTiles.map((tile) => {
+                    return (
+                      <>
+                        <br />
+                        {`${tile.word} ${tile.code}`}
+                      </>
+                    );
+                  })}
+                </strong>
+              </span>
+            )}
           </MessageNotification>
+
           <br />
 
           {restartButton}
@@ -584,6 +602,15 @@ const WordCodes = (props: Props) => {
       <MessageNotification type={isGuessCorrect() ? "success" : "error"}>
         <strong>{isGuessCorrect() ? "Correct!" : "Incorrect!"}</strong>
         <br />
+
+        {!isGuessCorrect() && (
+          <span>
+            The answer was
+            <strong>{getCurrentQuestion().isWordToCode ? getCurrentQuestion().code : getCurrentQuestion().word}</strong>
+          </span>
+        )}
+        <br />
+
         <span>{`${questionNumber + 1} / ${getTotalNumQuestions()} questions completed`}</span>
       </MessageNotification>
     );
@@ -672,10 +699,16 @@ const WordCodes = (props: Props) => {
       return;
     }
 
+    // No input method, the tiles are just dragged and dropped
     if (props.mode === "match") {
       return;
     }
 
+    if (!getCurrentQuestion()) {
+      return;
+    }
+
+    // Guess will be a code, need a NumPad
     if (getCurrentQuestion().isWordToCode) {
       return (
         <NumPad
@@ -690,22 +723,25 @@ const WordCodes = (props: Props) => {
       );
     }
 
-    return (
-      <Keyboard
-        onEnter={() => setInProgress(false)}
-        onBackspace={onBackspace}
-        settings={props.settings}
-        onSubmitLetter={onSubmitLetter}
-        targetWord={""}
-        page={props.page}
-        guesses={[]}
-        letterStatuses={[]}
-        inDictionary
-        disabled={!inProgress}
-        hasBackspace={true}
-        hasEnter={true}
-      />
-    );
+    // Guess will be a word, need a keyboard
+    if (!getCurrentQuestion().isWordToCode) {
+      return (
+        <Keyboard
+          onEnter={() => setInProgress(false)}
+          onBackspace={onBackspace}
+          settings={props.settings}
+          onSubmitLetter={onSubmitLetter}
+          targetWord={""}
+          page={props.page}
+          guesses={[]}
+          letterStatuses={[]}
+          inDictionary
+          disabled={!inProgress}
+          hasBackspace={true}
+          hasEnter={true}
+        />
+      );
+    }
   }
 
   function onBackspace() {
