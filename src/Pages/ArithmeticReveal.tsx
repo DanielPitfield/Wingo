@@ -15,7 +15,7 @@ import { pickRandomElementFrom } from "./WingoConfig";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
 import { MAX_NUMPAD_GUESS_LENGTH } from "../Data/GamemodeSettingsInputLimits";
 import { getGamemodeDefaultTimerValue } from "../Data/DefaultTimerValues";
-import { getQuestionSetOutcome } from "./Algebra";
+import { getQuestionSetOutcome } from "../Data/getQuestionSetOutcome";
 
 export interface ArithmeticRevealProps {
   campaignConfig:
@@ -408,10 +408,17 @@ const ArithmeticReveal = (props: Props) => {
       </MessageNotification>
     );
 
+    // The number of correct answers needed for a successful outcome
+    const targetScore = props.campaignConfig.isCampaignLevel
+      ? Math.min(props.campaignConfig.targetScore, gamemodeSettings.numCheckpoints)
+      : gamemodeSettings.numCheckpoints;
+
     // When the game has finished, show the number of correct answers
     const overallOutcome = (
       <>
-        <MessageNotification type={getQuestionSetOutcome(numCorrectAnswers, gamemodeSettings.numCheckpoints)}>
+        <MessageNotification
+          type={getQuestionSetOutcome(numCorrectAnswers, targetScore, props.campaignConfig.isCampaignLevel)}
+        >
           <strong>
             {isGuessCorrect() && isLastCheckpoint()
               ? "Completed all checkpoints!"
@@ -457,7 +464,7 @@ const ArithmeticReveal = (props: Props) => {
     if (!inProgress) {
       // Reached target checkpoint if a campaign level, otherwise reached the end (entered last target number)
       const wasCorrect = props.campaignConfig.isCampaignLevel
-        ? currentCheckpoint >= Math.min(props.campaignConfig.targetScore, gamemodeSettings.numCheckpoints)
+        ? currentCheckpoint + 1 >= Math.min(props.campaignConfig.targetScore, gamemodeSettings.numCheckpoints)
         : guess === targetNumbers[gamemodeSettings.numCheckpoints - 1].toString();
       props.onComplete(wasCorrect);
     }
@@ -642,9 +649,7 @@ const ArithmeticReveal = (props: Props) => {
         <div className="guess">
           <LetterTile
             letter={guess}
-            status={
-              inProgress ? "not set" : isGuessCorrect() ? "correct" : "incorrect"
-            }
+            status={inProgress ? "not set" : isGuessCorrect() ? "correct" : "incorrect"}
             settings={props.settings}
           ></LetterTile>
         </div>

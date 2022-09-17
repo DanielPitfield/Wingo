@@ -150,9 +150,12 @@ const LettersGameConfig = (props: Props) => {
         ? score >= Math.min(props.campaignConfig.targetScore, gamemodeSettings.numLetters)
         : score > 0;
 
+      // Not part of a gameshow
       if (props.gameshowScore === undefined) {
         props.onComplete(wasCorrect);
-      } else {
+      }
+      // Round within a gameshow
+      else {
         props.onCompleteGameshowRound?.(wasCorrect, longestWord, "", score);
       }
     }

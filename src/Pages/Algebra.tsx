@@ -16,6 +16,7 @@ import { getGamemodeDefaultTimerValue } from "../Data/DefaultTimerValues";
 import { MAX_NUMPAD_GUESS_LENGTH } from "../Data/GamemodeSettingsInputLimits";
 import { DEFAULT_ALPHABET, DEFAULT_ALPHABET_STRING } from "./WingoConfig";
 import { Difficulty, difficultyOptions } from "../Data/DefaultGamemodeSettings";
+import { getQuestionSetOutcome } from "../Data/getQuestionSetOutcome";
 
 export interface AlgebraProps {
   campaignConfig:
@@ -45,22 +46,6 @@ interface Props extends AlgebraProps {
   onComplete: (wasCorrect: boolean) => void;
 }
 
-export function getQuestionSetOutcome(numCorrectAnswers: number, numQuestions: number) {
-  // All questions in the set answered correctly
-  if (numCorrectAnswers === numQuestions) {
-    return "success";
-  }
-
-  // No answers correct
-  if (numCorrectAnswers === 0) {
-    return "error";
-  }
-
-  // Some answers correct
-  return "default";
-}
-
-/** */
 const Algebra = (props: Props) => {
   const [gamemodeSettings, setGamemodeSettings] = useState<AlgebraProps["gamemodeSettings"]>(props.gamemodeSettings);
 
@@ -227,10 +212,17 @@ const Algebra = (props: Props) => {
       </>
     );
 
-    // When the game has finished, show the number of correct answers
+    // The number of correct answers needed for a successful outcome
+    const targetScore = props.campaignConfig.isCampaignLevel
+      ? Math.min(props.campaignConfig.targetScore, getTotalNumQuestions())
+      : getTotalNumQuestions();
+
+    // When the game has finished, show the total number of correct answers
     const overallOutcome = (
       <>
-        <MessageNotification type={getQuestionSetOutcome(numCorrectAnswers, getTotalNumQuestions())}>
+        <MessageNotification
+          type={getQuestionSetOutcome(numCorrectAnswers, targetScore, props.campaignConfig.isCampaignLevel)}
+        >
           <strong>{`${numCorrectAnswers} / ${getTotalNumQuestions()} correct`}</strong>
         </MessageNotification>
         <br />
@@ -294,12 +286,10 @@ const Algebra = (props: Props) => {
   // Restart with new set of questions
   function ResetGame() {
     if (isGameOver()) {
-      const totalNumQuestions = getTotalNumQuestions();
-
       // Achieved target score if a campaign level, otherwise just all answers were correct
       const wasCorrect = props.campaignConfig.isCampaignLevel
-        ? numCorrectAnswers >= Math.min(props.campaignConfig.targetScore, totalNumQuestions)
-        : numCorrectAnswers === totalNumQuestions;
+        ? numCorrectAnswers >= Math.min(props.campaignConfig.targetScore, getTotalNumQuestions())
+        : numCorrectAnswers === getTotalNumQuestions();
       props.onComplete(wasCorrect);
     }
 

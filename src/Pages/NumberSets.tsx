@@ -9,12 +9,12 @@ import ProgressBar, { GreenToRedColorTransition } from "../Components/ProgressBa
 import { SaveData, SettingsData } from "../Data/SaveData";
 import { useClickChime, useCorrectChime, useFailureChime, useLightPingChime } from "../Data/Sounds";
 import { Theme } from "../Data/Themes";
-import { getNumberSets, NumberSetQuestion, NumberSetTemplate } from "../Data/NumberSetsTemplates";
+import { getNumberSets, NumberSetTemplate } from "../Data/NumberSetsTemplates";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
 import { getGamemodeDefaultTimerValue } from "../Data/DefaultTimerValues";
 import { Difficulty, difficultyOptions } from "../Data/DefaultGamemodeSettings";
 import { MAX_NUMPAD_GUESS_LENGTH } from "../Data/GamemodeSettingsInputLimits";
-import { getQuestionSetOutcome } from "./Algebra";
+import { getQuestionSetOutcome } from "../Data/getQuestionSetOutcome";
 
 export interface NumberSetsProps {
   campaignConfig:
@@ -184,7 +184,7 @@ const NumberSets = (props: Props) => {
           )}
           <br />
 
-          {(currentNumberSetIndex + 1) < gamemodeSettings.numSets && (
+          {currentNumberSetIndex + 1 < gamemodeSettings.numSets && (
             <span>{`${currentNumberSetIndex + 1} / ${gamemodeSettings.numSets} questions completed`}</span>
           )}
         </MessageNotification>
@@ -192,10 +192,17 @@ const NumberSets = (props: Props) => {
       </>
     );
 
+    // The number of correct answers needed for a successful outcome
+    const targetScore = props.campaignConfig.isCampaignLevel
+      ? Math.min(props.campaignConfig.targetScore, gamemodeSettings.numSets)
+      : gamemodeSettings.numSets;
+
     // When the game has finished, show the number of correct answers
     const overallOutcome = (
       <>
-        <MessageNotification type={getQuestionSetOutcome(numCorrectAnswers, gamemodeSettings.numSets)}>
+        <MessageNotification
+          type={getQuestionSetOutcome(numCorrectAnswers, targetScore, props.campaignConfig.isCampaignLevel)}
+        >
           <strong>{`${numCorrectAnswers} / ${gamemodeSettings.numSets} correct`}</strong>
         </MessageNotification>
         <br />

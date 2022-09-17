@@ -12,7 +12,6 @@ import { useClickChime, useCorrectChime, useFailureChime, useLightPingChime } fr
 import { Theme } from "../Data/Themes";
 import { arrayMove, OrderGroup } from "react-draggable-order";
 import { DraggableItem } from "../Components/DraggableItem";
-import { getQuestionSetOutcome } from "./Algebra";
 import GamemodeSettingsMenu from "../Components/GamemodeSettingsMenu";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
 import { MAX_CODE_LENGTH } from "../Data/GamemodeSettingsInputLimits";
@@ -20,6 +19,7 @@ import { getGamemodeDefaultTimerValue } from "../Data/DefaultTimerValues";
 import { getAllWordsOfLength } from "../Data/Conundrum";
 import { getGamemodeDefaultWordLength } from "../Data/DefaultWordLengths";
 import { shuffleArray } from "../Data/shuffleArray";
+import { getQuestionSetOutcome } from "../Data/getQuestionSetOutcome";
 
 const wordCodesModes = ["match", "question"] as const;
 export type wordCodesMode = typeof wordCodesModes[number];
@@ -179,9 +179,7 @@ const WordCodes = (props: Props) => {
       return;
     }
 
-    const successCondition = isGuessCorrect();
-
-    if (successCondition) {
+    if (isGuessCorrect()) {
       playCorrectChimeSoundEffect();
       setNumCorrectAnswers(numCorrectAnswers + 1);
     } else {
@@ -615,10 +613,18 @@ const WordCodes = (props: Props) => {
       </MessageNotification>
     );
 
+
+    // The number of correct answers needed for a successful outcome
+    const targetScore = props.campaignConfig.isCampaignLevel
+      ? Math.min(props.campaignConfig.targetScore, getTotalNumQuestions())
+      : getTotalNumQuestions();
+
     // When the game has finished, show the number of correct answers
     const overallOutcome = (
       <>
-        <MessageNotification type={getQuestionSetOutcome(numCorrectAnswers, getTotalNumQuestions())}>
+        <MessageNotification
+          type={getQuestionSetOutcome(numCorrectAnswers, targetScore, props.campaignConfig.isCampaignLevel)}
+        >
           <strong>{`${numCorrectAnswers} / ${getTotalNumQuestions()} correct`}</strong>
         </MessageNotification>
         <br />

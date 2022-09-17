@@ -191,7 +191,7 @@ export const LettersNumbersGameshow = (props: Props) => {
       {inProgress ? getNextRound() : displayGameshowSummary(summary, props.settings)}
       {!inProgress && (
         <Button
-          mode={"accept"}
+          mode="accept"
           onClick={() => {
             // Campaign level and reached target score, otherwise completed all rounds
             const wasCorrect = props.campaignConfig.isCampaignLevel

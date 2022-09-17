@@ -310,9 +310,12 @@ const NumbersGameConfig = (props: Props) => {
         ? Boolean(score && score >= Math.min(props.campaignConfig.targetScore, MAX_POSSIBLE_SCORE))
         : Boolean(difference && difference <= 10);
 
+      // Not part of a gameshow
       if (props.gameshowScore === undefined) {
         props.onComplete(wasCorrect);
-      } else {
+      }
+      // Round within a gameshow
+      else {
         props.onCompleteGameshowRound?.(
           wasCorrect,
           closestGuessSoFar?.toString() ?? "",
