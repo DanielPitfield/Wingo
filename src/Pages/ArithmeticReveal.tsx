@@ -15,6 +15,7 @@ import { pickRandomElementFrom } from "./WingoConfig";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
 import { MAX_NUMPAD_GUESS_LENGTH } from "../Data/GamemodeSettingsInputLimits";
 import { getGamemodeDefaultTimerValue } from "../Data/DefaultTimerValues";
+import { getQuestionSetOutcome } from "./Algebra";
 
 export interface ArithmeticRevealProps {
   campaignConfig:
@@ -358,98 +359,98 @@ const ArithmeticReveal = (props: Props) => {
     return () => clearInterval(timerGuess);
   }, [setRemainingSeconds, remainingSeconds, gamemodeSettings.timerConfig.isTimed, revealState, inProgress]);
 
-  /**
-   *
-   * @returns
-   */
+  // TODO: Still some refactoring with these functions and how they are used within displayOutcome()
+  const isGuessCorrect = (): Boolean => {
+    return guess.toUpperCase() === targetNumbers[currentCheckpoint].toString().toUpperCase();
+  };
+
+  const isLastCheckpoint = () => {
+    return currentCheckpoint + 1 >= gamemodeSettings.numCheckpoints;
+  };
+
+  // Has there been an incorrect checkpoint guess or have all the questions been answered
+  const isGameOver = () => {
+    const allCheckpointsCompleted = isLastCheckpoint() && !inProgress;
+    return !isGuessCorrect() || allCheckpointsCompleted;
+  };
+
   function displayOutcome(): React.ReactNode {
     // Game still in progress, don't display anything
     if (inProgress) {
       return;
     }
 
-    // Guess is the correct end of checkpoint value
-    const successCondition = guess === targetNumbers[currentCheckpoint].toString();
-    // Last checkpoint
-    const lastCheckpoint = currentCheckpoint === gamemodeSettings.numCheckpoints - 1;
+    const numCorrectAnswers = isGuessCorrect() ? currentCheckpoint + 1 : currentCheckpoint;
 
-    let outcomeNotification;
+    // Show outcome after current checkpoint geuss (and how many questions are left)
+    const currentQuestionOutcome = (
+      <MessageNotification type={isGuessCorrect() ? "success" : "error"}>
+        <strong>{isGuessCorrect() ? "Correct!" : "Incorrect!"}</strong>
+        <br />
 
-    // Current checkpoint guess correct and more checkpoints to go
-    if (successCondition && !lastCheckpoint) {
-      outcomeNotification = (
-        <>
-          <MessageNotification type="success">
-            <strong>Correct!</strong>
+        {isGuessCorrect() && !isGameOver() && (
+          <>
+            <span>{`${numCorrectAnswers} / ${gamemodeSettings.numCheckpoints} checkpoints completed`}</span>
             <br />
-            <span>{`${currentCheckpoint + 1} / ${gamemodeSettings.numCheckpoints} checkpoints completed`}</span>
-          </MessageNotification>
+          </>
+        )}
 
-          <br />
-
-          <Button
-            mode="accept"
-            onClick={() => setCurrentCheckpoint(currentCheckpoint + 1)}
-            settings={props.settings}
-            additionalProps={{ autoFocus: true }}
-          >
-            Next Checkpoint
-          </Button>
-        </>
-      );
-    }
-    // Last checkpoint guess correct
-    else if (successCondition && lastCheckpoint) {
-      outcomeNotification = (
-        <>
-          <MessageNotification type="success">
-            <strong>Correct!</strong>
-            <br />
-            <span>{`Completed all ${gamemodeSettings.numCheckpoints} checkpoints!`}</span>
-          </MessageNotification>
-
-          <br />
-
-          <Button
-            mode="accept"
-            onClick={() => ResetGame()}
-            settings={props.settings}
-            additionalProps={{ autoFocus: true }}
-          >
-            {props.campaignConfig.isCampaignLevel ? LEVEL_FINISHING_TEXT : "Restart"}
-          </Button>
-        </>
-      );
-    }
-    // Incorrect guess
-    else if (!successCondition) {
-      outcomeNotification = (
-        <>
-          <MessageNotification type="error">
-            <strong>Incorrect!</strong>
-            <br />
+        {!isGuessCorrect() && (
+          <>
             <span>
               The answer was <strong>{targetNumbers[currentCheckpoint]}</strong>
             </span>
             <br />
+
             {tiles[currentCheckpoint].join(" ")}
-          </MessageNotification>
+          </>
+        )}
+      </MessageNotification>
+    );
 
-          <br />
+    // When the game has finished, show the number of correct answers
+    const overallOutcome = (
+      <>
+        <MessageNotification type={getQuestionSetOutcome(numCorrectAnswers, gamemodeSettings.numCheckpoints)}>
+          <strong>
+            {isGuessCorrect() && isLastCheckpoint()
+              ? "Completed all checkpoints!"
+              : `${numCorrectAnswers} / ${gamemodeSettings.numCheckpoints} checkpoints completed`}
+          </strong>
+        </MessageNotification>
+        <br />
+      </>
+    );
 
-          <Button
-            mode="accept"
-            onClick={() => ResetGame()}
-            settings={props.settings}
-            additionalProps={{ autoFocus: true }}
-          >
-            {props.campaignConfig.isCampaignLevel ? LEVEL_FINISHING_TEXT : "Restart"}
-          </Button>
-        </>
-      );
-    }
+    const restartButton = (
+      <Button mode="accept" onClick={() => ResetGame()} settings={props.settings} additionalProps={{ autoFocus: true }}>
+        {props.campaignConfig.isCampaignLevel ? LEVEL_FINISHING_TEXT : "Restart"}
+      </Button>
+    );
 
-    return <>{outcomeNotification}</>;
+    const continueButton = (
+      <Button
+        mode="accept"
+        onClick={() => setCurrentCheckpoint(currentCheckpoint + 1)}
+        settings={props.settings}
+        additionalProps={{ autoFocus: true }}
+      >
+        Next Checkpoint
+      </Button>
+    );
+
+    // If no more questions, show restart button, otherwise show continue button
+    const nextButton = isGameOver() ? restartButton : continueButton;
+
+    const outcome = (
+      <>
+        {isGameOver() && overallOutcome}
+        {currentQuestionOutcome}
+        {nextButton}
+      </>
+    );
+
+    return outcome;
   }
 
   function ResetGame() {
@@ -642,13 +643,13 @@ const ArithmeticReveal = (props: Props) => {
           <LetterTile
             letter={guess}
             status={
-              inProgress ? "not set" : guess === targetNumbers[currentCheckpoint].toString() ? "correct" : "incorrect"
+              inProgress ? "not set" : isGuessCorrect() ? "correct" : "incorrect"
             }
             settings={props.settings}
           ></LetterTile>
         </div>
       )}
-      {(props.settings.gameplay.keyboard && revealState.type === "finished") && (
+      {props.settings.gameplay.keyboard && revealState.type === "finished" && (
         <NumPad
           onEnter={() => setInProgress(false)}
           onBackspace={onBackspace}

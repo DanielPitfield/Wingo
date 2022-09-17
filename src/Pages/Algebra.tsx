@@ -195,8 +195,8 @@ const Algebra = (props: Props) => {
 
   // Have all the questions been answered (there are no more questions)?
   const isGameOver = () => {
-    const isLastQuestion = getCompletedNumQuestions() >= getTotalNumQuestions();
-    return !inProgress && isLastQuestion;
+    const allQuestionsCompleted = getCompletedNumQuestions() >= getTotalNumQuestions();
+    return !inProgress && allQuestionsCompleted;
   };
 
   function displayOutcome(): React.ReactNode {
