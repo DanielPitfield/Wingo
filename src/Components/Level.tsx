@@ -146,10 +146,10 @@ export function getId(level: LevelConfig["level"]): string {
       return pageString;
 
     case "NumberSets":
-      return `${pageString}-${level.levelProps.defaultSet?.question ?? ""}`;
+      return `${pageString}-${JSON.stringify(level.levelProps.defaultNumberSets) ?? ""}`;
 
     case "Algebra":
-      return `${pageString}-${level.levelProps.defaultTemplate?.questions ?? ""}`;
+      return `${pageString}-${JSON.stringify(level.levelProps.defaultTemplates) ?? ""}`;
 
     case "WordCodes":
       return `${pageString}-${level.levelProps.mode}`;
