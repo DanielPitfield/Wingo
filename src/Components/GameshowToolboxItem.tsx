@@ -1,5 +1,5 @@
 import { AiOutlinePlus } from "react-icons/ai";
-import { pageDescription } from "../PageDescriptions";
+import { pageDescription } from "../Data/PageDescriptions";
 import { Button } from "./Button";
 
 interface Props {

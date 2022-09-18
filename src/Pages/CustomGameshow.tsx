@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { SettingsData } from "../Data/SaveData";
 import { PageName } from "../PageNames";
 import { Theme } from "../Data/Themes";
-import { pageDescription, pageDescriptions } from "../PageDescriptions";
+import { pageDescription, pageDescriptions } from "../Data/PageDescriptions";
 import { OrderGroup } from "react-draggable-order";
 import { GameshowToolboxItem } from "../Components/GameshowToolboxItem";
 import { GameshowOrderItem } from "../Components/GameshowOrderItem";

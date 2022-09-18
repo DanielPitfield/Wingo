@@ -1,4 +1,3 @@
-import { PageName } from "../PageNames";
 import { AlgebraProps } from "../Pages/Algebra";
 import { ArithmeticDragProps } from "../Pages/ArithmeticDrag";
 import { ArithmeticRevealProps } from "../Pages/ArithmeticReveal";
@@ -28,6 +27,7 @@ import {
   defaultWordCodesQuestionGamemodeSettings,
   fallbackWingoSettings,
 } from "./DefaultGamemodeSettings";
+import { PageName } from "./PageNames";
 import { SaveData } from "./SaveData";
 
 export function getPageGamemodeSettings(page: PageName) {

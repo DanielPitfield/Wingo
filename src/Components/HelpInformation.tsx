@@ -1,5 +1,5 @@
 import React from "react";
-import { pageDescriptions } from "../PageDescriptions";
+import { pageDescriptions } from "../Data/PageDescriptions";
 import { PageName } from "../PageNames";
 import { Modal } from "./Modal";
 

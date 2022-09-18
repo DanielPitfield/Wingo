@@ -1,5 +1,5 @@
 import { PageName } from "./PageNames";
-import { gameshowType } from "./Pages/CustomGameshow";
+import { gameshowType } from "../Pages/CustomGameshow";
 
 // This is needed for runtime; make sure it matches the Page type
 

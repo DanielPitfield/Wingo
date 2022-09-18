@@ -33,13 +33,13 @@ import { FiArrowLeft, FiHelpCircle, FiSettings } from "react-icons/fi";
 import HelpInformation from "./Components/HelpInformation";
 import { TitlePage } from "./Pages/TitlePage";
 import { defaultWingoGameshowRoundOrder } from "./Data/DefaultGamemodeSettings";
-import { PageName } from "./PageNames";
-import { pageDescriptions } from "./PageDescriptions";
+import { pageDescriptions } from "./Data/PageDescriptions";
 import SequencePuzzle from "./Pages/SequencePuzzle";
 import { CustomGameshow } from "./Pages/CustomGameshow";
 import { getGamemodeDefaultNumGuesses } from "./Data/DefaultNumGuesses";
 import { getGamemodeDefaultWordLength } from "./Data/DefaultWordLengths";
 import { getPageGamemodeSettings } from "./Data/getPageGamemodeSettings";
+import { PageName } from "./Data/PageNames";
 
 export const App = () => {
   // App wide listener for right click event

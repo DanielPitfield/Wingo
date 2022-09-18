@@ -1,6 +1,6 @@
 import { arrayMove } from "react-draggable-order";
 import { AiFillCloseSquare } from "react-icons/ai";
-import { pageDescription } from "../PageDescriptions";
+import { pageDescription } from "../Data/PageDescriptions";
 import { DraggableItem } from "./DraggableItem";
 
 interface Props {

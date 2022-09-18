@@ -1,5 +1,4 @@
-import { pageDescriptions } from "../PageDescriptions";
-import { PageName } from "../PageNames";
+import { pageDescriptions } from "./PageDescriptions";
 import { LevelConfig } from "../Components/Level";
 import { BaseChallenge } from "./Challenges/BaseChallenge";
 import { LettersGameConfigProps } from "../Pages/LettersGameConfig";
@@ -16,6 +15,7 @@ import { SameLetterWordsProps } from "../Pages/SameLetterWords";
 import { WordCodesProps } from "../Pages/WordCodes";
 import { WingoConfigProps } from "../Pages/WingoConfig";
 import { TileStatus, WingoInterlinkedProps } from "../Pages/WingoInterlinked";
+import { PageName } from "./PageNames";
 
 export type CampaignSaveData = {
   areas: { name: string; status: "locked" | "unlockable" | "unlocked"; completedLevelIds: string[] }[];

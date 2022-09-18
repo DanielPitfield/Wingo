@@ -1,6 +1,5 @@
-import React from "react";
-import LetterTile from "./Components/LetterTile";
-import { SettingsData } from "./Data/SaveData";
+import LetterTile from "./LetterTile";
+import { SettingsData } from "../Data/SaveData";
 
 interface Props {
   onClick: (value: string | null, index: number) => void;
