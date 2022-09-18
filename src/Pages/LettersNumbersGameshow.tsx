@@ -12,6 +12,8 @@ import { getGamemodeDefaultNumGuesses } from "../Data/DefaultNumGuesses";
 import { getGamemodeDefaultWordLength } from "../Data/DefaultWordLengths";
 import { getPageGamemodeSettings } from "../Data/getPageGamemodeSettings";
 
+type RoundType = "number" | "letter" | "conundrum";
+
 export interface LettersNumbersGameshowProps {
   campaignConfig:
     | {
@@ -40,7 +42,7 @@ interface Props extends LettersNumbersGameshowProps {
 
 export const LettersNumbersGameshow = (props: Props) => {
   const [inProgress, setInProgress] = useState(true);
-  const [roundOrder, setRoundOrder] = useState<("number" | "letter" | "conundrum")[]>([]);
+  const [roundOrder, setRoundOrder] = useState<RoundType[]>([]);
   const [roundNumber, setRoundNumber] = useState(0);
   const [gameshowScore, setGameshowScore] = useState(0);
   const [summary, setSummary] = useState<
@@ -54,23 +56,23 @@ export const LettersNumbersGameshow = (props: Props) => {
     }[]
   >([]);
 
+  // The order of rounds for just a singular set
+  function generateRoundSet(): RoundType[] {
+    return Array.from({ length: props.numLetterRoundsPerSet })
+      .map((_) => "letter" as RoundType)
+      .concat(Array.from({ length: props.numNumberRoundsPerSet }).map((_) => "number" as RoundType))
+      .concat(Array.from({ length: props.numConundrumRoundsPerSet }).map((_) => "conundrum" as RoundType))
+      .concat(props.hasFinishingConundrum ? ["conundrum" as RoundType] : []);
+  }
+
+  // The entire order of rounds
+  function generateRoundOrder(): RoundType[] {
+    return Array.from({ length: props.numSets }).flatMap((_, i) => generateRoundSet());
+  }
+
   // Determine round order (from props)
   React.useEffect(() => {
-    const rounds: ("number" | "letter" | "conundrum")[] = Array.from({ length: props.numSets })
-      .flatMap(
-        (_, i) =>
-          Array.from({ length: props.numLetterRoundsPerSet })
-            .map((_) => "letter")
-            .concat(Array.from({ length: props.numNumberRoundsPerSet }).map((_) => "number"))
-            .concat(Array.from({ length: props.numConundrumRoundsPerSet }).map((_) => "conundrum")) as (
-            | "number"
-            | "letter"
-            | "conundrum"
-          )[]
-      )
-      .concat(props.hasFinishingConundrum ? ["conundrum"] : []);
-
-    setRoundOrder(rounds);
+    setRoundOrder(generateRoundOrder());
   }, [
     props.numSets,
     props.numLetterRoundsPerSet,
@@ -129,18 +131,14 @@ export const LettersNumbersGameshow = (props: Props) => {
     return;
   }
 
-  function getRoundType() {
-    if (!roundOrder || roundOrder.length === 0) {
-      return;
-    }
-
-    return roundOrder[roundNumber];
+  function getRoundType(): RoundType | null {
+    return roundOrder[roundNumber] ?? null;
   }
 
   function getNextRound() {
     const roundType = getRoundType();
 
-    if (!roundType) {
+    if (roundType === null) {
       return;
     }
 
@@ -170,7 +168,14 @@ export const LettersNumbersGameshow = (props: Props) => {
         />
       );
     } else if (roundType === "number") {
-      return <NumbersGameConfig {...commonProps} theme={props.themes[1]} gameshowScore={gameshowScore} gamemodeSettings={getPageGamemodeSettings("NumbersGame") as NumbersGameConfigProps["gamemodeSettings"]}/>;
+      return (
+        <NumbersGameConfig
+          {...commonProps}
+          theme={props.themes[1]}
+          gameshowScore={gameshowScore}
+          gamemodeSettings={getPageGamemodeSettings("NumbersGame") as NumbersGameConfigProps["gamemodeSettings"]}
+        />
+      );
     } else if (roundType === "conundrum") {
       return (
         <WingoConfig
@@ -186,25 +191,44 @@ export const LettersNumbersGameshow = (props: Props) => {
     }
   }
 
+  const getMaximumPossibleScore = (): number => {
+    const MAX_LETTER_ROUND_SCORE = 9;
+    const MAX_NUMBER_ROUND_SCORE = 10;
+    const MAX_CONUNDRUM_ROUND_SCORE = 9;
+
+    const numLetterRounds = roundOrder.filter((round) => round === "letter").length;
+    const numNumberRounds = roundOrder.filter((round) => round === "number").length;
+    const numConundrumRounds = roundOrder.filter((round) => round === "conundrum").length;
+
+    const maxScore =
+      numLetterRounds * MAX_LETTER_ROUND_SCORE +
+      numNumberRounds * MAX_NUMBER_ROUND_SCORE +
+      numConundrumRounds * MAX_CONUNDRUM_ROUND_SCORE;
+
+    return maxScore;
+  };
+
+  function EndGameshow() {
+    // Campaign level and reached target score, otherwise completed all rounds
+    const wasCorrect = props.campaignConfig.isCampaignLevel
+      ? gameshowScore >= Math.min(props.campaignConfig.targetScore, getMaximumPossibleScore())
+      : roundNumber >= roundOrder.length;
+    props.onComplete(wasCorrect);
+
+    // Navigate away from gameshow
+    props.campaignConfig.isCampaignLevel ? props.setPage("campaign/area/level") : props.setPage("home");
+  }
+
   return (
     <>
-      {inProgress ? getNextRound() : displayGameshowSummary(summary, props.settings)}
+      {inProgress && <>{getNextRound()}</>}
       {!inProgress && (
-        <Button
-          mode="accept"
-          onClick={() => {
-            // Campaign level and reached target score, otherwise completed all rounds
-            const wasCorrect = props.campaignConfig.isCampaignLevel
-              ? gameshowScore >= props.campaignConfig.targetScore
-              : roundNumber >= roundOrder.length;
-            props.onComplete(wasCorrect);
-            props.campaignConfig.isCampaignLevel ? props.setPage("campaign/area/level") : props.setPage("home");
-          }}
-          settings={props.settings}
-          additionalProps={{ autoFocus: true }}
-        >
-          {props.campaignConfig.isCampaignLevel ? LEVEL_FINISHING_TEXT : "Back to Home"}
-        </Button>
+        <>
+          {displayGameshowSummary(summary, props.settings)}
+          <Button mode="accept" onClick={EndGameshow} settings={props.settings} additionalProps={{ autoFocus: true }}>
+            {props.campaignConfig.isCampaignLevel ? LEVEL_FINISHING_TEXT : "Back to Home"}
+          </Button>
+        </>
       )}
     </>
   );

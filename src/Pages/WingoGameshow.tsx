@@ -205,10 +205,10 @@ export const WingoGameshow = (props: Props) => {
       setInProgress(false);
     }
 
-    const nextRoundInfo = roundOrder[roundNumber];
+    const nextRoundInfo = getRoundInfo();
 
     // Missing required information for next round
-    if (!nextRoundInfo || !nextRoundInfo.wordLength) {
+    if (nextRoundInfo === null) {
       setInProgress(false);
       return;
     }
@@ -244,23 +244,13 @@ export const WingoGameshow = (props: Props) => {
   }
 
   function getRoundInfo() {
-    if (!roundOrder || roundOrder.length === 0) {
-      return;
-    }
-
-    return roundOrder[roundNumber];
+    return roundOrder[roundNumber] ?? null;
   }
 
   function getNextRound() {
     const nextRoundInfo = getRoundInfo();
 
-    if (!nextRoundInfo) {
-      return;
-    }
-
-    // Missing required information for next round
-    if (!nextRoundInfo.wordLength) {
-      setInProgress(false);
+    if (nextRoundInfo === null) {
       return;
     }
 
@@ -314,25 +304,40 @@ export const WingoGameshow = (props: Props) => {
     }
   }
 
+  const getMaximumPossibleScore = (): number => {
+    // TODO: What is the maximum score for each round type?
+    const MAX_NORMAL_ROUND_SCORE = 100;
+    const MAX_PUZZLE_ROUND_SCORE = 250;
+
+    const numNormalRounds = roundOrder.filter((round) => !round.isPuzzle).length;
+    const numPuzzleRounds = roundOrder.filter((round) => round.isPuzzle).length;
+
+    const maxScore = numNormalRounds * MAX_NORMAL_ROUND_SCORE + numPuzzleRounds * MAX_PUZZLE_ROUND_SCORE;
+
+    return maxScore;
+  };
+
+  function EndGameshow() {
+    // Campaign level and reached target score, otherwise completed all rounds
+    const wasCorrect = props.campaignConfig.isCampaignLevel
+      ? gameshowScore >= Math.min(props.campaignConfig.targetScore, getMaximumPossibleScore())
+      : roundNumber >= roundOrder.length;
+    props.onComplete(wasCorrect);
+
+    // Navigate away from gameshow
+    props.campaignConfig.isCampaignLevel ? props.setPage("campaign/area/level") : props.setPage("home");
+  }
+
   return (
     <>
-      {inProgress ? getNextRound() : displayGameshowSummary(summary, props.settings)}
+      {inProgress && <>{getNextRound()}</>}
       {!inProgress && (
-        <Button
-          mode={"accept"}
-          onClick={() => {
-            // Campaign level and reached target score, otherwise completed all rounds
-            const wasCorrect = props.campaignConfig.isCampaignLevel
-              ? gameshowScore >= props.campaignConfig.targetScore
-              : roundNumber >= roundOrder.length;
-            props.onComplete(wasCorrect);
-            props.campaignConfig.isCampaignLevel ? props.setPage("campaign/area/level") : props.setPage("home");
-          }}
-          settings={props.settings}
-          additionalProps={{ autoFocus: true }}
-        >
-          {props.campaignConfig.isCampaignLevel ? LEVEL_FINISHING_TEXT : "Back to Home"}
-        </Button>
+        <>
+          {displayGameshowSummary(summary, props.settings)}
+          <Button mode="accept" onClick={EndGameshow} settings={props.settings} additionalProps={{ autoFocus: true }}>
+            {props.campaignConfig.isCampaignLevel ? LEVEL_FINISHING_TEXT : "Back to Home"}
+          </Button>
+        </>
       )}
     </>
   );
