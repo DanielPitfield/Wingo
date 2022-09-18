@@ -15,6 +15,15 @@ export function getAllWordsOfLength(wordLength: number): string[] {
   return guessableWordArray.concat(targetWordArray) ?? [];
 }
 
+/*
+https://en.wikipedia.org/wiki/Countdown_(game_show)#Conundrum
+
+The Conundrum is designed to have only one solution,
+But on occasion more than one valid word is found by happenstance,
+(e.g. MISS AT TEE can become both ESTIMATES and STEAMIEST)
+If this happens, any of these results is accepted
+*/
+
 export function generateConundrum() {
   /*
   Combinations of word lengths that could make up a conundrum

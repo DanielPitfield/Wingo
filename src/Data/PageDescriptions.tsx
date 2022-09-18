@@ -210,10 +210,17 @@ export const pageDescriptions: pageDescription[] = [
     gameshowType: "LettersNumbers",
     description: "Find the highest scoring word from the list of random letters",
     helpInfo: (
+      // https://en.wikipedia.org/wiki/Countdown_(game_show)#Letters_round
       <>
-        <p>Add letters to the selection row</p>
-        <p>Guess the word from the hint for the category within the number of guesses</p>
-        <p>Press the 'Restart' button after an attempt or change the Category for a new target word</p>
+        <p>Add letters to the selection row using the 'Vowel' or Consonant' buttons</p>
+        <p>The 'Quick Pick' will randomly complete the letter selection for you</p>
+        <p>Enter the longest word which can be made with the letters</p>
+        <p>No letter may be used more often than it appears in the selection</p>
+        <p>
+          If an entered word is valid, it will be briefly highlighted in green, but if invalid, will be highlighted in
+          red
+        </p>
+        <p>The longest word entered will be automically chosen when the timer runs out</p>
       </>
     ),
   },
@@ -224,6 +231,24 @@ export const pageDescriptions: pageDescription[] = [
     isPlayable: true,
     gameshowType: "LettersNumbers",
     description: "Get the target number using a list of random numbers",
+    helpInfo: (
+      // https://en.wikipedia.org/wiki/Countdown_(game_show)#Numbers_round
+      <>
+        <p>Add numbers to the selection row using the 'Small' or Big' buttons</p>
+        <p>The 'Quick Pick' will randomly complete the number selection for you</p>
+        <p>
+          Work out a sequence of calculations with the numbers where the final result is as close to the target number
+          as possible
+        </p>
+        <p>No number may be used more often than it appears in the selection</p>
+        <p>Not all of the numbers in the selection need to be used </p>
+
+        <p>Only the four basic operations of addition, subtraction, multiplication and division may be used</p>
+        <p>Division can only be performed if the result has no remainder and fractions are not allowed</p>
+        <p>Only positive integers may be obtained as a result at any stage of the calculation</p>
+        <p>The 'Best Guess' button will end the game and take the closest answer so far</p>
+      </>
+    ),
   },
   {
     page: "Conundrum",
@@ -231,7 +256,14 @@ export const pageDescriptions: pageDescription[] = [
     shortTitle: "Conundrum",
     isPlayable: true,
     gameshowType: "LettersNumbers",
-    description: "Find the single word which uses all the letters",
+    description: "Find a single word which uses all the letters",
+    helpInfo: (
+      // https://en.wikipedia.org/wiki/Countdown_(game_show)#Conundrum
+      <>
+        <p>Enter a single word which uses all the letters</p>
+        <p>Only one guess is allowed</p>
+      </>
+    ),
   },
   {
     page: "ArithmeticReveal",

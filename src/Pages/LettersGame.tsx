@@ -41,6 +41,7 @@ interface Props {
   inProgress: boolean;
   inDictionary: boolean;
   hasSubmitLetter: boolean;
+  // TODO: Target word needed?
   targetWord: string;
   remainingSeconds: number;
 
