@@ -1,4 +1,4 @@
-import { PageName } from "../PageNames";
+import { PageName } from "../Data/PageNames";
 import { LetterStatus } from "../Components/LetterTile";
 import { getLetterStatus } from "../Pages/WingoConfig";
 

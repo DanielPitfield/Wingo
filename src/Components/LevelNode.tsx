@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { pageDescriptions } from "../Data/PageDescriptions";
-import { PageName } from "../PageNames";
+import { PageName } from "../Data/PageNames";
 import { getId, LevelConfig } from "./Level";
 import { SaveData, SettingsData } from "../Data/SaveData";
 import { Theme } from "../Data/Themes";

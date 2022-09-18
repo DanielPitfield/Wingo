@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { PageName } from "../PageNames";
+import { PageName } from "../Data/PageNames";
 import { LevelConfig } from "../Components/Level";
 import { MessageNotification } from "../Components/MessageNotification";
 import { SettingsData } from "../Data/SaveData";
@@ -19,7 +19,7 @@ interface AreaProps {
   setTheme: (theme: Theme) => void;
   setSelectedCampaignLevel: (level: LevelConfig) => void;
   setPage: (page: PageName) => void;
-};
+}
 
 /** Portion of the campaign, with many levels */
 export const Area = (props: AreaProps) => {

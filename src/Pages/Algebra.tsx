@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { PageName } from "../PageNames";
 import { Button } from "../Components/Button";
 import GamemodeSettingsMenu from "../Components/GamemodeSettingsMenu";
 import { Keyboard } from "../Components/Keyboard";
@@ -17,6 +16,7 @@ import { MAX_NUMPAD_GUESS_LENGTH } from "../Data/GamemodeSettingsInputLimits";
 import { DEFAULT_ALPHABET, DEFAULT_ALPHABET_STRING } from "./WingoConfig";
 import { Difficulty, difficultyOptions } from "../Data/DefaultGamemodeSettings";
 import { getQuestionSetOutcome } from "../Data/getQuestionSetOutcome";
+import { PageName } from "../Data/PageNames";
 
 export interface AlgebraProps {
   campaignConfig:

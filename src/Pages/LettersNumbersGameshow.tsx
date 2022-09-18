@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { SettingsData } from "../Data/SaveData";
-import { PageName } from "../PageNames";
+import { PageName } from "../Data/PageNames";
 import LettersGameConfig, { LettersGameConfigProps } from "./LettersGameConfig";
 import NumbersGameConfig, { NumbersGameConfigProps } from "./NumbersGameConfig";
 import { Theme } from "../Data/Themes";

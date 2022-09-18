@@ -1,4 +1,4 @@
-import { PageName } from "../PageNames";
+import { PageName } from "../Data/PageNames";
 import { Button } from "../Components/Button";
 import { Logo } from "../Components/Logo";
 import { SettingsData } from "../Data/SaveData";
@@ -8,7 +8,7 @@ import { FiCodesandbox, FiPlay, FiSettings, FiShuffle } from "react-icons/fi";
 interface TitlePageProps {
   setPage: (page: PageName) => void;
   settings: SettingsData;
-};
+}
 
 export const TitlePage = (props: TitlePageProps) => {
   return (

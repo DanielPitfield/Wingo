@@ -1,4 +1,4 @@
-import { PageName } from "../PageNames";
+import { PageName } from "../Data/PageNames";
 import { MIN_TARGET_WORD_LENGTH } from "./GamemodeSettingsInputLimits";
 
 const DEFAULT_WORD_LENGTH = 5;

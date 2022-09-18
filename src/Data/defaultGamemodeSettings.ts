@@ -1,4 +1,4 @@
-import { PageName } from "../PageNames";
+import { PageName } from "../Data/PageNames";
 import { NumbleConfigProps, numbleGridShape, numbleGridSize } from "../Pages/NumbleConfig";
 import { WingoConfigProps } from "../Pages/WingoConfig";
 import { WingoInterlinkedProps } from "../Pages/WingoInterlinked";

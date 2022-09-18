@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { arrayMove, OrderGroup } from "react-draggable-order";
-import { PageName } from "../PageNames";
+import { PageName } from "../Data/PageNames";
 import { Button } from "../Components/Button";
 import { operators, operatorSymbols } from "./NumbersGameConfig";
 import GamemodeSettingsMenu from "../Components/GamemodeSettingsMenu";

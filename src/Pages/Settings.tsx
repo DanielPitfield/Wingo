@@ -2,7 +2,7 @@ import { useState } from "react";
 import { IconType } from "react-icons";
 import { FiCompass, FiHeadphones, FiInfo, FiMonitor } from "react-icons/fi";
 import { pageDescriptions } from "../Data/PageDescriptions";
-import { PageName } from "../PageNames";
+import { PageName } from "../Data/PageNames";
 import { Button } from "../Components/Button";
 import { SettingsData } from "../Data/SaveData";
 import { StudioLogo } from "../Components/StudioLogo";

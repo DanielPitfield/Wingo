@@ -5,7 +5,7 @@ import { Theme } from "../Data/Themes";
 import { WingoInterlinked } from "./WingoInterlinked";
 
 import { generateConundrum, getAllWordsOfLength } from "../Data/Conundrum";
-import { PageName } from "../PageNames";
+import { PageName } from "../Data/PageNames";
 import {
   defaultDailyCrosswordGamemodeSettings,
   defaultWeeklyCrosswordGamemodeSettings,

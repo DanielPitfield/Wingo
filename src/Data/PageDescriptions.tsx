@@ -209,6 +209,13 @@ export const pageDescriptions: pageDescription[] = [
     isPlayable: true,
     gameshowType: "LettersNumbers",
     description: "Find the highest scoring word from the list of random letters",
+    helpInfo: (
+      <>
+        <p>Add letters to the selection row</p>
+        <p>Guess the word from the hint for the category within the number of guesses</p>
+        <p>Press the 'Restart' button after an attempt or change the Category for a new target word</p>
+      </>
+    ),
   },
   {
     page: "NumbersGame",

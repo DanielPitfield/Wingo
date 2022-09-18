@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Keyboard } from "../Components/Keyboard";
-import { PageName } from "../PageNames";
+import { PageName } from "../Data/PageNames";
 import { WordRow } from "../Components/WordRow";
 import { Button } from "../Components/Button";
 import { MessageNotification } from "../Components/MessageNotification";

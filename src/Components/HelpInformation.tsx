@@ -1,6 +1,6 @@
 import React from "react";
 import { pageDescriptions } from "../Data/PageDescriptions";
-import { PageName } from "../PageNames";
+import { PageName } from "../Data/PageNames";
 import { Modal } from "./Modal";
 
 interface Props {

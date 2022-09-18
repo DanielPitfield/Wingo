@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { PageName } from "../PageNames";
+import { PageName } from "../Data/PageNames";
 import { MessageNotification } from "../Components/MessageNotification";
 import LetterTile from "../Components/LetterTile";
 import { randomIntFromInterval } from "./Numble";

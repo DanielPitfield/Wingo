@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { PageName } from "../PageNames";
+import { PageName } from "../Data/PageNames";
 import { Button } from "../Components/Button";
 import GamemodeSettingsMenu from "../Components/GamemodeSettingsMenu";
 import { MessageNotification } from "../Components/MessageNotification";

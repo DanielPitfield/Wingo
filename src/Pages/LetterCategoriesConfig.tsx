@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { PageName } from "../PageNames";
+import { PageName } from "../Data/PageNames";
 import LetterCategories from "./LetterCategories";
 import { SaveData, SettingsData } from "../Data/SaveData";
 import { DEFAULT_ALPHABET, pickRandomElementFrom } from "./WingoConfig";

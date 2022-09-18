@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { PageName } from "../PageNames";
+import { PageName } from "../Data/PageNames";
 import LettersGame from "./LettersGame";
 import { Theme } from "../Data/Themes";
 import { SaveData, SettingsData } from "../Data/SaveData";

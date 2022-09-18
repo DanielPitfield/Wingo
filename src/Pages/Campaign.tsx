@@ -1,4 +1,4 @@
-import { PageName } from "../PageNames";
+import { PageName } from "../Data/PageNames";
 import { AreaConfig } from "./Area";
 import { Button } from "../Components/Button";
 import { getId, LevelConfig } from "../Components/Level";
@@ -16,7 +16,7 @@ interface CampaignProps {
   setSelectedArea: (areaConfig: AreaConfig) => void;
   setSelectedCampaignLevel: (level: LevelConfig) => void;
   setPage: (page: PageName) => void;
-};
+}
 
 /** The entire campaign, showing the list of areas */
 export const Campaign = (props: CampaignProps) => {

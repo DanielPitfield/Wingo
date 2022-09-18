@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { SettingsData } from "../Data/SaveData";
-import { PageName } from "../PageNames";
+import { PageName } from "../Data/PageNames";
 import { Theme } from "../Data/Themes";
 import { pageDescription, pageDescriptions } from "../Data/PageDescriptions";
 import { OrderGroup } from "react-draggable-order";

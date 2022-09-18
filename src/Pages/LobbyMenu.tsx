@@ -1,6 +1,6 @@
 import React from "react";
 import { pageDescriptions } from "../Data/PageDescriptions";
-import { PageName } from "../PageNames";
+import { PageName } from "../Data/PageNames";
 import { BsInfoCircleFill } from "react-icons/bs";
 import { AllChallenges } from "../Data/Challenges/AllChallenges";
 import { SaveData, SettingsData } from "../Data/SaveData";

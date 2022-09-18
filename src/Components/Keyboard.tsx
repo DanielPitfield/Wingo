@@ -2,7 +2,7 @@ import React from "react";
 import { Button } from "./Button";
 import { SettingsData } from "../Data/SaveData";
 import { useClickChime } from "../Data/Sounds";
-import { PageName } from "../PageNames";
+import { PageName } from "../Data/PageNames";
 import { FiChevronLeft, FiCornerDownLeft } from "react-icons/fi";
 import { getWordRowStatusSummary, WordRowStatusChecks } from "../Data/getWordRowStatusSummary";
 import { LetterStatus } from "./LetterTile";

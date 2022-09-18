@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { PageName } from "../PageNames";
+import { PageName } from "../Data/PageNames";
 import NumbersGame from "./NumbersGame";
 import { calculateTotal } from "../Components/NumberRow";
 import { Theme } from "../Data/Themes";

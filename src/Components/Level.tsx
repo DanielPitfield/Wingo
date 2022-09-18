@@ -1,5 +1,5 @@
 import React from "react";
-import { PageName } from "../PageNames";
+import { PageName } from "../Data/PageNames";
 import LettersGameConfig, { LettersGameConfigProps } from "../Pages/LettersGameConfig";
 import NumbersGameConfig, { NumbersGameConfigProps } from "../Pages/NumbersGameConfig";
 import LetterCategoriesConfig, { LetterCategoriesConfigProps } from "../Pages/LetterCategoriesConfig";

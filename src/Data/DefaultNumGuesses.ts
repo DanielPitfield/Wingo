@@ -1,4 +1,4 @@
-import { PageName } from "../PageNames";
+import { PageName } from "../Data/PageNames";
 
 const DEFAULT_NUM_GUESSES = 6;
 

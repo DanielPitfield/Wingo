@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { DEFAULT_ALPHABET, pickRandomElementFrom } from "./WingoConfig";
-import { PageName } from "../PageNames";
+import { PageName } from "../Data/PageNames";
 import { Button } from "../Components/Button";
 import { Keyboard } from "../Components/Keyboard";
 import LetterTile from "../Components/LetterTile";
@@ -612,7 +612,6 @@ const WordCodes = (props: Props) => {
         <span>{`${questionIndex + 1} / ${getTotalNumQuestions()} questions completed`}</span>
       </MessageNotification>
     );
-
 
     // The number of correct answers needed for a successful outcome
     const targetScore = props.campaignConfig.isCampaignLevel
