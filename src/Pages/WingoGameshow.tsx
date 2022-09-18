@@ -160,7 +160,7 @@ export const WingoGameshow = (props: Props) => {
   const [roundOrder, setRoundOrder] = useState<
     { isPuzzle: boolean; wordLength: number; basePoints: number; pointsLostPerGuess: number }[]
   >([]);
-  const [roundNumber, setRoundNumber] = useState(0);
+  const [roundNumberIndex, setRoundNumberIndex] = useState(0);
   const [wordLength, setWordLength] = useState(getGamemodeDefaultWordLength(props.page));
   const [gameshowScore, setGameshowScore] = useState(0);
   const [summary, setSummary] = useState<
@@ -201,7 +201,7 @@ export const WingoGameshow = (props: Props) => {
       return;
     }
 
-    if (roundNumber >= roundOrder.length) {
+    if (roundNumberIndex >= roundOrder.length) {
       setInProgress(false);
     }
 
@@ -215,7 +215,7 @@ export const WingoGameshow = (props: Props) => {
 
     // Before loading round, set the word length needed
     setWordLength(nextRoundInfo?.wordLength);
-  }, [roundNumber]);
+  }, [roundNumberIndex]);
 
   function onCompleteGameshowRound(wasCorrect: boolean, guess: string, correctAnswer: string, score: number | null) {
     // Incorrect answer or score couldn't be determined, use score of 0
@@ -225,7 +225,7 @@ export const WingoGameshow = (props: Props) => {
 
     const roundSummary = {
       score: newScore,
-      roundNumber: roundNumber,
+      roundNumber: roundNumberIndex,
       mode: `${roundInfo?.isPuzzle ? "Puzzle" : "Standard"} (${roundInfo?.wordLength} letters)`,
       wasCorrect: wasCorrect,
       guess: guess,
@@ -238,13 +238,13 @@ export const WingoGameshow = (props: Props) => {
     setSummary(newSummary);
 
     // Start next round
-    setRoundNumber(roundNumber + 1);
+    setRoundNumberIndex(roundNumberIndex + 1);
 
     return;
   }
 
   function getRoundInfo() {
-    return roundOrder[roundNumber] ?? null;
+    return roundOrder[roundNumberIndex] ?? null;
   }
 
   function getNextRound() {
@@ -321,7 +321,7 @@ export const WingoGameshow = (props: Props) => {
     // Campaign level and reached target score, otherwise completed all rounds
     const wasCorrect = props.campaignConfig.isCampaignLevel
       ? gameshowScore >= Math.min(props.campaignConfig.targetScore, getMaximumPossibleScore())
-      : roundNumber >= roundOrder.length;
+      : roundNumberIndex >= roundOrder.length;
     props.onComplete(wasCorrect);
 
     // Navigate away from gameshow

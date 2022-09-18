@@ -91,7 +91,7 @@ const WordCodes = (props: Props) => {
   const [questionWordCodes, setQuestionWordCodes] = useState<{ word: string; code: string; isWordToCode: boolean }[]>(
     []
   );
-  const [questionNumber, setQuestionNumber] = useState(0);
+  const [questionIndex, setQuestionIndex] = useState(0);
   const [numCorrectAnswers, setNumCorrectAnswers] = useState(0);
 
   const [gamemodeSettings, setGamemodeSettings] = useState<WordCodesProps["gamemodeSettings"]>(props.gamemodeSettings);
@@ -423,7 +423,7 @@ const WordCodes = (props: Props) => {
   }
 
   const getCurrentQuestion = () => {
-    return questionWordCodes[questionNumber];
+    return questionWordCodes[questionIndex];
   };
 
   const isGuessCorrect = () => {
@@ -545,7 +545,7 @@ const WordCodes = (props: Props) => {
   // Has the last wordCode been guessed/attempted?
   const isGameOver = () => {
     // Is the current question the last question?
-    const isLastQuestion = questionNumber === getTotalNumQuestions() - 1;
+    const isLastQuestion = questionIndex === getTotalNumQuestions() - 1;
 
     return !inProgress && isLastQuestion;
   };
@@ -609,7 +609,7 @@ const WordCodes = (props: Props) => {
         )}
         <br />
 
-        <span>{`${questionNumber + 1} / ${getTotalNumQuestions()} questions completed`}</span>
+        <span>{`${questionIndex + 1} / ${getTotalNumQuestions()} questions completed`}</span>
       </MessageNotification>
     );
 
@@ -685,7 +685,7 @@ const WordCodes = (props: Props) => {
 
     setNumCorrectAnswers(0);
     setRemainingGuesses(gamemodeSettings.numGuesses);
-    setQuestionNumber(0);
+    setQuestionIndex(0);
 
     if (gamemodeSettings.timerConfig.isTimed) {
       // Reset the timer if it is enabled in the game options
@@ -697,7 +697,7 @@ const WordCodes = (props: Props) => {
   function ContinueGame() {
     setInProgress(true);
     setGuess("");
-    setQuestionNumber(questionNumber + 1);
+    setQuestionIndex(questionIndex + 1);
   }
 
   function displayInputMethod() {

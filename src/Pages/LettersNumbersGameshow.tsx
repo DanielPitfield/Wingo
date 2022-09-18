@@ -43,7 +43,7 @@ interface Props extends LettersNumbersGameshowProps {
 export const LettersNumbersGameshow = (props: Props) => {
   const [inProgress, setInProgress] = useState(true);
   const [roundOrder, setRoundOrder] = useState<RoundType[]>([]);
-  const [roundNumber, setRoundNumber] = useState(0);
+  const [roundNumberIndex, setRoundNumberIndex] = useState(0);
   const [gameshowScore, setGameshowScore] = useState(0);
   const [summary, setSummary] = useState<
     {
@@ -102,10 +102,10 @@ export const LettersNumbersGameshow = (props: Props) => {
       return;
     }
 
-    if (roundNumber >= roundOrder.length) {
+    if (roundNumberIndex >= roundOrder.length) {
       setInProgress(false);
     }
-  }, [roundNumber]);
+  }, [roundNumberIndex]);
 
   function onCompleteGameshowRound(wasCorrect: boolean, guess: string, correctAnswer: string, score: number | null) {
     // Incorrect answer or score couldn't be determined, use score of 0
@@ -113,7 +113,7 @@ export const LettersNumbersGameshow = (props: Props) => {
 
     const roundSummary = {
       score: newScore,
-      roundNumber: roundNumber,
+      roundNumber: roundNumberIndex,
       mode: getRoundType()?.toString() || "",
       wasCorrect: wasCorrect,
       guess: guess,
@@ -126,13 +126,13 @@ export const LettersNumbersGameshow = (props: Props) => {
     setSummary(newSummary);
 
     // Start next round
-    setRoundNumber(roundNumber + 1);
+    setRoundNumberIndex(roundNumberIndex + 1);
 
     return;
   }
 
   function getRoundType(): RoundType | null {
-    return roundOrder[roundNumber] ?? null;
+    return roundOrder[roundNumberIndex] ?? null;
   }
 
   function getNextRound() {
@@ -212,7 +212,7 @@ export const LettersNumbersGameshow = (props: Props) => {
     // Campaign level and reached target score, otherwise completed all rounds
     const wasCorrect = props.campaignConfig.isCampaignLevel
       ? gameshowScore >= Math.min(props.campaignConfig.targetScore, getMaximumPossibleScore())
-      : roundNumber >= roundOrder.length;
+      : roundNumberIndex >= roundOrder.length;
     props.onComplete(wasCorrect);
 
     // Navigate away from gameshow

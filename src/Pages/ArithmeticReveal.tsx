@@ -64,7 +64,7 @@ const ArithmeticReveal = (props: Props) => {
   const [revealState, setRevealState] = useState<{ type: "in-progress"; revealedTiles: number } | { type: "finished" }>(
     { type: "in-progress", revealedTiles: 0 }
   );
-  const [currentCheckpoint, setCurrentCheckpoint] = useState(0);
+  const [currentCheckpointIndex, setCurrentCheckpointIndex] = useState(0);
   const [inProgress, setInProgress] = useState(true);
   const [guess, setGuess] = useState("");
   const [tiles, setTiles] = useState<string[][]>([]);
@@ -308,7 +308,7 @@ const ArithmeticReveal = (props: Props) => {
     if (gamemodeSettings.timerConfig.isTimed) {
       setRemainingSeconds(gamemodeSettings.timerConfig.seconds);
     }
-  }, [currentCheckpoint]);
+  }, [currentCheckpointIndex]);
 
   React.useEffect(() => {
     // If the game has finished
@@ -361,11 +361,11 @@ const ArithmeticReveal = (props: Props) => {
 
   // TODO: Still some refactoring with these functions and how they are used within displayOutcome()
   const isGuessCorrect = (): Boolean => {
-    return guess.toUpperCase() === targetNumbers[currentCheckpoint].toString().toUpperCase();
+    return guess.toUpperCase() === targetNumbers[currentCheckpointIndex].toString().toUpperCase();
   };
 
   const isLastCheckpoint = () => {
-    return currentCheckpoint + 1 >= gamemodeSettings.numCheckpoints;
+    return currentCheckpointIndex + 1 >= gamemodeSettings.numCheckpoints;
   };
 
   // Has there been an incorrect checkpoint guess or have all the questions been answered
@@ -380,7 +380,7 @@ const ArithmeticReveal = (props: Props) => {
       return;
     }
 
-    const numCorrectAnswers = isGuessCorrect() ? currentCheckpoint + 1 : currentCheckpoint;
+    const numCorrectAnswers = isGuessCorrect() ? currentCheckpointIndex + 1 : currentCheckpointIndex;
 
     // Show outcome after current checkpoint geuss (and how many questions are left)
     const currentQuestionOutcome = (
@@ -398,11 +398,11 @@ const ArithmeticReveal = (props: Props) => {
         {!isGuessCorrect() && (
           <>
             <span>
-              The answer was <strong>{targetNumbers[currentCheckpoint]}</strong>
+              The answer was <strong>{targetNumbers[currentCheckpointIndex]}</strong>
             </span>
             <br />
 
-            {tiles[currentCheckpoint].join(" ")}
+            {tiles[currentCheckpointIndex].join(" ")}
           </>
         )}
       </MessageNotification>
@@ -438,7 +438,7 @@ const ArithmeticReveal = (props: Props) => {
     const continueButton = (
       <Button
         mode="accept"
-        onClick={() => setCurrentCheckpoint(currentCheckpoint + 1)}
+        onClick={() => setCurrentCheckpointIndex(currentCheckpointIndex + 1)}
         settings={props.settings}
         additionalProps={{ autoFocus: true }}
       >
@@ -464,14 +464,14 @@ const ArithmeticReveal = (props: Props) => {
     if (!inProgress) {
       // Reached target checkpoint if a campaign level, otherwise reached the end (entered last target number)
       const wasCorrect = props.campaignConfig.isCampaignLevel
-        ? currentCheckpoint + 1 >= Math.min(props.campaignConfig.targetScore, gamemodeSettings.numCheckpoints)
+        ? currentCheckpointIndex + 1 >= Math.min(props.campaignConfig.targetScore, gamemodeSettings.numCheckpoints)
         : guess === targetNumbers[gamemodeSettings.numCheckpoints - 1].toString();
       props.onComplete(wasCorrect);
     }
 
     setInProgress(true);
     setGuess("");
-    setCurrentCheckpoint(0);
+    setCurrentCheckpointIndex(0);
     setRevealState({ type: "in-progress", revealedTiles: 0 });
     if (gamemodeSettings.timerConfig.isTimed) {
       // Reset the timer if it is enabled in the game options
@@ -639,7 +639,7 @@ const ArithmeticReveal = (props: Props) => {
       {inProgress && (
         <div className="target">
           <LetterTile
-            letter={revealState.type === "finished" ? "?" : tiles[currentCheckpoint]?.[revealState.revealedTiles]}
+            letter={revealState.type === "finished" ? "?" : tiles[currentCheckpointIndex]?.[revealState.revealedTiles]}
             status={revealState.type === "finished" || targetTransitioned ? "contains" : "not set"}
             settings={props.settings}
           ></LetterTile>
