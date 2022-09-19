@@ -5,7 +5,7 @@ import { WordRow } from "../Components/WordRow";
 import { Button } from "../Components/Button";
 import { MessageNotification } from "../Components/MessageNotification";
 import ProgressBar, { GreenToRedColorTransition } from "../Components/ProgressBar";
-import { isLettersGameGuessValid } from "./LettersGameConfig";
+import { isLettersGameGuessValid, LettersGameConfigProps } from "./LettersGameConfig";
 import { pickRandomElementFrom } from "./WingoConfig";
 import { Theme } from "../Data/Themes";
 import { SettingsData } from "../Data/SaveData";
@@ -26,10 +26,7 @@ interface Props {
       }
     | { isCampaignLevel: false };
 
-  gamemodeSettings: {
-    numLetters: number;
-    timerConfig: { isTimed: true; seconds: number } | { isTimed: false };
-  };
+  gamemodeSettings: LettersGameConfigProps["gamemodeSettings"];
 
   letterTileStatuses: {
     letter: string | null;
@@ -60,10 +57,7 @@ interface Props {
   onSubmitKeyboardLetter: (letter: string) => void;
   onBackspace: () => void;
 
-  updateGamemodeSettings: (newGamemodeSettings: {
-    numLetters: number;
-    timerConfig: { isTimed: true; seconds: number } | { isTimed: false };
-  }) => void;
+  updateGamemodeSettings: (newGamemodeSettings: LettersGameConfigProps["gamemodeSettings"]) => void;
 
   updateRemainingSeconds: (newSeconds: number) => void;
 

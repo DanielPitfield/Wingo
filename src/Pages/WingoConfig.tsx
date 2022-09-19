@@ -21,20 +21,22 @@ import { getGamemodeDefaultWordLength } from "../Data/DefaultWordLengths";
 import { words_puzzles } from "../Data/WordArrays/WordsPuzzles";
 import { LetterStatus } from "../Components/LetterTile";
 
+export type WingoMode =
+  | "daily"
+  | "repeat"
+  | "category"
+  | "increasing"
+  | "limitless"
+  | "puzzle"
+  | "interlinked"
+  | "crossword/fit"
+  | "crossword/daily"
+  | "crossword/weekly"
+  | "crossword"
+  | "conundrum";
+
 export interface WingoConfigProps {
-  mode:
-    | "daily"
-    | "repeat"
-    | "category"
-    | "increasing"
-    | "limitless"
-    | "puzzle"
-    | "interlinked"
-    | "crossword/fit"
-    | "crossword/daily"
-    | "crossword/weekly"
-    | "crossword"
-    | "conundrum";
+  mode: WingoMode;
 
   gamemodeSettings: {
     wordLength: number;
@@ -826,18 +828,7 @@ const WingoConfig = (props: Props) => {
         outcome,
         levelProps: {
           mode: props.mode,
-          gamemodeSettings: {
-            wordLength: gamemodeSettings.wordLength,
-            isFirstLetterProvided: gamemodeSettings.isFirstLetterProvided,
-            isHintShown: gamemodeSettings.isHintShown,
-            puzzleRevealMs: gamemodeSettings.puzzleRevealMs,
-            puzzleLeaveNumBlanks: gamemodeSettings.puzzleLeaveNumBlanks,
-            maxLivesConfig: gamemodeSettings.maxLivesConfig,
-            wordLengthMaxLimit: gamemodeSettings.wordLengthMaxLimit,
-            timerConfig: gamemodeSettings.timerConfig.isTimed
-              ? { isTimed: true, seconds: remainingSeconds }
-              : { isTimed: false },
-          },
+          gamemodeSettings: gamemodeSettings,
           targetWord,
           defaultWordLength: props.defaultWordLength,
           defaultNumGuesses: props.defaultNumGuesses,
@@ -879,16 +870,7 @@ const WingoConfig = (props: Props) => {
     }
   }
 
-  function updateGamemodeSettings(newGamemodeSettings: {
-    wordLength: number;
-    wordLengthMaxLimit: number;
-    isFirstLetterProvided: boolean;
-    isHintShown: boolean;
-    puzzleRevealMs: number;
-    puzzleLeaveNumBlanks: number;
-    maxLivesConfig: { isLimited: true; maxLives: number } | { isLimited: false };
-    timerConfig: { isTimed: true; seconds: number } | { isTimed: false };
-  }) {
+  function updateGamemodeSettings(newGamemodeSettings: WingoConfigProps["gamemodeSettings"]) {
     setGamemodeSettings(newGamemodeSettings);
   }
 

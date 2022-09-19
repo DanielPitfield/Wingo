@@ -10,10 +10,12 @@ import DiceGrid from "../Components/DiceGrid";
 import {
   getNextTeamNumberWithRemainingTime,
   HexagonPinAdjacency,
+  NumbleConfigProps,
   numbleGridShape,
   numbleGridShapes,
   numbleGridSize,
   numbleGridSizes,
+  NumbleStatus,
 } from "./NumbleConfig";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
 import { DEFAULT_NUMBLE_GUESS_TIMER_VALUE } from "../Data/DefaultGamemodeSettings";
@@ -29,43 +31,14 @@ interface Props {
         maxNumSelectedPins: number;
       }
     | { isCampaignLevel: false };
-  status:
-    | "dice-rolling"
-    | "dice-rolled-awaiting-pick"
-    | "picked-awaiting-dice-roll"
-    | "game-over-incorrect-tile"
-    | "game-over-target-score"
-    | "game-over-no-more-pins"
-    | "game-over-timer-ended";
-  setStatus: (
-    newStatus:
-      | "dice-rolling"
-      | "dice-rolled-awaiting-pick"
-      | "picked-awaiting-dice-roll"
-      | "game-over-incorrect-tile"
-      | "game-over-target-score"
-      | "game-over-no-more-pins"
-      | "game-over-timer-ended"
-  ) => void;
+
+  gamemodeSettings: NumbleConfigProps["gamemodeSettings"];
+
+  status: NumbleStatus;
+  setStatus: (newStatus: NumbleStatus) => void;
+
   currentTeamNumber: number;
   setCurrentTeamNumber: (teamNumber: number) => void;
-  gamemodeSettings: {
-    numDice: number;
-    diceMin: number;
-    diceMax: number;
-    gridShape: numbleGridShape;
-    gridSize: numbleGridSize;
-    numTeams: number;
-    isGameOverOnIncorrectPick: boolean;
-    guessTimerConfig:
-      | {
-          isTimed: true;
-          seconds: number;
-          timerBehaviour: { isGameOverWhenNoTimeLeft: true } | { isGameOverWhenNoTimeLeft: false; pointsLost: number };
-        }
-      | { isTimed: false };
-    timerConfig: { isTimed: true; seconds: number } | { isTimed: false };
-  };
 
   remainingGuessTimerSeconds: number;
   updateRemainingGuessTimerSeconds: (newGuessTimerSeconds: number) => void;
@@ -83,23 +56,7 @@ interface Props {
     }[]
   ) => void;
 
-  updateGamemodeSettings: (newGamemodeSettings: {
-    numDice: number;
-    diceMin: number;
-    diceMax: number;
-    gridShape: numbleGridShape;
-    gridSize: numbleGridSize;
-    numTeams: number;
-    isGameOverOnIncorrectPick: boolean;
-    guessTimerConfig:
-      | {
-          isTimed: true;
-          seconds: number;
-          timerBehaviour: { isGameOverWhenNoTimeLeft: true } | { isGameOverWhenNoTimeLeft: false; pointsLost: number };
-        }
-      | { isTimed: false };
-    timerConfig: { isTimed: true; seconds: number } | { isTimed: false };
-  }) => void;
+  updateGamemodeSettings: (newGamemodeSettings: NumbleConfigProps["gamemodeSettings"]) => void;
 
   onComplete: (wasCorrect: boolean) => void;
 

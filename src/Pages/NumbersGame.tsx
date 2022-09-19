@@ -5,7 +5,7 @@ import { MessageNotification } from "../Components/MessageNotification";
 import ProgressBar, { GreenToRedColorTransition } from "../Components/ProgressBar";
 import { NumberRow } from "../Components/NumberRow";
 import NumberTile from "../Components/NumberTile";
-import { determineScore, Guess, hasNumberSelectionFinished, hasNumberSelectionStarted } from "./NumbersGameConfig";
+import { determineScore, Guess, hasNumberSelectionFinished, hasNumberSelectionStarted, NumbersGameConfigProps } from "./NumbersGameConfig";
 import { NumberSelectionRow } from "../Components/NumberSelectionRow";
 import { Theme } from "../Data/Themes";
 import { NumberPuzzle, NumberPuzzleValue } from "../Data/NumbersGameSolver";
@@ -25,13 +25,7 @@ interface Props {
       }
     | { isCampaignLevel: false };
 
-  gamemodeSettings: {
-    hasScaryNumbers: boolean;
-    // The quantity of numbers (that make up the selection which can be chosen from to make the target number)
-    numOperands: number;
-    scoringMethod: "standard" | "pointLostPerDifference";
-    timerConfig: { isTimed: true; seconds: number } | { isTimed: false };
-  };
+  gamemodeSettings: NumbersGameConfigProps["gamemodeSettings"];
 
   remainingSeconds: number;
   wordIndex: number;
@@ -64,12 +58,7 @@ interface Props {
   onSubmitNumber: (number: number) => void;
   onBackspace: () => void;
 
-  updateGamemodeSettings: (newGamemodeSettings: {
-    hasScaryNumbers: boolean;
-    scoringMethod: "standard" | "pointLostPerDifference";
-    numOperands: number;
-    timerConfig: { isTimed: true; seconds: number } | { isTimed: false };
-  }) => void;
+  updateGamemodeSettings: (newGamemodeSettings: NumbersGameConfigProps["gamemodeSettings"]) => void;
   updateRemainingSeconds: (newSeconds: number) => void;
 
   ResetGame: () => void;

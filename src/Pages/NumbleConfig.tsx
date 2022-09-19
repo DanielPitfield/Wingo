@@ -11,7 +11,7 @@ import {
   square_64,
   square_25,
 } from "../Data/NumblePointColourMappings";
-import { defaultNumbleGamemodeSettings, DEFAULT_NUMBLE_GUESS_TIMER_VALUE } from "../Data/DefaultGamemodeSettings";
+import { DEFAULT_NUMBLE_GUESS_TIMER_VALUE } from "../Data/DefaultGamemodeSettings";
 import { getGamemodeDefaultTimerValue } from "../Data/DefaultTimerValues";
 import { MAX_NUMBLE_NUM_TEAMS } from "../Data/GamemodeSettingsInputLimits";
 
@@ -104,6 +104,15 @@ export function getNextTeamNumberWithRemainingTime(
   }
 }
 
+export type NumbleStatus =
+  | "dice-rolling"
+  | "dice-rolled-awaiting-pick"
+  | "picked-awaiting-dice-roll"
+  | "game-over-incorrect-tile"
+  | "game-over-target-score"
+  | "game-over-no-more-pins"
+  | "game-over-timer-ended";
+
 const NumbleConfig = (props: Props) => {
   const [gamemodeSettings, setGamemodeSettings] = useState<NumbleConfigProps["gamemodeSettings"]>(
     props.gamemodeSettings
@@ -112,15 +121,7 @@ const NumbleConfig = (props: Props) => {
   // The team number of the team that is choosing a pin next
   const [currentTeamNumber, setCurrentTeamNumber] = useState(0);
 
-  const [status, setStatus] = useState<
-    | "dice-rolling"
-    | "dice-rolled-awaiting-pick"
-    | "picked-awaiting-dice-roll"
-    | "game-over-incorrect-tile"
-    | "game-over-target-score"
-    | "game-over-no-more-pins"
-    | "game-over-timer-ended"
-  >("dice-rolled-awaiting-pick");
+  const [status, setStatus] = useState<NumbleStatus>("dice-rolled-awaiting-pick");
 
   // Guess Timer
   const [remainingGuessTimerSeconds, setRemainingGuessTimerSeconds] = useState(
@@ -237,23 +238,7 @@ const NumbleConfig = (props: Props) => {
     setTeamTimers(newTeamTimers);
   }
 
-  function updateGamemodeSettings(newGamemodeSettings: {
-    numDice: number;
-    diceMin: number;
-    diceMax: number;
-    gridShape: "square" | "hexagon";
-    gridSize: 25 | 64 | 100;
-    numTeams: number;
-    isGameOverOnIncorrectPick: boolean;
-    guessTimerConfig:
-      | {
-          isTimed: true;
-          seconds: number;
-          timerBehaviour: { isGameOverWhenNoTimeLeft: true } | { isGameOverWhenNoTimeLeft: false; pointsLost: number };
-        }
-      | { isTimed: false };
-    timerConfig: { isTimed: true; seconds: number } | { isTimed: false };
-  }) {
+  function updateGamemodeSettings(newGamemodeSettings: NumbleConfigProps["gamemodeSettings"]) {
     setGamemodeSettings(newGamemodeSettings);
   }
 

@@ -410,12 +410,7 @@ const NumbersGameConfig = (props: Props) => {
     }
   }
 
-  function updateGamemodeSettings(newGamemodeSettings: {
-    hasScaryNumbers: boolean;
-    scoringMethod: "standard" | "pointLostPerDifference";
-    numOperands: number;
-    timerConfig: { isTimed: true; seconds: number } | { isTimed: false };
-  }) {
+  function updateGamemodeSettings(newGamemodeSettings: NumbersGameConfigProps["gamemodeSettings"]) {
     setGamemodeSettings(newGamemodeSettings);
   }
 

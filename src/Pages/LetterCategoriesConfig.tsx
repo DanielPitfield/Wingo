@@ -269,10 +269,7 @@ const LetterCategoriesConfig = (props: Props) => {
     }
   }
 
-  function updateGamemodeSettings(newGamemodeSettings: {
-    numCategories: number;
-    timerConfig: { isTimed: true; seconds: number } | { isTimed: false };
-  }) {
+  function updateGamemodeSettings(newGamemodeSettings: LetterCategoriesConfigProps["gamemodeSettings"]) {
     setGamemodeSettings(newGamemodeSettings);
   }
 

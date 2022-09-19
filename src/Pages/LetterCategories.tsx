@@ -11,6 +11,7 @@ import GamemodeSettingsMenu from "../Components/GamemodeSettingsMenu";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
 import { MAX_NUM_CATEGORIES } from "../Data/GamemodeSettingsInputLimits";
 import { getGamemodeDefaultTimerValue } from "../Data/DefaultTimerValues";
+import { LetterCategoriesConfigProps } from "./LetterCategoriesConfig";
 
 interface Props {
   campaignConfig:
@@ -21,10 +22,7 @@ interface Props {
       }
     | { isCampaignLevel: false };
 
-  gamemodeSettings: {
-    numCategories: number;
-    timerConfig: { isTimed: true; seconds: number } | { isTimed: false };
-  };
+  gamemodeSettings: LetterCategoriesConfigProps["gamemodeSettings"];
 
   remainingSeconds: number;
   wordLength: number;
@@ -45,10 +43,7 @@ interface Props {
   onSubmitLetter: (letter: string) => void;
   onBackspace: () => void;
 
-  updateGamemodeSettings: (newGamemodeSettings: {
-    numCategories: number;
-    timerConfig: { isTimed: true; seconds: number } | { isTimed: false };
-  }) => void;
+  updateGamemodeSettings: (newGamemodeSettings: LetterCategoriesConfigProps["gamemodeSettings"]) => void;
   updateRemainingSeconds: (newSeconds: number) => void;
 
   ResetGame: () => void;

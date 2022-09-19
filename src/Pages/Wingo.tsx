@@ -5,7 +5,7 @@ import { WordRow } from "../Components/WordRow";
 import { Button } from "../Components/Button";
 import { MessageNotification } from "../Components/MessageNotification";
 import ProgressBar, { GreenToRedColorTransition } from "../Components/ProgressBar";
-import { getNewLives, WingoConfigProps } from "./WingoConfig";
+import { getNewLives, WingoConfigProps, WingoMode } from "./WingoConfig";
 import { Theme } from "../Data/Themes";
 import { SettingsData } from "../Data/SaveData";
 import { useCorrectChime, useFailureChime, useLightPingChime } from "../Data/Sounds";
@@ -28,18 +28,9 @@ import { LetterStatus } from "../Components/LetterTile";
 
 interface Props {
   isCampaignLevel: boolean;
-  mode: "daily" | "repeat" | "category" | "increasing" | "limitless" | "puzzle" | "conundrum";
+  mode: WingoMode;
 
-  gamemodeSettings: {
-    wordLength: number;
-    wordLengthMaxLimit: number;
-    isFirstLetterProvided: boolean;
-    isHintShown: boolean;
-    puzzleRevealMs: number;
-    puzzleLeaveNumBlanks: number;
-    maxLivesConfig: { isLimited: true; maxLives: number } | { isLimited: false };
-    timerConfig: { isTimed: true; seconds: number } | { isTimed: false };
-  };
+  gamemodeSettings: WingoConfigProps["gamemodeSettings"];
 
   remainingSeconds: number;
   numGuesses: number;
@@ -69,20 +60,12 @@ interface Props {
   onSubmitTargetCategory: (category: string) => void;
   onBackspace: () => void;
 
-  updateGamemodeSettings: (newGamemodeSettings: {
-    wordLength: number;
-    wordLengthMaxLimit: number;
-    isFirstLetterProvided: boolean;
-    isHintShown: boolean;
-    puzzleRevealMs: number;
-    puzzleLeaveNumBlanks: number;
-    maxLivesConfig: { isLimited: true; maxLives: number } | { isLimited: false };
-    timerConfig: { isTimed: true; seconds: number } | { isTimed: false };
-  }) => void;
+  updateGamemodeSettings: (newGamemodeSettings: WingoConfigProps["gamemodeSettings"]) => void;
 
   ResetGame: () => void;
   ContinueGame: () => void;
   setTheme: (theme: Theme) => void;
+
   gameshowScore?: number;
 }
 
@@ -261,11 +244,9 @@ const Wingo = (props: Props) => {
     const MIN_WORD_LENGTH_MAX_BOUNDARY =
       props.mode === "increasing" ? MAX_TARGET_WORD_LENGTH - 1 : MAX_TARGET_WORD_LENGTH;
 
-    let settings;
-
     // TODO: Timer that appears after all letters have been revealed (or player intervenes to guess early), which can also be configured in these gamemode settings options
     if (props.mode === "puzzle") {
-      settings = (
+      return (
         <>
           <label>
             <input
@@ -305,118 +286,116 @@ const Wingo = (props: Props) => {
           </label>
         </>
       );
-    } else {
-      settings = (
-        <>
+    }
+
+    return (
+      <>
+        <label>
+          <input
+            type="number"
+            name="wordLength"
+            value={props.gamemodeSettings.wordLength}
+            min={MIN_TARGET_WORD_LENGTH}
+            max={MIN_WORD_LENGTH_MAX_BOUNDARY}
+            onChange={handleGamemodeSettingsChange}
+          ></input>
+          {MIN_WORD_LENGTH_LABEL}
+        </label>
+
+        {isContinuationMode() && (
           <label>
             <input
               type="number"
-              name="wordLength"
-              value={props.gamemodeSettings.wordLength}
-              min={MIN_TARGET_WORD_LENGTH}
-              max={MIN_WORD_LENGTH_MAX_BOUNDARY}
+              name="wordLengthMaxLimit"
+              value={props.gamemodeSettings.wordLengthMaxLimit}
+              min={props.gamemodeSettings.wordLength + 1}
+              max={MAX_TARGET_WORD_LENGTH}
               onChange={handleGamemodeSettingsChange}
             ></input>
-            {MIN_WORD_LENGTH_LABEL}
+            Ending Word Length
           </label>
+        )}
 
-          {isContinuationMode() && (
-            <label>
-              <input
-                type="number"
-                name="wordLengthMaxLimit"
-                value={props.gamemodeSettings.wordLengthMaxLimit}
-                min={props.gamemodeSettings.wordLength + 1}
-                max={MAX_TARGET_WORD_LENGTH}
-                onChange={handleGamemodeSettingsChange}
-              ></input>
-              Ending Word Length
-            </label>
-          )}
-
-          {props.mode === "limitless" && (
-            <>
-              <label>
-                <input
-                  checked={props.gamemodeSettings.maxLivesConfig.isLimited}
-                  type="checkbox"
-                  name="maxLivesConfig"
-                  onChange={handleGamemodeSettingsChange}
-                ></input>
-                Cap max number of extra lives
-              </label>
-              {props.gamemodeSettings.maxLivesConfig.isLimited && (
-                <label>
-                  <input
-                    type="number"
-                    name="maxLivesConfig"
-                    value={props.gamemodeSettings.maxLivesConfig.maxLives}
-                    min={1}
-                    max={50}
-                    onChange={(e) => {
-                      setMostRecentMaxLives(e.target.valueAsNumber);
-                      handleGamemodeSettingsChange(e);
-                    }}
-                  ></input>
-                  Max number of extra lives
-                </label>
-              )}
-            </>
-          )}
-
-          <label>
-            <input
-              checked={props.gamemodeSettings.isFirstLetterProvided}
-              type="checkbox"
-              name="isFirstLetterProvided"
-              onChange={handleGamemodeSettingsChange}
-            ></input>
-            First Letter Provided
-          </label>
-
-          <label>
-            <input
-              checked={props.gamemodeSettings.isHintShown}
-              type="checkbox"
-              name="isHintShown"
-              onChange={handleGamemodeSettingsChange}
-            ></input>
-            Hints
-          </label>
-
+        {props.mode === "limitless" && (
           <>
             <label>
               <input
-                checked={props.gamemodeSettings.timerConfig.isTimed}
+                checked={props.gamemodeSettings.maxLivesConfig.isLimited}
                 type="checkbox"
-                name="timerConfig"
+                name="maxLivesConfig"
                 onChange={handleGamemodeSettingsChange}
               ></input>
-              Timer
+              Cap max number of extra lives
             </label>
-            {props.gamemodeSettings.timerConfig.isTimed && (
+            {props.gamemodeSettings.maxLivesConfig.isLimited && (
               <label>
                 <input
                   type="number"
-                  name="timerConfig"
-                  value={props.gamemodeSettings.timerConfig.seconds}
-                  min={10}
-                  max={120}
-                  step={5}
+                  name="maxLivesConfig"
+                  value={props.gamemodeSettings.maxLivesConfig.maxLives}
+                  min={1}
+                  max={50}
                   onChange={(e) => {
-                    setMostRecentTotalSeconds(e.target.valueAsNumber);
+                    setMostRecentMaxLives(e.target.valueAsNumber);
                     handleGamemodeSettingsChange(e);
                   }}
                 ></input>
-                Seconds
+                Max number of extra lives
               </label>
             )}
           </>
-        </>
-      );
-    }
+        )}
 
-    return settings;
+        <label>
+          <input
+            checked={props.gamemodeSettings.isFirstLetterProvided}
+            type="checkbox"
+            name="isFirstLetterProvided"
+            onChange={handleGamemodeSettingsChange}
+          ></input>
+          First Letter Provided
+        </label>
+
+        <label>
+          <input
+            checked={props.gamemodeSettings.isHintShown}
+            type="checkbox"
+            name="isHintShown"
+            onChange={handleGamemodeSettingsChange}
+          ></input>
+          Hints
+        </label>
+
+        <>
+          <label>
+            <input
+              checked={props.gamemodeSettings.timerConfig.isTimed}
+              type="checkbox"
+              name="timerConfig"
+              onChange={handleGamemodeSettingsChange}
+            ></input>
+            Timer
+          </label>
+          {props.gamemodeSettings.timerConfig.isTimed && (
+            <label>
+              <input
+                type="number"
+                name="timerConfig"
+                value={props.gamemodeSettings.timerConfig.seconds}
+                min={10}
+                max={120}
+                step={5}
+                onChange={(e) => {
+                  setMostRecentTotalSeconds(e.target.valueAsNumber);
+                  handleGamemodeSettingsChange(e);
+                }}
+              ></input>
+              Seconds
+            </label>
+          )}
+        </>
+      </>
+    );
   }
 
   React.useEffect(() => {
@@ -438,16 +417,16 @@ const Wingo = (props: Props) => {
   }, [props.inProgress]);
 
   function displayOutcome(): React.ReactNode {
-    // Game still in progress
-    if (props.inProgress) {
+    // Game still in progress, display the hint (if defined)
+    if (props.inProgress && props.targetHint) {
       return (
-        props.targetHint && (
-          <MessageNotification type="info">
-            <strong>Hint:</strong> {props.targetHint}
-          </MessageNotification>
-        )
+        <MessageNotification type="info">
+          <strong>Hint:</strong> {props.targetHint}
+        </MessageNotification>
       );
     }
+
+    // TODO: Refactor
 
     // Invalid word (wrong spelling)
     if (!props.inDictionary) {
@@ -538,25 +517,22 @@ const Wingo = (props: Props) => {
   }
 
   function isOutcomeContinue(): boolean {
-    const correctAnswer = props.targetWord.toUpperCase() === props.currentWord.toUpperCase();
+    const correctAnswer =
+      props.currentWord.length > 0 && props.targetWord.toUpperCase() === props.currentWord.toUpperCase();
 
-    // Correct answer with only row left
-    const lastRowCorrectAnswer = props.numGuesses === 1 && correctAnswer;
-
-    // Limitless - lives left or correct answer with last remaining life
-    const LimitlessContinue = props.mode === "limitless" && (props.numGuesses > 1 || lastRowCorrectAnswer);
-
-    // Increasing - correct and next wordLength does not exceed limit
-    const IncreasingContinue =
-      props.mode === "increasing" &&
-      correctAnswer &&
-      props.gamemodeSettings.wordLength < props.gamemodeSettings.wordLengthMaxLimit;
-
-    if (LimitlessContinue || IncreasingContinue) {
-      return true;
-    } else {
-      return false;
+    if (props.mode === "increasing") {
+      // Correct and next wordLength does not exceed limit
+      return correctAnswer && props.gamemodeSettings.wordLength < props.gamemodeSettings.wordLengthMaxLimit;
     }
+
+    if (props.mode === "limitless") {
+      // Correct answer with last row left
+      const lastRowCorrectAnswer = props.numGuesses === 1 && correctAnswer;
+      // Lives left or correct answer with last remaining life
+      return lastRowCorrectAnswer || props.numGuesses > 1;
+    }
+
+    return false;
   }
 
   function getSecondsUntilMidnight(): number {

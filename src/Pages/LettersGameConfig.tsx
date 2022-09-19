@@ -373,10 +373,7 @@ const LettersGameConfig = (props: Props) => {
     }
   }
 
-  function updateGamemodeSettings(newGamemodeSettings: {
-    numLetters: number;
-    timerConfig: { isTimed: true; seconds: number } | { isTimed: false };
-  }) {
+  function updateGamemodeSettings(newGamemodeSettings: LettersGameConfigProps["gamemodeSettings"]) {
     setGamemodeSettings(newGamemodeSettings);
   }
 
