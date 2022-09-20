@@ -1,7 +1,7 @@
 import { PageName } from "../Data/PageNames";
 import LetterTile from "./LetterTile";
 import { SettingsData } from "../Data/SaveData";
-import { getWordRowStatusSummary, WordRowStatusChecks } from "../Data/getWordRowStatusSummary";
+import { getWordRowStatusSummary, WordRowStatusChecks } from "../Helper Functions/getWordRowStatusSummary";
 
 interface Props {
   page: PageName;

@@ -13,10 +13,10 @@ import { PageName } from "../Data/PageNames";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
 import { categoryMappings, wordLengthMappingsTargets } from "../Data/WordArrayMappings";
 import { MAX_TARGET_WORD_LENGTH, MIN_TARGET_WORD_LENGTH } from "../Data/GamemodeSettingsInputLimits";
-import { getGamemodeDefaultTimerValue } from "../Data/DefaultTimerValues";
 import { DEFAULT_FIT_RESTRICTION } from "../Data/DefaultGamemodeSettings";
-import { getWordRowStatusSummary, WordRowStatusChecks } from "../Data/getWordRowStatusSummary";
+import { getWordRowStatusSummary, WordRowStatusChecks } from "../Helper Functions/getWordRowStatusSummary";
 import { shuffleArray } from "../Data/shuffleArray";
+import { getGamemodeDefaultTimerValue } from "../Helper Functions/getGamemodeDefaultTimerValue";
 
 type Orientation = "vertical" | "horizontal";
 

@@ -1,8 +1,6 @@
 import { PageName } from "../Data/PageNames";
 
-const DEFAULT_NUM_GUESSES = 6;
-
-const defaultNumGuesses: { page: PageName; numGuesses: number }[] = [
+export const gamemodeDefaultNumGuesses: { page: PageName; numGuesses: number }[] = [
   { page: "wingo/puzzle", numGuesses: 1 },
   { page: "NumbersGame", numGuesses: 5 },
   { page: "ArithmeticDrag/Match", numGuesses: 3 },
@@ -13,7 +11,3 @@ const defaultNumGuesses: { page: PageName; numGuesses: number }[] = [
   { page: "WordCodes/Match", numGuesses: 3 },
   { page: "LettersNumbersGameshow", numGuesses: 5 },
 ];
-
-export const getGamemodeDefaultNumGuesses = (page: PageName) => {
-  return defaultNumGuesses.find((x) => x.page === page)?.numGuesses ?? DEFAULT_NUM_GUESSES;
-};

@@ -14,8 +14,8 @@ import { AlgebraProps } from "../Pages/Algebra";
 import { WordCodesProps } from "../Pages/WordCodes";
 import { MAX_TARGET_WORD_LENGTH, MIN_TARGET_WORD_LENGTH } from "./GamemodeSettingsInputLimits";
 import { getGamemodeDefaultWordLength } from "./DefaultWordLengths";
-import { getGamemodeDefaultNumGuesses } from "./DefaultNumGuesses";
 import { getGamemodeDefaultTimerValue } from "./DefaultTimerValues";
+import { getGamemodeDefaultNumGuesses } from "../Helper Functions/getGamemodeDefaultNumGuesses";
 
 export const difficultyOptions = ["novice", "easy", "medium", "hard", "expert"] as const;
 export type Difficulty = typeof difficultyOptions[number];

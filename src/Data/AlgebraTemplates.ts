@@ -1,5 +1,4 @@
 import { Difficulty } from "./DefaultGamemodeSettings";
-import { shuffleArray } from "./shuffleArray";
 
 export type AlgebraTemplate = {
   difficulty: Difficulty;
@@ -22,7 +21,7 @@ export type answerType = "letter" | "number" | "combination";
 */
 
 /* All templates */
-const AlgebraTemplates = {
+export const AlgebraTemplates = {
   SmallEasy1: {
     difficulty: "easy",
     inputs: [3, 7, 5, 8, 4, 2],
@@ -66,12 +65,3 @@ const AlgebraTemplates = {
     ],
   } as AlgebraTemplate,
 };
-
-export function getAlgebraTemplates(numTemplates: number, difficulty: Difficulty): AlgebraTemplate[] {
-  // Templates that have the specified difficulty
-  const filteredAlgebraTemplates = Object.values(AlgebraTemplates).filter(
-    (algebraTemplate) => algebraTemplate.difficulty === difficulty
-  );
-  // Randomly select the required amount of templates
-  return shuffleArray(filteredAlgebraTemplates).slice(0, numTemplates);
-}

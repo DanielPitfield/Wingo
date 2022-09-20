@@ -1,8 +1,6 @@
 import { PageName } from "../Data/PageNames";
 
-const DEFAULT_TIMER_VALUE = 30;
-
-const defaultTimerValues: { page: PageName; timerValue: number }[] = [
+export const gamemodeDefaultTimerValues: { page: PageName; timerValue: number }[] = [
   { page: "Algebra", timerValue: 100 },
   { page: "ArithmeticDrag/Match", timerValue: 100 },
   { page: "ArithmeticDrag/Order", timerValue: 100 },
@@ -18,7 +16,3 @@ const defaultTimerValues: { page: PageName; timerValue: number }[] = [
   { page: "WordCodes/Question", timerValue: 100 },
   { page: "Numble", timerValue: 600 },
 ];
-
-export const getGamemodeDefaultTimerValue = (page: PageName) => {
-  return defaultTimerValues.find((x) => x.page === page)?.timerValue ?? DEFAULT_TIMER_VALUE;
-};

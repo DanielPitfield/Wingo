@@ -4,7 +4,7 @@ import { SettingsData } from "../Data/SaveData";
 import { useClickChime } from "../Data/Sounds";
 import { PageName } from "../Data/PageNames";
 import { FiChevronLeft, FiCornerDownLeft } from "react-icons/fi";
-import { getWordRowStatusSummary, WordRowStatusChecks } from "../Data/getWordRowStatusSummary";
+import { getWordRowStatusSummary, WordRowStatusChecks } from "../Helper Functions/getWordRowStatusSummary";
 import { LetterStatus } from "./LetterTile";
 import { DEFAULT_ALPHABET } from "../Pages/WingoConfig";
 

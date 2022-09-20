@@ -1,7 +1,6 @@
 import { operators } from "../Pages/NumbersGameConfig";
 import { randomIntFromInterval } from "../Pages/Numble";
 import { Difficulty } from "./DefaultGamemodeSettings";
-import { shuffleArray } from "./shuffleArray";
 
 /** Config for a specific number set (exported for config from campaign) */
 export type NumberSetTemplate = {
@@ -24,7 +23,7 @@ export type NumberSetQuestion = {
 const smallNumbers: number[] = Array.from({ length: 10 }).map((_) => randomIntFromInterval(2, 10));
 
 /* All number sets */
-const NumberSetsTemplates = {
+export const NumberSetsTemplates = {
   Multiply: {
     difficulty: "easy",
     correctAnswerDescription: "Multiply left number by right number",
@@ -119,12 +118,3 @@ const NumberSetsTemplates = {
     },
   } as NumberSetTemplate,
 };
-
-export function getNumberSets(numSets: number, difficulty: Difficulty): NumberSetTemplate[] {
-  // Sets that have the specified difficulty
-  const filteredNumberSets = Object.values(NumberSetsTemplates).filter(
-    (numberSet) => numberSet.difficulty === difficulty
-  );
-  // Randomly select the required amount of sets
-  return shuffleArray(filteredNumberSets).slice(0, numSets);
-}
