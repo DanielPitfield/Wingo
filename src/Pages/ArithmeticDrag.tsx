@@ -14,7 +14,7 @@ import { pickRandomElementFrom } from "./WingoConfig";
 import { DraggableItem } from "../Components/DraggableItem";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
 import { getGamemodeDefaultTimerValue } from "../Data/DefaultTimerValues";
-import { shuffleArray } from "../Data/shuffleArray";
+import { shuffleArray } from "../Helper Functions/shuffleArray";
 
 // Const Contexts: https://stackoverflow.com/questions/44497388/typescript-array-to-string-literal-type
 export const arithmeticNumberSizes = ["small", "medium", "large"] as const;

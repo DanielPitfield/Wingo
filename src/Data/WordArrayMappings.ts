@@ -20,7 +20,6 @@ import { words_six_targets, words_six_guessable } from "./WordArrays/Lengths/Wor
 import { words_seven_targets, words_seven_guessable } from "./WordArrays/Lengths/Words7";
 import { words_eight_targets, words_eight_guessable } from "./WordArrays/Lengths/Words8";
 import { words_nine_targets, words_nine_guessable } from "./WordArrays/Lengths/Words9";
-import { words_puzzles } from "./WordArrays/WordsPuzzles";
 
 // --- Default values/variables --- //
 export const wordLengthMappingsTargets = [

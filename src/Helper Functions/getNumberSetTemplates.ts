@@ -1,6 +1,6 @@
 import { Difficulty } from "../Data/DefaultGamemodeSettings";
 import { NumberSetTemplate, NumberSetsTemplates } from "../Data/NumberSetsTemplates";
-import { shuffleArray } from "../Data/shuffleArray";
+import { shuffleArray } from "./shuffleArray";
 
 export function getNumberSetTemplates(numSets: number, difficulty: Difficulty): NumberSetTemplate[] {
   // Sets that have the specified difficulty

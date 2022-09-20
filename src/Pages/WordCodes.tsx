@@ -16,9 +16,9 @@ import GamemodeSettingsMenu from "../Components/GamemodeSettingsMenu";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
 import { MAX_CODE_LENGTH } from "../Data/GamemodeSettingsInputLimits";
 import { getGamemodeDefaultTimerValue } from "../Data/DefaultTimerValues";
-import { getAllWordsOfLength } from "../Data/Conundrum";
+import { getAllWordsOfLength } from "../Helper Functions/getConundrum";
 import { getGamemodeDefaultWordLength } from "../Data/DefaultWordLengths";
-import { shuffleArray } from "../Data/shuffleArray";
+import { shuffleArray } from "../Helper Functions/shuffleArray";
 import { getQuestionSetOutcome } from "../Data/getQuestionSetOutcome";
 
 const wordCodesModes = ["match", "question"] as const;

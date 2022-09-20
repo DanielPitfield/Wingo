@@ -6,7 +6,7 @@ import { Keyboard } from "../Components/Keyboard";
 import { Button } from "../Components/Button";
 import React from "react";
 import { MessageNotification } from "../Components/MessageNotification";
-import { CrosswordGenerationResult, crosswordGenerator as crossWordGenerator } from "../Data/CrossWordGenerator";
+import { CrosswordGenerationResult, crosswordGenerator as crossWordGenerator } from "../Helper Functions/CrossWordGenerator";
 import GamemodeSettingsMenu from "../Components/GamemodeSettingsMenu";
 import ProgressBar, { GreenToRedColorTransition } from "../Components/ProgressBar";
 import { PageName } from "../Data/PageNames";
@@ -15,7 +15,7 @@ import { categoryMappings, wordLengthMappingsTargets } from "../Data/WordArrayMa
 import { MAX_TARGET_WORD_LENGTH, MIN_TARGET_WORD_LENGTH } from "../Data/GamemodeSettingsInputLimits";
 import { DEFAULT_FIT_RESTRICTION } from "../Data/DefaultGamemodeSettings";
 import { getWordRowStatusSummary, WordRowStatusChecks } from "../Helper Functions/getWordRowStatusSummary";
-import { shuffleArray } from "../Data/shuffleArray";
+import { shuffleArray } from "../Helper Functions/shuffleArray";
 import { getGamemodeDefaultTimerValue } from "../Helper Functions/getGamemodeDefaultTimerValue";
 
 type Orientation = "vertical" | "horizontal";

@@ -1,19 +1,6 @@
+import { getAllWordsOfLength } from "./getAllWordsOfLength";
+import { isAnagram } from "./isAnagram";
 import { pickRandomElementFrom } from "../Pages/WingoConfig";
-import { wordLengthMappingsGuessable, wordLengthMappingsTargets } from "./WordArrayMappings";
-
-export function checkAnagram(constructedWord: string, targetWord: string): boolean {
-  const constructedWordLetters = constructedWord.split("").sort().join("");
-  const targetWordLetters = targetWord.split("").sort().join("");
-
-  return constructedWordLetters === targetWordLetters;
-}
-
-export function getAllWordsOfLength(wordLength: number): string[] {
-  const guessableWordArray: string[] = wordLengthMappingsGuessable.find((x) => x.value === wordLength)?.array ?? [];
-  const targetWordArray: string[] = wordLengthMappingsTargets.find((x) => x.value === wordLength)?.array ?? [];
-
-  return guessableWordArray.concat(targetWordArray) ?? [];
-}
 
 /*
 https://en.wikipedia.org/wiki/Countdown_(game_show)#Conundrum
@@ -24,7 +11,7 @@ But on occasion more than one valid word is found by happenstance,
 If this happens, any of these results is accepted
 */
 
-export function generateConundrum() {
+export function getConundrum() {
   /*
   Combinations of word lengths that could make up a conundrum
   There are probably more combinations, but these should make the best conundrums
@@ -67,7 +54,7 @@ export function generateConundrum() {
 
     if (conundrumLength > 0 && constructedWord.length === conundrumLength) {
       // Find words which are anagrams of constructedWord
-      const anagrams = getAllWordsOfLength(conundrumLength).filter((word) => checkAnagram(constructedWord, word));
+      const anagrams = getAllWordsOfLength(conundrumLength).filter((word) => isAnagram(constructedWord, word));
 
       // Very few number of anagrams
       if (anagrams.length <= MAX_NUM_ANAGRAMS) {

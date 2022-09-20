@@ -3,8 +3,6 @@ import Wingo from "./Wingo";
 import { SaveData, SettingsData } from "../Data/SaveData";
 import { Theme } from "../Data/Themes";
 import { WingoInterlinked } from "./WingoInterlinked";
-
-import { generateConundrum, getAllWordsOfLength } from "../Data/Conundrum";
 import { PageName } from "../Data/PageNames";
 import {
   defaultDailyCrosswordGamemodeSettings,
@@ -15,11 +13,13 @@ import {
 } from "../Data/DefaultGamemodeSettings";
 import { MIN_TARGET_WORD_LENGTH } from "../Data/GamemodeSettingsInputLimits";
 import { categoryMappings, wordLengthMappingsTargets } from "../Data/WordArrayMappings";
-import { getGamemodeDefaultTimerValue } from "../Data/DefaultTimerValues";
-import { getDeterministicArrayItems } from "../Data/DeterministicSeeding";
-import { getGamemodeDefaultWordLength } from "../Data/DefaultWordLengths";
+import { getDeterministicArrayItems } from "../Helper Functions/DeterministicSeeding";
 import { words_puzzles } from "../Data/WordArrays/WordsPuzzles";
 import { LetterStatus } from "../Components/LetterTile";
+import { getAllWordsOfLength } from "../Helper Functions/getAllWordsOfLength";
+import { getGamemodeDefaultTimerValue } from "../Helper Functions/getGamemodeDefaultTimerValue";
+import { getGamemodeDefaultWordLength } from "../Helper Functions/getGamemodeDefaultWordLength";
+import { getConundrum } from "../Helper Functions/getConundrum";
 
 export type WingoMode =
   | "daily"
@@ -276,7 +276,7 @@ const WingoConfig = (props: Props) => {
         return pickRandomElementFrom(targetLengthWordArray);
 
       case "conundrum":
-        const newConundrum = generateConundrum();
+        const newConundrum = getConundrum();
         if (newConundrum) {
           setConundrum(newConundrum.question);
           setTargetWord(newConundrum.answer);

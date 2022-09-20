@@ -10,7 +10,7 @@ import { Theme } from "../Data/Themes";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
 import { categoryMappings } from "../Data/WordArrayMappings";
 import { getGamemodeDefaultTimerValue } from "../Data/DefaultTimerValues";
-import { shuffleArray } from "../Data/shuffleArray";
+import { shuffleArray } from "../Helper Functions/shuffleArray";
 
 export interface OnlyConnectProps {
   gamemodeSettings: {

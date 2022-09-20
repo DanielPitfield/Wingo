@@ -20,7 +20,7 @@ import {
   MIN_NUM_SAME_LETTER_MATCHING_WORDS,
   MIN_NUM_SAME_LETTER_TOTAL_WORDS,
 } from "../Data/GamemodeSettingsInputLimits";
-import { shuffleArray } from "../Data/shuffleArray";
+import { shuffleArray } from "../Helper Functions/shuffleArray";
 
 export interface SameLetterWordsProps {
   gamemodeSettings: {

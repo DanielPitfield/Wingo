@@ -21,7 +21,7 @@ import {
   MIN_TARGET_WORD_LENGTH,
 } from "../Data/GamemodeSettingsInputLimits";
 import { categoryMappings } from "../Data/WordArrayMappings";
-import { getNewGamemodeSettingValue } from "../Data/GamemodeSettingsNewValue";
+import { getNewGamemodeSettingValue } from "../Helper Functions/getGamemodeSettingsNewValue";
 import { getGamemodeDefaultTimerValue } from "../Data/DefaultTimerValues";
 import { DEFAULT_WINGO_INCREASING_MAX_NUM_LIVES } from "../Data/DefaultGamemodeSettings";
 import { LetterStatus } from "../Components/LetterTile";
