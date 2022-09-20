@@ -9,8 +9,9 @@ import { useClickChime, useCorrectChime, useFailureChime, useLightPingChime } fr
 import { Theme } from "../Data/Themes";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
 import { categoryMappings } from "../Data/WordArrayMappings";
-import { getGamemodeDefaultTimerValue } from "../Data/DefaultTimerValues";
 import { shuffleArray } from "../Helper Functions/shuffleArray";
+import { getPrettyText } from "../Helper Functions/getPrettyText";
+import { getGamemodeDefaultTimerValue } from "../Helper Functions/getGamemodeDefaultTimerValue";
 
 export interface OnlyConnectProps {
   gamemodeSettings: {
@@ -40,21 +41,6 @@ interface Props extends OnlyConnectProps {
   onComplete: (wasCorrect: boolean) => void;
 }
 
-export function getPrettyWord(text: string): string {
-  return (
-    text
-      // Replace dashes with spaces
-      .replaceAll("-", " ")
-      // Get each individual word
-      .split(" ")
-      // Capitalise the first letter of each word
-      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-      // Join the words together with spaces (as one string)
-      .join(" ")
-  );
-}
-
-/** */
 const OnlyConnect = (props: Props) => {
   const [inProgress, setInProgress] = useState(true);
   const [gridWords, setGridWords] = useState<GridWord[]>([]);
@@ -351,7 +337,7 @@ const OnlyConnect = (props: Props) => {
                 playClickSoundEffect();
               }}
             >
-              {gridItem ? getPrettyWord(gridItem.word) : ""}
+              {gridItem ? getPrettyText(gridItem.word) : ""}
             </button>
           );
         })}
@@ -391,7 +377,7 @@ const OnlyConnect = (props: Props) => {
           else {
             const categoryWords: string[] = gridWords
               .filter((word) => word.categoryName === categoryNames[i])
-              .map((x) => getPrettyWord(x.word));
+              .map((x) => getPrettyText(x.word));
 
             // Show the name and words of the category
             return (

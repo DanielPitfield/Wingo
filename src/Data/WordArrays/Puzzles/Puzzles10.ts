@@ -1,4 +1,4 @@
-export const words_puzzles = [
+export const puzzles_ten = [
   { word: "acceptance", hint: "Be kind and understanding with this answer" },
   { word: "adrenaline", hint: "Fight or Flight" },
   { word: "accountant", hint: "This answer takes charge of company finances" },

@@ -62,11 +62,6 @@ interface Props {
   settings: SettingsData;
 }
 
-export function randomIntFromInterval(min: number, max: number) {
-  // min and max included
-  return Math.floor(Math.random() * (max - min + 1) + min);
-}
-
 const Numble = (props: Props) => {
   // Information as to how the pins are displayed and what pins are on each row
   const rowValues = getNumbleRowValues(props.gamemodeSettings.gridShape, props.gamemodeSettings.gridSize);

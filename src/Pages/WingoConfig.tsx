@@ -14,12 +14,13 @@ import {
 import { MIN_TARGET_WORD_LENGTH } from "../Data/GamemodeSettingsInputLimits";
 import { categoryMappings, wordLengthMappingsTargets } from "../Data/WordArrayMappings";
 import { getDeterministicArrayItems } from "../Helper Functions/DeterministicSeeding";
-import { words_puzzles } from "../Data/WordArrays/WordsPuzzles";
 import { LetterStatus } from "../Components/LetterTile";
 import { getAllWordsOfLength } from "../Helper Functions/getAllWordsOfLength";
 import { getGamemodeDefaultTimerValue } from "../Helper Functions/getGamemodeDefaultTimerValue";
 import { getGamemodeDefaultWordLength } from "../Helper Functions/getGamemodeDefaultWordLength";
 import { getConundrum } from "../Helper Functions/getConundrum";
+import { getRandomElementFrom } from "../Helper Functions/getRandomElementFrom";
+import { puzzles_ten } from "../Data/WordArrays/Puzzles/Puzzles10";
 
 export type WingoMode =
   | "daily"
@@ -85,15 +86,6 @@ interface Props extends WingoConfigProps {
   addGold: (gold: number) => void;
   onComplete: (wasCorrect: boolean) => void;
   onCompleteGameshowRound?: (wasCorrect: boolean, guess: string, correctAnswer: string, score: number | null) => void;
-}
-
-export function pickRandomElementFrom(array: any[]) {
-  if (!array || array.length === 0) {
-    return null;
-  }
-
-  // Math.floor() can be used because Math.random() generates a number between 0 (inclusive) and 1 (exclusive)
-  return array[Math.floor(Math.random() * array.length)];
 }
 
 export const DEFAULT_ALPHABET_STRING = "abcdefghijklmnopqrstuvwxyz";
@@ -225,19 +217,19 @@ const WingoConfig = (props: Props) => {
         return newTarget;
 
       case "puzzle":
-        // Get a random puzzle (from words_puzzles.ts)
+        // Get a random puzzle (from puzzles_ten.ts)
         // TODO: Expand to have 9, 10 and 11 length puzzles
-        return pickRandomElementFrom(words_puzzles);
+        return getRandomElementFrom(puzzles_ten);
 
       case "category":
         // A target category has been manually selected from dropdown
         if (hasSelectedTargetCategory) {
           // Continue using that category
           const targetWordArray = categoryMappings.find((x) => x.name === targetCategory)?.array!;
-          return pickRandomElementFrom(targetWordArray);
+          return getRandomElementFrom(targetWordArray);
         } else {
           // Otherwise, randomly choose a category (can be changed afterwards)
-          setTargetCategory(pickRandomElementFrom(categoryMappings).name);
+          setTargetCategory(getRandomElementFrom(categoryMappings).name);
           // A random word from this category is set in a useEffect(), so return
           return;
         }
@@ -254,7 +246,7 @@ const WingoConfig = (props: Props) => {
           return;
         } else {
           // Choose random word
-          return pickRandomElementFrom(targetLengthWordArray);
+          return getRandomElementFrom(targetLengthWordArray);
         }
 
       case "limitless":
@@ -273,7 +265,7 @@ const WingoConfig = (props: Props) => {
         }
 
         // Choose random word
-        return pickRandomElementFrom(targetLengthWordArray);
+        return getRandomElementFrom(targetLengthWordArray);
 
       case "conundrum":
         const newConundrum = getConundrum();
@@ -288,7 +280,7 @@ const WingoConfig = (props: Props) => {
 
       default:
         // Choose random word
-        return pickRandomElementFrom(targetLengthWordArray);
+        return getRandomElementFrom(targetLengthWordArray);
     }
   }
 
@@ -417,7 +409,7 @@ const WingoConfig = (props: Props) => {
     // Category may be changed mid-game (so clear anything from before)
     ResetGame();
 
-    const newTarget = pickRandomElementFrom(categoryMappings.find((x) => x.name === targetCategory)?.array ?? []);
+    const newTarget = getRandomElementFrom(categoryMappings.find((x) => x.name === targetCategory)?.array ?? []);
 
     console.log(
       `%cMode:%c ${props.mode}\n%cHint:%c ${newTarget.hint}\n%cWord:%c ${newTarget.word}`,
