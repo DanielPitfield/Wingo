@@ -29,8 +29,8 @@ export function getNumbersGameGuessTotal(guess: Guess): number | null {
     return null;
   }
 
-  // If the result is negative
-  if (result < 0) {
+  // If the result is negative or zero
+  if (result <= 0) {
     return null;
   }
 
