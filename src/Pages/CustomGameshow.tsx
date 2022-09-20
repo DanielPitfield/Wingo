@@ -68,7 +68,7 @@ export const CustomGameshow = (props: Props) => {
   }
 
   // List of buttons (which add to the queue when clicked)
-  function displayAvailableModes() {
+  function displayAvailableModes(): React.ReactNode {
     return (
       <div className="gameshow-available-modes-wrapper">
         {availableModes.map((gameshowMode) => (
@@ -79,7 +79,7 @@ export const CustomGameshow = (props: Props) => {
   }
 
   // The order of gamemodes (the CustomGameshow will have)
-  function displayQueuedModes() {
+  function displayQueuedModes(): React.ReactNode {
     const draggableItemProps = {
       queuedModes: queuedModes,
       setQueuedModes: setQueuedModes,

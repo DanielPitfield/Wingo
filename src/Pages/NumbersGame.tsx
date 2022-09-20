@@ -140,8 +140,8 @@ const NumbersGame = (props: Props) => {
     props.onSubmitNumbersGameSelection(newNumbersGameSelection);
   }
   // Create grid of rows (for guessing numbers)
-  function populateGrid() {
-    let Grid = [];
+  function displayGrid(): React.ReactNode {
+    const Grid = [];
 
     const isSelectionFinished = hasNumberSelectionFinished(
       props.numberTileStatuses,
@@ -392,7 +392,7 @@ const NumbersGame = (props: Props) => {
     }
   }
 
-  function displayBestSolution() {
+  function displayBestSolution(): React.ReactNode {
     const { difference } = determineScore(
       props.closestGuessSoFar,
       props.targetNumber,
@@ -447,7 +447,7 @@ const NumbersGame = (props: Props) => {
     );
   }
 
-  function displayGameshowScore() {
+  function displayGameshowScore(): React.ReactNode {
     if (props.gameshowScore === undefined || props.gameshowScore === null) {
       return;
     }
@@ -498,7 +498,7 @@ const NumbersGame = (props: Props) => {
         </>
       )}
 
-      <div className="numbers-game-grid">{populateGrid()}</div>
+      <div className="numbers-game-grid">{displayGrid()}</div>
 
       {props.inProgress && (
         <>

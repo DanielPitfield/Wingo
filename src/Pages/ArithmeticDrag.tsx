@@ -319,10 +319,8 @@ const ArithmeticDrag = (props: Props) => {
    * LetterTile Debug: letter={`R: ${tile.total}`}
    * @returns
    */
-  function displayTiles() {
-    let Grid = [];
-
-    Grid.push(
+  function displayTiles(): React.ReactNode {
+    const draggableExpressionTiles = (
       <div className="draggable_expressions">
         <OrderGroup mode={"between"}>
           {expressionTiles.map((tile, index) => (
@@ -355,42 +353,45 @@ const ArithmeticDrag = (props: Props) => {
       </div>
     );
 
-    if (props.mode === "match" && resultTiles.length > 0) {
-      Grid.push(
-        <div className="draggable_results">
-          <OrderGroup mode={"between"}>
-            {resultTiles.map((tile, index) => (
-              <DraggableItem
-                key={index}
-                index={index}
-                onMove={(toIndex) => {
-                  if (inProgress) {
-                    // The new order after the drag + all statuses reset
-                    const newResultTiles = arrayMove(resultTiles, index, toIndex).map((tile) => {
+    const draggableResultTiles = (
+      <div className="draggable_results">
+        <OrderGroup mode={"between"}>
+          {resultTiles.map((tile, index) => (
+            <DraggableItem
+              key={index}
+              index={index}
+              onMove={(toIndex) => {
+                if (inProgress) {
+                  // The new order after the drag + all statuses reset
+                  const newResultTiles = arrayMove(resultTiles, index, toIndex).map((tile) => {
+                    tile.status = "not set";
+                    return tile;
+                  });
+                  setResultTiles(newResultTiles);
+
+                  // Just statuses reset
+                  setExpressionTiles(
+                    expressionTiles.map((tile) => {
                       tile.status = "not set";
                       return tile;
-                    });
-                    setResultTiles(newResultTiles);
+                    })
+                  );
+                }
+              }}
+            >
+              <LetterTile letter={tile.total.toString()} status={tile.status} settings={props.settings} />
+            </DraggableItem>
+          ))}
+        </OrderGroup>
+      </div>
+    );
 
-                    // Just statuses reset
-                    setExpressionTiles(
-                      expressionTiles.map((tile) => {
-                        tile.status = "not set";
-                        return tile;
-                      })
-                    );
-                  }
-                }}
-              >
-                <LetterTile letter={tile.total.toString()} status={tile.status} settings={props.settings} />
-              </DraggableItem>
-            ))}
-          </OrderGroup>
-        </div>
-      );
-    }
-
-    return Grid;
+    return (
+      <>
+        {draggableExpressionTiles}
+        {props.mode === "match" && resultTiles.length > 0 && <>{draggableResultTiles}</>}
+      </>
+    );
   }
 
   function checkTiles() {

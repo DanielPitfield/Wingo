@@ -55,7 +55,7 @@ type RoundInfo = {
   correctAnswer: string;
 };
 
-export function displayGameshowSummary(summary: RoundInfo[], settings: SettingsData) {
+export function displayGameshowSummary(summary: RoundInfo[], settings: SettingsData): React.ReactNode {
   return (
     <section className="gameshow-summary-info">
       <h2 className="gameshow-summary-info-title">Summary</h2>

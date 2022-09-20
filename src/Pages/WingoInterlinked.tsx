@@ -806,11 +806,7 @@ export const WingoInterlinked = (props: Props) => {
     );
   }
 
-  /**
-   *
-   * @returns
-   */
-  function populateGrid() {
+  function displayGrid(): React.ReactNode {
     const grid = [];
 
     for (let y = 0; y < gridConfig.height; y++) {
@@ -1117,7 +1113,7 @@ export const WingoInterlinked = (props: Props) => {
           <strong>Hint:</strong> {hint}
         </MessageNotification>
       )}
-      <div className="word_grid">{populateGrid()}</div>
+      <div className="word_grid">{displayGrid()}</div>
       {Boolean(inProgress && STARTING_NUM_WORD_GUESSES > 0) && (
         <Button
           mode="accept"

@@ -359,7 +359,7 @@ const OnlyConnect = (props: Props) => {
     );
   }
 
-  function displayGrid() {
+  function displayGrid(): React.ReactNode {
     // Create a grid (of a row for every group)
     return Array.from({ length: gamemodeSettings.numGroups }).map((_, index) => populateRow(index));
   }

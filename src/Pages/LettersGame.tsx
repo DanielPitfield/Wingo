@@ -160,51 +160,50 @@ const LettersGame = (props: Props) => {
     props.onSubmitSelectionWord(newLettersGameWord);
   }
 
-  // Create grid of rows (for guessing words)
-  function populateGrid() {
-    let Grid = [];
-
+  function displayGrid(): React.ReactNode {
     // Read only letter selection WordRow
-    Grid.push(
-      <div className="letters-game-wrapper" key={"letter_selection"}>
-        <LetterSelectionRow
-          key={"letters-game/read-only"}
-          letterTileStatuses={props.letterTileStatuses}
-          settings={props.settings}
-          disabled={!props.inProgress}
-          onClick={props.onClickSelectionLetter}
-        />
-        <div className="add-letter-buttons-wrapper">
-          <Button
-            mode={"default"}
-            disabled={IS_SELECTION_FINISHED}
-            settings={props.settings}
-            onClick={() => props.onSubmitSelectionLetter(getVowel())}
-          >
-            Vowel
-          </Button>
-          <Button
-            mode={"default"}
-            disabled={IS_SELECTION_FINISHED}
-            settings={props.settings}
-            onClick={() => props.onSubmitSelectionLetter(getConsonant())}
-          >
-            Consonant
-          </Button>
-          <Button
-            mode={"default"}
-            disabled={SELECTION_WORD_NUM_LETTERS !== 0 || IS_SELECTION_FINISHED}
-            settings={props.settings}
-            onClick={quickLetterSelection}
-          >
-            Quick Pick
-          </Button>
-        </div>
-      </div>
+    const letterSelection = (
+      <LetterSelectionRow
+        key={"letters-game/read-only"}
+        letterTileStatuses={props.letterTileStatuses}
+        settings={props.settings}
+        disabled={!props.inProgress}
+        onClick={props.onClickSelectionLetter}
+      />
     );
 
+    // Buttons to add letters to letter selection row
+    const addLetterButtons = (
+      <div className="add-letter-buttons-wrapper">
+        <Button
+          mode={"default"}
+          disabled={IS_SELECTION_FINISHED}
+          settings={props.settings}
+          onClick={() => props.onSubmitSelectionLetter(getVowel())}
+        >
+          Vowel
+        </Button>
+        <Button
+          mode={"default"}
+          disabled={IS_SELECTION_FINISHED}
+          settings={props.settings}
+          onClick={() => props.onSubmitSelectionLetter(getConsonant())}
+        >
+          Consonant
+        </Button>
+        <Button
+          mode={"default"}
+          disabled={SELECTION_WORD_NUM_LETTERS !== 0 || IS_SELECTION_FINISHED}
+          settings={props.settings}
+          onClick={quickLetterSelection}
+        >
+          Quick Pick
+        </Button>
+      </div>
+    );
+    
     // WordRow to enter words using available letters
-    Grid.push(
+    const inputRow = (
       <WordRow
         key={"letters-game/input"}
         page={props.page}
@@ -221,7 +220,13 @@ const LettersGame = (props: Props) => {
       ></WordRow>
     );
 
-    return Grid;
+    return (
+      <div className="letters-game-wrapper" key={"letter_selection"}>
+        {letterSelection}
+        {addLetterButtons}
+        {inputRow}
+      </div>
+    );
   }
 
   function generateSettingsOptions(): React.ReactNode {
@@ -380,7 +385,7 @@ const LettersGame = (props: Props) => {
     setBestGuess(longestWord);
   }, [props.guesses]);
 
-  function displayGameshowScore() {
+  function displayGameshowScore(): React.ReactNode {
     if (props.gameshowScore === undefined || props.gameshowScore === null) {
       return;
     }
@@ -426,7 +431,7 @@ const LettersGame = (props: Props) => {
         )}
       </div>
 
-      <div className="letters-game-word-grid">{populateGrid()}</div>
+      <div className="letters-game-word-grid">{displayGrid()}</div>
 
       {props.settings.gameplay.keyboard && (
         <Keyboard

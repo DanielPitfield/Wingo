@@ -50,8 +50,8 @@ const LetterCategories = (props: Props) => {
   );
 
   // Create grid of rows (for guessing words)
-  function populateGrid() {
-    let Grid = [];
+  function displayGrid(): React.ReactNode {
+    const Grid = [];
 
     for (const [index, categoryMapping] of props.chosenCategoryMappings.entries()) {
       let word;
@@ -234,7 +234,7 @@ const LetterCategories = (props: Props) => {
         </div>
       )}
 
-      <div className="word_grid">{populateGrid()}</div>
+      <div className="word_grid">{displayGrid()}</div>
 
       {props.settings.gameplay.keyboard && (
         <div className="keyboard">

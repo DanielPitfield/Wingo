@@ -500,18 +500,18 @@ const Numble = (props: Props) => {
     );
   }
 
-  // TODO: Refactor all populateGrid() similar to this using .map()
-  function populateGrid() {
-    let Grid = [];
+  function displayGrid(): React.ReactNode {
+    const Grid = [];
 
     // Start with higher value rows (so that they are rendered first, at the top of the grid)
     for (let i = rowValues.length; i >= 1; i--) {
       Grid.push(populateRow(i));
     }
+
     return Grid;
   }
 
-  function displayPinScores() {
+  function displayPinScores(): React.ReactNode {
     const pinScores = [];
     // Create read-only numble pin of each colour with text of how many points it awards
     for (const colourRange of pointColourMapping) {
@@ -1032,7 +1032,7 @@ const Numble = (props: Props) => {
       </div>
 
       <div className="numble-grid" data-shape={props.gamemodeSettings.gridShape}>
-        {populateGrid()}
+        {displayGrid()}
       </div>
 
       <div className="numble-score-wrapper">

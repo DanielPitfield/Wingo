@@ -340,7 +340,7 @@ const SameLetterWords = (props: Props) => {
     );
   }
 
-  function displayGrid() {
+  function displayGrid(): React.ReactNode {
     // The number of total words divided by the number of words that make up the correct selection (rounded up)
     const numRows = Math.ceil(gamemodeSettings.numTotalWords / gamemodeSettings.numMatchingWords);
     return Array.from({ length: numRows }).map((_, index) => populateRow(index));

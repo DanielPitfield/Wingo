@@ -353,7 +353,7 @@ const WordCodes = (props: Props) => {
   }
 
   // Textual information for questions gamemode
-  function displayInformation() {
+  function displayInformation(): React.ReactNode {
     if (props.mode !== "question") {
       return;
     }
@@ -391,7 +391,7 @@ const WordCodes = (props: Props) => {
     );
   }
 
-  function displayQuestion() {
+  function displayQuestion(): React.ReactNode {
     if (props.mode !== "question") {
       return;
     }
@@ -444,14 +444,12 @@ const WordCodes = (props: Props) => {
   };
 
   // Draggable tiles for match gamemode
-  function displayTiles() {
+  function displayTiles(): React.ReactNode {
     if (props.mode !== "match") {
       return;
     }
 
-    let Grid = [];
-
-    Grid.push(
+    const draggableWordTiles = (
       <div className="draggable_words">
         <OrderGroup mode={"between"}>
           {wordTiles.map((tile, index) => (
@@ -467,7 +465,7 @@ const WordCodes = (props: Props) => {
       </div>
     );
 
-    Grid.push(
+    const draggableCodeTiles = (
       <div className="draggable_codes">
         <OrderGroup mode={"between"}>
           {codeTiles.map((tile, index) => (
@@ -483,7 +481,12 @@ const WordCodes = (props: Props) => {
       </div>
     );
 
-    return Grid;
+    return (
+      <>
+        {draggableWordTiles}
+        {draggableCodeTiles}
+      </>
+    );
   }
 
   function checkTiles() {
@@ -699,7 +702,7 @@ const WordCodes = (props: Props) => {
     setQuestionIndex(questionIndex + 1);
   }
 
-  function displayInputMethod() {
+  function displayInputMethod(): React.ReactNode {
     if (!props.settings.gameplay.keyboard) {
       return;
     }

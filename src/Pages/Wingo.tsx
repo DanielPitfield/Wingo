@@ -92,12 +92,12 @@ const Wingo = (props: Props) => {
       : DEFAULT_WINGO_INCREASING_MAX_NUM_LIVES
   );
 
-  const isModeWithDisplayRow = () => {
+  const isModeWithDisplayRow = (): boolean => {
     const modesWithDisplayRow: typeof props.mode[] = ["puzzle", "conundrum"];
     return modesWithDisplayRow.includes(props.mode);
   };
 
-  function getDisplayRow() {
+  function getDisplayRow(): React.ReactNode {
     if (!isModeWithDisplayRow()) {
       return;
     }
@@ -159,8 +159,8 @@ const Wingo = (props: Props) => {
   }
 
   // Create grid of rows (for guessing words)
-  function populateGrid() {
-    let Grid = [];
+  function displayGrid(): React.ReactNode {
+    const Grid = [];
 
     // Puzzle/Conundrum display row
     if (isModeWithDisplayRow()) {
@@ -572,7 +572,7 @@ const Wingo = (props: Props) => {
     return () => clearInterval(intervalId);
   }, [props.mode, props.inProgress]);
 
-  function displayGameshowScore() {
+  function displayGameshowScore(): React.ReactNode {
     if (props.gameshowScore === undefined || props.gameshowScore === null) {
       return;
     }
@@ -655,7 +655,7 @@ const Wingo = (props: Props) => {
           )
       }
 
-      <div className="word_grid">{populateGrid()}</div>
+      <div className="word_grid">{displayGrid()}</div>
 
       {props.settings.gameplay.keyboard && (
         <Keyboard
