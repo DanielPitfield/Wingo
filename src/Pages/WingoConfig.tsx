@@ -91,46 +91,6 @@ interface Props extends WingoConfigProps {
 export const DEFAULT_ALPHABET_STRING = "abcdefghijklmnopqrstuvwxyz";
 export const DEFAULT_ALPHABET = DEFAULT_ALPHABET_STRING.split("");
 
-export function getLetterStatus(
-  // TODO: Refactor
-  letter: string,
-  index: number,
-  targetWord: string,
-  inDictionary: boolean
-): LetterStatus {
-  if (!inDictionary) {
-    // Red
-    return "incorrect";
-  }
-  if (targetWord?.[index]?.toUpperCase() === letter?.toUpperCase()) {
-    // Green
-    return "correct";
-  }
-  if (targetWord?.toUpperCase().includes(letter?.toUpperCase())) {
-    // Yellow
-    return "contains";
-  }
-  // Grey
-  return "not in word";
-}
-
-export function getNewLives(
-  numGuesses: number,
-  wordIndex: number,
-  maxLivesConfig: { isLimited: true; maxLives: number } | { isLimited: false }
-): number {
-  // Calculate the number of rows not used
-  const extraRows = numGuesses - (wordIndex + 1);
-
-  // Not limited, the number of new lives is not capped
-  if (!maxLivesConfig.isLimited) {
-    return extraRows;
-  }
-
-  // Limited, the number of new lives (but capped at the max value)
-  return Math.min(extraRows, maxLivesConfig.maxLives);
-}
-
 const WingoConfig = (props: Props) => {
   const [guesses, setGuesses] = useState<string[]>(props.guesses ?? []);
   const [numGuesses, setNumGuesses] = useState(props.defaultNumGuesses);

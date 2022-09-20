@@ -5,6 +5,7 @@ import { calculateTotal } from "../Components/NumberRow";
 import { Theme } from "../Data/Themes";
 import { SaveData, SettingsData } from "../Data/SaveData";
 import { getGamemodeDefaultTimerValue } from "../Data/DefaultTimerValues";
+import { operators } from "../Data/operators";
 
 export interface NumbersGameConfigProps {
   campaignConfig:
@@ -35,106 +36,6 @@ interface Props extends NumbersGameConfigProps {
   addGold: (gold: number) => void;
   onComplete: (wasCorrect: boolean) => void;
   onCompleteGameshowRound?: (wasCorrect: boolean, guess: string, correctAnswer: string, score: number | null) => void;
-}
-
-export const operators: { name: "÷" | "-" | "+" | "×"; function: (num1: number, num2: number) => number }[] = [
-  {
-    name: "÷",
-    function: (num1: number, num2: number): number => num1 / num2,
-  },
-  {
-    name: "-",
-    function: (num1: number, num2: number): number => num1 - num2,
-  },
-  {
-    name: "+",
-    function: (num1: number, num2: number): number => num1 + num2,
-  },
-  {
-    name: "×",
-    function: (num1: number, num2: number): number => num1 * num2,
-  },
-];
-
-export const operatorSymbols = ["÷", "-", "+", "×"];
-
-export function hasNumberSelectionStarted(
-  statuses: {
-    type: "original" | "intermediary";
-    number: number | null;
-    picked: boolean;
-  }[]
-): boolean {
-  return statuses.filter((x) => x.type === "original" && x.number).length > 0;
-}
-
-export function hasNumberSelectionFinished(
-  statuses: {
-    type: "original" | "intermediary";
-    number: number | null;
-    picked: boolean;
-  }[],
-  numOperands: number
-): boolean {
-  return statuses.filter((x) => x.type === "original" && x.number).length === numOperands;
-}
-
-export function determineScore(
-  bestGuess: number | null,
-  targetNumber: number | null,
-  scoringMethod: "standard" | "pointLostPerDifference"
-): { score: number | null; difference: number | null } {
-  if (!targetNumber) {
-    return { score: null, difference: null };
-  }
-
-  if (bestGuess === null) {
-    return { score: null, difference: null };
-  }
-
-  const difference = Math.abs(bestGuess - targetNumber);
-
-  if (difference === null) {
-    return { score: null, difference: null };
-  }
-
-  let score = 0;
-
-  /* 
-  Standard:
-  10 points for reaching it exactly
-  7 points for being 1–5 away
-  5 points for being 6–10 away
-  */
-
-  if (scoringMethod === "standard") {
-    const exactAnswer = difference === 0;
-    const sevenPointRange = difference >= 1 && difference <= 5;
-    const fivePointRange = difference >= 6 && difference <= 10;
-
-    if (exactAnswer) {
-      score = 10;
-    } else if (sevenPointRange) {
-      score = 7;
-    } else if (fivePointRange) {
-      score = 5;
-    } else {
-      score = 0;
-    }
-  } else if (scoringMethod === "pointLostPerDifference" && difference >= 0 && difference <= 10) {
-    // Award one point for being 10 away
-    if (difference === 10) {
-      score = 1;
-    }
-    // 10 points for exact answer (and one point is lost for each additional one difference after that)
-    else {
-      score = 10 - difference;
-    }
-  } else {
-    throw new Error("Unexpected NumbersGame scoring method");
-  }
-
-  return { score: score, difference: difference };
 }
 
 export type Guess = { operand1: number | null; operand2: number | null; operator: typeof operators[0]["name"] };

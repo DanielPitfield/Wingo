@@ -22,47 +22,6 @@ interface Props {
   setOperator: (operator: typeof operators[0]["name"]) => void;
 }
 
-/**
- *
- * @param guess
- * @returns
- */
-export function calculateTotal(guess: Guess): number | null {
-  if (!guess) {
-    return null;
-  }
-
-  const operator = operators.find((x) => x.name === guess.operator);
-
-  if (!operator) {
-    return null;
-  }
-
-  // Either operand is missing, show nothing
-  if (guess.operand1 === null || guess.operand2 === null) {
-    return null;
-  }
-
-  const result = operator.function(guess.operand1, guess.operand2);
-
-  // If the result is not generated correctly
-  if (!result) {
-    return null;
-  }
-
-  // If the result is fractional
-  if (result !== Math.round(result)) {
-    return null;
-  }
-
-  // If the result is negative
-  if (result < 0) {
-    return null;
-  }
-
-  return result;
-}
-
 export const NumberRow = (props: Props) => {
   return (
     <div className="number_row">
