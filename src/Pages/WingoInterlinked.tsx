@@ -807,13 +807,7 @@ export const WingoInterlinked = (props: Props) => {
   }
 
   function displayGrid(): React.ReactNode {
-    const grid = [];
-
-    for (let y = 0; y < gridConfig.height; y++) {
-      grid.push(populateRow(y));
-    }
-
-    return grid;
+    return Array.from({ length: gridConfig.height }).map((_, index) => populateRow(index));
   }
 
   // Started with more than 2 words (so not basic WingoInterlinked of two interlinked words but a fully fledged crossword)
