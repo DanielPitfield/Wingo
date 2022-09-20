@@ -3,15 +3,12 @@ import { PageName } from "../Data/PageNames";
 import { Button } from "../Components/Button";
 import GamemodeSettingsMenu from "../Components/GamemodeSettingsMenu";
 import { MessageNotification } from "../Components/MessageNotification";
-import { getPrettyWord } from "./OnlyConnect";
 import ProgressBar, { GreenToRedColorTransition } from "../Components/ProgressBar";
 import { SaveData, SettingsData } from "../Data/SaveData";
 import { useClickChime, useCorrectChime, useFailureChime, useLightPingChime } from "../Data/Sounds";
 import { Theme } from "../Data/Themes";
-import { pickRandomElementFrom } from "./WingoConfig";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
 import { wordLengthMappingsTargets } from "../Data/WordArrayMappings";
-import { getGamemodeDefaultTimerValue } from "../Data/DefaultTimerValues";
 import {
   MAX_NUM_SAME_LETTER_GUESSES,
   MAX_NUM_SAME_LETTER_MATCHING_WORDS,
@@ -21,6 +18,9 @@ import {
   MIN_NUM_SAME_LETTER_TOTAL_WORDS,
 } from "../Data/GamemodeSettingsInputLimits";
 import { shuffleArray } from "../Helper Functions/shuffleArray";
+import { getGamemodeDefaultTimerValue } from "../Helper Functions/getGamemodeDefaultTimerValue";
+import { getRandomElementFrom } from "../Helper Functions/getRandomElementFrom";
+import { getPrettyText } from "../Helper Functions/getPrettyText";
 
 export interface SameLetterWordsProps {
   gamemodeSettings: {
@@ -282,7 +282,7 @@ const SameLetterWords = (props: Props) => {
       let attemptCount = 0;
 
       while (attemptCount < MAX_ATTEMPTS_BEFORE_TRYING_LOWER_NUM) {
-        const originalWord = pickRandomElementFrom(targetWordArray);
+        const originalWord = getRandomElementFrom(targetWordArray);
         const matchingWords = getMatchingWords(originalWord);
 
         // Found a matching words subset of the length being considered currently
@@ -332,7 +332,7 @@ const SameLetterWords = (props: Props) => {
                 playClickSoundEffect();
               }}
             >
-              {word ? getPrettyWord(word) : ""}
+              {word ? getPrettyText(word) : ""}
             </button>
           );
         })}

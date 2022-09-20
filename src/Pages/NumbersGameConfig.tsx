@@ -1,11 +1,13 @@
 import React, { useState } from "react";
 import { PageName } from "../Data/PageNames";
 import NumbersGame from "./NumbersGame";
-import { calculateTotal } from "../Components/NumberRow";
 import { Theme } from "../Data/Themes";
 import { SaveData, SettingsData } from "../Data/SaveData";
-import { getGamemodeDefaultTimerValue } from "../Data/DefaultTimerValues";
 import { operators } from "../Data/operators";
+import { getGamemodeDefaultTimerValue } from "../Helper Functions/getGamemodeDefaultTimerValue";
+import { hasNumberSelectionFinished } from "../Helper Functions/hasNumberSelectionFinished";
+import { getNumbersGameGuessTotal } from "../Helper Functions/getNumbersGameGuessTotal";
+import { getNumbersGameScore } from "../Helper Functions/getNumbersGameScore";
 
 export interface NumbersGameConfigProps {
   campaignConfig:
@@ -133,7 +135,7 @@ const NumbersGameConfig = (props: Props) => {
       return {
         type: "intermediary",
         wordIndex: index,
-        number: calculateTotal(guess),
+        number: getNumbersGameGuessTotal(guess),
         picked: existingNumbersGameStatus?.picked || false,
       };
     });
@@ -203,7 +205,11 @@ const NumbersGameConfig = (props: Props) => {
 
   function ResetGame() {
     if (!inProgress) {
-      const { score, difference } = determineScore(closestGuessSoFar, targetNumber, gamemodeSettings.scoringMethod);
+      const { score, difference } = getNumbersGameScore(
+        closestGuessSoFar,
+        targetNumber,
+        gamemodeSettings.scoringMethod
+      );
 
       const MAX_POSSIBLE_SCORE = 10;
       // Achieved target score if a campaign level, otherwise just within 10 of target number

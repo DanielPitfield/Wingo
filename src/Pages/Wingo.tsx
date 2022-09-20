@@ -5,7 +5,7 @@ import { WordRow } from "../Components/WordRow";
 import { Button } from "../Components/Button";
 import { MessageNotification } from "../Components/MessageNotification";
 import ProgressBar, { GreenToRedColorTransition } from "../Components/ProgressBar";
-import { getNewLives, WingoConfigProps, WingoMode } from "./WingoConfig";
+import { WingoConfigProps, WingoMode } from "./WingoConfig";
 import { Theme } from "../Data/Themes";
 import { SettingsData } from "../Data/SaveData";
 import { useCorrectChime, useFailureChime, useLightPingChime } from "../Data/Sounds";
@@ -22,9 +22,10 @@ import {
 } from "../Data/GamemodeSettingsInputLimits";
 import { categoryMappings } from "../Data/WordArrayMappings";
 import { getNewGamemodeSettingValue } from "../Helper Functions/getGamemodeSettingsNewValue";
-import { getGamemodeDefaultTimerValue } from "../Data/DefaultTimerValues";
 import { DEFAULT_WINGO_INCREASING_MAX_NUM_LIVES } from "../Data/DefaultGamemodeSettings";
 import { LetterStatus } from "../Components/LetterTile";
+import { getGamemodeDefaultTimerValue } from "../Helper Functions/getGamemodeDefaultTimerValue";
+import { getNumNewLimitlessLives } from "../Helper Functions/getNumNewLimitlessLives";
 
 interface Props {
   isCampaignLevel: boolean;
@@ -407,7 +408,7 @@ const Wingo = (props: Props) => {
     const wasFailure =
       !props.inDictionary ||
       (props.mode === "limitless" &&
-        getNewLives(props.numGuesses, props.wordIndex, props.gamemodeSettings.maxLivesConfig) <= 0);
+        getNumNewLimitlessLives(props.numGuesses, props.wordIndex, props.gamemodeSettings.maxLivesConfig) <= 0);
 
     if (wasFailure) {
       playFailureChimeSoundEffect();
@@ -454,7 +455,7 @@ const Wingo = (props: Props) => {
     }
 
     // The number of rows not used in guessing word
-    const newLives = getNewLives(props.numGuesses, props.wordIndex, props.gamemodeSettings.maxLivesConfig);
+    const newLives = getNumNewLimitlessLives(props.numGuesses, props.wordIndex, props.gamemodeSettings.maxLivesConfig);
 
     if (props.mode === "limitless") {
       // Word guessed with rows to spare

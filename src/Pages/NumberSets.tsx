@@ -9,12 +9,13 @@ import ProgressBar, { GreenToRedColorTransition } from "../Components/ProgressBa
 import { SaveData, SettingsData } from "../Data/SaveData";
 import { useClickChime, useCorrectChime, useFailureChime, useLightPingChime } from "../Data/Sounds";
 import { Theme } from "../Data/Themes";
-import { getNumberSets, NumberSetTemplate } from "../Data/NumberSetsTemplates";
+import { NumberSetTemplate } from "../Data/NumberSetsTemplates";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
-import { getGamemodeDefaultTimerValue } from "../Data/DefaultTimerValues";
 import { Difficulty, difficultyOptions } from "../Data/DefaultGamemodeSettings";
 import { MAX_NUMPAD_GUESS_LENGTH } from "../Data/GamemodeSettingsInputLimits";
-import { getQuestionSetOutcome } from "../Data/getQuestionSetOutcome";
+import { getGamemodeDefaultTimerValue } from "../Helper Functions/getGamemodeDefaultTimerValue";
+import { getQuestionSetOutcome } from "../Helper Functions/getQuestionSetOutcome";
+import { getNumberSetTemplates } from "../Helper Functions/getNumberSetTemplates";
 
 export interface NumberSetsProps {
   campaignConfig:
@@ -52,7 +53,7 @@ const NumberSets = (props: Props) => {
   const [guess, setGuess] = useState("");
 
   const [numberSets, setNumberSets] = useState<NumberSetTemplate[]>(
-    props.defaultNumberSets ?? getNumberSets(gamemodeSettings.numSets, gamemodeSettings.difficulty)
+    props.defaultNumberSets ?? getNumberSetTemplates(gamemodeSettings.numSets, gamemodeSettings.difficulty)
   );
   const [currentNumberSetIndex, setCurrentNumberSetIndex] = useState(0);
   const [numCorrectAnswers, setNumCorrectAnswers] = useState(0);
@@ -252,7 +253,7 @@ const NumberSets = (props: Props) => {
     setInProgress(true);
     setGuess("");
 
-    setNumberSets(getNumberSets(gamemodeSettings.numSets, gamemodeSettings.difficulty));
+    setNumberSets(getNumberSetTemplates(gamemodeSettings.numSets, gamemodeSettings.difficulty));
 
     setCurrentNumberSetIndex(0);
     setNumCorrectAnswers(0);

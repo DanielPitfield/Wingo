@@ -1,6 +1,6 @@
-import { operators } from "../Pages/NumbersGameConfig";
-import { randomIntFromInterval } from "../Pages/Numble";
+import { getRandomIntFromRange } from "../Helper Functions/getRandomIntFromRange";
 import { Difficulty } from "./DefaultGamemodeSettings";
+import { operators } from "./operators";
 
 /** Config for a specific number set (exported for config from campaign) */
 export type NumberSetTemplate = {
@@ -20,7 +20,7 @@ export type NumberSetQuestion = {
 // TODO: Examples and finding of operator are hardcoded
 // TODO: The correctAnswer must be an integer
 
-const smallNumbers: number[] = Array.from({ length: 10 }).map((_) => randomIntFromInterval(2, 10));
+const smallNumbers: number[] = Array.from({ length: 10 }).map((_) => getRandomIntFromRange(2, 10));
 
 /* All number sets */
 export const NumberSetsTemplates = {

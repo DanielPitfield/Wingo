@@ -4,13 +4,13 @@ import { PageName } from "../Data/PageNames";
 import LettersGameConfig, { LettersGameConfigProps } from "./LettersGameConfig";
 import NumbersGameConfig, { NumbersGameConfigProps } from "./NumbersGameConfig";
 import { Theme } from "../Data/Themes";
-import { displayGameshowSummary } from "./WingoGameshow";
 import { Button } from "../Components/Button";
 import WingoConfig, { WingoConfigProps } from "./WingoConfig";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
-import { getGamemodeDefaultNumGuesses } from "../Data/DefaultNumGuesses";
-import { getGamemodeDefaultWordLength } from "../Data/DefaultWordLengths";
-import { getPageGamemodeSettings } from "../Data/getPageGamemodeSettings";
+import { getGamemodeDefaultNumGuesses } from "../Helper Functions/getGamemodeDefaultNumGuesses";
+import { getGamemodeDefaultWordLength } from "../Helper Functions/getGamemodeDefaultWordLength";
+import { displayGameshowSummary } from "../Helper Functions/getGameshowSummary";
+import { getPageGamemodeSettings } from "../Helper Functions/getPageGamemodeSettings";
 
 type RoundType = "number" | "letter" | "conundrum";
 

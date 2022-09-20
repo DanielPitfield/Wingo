@@ -1,6 +1,6 @@
 import { getAllWordsOfLength } from "./getAllWordsOfLength";
+import { getRandomElementFrom } from "./getRandomElementFrom";
 import { isAnagram } from "./isAnagram";
-import { pickRandomElementFrom } from "../Pages/WingoConfig";
 
 /*
 https://en.wikipedia.org/wiki/Countdown_(game_show)#Conundrum
@@ -31,7 +31,7 @@ export function getConundrum() {
   const MAX_NUM_ANAGRAMS = 3;
 
   // Get a random word length combination
-  let wordLengthCombination = pickRandomElementFrom(wordLengthCombinations);
+  let wordLengthCombination = getRandomElementFrom(wordLengthCombinations);
 
   let failCount = 0;
   let conundrum;
@@ -44,7 +44,7 @@ export function getConundrum() {
       // Get all words of  wordLength (can be from either guessable or target)
       const wordArray = getAllWordsOfLength(wordLength);
       // Find a word of the wordLength
-      const word = pickRandomElementFrom(wordArray) ?? "";
+      const word = getRandomElementFrom(wordArray) ?? "";
       // Append the word to constructedWord
       constructedWord += word;
     }
@@ -58,7 +58,7 @@ export function getConundrum() {
 
       // Very few number of anagrams
       if (anagrams.length <= MAX_NUM_ANAGRAMS) {
-        conundrum = { question: constructedWord, answer: pickRandomElementFrom(anagrams) };
+        conundrum = { question: constructedWord, answer: getRandomElementFrom(anagrams) };
         return conundrum;
       }
     }
@@ -67,7 +67,7 @@ export function getConundrum() {
     failCount += 1;
     if (failCount === MAX_ATTEMPTS_PER_COMBINATON) {
       // Try a different wordLengthCombination
-      wordLengthCombination = pickRandomElementFrom(wordLengthCombinations);
+      wordLengthCombination = getRandomElementFrom(wordLengthCombinations);
       failCount = 0;
     }
   }

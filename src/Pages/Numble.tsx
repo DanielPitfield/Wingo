@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { Button } from "../Components/Button";
-import { NumberPuzzle } from "../Data/NumbersGameSolver";
 import GamemodeSettingsMenu from "../Components/GamemodeSettingsMenu";
 import { MessageNotification, MessageNotificationProps } from "../Components/MessageNotification";
 import ProgressBar, { GreenToRedColorTransition } from "../Components/ProgressBar";
@@ -8,7 +7,6 @@ import { SaveData, SettingsData } from "../Data/SaveData";
 import { Theme } from "../Data/Themes";
 import DiceGrid from "../Components/DiceGrid";
 import {
-  getNextTeamNumberWithRemainingTime,
   NumbleConfigProps,
   numbleGridShape,
   numbleGridShapes,
@@ -18,15 +16,14 @@ import {
 } from "./NumbleConfig";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
 import { DEFAULT_NUMBLE_GUESS_TIMER_VALUE } from "../Data/DefaultGamemodeSettings";
-import { getGamemodeDefaultTimerValue } from "../Data/DefaultTimerValues";
-import {
-  getNumblePointColourMapping,
-  NumbleColour,
-  NumblePointColourRange,
-} from "../Data/getNumblePointColourMappings";
-import { getNumbleRowValues } from "../Data/getNumbleRowValues";
-import { getHexagonAdjacentPins } from "../Data/getHexagonAdjacentPins";
-import { getSquareAdjacentPins } from "../Data/getSquareAdjacentPins";
+import { getGamemodeDefaultTimerValue } from "../Helper Functions/getGamemodeDefaultTimerValue";
+import { getHexagonAdjacentPins } from "../Helper Functions/getHexagonAdjacentPins";
+import { getNextTeamNumberWithRemainingTime } from "../Helper Functions/getNextTeamWithRemainingTime";
+import { getNumblePointColourMapping, NumblePointColourRange, NumbleColour } from "../Helper Functions/getNumblePointColourMappings";
+import { getNumbleRowValues } from "../Helper Functions/getNumbleRowValues";
+import { getSquareAdjacentPins } from "../Helper Functions/getSquareAdjacentPins";
+import { NumberPuzzle } from "../Helper Functions/NumbersGameSolver";
+import { getRandomIntFromRange } from "../Helper Functions/getRandomIntFromRange";
 
 interface Props {
   campaignConfig: NumbleConfigProps["campaignConfig"];
@@ -86,7 +83,7 @@ const Numble = (props: Props) => {
   };
 
   const getRandomDiceNumber = () => {
-    return randomIntFromInterval(props.gamemodeSettings.diceMin, props.gamemodeSettings.diceMax);
+    return getRandomIntFromRange(props.gamemodeSettings.diceMin, props.gamemodeSettings.diceMax);
   };
 
   const [diceValues, setdiceValues] = useState<number[]>(

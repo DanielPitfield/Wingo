@@ -1,6 +1,6 @@
 import { PageName } from "../Data/PageNames";
 import { LetterStatus } from "../Components/LetterTile";
-import { getLetterStatus } from "../Pages/WingoConfig";
+import { getLetterStatus } from "./getLetterStatus";
 
 const isSimpleStatusMode = (page: PageName) => {
   // The modes where the letter statuses should be either correct or incorrect (green or red statuses) and nothing inbetween

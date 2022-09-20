@@ -1,21 +1,22 @@
 import React, { useState } from "react";
-import { Keyboard } from "../Components/Keyboard";
-import { PageName } from "../Data/PageNames";
-import { WordRow } from "../Components/WordRow";
 import { Button } from "../Components/Button";
+import GamemodeSettingsMenu from "../Components/GamemodeSettingsMenu";
+import { Keyboard } from "../Components/Keyboard";
+import { LetterSelectionRow } from "../Components/LetterSelectionRow";
+import { LEVEL_FINISHING_TEXT } from "../Components/Level";
 import { MessageNotification } from "../Components/MessageNotification";
 import ProgressBar, { GreenToRedColorTransition } from "../Components/ProgressBar";
-import { isLettersGameGuessValid, LettersGameConfigProps } from "./LettersGameConfig";
-import { pickRandomElementFrom } from "./WingoConfig";
-import { Theme } from "../Data/Themes";
-import { SettingsData } from "../Data/SaveData";
-import GamemodeSettingsMenu from "../Components/GamemodeSettingsMenu";
-import { LEVEL_FINISHING_TEXT } from "../Components/Level";
-import { LetterSelectionRow } from "../Components/LetterSelectionRow";
-import { getAllWordsOfLength } from "../Helper Functions/getConundrum";
+import { WordRow } from "../Components/WordRow";
 import { MAX_TARGET_WORD_LENGTH, MIN_TARGET_WORD_LENGTH } from "../Data/GamemodeSettingsInputLimits";
-import { getGamemodeDefaultTimerValue } from "../Data/DefaultTimerValues";
+import { PageName } from "../Data/PageNames";
+import { SettingsData } from "../Data/SaveData";
+import { Theme } from "../Data/Themes";
+import { getAllWordsOfLength } from "../Helper Functions/getAllWordsOfLength";
+import { getGamemodeDefaultTimerValue } from "../Helper Functions/getGamemodeDefaultTimerValue";
+import { getRandomElementFrom } from "../Helper Functions/getRandomElementFrom";
+import { isLettersGameGuessValid } from "../Helper Functions/isLettersGameGuessValid";
 import { shuffleArray } from "../Helper Functions/shuffleArray";
+import { LettersGameConfigProps } from "./LettersGameConfig";
 
 interface Props {
   campaignConfig: LettersGameConfigProps["campaignConfig"];
@@ -88,7 +89,7 @@ const LettersGame = (props: Props) => {
     }
 
     // Select a random value from this array
-    return pickRandomElementFrom(weightedArray);
+    return getRandomElementFrom(weightedArray);
   }
 
   function getVowel(): string {
@@ -201,7 +202,7 @@ const LettersGame = (props: Props) => {
         </Button>
       </div>
     );
-    
+
     // WordRow to enter words using available letters
     const inputRow = (
       <WordRow

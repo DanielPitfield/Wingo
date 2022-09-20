@@ -10,8 +10,8 @@ import { SettingsData } from "../Data/SaveData";
 import GamemodeSettingsMenu from "../Components/GamemodeSettingsMenu";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
 import { MAX_NUM_CATEGORIES } from "../Data/GamemodeSettingsInputLimits";
-import { getGamemodeDefaultTimerValue } from "../Data/DefaultTimerValues";
 import { LetterCategoriesConfigProps } from "./LetterCategoriesConfig";
+import { getGamemodeDefaultTimerValue } from "../Helper Functions/getGamemodeDefaultTimerValue";
 
 interface Props {
   campaignConfig: LetterCategoriesConfigProps["campaignConfig"];

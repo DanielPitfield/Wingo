@@ -5,22 +5,19 @@ import { MessageNotification } from "../Components/MessageNotification";
 import ProgressBar, { GreenToRedColorTransition } from "../Components/ProgressBar";
 import { NumberRow } from "../Components/NumberRow";
 import NumberTile from "../Components/NumberTile";
-import {
-  determineScore,
-  Guess,
-  hasNumberSelectionFinished,
-  hasNumberSelectionStarted,
-  NumbersGameConfigProps,
-} from "./NumbersGameConfig";
+import { Guess, NumbersGameConfigProps } from "./NumbersGameConfig";
 import { NumberSelectionRow } from "../Components/NumberSelectionRow";
 import { Theme } from "../Data/Themes";
-import { NumberPuzzle, NumberPuzzleValue } from "../Data/NumbersGameSolver";
 import { SettingsData } from "../Data/SaveData";
 import GamemodeSettingsMenu from "../Components/GamemodeSettingsMenu";
-import { pickRandomElementFrom } from "./WingoConfig";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
-import { getGamemodeDefaultTimerValue } from "../Data/DefaultTimerValues";
 import { DEFAULT_NUMBERS_GAME_NUM_ROWS } from "../Data/DefaultGamemodeSettings";
+import { getGamemodeDefaultTimerValue } from "../Helper Functions/getGamemodeDefaultTimerValue";
+import { getRandomElementFrom } from "../Helper Functions/getRandomElementFrom";
+import { hasNumberSelectionFinished } from "../Helper Functions/hasNumberSelectionFinished";
+import { hasNumberSelectionStarted } from "../Helper Functions/hasNumberSelectionStarted";
+import { NumberPuzzleValue, NumberPuzzle } from "../Helper Functions/NumbersGameSolver";
+import { getNumbersGameScore } from "../Helper Functions/getNumbersGameScore";
 
 interface Props {
   campaignConfig: NumbersGameConfigProps["campaignConfig"];
@@ -105,7 +102,7 @@ const NumbersGame = (props: Props) => {
     // The numbers 1 through 10
     const smallNumbers = Array.from({ length: 10 }, (_, i) => i + 1);
 
-    return pickRandomElementFrom(smallNumbers);
+    return getRandomElementFrom(smallNumbers);
   }
 
   function getBigNumber(): number | null {
@@ -119,7 +116,7 @@ const NumbersGame = (props: Props) => {
       : // The four standard big numbers
         [25, 50, 75, 100];
 
-    return pickRandomElementFrom(bigNumbers);
+    return getRandomElementFrom(bigNumbers);
   }
 
   // Automatically choose a selection of small or big numbers
@@ -349,7 +346,7 @@ const NumbersGame = (props: Props) => {
       return;
     }
 
-    const { score, difference } = determineScore(
+    const { score, difference } = getNumbersGameScore(
       props.closestGuessSoFar,
       props.targetNumber,
       props.gamemodeSettings.scoringMethod
@@ -393,7 +390,7 @@ const NumbersGame = (props: Props) => {
   }
 
   function displayBestSolution(): React.ReactNode {
-    const { difference } = determineScore(
+    const { difference } = getNumbersGameScore(
       props.closestGuessSoFar,
       props.targetNumber,
       props.gamemodeSettings.scoringMethod

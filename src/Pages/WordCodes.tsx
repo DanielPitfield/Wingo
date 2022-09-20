@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { DEFAULT_ALPHABET, pickRandomElementFrom } from "./WingoConfig";
+import { DEFAULT_ALPHABET } from "./WingoConfig";
 import { PageName } from "../Data/PageNames";
 import { Button } from "../Components/Button";
 import { Keyboard } from "../Components/Keyboard";
@@ -15,11 +15,12 @@ import { DraggableItem } from "../Components/DraggableItem";
 import GamemodeSettingsMenu from "../Components/GamemodeSettingsMenu";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
 import { MAX_CODE_LENGTH } from "../Data/GamemodeSettingsInputLimits";
-import { getGamemodeDefaultTimerValue } from "../Data/DefaultTimerValues";
-import { getAllWordsOfLength } from "../Helper Functions/getConundrum";
-import { getGamemodeDefaultWordLength } from "../Data/DefaultWordLengths";
 import { shuffleArray } from "../Helper Functions/shuffleArray";
-import { getQuestionSetOutcome } from "../Data/getQuestionSetOutcome";
+import { getAllWordsOfLength } from "../Helper Functions/getAllWordsOfLength";
+import { getGamemodeDefaultTimerValue } from "../Helper Functions/getGamemodeDefaultTimerValue";
+import { getGamemodeDefaultWordLength } from "../Helper Functions/getGamemodeDefaultWordLength";
+import { getQuestionSetOutcome } from "../Helper Functions/getQuestionSetOutcome";
+import { getRandomElementFrom } from "../Helper Functions/getRandomElementFrom";
 
 const wordCodesModes = ["match", "question"] as const;
 export type wordCodesMode = typeof wordCodesModes[number];
@@ -267,7 +268,7 @@ const WordCodes = (props: Props) => {
 
   function getValidLetters(wordArray: string[]) {
     // Get the letters of a random word from the array
-    const validLetters = pickRandomElementFrom(wordArray).split("");
+    const validLetters = getRandomElementFrom(wordArray).split("");
 
     if (validLetters.length < MAX_CODE_LENGTH) {
       // How many more letters can be added beofre reaching the max limit?
@@ -329,7 +330,7 @@ const WordCodes = (props: Props) => {
       TODO: The number of these questions which ask what the code for a display word (instead of a new word) could be configurable
       */
 
-      const questionWordSubset = gamemodeSettings.numWordToCodeQuestions > 0 ? [pickRandomElementFrom(wordSubset)] : [];
+      const questionWordSubset = gamemodeSettings.numWordToCodeQuestions > 0 ? [getRandomElementFrom(wordSubset)] : [];
 
       // How many more words for questions are needed?
       const numQuestions =

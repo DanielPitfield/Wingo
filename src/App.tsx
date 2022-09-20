@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { SplashScreen } from "./Pages/SplashScreen";
 import { LobbyMenu } from "./Pages/LobbyMenu";
-import WingoConfig, { pickRandomElementFrom, WingoConfigProps } from "./Pages/WingoConfig";
+import WingoConfig, { WingoConfigProps } from "./Pages/WingoConfig";
 import { Button } from "./Components/Button";
 import NumbleConfig, { NumbleConfigProps } from "./Pages/NumbleConfig";
 import GoldCoin from "./Data/Images/gold.png";
@@ -36,10 +36,11 @@ import { defaultWingoGameshowRoundOrder } from "./Data/DefaultGamemodeSettings";
 import { pageDescriptions } from "./Data/PageDescriptions";
 import SequencePuzzle from "./Pages/SequencePuzzle";
 import { CustomGameshow } from "./Pages/CustomGameshow";
-import { getGamemodeDefaultNumGuesses } from "./Data/DefaultNumGuesses";
-import { getGamemodeDefaultWordLength } from "./Data/DefaultWordLengths";
-import { getPageGamemodeSettings } from "./Data/getPageGamemodeSettings";
 import { PageName } from "./Data/PageNames";
+import { getGamemodeDefaultNumGuesses } from "./Helper Functions/getGamemodeDefaultNumGuesses";
+import { getGamemodeDefaultWordLength } from "./Helper Functions/getGamemodeDefaultWordLength";
+import { getPageGamemodeSettings } from "./Helper Functions/getPageGamemodeSettings";
+import { getRandomElementFrom } from "./Helper Functions/getRandomElementFrom";
 
 export const App = () => {
   // App wide listener for right click event
@@ -116,7 +117,7 @@ export const App = () => {
     // Set the page to any playable page
     if (page === "random") {
       const playablePages = pageDescriptions.filter((page) => page.isPlayable);
-      const newPage = pickRandomElementFrom(playablePages)?.page;
+      const newPage = getRandomElementFrom(playablePages)?.page;
       setPage(newPage);
       setIsRandomSession(true);
     }

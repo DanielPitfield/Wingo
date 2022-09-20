@@ -2,20 +2,20 @@ import React, { useState } from "react";
 import { PageName } from "../Data/PageNames";
 import { MessageNotification } from "../Components/MessageNotification";
 import LetterTile from "../Components/LetterTile";
-import { randomIntFromInterval } from "./Numble";
 import { NumPad } from "../Components/NumPad";
 import ProgressBar, { GreenToRedColorTransition } from "../Components/ProgressBar";
 import { Button } from "../Components/Button";
-import { operators } from "./NumbersGameConfig";
 import { Theme } from "../Data/Themes";
 import { SaveData, SettingsData } from "../Data/SaveData";
 import GamemodeSettingsMenu from "../Components/GamemodeSettingsMenu";
 import { arithmeticNumberSize, arithmeticNumberSizes } from "./ArithmeticDrag";
-import { pickRandomElementFrom } from "./WingoConfig";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
 import { MAX_NUMPAD_GUESS_LENGTH } from "../Data/GamemodeSettingsInputLimits";
-import { getGamemodeDefaultTimerValue } from "../Data/DefaultTimerValues";
-import { getQuestionSetOutcome } from "../Data/getQuestionSetOutcome";
+import { operators } from "../Data/operators";
+import { getGamemodeDefaultTimerValue } from "../Helper Functions/getGamemodeDefaultTimerValue";
+import { getQuestionSetOutcome } from "../Helper Functions/getQuestionSetOutcome";
+import { getRandomElementFrom } from "../Helper Functions/getRandomElementFrom";
+import { getRandomIntFromRange } from "../Helper Functions/getRandomIntFromRange";
 
 export interface ArithmeticRevealProps {
   campaignConfig:
@@ -160,7 +160,7 @@ const ArithmeticReveal = (props: Props) => {
 
     while (!foundTileNumber) {
       // One of the four operators
-      let tileOperator = pickRandomElementFrom(operators);
+      let tileOperator = getRandomElementFrom(operators);
       let operatorSymbol = tileOperator.name;
       let tileNumber: number | undefined = undefined;
 
@@ -172,7 +172,7 @@ const ArithmeticReveal = (props: Props) => {
 
           // Loop max_limit times in the attempt of finding a clean divisor
           do {
-            const randomDivisor = randomIntFromInterval(2, getOperandLimit(operatorSymbol)!);
+            const randomDivisor = getRandomIntFromRange(2, getOperandLimit(operatorSymbol)!);
             // Clean division (result would be integer)
             if (targetNumber % randomDivisor === 0 && targetNumber > 0) {
               // Use that divisor as tile number
@@ -186,12 +186,12 @@ const ArithmeticReveal = (props: Props) => {
 
         case "×": {
           // Lower threshold of 2 (no point multiplying by 1)
-          tileNumber = randomIntFromInterval(2, getOperandLimit(operatorSymbol)!);
+          tileNumber = getRandomIntFromRange(2, getOperandLimit(operatorSymbol)!);
           break;
         }
 
         case "+": {
-          tileNumber = randomIntFromInterval(1, getOperandLimit(operatorSymbol)!);
+          tileNumber = getRandomIntFromRange(1, getOperandLimit(operatorSymbol)!);
           break;
         }
 
@@ -205,10 +205,10 @@ const ArithmeticReveal = (props: Props) => {
           // The target number is smaller than the maximum value which can be subtracted
           else if (targetNumber < getOperandLimit(operatorSymbol)!) {
             // Only subtract a random value which is smaller than targetNumber
-            tileNumber = randomIntFromInterval(1, targetNumber - 1);
+            tileNumber = getRandomIntFromRange(1, targetNumber - 1);
           } else {
             // Proceed as normal
-            tileNumber = randomIntFromInterval(1, getOperandLimit(operatorSymbol)!);
+            tileNumber = getRandomIntFromRange(1, getOperandLimit(operatorSymbol)!);
           }
         }
       }
@@ -239,7 +239,7 @@ const ArithmeticReveal = (props: Props) => {
 
     for (let i = 0; i < gamemodeSettings.numCheckpoints; i++) {
       // Use/carry on from previous checkpoint target (unless first checkpoint which uses a random number)
-      const checkpointStartingNumber = newTargetNumbers[i - 1] ?? randomIntFromInterval(1, getStartingNumberLimit());
+      const checkpointStartingNumber = newTargetNumbers[i - 1] ?? getRandomIntFromRange(1, getStartingNumberLimit());
 
       // Start a tiles array, starting with the number
       const checkpointTiles: string[] = [checkpointStartingNumber.toString()];

@@ -5,9 +5,10 @@ import { Theme } from "../Data/Themes";
 import WingoConfig, { WingoConfigProps } from "./WingoConfig";
 import { Button } from "../Components/Button";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
-import { getGamemodeDefaultWordLength } from "../Data/DefaultWordLengths";
-import { getWingoGameshowRoundOrder } from "../Data/getWingoGameshowRoundOrder";
-import { getPageGamemodeSettings } from "../Data/getPageGamemodeSettings";
+import { getGamemodeDefaultWordLength } from "../Helper Functions/getGamemodeDefaultWordLength";
+import { displayGameshowSummary } from "../Helper Functions/getGameshowSummary";
+import { getPageGamemodeSettings } from "../Helper Functions/getPageGamemodeSettings";
+import { getWingoGameshowRoundOrder } from "../Helper Functions/getWingoGameshowRoundOrder";
 
 export interface WingoGameshowProps {
   campaignConfig:

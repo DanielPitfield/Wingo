@@ -4,8 +4,9 @@ import { SaveData, SettingsData } from "../Data/SaveData";
 import { Theme } from "../Data/Themes";
 import Numble from "./Numble";
 import { DEFAULT_NUMBLE_GUESS_TIMER_VALUE } from "../Data/DefaultGamemodeSettings";
-import { getGamemodeDefaultTimerValue } from "../Data/DefaultTimerValues";
 import { MAX_NUMBLE_NUM_TEAMS } from "../Data/GamemodeSettingsInputLimits";
+import { getGamemodeDefaultTimerValue } from "../Helper Functions/getGamemodeDefaultTimerValue";
+import { getNextTeamNumberWithRemainingTime } from "../Helper Functions/getNextTeamWithRemainingTime";
 
 export const numbleGridShapes = ["square", "hexagon"] as const;
 export type numbleGridShape = typeof numbleGridShapes[number];

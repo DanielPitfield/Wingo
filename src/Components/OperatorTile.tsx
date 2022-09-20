@@ -1,4 +1,4 @@
-import { operators } from "../Pages/NumbersGameConfig";
+import { operators } from "../Data/operators";
 
 interface Props {
   hasTimerEnded: boolean;

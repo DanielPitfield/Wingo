@@ -1,3 +1,22 @@
+import {
+  defaultWingoGamemodeSettings,
+  fallbackWingoSettings,
+  defaultLetterCategoriesGamemodeSettings,
+  defaultLettersGameGamemodeSettings,
+  defaultNumbersGameGamemodeSettings,
+  defaultArithmeticRevealGamemodeSettings,
+  defaultArithmeticDragOrderGamemodeSettings,
+  defaultArithmeticDragMatchGamemodeSettings,
+  defaultNumbleGamemodeSettings,
+  defaultOnlyConnectGamemodeSettings,
+  defaultSameLetterWordsGamemodeSettings,
+  defaultNumberSetsGamemodeSettings,
+  defaultAlgebraGamemodeSettings,
+  defaultWordCodesQuestionGamemodeSettings,
+  defaultWordCodesMatchGamemodeSettings,
+} from "../Data/DefaultGamemodeSettings";
+import { PageName } from "../Data/PageNames";
+import { SaveData } from "../Data/SaveData";
 import { AlgebraProps } from "../Pages/Algebra";
 import { ArithmeticDragProps } from "../Pages/ArithmeticDrag";
 import { ArithmeticRevealProps } from "../Pages/ArithmeticReveal";
@@ -10,25 +29,6 @@ import { OnlyConnectProps } from "../Pages/OnlyConnect";
 import { SameLetterWordsProps } from "../Pages/SameLetterWords";
 import { WingoConfigProps } from "../Pages/WingoConfig";
 import { WordCodesProps } from "../Pages/WordCodes";
-import {
-  defaultAlgebraGamemodeSettings,
-  defaultArithmeticDragMatchGamemodeSettings,
-  defaultArithmeticDragOrderGamemodeSettings,
-  defaultArithmeticRevealGamemodeSettings,
-  defaultLetterCategoriesGamemodeSettings,
-  defaultLettersGameGamemodeSettings,
-  defaultNumberSetsGamemodeSettings,
-  defaultNumbersGameGamemodeSettings,
-  defaultNumbleGamemodeSettings,
-  defaultOnlyConnectGamemodeSettings,
-  defaultSameLetterWordsGamemodeSettings,
-  defaultWingoGamemodeSettings,
-  defaultWordCodesMatchGamemodeSettings,
-  defaultWordCodesQuestionGamemodeSettings,
-  fallbackWingoSettings,
-} from "./DefaultGamemodeSettings";
-import { PageName } from "./PageNames";
-import { SaveData } from "./SaveData";
 
 export function getPageGamemodeSettings(page: PageName) {
   switch (page) {

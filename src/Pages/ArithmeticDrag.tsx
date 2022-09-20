@@ -2,19 +2,19 @@ import React, { useState } from "react";
 import { arrayMove, OrderGroup } from "react-draggable-order";
 import { PageName } from "../Data/PageNames";
 import { Button } from "../Components/Button";
-import { operators, operatorSymbols } from "./NumbersGameConfig";
 import GamemodeSettingsMenu from "../Components/GamemodeSettingsMenu";
 import LetterTile from "../Components/LetterTile";
 import { MessageNotification } from "../Components/MessageNotification";
-import { randomIntFromInterval } from "./Numble";
 import ProgressBar, { GreenToRedColorTransition } from "../Components/ProgressBar";
 import { SaveData, SettingsData } from "../Data/SaveData";
 import { Theme } from "../Data/Themes";
-import { pickRandomElementFrom } from "./WingoConfig";
 import { DraggableItem } from "../Components/DraggableItem";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
-import { getGamemodeDefaultTimerValue } from "../Data/DefaultTimerValues";
 import { shuffleArray } from "../Helper Functions/shuffleArray";
+import { operatorSymbols, operators } from "../Data/operators";
+import { getGamemodeDefaultTimerValue } from "../Helper Functions/getGamemodeDefaultTimerValue";
+import { getRandomElementFrom } from "../Helper Functions/getRandomElementFrom";
+import { getRandomIntFromRange } from "../Helper Functions/getRandomIntFromRange";
 
 // Const Contexts: https://stackoverflow.com/questions/44497388/typescript-array-to-string-literal-type
 export const arithmeticNumberSizes = ["small", "medium", "large"] as const;
@@ -166,7 +166,7 @@ const ArithmeticDrag = (props: Props) => {
    */
   function generateTile(): { expression: string; total: number; status: "not set" } {
     // First number of the tile expression
-    const startingNumber = randomIntFromInterval(1, getStartingNumberLimit());
+    const startingNumber = getRandomIntFromRange(1, getStartingNumberLimit());
 
     // Begin the expression and total as this value (as string and as number)
     let expression = startingNumber.toString();
@@ -178,7 +178,7 @@ const ArithmeticDrag = (props: Props) => {
     // Until expression has the required number of operators (is correct length)
     while (countOperators(expression) < numOperators) {
       // Choose one of the four operators
-      let operator = pickRandomElementFrom(operators);
+      let operator = getRandomElementFrom(operators);
       let operatorSymbol = operator.name;
       let operand: number | undefined = undefined;
 
@@ -191,7 +191,7 @@ const ArithmeticDrag = (props: Props) => {
 
           // Loop max_limit times in the attempt of finding a clean divisor
           do {
-            const randomDivisor = randomIntFromInterval(2, getOperandLimit(operatorSymbol)!);
+            const randomDivisor = getRandomIntFromRange(2, getOperandLimit(operatorSymbol)!);
             // Clean division (result would be integer)
             if (total % randomDivisor === 0 && total > 0) {
               // Use that divisor as tile number
@@ -205,12 +205,12 @@ const ArithmeticDrag = (props: Props) => {
 
         case "×": {
           // Lower threshold of 2 (no point multiplying by 1)
-          operand = randomIntFromInterval(2, getOperandLimit(operatorSymbol)!);
+          operand = getRandomIntFromRange(2, getOperandLimit(operatorSymbol)!);
           break;
         }
 
         case "+": {
-          operand = randomIntFromInterval(1, getOperandLimit(operatorSymbol)!);
+          operand = getRandomIntFromRange(1, getOperandLimit(operatorSymbol)!);
           break;
         }
 
@@ -224,10 +224,10 @@ const ArithmeticDrag = (props: Props) => {
           // The target number is smaller than the maximum value which can be subtracted
           else if (total < getOperandLimit(operatorSymbol)!) {
             // Only subtract a random value which is smaller than targetNumber
-            operand = randomIntFromInterval(1, total - 1);
+            operand = getRandomIntFromRange(1, total - 1);
           } else {
             // Proceed as normal
-            operand = randomIntFromInterval(1, getOperandLimit(operatorSymbol)!);
+            operand = getRandomIntFromRange(1, getOperandLimit(operatorSymbol)!);
           }
         }
       }

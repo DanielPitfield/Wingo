@@ -2,13 +2,14 @@ import React, { useState } from "react";
 import { PageName } from "../Data/PageNames";
 import LetterCategories from "./LetterCategories";
 import { SaveData, SettingsData } from "../Data/SaveData";
-import { DEFAULT_ALPHABET, pickRandomElementFrom } from "./WingoConfig";
+import { DEFAULT_ALPHABET } from "./WingoConfig";
 import { Theme } from "../Data/Themes";
 import { categoryMappings } from "../Data/WordArrayMappings";
-import { getGamemodeDefaultTimerValue } from "../Data/DefaultTimerValues";
 import { MAX_NUM_CATEGORIES } from "../Data/GamemodeSettingsInputLimits";
-import { getGamemodeDefaultWordLength } from "../Data/DefaultWordLengths";
 import { shuffleArray } from "../Helper Functions/shuffleArray";
+import { getGamemodeDefaultTimerValue } from "../Helper Functions/getGamemodeDefaultTimerValue";
+import { getGamemodeDefaultWordLength } from "../Helper Functions/getGamemodeDefaultWordLength";
+import { getRandomElementFrom } from "../Helper Functions/getRandomElementFrom";
 
 export interface LetterCategoriesConfigProps {
   campaignConfig:
@@ -123,7 +124,7 @@ const LetterCategoriesConfig = (props: Props) => {
   function generateTargetWords() {
     if (inProgress) {
       // Get a random letter from the Alphabet
-      const requiredStartingLetter = pickRandomElementFrom(DEFAULT_ALPHABET);
+      const requiredStartingLetter = getRandomElementFrom(DEFAULT_ALPHABET);
       // Set this letter as the letter that all words must begin with
       setRequiredStartingLetter(requiredStartingLetter);
       // Provide this letter as the start of guesses/words

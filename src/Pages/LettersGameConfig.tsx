@@ -3,8 +3,9 @@ import { PageName } from "../Data/PageNames";
 import LettersGame from "./LettersGame";
 import { Theme } from "../Data/Themes";
 import { SaveData, SettingsData } from "../Data/SaveData";
-import { getAllWordsOfLength } from "../Helper Functions/getConundrum";
-import { getGamemodeDefaultTimerValue } from "../Data/DefaultTimerValues";
+import { getAllWordsOfLength } from "../Helper Functions/getAllWordsOfLength";
+import { getGamemodeDefaultTimerValue } from "../Helper Functions/getGamemodeDefaultTimerValue";
+import { isLettersGameGuessValid } from "../Helper Functions/isLettersGameGuessValid";
 
 export interface LettersGameConfigProps {
   campaignConfig:

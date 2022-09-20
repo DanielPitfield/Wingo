@@ -9,14 +9,15 @@ import ProgressBar, { GreenToRedColorTransition } from "../Components/ProgressBa
 import { SaveData, SettingsData } from "../Data/SaveData";
 import { useClickChime, useCorrectChime, useFailureChime, useLightPingChime } from "../Data/Sounds";
 import { Theme } from "../Data/Themes";
-import { AlgebraTemplate, answerType, getAlgebraTemplates, AlgebraQuestion } from "../Data/AlgebraTemplates";
+import { AlgebraTemplate, answerType, AlgebraQuestion } from "../Data/AlgebraTemplates";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
-import { getGamemodeDefaultTimerValue } from "../Data/DefaultTimerValues";
 import { MAX_NUMPAD_GUESS_LENGTH } from "../Data/GamemodeSettingsInputLimits";
 import { DEFAULT_ALPHABET, DEFAULT_ALPHABET_STRING } from "./WingoConfig";
 import { Difficulty, difficultyOptions } from "../Data/DefaultGamemodeSettings";
-import { getQuestionSetOutcome } from "../Data/getQuestionSetOutcome";
 import { PageName } from "../Data/PageNames";
+import { getAlgebraTemplates } from "../Helper Functions/getAlgebraTemplates";
+import { getGamemodeDefaultTimerValue } from "../Helper Functions/getGamemodeDefaultTimerValue";
+import { getQuestionSetOutcome } from "../Helper Functions/getQuestionSetOutcome";
 
 export interface AlgebraProps {
   campaignConfig:
