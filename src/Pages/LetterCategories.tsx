@@ -14,14 +14,7 @@ import { getGamemodeDefaultTimerValue } from "../Data/DefaultTimerValues";
 import { LetterCategoriesConfigProps } from "./LetterCategoriesConfig";
 
 interface Props {
-  campaignConfig:
-    | {
-        isCampaignLevel: true;
-        // How many categories must be successfully answered to pass the campaign level?
-        targetScore: number;
-      }
-    | { isCampaignLevel: false };
-
+  campaignConfig: LetterCategoriesConfigProps["campaignConfig"];
   gamemodeSettings: LetterCategoriesConfigProps["gamemodeSettings"];
 
   remainingSeconds: number;

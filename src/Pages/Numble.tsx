@@ -29,17 +29,7 @@ import { getHexagonAdjacentPins } from "../Data/getHexagonAdjacentPins";
 import { getSquareAdjacentPins } from "../Data/getSquareAdjacentPins";
 
 interface Props {
-  // TODO: Refactor all campaignConfig like this to use ConfigProps["name"]
-  campaignConfig:
-    | {
-        isCampaignLevel: true;
-        // What score must be achieved to pass the campaign level?
-        targetScore: number;
-        // How many pins can be selected before game ends?
-        maxNumSelectedPins: number;
-      }
-    | { isCampaignLevel: false };
-
+  campaignConfig: NumbleConfigProps["campaignConfig"];
   gamemodeSettings: NumbleConfigProps["gamemodeSettings"];
 
   status: NumbleStatus;
@@ -461,7 +451,6 @@ const Numble = (props: Props) => {
     const X_SLANT = 2.45;
     const Y_SLANT = 1.8;
 
-    
     const rowIndex = rowNumber - 1;
     // What pin values are on this row?
     const currentRowValues = rowValues[rowIndex].values;

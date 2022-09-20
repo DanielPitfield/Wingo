@@ -18,14 +18,7 @@ import { getGamemodeDefaultTimerValue } from "../Data/DefaultTimerValues";
 import { shuffleArray } from "../Data/shuffleArray";
 
 interface Props {
-  campaignConfig:
-    | {
-        isCampaignLevel: true;
-        // What score must be achieved to pass the campaign level?
-        targetScore: number;
-      }
-    | { isCampaignLevel: false };
-
+  campaignConfig: LettersGameConfigProps["campaignConfig"];
   gamemodeSettings: LettersGameConfigProps["gamemodeSettings"];
 
   letterTileStatuses: {

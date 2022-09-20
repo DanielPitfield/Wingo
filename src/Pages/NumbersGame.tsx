@@ -5,7 +5,13 @@ import { MessageNotification } from "../Components/MessageNotification";
 import ProgressBar, { GreenToRedColorTransition } from "../Components/ProgressBar";
 import { NumberRow } from "../Components/NumberRow";
 import NumberTile from "../Components/NumberTile";
-import { determineScore, Guess, hasNumberSelectionFinished, hasNumberSelectionStarted, NumbersGameConfigProps } from "./NumbersGameConfig";
+import {
+  determineScore,
+  Guess,
+  hasNumberSelectionFinished,
+  hasNumberSelectionStarted,
+  NumbersGameConfigProps,
+} from "./NumbersGameConfig";
 import { NumberSelectionRow } from "../Components/NumberSelectionRow";
 import { Theme } from "../Data/Themes";
 import { NumberPuzzle, NumberPuzzleValue } from "../Data/NumbersGameSolver";
@@ -17,14 +23,7 @@ import { getGamemodeDefaultTimerValue } from "../Data/DefaultTimerValues";
 import { DEFAULT_NUMBERS_GAME_NUM_ROWS } from "../Data/DefaultGamemodeSettings";
 
 interface Props {
-  campaignConfig:
-    | {
-        isCampaignLevel: true;
-        // What score must be achieved to pass the campaign level?
-        targetScore: number;
-      }
-    | { isCampaignLevel: false };
-
+  campaignConfig: NumbersGameConfigProps["campaignConfig"];
   gamemodeSettings: NumbersGameConfigProps["gamemodeSettings"];
 
   remainingSeconds: number;
