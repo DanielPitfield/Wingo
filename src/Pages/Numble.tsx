@@ -9,7 +9,6 @@ import { Theme } from "../Data/Themes";
 import DiceGrid from "../Components/DiceGrid";
 import {
   getNextTeamNumberWithRemainingTime,
-  HexagonPinAdjacency,
   NumbleConfigProps,
   numbleGridShape,
   numbleGridShapes,
@@ -20,8 +19,17 @@ import {
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
 import { DEFAULT_NUMBLE_GUESS_TIMER_VALUE } from "../Data/DefaultGamemodeSettings";
 import { getGamemodeDefaultTimerValue } from "../Data/DefaultTimerValues";
+import {
+  getNumblePointColourMapping,
+  NumbleColour,
+  NumblePointColourRange,
+} from "../Data/getNumblePointColourMappings";
+import { getNumbleRowValues } from "../Data/getNumbleRowValues";
+import { getHexagonAdjacentPins } from "../Data/getHexagonAdjacentPins";
+import { getSquareAdjacentPins } from "../Data/getSquareAdjacentPins";
 
 interface Props {
+  // TODO: Refactor all campaignConfig like this to use ConfigProps["name"]
   campaignConfig:
     | {
         isCampaignLevel: true;
@@ -60,18 +68,6 @@ interface Props {
 
   onComplete: (wasCorrect: boolean) => void;
 
-  determineHexagonRowValues: () => { rowNumber: number; values: number[] }[];
-  determinePoints: (value: number) => number;
-  determinePointColourMappings: () => { points: number; colour: string }[];
-  determineSquareAdjacentMappings: () => {
-    pin: number;
-    adjacentPins: number[];
-  }[];
-  determineHexagonAdjacentMappings: () => {
-    pin: number;
-    adjacentPins: HexagonPinAdjacency;
-  }[];
-
   theme: Theme;
   settings: SettingsData;
 }
@@ -82,14 +78,36 @@ export function randomIntFromInterval(min: number, max: number) {
 }
 
 const Numble = (props: Props) => {
+  // Information as to how the pins are displayed and what pins are on each row
+  const rowValues = getNumbleRowValues(props.gamemodeSettings.gridShape, props.gamemodeSettings.gridSize);
+
+  // Information as to how many points and what colour pins are
+  const pointColourMapping = getNumblePointColourMapping(
+    props.gamemodeSettings.gridShape,
+    props.gamemodeSettings.gridSize
+  );
+
+  // Get the point and colour information of the pin (find which range it falls within)
+  const getPointColourRange = (pinNumber: number): NumblePointColourRange | null => {
+    return pointColourMapping.find((row) => row.start <= pinNumber && row.end >= pinNumber) ?? null;
+  };
+
+  const getPinBasePoints = (pinNumber: number): number => {
+    return getPointColourRange(pinNumber)?.points ?? 0;
+  };
+
+  const getPinColour = (pinNumber: number): NumbleColour | null => {
+    return getPointColourRange(pinNumber)?.colour ?? null;
+  };
+
+  const getRandomDiceNumber = () => {
+    return randomIntFromInterval(props.gamemodeSettings.diceMin, props.gamemodeSettings.diceMax);
+  };
+
   const [diceValues, setdiceValues] = useState<number[]>(
-    Array.from({ length: props.gamemodeSettings.numDice }).map((x) => randomDiceNumber())
+    Array.from({ length: props.gamemodeSettings.numDice }).map((x) => getRandomDiceNumber())
   );
   const [pickedPins, setPickedPins] = useState<{ pinNumber: number; teamNumber: number }[]>([]);
-  const gridPoints = Array.from({ length: props.gamemodeSettings.gridSize }).map((_, i) => ({
-    number: i + 1,
-    points: props.determinePoints(i + 1),
-  }));
 
   const initialScores = Array.from({ length: props.gamemodeSettings.numTeams }).map((_, i) => ({
     teamNumber: i,
@@ -122,6 +140,13 @@ const Numble = (props: Props) => {
     props.setStatus("dice-rolled-awaiting-pick");
   }, [diceValues]);
 
+  const isGameOver = () => {
+    // How many teams have time left?
+    const numRemainingTeams = props.teamTimers.filter((team) => team.remainingSeconds > 0).length;
+    // Have all teams used all their time?
+    return numRemainingTeams === 0;
+  };
+
   // Game timer handling
   React.useEffect(() => {
     // TODO: Move status to NumbleConfig and set within timer useEffect()?
@@ -133,12 +158,8 @@ const Numble = (props: Props) => {
       return;
     }
 
-    // Have all teams used all their time?
-    const numRemainingTeams = props.teamTimers.filter((team) => team.remainingSeconds > 0).length;
-    const isGameOver = numRemainingTeams === 0;
-
     // Game over when all timers have run out
-    if (isGameOver) {
+    if (isGameOver()) {
       props.setStatus("game-over-timer-ended");
     }
   }, [props.gamemodeSettings.timerConfig.isTimed, props.teamTimers]);
@@ -231,18 +252,6 @@ const Numble = (props: Props) => {
     SaveData.setNumbleConfigGamemodeSettings(props.gamemodeSettings);
   }, [props.gamemodeSettings]);
 
-  /**
-   *
-   * @returns
-   */
-  function randomDiceNumber() {
-    return randomIntFromInterval(props.gamemodeSettings.diceMin, props.gamemodeSettings.diceMax);
-  }
-
-  /**
-   *
-   * @returns
-   */
   function rollDice() {
     // Dice is now being rolled
     props.setStatus("dice-rolling");
@@ -253,14 +262,9 @@ const Numble = (props: Props) => {
     }
 
     // Determine random dice values for all the dice
-    setdiceValues(Array.from({ length: props.gamemodeSettings.numDice }).map((x) => randomDiceNumber()));
+    setdiceValues(Array.from({ length: props.gamemodeSettings.numDice }).map((x) => getRandomDiceNumber()));
   }
 
-  /**
-   *
-   * @param value
-   * @returns
-   */
   function isPrime(value: number): boolean {
     if (value <= 1) {
       return false;
@@ -284,17 +288,12 @@ const Numble = (props: Props) => {
     return true;
   }
 
-  /**
-   *
-   * @param pinNumber
-   * @returns
-   */
   function isAdjacentBonus(pinNumber: number): boolean {
+    // Which pins have been picked so far?
+    const pickedPinNumbers = pickedPins.map((x) => x.pinNumber);
+
     if (props.gamemodeSettings.gridShape === "square") {
-      // Pin adjacency information
-      const adjacentMappings = props.determineSquareAdjacentMappings();
-      // Adjacent pins of the clicked pin
-      const adjacentPins = adjacentMappings.find((x) => x.pin === pinNumber)?.adjacentPins;
+      const adjacentPins = getSquareAdjacentPins(pinNumber, props.gamemodeSettings.gridSize);
 
       if (!adjacentPins) {
         return false;
@@ -304,37 +303,30 @@ const Numble = (props: Props) => {
       const pickedAdjacentPins = pickedPins.filter((x) => adjacentPins?.includes(x.pinNumber));
 
       // The pin and the 3 adjacent pins to make a 2x2 square
-      if (pickedAdjacentPins.length >= 3) {
-        return true;
-      } else {
-        return false;
-      }
-    } else if (props.gamemodeSettings.gridShape === ("hexagon" as numbleGridShape)) {
-      // Pin adjacency information
-      const adjacentMappings = props.determineHexagonAdjacentMappings();
-      // Adjacent pins of the clicked pin
-      const adjacentPins = adjacentMappings.find((x) => x.pin === pinNumber)?.adjacentPins;
+      return pickedAdjacentPins.length >= 3;
+    }
+
+    if (props.gamemodeSettings.gridShape === "hexagon") {
+      const adjacentPins = getHexagonAdjacentPins(pinNumber, rowValues);
 
       if (!adjacentPins) {
         return false;
       }
 
-      const pickedPinNumbers = pickedPins.map((x) => x.pinNumber);
-
       // The pin and two adjacent pins forming a triangle can happen in six ways
 
       // In a clockwise direction...
       const topTriangle =
-        adjacentPins.leftAbove !== null &&
-        pickedPinNumbers.includes(adjacentPins.leftAbove) &&
-        adjacentPins.rightAbove !== null &&
-        pickedPinNumbers.includes(adjacentPins.rightAbove);
+        adjacentPins?.leftAbove !== null &&
+        pickedPinNumbers.includes(adjacentPins?.leftAbove) &&
+        adjacentPins?.rightAbove !== null &&
+        pickedPinNumbers.includes(adjacentPins?.rightAbove);
 
       const topRightTriangle =
-        adjacentPins.rightAbove !== null &&
-        pickedPinNumbers.includes(adjacentPins.rightAbove) &&
-        adjacentPins.right !== null &&
-        pickedPinNumbers.includes(adjacentPins.right);
+        adjacentPins?.rightAbove !== null &&
+        pickedPinNumbers.includes(adjacentPins?.rightAbove) &&
+        adjacentPins?.right !== null &&
+        pickedPinNumbers.includes(adjacentPins?.right);
 
       const bottomRightTriangle =
         adjacentPins.rightBelow !== null &&
@@ -360,22 +352,18 @@ const Numble = (props: Props) => {
         adjacentPins.left !== null &&
         pickedPinNumbers.includes(adjacentPins.left);
 
-      if (
+      // Any of these conditions
+      return (
         topTriangle ||
         topRightTriangle ||
         bottomRightTriangle ||
         bottomTriangle ||
         bottomLeftTriangle ||
         topLeftTriangle
-      ) {
-        return true;
-      } else {
-        return false;
-      }
-    } else {
-      // Unexpected grid shape
-      return false;
+      );
     }
+
+    return false;
   }
 
   // Determine and set the next team to play
@@ -388,11 +376,6 @@ const Numble = (props: Props) => {
     }
   }
 
-  /**
-   *
-   * @param pinNumber
-   * @returns
-   */
   function onClick(pinNumber: number) {
     if (props.status === "dice-rolling") {
       return;
@@ -430,7 +413,7 @@ const Numble = (props: Props) => {
     setPickedPins(newPickedPins);
 
     // Find out how many base points the pin is worth
-    let pinScore = gridPoints.find((x) => x.number === pinNumber)?.points ?? 0;
+    let pinScore = getPinBasePoints(pinNumber);
 
     // Double points if the picked pin is a prime number
     if (isPrime(pinNumber)) {
@@ -467,8 +450,7 @@ const Numble = (props: Props) => {
     nextTeamTurn();
   }
 
-  // Array (length of rowLength) of buttons
-  function populateRow(rowLength: number, rowNumber: number) {
+  function populateRow(rowNumber: number) {
     // Calculate the middle row
     const middle = Math.sqrt(props.gamemodeSettings.gridSize) / 2;
 
@@ -479,11 +461,10 @@ const Numble = (props: Props) => {
     const X_SLANT = 2.45;
     const Y_SLANT = 1.8;
 
-    // Information regarding which pin values are on the current row (for hexagon grid shape)
-    const rowInformation = props.determineHexagonRowValues().find((row) => rowNumber === row.rowNumber);
-
-    // Information regarding what colour the rows are and how many points are awarded for each row
-    const pointColourInformation = props.determinePointColourMappings();
+    
+    const rowIndex = rowNumber - 1;
+    // What pin values are on this row?
+    const currentRowValues = rowValues[rowIndex].values;
 
     return (
       <div
@@ -495,107 +476,72 @@ const Numble = (props: Props) => {
               : undefined,
         }}
       >
-        {Array.from({ length: rowLength }).map((_, i) => {
-          if (props.gamemodeSettings.gridShape === "square") {
-            // What was the highest value included in the previous row?
-            const prevRowEndingValue = (rowNumber - 1) * rowLength;
-            // Start from that value and add the index to it (index is zero based, so add an additional one)
-            const value = prevRowEndingValue + i + 1;
-            // Has the pin already been picked?
-            const isPicked = pickedPins.map((x) => x.pinNumber).includes(value);
-            // What colour should the pin be?
-            const colour = pointColourInformation.find((x) => x.points === props.determinePoints(value))?.colour;
-
-            return (
-              <button
-                key={i}
-                className="numble-button"
-                data-prime={isPrime(value)}
-                data-shape={props.gamemodeSettings.gridShape}
-                data-picked={isPicked}
-                data-team-number={pickedPins.find((x) => x.pinNumber === value)?.teamNumber}
-                data-colour={colour}
-                onClick={() => onClick(value)}
-                disabled={isPicked || props.status !== "dice-rolled-awaiting-pick"}
-              >
-                {value}
-              </button>
-            );
-          } else if (props.gamemodeSettings.gridShape === ("hexagon" as numbleGridShape)) {
-            const value = rowInformation?.values[i];
-
-            if (!value) {
-              return;
-            }
-
-            const isPicked = pickedPins.map((x) => x.pinNumber).includes(value);
-            const colour = pointColourInformation.find((x) => x.points === props.determinePoints(value))?.colour;
-
-            return (
-              <button
-                key={i}
-                className="numble-button"
-                data-prime={isPrime(value)}
-                data-shape={props.gamemodeSettings.gridShape}
-                data-picked={isPicked}
-                data-team-number={pickedPins.find((x) => x.pinNumber === value)?.teamNumber}
-                data-colour={colour}
-                onClick={() => onClick(value)}
-                disabled={isPicked || props.status !== "dice-rolled-awaiting-pick"}
-              >
+        {currentRowValues.map((value) => {
+          const buttonBody =
+            props.gamemodeSettings.gridShape === "hexagon" ? (
+              <>
                 <span className="top"></span>
                 <span className="middle">{value}</span>
                 <span className="bottom"></span>
-              </button>
+              </>
+            ) : (
+              <>{value}</>
             );
-          }
+
+          // Has the pin already been picked?
+          const isPicked = pickedPins.map((x) => x.pinNumber).includes(value);
+
+          return (
+            <button
+              key={value}
+              className="numble-button"
+              data-prime={isPrime(value)}
+              data-shape={props.gamemodeSettings.gridShape}
+              data-picked={isPicked}
+              data-team-number={pickedPins.find((x) => x.pinNumber === value)?.teamNumber}
+              data-colour={getPinColour(value)}
+              onClick={() => onClick(value)}
+              disabled={isPicked || props.status !== "dice-rolled-awaiting-pick"}
+            >
+              {buttonBody}
+            </button>
+          );
         })}
       </div>
     );
   }
 
-  /**
-   *
-   * @returns
-   */
+  // TODO: Refactor all populateGrid() similar to this using .map()
   function populateGrid() {
     let Grid = [];
 
-    const rowLength = Math.sqrt(props.gamemodeSettings.gridSize);
-
     // Start with higher value rows (so that they are rendered first, at the top of the grid)
-    for (let i = rowLength; i >= 1; i--) {
-      Grid.push(populateRow(rowLength, i));
+    for (let i = rowValues.length; i >= 1; i--) {
+      Grid.push(populateRow(i));
     }
     return Grid;
   }
 
-  /**
-   *
-   * @returns
-   */
   function displayPinScores() {
     const pinScores = [];
-    const pointColourMappings = props.determinePointColourMappings();
-
     // Create read-only numble pin of each colour with text of how many points it awards
-    for (const row of pointColourMappings) {
+    for (const colourRange of pointColourMapping) {
       pinScores.push(
         <button
-          key={row.colour}
+          key={colourRange.colour}
           className="numble-button-display"
           data-prime={false}
           data-picked={false}
-          data-colour={row.colour}
+          data-colour={colourRange.colour}
           disabled={false}
         >
-          {row.points}
+          {colourRange.points}
         </button>
       );
     }
 
     // Use the last/highest row colour to show prime numble pin
-    const lastPointColourMapping = pointColourMappings[pointColourMappings.length - 1];
+    const lastPointColourMapping = pointColourMapping[pointColourMapping.length - 1];
 
     // Create a prime numble pin (a pin with a border) to show it awards double points
     pinScores.push(
