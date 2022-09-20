@@ -350,6 +350,16 @@ const NumbersGameConfig = (props: Props) => {
       return;
     }
 
+    /*
+    The current guess already has both operands
+    This likely means the operands total to an invalid result
+    Instead of moving on to next row/guess,
+    Wait on the invalid result being resolved by the user (either through undoing or changing the operator)
+    */
+    if (currentGuess.operand1 !== null && currentGuess.operand2 !== null) {
+      return;
+    }
+
     let updatedGuess: Guess;
 
     const bothOperandsEmpty = currentGuess.operand1 === null && currentGuess.operand2 === null;
@@ -365,8 +375,12 @@ const NumbersGameConfig = (props: Props) => {
       updatedGuess = currentGuess;
     }
 
-    // If guess is now full
-    if (updatedGuess.operand1 !== null && updatedGuess.operand2 !== null) {
+    // If guess is now full and the guess makes a valid result
+    if (
+      updatedGuess.operand1 !== null &&
+      updatedGuess.operand2 !== null &&
+      getNumbersGameGuessTotal(updatedGuess) !== null
+    ) {
       // Record the guessed expression
       setGuesses(guesses.concat(updatedGuess));
       // Clear current guess
@@ -427,7 +441,7 @@ const NumbersGameConfig = (props: Props) => {
 
     // Undoing when the current row is empty/blank
     if (currentRowEmpty) {
-      // Just go back a row (the current guess will automatically the guess at this previous row)
+      // Just go back a row (the current guess will automatically be the guess at this previous row)
       setWordIndex(Math.max(0, wordIndex - 1));
       return;
     }
