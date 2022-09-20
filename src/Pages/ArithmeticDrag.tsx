@@ -11,7 +11,7 @@ import { Theme } from "../Data/Themes";
 import { DraggableItem } from "../Components/DraggableItem";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
 import { shuffleArray } from "../Helper Functions/shuffleArray";
-import { operatorSymbols, operators } from "../Data/operators";
+import { operatorSymbols, operators } from "../Data/Operators";
 import { getGamemodeDefaultTimerValue } from "../Helper Functions/getGamemodeDefaultTimerValue";
 import { getRandomElementFrom } from "../Helper Functions/getRandomElementFrom";
 import { getRandomIntFromRange } from "../Helper Functions/getRandomIntFromRange";

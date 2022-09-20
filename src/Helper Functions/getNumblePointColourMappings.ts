@@ -20,6 +20,7 @@ What colour are all the pins in this range?
 */
 export type NumblePointColourRange = { start: number; end: number; points: number; colour: NumbleColour };
 
+// TODO: Split into /Data and /Helper Function files
 const hexagon25: NumblePointColourRange[] = [
   { start: 1, end: 6, points: 20, colour: "orange" },
   { start: 7, end: 10, points: 50, colour: "yellow" },

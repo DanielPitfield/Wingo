@@ -1,6 +1,6 @@
 import { getRandomIntFromRange } from "../Helper Functions/getRandomIntFromRange";
 import { Difficulty } from "./DefaultGamemodeSettings";
-import { operators } from "./operators";
+import { operators } from "./Operators";
 
 /** Config for a specific number set (exported for config from campaign) */
 export type NumberSetTemplate = {

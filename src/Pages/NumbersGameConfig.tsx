@@ -3,7 +3,7 @@ import { PageName } from "../Data/PageNames";
 import NumbersGame from "./NumbersGame";
 import { Theme } from "../Data/Themes";
 import { SaveData, SettingsData } from "../Data/SaveData";
-import { operators } from "../Data/operators";
+import { operators } from "../Data/Operators";
 import { getGamemodeDefaultTimerValue } from "../Helper Functions/getGamemodeDefaultTimerValue";
 import { hasNumberSelectionFinished } from "../Helper Functions/hasNumberSelectionFinished";
 import { getNumbersGameGuessTotal } from "../Helper Functions/getNumbersGameGuessTotal";

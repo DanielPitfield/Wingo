@@ -1,6 +1,8 @@
 import NumberTile from "./NumberTile";
 import OperatorTile from "./OperatorTile";
-import { Guess, operators } from "../Pages/NumbersGameConfig";
+import { Guess } from "../Pages/NumbersGameConfig";
+import { operators } from "../Data/Operators";
+import { getNumbersGameGuessTotal } from "../Helper Functions/getNumbersGameGuessTotal";
 
 interface Props {
   onClick: (
@@ -28,7 +30,9 @@ export const NumberRow = (props: Props) => {
       <NumberTile
         key="first-operand"
         number={props.expression ? props.expression.operand1 : null}
-        disabled={props.disabled || calculateTotal(props.expression) !== null || props.expression.operand1 === null}
+        disabled={
+          props.disabled || getNumbersGameGuessTotal(props.expression) !== null || props.expression.operand1 === null
+        }
       />
 
       <OperatorTile
@@ -36,14 +40,16 @@ export const NumberRow = (props: Props) => {
         hasTimerEnded={props.hasTimerEnded}
         targetNumber={props.targetNumber}
         setOperator={props.setOperator}
-        disabled={props.disabled || calculateTotal(props.expression) !== null}
+        disabled={props.disabled || getNumbersGameGuessTotal(props.expression) !== null}
         operator={props.expression ? props.expression.operator : "+"}
       />
 
       <NumberTile
         key="second-operand"
         number={props.expression ? props.expression.operand2 : null}
-        disabled={props.disabled || calculateTotal(props.expression) !== null || props.expression.operand2 === null}
+        disabled={
+          props.disabled || getNumbersGameGuessTotal(props.expression) !== null || props.expression.operand2 === null
+        }
       />
 
       <div key="equals" className="equals_tile" data-disabled={true} data-is-readonly={false}>
@@ -52,14 +58,17 @@ export const NumberRow = (props: Props) => {
 
       <NumberTile
         key="row_result"
-        number={calculateTotal(props.expression) || null}
+        number={getNumbersGameGuessTotal(props.expression) || null}
         disabled={
           props.disabled ||
           props.intermediaryGuessStatuses.find((x) => x.wordIndex === props.rowIndex)?.picked === true ||
-          calculateTotal(props.expression) === null
+          getNumbersGameGuessTotal(props.expression) === null
         }
         onClick={() =>
-          props.onClick(calculateTotal(props.expression) || null, { type: "intermediary", rowIndex: props.rowIndex })
+          props.onClick(getNumbersGameGuessTotal(props.expression) || null, {
+            type: "intermediary",
+            rowIndex: props.rowIndex,
+          })
         }
       />
     </div>

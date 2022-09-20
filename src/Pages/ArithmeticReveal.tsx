@@ -11,7 +11,7 @@ import GamemodeSettingsMenu from "../Components/GamemodeSettingsMenu";
 import { arithmeticNumberSize, arithmeticNumberSizes } from "./ArithmeticDrag";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
 import { MAX_NUMPAD_GUESS_LENGTH } from "../Data/GamemodeSettingsInputLimits";
-import { operators } from "../Data/operators";
+import { operators } from "../Data/Operators";
 import { getGamemodeDefaultTimerValue } from "../Helper Functions/getGamemodeDefaultTimerValue";
 import { getQuestionSetOutcome } from "../Helper Functions/getQuestionSetOutcome";
 import { getRandomElementFrom } from "../Helper Functions/getRandomElementFrom";

@@ -1,4 +1,4 @@
-import { operators } from "../Data/operators";
+import { operators } from "../Data/Operators";
 import { Guess } from "../Pages/NumbersGameConfig";
 
 export function getNumbersGameGuessTotal(guess: Guess): number | null {

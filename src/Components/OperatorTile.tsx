@@ -1,4 +1,4 @@
-import { operators } from "../Data/operators";
+import { operators } from "../Data/Operators";
 
 interface Props {
   hasTimerEnded: boolean;
