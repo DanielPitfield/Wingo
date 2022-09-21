@@ -559,10 +559,14 @@ const WingoConfig = (props: Props) => {
     }
   }
 
+  const isCurrentGuessCorrect = () => {
+    return currentWord.toLowerCase() === targetWord.toLowerCase() && currentWord.length > 0;
+  };
+
   function ResetGame() {
     if (!inProgress) {
       // Guessed the target word correctly
-      const wasCorrect = currentWord.length > 0 && currentWord.toUpperCase() === targetWord?.toUpperCase();
+      const wasCorrect = isCurrentGuessCorrect();
 
       if (props.gameshowScore === undefined) {
         props.onComplete(wasCorrect);
@@ -592,7 +596,10 @@ const WingoConfig = (props: Props) => {
     setMostRecentTotalSeconds(newRemainingSeconds);
     setRemainingSeconds(newRemainingSeconds);
 
-    const limitlessAndLivesRemaining = props.mode === "limitless" && numGuesses > 1;
+    // TODO: MAJOR: Limitless mode shouldn't be resetting with lives left anyway (should be continuing), but there is a side effect or bug somewhere
+
+    // TODO: numGuesses >= 1, stops resetting with two rows left, but means hard reset doesn't reset the numGuesses
+    const limitlessAndLivesRemaining = props.mode === "limitless" && numGuesses >= 1;
 
     // Don't reset to defaultNumGuesses when there are lives remaining in limitless mode
     if (!limitlessAndLivesRemaining) {
@@ -620,21 +627,19 @@ const WingoConfig = (props: Props) => {
     setMostRecentTotalSeconds(newRemainingSeconds);
     setRemainingSeconds(newRemainingSeconds);
 
-    const isCorrectAnswer = currentWord.toLowerCase() === targetWord.toLowerCase() && currentWord.length > 0;
-
     // Add new rows for success in limitless mode
-    if (props.mode === "limitless" && isCorrectAnswer) {
+    if (props.mode === "limitless" && isCurrentGuessCorrect()) {
       const newLives = getNumNewLimitlessLives(numGuesses, wordIndex, gamemodeSettings.maxLivesConfig);
       setNumGuesses(numGuesses + newLives);
     }
 
-    // Remove row for failiure in limitless mode
-    if (props.mode === "limitless" && numGuesses > 1 && !isCorrectAnswer) {
-      setNumGuesses(numGuesses - 1); // Remove a row
+    // Remove a row for failiure in limitless mode
+    if (props.mode === "limitless" && !isCurrentGuessCorrect() && numGuesses >= 1) {
+      setNumGuesses(numGuesses - 1);
     }
 
     // Increment word length (only on success) for these modes
-    if ((props.mode === "limitless" || props.mode === "increasing") && isCorrectAnswer) {
+    if ((props.mode === "limitless" || props.mode === "increasing") && isCurrentGuessCorrect()) {
       const newGamemodeSettings = {
         ...gamemodeSettings,
         wordLength: gamemodeSettings.wordLength + 1,
@@ -695,20 +700,33 @@ const WingoConfig = (props: Props) => {
     return goldTotal;
   }
 
+  function isOutcomeContinue(): boolean {
+    const correctAnswer = currentWord.length > 0 && currentWord.toUpperCase() === targetWord.toUpperCase();
+
+    if (props.mode === "increasing") {
+      // Correct and next wordLength does not exceed limit
+      return correctAnswer && props.gamemodeSettings.wordLength < props.gamemodeSettings.wordLengthMaxLimit;
+    }
+
+    if (props.mode === "limitless") {
+      // Correct answer with last row left
+      const lastRowCorrectAnswer = numGuesses === 1 && correctAnswer;
+      // Lives left or correct answer with last remaining life
+      return lastRowCorrectAnswer || numGuesses > 1;
+    }
+
+    return false;
+  }
+
   function onEnter() {
     // Daily/weekly modes are one attempt only, if they are over, don't allow pressing Enter to restart
     if (!inProgress && getDailyWeeklyWingoModes().includes(props.mode)) {
       return;
     }
-    
-    // Pressing Enter to Continue or Restart
-    if (!inProgress) {
-      const isContinue =
-        targetWord?.toUpperCase() === currentWord.toUpperCase() &&
-        (props.mode === "increasing" || props.mode === "limitless");
 
-      // Correct word and either increasing or limitless mode
-      isContinue ? ContinueGame() : ResetGame();
+    // Pressing Enter to Continue/Restart
+    if (!inProgress) {
+      isOutcomeContinue() ? ContinueGame() : ResetGame();
     }
 
     // Used all guesses

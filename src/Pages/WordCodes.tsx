@@ -180,7 +180,7 @@ const WordCodes = (props: Props) => {
       return;
     }
 
-    if (isGuessCorrect()) {
+    if (isCurrentGuessCorrect()) {
       playCorrectChimeSoundEffect();
       setNumCorrectAnswers(numCorrectAnswers + 1);
     } else {
@@ -427,7 +427,7 @@ const WordCodes = (props: Props) => {
     return questionWordCodes[questionIndex];
   };
 
-  const isGuessCorrect = () => {
+  const isCurrentGuessCorrect = () => {
     if (props.mode === "match") {
       const numCorrectTiles = wordTiles.filter((x) => x.status === "correct").length;
       return numCorrectTiles === getTotalNumQuestions();
@@ -572,11 +572,11 @@ const WordCodes = (props: Props) => {
       // Show how many tiles are in correct position
       return (
         <>
-          <MessageNotification type={isGuessCorrect() ? "success" : "error"}>
-            <strong>{isGuessCorrect() ? "All tiles in the correct order!" : `${numCorrectTiles} tiles correct`}</strong>
+          <MessageNotification type={isCurrentGuessCorrect() ? "success" : "error"}>
+            <strong>{isCurrentGuessCorrect() ? "All tiles in the correct order!" : `${numCorrectTiles} tiles correct`}</strong>
             <br />
 
-            {!isGuessCorrect() && (
+            {!isCurrentGuessCorrect() && (
               <span>
                 The answers were:
                 <strong>
@@ -601,11 +601,11 @@ const WordCodes = (props: Props) => {
     }
 
     const currentQuestionOutcome = (
-      <MessageNotification type={isGuessCorrect() ? "success" : "error"}>
-        <strong>{isGuessCorrect() ? "Correct!" : "Incorrect!"}</strong>
+      <MessageNotification type={isCurrentGuessCorrect() ? "success" : "error"}>
+        <strong>{isCurrentGuessCorrect() ? "Correct!" : "Incorrect!"}</strong>
         <br />
 
-        {!isGuessCorrect() && (
+        {!isCurrentGuessCorrect() && (
           <span>
             The answer was
             <strong>{getCurrentQuestion().isWordToCode ? getCurrentQuestion().code : getCurrentQuestion().word}</strong>
@@ -1024,7 +1024,7 @@ const WordCodes = (props: Props) => {
           <div className="guess">
             <LetterTile
               letter={guess}
-              status={inProgress ? "not set" : isGuessCorrect() ? "correct" : "incorrect"}
+              status={inProgress ? "not set" : isCurrentGuessCorrect() ? "correct" : "incorrect"}
               settings={props.settings}
             ></LetterTile>
           </div>

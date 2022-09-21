@@ -404,7 +404,7 @@ const Wingo = (props: Props) => {
       return;
     }
 
-    if (isGuessCorrect()) {
+    if (isCurrentGuessCorrect()) {
       playCorrectChimeSoundEffect();
     } else {
       playFailureChimeSoundEffect();
@@ -424,9 +424,9 @@ const Wingo = (props: Props) => {
     );
   }
 
-  const isGuessCorrect = () => {
+  const isCurrentGuessCorrect = () => {
     return (
-      props.targetWord.length > 0 &&
+      props.currentWord.length > 0 &&
       props.currentWord.toUpperCase() === props.targetWord.toUpperCase() &&
       props.inDictionary
     );
@@ -445,7 +445,7 @@ const Wingo = (props: Props) => {
         props.gamemodeSettings.maxLivesConfig
       );
 
-      if (isGuessCorrect()) {
+      if (isCurrentGuessCorrect()) {
         return (
           <MessageNotification type="success">
             <strong>
@@ -483,8 +483,8 @@ const Wingo = (props: Props) => {
     }
 
     return (
-      <MessageNotification type={isGuessCorrect() ? "success" : "error"}>
-        <strong>{isGuessCorrect() ? "Correct!" : "Incorrect!"}</strong>
+      <MessageNotification type={isCurrentGuessCorrect() ? "success" : "error"}>
+        <strong>{isCurrentGuessCorrect() ? "Correct!" : "Incorrect!"}</strong>
         <br />
 
         {!props.inDictionary && (
@@ -494,7 +494,7 @@ const Wingo = (props: Props) => {
           </>
         )}
 
-        {isGuessCorrect() && (
+        {isCurrentGuessCorrect() && (
           <strong>
             {props.wordIndex === 0
               ? "You guessed the word in one guess"
@@ -502,7 +502,7 @@ const Wingo = (props: Props) => {
           </strong>
         )}
 
-        {!isGuessCorrect() && !props.isCampaignLevel && (
+        {!isCurrentGuessCorrect() && !props.isCampaignLevel && (
           <>
             The word was: <strong>{props.targetWord.toUpperCase()}</strong>
           </>
