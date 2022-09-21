@@ -21,6 +21,8 @@ import { getGamemodeDefaultWordLength } from "../Helper Functions/getGamemodeDef
 import { getConundrum } from "../Helper Functions/getConundrum";
 import { getRandomElementFrom } from "../Helper Functions/getRandomElementFrom";
 import { puzzles_ten } from "../Data/WordArrays/Puzzles/Puzzles10";
+import { getLetterStatus } from "../Helper Functions/getLetterStatus";
+import { getNumNewLimitlessLives } from "../Helper Functions/getNumNewLimitlessLives";
 
 export type WingoMode =
   | "daily"
@@ -618,7 +620,7 @@ const WingoConfig = (props: Props) => {
 
     // Add new rows for success in limitless mode
     if (props.mode === "limitless" && isCorrectAnswer) {
-      const newLives = getNewLives(numGuesses, wordIndex, gamemodeSettings.maxLivesConfig);
+      const newLives = getNumNewLimitlessLives(numGuesses, wordIndex, gamemodeSettings.maxLivesConfig);
       setNumGuesses(numGuesses + newLives);
     }
 
