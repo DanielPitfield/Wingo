@@ -404,16 +404,10 @@ const Wingo = (props: Props) => {
       return;
     }
 
-    // Determine whether the game ended in failure or success
-    const wasFailure =
-      !props.inDictionary ||
-      (props.mode === "limitless" &&
-        getNumNewLimitlessLives(props.numGuesses, props.wordIndex, props.gamemodeSettings.maxLivesConfig) <= 0);
-
-    if (wasFailure) {
-      playFailureChimeSoundEffect();
-    } else {
+    if (isGuessCorrect()) {
       playCorrectChimeSoundEffect();
+    } else {
+      playFailureChimeSoundEffect();
     }
   }, [props.inProgress]);
 
@@ -595,6 +589,7 @@ const Wingo = (props: Props) => {
       }}
     >
       {props.gameshowScore !== undefined && <div className="gameshow-score">{displayGameshowScore()}</div>}
+      {props.inProgress && <div>{displayHint()}</div>}
       <div>{displayOutcome()}</div>
       {props.mode === "daily" && !props.inProgress && (
         <MessageNotification type="default">
