@@ -23,20 +23,24 @@ import { getRandomElementFrom } from "../Helper Functions/getRandomElementFrom";
 import { puzzles_ten } from "../Data/WordArrays/Puzzles/Puzzles10";
 import { getLetterStatus } from "../Helper Functions/getLetterStatus";
 import { getNumNewLimitlessLives } from "../Helper Functions/getNumNewLimitlessLives";
+import { getDailyWeeklyWingoModes } from "../Helper Functions/getDailyWeeklyWingoModes";
 
-export type WingoMode =
-  | "daily"
-  | "repeat"
-  | "category"
-  | "increasing"
-  | "limitless"
-  | "puzzle"
-  | "interlinked"
-  | "crossword/fit"
-  | "crossword/daily"
-  | "crossword/weekly"
-  | "crossword"
-  | "conundrum";
+export const wingoModes = [
+  "daily",
+  "repeat",
+  "category",
+  "increasing",
+  "limitless",
+  "puzzle",
+  "interlinked",
+  "crossword/fit",
+  "crossword/daily",
+  "crossword/weekly",
+  "crossword",
+  "conundrum",
+] as const;
+
+export type WingoMode = typeof wingoModes[number];
 
 export interface WingoConfigProps {
   mode: WingoMode;
@@ -692,28 +696,25 @@ const WingoConfig = (props: Props) => {
   }
 
   function onEnter() {
-    // Pressing Enter to Continue or Restart (daily mode is strictly one attempt only, so no continue or restart)
-    if (!inProgress && props.mode !== "daily") {
-      // Correct word and either increasing or limitless mode
-      if (
-        targetWord?.toUpperCase() === currentWord.toUpperCase() &&
-        (props.mode === "increasing" || props.mode === "limitless")
-      ) {
-        ContinueGame();
-      } else {
-        ResetGame();
-      }
-
+    // Daily/weekly modes are one attempt only, if they are over, don't allow pressing Enter to restart
+    if (!inProgress && getDailyWeeklyWingoModes().includes(props.mode)) {
       return;
+    }
+    
+    // Pressing Enter to Continue or Restart
+    if (!inProgress) {
+      const isContinue =
+        targetWord?.toUpperCase() === currentWord.toUpperCase() &&
+        (props.mode === "increasing" || props.mode === "limitless");
+
+      // Correct word and either increasing or limitless mode
+      isContinue ? ContinueGame() : ResetGame();
     }
 
     // Used all guesses
     if (wordIndex >= numGuesses) {
       return;
     }
-
-    // Start as true until proven otherwise
-    setInDictionary(true);
 
     // Category mode but no target word (to determine the valid category)
     if (props.mode === "category" && !targetWord) {
@@ -725,10 +726,12 @@ const WingoConfig = (props: Props) => {
       setIsIncompleteWord(true);
       return;
     }
+
+    // Start as true until proven otherwise
+    setInDictionary(true);
+
     // The word is complete or enforce full length guesses is off
-    else {
-      setIsIncompleteWord(false);
-    }
+    setIsIncompleteWord(false);
 
     // Don't end game prematurely (before wordArray is determined)
     if (wordArray.length === 0 && currentWord.toLowerCase() !== targetWord.toLowerCase()) {
