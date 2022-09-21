@@ -51,7 +51,7 @@ export interface WingoConfigProps {
     isHintShown: boolean;
 
     // Puzzle mode
-    puzzleRevealMs: number;
+    puzzleRevealSeconds: number;
     puzzleLeaveNumBlanks: number;
 
     // Limitless mode
@@ -462,7 +462,7 @@ const WingoConfig = (props: Props) => {
           }
         }
         setRevealedLetterIndexes(newrevealedLetterIndexes);
-      }, gamemodeSettings.puzzleRevealMs);
+      }, gamemodeSettings.puzzleRevealSeconds * 1000);
     }
 
     return () => {
@@ -488,7 +488,7 @@ const WingoConfig = (props: Props) => {
     props.mode === "category" || gamemodeSettings.wordLength,
     // Puzzle settings are changed
     gamemodeSettings.puzzleLeaveNumBlanks,
-    gamemodeSettings.puzzleRevealMs,
+    gamemodeSettings.puzzleRevealSeconds,
     // Game ends or mode is changed
     inProgress,
     props.mode,
@@ -511,7 +511,7 @@ const WingoConfig = (props: Props) => {
           wordLength: gamemodeSettings.wordLength,
           isFirstLetterProvided: gamemodeSettings.isFirstLetterProvided,
           isHintShown: gamemodeSettings.isHintShown,
-          puzzleRevealMs: gamemodeSettings.puzzleRevealMs,
+          puzzleRevealSeconds: gamemodeSettings.puzzleRevealSeconds,
           puzzleLeaveNumBlanks: gamemodeSettings.puzzleLeaveNumBlanks,
           maxLivesConfig: gamemodeSettings.maxLivesConfig,
           wordLengthMaxLimit: gamemodeSettings.wordLengthMaxLimit,

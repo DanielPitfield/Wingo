@@ -18,7 +18,7 @@ export const area: AreaConfig = {
         gamemodeSettings: {
           isFirstLetterProvided: true,
           puzzleLeaveNumBlanks: 0,
-          puzzleRevealMs: 0,
+          puzzleRevealSeconds: 0,
           timerConfig: { isTimed: false },
         },
         checkInDictionary: false,
@@ -45,7 +45,7 @@ export const area: AreaConfig = {
           gamemodeSettings: {
             isFirstLetterProvided: true,
             puzzleLeaveNumBlanks: 0,
-            puzzleRevealMs: 0,
+            puzzleRevealSeconds: 0,
             timerConfig: { isTimed: false },
           },
         },
@@ -69,7 +69,7 @@ export const area: AreaConfig = {
           gamemodeSettings: {
             isFirstLetterProvided: true,
             puzzleLeaveNumBlanks: 0,
-            puzzleRevealMs: 0,
+            puzzleRevealSeconds: 0,
             timerConfig: { isTimed: false },
           },
         },
@@ -93,7 +93,7 @@ export const area: AreaConfig = {
           gamemodeSettings: {
             isFirstLetterProvided: false,
             puzzleLeaveNumBlanks: 3,
-            puzzleRevealMs: 1500,
+            puzzleRevealSeconds: 1500,
             timerConfig: { isTimed: false },
           },
         },
@@ -117,7 +117,7 @@ export const area: AreaConfig = {
           gamemodeSettings: {
             isFirstLetterProvided: false,
             puzzleLeaveNumBlanks: 0,
-            puzzleRevealMs: 0,
+            puzzleRevealSeconds: 0,
             timerConfig: { isTimed: false },
           },
         },
@@ -141,7 +141,7 @@ export const area: AreaConfig = {
           gamemodeSettings: {
             isFirstLetterProvided: false,
             puzzleLeaveNumBlanks: 3,
-            puzzleRevealMs: 1500,
+            puzzleRevealSeconds: 1500,
             timerConfig: { isTimed: false },
           },
         },
@@ -165,7 +165,7 @@ export const area: AreaConfig = {
           gamemodeSettings: {
             isFirstLetterProvided: false,
             puzzleLeaveNumBlanks: 0,
-            puzzleRevealMs: 0,
+            puzzleRevealSeconds: 0,
             timerConfig: { isTimed: false },
           },
         },
@@ -189,7 +189,7 @@ export const area: AreaConfig = {
           gamemodeSettings: {
             isFirstLetterProvided: true,
             puzzleLeaveNumBlanks: 3,
-            puzzleRevealMs: 1500,
+            puzzleRevealSeconds: 1500,
             timerConfig: { isTimed: false },
           },
         },
@@ -213,7 +213,7 @@ export const area: AreaConfig = {
           gamemodeSettings: {
             isFirstLetterProvided: false,
             puzzleLeaveNumBlanks: 3,
-            puzzleRevealMs: 1500,
+            puzzleRevealSeconds: 1500,
             timerConfig: { isTimed: false },
           },
         },
@@ -237,7 +237,7 @@ export const area: AreaConfig = {
           gamemodeSettings: {
             isFirstLetterProvided: false,
             puzzleLeaveNumBlanks: 3,
-            puzzleRevealMs: 1500,
+            puzzleRevealSeconds: 1500,
             timerConfig: { isTimed: false },
           },
         },
@@ -261,7 +261,7 @@ export const area: AreaConfig = {
           gamemodeSettings: {
             isFirstLetterProvided: true,
             puzzleLeaveNumBlanks: 3,
-            puzzleRevealMs: 1500,
+            puzzleRevealSeconds: 1500,
             timerConfig: { isTimed: false },
           },
         },
@@ -285,7 +285,7 @@ export const area: AreaConfig = {
           gamemodeSettings: {
             isFirstLetterProvided: true,
             puzzleLeaveNumBlanks: 3,
-            puzzleRevealMs: 1500,
+            puzzleRevealSeconds: 1500,
             timerConfig: { isTimed: false },
           },
         },
@@ -309,7 +309,7 @@ export const area: AreaConfig = {
           gamemodeSettings: {
             isFirstLetterProvided: true,
             puzzleLeaveNumBlanks: 3,
-            puzzleRevealMs: 1500,
+            puzzleRevealSeconds: 1500,
             timerConfig: { isTimed: false },
           },
         },
@@ -333,7 +333,7 @@ export const area: AreaConfig = {
           gamemodeSettings: {
             isFirstLetterProvided: false,
             puzzleLeaveNumBlanks: 3,
-            puzzleRevealMs: 1500,
+            puzzleRevealSeconds: 1500,
             timerConfig: { isTimed: false },
           },
         },
@@ -357,7 +357,7 @@ export const area: AreaConfig = {
           gamemodeSettings: {
             isFirstLetterProvided: false,
             puzzleLeaveNumBlanks: 3,
-            puzzleRevealMs: 1500,
+            puzzleRevealSeconds: 1500,
             timerConfig: { isTimed: false },
           },
         },
@@ -381,7 +381,7 @@ export const area: AreaConfig = {
           gamemodeSettings: {
             isFirstLetterProvided: false,
             puzzleLeaveNumBlanks: 3,
-            puzzleRevealMs: 1500,
+            puzzleRevealSeconds: 1500,
             timerConfig: { isTimed: false },
           },
         },
@@ -405,7 +405,7 @@ export const area: AreaConfig = {
           gamemodeSettings: {
             isFirstLetterProvided: true,
             puzzleLeaveNumBlanks: 3,
-            puzzleRevealMs: 1500,
+            puzzleRevealSeconds: 1500,
             timerConfig: { isTimed: false },
           },
         },
@@ -429,7 +429,7 @@ export const area: AreaConfig = {
           gamemodeSettings: {
             isFirstLetterProvided: true,
             puzzleLeaveNumBlanks: 3,
-            puzzleRevealMs: 1500,
+            puzzleRevealSeconds: 1500,
             timerConfig: { isTimed: false },
           },
         },
@@ -453,7 +453,7 @@ export const area: AreaConfig = {
           gamemodeSettings: {
             isFirstLetterProvided: true,
             puzzleLeaveNumBlanks: 3,
-            puzzleRevealMs: 1500,
+            puzzleRevealSeconds: 1500,
             timerConfig: { isTimed: false },
           },
         },
@@ -477,7 +477,7 @@ export const area: AreaConfig = {
           gamemodeSettings: {
             isFirstLetterProvided: true,
             puzzleLeaveNumBlanks: 3,
-            puzzleRevealMs: 1500,
+            puzzleRevealSeconds: 1500,
             timerConfig: { isTimed: false },
           },
         },
@@ -501,7 +501,7 @@ export const area: AreaConfig = {
           gamemodeSettings: {
             isFirstLetterProvided: true,
             puzzleLeaveNumBlanks: 3,
-            puzzleRevealMs: 1500,
+            puzzleRevealSeconds: 1500,
             timerConfig: { isTimed: false },
           },
         },
@@ -525,7 +525,7 @@ export const area: AreaConfig = {
           gamemodeSettings: {
             isFirstLetterProvided: true,
             puzzleLeaveNumBlanks: 3,
-            puzzleRevealMs: 1500,
+            puzzleRevealSeconds: 1500,
             timerConfig: { isTimed: false },
           },
         },
@@ -549,7 +549,7 @@ export const area: AreaConfig = {
           gamemodeSettings: {
             isFirstLetterProvided: true,
             puzzleLeaveNumBlanks: 3,
-            puzzleRevealMs: 1500,
+            puzzleRevealSeconds: 1500,
             timerConfig: { isTimed: false },
           },
         },
@@ -573,7 +573,7 @@ export const area: AreaConfig = {
           gamemodeSettings: {
             isFirstLetterProvided: true,
             puzzleLeaveNumBlanks: 3,
-            puzzleRevealMs: 1500,
+            puzzleRevealSeconds: 1500,
             timerConfig: { isTimed: false },
           },
         },
@@ -597,7 +597,7 @@ export const area: AreaConfig = {
           gamemodeSettings: {
             isFirstLetterProvided: true,
             puzzleLeaveNumBlanks: 3,
-            puzzleRevealMs: 1500,
+            puzzleRevealSeconds: 1500,
             timerConfig: { isTimed: false },
           },
         },
@@ -621,7 +621,7 @@ export const area: AreaConfig = {
           gamemodeSettings: {
             isFirstLetterProvided: true,
             puzzleLeaveNumBlanks: 3,
-            puzzleRevealMs: 1500,
+            puzzleRevealSeconds: 1500,
             timerConfig: { isTimed: false },
           },
         },
@@ -645,7 +645,7 @@ export const area: AreaConfig = {
           gamemodeSettings: {
             isFirstLetterProvided: true,
             puzzleLeaveNumBlanks: 3,
-            puzzleRevealMs: 1500,
+            puzzleRevealSeconds: 1500,
             timerConfig: { isTimed: false },
           },
         },
@@ -669,7 +669,7 @@ export const area: AreaConfig = {
           gamemodeSettings: {
             isFirstLetterProvided: true,
             puzzleLeaveNumBlanks: 3,
-            puzzleRevealMs: 1500,
+            puzzleRevealSeconds: 1500,
             timerConfig: { isTimed: false },
           },
         },
@@ -693,7 +693,7 @@ export const area: AreaConfig = {
           gamemodeSettings: {
             isFirstLetterProvided: true,
             puzzleLeaveNumBlanks: 3,
-            puzzleRevealMs: 1500,
+            puzzleRevealSeconds: 1500,
             timerConfig: { isTimed: false },
           },
         },
@@ -717,7 +717,7 @@ export const area: AreaConfig = {
           gamemodeSettings: {
             isFirstLetterProvided: true,
             puzzleLeaveNumBlanks: 3,
-            puzzleRevealMs: 1500,
+            puzzleRevealSeconds: 1500,
             timerConfig: { isTimed: false },
           },
         },
@@ -741,7 +741,7 @@ export const area: AreaConfig = {
           gamemodeSettings: {
             isFirstLetterProvided: true,
             puzzleLeaveNumBlanks: 3,
-            puzzleRevealMs: 1500,
+            puzzleRevealSeconds: 1500,
             timerConfig: { isTimed: false },
           },
         },
@@ -765,7 +765,7 @@ export const area: AreaConfig = {
           gamemodeSettings: {
             isFirstLetterProvided: true,
             puzzleLeaveNumBlanks: 3,
-            puzzleRevealMs: 1500,
+            puzzleRevealSeconds: 1500,
             timerConfig: { isTimed: false },
           },
         },
@@ -789,7 +789,7 @@ export const area: AreaConfig = {
           gamemodeSettings: {
             isFirstLetterProvided: true,
             puzzleLeaveNumBlanks: 3,
-            puzzleRevealMs: 1500,
+            puzzleRevealSeconds: 1500,
             timerConfig: { isTimed: false },
           },
         },
@@ -813,7 +813,7 @@ export const area: AreaConfig = {
           gamemodeSettings: {
             isFirstLetterProvided: true,
             puzzleLeaveNumBlanks: 3,
-            puzzleRevealMs: 1500,
+            puzzleRevealSeconds: 1500,
             timerConfig: { isTimed: false },
           },
         },
@@ -837,7 +837,7 @@ export const area: AreaConfig = {
           gamemodeSettings: {
             isFirstLetterProvided: true,
             puzzleLeaveNumBlanks: 3,
-            puzzleRevealMs: 1500,
+            puzzleRevealSeconds: 1500,
             timerConfig: { isTimed: false },
           },
         },
@@ -861,7 +861,7 @@ export const area: AreaConfig = {
           gamemodeSettings: {
             isFirstLetterProvided: true,
             puzzleLeaveNumBlanks: 3,
-            puzzleRevealMs: 1500,
+            puzzleRevealSeconds: 1500,
             timerConfig: { isTimed: false },
           },
         },

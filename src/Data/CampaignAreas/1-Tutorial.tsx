@@ -28,7 +28,7 @@ export const area: AreaConfig = {
         gamemodeSettings: {
           isFirstLetterProvided: true,
           puzzleLeaveNumBlanks: 0,
-          puzzleRevealMs: 0,
+          puzzleRevealSeconds: 0,
           timerConfig: { isTimed: false },
         },
         checkInDictionary: false,
@@ -60,7 +60,7 @@ export const area: AreaConfig = {
           gamemodeSettings: {
             isFirstLetterProvided: true,
             puzzleLeaveNumBlanks: 0,
-            puzzleRevealMs: 0,
+            puzzleRevealSeconds: 0,
             timerConfig: { isTimed: false },
           },
           checkInDictionary: false,

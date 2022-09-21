@@ -40,9 +40,8 @@ const WingoGamemodeSettingsOptions = (props: Props) => {
         <label>
           <input
             type="number"
-            name="puzzleRevealMs"
-            // Show value in seconds (divide by 1000)
-            value={props.gamemodeSettings.puzzleRevealMs / 1000}
+            name="puzzleRevealSeconds"
+            value={props.gamemodeSettings.puzzleRevealSeconds}
             min={MIN_PUZZLE_REVEAL_INTERVAL_SECONDS}
             max={MAX_PUZZLE_REVEAL_INTERVAL_SECONDS}
             onChange={props.handleSimpleGamemodeSettingsChange}

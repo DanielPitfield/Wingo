@@ -20,7 +20,7 @@ import { getGamemodeDefaultWordLength } from "../Helper Functions/getGamemodeDef
 export const difficultyOptions = ["novice", "easy", "medium", "hard", "expert"] as const;
 export type Difficulty = typeof difficultyOptions[number];
 
-export const DEFAULT_PUZZLE_REVEAL_MS = 2000;
+export const DEFAULT_PUZZLE_REVEAL_SECONDS = 2;
 export const DEFAULT_PUZZLE_LEAVE_NUM_BLANKS = 3;
 
 export const DEFAULT_NUMBERS_GAME_NUM_ROWS = 5;
@@ -34,7 +34,7 @@ export const DEFAULT_FIT_RESTRICTION = 0;
 const commonWingoSettings = {
   isFirstLetterProvided: false,
   isHintShown: false,
-  puzzleRevealMs: DEFAULT_PUZZLE_REVEAL_MS,
+  puzzleRevealSeconds: DEFAULT_PUZZLE_REVEAL_SECONDS,
   puzzleLeaveNumBlanks: DEFAULT_PUZZLE_LEAVE_NUM_BLANKS,
   maxLivesConfig: { isLimited: true, maxLives: DEFAULT_WINGO_INCREASING_MAX_NUM_LIVES },
   wordLengthMaxLimit: MAX_TARGET_WORD_LENGTH,
