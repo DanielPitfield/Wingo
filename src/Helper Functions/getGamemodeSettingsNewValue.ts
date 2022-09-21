@@ -12,39 +12,37 @@ export const getNewGamemodeSettingValue = (
     return;
   }
 
-  // Look for a return value using the name first
-  switch (name) {
-    case "puzzleRevealMs":
-      return e.target.valueAsNumber * 1000;
-    case "maxLivesConfig":
-      if (type === "checkbox" && mostRecentValues?.maxLives !== undefined) {
-        return e.target.checked ? { isLimited: true, maxLives: mostRecentValues?.maxLives } : { isLimited: false };
-      } else if (type === "number") {
-        return { isLimited: true, maxLives: e.target.valueAsNumber };
-      }
-      break;
+  if (name === "puzzleRevealMs") {
+    // Look for a return value using the name first
+    return e.target.valueAsNumber * 1000;
+  }
 
-    case "timerConfig":
-      if (type === "checkbox" && mostRecentValues?.totalSeconds !== undefined) {
-        // If currently timed, on change, make the game not timed and vice versa
-        return e.target.checked ? { isTimed: true, seconds: mostRecentValues?.totalSeconds } : { isTimed: false };
-      } else if (type === "number") {
-        return { isTimed: true, seconds: e.target.valueAsNumber };
-      }
-      break;
+  if (name === "maxLivesConfig" && type === "checkbox" && mostRecentValues?.maxLives !== undefined) {
+    return e.target.checked ? { isLimited: true, maxLives: mostRecentValues?.maxLives } : { isLimited: false };
+  }
 
-    // No case specified for the name, then look for a return value using type
+  if (name === "maxLivesConfig" && type === "number") {
+    return { isLimited: true, maxLives: e.target.valueAsNumber };
+  }
+
+  if (name === "timerConfig" && type === "checkbox" && mostRecentValues?.totalSeconds !== undefined) {
+    return e.target.checked ? { isTimed: true, seconds: mostRecentValues?.totalSeconds } : { isTimed: false };
+  }
+
+  if (name === "timerConfig" && type === "number") {
+    return { isTimed: true, seconds: e.target.valueAsNumber };
+  }
+
+  // Now look by type
+  switch (type) {
+    case "number":
+      return e.target.valueAsNumber;
+
+    case "checkbox":
+      return e.target.checked;
+
+    // Default
     default:
-      switch (type) {
-        case "number":
-          return e.target.valueAsNumber;
-
-        case "checkbox":
-          return e.target.checked;
-
-        // Default
-        default:
-          return e.target.value;
-      }
+      return e.target.value;
   }
 };

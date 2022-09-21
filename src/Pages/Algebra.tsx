@@ -18,6 +18,8 @@ import { PageName } from "../Data/PageNames";
 import { getAlgebraTemplates } from "../Helper Functions/getAlgebraTemplates";
 import { getGamemodeDefaultTimerValue } from "../Helper Functions/getGamemodeDefaultTimerValue";
 import { getQuestionSetOutcome } from "../Helper Functions/getQuestionSetOutcome";
+import { getNewGamemodeSettingValue } from "../Helper Functions/getGamemodeSettingsNewValue";
+import AlgebraGamemodeSettingsOptions from "../Components/GamemodeSettingsOptions/AlgebraGamemodeSettingsOptions";
 
 export interface AlgebraProps {
   campaignConfig:
@@ -383,71 +385,14 @@ const Algebra = (props: Props) => {
     setGuess(`${guess}${number}`);
   }
 
-  function generateSettingsOptions(): React.ReactNode {
-    return (
-      <>
-        <label>
-          <select
-            onChange={(e) => {
-              const newGamemodeSettings = {
-                ...gamemodeSettings,
-                difficulty: e.target.value as Difficulty,
-              };
-              setGamemodeSettings(newGamemodeSettings);
-            }}
-            className="difficulty_input"
-            name="difficulty"
-            value={gamemodeSettings.difficulty}
-          >
-            {difficultyOptions.map((difficultyOption) => (
-              <option key={difficultyOption} value={difficultyOption}>
-                {difficultyOption}
-              </option>
-            ))}
-          </select>
-          Difficulty
-        </label>
+  const handleGamemodeSettingsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newGamemodeSettings: AlgebraProps["gamemodeSettings"] = {
+      ...props.gamemodeSettings,
+      [e.target.name]: getNewGamemodeSettingValue(e, { totalSeconds: mostRecentTotalSeconds }),
+    };
 
-        <label>
-          <input
-            checked={gamemodeSettings.timerConfig.isTimed}
-            type="checkbox"
-            onChange={() => {
-              // If currently timed, on change, make the game not timed and vice versa
-              const newTimer: { isTimed: true; seconds: number } | { isTimed: false } = gamemodeSettings.timerConfig
-                .isTimed
-                ? { isTimed: false }
-                : { isTimed: true, seconds: mostRecentTotalSeconds };
-              const newGamemodeSettings = { ...gamemodeSettings, timerConfig: newTimer };
-              setGamemodeSettings(newGamemodeSettings);
-            }}
-          ></input>
-          Timer
-        </label>
-        {gamemodeSettings.timerConfig.isTimed && (
-          <label>
-            <input
-              type="number"
-              value={gamemodeSettings.timerConfig.seconds}
-              min={10}
-              max={120}
-              step={5}
-              onChange={(e) => {
-                setRemainingSeconds(e.target.valueAsNumber);
-                setMostRecentTotalSeconds(e.target.valueAsNumber);
-                const newGamemodeSettings = {
-                  ...gamemodeSettings,
-                  timerConfig: { isTimed: true, seconds: e.target.valueAsNumber },
-                };
-                setGamemodeSettings(newGamemodeSettings);
-              }}
-            ></input>
-            Seconds
-          </label>
-        )}
-      </>
-    );
-  }
+    setGamemodeSettings(newGamemodeSettings);
+  };
 
   function displayInputMethods(): React.ReactNode {
     if (!props.settings.gameplay.keyboard) {
@@ -513,7 +458,14 @@ const Algebra = (props: Props) => {
     >
       {!props.campaignConfig.isCampaignLevel && (
         <div className="gamemodeSettings">
-          <GamemodeSettingsMenu>{generateSettingsOptions()}</GamemodeSettingsMenu>
+          <GamemodeSettingsMenu>
+            <AlgebraGamemodeSettingsOptions
+              gamemodeSettings={props.gamemodeSettings}
+              handleGamemodeSettingsChange={handleGamemodeSettingsChange}
+              setMostRecentTotalSeconds={setMostRecentTotalSeconds}
+              setRemainingSeconds={setRemainingSeconds}
+            ></AlgebraGamemodeSettingsOptions>
+          </GamemodeSettingsMenu>
         </div>
       )}
 
