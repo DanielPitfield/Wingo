@@ -417,104 +417,104 @@ const Wingo = (props: Props) => {
     }
   }, [props.inProgress]);
 
+  function displayHint() {
+    if (!props.targetHint) {
+      return;
+    }
+
+    // Display the hint (if defined)
+    return (
+      <MessageNotification type="info">
+        <strong>Hint:</strong> {props.targetHint}
+      </MessageNotification>
+    );
+  }
+
+  const isGuessCorrect = () => {
+    return (
+      props.targetWord.length > 0 &&
+      props.currentWord.toUpperCase() === props.targetWord.toUpperCase() &&
+      props.inDictionary
+    );
+  };
+
   function displayOutcome(): React.ReactNode {
-    // Game still in progress, display the hint (if defined)
-    if (props.inProgress && props.targetHint) {
-      return (
-        <MessageNotification type="info">
-          <strong>Hint:</strong> {props.targetHint}
-        </MessageNotification>
-      );
+    if (props.inProgress) {
+      return;
     }
-
-    // TODO: Refactor
-
-    // Invalid word (wrong spelling)
-    if (!props.inDictionary) {
-      if (props.mode === "puzzle" || props.mode === "conundrum") {
-        return <MessageNotification type="error">Incorrect</MessageNotification>;
-      } else {
-        return (
-          <MessageNotification type="error">
-            <strong>{props.currentWord.toUpperCase()}</strong> is not a valid word
-            {!props.isCampaignLevel && (
-              <>
-                <br />
-                The word was: <strong>{props.targetWord.toUpperCase()}</strong>
-              </>
-            )}
-            {props.mode === "limitless" && (
-              <>
-                <br />
-                <strong>-1 life</strong>
-              </>
-            )}
-          </MessageNotification>
-        );
-      }
-    }
-
-    // The number of rows not used in guessing word
-    const newLives = getNumNewLimitlessLives(props.numGuesses, props.wordIndex, props.gamemodeSettings.maxLivesConfig);
 
     if (props.mode === "limitless") {
-      // Word guessed with rows to spare
-      if (newLives > 0) {
-        return (
-          <MessageNotification type="success">
-            <strong>+{newLives}</strong> lives
-          </MessageNotification>
-        );
-        // Word guessed with last guess
-      } else if (props.currentWord.toUpperCase() === props.targetWord.toUpperCase()) {
-        return (
-          <MessageNotification type="success">
-            <strong>No lives added</strong>
-          </MessageNotification>
-        );
-        // Word was not guessed
-      } else {
-        return (
-          <MessageNotification type="default">
-            {!props.isCampaignLevel && (
-              <>
-                The word was: <strong>{props.targetWord.toUpperCase()}</strong>
-                <br />
-              </>
-            )}
-            <strong>-1 life</strong>
-          </MessageNotification>
-        );
-      }
-    }
-
-    // Other modes
-    if (props.wordIndex === 0 && props.currentWord.toUpperCase() === props.targetWord.toUpperCase()) {
-      if (props.mode === "puzzle" || props.mode === "conundrum") {
-        return <MessageNotification type="success">Correct</MessageNotification>;
-      } else {
-        return <MessageNotification type="success">You guessed the word in one guess</MessageNotification>;
-      }
-    } else if (
-      props.wordIndex < props.numGuesses &&
-      props.currentWord.toUpperCase() === props.targetWord.toUpperCase()
-    ) {
-      return (
-        <MessageNotification type="success">
-          You guessed the word in <strong>{props.wordIndex + 1}</strong> guesses
-        </MessageNotification>
+      // The number of rows not used in guessing word
+      const newLives = getNumNewLimitlessLives(
+        props.numGuesses,
+        props.wordIndex,
+        props.gamemodeSettings.maxLivesConfig
       );
-    } else {
+
+      if (isGuessCorrect()) {
+        return (
+          <MessageNotification type="success">
+            <strong>
+              {newLives > 0
+                ? /* Word guessed with rows to spare */ `+${newLives} ${newLives === 1 ? "life" : "lives"}`
+                : /* Word guessed with last guess */ "No lives added"}
+            </strong>
+          </MessageNotification>
+        );
+      }
+
       return (
-        <MessageNotification type="default">
+        <MessageNotification type={props.numGuesses > 1 ? "default" : "error"}>
+          {props.numGuesses <= 1 && (
+            <>
+              <strong>Game Over</strong>
+              <br />
+            </>
+          )}
+          {!props.inDictionary && (
+            <>
+              <strong>{props.currentWord.toUpperCase()}</strong> is not a valid word
+              <br />
+            </>
+          )}
           {!props.isCampaignLevel && (
             <>
               The word was: <strong>{props.targetWord.toUpperCase()}</strong>
+              <br />
             </>
           )}
+          <strong>-1 life</strong>
         </MessageNotification>
       );
     }
+
+    return (
+      <MessageNotification type={isGuessCorrect() ? "success" : "error"}>
+        <strong>{isGuessCorrect() ? "Correct!" : "Incorrect!"}</strong>
+        <br />
+
+        {!props.inDictionary && (
+          <>
+            <strong>{props.currentWord.toUpperCase()}</strong> is not a valid word
+            <br />
+          </>
+        )}
+
+        {isGuessCorrect() && (
+          <strong>
+            {props.wordIndex === 0
+              ? "You guessed the word in one guess"
+              : `You guessed the word in ${props.wordIndex + 1} guesses`}
+          </strong>
+        )}
+
+        {!isGuessCorrect() && !props.isCampaignLevel && (
+          <>
+            The word was: <strong>{props.targetWord.toUpperCase()}</strong>
+          </>
+        )}
+      </MessageNotification>
+    );
   }
 
   function isOutcomeContinue(): boolean {
