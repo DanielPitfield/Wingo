@@ -11,21 +11,13 @@ import { SettingsData } from "../Data/SaveData";
 import { useCorrectChime, useFailureChime, useLightPingChime } from "../Data/Sounds";
 import GamemodeSettingsMenu from "../Components/GamemodeSettingsMenu";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
-import {
-  MIN_PUZZLE_WORD_LENGTH,
-  MAX_PUZZLE_WORD_LENGTH,
-  MIN_PUZZLE_REVEAL_INTERVAL_SECONDS,
-  MAX_PUZZLE_REVEAL_INTERVAL_SECONDS,
-  MIN_PUZZLE_LEAVE_NUM_BLANKS,
-  MAX_TARGET_WORD_LENGTH,
-  MIN_TARGET_WORD_LENGTH,
-} from "../Data/GamemodeSettingsInputLimits";
 import { categoryMappings } from "../Data/WordArrayMappings";
 import { getNewGamemodeSettingValue } from "../Helper Functions/getGamemodeSettingsNewValue";
 import { DEFAULT_WINGO_INCREASING_MAX_NUM_LIVES } from "../Data/DefaultGamemodeSettings";
 import { LetterStatus } from "../Components/LetterTile";
 import { getGamemodeDefaultTimerValue } from "../Helper Functions/getGamemodeDefaultTimerValue";
 import { getNumNewLimitlessLives } from "../Helper Functions/getNumNewLimitlessLives";
+import GamemodeSettingsOptions from "../Components/GamemodeSettingsOptions/WingoGamemodeSettingsOptions";
 
 interface Props {
   isCampaignLevel: boolean;
@@ -227,177 +219,6 @@ const Wingo = (props: Props) => {
 
     props.updateGamemodeSettings(newGamemodeSettings);
   };
-
-  function generateSettingsOptions(): React.ReactNode {
-    // Show atleast 1 letter (can't all be blank!)
-    const MAX_PUZZLE_LEAVE_NUM_BLANKS = props.targetWord.length - 1;
-
-    // Can the current mode be continued?
-    const isContinuationMode = () => {
-      // The modes which can be continued (they aren't always just reset)
-      const continuationModes: typeof props.mode[] = ["increasing", "limitless"];
-      return continuationModes.includes(props.mode);
-    };
-
-    const MIN_WORD_LENGTH_LABEL = isContinuationMode() ? "Starting Word Length" : "Word Length";
-
-    // The starting word length must be atleast one below the maximum target word length (for 'increasing' mode), otherwise it would just be a mode of guessing one long word
-    const MIN_WORD_LENGTH_MAX_BOUNDARY =
-      props.mode === "increasing" ? MAX_TARGET_WORD_LENGTH - 1 : MAX_TARGET_WORD_LENGTH;
-
-    // TODO: Timer that appears after all letters have been revealed (or player intervenes to guess early), which can also be configured in these gamemode settings options
-    if (props.mode === "puzzle") {
-      return (
-        <>
-          <label>
-            <input
-              type="number"
-              name="wordLength"
-              value={props.gamemodeSettings.wordLength}
-              min={MIN_PUZZLE_WORD_LENGTH}
-              max={MAX_PUZZLE_WORD_LENGTH}
-              onChange={handleGamemodeSettingsChange}
-            ></input>
-            Word Length
-          </label>
-
-          <label>
-            <input
-              type="number"
-              name="puzzleRevealMs"
-              // Show value in seconds (divide by 1000)
-              value={props.gamemodeSettings.puzzleRevealMs / 1000}
-              min={MIN_PUZZLE_REVEAL_INTERVAL_SECONDS}
-              max={MAX_PUZZLE_REVEAL_INTERVAL_SECONDS}
-              onChange={handleGamemodeSettingsChange}
-            ></input>
-            Reveal Interval (seconds)
-          </label>
-
-          <label>
-            <input
-              type="number"
-              name="puzzleLeaveNumBlanks"
-              value={props.gamemodeSettings.puzzleLeaveNumBlanks}
-              min={MIN_PUZZLE_LEAVE_NUM_BLANKS}
-              max={MAX_PUZZLE_LEAVE_NUM_BLANKS}
-              onChange={handleGamemodeSettingsChange}
-            ></input>
-            Number of letters left blank
-          </label>
-        </>
-      );
-    }
-
-    return (
-      <>
-        <label>
-          <input
-            type="number"
-            name="wordLength"
-            value={props.gamemodeSettings.wordLength}
-            min={MIN_TARGET_WORD_LENGTH}
-            max={MIN_WORD_LENGTH_MAX_BOUNDARY}
-            onChange={handleGamemodeSettingsChange}
-          ></input>
-          {MIN_WORD_LENGTH_LABEL}
-        </label>
-
-        {isContinuationMode() && (
-          <label>
-            <input
-              type="number"
-              name="wordLengthMaxLimit"
-              value={props.gamemodeSettings.wordLengthMaxLimit}
-              min={props.gamemodeSettings.wordLength + 1}
-              max={MAX_TARGET_WORD_LENGTH}
-              onChange={handleGamemodeSettingsChange}
-            ></input>
-            Ending Word Length
-          </label>
-        )}
-
-        {props.mode === "limitless" && (
-          <>
-            <label>
-              <input
-                checked={props.gamemodeSettings.maxLivesConfig.isLimited}
-                type="checkbox"
-                name="maxLivesConfig"
-                onChange={handleGamemodeSettingsChange}
-              ></input>
-              Cap max number of extra lives
-            </label>
-            {props.gamemodeSettings.maxLivesConfig.isLimited && (
-              <label>
-                <input
-                  type="number"
-                  name="maxLivesConfig"
-                  value={props.gamemodeSettings.maxLivesConfig.maxLives}
-                  min={1}
-                  max={50}
-                  onChange={(e) => {
-                    setMostRecentMaxLives(e.target.valueAsNumber);
-                    handleGamemodeSettingsChange(e);
-                  }}
-                ></input>
-                Max number of extra lives
-              </label>
-            )}
-          </>
-        )}
-
-        <label>
-          <input
-            checked={props.gamemodeSettings.isFirstLetterProvided}
-            type="checkbox"
-            name="isFirstLetterProvided"
-            onChange={handleGamemodeSettingsChange}
-          ></input>
-          First Letter Provided
-        </label>
-
-        <label>
-          <input
-            checked={props.gamemodeSettings.isHintShown}
-            type="checkbox"
-            name="isHintShown"
-            onChange={handleGamemodeSettingsChange}
-          ></input>
-          Hints
-        </label>
-
-        <>
-          <label>
-            <input
-              checked={props.gamemodeSettings.timerConfig.isTimed}
-              type="checkbox"
-              name="timerConfig"
-              onChange={handleGamemodeSettingsChange}
-            ></input>
-            Timer
-          </label>
-          {props.gamemodeSettings.timerConfig.isTimed && (
-            <label>
-              <input
-                type="number"
-                name="timerConfig"
-                value={props.gamemodeSettings.timerConfig.seconds}
-                min={10}
-                max={120}
-                step={5}
-                onChange={(e) => {
-                  setMostRecentTotalSeconds(e.target.valueAsNumber);
-                  handleGamemodeSettingsChange(e);
-                }}
-              ></input>
-              Seconds
-            </label>
-          )}
-        </>
-      </>
-    );
-  }
 
   React.useEffect(() => {
     if (props.inProgress) {
@@ -646,7 +467,15 @@ const Wingo = (props: Props) => {
           !props.isCampaignLevel &&
           !props.gameshowScore && (
             <div className="gamemodeSettings">
-              <GamemodeSettingsMenu>{generateSettingsOptions()}</GamemodeSettingsMenu>
+              <GamemodeSettingsMenu>
+                <GamemodeSettingsOptions
+                  mode={props.mode}
+                  gamemodeSettings={props.gamemodeSettings}
+                  handleGamemodeSettingsChange={handleGamemodeSettingsChange}
+                  setMostRecentMaxLives={setMostRecentMaxLives}
+                  setMostRecentTotalSeconds={setMostRecentTotalSeconds}
+                ></GamemodeSettingsOptions>
+              </GamemodeSettingsMenu>
             </div>
           )
       }
