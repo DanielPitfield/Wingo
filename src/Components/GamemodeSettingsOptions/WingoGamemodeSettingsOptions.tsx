@@ -12,7 +12,11 @@ import { WingoConfigProps, WingoMode } from "../../Pages/WingoConfig";
 interface Props {
   mode: WingoMode;
   gamemodeSettings: WingoConfigProps["gamemodeSettings"];
-  handleGamemodeSettingsChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+
+  handleMaxLivesToggle: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  handleTimerToggle: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  handleSimpleGamemodeSettingsChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+
   setMostRecentMaxLives: (numLives: number) => void;
   setMostRecentTotalSeconds: (numSeconds: number) => void;
 }
@@ -28,7 +32,7 @@ const WingoGamemodeSettingsOptions = (props: Props) => {
             value={props.gamemodeSettings.wordLength}
             min={MIN_PUZZLE_WORD_LENGTH}
             max={MAX_PUZZLE_WORD_LENGTH}
-            onChange={props.handleGamemodeSettingsChange}
+            onChange={props.handleSimpleGamemodeSettingsChange}
           ></input>
           Word Length
         </label>
@@ -41,7 +45,7 @@ const WingoGamemodeSettingsOptions = (props: Props) => {
             value={props.gamemodeSettings.puzzleRevealMs / 1000}
             min={MIN_PUZZLE_REVEAL_INTERVAL_SECONDS}
             max={MAX_PUZZLE_REVEAL_INTERVAL_SECONDS}
-            onChange={props.handleGamemodeSettingsChange}
+            onChange={props.handleSimpleGamemodeSettingsChange}
           ></input>
           Reveal Interval (seconds)
         </label>
@@ -54,7 +58,7 @@ const WingoGamemodeSettingsOptions = (props: Props) => {
             min={MIN_PUZZLE_LEAVE_NUM_BLANKS}
             // Show atleast 1 letter (can't all be blank!)
             max={props.gamemodeSettings.wordLength - 1}
-            onChange={props.handleGamemodeSettingsChange}
+            onChange={props.handleSimpleGamemodeSettingsChange}
           ></input>
           Number of letters left blank
         </label>
@@ -83,7 +87,7 @@ const WingoGamemodeSettingsOptions = (props: Props) => {
           value={props.gamemodeSettings.wordLength}
           min={MIN_TARGET_WORD_LENGTH}
           max={MIN_WORD_LENGTH_MAX_BOUNDARY}
-          onChange={props.handleGamemodeSettingsChange}
+          onChange={props.handleSimpleGamemodeSettingsChange}
         ></input>
         {MIN_WORD_LENGTH_LABEL}
       </label>
@@ -96,7 +100,7 @@ const WingoGamemodeSettingsOptions = (props: Props) => {
             value={props.gamemodeSettings.wordLengthMaxLimit}
             min={props.gamemodeSettings.wordLength + 1}
             max={MAX_TARGET_WORD_LENGTH}
-            onChange={props.handleGamemodeSettingsChange}
+            onChange={props.handleSimpleGamemodeSettingsChange}
           ></input>
           Ending Word Length
         </label>
@@ -109,7 +113,7 @@ const WingoGamemodeSettingsOptions = (props: Props) => {
               checked={props.gamemodeSettings.maxLivesConfig.isLimited}
               type="checkbox"
               name="maxLivesConfig"
-              onChange={props.handleGamemodeSettingsChange}
+              onChange={props.handleMaxLivesToggle}
             ></input>
             Cap max number of extra lives
           </label>
@@ -123,7 +127,7 @@ const WingoGamemodeSettingsOptions = (props: Props) => {
                 max={50}
                 onChange={(e) => {
                   props.setMostRecentMaxLives(e.target.valueAsNumber);
-                  props.handleGamemodeSettingsChange(e);
+                  props.handleSimpleGamemodeSettingsChange(e);
                 }}
               ></input>
               Max number of extra lives
@@ -137,7 +141,7 @@ const WingoGamemodeSettingsOptions = (props: Props) => {
           checked={props.gamemodeSettings.isFirstLetterProvided}
           type="checkbox"
           name="isFirstLetterProvided"
-          onChange={props.handleGamemodeSettingsChange}
+          onChange={props.handleSimpleGamemodeSettingsChange}
         ></input>
         First Letter Provided
       </label>
@@ -147,7 +151,7 @@ const WingoGamemodeSettingsOptions = (props: Props) => {
           checked={props.gamemodeSettings.isHintShown}
           type="checkbox"
           name="isHintShown"
-          onChange={props.handleGamemodeSettingsChange}
+          onChange={props.handleSimpleGamemodeSettingsChange}
         ></input>
         Hints
       </label>
@@ -158,7 +162,7 @@ const WingoGamemodeSettingsOptions = (props: Props) => {
             checked={props.gamemodeSettings.timerConfig.isTimed}
             type="checkbox"
             name="timerConfig"
-            onChange={props.handleGamemodeSettingsChange}
+            onChange={props.handleTimerToggle}
           ></input>
           Timer
         </label>
@@ -173,7 +177,7 @@ const WingoGamemodeSettingsOptions = (props: Props) => {
               step={5}
               onChange={(e) => {
                 props.setMostRecentTotalSeconds(e.target.valueAsNumber);
-                props.handleGamemodeSettingsChange(e);
+                props.handleSimpleGamemodeSettingsChange(e);
               }}
             ></input>
             Seconds

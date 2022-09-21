@@ -385,10 +385,29 @@ const Algebra = (props: Props) => {
     setGuess(`${guess}${number}`);
   }
 
-  const handleGamemodeSettingsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleDifficultyChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newGamemodeSettings: AlgebraProps["gamemodeSettings"] = {
       ...props.gamemodeSettings,
-      [e.target.name]: getNewGamemodeSettingValue(e, { totalSeconds: mostRecentTotalSeconds }),
+      difficulty: e.target.value as Difficulty,
+    };
+
+    setGamemodeSettings(newGamemodeSettings);
+  };
+
+  const handleTimerToggle = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newGamemodeSettings: AlgebraProps["gamemodeSettings"] = {
+      ...props.gamemodeSettings,
+      timerConfig: e.target.checked ? { isTimed: true, seconds: mostRecentTotalSeconds } : { isTimed: false },
+    };
+
+    setGamemodeSettings(newGamemodeSettings);
+  };
+
+
+  const handleSimpleGamemodeSettingsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newGamemodeSettings: AlgebraProps["gamemodeSettings"] = {
+      ...props.gamemodeSettings,
+      [e.target.name]: getNewGamemodeSettingValue(e),
     };
 
     setGamemodeSettings(newGamemodeSettings);
@@ -461,7 +480,9 @@ const Algebra = (props: Props) => {
           <GamemodeSettingsMenu>
             <AlgebraGamemodeSettingsOptions
               gamemodeSettings={props.gamemodeSettings}
-              handleGamemodeSettingsChange={handleGamemodeSettingsChange}
+              handleDifficultyChange={handleDifficultyChange}
+              handleTimerToggle={handleTimerToggle}
+              handleSimpleGamemodeSettingsChange={handleSimpleGamemodeSettingsChange}
               setMostRecentTotalSeconds={setMostRecentTotalSeconds}
               setRemainingSeconds={setRemainingSeconds}
             ></AlgebraGamemodeSettingsOptions>

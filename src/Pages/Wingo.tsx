@@ -208,13 +208,28 @@ const Wingo = (props: Props) => {
     return Grid;
   }
 
-  const handleGamemodeSettingsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleMaxLivesToggle = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newGamemodeSettings: WingoConfigProps["gamemodeSettings"] = {
       ...props.gamemodeSettings,
-      [e.target.name]: getNewGamemodeSettingValue(e, {
-        maxLives: mostRecentMaxLives,
-        totalSeconds: mostRecentTotalSeconds,
-      }),
+      maxLivesConfig: e.target.checked ? { isLimited: true, maxLives: mostRecentMaxLives } : { isLimited: false },
+    };
+
+    props.updateGamemodeSettings(newGamemodeSettings);
+  };
+
+  const handleTimerToggle = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newGamemodeSettings: WingoConfigProps["gamemodeSettings"] = {
+      ...props.gamemodeSettings,
+      timerConfig: e.target.checked ? { isTimed: true, seconds: mostRecentTotalSeconds } : { isTimed: false },
+    };
+
+    props.updateGamemodeSettings(newGamemodeSettings);
+  };
+
+  const handleSimpleGamemodeSettingsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newGamemodeSettings: WingoConfigProps["gamemodeSettings"] = {
+      ...props.gamemodeSettings,
+      [e.target.name]: getNewGamemodeSettingValue(e),
     };
 
     props.updateGamemodeSettings(newGamemodeSettings);
@@ -471,7 +486,9 @@ const Wingo = (props: Props) => {
                 <GamemodeSettingsOptions
                   mode={props.mode}
                   gamemodeSettings={props.gamemodeSettings}
-                  handleGamemodeSettingsChange={handleGamemodeSettingsChange}
+                  handleMaxLivesToggle={handleMaxLivesToggle}
+                  handleTimerToggle={handleTimerToggle}
+                  handleSimpleGamemodeSettingsChange={handleSimpleGamemodeSettingsChange}
                   setMostRecentMaxLives={setMostRecentMaxLives}
                   setMostRecentTotalSeconds={setMostRecentTotalSeconds}
                 ></GamemodeSettingsOptions>

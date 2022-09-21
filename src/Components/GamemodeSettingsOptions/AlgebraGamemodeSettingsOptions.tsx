@@ -3,7 +3,11 @@ import { AlgebraProps } from "../../Pages/Algebra";
 
 interface Props {
   gamemodeSettings: AlgebraProps["gamemodeSettings"];
-  handleGamemodeSettingsChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+
+  handleDifficultyChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
+  handleTimerToggle: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  handleSimpleGamemodeSettingsChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+
   setRemainingSeconds: (numSeconds: number) => void;
   setMostRecentTotalSeconds: (numSeconds: number) => void;
 }
@@ -13,7 +17,7 @@ const AlgebraGamemodeSettingsOptions = (props: Props) => {
     <>
       <label>
         <select
-          onChange={props.handleGamemodeSettingsChange}
+          onChange={props.handleDifficultyChange}
           className="difficulty_input"
           name="difficulty"
           value={props.gamemodeSettings.difficulty}
@@ -31,7 +35,7 @@ const AlgebraGamemodeSettingsOptions = (props: Props) => {
         <input
           checked={props.gamemodeSettings.timerConfig.isTimed}
           type="checkbox"
-          onChange={props.handleGamemodeSettingsChange}
+          onChange={props.handleTimerToggle}
         ></input>
         Timer
       </label>
@@ -46,7 +50,7 @@ const AlgebraGamemodeSettingsOptions = (props: Props) => {
             onChange={(e) => {
               props.setRemainingSeconds(e.target.valueAsNumber);
               props.setMostRecentTotalSeconds(e.target.valueAsNumber);
-              props.handleGamemodeSettingsChange(e);
+              props.handleSimpleGamemodeSettingsChange(e);
             }}
           ></input>
           Seconds
