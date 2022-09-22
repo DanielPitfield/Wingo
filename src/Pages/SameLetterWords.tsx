@@ -21,6 +21,8 @@ import { shuffleArray } from "../Helper Functions/shuffleArray";
 import { getGamemodeDefaultTimerValue } from "../Helper Functions/getGamemodeDefaultTimerValue";
 import { getRandomElementFrom } from "../Helper Functions/getRandomElementFrom";
 import { getPrettyText } from "../Helper Functions/getPrettyText";
+import { getNewGamemodeSettingValue } from "../Helper Functions/getGamemodeSettingsNewValue";
+import SameLetterWordsGamemodeSettings from "../Components/GamemodeSettingsOptions/SameLetterWordsGamemodeSettings";
 
 export interface SameLetterWordsProps {
   gamemodeSettings: {
@@ -409,98 +411,23 @@ const SameLetterWords = (props: Props) => {
     }
   }
 
-  function generateSettingsOptions(): React.ReactNode {
-    return (
-      <>
-        <label>
-          <input
-            type="number"
-            value={gamemodeSettings.numMatchingWords}
-            min={MIN_NUM_SAME_LETTER_MATCHING_WORDS}
-            max={Math.min(MAX_NUM_SAME_LETTER_MATCHING_WORDS, gamemodeSettings.numTotalWords - 1)}
-            onChange={(e) => {
-              const newGamemodeSettings = {
-                ...gamemodeSettings,
-                numMatchingWords: e.target.valueAsNumber,
-              };
-              setGamemodeSettings(newGamemodeSettings);
-            }}
-          ></input>
-          Number of matching words
-        </label>
-        <label>
-          <input
-            type="number"
-            value={gamemodeSettings.numTotalWords}
-            min={Math.max(MIN_NUM_SAME_LETTER_TOTAL_WORDS, gamemodeSettings.numMatchingWords + 1)}
-            max={MAX_NUM_SAME_LETTER_TOTAL_WORDS}
-            onChange={(e) => {
-              const newGamemodeSettings = {
-                ...gamemodeSettings,
-                numTotalWords: e.target.valueAsNumber,
-              };
-              setGamemodeSettings(newGamemodeSettings);
-            }}
-          ></input>
-          Number of total words
-        </label>
-        <label>
-          <input
-            type="number"
-            value={gamemodeSettings.numGuesses}
-            min={MIN_NUM_SAME_LETTER_GUESSES}
-            max={MAX_NUM_SAME_LETTER_GUESSES}
-            onChange={(e) => {
-              setRemainingGuesses(e.target.valueAsNumber);
-              const newGamemodeSettings = {
-                ...gamemodeSettings,
-                numGuesses: e.target.valueAsNumber,
-              };
-              setGamemodeSettings(newGamemodeSettings);
-            }}
-          ></input>
-          Number of guesses
-        </label>
-        <label>
-          <input
-            checked={gamemodeSettings.timerConfig.isTimed}
-            type="checkbox"
-            onChange={() => {
-              // If currently timed, on change, make the game not timed and vice versa
-              const newTimer: { isTimed: true; seconds: number } | { isTimed: false } = gamemodeSettings.timerConfig
-                .isTimed
-                ? { isTimed: false }
-                : { isTimed: true, seconds: mostRecentTotalSeconds };
-              const newGamemodeSettings = { ...gamemodeSettings, timerConfig: newTimer };
-              setGamemodeSettings(newGamemodeSettings);
-            }}
-          ></input>
-          Timer
-        </label>
-        {gamemodeSettings.timerConfig.isTimed && (
-          <label>
-            <input
-              type="number"
-              value={gamemodeSettings.timerConfig.seconds}
-              min={10}
-              max={120}
-              step={5}
-              onChange={(e) => {
-                setRemainingSeconds(e.target.valueAsNumber);
-                setMostRecentTotalSeconds(e.target.valueAsNumber);
-                const newGamemodeSettings = {
-                  ...gamemodeSettings,
-                  timerConfig: { isTimed: true, seconds: e.target.valueAsNumber },
-                };
-                setGamemodeSettings(newGamemodeSettings);
-              }}
-            ></input>
-            Seconds
-          </label>
-        )}
-      </>
-    );
-  }
+  const handleTimerToggle = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newGamemodeSettings: SameLetterWordsProps["gamemodeSettings"] = {
+      ...gamemodeSettings,
+      timerConfig: e.target.checked ? { isTimed: true, seconds: mostRecentTotalSeconds } : { isTimed: false },
+    };
+
+    setGamemodeSettings(newGamemodeSettings);
+  };
+
+  const handleSimpleGamemodeSettingsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newGamemodeSettings: SameLetterWordsProps["gamemodeSettings"] = {
+      ...gamemodeSettings,
+      [e.target.name]: getNewGamemodeSettingValue(e),
+    };
+
+    setGamemodeSettings(newGamemodeSettings);
+  };
 
   return (
     <div
@@ -509,7 +436,14 @@ const SameLetterWords = (props: Props) => {
     >
       {!props.isCampaignLevel && (
         <div className="gamemodeSettings">
-          <GamemodeSettingsMenu>{generateSettingsOptions()}</GamemodeSettingsMenu>
+          <SameLetterWordsGamemodeSettings
+            gamemodeSettings={gamemodeSettings}
+            handleSimpleGamemodeSettingsChange={handleSimpleGamemodeSettingsChange}
+            handleTimerToggle={handleTimerToggle}
+            setMostRecentTotalSeconds={setMostRecentTotalSeconds}
+            setRemainingGuesses={setRemainingGuesses}
+            setRemainingSeconds={setRemainingSeconds}
+          ></SameLetterWordsGamemodeSettings>
         </div>
       )}
       <div className="outcome">{displayOutcome()}</div>
