@@ -12,6 +12,8 @@ import { categoryMappings } from "../Data/WordArrayMappings";
 import { shuffleArray } from "../Helper Functions/shuffleArray";
 import { getPrettyText } from "../Helper Functions/getPrettyText";
 import { getGamemodeDefaultTimerValue } from "../Helper Functions/getGamemodeDefaultTimerValue";
+import { getNewGamemodeSettingValue } from "../Helper Functions/getGamemodeSettingsNewValue";
+import OnlyConnectGamemodeSettings from "../Components/GamemodeSettingsOptions/OnlyConnectGamemodeSettings";
 
 export interface OnlyConnectProps {
   gamemodeSettings: {
@@ -447,103 +449,23 @@ const OnlyConnect = (props: Props) => {
     }
   }
 
-  function generateSettingsOptions(): React.ReactNode {
-    const MIN_NUM_GROUPS = 2;
-    const MAX_NUM_GROUPS = 10;
+  const handleTimerToggle = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newGamemodeSettings: OnlyConnectProps["gamemodeSettings"] = {
+      ...gamemodeSettings,
+      timerConfig: e.target.checked ? { isTimed: true, seconds: mostRecentTotalSeconds } : { isTimed: false },
+    };
 
-    const MIN_GROUP_SIZE = 2;
-    const MAX_GROUP_SIZE = 10;
+    setGamemodeSettings(newGamemodeSettings);
+  };
 
-    return (
-      <>
-        <label>
-          <input
-            type="number"
-            value={gamemodeSettings.numGroups}
-            min={MIN_NUM_GROUPS}
-            max={MAX_NUM_GROUPS}
-            onChange={(e) => {
-              const newGamemodeSettings = {
-                ...gamemodeSettings,
-                numGroups: e.target.valueAsNumber,
-              };
-              setGamemodeSettings(newGamemodeSettings);
-            }}
-          ></input>
-          Number of groups
-        </label>
-        <label>
-          <input
-            type="number"
-            value={gamemodeSettings.groupSize}
-            min={MIN_GROUP_SIZE}
-            max={MAX_GROUP_SIZE}
-            onChange={(e) => {
-              const newGamemodeSettings = {
-                ...gamemodeSettings,
-                groupSize: e.target.valueAsNumber,
-              };
-              setGamemodeSettings(newGamemodeSettings);
-            }}
-          ></input>
-          Group size
-        </label>
-        <label>
-          <input
-            type="number"
-            value={gamemodeSettings.numGuesses}
-            min={1}
-            max={10}
-            onChange={(e) => {
-              const newGamemodeSettings = {
-                ...gamemodeSettings,
-                numGuesses: e.target.valueAsNumber,
-              };
-              setGamemodeSettings(newGamemodeSettings);
-            }}
-          ></input>
-          Number of guesses
-        </label>
-        <label>
-          <input
-            checked={gamemodeSettings.timerConfig.isTimed}
-            type="checkbox"
-            onChange={() => {
-              // If currently timed, on change, make the game not timed and vice versa
-              const newTimer: { isTimed: true; seconds: number } | { isTimed: false } = gamemodeSettings.timerConfig
-                .isTimed
-                ? { isTimed: false }
-                : { isTimed: true, seconds: mostRecentTotalSeconds };
-              const newGamemodeSettings = { ...gamemodeSettings, timerConfig: newTimer };
-              setGamemodeSettings(newGamemodeSettings);
-            }}
-          ></input>
-          Timer
-        </label>
-        {gamemodeSettings.timerConfig.isTimed && (
-          <label>
-            <input
-              type="number"
-              value={gamemodeSettings.timerConfig.seconds}
-              min={10}
-              max={120}
-              step={5}
-              onChange={(e) => {
-                setRemainingSeconds(e.target.valueAsNumber);
-                setMostRecentTotalSeconds(e.target.valueAsNumber);
-                const newGamemodeSettings = {
-                  ...gamemodeSettings,
-                  timerConfig: { isTimed: true, seconds: e.target.valueAsNumber },
-                };
-                setGamemodeSettings(newGamemodeSettings);
-              }}
-            ></input>
-            Seconds
-          </label>
-        )}
-      </>
-    );
-  }
+  const handleSimpleGamemodeSettingsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newGamemodeSettings: OnlyConnectProps["gamemodeSettings"] = {
+      ...gamemodeSettings,
+      [e.target.name]: getNewGamemodeSettingValue(e),
+    };
+
+    setGamemodeSettings(newGamemodeSettings);
+  };
 
   return (
     <div
@@ -552,7 +474,13 @@ const OnlyConnect = (props: Props) => {
     >
       {!props.isCampaignLevel && (
         <div className="gamemodeSettings">
-          <GamemodeSettingsMenu>{generateSettingsOptions()}</GamemodeSettingsMenu>
+          <OnlyConnectGamemodeSettings
+            gamemodeSettings={gamemodeSettings}
+            handleSimpleGamemodeSettingsChange={handleSimpleGamemodeSettingsChange}
+            handleTimerToggle={handleTimerToggle}
+            setMostRecentTotalSeconds={setMostRecentTotalSeconds}
+            setRemainingSeconds={setRemainingSeconds}
+          ></OnlyConnectGamemodeSettings>
         </div>
       )}
       {!inProgress && <div className="outcome">{displayOutcome()}</div>}
