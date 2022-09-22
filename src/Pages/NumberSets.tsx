@@ -11,11 +11,13 @@ import { useClickChime, useCorrectChime, useFailureChime, useLightPingChime } fr
 import { Theme } from "../Data/Themes";
 import { NumberSetTemplate } from "../Data/NumberSetsTemplates";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
-import { Difficulty, difficultyOptions } from "../Data/DefaultGamemodeSettings";
+import { Difficulty } from "../Data/DefaultGamemodeSettings";
 import { MAX_NUMPAD_GUESS_LENGTH } from "../Data/GamemodeSettingsInputLimits";
 import { getGamemodeDefaultTimerValue } from "../Helper Functions/getGamemodeDefaultTimerValue";
 import { getQuestionSetOutcome } from "../Helper Functions/getQuestionSetOutcome";
 import { getNumberSetTemplates } from "../Helper Functions/getNumberSetTemplates";
+import { getNewGamemodeSettingValue } from "../Helper Functions/getGamemodeSettingsNewValue";
+import NumberSetsGamemodeSettings from "../Components/GamemodeSettingsOptions/NumberSetsGamemodeSettings";
 
 export interface NumberSetsProps {
   campaignConfig:
@@ -295,71 +297,32 @@ const NumberSets = (props: Props) => {
     setGuess(`${guess}${number}`);
   }
 
-  function generateSettingsOptions(): React.ReactNode {
-    return (
-      <>
-        <label>
-          <select
-            onChange={(e) => {
-              const newGamemodeSettings = {
-                ...gamemodeSettings,
-                difficulty: e.target.value as Difficulty,
-              };
-              setGamemodeSettings(newGamemodeSettings);
-            }}
-            className="difficulty_input"
-            name="difficulty"
-            value={gamemodeSettings.difficulty}
-          >
-            {difficultyOptions.map((difficultyOption) => (
-              <option key={difficultyOption} value={difficultyOption}>
-                {difficultyOption}
-              </option>
-            ))}
-          </select>
-          Difficulty
-        </label>
+  const handleDifficultyChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const newGamemodeSettings: NumberSetsProps["gamemodeSettings"] = {
+      ...gamemodeSettings,
+      difficulty: e.target.value as Difficulty,
+    };
 
-        <label>
-          <input
-            checked={gamemodeSettings.timerConfig.isTimed}
-            type="checkbox"
-            onChange={() => {
-              // If currently timed, on change, make the game not timed and vice versa
-              const newTimer: { isTimed: true; seconds: number } | { isTimed: false } = gamemodeSettings.timerConfig
-                .isTimed
-                ? { isTimed: false }
-                : { isTimed: true, seconds: mostRecentTotalSeconds };
-              const newGamemodeSettings = { ...gamemodeSettings, timerConfig: newTimer };
-              setGamemodeSettings(newGamemodeSettings);
-            }}
-          ></input>
-          Timer
-        </label>
-        {gamemodeSettings.timerConfig.isTimed && (
-          <label>
-            <input
-              type="number"
-              value={gamemodeSettings.timerConfig.seconds}
-              min={10}
-              max={120}
-              step={5}
-              onChange={(e) => {
-                setRemainingSeconds(e.target.valueAsNumber);
-                setMostRecentTotalSeconds(e.target.valueAsNumber);
-                const newGamemodeSettings = {
-                  ...gamemodeSettings,
-                  timerConfig: { isTimed: true, seconds: e.target.valueAsNumber },
-                };
-                setGamemodeSettings(newGamemodeSettings);
-              }}
-            ></input>
-            Seconds
-          </label>
-        )}
-      </>
-    );
-  }
+    setGamemodeSettings(newGamemodeSettings);
+  };
+
+  const handleTimerToggle = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newGamemodeSettings: NumberSetsProps["gamemodeSettings"] = {
+      ...gamemodeSettings,
+      timerConfig: e.target.checked ? { isTimed: true, seconds: mostRecentTotalSeconds } : { isTimed: false },
+    };
+
+    setGamemodeSettings(newGamemodeSettings);
+  };
+
+  const handleSimpleGamemodeSettingsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newGamemodeSettings: NumberSetsProps["gamemodeSettings"] = {
+      ...gamemodeSettings,
+      [e.target.name]: getNewGamemodeSettingValue(e),
+    };
+
+    setGamemodeSettings(newGamemodeSettings);
+  };
 
   return (
     <div
@@ -368,7 +331,14 @@ const NumberSets = (props: Props) => {
     >
       {!props.campaignConfig.isCampaignLevel && (
         <div className="gamemodeSettings">
-          <GamemodeSettingsMenu>{generateSettingsOptions()}</GamemodeSettingsMenu>
+          <NumberSetsGamemodeSettings
+            gamemodeSettings={gamemodeSettings}
+            handleDifficultyChange={handleDifficultyChange}
+            handleTimerToggle={handleTimerToggle}
+            handleSimpleGamemodeSettingsChange={handleSimpleGamemodeSettingsChange}
+            setMostRecentTotalSeconds={setMostRecentTotalSeconds}
+            setRemainingSeconds={setRemainingSeconds}
+          ></NumberSetsGamemodeSettings>
         </div>
       )}
 
