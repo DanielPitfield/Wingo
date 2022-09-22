@@ -6,7 +6,10 @@ import { Keyboard } from "../Components/Keyboard";
 import { Button } from "../Components/Button";
 import React from "react";
 import { MessageNotification } from "../Components/MessageNotification";
-import { CrosswordGenerationResult, crosswordGenerator as crossWordGenerator } from "../Helper Functions/CrossWordGenerator";
+import {
+  CrosswordGenerationResult,
+  crosswordGenerator as crossWordGenerator,
+} from "../Helper Functions/CrossWordGenerator";
 import GamemodeSettingsMenu from "../Components/GamemodeSettingsMenu";
 import ProgressBar, { GreenToRedColorTransition } from "../Components/ProgressBar";
 import { PageName } from "../Data/PageNames";
@@ -17,6 +20,8 @@ import { DEFAULT_FIT_RESTRICTION } from "../Data/DefaultGamemodeSettings";
 import { getWordRowStatusSummary, WordRowStatusChecks } from "../Helper Functions/getWordRowStatusSummary";
 import { shuffleArray } from "../Helper Functions/shuffleArray";
 import { getGamemodeDefaultTimerValue } from "../Helper Functions/getGamemodeDefaultTimerValue";
+import { getNewGamemodeSettingValue } from "../Helper Functions/getGamemodeSettingsNewValue";
+import WingoInterlinkedGamemodeSettings from "../Components/GamemodeSettingsOptions/WingoInterlinkedGamemodeSettings";
 
 type Orientation = "vertical" | "horizontal";
 
@@ -810,197 +815,6 @@ export const WingoInterlinked = (props: Props) => {
     return Array.from({ length: gridConfig.height }).map((_, index) => populateRow(index));
   }
 
-  // Started with more than 2 words (so not basic WingoInterlinked of two interlinked words but a fully fledged crossword)
-  const IS_CROSSWORD = props.gamemodeSettings.numWords > 2;
-
-  function generateSettingsOptions(): React.ReactNode {
-    return (
-      <>
-        {IS_CROSSWORD && (
-          <label>
-            <input
-              type="number"
-              value={gamemodeSettings.numWords}
-              min={2}
-              max={10}
-              onChange={(e) => {
-                const newGamemodeSettings = { ...gamemodeSettings, numWords: e.target.valueAsNumber };
-                setGamemodeSettings(newGamemodeSettings);
-              }}
-            ></input>
-            Number of words
-          </label>
-        )}
-        <label>
-          <input
-            type="number"
-            value={gamemodeSettings.minWordLength}
-            min={MIN_TARGET_WORD_LENGTH}
-            // Can't go above maximum word length
-            // TODO: Should all words be the same length for crossword fit mode?
-            max={Math.min(gamemodeSettings.maxWordLength, MAX_TARGET_WORD_LENGTH)}
-            onChange={(e) => {
-              const newGamemodeSettings = { ...gamemodeSettings, minWordLength: e.target.valueAsNumber };
-              setGamemodeSettings(newGamemodeSettings);
-            }}
-          ></input>
-          Minimum Word Length
-        </label>
-
-        <label>
-          <input
-            type="number"
-            value={gamemodeSettings.maxWordLength}
-            // Can't go below the minimum word length
-            min={Math.max(gamemodeSettings.minWordLength, MIN_TARGET_WORD_LENGTH)}
-            max={MAX_TARGET_WORD_LENGTH}
-            onChange={(e) => {
-              const newGamemodeSettings = { ...gamemodeSettings, maxWordLength: e.target.valueAsNumber };
-              setGamemodeSettings(newGamemodeSettings);
-            }}
-          ></input>
-          Maximum Word Length
-        </label>
-
-        {!props.provideWords && (
-          <>
-            <label>
-              <input
-                checked={gamemodeSettings.fitRestrictionConfig.isRestricted}
-                type="checkbox"
-                onChange={() => {
-                  // If currently restricted, on change, make the game not restricted and vice versa
-                  const newRestrictionConfig: { isRestricted: true; fitRestriction: number } | { isRestricted: false } =
-                    gamemodeSettings.fitRestrictionConfig.isRestricted
-                      ? { isRestricted: false }
-                      : { isRestricted: true, fitRestriction: mostRecentFitRestriction };
-                  const newGamemodeSettings = { ...gamemodeSettings, fitRestrictionConfig: newRestrictionConfig };
-                  setGamemodeSettings(newGamemodeSettings);
-                }}
-              ></input>
-              Fit Restriction
-            </label>
-
-            {gamemodeSettings.fitRestrictionConfig.isRestricted && (
-              <label>
-                <input
-                  type="number"
-                  value={gamemodeSettings.fitRestrictionConfig.fitRestriction}
-                  min={0}
-                  max={50}
-                  onChange={(e) => {
-                    setMostRecentFitRestriction(e.target.valueAsNumber);
-                    const newGamemodeSettings = {
-                      ...gamemodeSettings,
-                      fitRestrictionConfig: { isRestricted: true, fitRestriction: e.target.valueAsNumber },
-                    };
-                    setGamemodeSettings(newGamemodeSettings);
-                  }}
-                ></input>
-                Fit Restriction Amount
-              </label>
-            )}
-          </>
-        )}
-
-        <label>
-          <input
-            checked={gamemodeSettings.isFirstLetterProvided}
-            type="checkbox"
-            onChange={() => {
-              const newGamemodeSettings = {
-                ...gamemodeSettings,
-                isFirstLetterProvided: !gamemodeSettings.isFirstLetterProvided,
-              };
-              setGamemodeSettings(newGamemodeSettings);
-            }}
-          ></input>
-          First Letter Provided
-        </label>
-
-        <label>
-          <input
-            checked={gamemodeSettings.isHintShown}
-            type="checkbox"
-            onChange={() => {
-              const newGamemodeSettings = { ...gamemodeSettings, isHintShown: !gamemodeSettings.isHintShown };
-              setGamemodeSettings(newGamemodeSettings);
-            }}
-          ></input>
-          Hints
-        </label>
-
-        <label>
-          <input
-            type="number"
-            value={gamemodeSettings.numWordGuesses}
-            min={0}
-            max={100}
-            onChange={(e) => {
-              const newGamemodeSettings = { ...gamemodeSettings, numWordGuesses: e.target.valueAsNumber };
-              setGamemodeSettings(newGamemodeSettings);
-            }}
-          ></input>
-          Number of word guesses
-        </label>
-
-        <label>
-          <input
-            type="number"
-            value={gamemodeSettings.numGridGuesses}
-            min={0}
-            max={20}
-            onChange={(e) => {
-              const newGamemodeSettings = { ...gamemodeSettings, numGridGuesses: e.target.valueAsNumber };
-              setGamemodeSettings(newGamemodeSettings);
-            }}
-          ></input>
-          Number of grid guesses
-        </label>
-
-        <>
-          <label>
-            <input
-              checked={gamemodeSettings.timerConfig.isTimed}
-              type="checkbox"
-              onChange={() => {
-                // If currently timed, on change, make the game not timed and vice versa
-                const newTimerConfig: { isTimed: true; seconds: number } | { isTimed: false } = gamemodeSettings
-                  .timerConfig.isTimed
-                  ? { isTimed: false }
-                  : { isTimed: true, seconds: mostRecentTotalSeconds };
-                const newGamemodeSettings = { ...gamemodeSettings, timerConfig: newTimerConfig };
-                setGamemodeSettings(newGamemodeSettings);
-              }}
-            ></input>
-            Timer
-          </label>
-          {gamemodeSettings.timerConfig.isTimed && (
-            <label>
-              <input
-                type="number"
-                value={gamemodeSettings.timerConfig.seconds}
-                min={10}
-                max={120}
-                step={5}
-                onChange={(e) => {
-                  setRemainingSeconds(e.target.valueAsNumber);
-                  setMostRecentTotalSeconds(e.target.valueAsNumber);
-                  const newGamemodeSettings = {
-                    ...gamemodeSettings,
-                    timerConfig: { isTimed: true, seconds: e.target.valueAsNumber },
-                  };
-                  setGamemodeSettings(newGamemodeSettings);
-                }}
-              ></input>
-              Seconds
-            </label>
-          )}
-        </>
-      </>
-    );
-  }
-
   function displayOutcome(): React.ReactNode {
     // Game still in progress, don't display anything
     if (inProgress) {
@@ -1072,6 +886,35 @@ export const WingoInterlinked = (props: Props) => {
 
   const hint = wordHints?.find((x) => x.word === gridConfig.words[currentWordIndex].word)?.hint;
 
+  const handleFitRestrictionToggle = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newGamemodeSettings: WingoInterlinkedProps["gamemodeSettings"] = {
+      ...gamemodeSettings,
+      fitRestrictionConfig: e.target.checked
+        ? { isRestricted: true, fitRestriction: mostRecentFitRestriction }
+        : { isRestricted: false },
+    };
+
+    setGamemodeSettings(newGamemodeSettings);
+  };
+
+  const handleTimerToggle = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newGamemodeSettings: WingoInterlinkedProps["gamemodeSettings"] = {
+      ...gamemodeSettings,
+      timerConfig: e.target.checked ? { isTimed: true, seconds: mostRecentTotalSeconds } : { isTimed: false },
+    };
+
+    setGamemodeSettings(newGamemodeSettings);
+  };
+
+  const handleSimpleGamemodeSettingsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newGamemodeSettings: WingoInterlinkedProps["gamemodeSettings"] = {
+      ...gamemodeSettings,
+      [e.target.name]: getNewGamemodeSettingValue(e),
+    };
+
+    setGamemodeSettings(newGamemodeSettings);
+  };
+
   return (
     <div
       className="App wingo_interlinked"
@@ -1079,7 +922,16 @@ export const WingoInterlinked = (props: Props) => {
     >
       {!props.isCampaignLevel && (
         <div className="gamemodeSettings">
-          <GamemodeSettingsMenu>{generateSettingsOptions()}</GamemodeSettingsMenu>
+          <WingoInterlinkedGamemodeSettings
+            gamemodeSettings={gamemodeSettings}
+            provideWords={props.provideWords}
+            handleFitRestrictionToggle={handleFitRestrictionToggle}
+            handleSimpleGamemodeSettingsChange={handleSimpleGamemodeSettingsChange}
+            handleTimerToggle={handleTimerToggle}
+            setMostRecentFitRestriction={setMostRecentFitRestriction}
+            setMostRecentTotalSeconds={setMostRecentTotalSeconds}
+            setRemainingSeconds={setRemainingSeconds}
+          ></WingoInterlinkedGamemodeSettings>
         </div>
       )}
 

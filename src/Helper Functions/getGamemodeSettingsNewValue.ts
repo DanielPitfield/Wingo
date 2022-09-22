@@ -9,6 +9,10 @@ export const getNewGamemodeSettingValue = (e: React.ChangeEvent<HTMLInputElement
     return { isTimed: true, seconds: e.target.valueAsNumber };
   }
 
+  if (name === "fitRestrictionConfig" && type === "number") {
+    return { isRestricted: true, fitRestriction: e.target.valueAsNumber };
+  }
+
   // Now look by type
   switch (type) {
     case "number":
