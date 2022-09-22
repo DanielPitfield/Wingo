@@ -208,33 +208,6 @@ const Wingo = (props: Props) => {
     return Grid;
   }
 
-  const handleMaxLivesToggle = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newGamemodeSettings: WingoConfigProps["gamemodeSettings"] = {
-      ...props.gamemodeSettings,
-      maxLivesConfig: e.target.checked ? { isLimited: true, maxLives: mostRecentMaxLives } : { isLimited: false },
-    };
-
-    props.updateGamemodeSettings(newGamemodeSettings);
-  };
-
-  const handleTimerToggle = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newGamemodeSettings: WingoConfigProps["gamemodeSettings"] = {
-      ...props.gamemodeSettings,
-      timerConfig: e.target.checked ? { isTimed: true, seconds: mostRecentTotalSeconds } : { isTimed: false },
-    };
-
-    props.updateGamemodeSettings(newGamemodeSettings);
-  };
-
-  const handleSimpleGamemodeSettingsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newGamemodeSettings: WingoConfigProps["gamemodeSettings"] = {
-      ...props.gamemodeSettings,
-      [e.target.name]: getNewGamemodeSettingValue(e),
-    };
-
-    props.updateGamemodeSettings(newGamemodeSettings);
-  };
-
   React.useEffect(() => {
     if (props.inProgress) {
       return;
@@ -415,6 +388,33 @@ const Wingo = (props: Props) => {
       </MessageNotification>
     );
   }
+
+  const handleMaxLivesToggle = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newGamemodeSettings: WingoConfigProps["gamemodeSettings"] = {
+      ...props.gamemodeSettings,
+      maxLivesConfig: e.target.checked ? { isLimited: true, maxLives: mostRecentMaxLives } : { isLimited: false },
+    };
+
+    props.updateGamemodeSettings(newGamemodeSettings);
+  };
+
+  const handleTimerToggle = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newGamemodeSettings: WingoConfigProps["gamemodeSettings"] = {
+      ...props.gamemodeSettings,
+      timerConfig: e.target.checked ? { isTimed: true, seconds: mostRecentTotalSeconds } : { isTimed: false },
+    };
+
+    props.updateGamemodeSettings(newGamemodeSettings);
+  };
+
+  const handleSimpleGamemodeSettingsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newGamemodeSettings: WingoConfigProps["gamemodeSettings"] = {
+      ...props.gamemodeSettings,
+      [e.target.name]: getNewGamemodeSettingValue(e),
+    };
+
+    props.updateGamemodeSettings(newGamemodeSettings);
+  };
 
   return (
     <div

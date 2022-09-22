@@ -385,34 +385,6 @@ const Algebra = (props: Props) => {
     setGuess(`${guess}${number}`);
   }
 
-  const handleDifficultyChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const newGamemodeSettings: AlgebraProps["gamemodeSettings"] = {
-      ...props.gamemodeSettings,
-      difficulty: e.target.value as Difficulty,
-    };
-
-    setGamemodeSettings(newGamemodeSettings);
-  };
-
-  const handleTimerToggle = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newGamemodeSettings: AlgebraProps["gamemodeSettings"] = {
-      ...props.gamemodeSettings,
-      timerConfig: e.target.checked ? { isTimed: true, seconds: mostRecentTotalSeconds } : { isTimed: false },
-    };
-
-    setGamemodeSettings(newGamemodeSettings);
-  };
-
-
-  const handleSimpleGamemodeSettingsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newGamemodeSettings: AlgebraProps["gamemodeSettings"] = {
-      ...props.gamemodeSettings,
-      [e.target.name]: getNewGamemodeSettingValue(e),
-    };
-
-    setGamemodeSettings(newGamemodeSettings);
-  };
-
   function displayInputMethods(): React.ReactNode {
     if (!props.settings.gameplay.keyboard) {
       return;
@@ -469,6 +441,33 @@ const Algebra = (props: Props) => {
       );
     }
   }
+
+  const handleDifficultyChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const newGamemodeSettings: AlgebraProps["gamemodeSettings"] = {
+      ...props.gamemodeSettings,
+      difficulty: e.target.value as Difficulty,
+    };
+
+    setGamemodeSettings(newGamemodeSettings);
+  };
+
+  const handleTimerToggle = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newGamemodeSettings: AlgebraProps["gamemodeSettings"] = {
+      ...props.gamemodeSettings,
+      timerConfig: e.target.checked ? { isTimed: true, seconds: mostRecentTotalSeconds } : { isTimed: false },
+    };
+
+    setGamemodeSettings(newGamemodeSettings);
+  };
+
+  const handleSimpleGamemodeSettingsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newGamemodeSettings: AlgebraProps["gamemodeSettings"] = {
+      ...props.gamemodeSettings,
+      [e.target.name]: getNewGamemodeSettingValue(e),
+    };
+
+    setGamemodeSettings(newGamemodeSettings);
+  };
 
   return (
     <div
