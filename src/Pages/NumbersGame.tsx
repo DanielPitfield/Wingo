@@ -18,6 +18,8 @@ import { hasNumberSelectionFinished } from "../Helper Functions/hasNumberSelecti
 import { hasNumberSelectionStarted } from "../Helper Functions/hasNumberSelectionStarted";
 import { NumberPuzzleValue, NumberPuzzle } from "../Helper Functions/NumbersGameSolver";
 import { getNumbersGameScore } from "../Helper Functions/getNumbersGameScore";
+import { getNewGamemodeSettingValue } from "../Helper Functions/getGamemodeSettingsNewValue";
+import NumbersGameGamemodeSettings from "../Components/GamemodeSettingsOptions/NumbersGameGamemodeSettings";
 
 interface Props {
   campaignConfig: NumbersGameConfigProps["campaignConfig"];
@@ -75,6 +77,7 @@ const NumbersGame = (props: Props) => {
   const NUMBERPUZZLE_MAX_NUM_OPERANDS = 7;
 
   const [solutions, setSolutions] = useState<{ best: NumberPuzzleValue; all: NumberPuzzleValue[] } | null>(null);
+
   const [mostRecentTotalSeconds, setMostRecentTotalSeconds] = useState(
     props.gamemodeSettings?.timerConfig?.isTimed === true
       ? props.gamemodeSettings?.timerConfig.seconds
@@ -265,82 +268,6 @@ const NumbersGame = (props: Props) => {
     setSolutions(puzzle.solve());
   }
 
-  function generateSettingsOptions(): React.ReactNode {
-    return (
-      <>
-        <label>
-          <input
-            type="number"
-            value={props.gamemodeSettings.numOperands}
-            min={4}
-            max={10}
-            onChange={(e) => {
-              const newGamemodeSettings = {
-                ...props.gamemodeSettings,
-                numOperands: e.target.valueAsNumber,
-              };
-              props.updateGamemodeSettings(newGamemodeSettings);
-            }}
-          ></input>
-          Numbers in selection
-        </label>
-        <label>
-          <input
-            checked={props.gamemodeSettings.hasScaryNumbers}
-            type="checkbox"
-            onChange={(e) => {
-              const newGamemodeSettings = {
-                ...props.gamemodeSettings,
-                hasScaryNumbers: !props.gamemodeSettings.hasScaryNumbers,
-              };
-              props.updateGamemodeSettings(newGamemodeSettings);
-            }}
-          ></input>
-          Scary Big Numbers
-        </label>
-        <>
-          <label>
-            <input
-              checked={props.gamemodeSettings.timerConfig.isTimed}
-              type="checkbox"
-              onChange={() => {
-                // If currently timed, on change, make the game not timed and vice versa
-                const newTimer: { isTimed: true; seconds: number } | { isTimed: false } = props.gamemodeSettings
-                  .timerConfig.isTimed
-                  ? { isTimed: false }
-                  : { isTimed: true, seconds: mostRecentTotalSeconds };
-                const newGamemodeSettings = { ...props.gamemodeSettings, timerConfig: newTimer };
-                props.updateGamemodeSettings(newGamemodeSettings);
-              }}
-            ></input>
-            Timer
-          </label>
-          {props.gamemodeSettings.timerConfig.isTimed && (
-            <label>
-              <input
-                type="number"
-                value={props.gamemodeSettings.timerConfig.seconds}
-                min={10}
-                max={120}
-                step={5}
-                onChange={(e) => {
-                  props.updateRemainingSeconds(e.target.valueAsNumber);
-                  setMostRecentTotalSeconds(e.target.valueAsNumber);
-                  const newGamemodeSettings = {
-                    ...props.gamemodeSettings,
-                    timer: { isTimed: true, seconds: e.target.valueAsNumber },
-                  };
-                  props.updateGamemodeSettings(newGamemodeSettings);
-                }}
-              ></input>
-              Seconds
-            </label>
-          )}
-        </>
-      </>
-    );
-  }
-
   function displayOutcome(): React.ReactNode {
     if (props.inProgress || !props.hasTimerEnded || !props.targetNumber) {
       return;
@@ -457,6 +384,24 @@ const NumbersGame = (props: Props) => {
     );
   }
 
+  const handleTimerToggle = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newGamemodeSettings: NumbersGameConfigProps["gamemodeSettings"] = {
+      ...props.gamemodeSettings,
+      timerConfig: e.target.checked ? { isTimed: true, seconds: mostRecentTotalSeconds } : { isTimed: false },
+    };
+
+    props.updateGamemodeSettings(newGamemodeSettings);
+  };
+
+  const handleSimpleGamemodeSettingsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newGamemodeSettings: NumbersGameConfigProps["gamemodeSettings"] = {
+      ...props.gamemodeSettings,
+      [e.target.name]: getNewGamemodeSettingValue(e),
+    };
+
+    props.updateGamemodeSettings(newGamemodeSettings);
+  };
+
   return (
     <div
       className="App"
@@ -464,7 +409,13 @@ const NumbersGame = (props: Props) => {
     >
       {!props.campaignConfig.isCampaignLevel && !props.gameshowScore && (
         <div className="gamemodeSettings">
-          <GamemodeSettingsMenu>{generateSettingsOptions()}</GamemodeSettingsMenu>
+          <NumbersGameGamemodeSettings
+            gamemodeSettings={props.gamemodeSettings}
+            handleSimpleGamemodeSettingsChange={handleSimpleGamemodeSettingsChange}
+            handleTimerToggle={handleTimerToggle}
+            setMostRecentTotalSeconds={setMostRecentTotalSeconds}
+            updateRemainingSeconds={props.updateRemainingSeconds}
+          ></NumbersGameGamemodeSettings>
         </div>
       )}
 
