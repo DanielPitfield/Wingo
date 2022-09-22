@@ -12,6 +12,8 @@ import { LEVEL_FINISHING_TEXT } from "../Components/Level";
 import { MAX_NUM_CATEGORIES } from "../Data/GamemodeSettingsInputLimits";
 import { LetterCategoriesConfigProps } from "./LetterCategoriesConfig";
 import { getGamemodeDefaultTimerValue } from "../Helper Functions/getGamemodeDefaultTimerValue";
+import LetterCategoriesGamemodeSettings from "../Components/GamemodeSettingsOptions/LetterCategoriesGamemodeSettings";
+import { getNewGamemodeSettingValue } from "../Helper Functions/getGamemodeSettingsNewValue";
 
 interface Props {
   campaignConfig: LetterCategoriesConfigProps["campaignConfig"];
@@ -113,68 +115,6 @@ const LetterCategories = (props: Props) => {
     return Grid;
   }
 
-  function generateSettingsOptions(): React.ReactNode {
-    return (
-      <>
-        <label>
-          <input
-            type="number"
-            value={props.gamemodeSettings.numCategories}
-            min={2}
-            max={MAX_NUM_CATEGORIES}
-            onChange={(e) => {
-              const newGamemodeSettings = {
-                ...props.gamemodeSettings,
-                numCategories: e.target.valueAsNumber,
-              };
-              props.updateGamemodeSettings(newGamemodeSettings);
-            }}
-          ></input>
-          Number of categories
-        </label>
-        <>
-          <label>
-            <input
-              checked={props.gamemodeSettings.timerConfig.isTimed}
-              type="checkbox"
-              onChange={() => {
-                // If currently timed, on change, make the game not timed and vice versa
-                const newTimer: { isTimed: true; seconds: number } | { isTimed: false } = props.gamemodeSettings
-                  .timerConfig.isTimed
-                  ? { isTimed: false }
-                  : { isTimed: true, seconds: mostRecentTotalSeconds };
-                const newGamemodeSettings = { ...props.gamemodeSettings, timerConfig: newTimer };
-                props.updateGamemodeSettings(newGamemodeSettings);
-              }}
-            ></input>
-            Timer
-          </label>
-          {props.gamemodeSettings.timerConfig.isTimed && (
-            <label>
-              <input
-                type="number"
-                value={props.gamemodeSettings.timerConfig.seconds}
-                min={10}
-                max={120}
-                step={5}
-                onChange={(e) => {
-                  props.updateRemainingSeconds(e.target.valueAsNumber);
-                  setMostRecentTotalSeconds(e.target.valueAsNumber);
-                  const newGamemodeSettings = {
-                    ...props.gamemodeSettings,
-                    timer: { isTimed: true, seconds: e.target.valueAsNumber },
-                  };
-                  props.updateGamemodeSettings(newGamemodeSettings);
-                }}
-              ></input>
-              Seconds
-            </label>
-          )}
-        </>
-      </>
-    );
-  }
-
   function displayOutcome(): React.ReactNode {
     // Game still in progress, don't display anything
     if (props.inProgress) {
@@ -209,6 +149,24 @@ const LetterCategories = (props: Props) => {
     }
   }
 
+  const handleTimerToggle = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newGamemodeSettings: LetterCategoriesConfigProps["gamemodeSettings"] = {
+      ...props.gamemodeSettings,
+      timerConfig: e.target.checked ? { isTimed: true, seconds: mostRecentTotalSeconds } : { isTimed: false },
+    };
+
+    props.updateGamemodeSettings(newGamemodeSettings);
+  };
+
+  const handleSimpleGamemodeSettingsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newGamemodeSettings: LetterCategoriesConfigProps["gamemodeSettings"] = {
+      ...props.gamemodeSettings,
+      [e.target.name]: getNewGamemodeSettingValue(e),
+    };
+
+    props.updateGamemodeSettings(newGamemodeSettings);
+  };
+
   return (
     <div
       className="App"
@@ -230,7 +188,13 @@ const LetterCategories = (props: Props) => {
 
       {!props.campaignConfig.isCampaignLevel && (
         <div className="gamemodeSettings">
-          <GamemodeSettingsMenu>{generateSettingsOptions()}</GamemodeSettingsMenu>
+          <LetterCategoriesGamemodeSettings
+            gamemodeSettings={props.gamemodeSettings}
+            handleSimpleGamemodeSettingsChange={handleSimpleGamemodeSettingsChange}
+            handleTimerToggle={handleTimerToggle}
+            setMostRecentTotalSeconds={setMostRecentTotalSeconds}
+            updateRemainingSeconds={props.updateRemainingSeconds}
+          ></LetterCategoriesGamemodeSettings>
         </div>
       )}
 
