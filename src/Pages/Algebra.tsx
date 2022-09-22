@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { Button } from "../Components/Button";
-import GamemodeSettingsMenu from "../Components/GamemodeSettingsMenu";
 import { Keyboard } from "../Components/Keyboard";
 import LetterTile from "../Components/LetterTile";
 import { MessageNotification } from "../Components/MessageNotification";
@@ -19,7 +18,7 @@ import { getAlgebraTemplates } from "../Helper Functions/getAlgebraTemplates";
 import { getGamemodeDefaultTimerValue } from "../Helper Functions/getGamemodeDefaultTimerValue";
 import { getQuestionSetOutcome } from "../Helper Functions/getQuestionSetOutcome";
 import { getNewGamemodeSettingValue } from "../Helper Functions/getGamemodeSettingsNewValue";
-import AlgebraGamemodeSettingsOptions from "../Components/GamemodeSettingsOptions/AlgebraGamemodeSettingsOptions";
+import AlgebraGamemodeSettings from "../Components/GamemodeSettingsOptions/AlgebraGamemodeSettings";
 
 export interface AlgebraProps {
   campaignConfig:
@@ -476,16 +475,14 @@ const Algebra = (props: Props) => {
     >
       {!props.campaignConfig.isCampaignLevel && (
         <div className="gamemodeSettings">
-          <GamemodeSettingsMenu>
-            <AlgebraGamemodeSettingsOptions
-              gamemodeSettings={gamemodeSettings}
-              handleDifficultyChange={handleDifficultyChange}
-              handleTimerToggle={handleTimerToggle}
-              handleSimpleGamemodeSettingsChange={handleSimpleGamemodeSettingsChange}
-              setMostRecentTotalSeconds={setMostRecentTotalSeconds}
-              setRemainingSeconds={setRemainingSeconds}
-            ></AlgebraGamemodeSettingsOptions>
-          </GamemodeSettingsMenu>
+          <AlgebraGamemodeSettings
+            gamemodeSettings={gamemodeSettings}
+            handleDifficultyChange={handleDifficultyChange}
+            handleTimerToggle={handleTimerToggle}
+            handleSimpleGamemodeSettingsChange={handleSimpleGamemodeSettingsChange}
+            setMostRecentTotalSeconds={setMostRecentTotalSeconds}
+            setRemainingSeconds={setRemainingSeconds}
+          ></AlgebraGamemodeSettings>
         </div>
       )}
 

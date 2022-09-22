@@ -9,7 +9,6 @@ import { WingoConfigProps, WingoMode } from "./WingoConfig";
 import { Theme } from "../Data/Themes";
 import { SettingsData } from "../Data/SaveData";
 import { useCorrectChime, useFailureChime, useLightPingChime } from "../Data/Sounds";
-import GamemodeSettingsMenu from "../Components/GamemodeSettingsMenu";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
 import { categoryMappings } from "../Data/WordArrayMappings";
 import { getNewGamemodeSettingValue } from "../Helper Functions/getGamemodeSettingsNewValue";
@@ -17,7 +16,7 @@ import { DEFAULT_WINGO_INCREASING_MAX_NUM_LIVES } from "../Data/DefaultGamemodeS
 import { LetterStatus } from "../Components/LetterTile";
 import { getGamemodeDefaultTimerValue } from "../Helper Functions/getGamemodeDefaultTimerValue";
 import { getNumNewLimitlessLives } from "../Helper Functions/getNumNewLimitlessLives";
-import GamemodeSettingsOptions from "../Components/GamemodeSettingsOptions/WingoGamemodeSettingsOptions";
+import WingoGamemodeSettings from "../Components/GamemodeSettingsOptions/WingoGamemodeSettings";
 
 interface Props {
   isCampaignLevel: boolean;
@@ -482,17 +481,15 @@ const Wingo = (props: Props) => {
           !props.isCampaignLevel &&
           !props.gameshowScore && (
             <div className="gamemodeSettings">
-              <GamemodeSettingsMenu>
-                <GamemodeSettingsOptions
-                  mode={props.mode}
-                  gamemodeSettings={props.gamemodeSettings}
-                  handleMaxLivesToggle={handleMaxLivesToggle}
-                  handleTimerToggle={handleTimerToggle}
-                  handleSimpleGamemodeSettingsChange={handleSimpleGamemodeSettingsChange}
-                  setMostRecentMaxLives={setMostRecentMaxLives}
-                  setMostRecentTotalSeconds={setMostRecentTotalSeconds}
-                ></GamemodeSettingsOptions>
-              </GamemodeSettingsMenu>
+              <WingoGamemodeSettings
+                mode={props.mode}
+                gamemodeSettings={props.gamemodeSettings}
+                handleMaxLivesToggle={handleMaxLivesToggle}
+                handleTimerToggle={handleTimerToggle}
+                handleSimpleGamemodeSettingsChange={handleSimpleGamemodeSettingsChange}
+                setMostRecentMaxLives={setMostRecentMaxLives}
+                setMostRecentTotalSeconds={setMostRecentTotalSeconds}
+              ></WingoGamemodeSettings>
             </div>
           )
       }
