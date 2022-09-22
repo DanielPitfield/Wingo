@@ -13,7 +13,7 @@ import { AlgebraTemplate, answerType, AlgebraQuestion } from "../Data/AlgebraTem
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
 import { MAX_NUMPAD_GUESS_LENGTH } from "../Data/GamemodeSettingsInputLimits";
 import { DEFAULT_ALPHABET, DEFAULT_ALPHABET_STRING } from "./WingoConfig";
-import { Difficulty, difficultyOptions } from "../Data/DefaultGamemodeSettings";
+import { Difficulty } from "../Data/DefaultGamemodeSettings";
 import { PageName } from "../Data/PageNames";
 import { getAlgebraTemplates } from "../Helper Functions/getAlgebraTemplates";
 import { getGamemodeDefaultTimerValue } from "../Helper Functions/getGamemodeDefaultTimerValue";
@@ -479,7 +479,7 @@ const Algebra = (props: Props) => {
         <div className="gamemodeSettings">
           <GamemodeSettingsMenu>
             <AlgebraGamemodeSettingsOptions
-              gamemodeSettings={props.gamemodeSettings}
+              gamemodeSettings={gamemodeSettings}
               handleDifficultyChange={handleDifficultyChange}
               handleTimerToggle={handleTimerToggle}
               handleSimpleGamemodeSettingsChange={handleSimpleGamemodeSettingsChange}
