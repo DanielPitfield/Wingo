@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { PageName } from "../Data/PageNames";
 import { Button } from "../Components/Button";
-import GamemodeSettingsMenu from "../Components/GamemodeSettingsMenu";
 import { MessageNotification } from "../Components/MessageNotification";
 import ProgressBar, { GreenToRedColorTransition } from "../Components/ProgressBar";
 import { SaveData, SettingsData } from "../Data/SaveData";

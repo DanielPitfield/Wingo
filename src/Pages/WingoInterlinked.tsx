@@ -10,12 +10,10 @@ import {
   CrosswordGenerationResult,
   crosswordGenerator as crossWordGenerator,
 } from "../Helper Functions/CrossWordGenerator";
-import GamemodeSettingsMenu from "../Components/GamemodeSettingsMenu";
 import ProgressBar, { GreenToRedColorTransition } from "../Components/ProgressBar";
 import { PageName } from "../Data/PageNames";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
 import { categoryMappings, wordLengthMappingsTargets } from "../Data/WordArrayMappings";
-import { MAX_TARGET_WORD_LENGTH, MIN_TARGET_WORD_LENGTH } from "../Data/GamemodeSettingsInputLimits";
 import { DEFAULT_FIT_RESTRICTION } from "../Data/DefaultGamemodeSettings";
 import { getWordRowStatusSummary, WordRowStatusChecks } from "../Helper Functions/getWordRowStatusSummary";
 import { shuffleArray } from "../Helper Functions/shuffleArray";
@@ -826,6 +824,7 @@ export const WingoInterlinked = (props: Props) => {
       if (tile.status === "correct") {
         return true;
       }
+      return false;
     });
 
     return (

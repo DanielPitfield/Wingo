@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { PageName } from "../Data/PageNames";
 import { Button } from "../Components/Button";
-import GamemodeSettingsMenu from "../Components/GamemodeSettingsMenu";
 import { MessageNotification } from "../Components/MessageNotification";
 import ProgressBar, { GreenToRedColorTransition } from "../Components/ProgressBar";
 import { SaveData, SettingsData } from "../Data/SaveData";
@@ -9,20 +8,12 @@ import { useClickChime, useCorrectChime, useFailureChime, useLightPingChime } fr
 import { Theme } from "../Data/Themes";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
 import { wordLengthMappingsTargets } from "../Data/WordArrayMappings";
-import {
-  MAX_NUM_SAME_LETTER_GUESSES,
-  MAX_NUM_SAME_LETTER_MATCHING_WORDS,
-  MAX_NUM_SAME_LETTER_TOTAL_WORDS,
-  MIN_NUM_SAME_LETTER_GUESSES,
-  MIN_NUM_SAME_LETTER_MATCHING_WORDS,
-  MIN_NUM_SAME_LETTER_TOTAL_WORDS,
-} from "../Data/GamemodeSettingsInputLimits";
 import { shuffleArray } from "../Helper Functions/shuffleArray";
 import { getGamemodeDefaultTimerValue } from "../Helper Functions/getGamemodeDefaultTimerValue";
 import { getRandomElementFrom } from "../Helper Functions/getRandomElementFrom";
 import { getPrettyText } from "../Helper Functions/getPrettyText";
 import { getNewGamemodeSettingValue } from "../Helper Functions/getGamemodeSettingsNewValue";
-import SameLetterWordsGamemodeSettings from "../Components/GamemodeSettingsOptions/SameLetterWordsGamemodeSettings";
+import SameLetterWordsGamemodeSettings, { MIN_NUM_SAME_LETTER_MATCHING_WORDS, MIN_NUM_SAME_LETTER_TOTAL_WORDS } from "../Components/GamemodeSettingsOptions/SameLetterWordsGamemodeSettings";
 
 export interface SameLetterWordsProps {
   gamemodeSettings: {

@@ -4,9 +4,9 @@ import { SaveData, SettingsData } from "../Data/SaveData";
 import { Theme } from "../Data/Themes";
 import Numble from "./Numble";
 import { DEFAULT_NUMBLE_GUESS_TIMER_VALUE } from "../Data/DefaultGamemodeSettings";
-import { MAX_NUMBLE_NUM_TEAMS } from "../Data/GamemodeSettingsInputLimits";
 import { getGamemodeDefaultTimerValue } from "../Helper Functions/getGamemodeDefaultTimerValue";
 import { getNextTeamNumberWithRemainingTime } from "../Helper Functions/getNextTeamWithRemainingTime";
+import { MAX_NUM_NUMBLE_TEAMS } from "../Components/GamemodeSettingsOptions/NumbleGamemodeSettings";
 
 export const numbleGridShapes = ["square", "hexagon"] as const;
 export type numbleGridShape = typeof numbleGridShapes[number];
@@ -178,7 +178,7 @@ const NumbleConfig = (props: Props) => {
         ? // Always 1 team when a campaign level
           1
         : // No more than 4 teams
-          Math.min(MAX_NUMBLE_NUM_TEAMS, props.gamemodeSettings.numTeams),
+          Math.min(MAX_NUM_NUMBLE_TEAMS, props.gamemodeSettings.numTeams),
     };
     setGamemodeSettings(newGamemodeSettings);
   }, [props.gamemodeSettings.numTeams, props.campaignConfig.isCampaignLevel]);

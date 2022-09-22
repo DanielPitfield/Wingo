@@ -2,9 +2,6 @@ import {
   MAX_TARGET_WORD_LENGTH,
   MIN_PUZZLE_WORD_LENGTH,
   MAX_PUZZLE_WORD_LENGTH,
-  MIN_PUZZLE_REVEAL_INTERVAL_SECONDS,
-  MAX_PUZZLE_REVEAL_INTERVAL_SECONDS,
-  MIN_PUZZLE_LEAVE_NUM_BLANKS,
   MIN_TARGET_WORD_LENGTH,
 } from "../../Data/GamemodeSettingsInputLimits";
 import { WingoConfigProps, WingoMode } from "../../Pages/WingoConfig";
@@ -21,6 +18,12 @@ interface Props {
   setMostRecentMaxLives: (numLives: number) => void;
   setMostRecentTotalSeconds: (numSeconds: number) => void;
 }
+
+const MIN_PUZZLE_REVEAL_INTERVAL_SECONDS = 1;
+const MAX_PUZZLE_REVEAL_INTERVAL_SECONDS = 10;
+
+// Must be atleast 1 letter blank (otherwise entire word is revealed)
+const MIN_PUZZLE_LEAVE_NUM_BLANKS = 1;
 
 const WingoGamemodeSettings = (props: Props) => {
   if (props.mode === "puzzle") {

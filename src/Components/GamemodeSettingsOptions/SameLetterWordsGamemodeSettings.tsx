@@ -1,11 +1,3 @@
-import {
-  MIN_NUM_SAME_LETTER_MATCHING_WORDS,
-  MAX_NUM_SAME_LETTER_MATCHING_WORDS,
-  MIN_NUM_SAME_LETTER_TOTAL_WORDS,
-  MAX_NUM_SAME_LETTER_TOTAL_WORDS,
-  MIN_NUM_SAME_LETTER_GUESSES,
-  MAX_NUM_SAME_LETTER_GUESSES,
-} from "../../Data/GamemodeSettingsInputLimits";
 import { SameLetterWordsProps } from "../../Pages/SameLetterWords";
 import GamemodeSettingsMenu from "../GamemodeSettingsMenu";
 
@@ -20,6 +12,15 @@ interface Props {
   setMostRecentTotalSeconds: (numSeconds: number) => void;
 }
 
+export const MIN_NUM_SAME_LETTER_TOTAL_WORDS = 4;
+const MAX_NUM_TOTAL_WORDS = 20;
+
+export const MIN_NUM_SAME_LETTER_MATCHING_WORDS = 2;
+const MAX_NUM_MATCHING_WORDS = 10;
+
+const MIN_NUM_GUESSES = 1;
+const MAX_NUM_GUESSES = 100;
+
 const SameLetterWordsGamemodeSettings = (props: Props) => {
   return (
     <GamemodeSettingsMenu>
@@ -30,7 +31,7 @@ const SameLetterWordsGamemodeSettings = (props: Props) => {
             name="numMatchingWords"
             value={props.gamemodeSettings.numMatchingWords}
             min={MIN_NUM_SAME_LETTER_MATCHING_WORDS}
-            max={Math.min(MAX_NUM_SAME_LETTER_MATCHING_WORDS, props.gamemodeSettings.numTotalWords - 1)}
+            max={Math.min(MAX_NUM_MATCHING_WORDS, props.gamemodeSettings.numTotalWords - 1)}
             onChange={props.handleSimpleGamemodeSettingsChange}
           ></input>
           Number of matching words
@@ -42,7 +43,7 @@ const SameLetterWordsGamemodeSettings = (props: Props) => {
             name="numTotalWords"
             value={props.gamemodeSettings.numTotalWords}
             min={Math.max(MIN_NUM_SAME_LETTER_TOTAL_WORDS, props.gamemodeSettings.numMatchingWords + 1)}
-            max={MAX_NUM_SAME_LETTER_TOTAL_WORDS}
+            max={MAX_NUM_TOTAL_WORDS}
             onChange={props.handleSimpleGamemodeSettingsChange}
           ></input>
           Number of total words
@@ -53,8 +54,8 @@ const SameLetterWordsGamemodeSettings = (props: Props) => {
             type="number"
             name="numGuesses"
             value={props.gamemodeSettings.numGuesses}
-            min={MIN_NUM_SAME_LETTER_GUESSES}
-            max={MAX_NUM_SAME_LETTER_GUESSES}
+            min={MIN_NUM_GUESSES}
+            max={MAX_NUM_GUESSES}
             onChange={(e) => {
               props.setRemainingGuesses(e.target.valueAsNumber);
               props.handleSimpleGamemodeSettingsChange(e);
