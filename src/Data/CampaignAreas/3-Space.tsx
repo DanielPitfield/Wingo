@@ -173,7 +173,7 @@ export const area: AreaConfig = {
           gamemodeSettings: {
             isFirstLetterProvided: true,
             puzzleLeaveNumBlanks: 4,
-            puzzleRevealSeconds: 1500,
+            puzzleRevealSeconds: 1.5,
             timerConfig: { isTimed: false },
           },
         },
@@ -273,7 +273,7 @@ export const area: AreaConfig = {
           gamemodeSettings: {
             isFirstLetterProvided: false,
             puzzleLeaveNumBlanks: 3,
-            puzzleRevealSeconds: 1500,
+            puzzleRevealSeconds: 1.5,
             timerConfig: { isTimed: false },
           },
         },
@@ -339,7 +339,7 @@ export const area: AreaConfig = {
           gamemodeSettings: {
             isFirstLetterProvided: false,
             puzzleLeaveNumBlanks: 3,
-            puzzleRevealSeconds: 1500,
+            puzzleRevealSeconds: 1.5,
             timerConfig: { isTimed: false },
           },
         },
@@ -389,7 +389,7 @@ export const area: AreaConfig = {
           gamemodeSettings: {
             isFirstLetterProvided: true,
             puzzleLeaveNumBlanks: 3,
-            puzzleRevealSeconds: 1500,
+            puzzleRevealSeconds: 1.5,
             timerConfig: { isTimed: false },
           },
         },
