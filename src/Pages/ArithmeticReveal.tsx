@@ -7,8 +7,7 @@ import ProgressBar, { GreenToRedColorTransition } from "../Components/ProgressBa
 import { Button } from "../Components/Button";
 import { Theme } from "../Data/Themes";
 import { SaveData, SettingsData } from "../Data/SaveData";
-import GamemodeSettingsMenu from "../Components/GamemodeSettingsMenu";
-import { arithmeticNumberSize, arithmeticNumberSizes } from "./ArithmeticDrag";
+import { arithmeticNumberSize } from "./ArithmeticDrag";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
 import { MAX_NUMPAD_GUESS_LENGTH } from "../Data/GamemodeSettingsInputLimits";
 import { operators } from "../Data/Operators";
@@ -16,6 +15,8 @@ import { getGamemodeDefaultTimerValue } from "../Helper Functions/getGamemodeDef
 import { getQuestionSetOutcome } from "../Helper Functions/getQuestionSetOutcome";
 import { getRandomElementFrom } from "../Helper Functions/getRandomElementFrom";
 import { getRandomIntFromRange } from "../Helper Functions/getRandomIntFromRange";
+import ArithmeticRevealGamemodeSettings from "../Components/GamemodeSettingsOptions/ArithmeticRevealGamemodeSettings";
+import { getNewGamemodeSettingValue } from "../Helper Functions/getGamemodeSettingsNewValue";
 
 export interface ArithmeticRevealProps {
   campaignConfig:
@@ -501,129 +502,32 @@ const ArithmeticReveal = (props: Props) => {
     setTargetTransitioned(false);
   }, [targetTransitioned]);
 
-  function generateSettingsOptions(): React.ReactNode {
-    const MIN_NUM_TILES = 2;
-    const MAX_NUM_TILES = 10;
+  const handleNumberSizeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const newGamemodeSettings: ArithmeticRevealProps["gamemodeSettings"] = {
+      ...gamemodeSettings,
+      numberSize: e.target.value as arithmeticNumberSize,
+    };
 
-    const MIN_NUM_CHECKPOINTS = 1;
-    const MAX_NUM_CHECKPOINTS = 10;
+    setGamemodeSettings(newGamemodeSettings);
+  };
 
-    const MIN_REVEAL_INTERVAL = 1;
-    const MAX_REVEAL_INTERVAL = 5;
+  const handleTimerToggle = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newGamemodeSettings: ArithmeticRevealProps["gamemodeSettings"] = {
+      ...gamemodeSettings,
+      timerConfig: e.target.checked ? { isTimed: true, seconds: mostRecentTotalSeconds } : { isTimed: false },
+    };
 
-    return (
-      <>
-        <label>
-          <input
-            type="number"
-            value={gamemodeSettings.numTiles}
-            min={MIN_NUM_TILES}
-            max={MAX_NUM_TILES}
-            onChange={(e) => {
-              const newGamemodeSettings = {
-                ...gamemodeSettings,
-                numTiles: e.target.valueAsNumber,
-              };
-              setGamemodeSettings(newGamemodeSettings);
-            }}
-          ></input>
-          Number of tiles
-        </label>
-        <label>
-          <input
-            type="number"
-            value={gamemodeSettings.numCheckpoints}
-            min={MIN_NUM_CHECKPOINTS}
-            max={MAX_NUM_CHECKPOINTS}
-            onChange={(e) => {
-              const newGamemodeSettings = {
-                ...gamemodeSettings,
-                numCheckpoints: e.target.valueAsNumber,
-              };
-              setGamemodeSettings(newGamemodeSettings);
-            }}
-          ></input>
-          Number of checkpoints
-        </label>
-        <label>
-          <select
-            onChange={(e) => {
-              const newGamemodeSettings = {
-                ...gamemodeSettings,
-                numberSize: e.target.value as arithmeticNumberSize,
-              };
-              setGamemodeSettings(newGamemodeSettings);
-            }}
-            className="numberSize_input"
-            name="numberSize"
-            value={gamemodeSettings.numberSize}
-          >
-            {arithmeticNumberSizes.map((sizeOption) => (
-              <option key={sizeOption} value={sizeOption}>
-                {sizeOption}
-              </option>
-            ))}
-          </select>
-          Number size
-        </label>
-        <label>
-          <input
-            type="number"
-            value={gamemodeSettings.revealIntervalSeconds}
-            min={MIN_REVEAL_INTERVAL}
-            max={MAX_REVEAL_INTERVAL}
-            onChange={(e) => {
-              const newGamemodeSettings = {
-                ...gamemodeSettings,
-                revealIntervalSeconds: e.target.valueAsNumber,
-              };
-              setGamemodeSettings(newGamemodeSettings);
-            }}
-          ></input>
-          Reveal interval
-        </label>
-        <>
-          <label>
-            <input
-              checked={gamemodeSettings.timerConfig.isTimed}
-              type="checkbox"
-              onChange={() => {
-                // If currently timed, on change, make the game not timed and vice versa
-                const newTimer: { isTimed: true; seconds: number } | { isTimed: false } = gamemodeSettings.timerConfig
-                  .isTimed
-                  ? { isTimed: false }
-                  : { isTimed: true, seconds: mostRecentTotalSeconds };
-                const newGamemodeSettings = { ...gamemodeSettings, timerConfig: newTimer };
-                setGamemodeSettings(newGamemodeSettings);
-              }}
-            ></input>
-            Timer
-          </label>
-          {gamemodeSettings.timerConfig.isTimed && (
-            <label>
-              <input
-                type="number"
-                value={gamemodeSettings.timerConfig.seconds}
-                min={10}
-                max={120}
-                step={5}
-                onChange={(e) => {
-                  setRemainingSeconds(e.target.valueAsNumber);
-                  setMostRecentTotalSeconds(e.target.valueAsNumber);
-                  const newGamemodeSettings = {
-                    ...gamemodeSettings,
-                    timerConfig: { isTimed: true, seconds: e.target.valueAsNumber },
-                  };
-                  setGamemodeSettings(newGamemodeSettings);
-                }}
-              ></input>
-              Seconds
-            </label>
-          )}
-        </>
-      </>
-    );
-  }
+    setGamemodeSettings(newGamemodeSettings);
+  };
+
+  const handleSimpleGamemodeSettingsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newGamemodeSettings: ArithmeticRevealProps["gamemodeSettings"] = {
+      ...gamemodeSettings,
+      [e.target.name]: getNewGamemodeSettingValue(e),
+    };
+
+    setGamemodeSettings(newGamemodeSettings);
+  };
 
   return (
     <div
@@ -632,7 +536,14 @@ const ArithmeticReveal = (props: Props) => {
     >
       {!props.campaignConfig.isCampaignLevel && (
         <div className="gamemodeSettings">
-          <GamemodeSettingsMenu>{generateSettingsOptions()}</GamemodeSettingsMenu>
+          <ArithmeticRevealGamemodeSettings
+            gamemodeSettings={gamemodeSettings}
+            handleNumberSizeChange={handleNumberSizeChange}
+            handleSimpleGamemodeSettingsChange={handleSimpleGamemodeSettingsChange}
+            handleTimerToggle={handleTimerToggle}
+            setMostRecentTotalSeconds={setMostRecentTotalSeconds}
+            setRemainingSeconds={setRemainingSeconds}
+          ></ArithmeticRevealGamemodeSettings>
         </div>
       )}
       <div className="outcome">{displayOutcome()}</div>
