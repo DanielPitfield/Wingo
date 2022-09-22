@@ -443,7 +443,7 @@ const Algebra = (props: Props) => {
 
   const handleDifficultyChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newGamemodeSettings: AlgebraProps["gamemodeSettings"] = {
-      ...props.gamemodeSettings,
+      ...gamemodeSettings,
       difficulty: e.target.value as Difficulty,
     };
 
@@ -452,7 +452,7 @@ const Algebra = (props: Props) => {
 
   const handleTimerToggle = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newGamemodeSettings: AlgebraProps["gamemodeSettings"] = {
-      ...props.gamemodeSettings,
+      ...gamemodeSettings,
       timerConfig: e.target.checked ? { isTimed: true, seconds: mostRecentTotalSeconds } : { isTimed: false },
     };
 
@@ -461,7 +461,7 @@ const Algebra = (props: Props) => {
 
   const handleSimpleGamemodeSettingsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newGamemodeSettings: AlgebraProps["gamemodeSettings"] = {
-      ...props.gamemodeSettings,
+      ...gamemodeSettings,
       [e.target.name]: getNewGamemodeSettingValue(e),
     };
 

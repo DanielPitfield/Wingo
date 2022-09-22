@@ -37,6 +37,7 @@ const AlgebraGamemodeSettings = (props: Props) => {
           <input
             checked={props.gamemodeSettings.timerConfig.isTimed}
             type="checkbox"
+            name="timerConfig"
             onChange={props.handleTimerToggle}
           ></input>
           Timer
@@ -46,6 +47,7 @@ const AlgebraGamemodeSettings = (props: Props) => {
           <label>
             <input
               type="number"
+              name="timerConfig"
               value={props.gamemodeSettings.timerConfig.seconds}
               min={10}
               max={120}
