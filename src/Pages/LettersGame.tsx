@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { Button } from "../Components/Button";
-import GamemodeSettingsMenu from "../Components/GamemodeSettingsMenu";
 import LettersGameGamemodeSettings from "../Components/GamemodeSettingsOptions/LettersGameGamemodeSettings";
 import { Keyboard } from "../Components/Keyboard";
 import { LetterSelectionRow } from "../Components/LetterSelectionRow";
@@ -8,7 +7,6 @@ import { LEVEL_FINISHING_TEXT } from "../Components/Level";
 import { MessageNotification } from "../Components/MessageNotification";
 import ProgressBar, { GreenToRedColorTransition } from "../Components/ProgressBar";
 import { WordRow } from "../Components/WordRow";
-import { MAX_TARGET_WORD_LENGTH, MIN_TARGET_WORD_LENGTH } from "../Data/GamemodeSettingsInputLimits";
 import { PageName } from "../Data/PageNames";
 import { SettingsData } from "../Data/SaveData";
 import { Theme } from "../Data/Themes";

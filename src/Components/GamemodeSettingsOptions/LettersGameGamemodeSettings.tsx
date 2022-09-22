@@ -1,8 +1,4 @@
-import {
-  MAX_NUM_CATEGORIES,
-  MAX_TARGET_WORD_LENGTH,
-  MIN_TARGET_WORD_LENGTH,
-} from "../../Data/GamemodeSettingsInputLimits";
+import { MAX_TARGET_WORD_LENGTH, MIN_TARGET_WORD_LENGTH } from "../../Data/GamemodeSettingsInputLimits";
 import { LettersGameConfigProps } from "../../Pages/LettersGameConfig";
 import GamemodeSettingsMenu from "../GamemodeSettingsMenu";
 

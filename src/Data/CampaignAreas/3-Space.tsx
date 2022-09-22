@@ -1,4 +1,3 @@
-import { Puzzles } from "../Puzzles";
 import { Themes } from "../Themes";
 import { AreaConfig } from "../../Pages/Area";
 
