@@ -78,11 +78,12 @@ const NumbleConfig = (props: Props) => {
 
   const [status, setStatus] = useState<NumbleStatus>("dice-rolled-awaiting-pick");
 
-  const [remainingGuessTimerSeconds, setRemainingGuessTimerSeconds] = useState(
+  const INITIAL_GUESS_TIMER_VALUE =
     props.gamemodeSettings?.guessTimerConfig?.isTimed === true
       ? props.gamemodeSettings?.guessTimerConfig.seconds
-      : DEFAULT_NUMBLE_GUESS_TIMER_VALUE
-  );
+      : DEFAULT_NUMBLE_GUESS_TIMER_VALUE;
+
+  const [remainingGuessTimerSeconds, setRemainingGuessTimerSeconds] = useState(INITIAL_GUESS_TIMER_VALUE);
 
   const INITIAL_TEAM_TIMER_VALUE =
     props.gamemodeSettings?.timerConfig?.isTimed === true
@@ -109,6 +110,11 @@ const NumbleConfig = (props: Props) => {
     }
 
     setCurrentTeamNumber(newCurrentTeamNumber);
+
+    if (gamemodeSettings.guessTimerConfig.isTimed) {
+      setRemainingGuessTimerSeconds(gamemodeSettings.guessTimerConfig.seconds);
+    }
+
     // Next team rolls their own dice values
     setStatus("picked-awaiting-dice-roll");
   };
@@ -128,6 +134,16 @@ const NumbleConfig = (props: Props) => {
     if (remainingGuessTimerSeconds <= 0) {
       // Game ends when you run out of time is OFF
       if (!gamemodeSettings.guessTimerConfig.timerBehaviour.isGameOverWhenNoTimeLeft) {
+        // Penalty will now get applied (invoked by Numble timer useEffect()s)
+
+        // Dice must be rolled again (ran out of time to use current roll)
+        setStatus("picked-awaiting-dice-roll");
+
+        // Move on to next team (if multiplayer)
+        if (gamemodeSettings.numTeams > 1) {
+          nextTeamTurn();
+        }
+
         return;
       }
 
