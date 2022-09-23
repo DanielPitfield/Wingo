@@ -218,25 +218,28 @@ const WordCodes = (props: Props) => {
 
     if (props.mode === "match") {
       // Word Tiles
-      let newWordTiles: { word: string; code: string; status: "not set" }[] = [];
-      newWordTiles = wordCodes.map((wordCode) => ({ ...wordCode, status: "not set" }));
-      newWordTiles = shuffleArray(newWordTiles);
-      setWordTiles(newWordTiles);
+      const newWordTiles: { word: string; code: string; status: "not set" }[] = wordCodes.map((wordCode) => ({
+        ...wordCode,
+        status: "not set",
+      }));
+
+      setWordTiles(shuffleArray(newWordTiles));
 
       // Code tiles
-      let newCodeTiles: { code: string; status: "not set" }[] = [];
-      newCodeTiles = wordCodes.map((wordCode) => ({ code: wordCode.code, status: "not set" }));
-      newCodeTiles = shuffleArray(newCodeTiles);
-      setCodeTiles(newCodeTiles);
+      const newCodeTiles: { code: string; status: "not set" }[] = wordCodes.map((wordCode) => ({
+        code: wordCode.code,
+        status: "not set",
+      }));
+
+      setCodeTiles(shuffleArray(newCodeTiles));
     }
 
     if (props.mode === "question") {
-      let newDisplayWords = wordCodes.map((wordCode) => {
+      const newDisplayWords = wordCodes.map((wordCode) => {
         return wordCode.word.toUpperCase();
       });
-      newDisplayWords = shuffleArray(newDisplayWords);
 
-      setDisplayWords(newDisplayWords);
+      setDisplayWords(shuffleArray(newDisplayWords));
 
       let newDisplayCodes = wordCodes.map((wordCode) => {
         return wordCode.code;
@@ -255,8 +258,6 @@ const WordCodes = (props: Props) => {
 
       setDisplayCodes(newDisplayCodes);
     }
-
-    return;
   }, [wordCodes]);
 
   // Determines whether a word only contains the specified valid letters
@@ -288,10 +289,9 @@ const WordCodes = (props: Props) => {
 
   function getLetterCodes(validLetters: string[]): { letter: string; code: number }[] {
     // Add a number code to each of the valid letters
-    const letterCodes = validLetters.map((letter: string, index: number) => {
+    return validLetters.map((letter: string, index: number) => {
       return { letter: letter, code: index };
     });
-    return letterCodes;
   }
 
   // Finds the code for a given word
@@ -306,7 +306,7 @@ const WordCodes = (props: Props) => {
   }
 
   function determineWordCodes() {
-    let targetWordArray = getAllWordsOfLength(gamemodeSettings.codeLength);
+    const targetWordArray = getAllWordsOfLength(gamemodeSettings.codeLength);
 
     const validLetters = getValidLetters(targetWordArray);
     const letterCodes = getLetterCodes(validLetters);
