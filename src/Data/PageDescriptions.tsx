@@ -33,6 +33,11 @@ export type pageDescription = {
   helpInfo?: JSX.Element;
 };
 
+/* TODO: Gamemode display order
+Is there some way of specifying which order the tiles which are derived from these pageDescriptions appear?
+Other than ensuring they are in the correct order here (within pageDescriptions)
+*/
+
 export const pageDescriptions: pageDescription[] = [
   { page: "splash-screen", title: "Wingo", categoryType: null, isDisplayed: false, isRandomlyPlayable: false },
   { page: "TitlePage", title: "Home", categoryType: null, isDisplayed: false, isRandomlyPlayable: false },
@@ -54,6 +59,44 @@ export const pageDescriptions: pageDescription[] = [
     ),
   },
   {
+    page: "wingo/crossword/daily",
+    title: "Wingo Crossword (Daily)",
+    shortTitle: "Daily Crossword",
+    categoryType: "Daily / Weekly",
+    isDisplayed: true,
+    isRandomlyPlayable: false,
+    description: "Guess a crossword for today",
+    helpInfo: (
+      <>
+        <p>Complete a crossword specifically for today only!</p>
+        <p>Guess the many target words, using the shared letters as hints</p>
+        <p>Click on the word to highlight it, and make a guess</p>
+        <p>Click 'Check Current Word' once you have guessed one word to see which letters are correct</p>
+        <p>Click 'Check Crossword' once you have guessed all words to see if your guesses are correct</p>
+        <p>Do all this without running out of guesses!</p>
+      </>
+    ),
+  },
+  {
+    page: "wingo/crossword/weekly",
+    title: "Wingo Crossword (Weekly)",
+    shortTitle: "Weekly Crossword",
+    categoryType: "Daily / Weekly",
+    isDisplayed: true,
+    isRandomlyPlayable: false,
+    description: "Guess a crossword for this week",
+    helpInfo: (
+      <>
+        <p>Complete a crossword specifically for this week</p>
+        <p>Guess the many target words, using the shared letters as hints</p>
+        <p>Click on the word to highlight it, and make a guess</p>
+        <p>Click 'Check Current Word' once you have guessed one word to see which letters are correct</p>
+        <p>Click 'Check Crossword' once you have guessed all words to see if your guesses are correct</p>
+        <p>Do all this without running out of guesses!</p>
+      </>
+    ),
+  },
+  {
     page: "wingo/repeat",
     title: "Standard/Normal Wingo",
     shortTitle: "Standard",
@@ -69,22 +112,19 @@ export const pageDescriptions: pageDescription[] = [
     ),
   },
   {
-    page: "wingo/category",
-    title: "Wingo Categories",
-    shortTitle: "Categories",
+    page: "wingo/puzzle",
+    title: "Wingo Puzzle",
+    shortTitle: "Puzzle",
     categoryType: "Wingo",
     isDisplayed: true,
     isRandomlyPlayable: true,
     gameshowType: "Wingo",
-    description: "Guess a word related to a category",
+    description: "Use a cryptic clue to guess the word as fast as possible!",
     helpInfo: (
       <>
-        <p>The target word is a word from the currently selected category</p>
-        <p>
-          The guesses you make must also be words from this category (but they do not have to be the length of the
-          target word)
-        </p>
-        <p>The category can be changed from the dropdown list (this will delete any guesses made)</p>
+        <p>Guess the target word from the hint provided</p>
+        <p>A random letter of the target word will become revealed every few seconds</p>
+        <p>Press 'Enter' once you know the answer and make your guess (this will stop the letters revealing!)</p>
       </>
     ),
   },
@@ -121,19 +161,22 @@ export const pageDescriptions: pageDescription[] = [
     ),
   },
   {
-    page: "wingo/puzzle",
-    title: "Wingo Puzzle",
-    shortTitle: "Puzzle",
+    page: "wingo/category",
+    title: "Wingo Categories",
+    shortTitle: "Categories",
     categoryType: "Wingo",
     isDisplayed: true,
     isRandomlyPlayable: true,
     gameshowType: "Wingo",
-    description: "Use a cryptic clue to guess the word as fast as possible!",
+    description: "Guess a word related to a category",
     helpInfo: (
       <>
-        <p>Guess the target word from the hint provided</p>
-        <p>A random letter of the target word will become revealed every few seconds</p>
-        <p>Press 'Enter' once you know the answer and make your guess (this will stop the letters revealing!)</p>
+        <p>The target word is a word from the currently selected category</p>
+        <p>
+          The guesses you make must also be words from this category (but they do not have to be the length of the
+          target word)
+        </p>
+        <p>The category can be changed from the dropdown list (this will delete any guesses made)</p>
       </>
     ),
   },
@@ -175,76 +218,13 @@ export const pageDescriptions: pageDescription[] = [
     ),
   },
   {
-    page: "wingo/crossword/fit",
-    title: "Wingo Crossword Fit",
-    shortTitle: "Crossword Fit",
-    categoryType: "Wingo",
-    isDisplayed: true,
-    isRandomlyPlayable: true,
-    gameshowType: "Wingo",
-    description: "Fill the crossword with the provided words",
-    helpInfo: (
-      <>
-        <p>Fill each word with one of the provided words, using the revealed letters as hints</p>
-        <p>Click on the word to highlight it, and make a guess</p>
-        <p>Click 'Check Crossword' once you have guessed all words to see if your guesses are correct</p>
-        <p>Do all this without running out of guesses!</p>
-      </>
-    ),
-  },
-  {
-    page: "wingo/crossword/weekly",
-    title: "Wingo Crossword (Weekly)",
-    shortTitle: "Weekly Crossword",
-    categoryType: "Daily / Weekly",
-    isDisplayed: true,
-    isRandomlyPlayable: false,
-    description: "Guess a crossword for this week",
-    helpInfo: (
-      <>
-        <p>Complete a crossword specifically for this week</p>
-        <p>Guess the many target words, using the shared letters as hints</p>
-        <p>Click on the word to highlight it, and make a guess</p>
-        <p>Click 'Check Current Word' once you have guessed one word to see which letters are correct</p>
-        <p>Click 'Check Crossword' once you have guessed all words to see if your guesses are correct</p>
-        <p>Do all this without running out of guesses!</p>
-      </>
-    ),
-  },
-  {
-    page: "wingo/crossword/daily",
-    title: "Wingo Crossword (Daily)",
-    shortTitle: "Daily Crossword",
-    categoryType: "Daily / Weekly",
-    isDisplayed: true,
-    isRandomlyPlayable: false,
-    description: "Guess a crossword for today",
-    helpInfo: (
-      <>
-        <p>Complete a crossword specifically for today only!</p>
-        <p>Guess the many target words, using the shared letters as hints</p>
-        <p>Click on the word to highlight it, and make a guess</p>
-        <p>Click 'Check Current Word' once you have guessed one word to see which letters are correct</p>
-        <p>Click 'Check Crossword' once you have guessed all words to see if your guesses are correct</p>
-        <p>Do all this without running out of guesses!</p>
-      </>
-    ),
-  },
-  {
-    page: "LettersCategories",
-    title: "Letters Categories",
-    shortTitle: "Categories (5)",
+    page: "OnlyConnect",
+    title: "Only Connect",
+    shortTitle: "Only Connect",
     categoryType: "Letters",
     isDisplayed: true,
     isRandomlyPlayable: true,
-    description: "Guess the word for each category",
-    helpInfo: (
-      <>
-        <p>Select a category</p>
-        <p>Guess the word from the hint for the category within the number of guesses</p>
-        <p>Press the 'Restart' button after an attempt or change the Category for a new target word</p>
-      </>
-    ),
+    description: "Find groups of words from a scrambled word grid",
   },
   {
     page: "LettersGame",
@@ -269,6 +249,102 @@ export const pageDescriptions: pageDescription[] = [
         <p>The longest word entered will be automically chosen when the timer runs out</p>
       </>
     ),
+  },
+  {
+    page: "Conundrum",
+    title: "Conundrum",
+    shortTitle: "Conundrum",
+    categoryType: "Letters",
+    isDisplayed: true,
+    isRandomlyPlayable: true,
+    gameshowType: "LettersNumbers",
+    description: "Find a single word which uses all the letters",
+    helpInfo: (
+      // https://en.wikipedia.org/wiki/Countdown_(game_show)#Conundrum
+      <>
+        <p>Enter a single word which uses all the letters</p>
+        <p>Only one guess is allowed</p>
+      </>
+    ),
+  },
+  {
+    page: "LettersCategories",
+    title: "Letters Categories",
+    shortTitle: "Categories (5)",
+    categoryType: "Letters",
+    isDisplayed: true,
+    isRandomlyPlayable: true,
+    description: "Guess the word for each category",
+    helpInfo: (
+      <>
+        <p>Select a category</p>
+        <p>Guess the word from the hint for the category within the number of guesses</p>
+        <p>Press the 'Restart' button after an attempt or change the Category for a new target word</p>
+      </>
+    ),
+  },
+  {
+    page: "SameLetters",
+    title: "Same Letter Words",
+    shortTitle: "Same Letter Words",
+    categoryType: "Letters",
+    isDisplayed: true,
+    isRandomlyPlayable: true,
+    description: "Find the words which are made from the same letters",
+  },
+  {
+    page: "WordCodes/Question",
+    title: "Word Codes",
+    shortTitle: "Word Codes",
+    categoryType: "Letters",
+    isDisplayed: true,
+    isRandomlyPlayable: true,
+    description: "Decipher codes to find words (and vice versa)",
+  },
+  {
+    page: "WordCodes/Match",
+    title: "Word Codes (Match)",
+    shortTitle: "Word Codes (Match)",
+    categoryType: "Letters",
+    isDisplayed: true,
+    isRandomlyPlayable: true,
+    description: "Match the words to their codes",
+  },
+  {
+    page: "wingo/crossword/fit",
+    title: "Wingo Crossword Fit",
+    shortTitle: "Crossword Fit",
+    categoryType: "Letters",
+    isDisplayed: true,
+    isRandomlyPlayable: true,
+    gameshowType: "Wingo",
+    description: "Fill the crossword with the provided words",
+    helpInfo: (
+      <>
+        <p>Fill each word with one of the provided words, using the revealed letters as hints</p>
+        <p>Click on the word to highlight it, and make a guess</p>
+        <p>Click 'Check Crossword' once you have guessed all words to see if your guesses are correct</p>
+        <p>Do all this without running out of guesses!</p>
+      </>
+    ),
+  },
+  {
+    page: "ArithmeticReveal",
+    title: "Quick Maths",
+    shortTitle: "Quick Maths",
+    categoryType: "Numbers",
+    isDisplayed: true,
+    isRandomlyPlayable: true,
+    description: "Test your arithmetic with quickfire calculations",
+  },
+  {
+    page: "Numble",
+    title: "Numble",
+    shortTitle: "Numble",
+    categoryType: "Numbers",
+    isDisplayed: true,
+    isRandomlyPlayable: true,
+    description: "Find the highest scoring number from a list of random numbers",
   },
   {
     page: "NumbersGame",
@@ -298,32 +374,7 @@ export const pageDescriptions: pageDescription[] = [
       </>
     ),
   },
-  {
-    page: "Conundrum",
-    title: "Conundrum",
-    shortTitle: "Conundrum",
-    categoryType: "Letters",
-    isDisplayed: true,
-    isRandomlyPlayable: true,
-    gameshowType: "LettersNumbers",
-    description: "Find a single word which uses all the letters",
-    helpInfo: (
-      // https://en.wikipedia.org/wiki/Countdown_(game_show)#Conundrum
-      <>
-        <p>Enter a single word which uses all the letters</p>
-        <p>Only one guess is allowed</p>
-      </>
-    ),
-  },
-  {
-    page: "ArithmeticReveal",
-    title: "Quick Maths",
-    shortTitle: "Quick Maths",
-    categoryType: "Numbers",
-    isDisplayed: true,
-    isRandomlyPlayable: true,
-    description: "Test your arithmetic with quickfire calculations",
-  },
+
   {
     page: "ArithmeticDrag/Order",
     title: "Arithmetic (Order)",
@@ -341,33 +392,6 @@ export const pageDescriptions: pageDescription[] = [
     isDisplayed: true,
     isRandomlyPlayable: true,
     description: "Match the arithmetic expressions with the results they evaluate to",
-  },
-  {
-    page: "Numble",
-    title: "Numble",
-    shortTitle: "Numble",
-    categoryType: "Numbers",
-    isDisplayed: true,
-    isRandomlyPlayable: true,
-    description: "Find the highest scoring number from a list of random numbers",
-  },
-  {
-    page: "OnlyConnect",
-    title: "Only Connect",
-    shortTitle: "Only Connect",
-    categoryType: "Letters",
-    isDisplayed: true,
-    isRandomlyPlayable: true,
-    description: "Find groups of words from a scrambled word grid",
-  },
-  {
-    page: "SameLetters",
-    title: "Same Letter Words",
-    shortTitle: "Same Letter Words",
-    categoryType: "Letters",
-    isDisplayed: true,
-    isRandomlyPlayable: true,
-    description: "Find the words which are made from the same letters",
   },
   {
     page: "NumberSets",
@@ -388,24 +412,6 @@ export const pageDescriptions: pageDescription[] = [
     description: "Find the answer to a unique number set",
   },
   {
-    page: "WordCodes/Question",
-    title: "Word Codes",
-    shortTitle: "Word Codes",
-    categoryType: "Letters",
-    isDisplayed: true,
-    isRandomlyPlayable: true,
-    description: "Decipher codes to find words (and vice versa)",
-  },
-  {
-    page: "WordCodes/Match",
-    title: "Word Codes (Match)",
-    shortTitle: "Word Codes (Match)",
-    categoryType: "Letters",
-    isDisplayed: true,
-    isRandomlyPlayable: true,
-    description: "Match the words to their codes",
-  },
-  {
     page: "PuzzleSequence",
     title: "Sequence Puzzle",
     shortTitle: "Sequence",
@@ -414,6 +420,39 @@ export const pageDescriptions: pageDescription[] = [
     isRandomlyPlayable: true,
     description: "Find what comes next in the sequence",
   },
+  {
+    page: "Wingo/Gameshow",
+    title: "Wingo Gameshow",
+    shortTitle: "Wingo Gameshow",
+    categoryType: "Gameshow Presets",
+    isDisplayed: true,
+    isRandomlyPlayable: false,
+  },
+  {
+    page: "LettersNumbersGameshow",
+    title: "Letters Numbers Gameshow",
+    shortTitle: "Letters Numbers Gameshow",
+    categoryType: "Gameshow Presets",
+    isDisplayed: true,
+    isRandomlyPlayable: false,
+  },
+  {
+    page: "Custom/Gameshow",
+    title: "Custom Gameshow",
+    shortTitle: "Custom Gameshow",
+    categoryType: "Gameshow Presets",
+    isDisplayed: true,
+    isRandomlyPlayable: false,
+  },
+  {
+    page: "random",
+    title: "Random",
+    shortTitle: "Random",
+    categoryType: "Gameshow Presets",
+    isDisplayed: true,
+    isRandomlyPlayable: false,
+  },
+
   {
     page: "campaign",
     title: "Campaign",
@@ -452,38 +491,6 @@ export const pageDescriptions: pageDescription[] = [
     shortTitle: "Settings",
     categoryType: null,
     isDisplayed: false,
-    isRandomlyPlayable: false,
-  },
-  {
-    page: "random",
-    title: "Random",
-    shortTitle: "Random",
-    categoryType: "Gameshow Presets",
-    isDisplayed: true,
-    isRandomlyPlayable: false,
-  },
-  {
-    page: "LettersNumbersGameshow",
-    title: "Letters Numbers Gameshow",
-    shortTitle: "Letters Numbers Gameshow",
-    categoryType: "Gameshow Presets",
-    isDisplayed: true,
-    isRandomlyPlayable: false,
-  },
-  {
-    page: "Wingo/Gameshow",
-    title: "Wingo Gameshow",
-    shortTitle: "Wingo Gameshow",
-    categoryType: "Gameshow Presets",
-    isDisplayed: true,
-    isRandomlyPlayable: false,
-  },
-  {
-    page: "Custom/Gameshow",
-    title: "Custom Gameshow",
-    shortTitle: "Custom Gameshow",
-    categoryType: "Gameshow Presets",
-    isDisplayed: true,
     isRandomlyPlayable: false,
   },
 ];
