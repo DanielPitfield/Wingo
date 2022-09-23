@@ -1,27 +1,49 @@
 import { PageName } from "./PageNames";
 import { gameshowType } from "../Pages/CustomGameshow";
 
-// This is needed for runtime; make sure it matches the Page type
+export const GamemodeCategories = [
+  "Daily / Weekly",
+  "Wingo",
+  "Letters",
+  "Numbers",
+  "Puzzle",
+  "Gameshow Presets",
+  null,
+] as const;
+
+export type GamemodeCategory = typeof GamemodeCategories[number];
 
 export type pageDescription = {
   page: PageName;
   title: string;
   shortTitle?: string;
-  isPlayable: boolean;
+  // What category best describes this gamemode (the tile to select the gamemode will be under a title with this name)?
+  categoryType: GamemodeCategory;
+  // Is the gamemode shown on the gamemode selection screen (is it available to play/enabled?)
+  isDisplayed: boolean;
+  // Can the gamemode be selected during a random session?
+  isRandomlyPlayable: boolean;
+
+  /* TODO: Remove gameshowType?
+  This is only used to determine which gamemodes appear when you use the filter within the Custom Gameshow configuration
+  But pretty sure it's not needed as Custom preset should allow any gamemode?
+  */
   gameshowType?: gameshowType;
   description?: string;
   helpInfo?: JSX.Element;
 };
 
 export const pageDescriptions: pageDescription[] = [
-  { page: "splash-screen", title: "Wingo", isPlayable: false },
-  { page: "TitlePage", title: "Home", isPlayable: false },
-  //{ page: "home", title: "", isPlayable: false },
+  { page: "splash-screen", title: "Wingo", categoryType: null, isDisplayed: false, isRandomlyPlayable: false },
+  { page: "TitlePage", title: "Home", categoryType: null, isDisplayed: false, isRandomlyPlayable: false },
+  //{ page: "home", title: "", isDisplayed: false, isRandomlyPlayable: false },
   {
     page: "wingo/daily",
     title: "Daily Wingo",
     shortTitle: "Daily",
-    isPlayable: false,
+    categoryType: "Daily / Weekly",
+    isDisplayed: true,
+    isRandomlyPlayable: false,
     description: "Guess today's word",
     helpInfo: (
       <>
@@ -35,7 +57,9 @@ export const pageDescriptions: pageDescription[] = [
     page: "wingo/repeat",
     title: "Standard/Normal Wingo",
     shortTitle: "Standard",
-    isPlayable: true,
+    categoryType: "Wingo",
+    isDisplayed: true,
+    isRandomlyPlayable: true,
     gameshowType: "Wingo",
     description: "Guess a word",
     helpInfo: (
@@ -48,7 +72,9 @@ export const pageDescriptions: pageDescription[] = [
     page: "wingo/category",
     title: "Wingo Categories",
     shortTitle: "Categories",
-    isPlayable: true,
+    categoryType: "Wingo",
+    isDisplayed: true,
+    isRandomlyPlayable: true,
     gameshowType: "Wingo",
     description: "Guess a word related to a category",
     helpInfo: (
@@ -66,7 +92,9 @@ export const pageDescriptions: pageDescription[] = [
     page: "wingo/increasing",
     title: "Wingo Increasing Length",
     shortTitle: "Increasing",
-    isPlayable: true,
+    categoryType: "Wingo",
+    isDisplayed: true,
+    isRandomlyPlayable: true,
     gameshowType: "Wingo",
     description: "Increase the word length to guess with every correct answer",
     helpInfo: (
@@ -79,7 +107,9 @@ export const pageDescriptions: pageDescription[] = [
     page: "wingo/limitless",
     title: "Wingo Limitless/Survival",
     shortTitle: "Limitless",
-    isPlayable: true,
+    categoryType: "Wingo",
+    isDisplayed: true,
+    isRandomlyPlayable: true,
     gameshowType: "Wingo",
     description: "Gain lives with correct, early answers; how long can you survive?",
     helpInfo: (
@@ -94,7 +124,9 @@ export const pageDescriptions: pageDescription[] = [
     page: "wingo/puzzle",
     title: "Wingo Puzzle",
     shortTitle: "Puzzle",
-    isPlayable: true,
+    categoryType: "Wingo",
+    isDisplayed: true,
+    isRandomlyPlayable: true,
     gameshowType: "Wingo",
     description: "Use a cryptic clue to guess the word as fast as possible!",
     helpInfo: (
@@ -109,7 +141,9 @@ export const pageDescriptions: pageDescription[] = [
     page: "wingo/interlinked",
     title: "Wingo Interlinked",
     shortTitle: "Interlinked",
-    isPlayable: true,
+    categoryType: "Wingo",
+    isDisplayed: true,
+    isRandomlyPlayable: true,
     gameshowType: "Wingo",
     description: "Guess two words interlinked by a shared letter",
     helpInfo: (
@@ -125,7 +159,9 @@ export const pageDescriptions: pageDescription[] = [
     page: "wingo/crossword",
     title: "Wingo Crossword",
     shortTitle: "Crossword",
-    isPlayable: true,
+    categoryType: "Wingo",
+    isDisplayed: true,
+    isRandomlyPlayable: true,
     gameshowType: "Wingo",
     description: "Guess a crossword of words",
     helpInfo: (
@@ -142,7 +178,9 @@ export const pageDescriptions: pageDescription[] = [
     page: "wingo/crossword/fit",
     title: "Wingo Crossword Fit",
     shortTitle: "Crossword Fit",
-    isPlayable: true,
+    categoryType: "Wingo",
+    isDisplayed: true,
+    isRandomlyPlayable: true,
     gameshowType: "Wingo",
     description: "Fill the crossword with the provided words",
     helpInfo: (
@@ -158,7 +196,9 @@ export const pageDescriptions: pageDescription[] = [
     page: "wingo/crossword/weekly",
     title: "Wingo Crossword (Weekly)",
     shortTitle: "Weekly Crossword",
-    isPlayable: false,
+    categoryType: "Daily / Weekly",
+    isDisplayed: true,
+    isRandomlyPlayable: false,
     description: "Guess a crossword for this week",
     helpInfo: (
       <>
@@ -175,7 +215,9 @@ export const pageDescriptions: pageDescription[] = [
     page: "wingo/crossword/daily",
     title: "Wingo Crossword (Daily)",
     shortTitle: "Daily Crossword",
-    isPlayable: false,
+    categoryType: "Daily / Weekly",
+    isDisplayed: true,
+    isRandomlyPlayable: false,
     description: "Guess a crossword for today",
     helpInfo: (
       <>
@@ -192,7 +234,9 @@ export const pageDescriptions: pageDescription[] = [
     page: "LettersCategories",
     title: "Letters Categories",
     shortTitle: "Categories (5)",
-    isPlayable: true,
+    categoryType: "Letters",
+    isDisplayed: true,
+    isRandomlyPlayable: true,
     description: "Guess the word for each category",
     helpInfo: (
       <>
@@ -206,7 +250,9 @@ export const pageDescriptions: pageDescription[] = [
     page: "LettersGame",
     title: "Letters Game",
     shortTitle: "Letters Game",
-    isPlayable: true,
+    categoryType: "Letters",
+    isDisplayed: true,
+    isRandomlyPlayable: true,
     gameshowType: "LettersNumbers",
     description: "Find the highest scoring word from the list of random letters",
     helpInfo: (
@@ -228,7 +274,9 @@ export const pageDescriptions: pageDescription[] = [
     page: "NumbersGame",
     title: "Numbers Game",
     shortTitle: "Numbers Game",
-    isPlayable: true,
+    categoryType: "Numbers",
+    isDisplayed: true,
+    isRandomlyPlayable: true,
     gameshowType: "LettersNumbers",
     description: "Get the target number using a list of random numbers",
     helpInfo: (
@@ -254,7 +302,9 @@ export const pageDescriptions: pageDescription[] = [
     page: "Conundrum",
     title: "Conundrum",
     shortTitle: "Conundrum",
-    isPlayable: true,
+    categoryType: "Letters",
+    isDisplayed: true,
+    isRandomlyPlayable: true,
     gameshowType: "LettersNumbers",
     description: "Find a single word which uses all the letters",
     helpInfo: (
@@ -269,91 +319,171 @@ export const pageDescriptions: pageDescription[] = [
     page: "ArithmeticReveal",
     title: "Quick Maths",
     shortTitle: "Quick Maths",
-    isPlayable: true,
+    categoryType: "Numbers",
+    isDisplayed: true,
+    isRandomlyPlayable: true,
     description: "Test your arithmetic with quickfire calculations",
   },
   {
     page: "ArithmeticDrag/Order",
     title: "Arithmetic (Order)",
     shortTitle: "Arithmetic (Order)",
-    isPlayable: true,
+    categoryType: "Numbers",
+    isDisplayed: true,
+    isRandomlyPlayable: true,
     description: "Put the arithmetic expressions in order from smallest to largest",
   },
   {
     page: "ArithmeticDrag/Match",
     title: "Arithmetic (Match)",
     shortTitle: "Arithmetic (Match)",
-    isPlayable: true,
+    categoryType: "Numbers",
+    isDisplayed: true,
+    isRandomlyPlayable: true,
     description: "Match the arithmetic expressions with the results they evaluate to",
   },
   {
     page: "Numble",
     title: "Numble",
     shortTitle: "Numble",
-    isPlayable: true,
+    categoryType: "Numbers",
+    isDisplayed: true,
+    isRandomlyPlayable: true,
     description: "Find the highest scoring number from a list of random numbers",
   },
   {
     page: "OnlyConnect",
     title: "Only Connect",
     shortTitle: "Only Connect",
-    isPlayable: true,
+    categoryType: "Letters",
+    isDisplayed: true,
+    isRandomlyPlayable: true,
     description: "Find groups of words from a scrambled word grid",
   },
   {
     page: "SameLetters",
     title: "Same Letter Words",
     shortTitle: "Same Letter Words",
-    isPlayable: true,
+    categoryType: "Letters",
+    isDisplayed: true,
+    isRandomlyPlayable: true,
     description: "Find the words which are made from the same letters",
   },
   {
     page: "NumberSets",
     title: "Number Sets",
     shortTitle: "Number Sets",
-    isPlayable: true,
+    categoryType: "Numbers",
+    isDisplayed: true,
+    isRandomlyPlayable: true,
     description: "Find the answer to a unique number set",
   },
   {
     page: "Algebra",
     title: "Algebra",
     shortTitle: "Algebra",
-    isPlayable: true,
+    categoryType: "Numbers",
+    isDisplayed: true,
+    isRandomlyPlayable: true,
     description: "Find the answer to a unique number set",
   },
   {
     page: "WordCodes/Question",
     title: "Word Codes",
     shortTitle: "Word Codes",
-    isPlayable: true,
+    categoryType: "Letters",
+    isDisplayed: true,
+    isRandomlyPlayable: true,
     description: "Decipher codes to find words (and vice versa)",
   },
   {
     page: "WordCodes/Match",
     title: "Word Codes (Match)",
     shortTitle: "Word Codes (Match)",
-    isPlayable: true,
+    categoryType: "Letters",
+    isDisplayed: true,
+    isRandomlyPlayable: true,
     description: "Match the words to their codes",
   },
   {
     page: "PuzzleSequence",
     title: "Sequence Puzzle",
     shortTitle: "Sequence",
-    isPlayable: true,
+    categoryType: "Puzzle",
+    isDisplayed: true,
+    isRandomlyPlayable: true,
     description: "Find what comes next in the sequence",
   },
-  { page: "campaign", title: "Campaign", shortTitle: "Campaign", isPlayable: false },
-  { page: "campaign/area", title: "Campaign Areas", shortTitle: "Areas", isPlayable: false },
-  { page: "campaign/area/level", title: "Campaign Level", shortTitle: "Level", isPlayable: false },
-  { page: "challenges", title: "Challenges", shortTitle: "Challenges", isPlayable: false },
-  { page: "settings", title: "Settings", shortTitle: "Settings", isPlayable: false },
-  { page: "random", title: "Random", shortTitle: "Random", isPlayable: false },
+  {
+    page: "campaign",
+    title: "Campaign",
+    shortTitle: "Campaign",
+    categoryType: null,
+    isDisplayed: false,
+    isRandomlyPlayable: false,
+  },
+  {
+    page: "campaign/area",
+    title: "Campaign Areas",
+    shortTitle: "Areas",
+    categoryType: null,
+    isDisplayed: false,
+    isRandomlyPlayable: false,
+  },
+  {
+    page: "campaign/area/level",
+    title: "Campaign Level",
+    shortTitle: "Level",
+    categoryType: null,
+    isDisplayed: false,
+    isRandomlyPlayable: false,
+  },
+  {
+    page: "challenges",
+    title: "Challenges",
+    shortTitle: "Challenges",
+    categoryType: null,
+    isDisplayed: false,
+    isRandomlyPlayable: false,
+  },
+  {
+    page: "settings",
+    title: "Settings",
+    shortTitle: "Settings",
+    categoryType: null,
+    isDisplayed: false,
+    isRandomlyPlayable: false,
+  },
+  {
+    page: "random",
+    title: "Random",
+    shortTitle: "Random",
+    categoryType: null,
+    isDisplayed: true,
+    isRandomlyPlayable: false,
+  },
   {
     page: "LettersNumbersGameshow",
     title: "Letters Numbers Gameshow",
     shortTitle: "Letters Numbers Gameshow",
-    isPlayable: false,
+    categoryType: "Gameshow Presets",
+    isDisplayed: true,
+    isRandomlyPlayable: false,
   },
-  { page: "Wingo/Gameshow", title: "Wingo Gameshow", shortTitle: "Wingo Gameshow", isPlayable: false },
-  { page: "Custom/Gameshow", title: "Custom Gameshow", shortTitle: "Custom Gameshow", isPlayable: false },
+  {
+    page: "Wingo/Gameshow",
+    title: "Wingo Gameshow",
+    shortTitle: "Wingo Gameshow",
+    categoryType: "Gameshow Presets",
+    isDisplayed: true,
+    isRandomlyPlayable: false,
+  },
+  {
+    page: "Custom/Gameshow",
+    title: "Custom Gameshow",
+    shortTitle: "Custom Gameshow",
+    categoryType: "Gameshow Presets",
+    isDisplayed: true,
+    isRandomlyPlayable: false,
+  },
 ];

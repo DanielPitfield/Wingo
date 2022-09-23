@@ -116,7 +116,7 @@ export const App = () => {
   React.useEffect(() => {
     // Set the page to any playable page
     if (page === "random") {
-      const playablePages = pageDescriptions.filter((page) => page.isPlayable);
+      const playablePages = pageDescriptions.filter((page) => page.isRandomlyPlayable);
       const newPage = getRandomElementFrom(playablePages)?.page;
       setPage(newPage);
       setIsRandomSession(true);

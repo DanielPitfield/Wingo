@@ -46,9 +46,9 @@ export const CustomGameshow = (props: Props) => {
   function getAvailableModes(): pageDescription[] {
     return currentGameshowType === "Custom"
       ? // Any playable mode
-        pageDescriptions.filter((page) => page.isPlayable)
+        pageDescriptions.filter((page) => page.isRandomlyPlayable)
       : // Any mode tagged with the current gameshow type
-        pageDescriptions.filter((page) => page.gameshowType === currentGameshowType && page.isPlayable);
+        pageDescriptions.filter((page) => page.gameshowType === currentGameshowType && page.isRandomlyPlayable);
   }
 
   // Append mode (the available mode which was clicked) to queue
