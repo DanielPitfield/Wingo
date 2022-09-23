@@ -10,7 +10,6 @@ import { LEVEL_FINISHING_TEXT } from "../Components/Level";
 import { DEFAULT_NUMBLE_GUESS_TIMER_VALUE } from "../Data/DefaultGamemodeSettings";
 import { getGamemodeDefaultTimerValue } from "../Helper Functions/getGamemodeDefaultTimerValue";
 import { getHexagonAdjacentPins } from "../Helper Functions/getHexagonAdjacentPins";
-import { getNextTeamNumberWithRemainingTime } from "../Helper Functions/getNextTeamWithRemainingTime";
 import {
   getNumblePointColourMapping,
   NumblePointColourRange,
@@ -32,6 +31,8 @@ interface Props {
 
   currentTeamNumber: number;
   setCurrentTeamNumber: (teamNumber: number) => void;
+
+  nextTeamTurn: () => void;
 
   remainingGuessTimerSeconds: number;
   updateRemainingGuessTimerSeconds: (newGuessTimerSeconds: number) => void;
@@ -94,7 +95,7 @@ const Numble = (props: Props) => {
     total: 0,
   }));
 
-  const [totalPoints, setTotalPoints] = useState(initialScores);
+  const [totalScores, setTotalScores] = useState(initialScores);
 
   const [mostRecentGuessTimerTotalSeconds, setMostRecentGuessTimerTotalSeconds] = useState(
     props.gamemodeSettings?.guessTimerConfig?.isTimed === true
@@ -120,6 +121,39 @@ const Numble = (props: Props) => {
     props.setStatus("dice-rolled-awaiting-pick");
   }, [diceValues]);
 
+  // Guess timer
+  React.useEffect(() => {
+    if (!props.gamemodeSettings.guessTimerConfig.isTimed) {
+      return;
+    }
+
+    if (props.remainingGuessTimerSeconds > 0) {
+      return;
+    }
+
+    if (!props.teamTimers || props.teamTimers.length <= 0) {
+      return;
+    }
+
+    // Only worried about deducting points (penalties) here, not ending the game which is handled in NumbleConfig
+    if (props.gamemodeSettings.guessTimerConfig.timerBehaviour.isGameOverWhenNoTimeLeft) {
+      return;
+    }
+
+    const penalty = props.gamemodeSettings.guessTimerConfig.timerBehaviour.pointsLost;
+
+    const newTotalScores = totalScores.map((teamScoreInfo) => {
+      // Subtract specified penalty from total score of current team
+      if (teamScoreInfo.teamNumber === props.currentTeamNumber) {
+        const newScore = Math.max(0, teamScoreInfo.total - penalty);
+        return { ...teamScoreInfo, total: newScore };
+      }
+
+      return teamScoreInfo;
+    });
+    setTotalScores(newTotalScores);
+  }, [props.gamemodeSettings.guessTimerConfig.isTimed, props.remainingGuessTimerSeconds]);
+
   const isGameOver = () => {
     // How many teams have time left?
     const numRemainingTeams = props.teamTimers.filter((team) => team.remainingSeconds > 0).length;
@@ -127,7 +161,7 @@ const Numble = (props: Props) => {
     return numRemainingTeams === 0;
   };
 
-  // Game timer handling
+  // Game timer
   React.useEffect(() => {
     // TODO: Move status to NumbleConfig and set within timer useEffect()?
     if (!props.gamemodeSettings.timerConfig.isTimed) {
@@ -143,52 +177,6 @@ const Numble = (props: Props) => {
       props.setStatus("game-over-timer-ended");
     }
   }, [props.gamemodeSettings.timerConfig.isTimed, props.teamTimers]);
-
-  // Guess timer handling
-  React.useEffect(() => {
-    if (!props.gamemodeSettings.guessTimerConfig.isTimed) {
-      return;
-    }
-
-    if (props.remainingGuessTimerSeconds > 0) {
-      return;
-    }
-
-    if (!props.teamTimers || props.teamTimers.length <= 0) {
-      return;
-    }
-
-    if (props.gamemodeSettings.guessTimerConfig.timerBehaviour.isGameOverWhenNoTimeLeft) {
-      // Set current team's remaining time to zero
-      const newTeamTimers = props.teamTimers.map((teamTimerInfo) => {
-        if (teamTimerInfo.teamNumber === props.currentTeamNumber) {
-          return { ...teamTimerInfo, remainingSeconds: 0 };
-        }
-        return teamTimerInfo;
-      });
-      props.updateTeamTimers(newTeamTimers);
-    } else {
-      // Subtract specified penalty from total score of current team
-      const currentPoints = totalPoints.find(
-        (totalPointsInfo) => totalPointsInfo.teamNumber === props.currentTeamNumber
-      )?.total;
-
-      if (!currentPoints) {
-        return;
-      }
-
-      const penalty = props.gamemodeSettings.guessTimerConfig.timerBehaviour.pointsLost;
-      const newScore = Math.max(0, currentPoints - penalty);
-
-      const newTotalPoints = totalPoints.map((totalPointsInfo) => {
-        if (totalPointsInfo.teamNumber === props.currentTeamNumber) {
-          return { ...totalPointsInfo, total: newScore };
-        }
-        return totalPointsInfo;
-      });
-      setTotalPoints(newTotalPoints);
-    }
-  }, [props.gamemodeSettings.guessTimerConfig.isTimed, props.remainingGuessTimerSeconds]);
 
   React.useEffect(() => {
     // Reset guess timer
@@ -211,7 +199,7 @@ const Numble = (props: Props) => {
       props.setStatus("game-over-no-more-pins");
     }
 
-    const score = totalPoints[0].total ?? 0;
+    const score = totalScores[0].total ?? 0;
 
     // Reached target score
     if (score >= props.campaignConfig.targetScore) {
@@ -346,16 +334,6 @@ const Numble = (props: Props) => {
     return false;
   }
 
-  // Determine and set the next team to play
-  function nextTeamTurn() {
-    const newCurrentTeamNumber = getNextTeamNumberWithRemainingTime(props.currentTeamNumber, props.teamTimers);
-    if (newCurrentTeamNumber !== null) {
-      props.setCurrentTeamNumber(newCurrentTeamNumber);
-      // Next team rolls their own dice values
-      props.setStatus("picked-awaiting-dice-roll");
-    }
-  }
-
   function onClick(pinNumber: number) {
     if (props.status === "dice-rolling") {
       return;
@@ -369,21 +347,32 @@ const Numble = (props: Props) => {
     const puzzle = new NumberPuzzle(pinNumber, diceValues);
     const solutions = puzzle.solve().all;
 
-    // There are no solutions (ways of making the selected number)
+    // There are no ways of making the selected number
     if (solutions.length < 1) {
-      if (props.gamemodeSettings.isGameOverOnIncorrectPick && props.gamemodeSettings.numTeams === 1) {
-        props.setStatus("game-over-incorrect-tile"); // End game
-      } else if (props.gamemodeSettings.isGameOverOnIncorrectPick && props.gamemodeSettings.numTeams > 1) {
-        // Set current team's remaining time to zero
-        const newTeamTimers = props.teamTimers.map((teamTimerInfo) => {
-          if (teamTimerInfo.teamNumber === props.currentTeamNumber) {
-            return { ...teamTimerInfo, remainingSeconds: 0 };
-          }
-          return teamTimerInfo;
-        });
-        props.updateTeamTimers(newTeamTimers);
+      // The option controlling if the game ends on an incorrect pick is off
+      if (!props.gamemodeSettings.isGameOverOnIncorrectPick) {
+        // Ignore, wait for player to choose another number
+        return;
       }
-      nextTeamTurn();
+
+      // Singleplayer
+      if (props.gamemodeSettings.numTeams === 1) {
+        // End game using status
+        props.setStatus("game-over-incorrect-tile");
+        return;
+      }
+
+      // Multiplayer - Set current team's remaining time to zero
+      const newTeamTimers = props.teamTimers.map((teamTimerInfo) => {
+        if (teamTimerInfo.teamNumber === props.currentTeamNumber) {
+          return { ...teamTimerInfo, remainingSeconds: 0 };
+        }
+        return teamTimerInfo;
+      });
+      props.updateTeamTimers(newTeamTimers);
+
+      props.nextTeamTurn();
+
       return;
     }
 
@@ -408,8 +397,8 @@ const Numble = (props: Props) => {
 
     // Add points to total points
     if (pinScore) {
-      const currentScore = totalPoints.find(
-        (totalPointsInfo) => totalPointsInfo.teamNumber === props.currentTeamNumber
+      const currentScore = totalScores.find(
+        (totalScoresInfo) => totalScoresInfo.teamNumber === props.currentTeamNumber
       )?.total;
 
       if (currentScore === undefined) {
@@ -417,17 +406,17 @@ const Numble = (props: Props) => {
       }
 
       const newScore = currentScore + pinScore;
-      const newTotalPoints = totalPoints.map((totalPointsInfo) => {
-        if (totalPointsInfo.teamNumber === props.currentTeamNumber) {
-          return { ...totalPointsInfo, total: newScore };
+      const newtotalScores = totalScores.map((totalScoresInfo) => {
+        if (totalScoresInfo.teamNumber === props.currentTeamNumber) {
+          return { ...totalScoresInfo, total: newScore };
         }
-        return totalPointsInfo;
+        return totalScoresInfo;
       });
 
-      setTotalPoints(newTotalPoints);
+      setTotalScores(newtotalScores);
     }
 
-    nextTeamTurn();
+    props.nextTeamTurn();
   }
 
   function populateRow(rowNumber: number) {
@@ -582,7 +571,7 @@ const Numble = (props: Props) => {
     // Singleplayer
     if (props.gamemodeSettings.numTeams === 1) {
       const outcomeMessageInfo = getOutcomeNotificationMessage();
-      const finalScore = totalPoints[0].total;
+      const finalScore = totalScores[0].total;
 
       return (
         <MessageNotification type={outcomeMessageInfo.messageType}>
@@ -603,11 +592,11 @@ const Numble = (props: Props) => {
       const gameStatusMessage = props.status === "game-over-timer-ended" ? "No remaining time" : "All pins picked";
 
       // Determine the winner(s)
-      const teamScores = totalPoints.map((team) => team.total);
+      const teamScores = totalScores.map((team) => team.total);
       const highestScore = Math.max(...teamScores);
 
       // There may be a draw and so more than one team with this highest score
-      const winningTeamNumbers = totalPoints
+      const winningTeamNumbers = totalScores
         .filter((team) => team.total === highestScore)
         .map((team) => team.teamNumber);
 
@@ -623,11 +612,11 @@ const Numble = (props: Props) => {
       // Every team's score shown next to their team colour name
       const formattedScores = (
         <>
-          {totalPoints.map((teamPoints) => (
+          {totalScores.map((teamPoints) => (
             <>
               <br />
               {`${teamNumberColourMappings.find((x) => x.teamNumber === teamPoints.teamNumber)?.teamName}: ${
-                totalPoints.find((x) => x.teamNumber === teamPoints.teamNumber)?.total
+                totalScores.find((x) => x.teamNumber === teamPoints.teamNumber)?.total
               }`}
             </>
           ))}
@@ -669,7 +658,7 @@ const Numble = (props: Props) => {
 
     // Clear any game progress
     setPickedPins([]);
-    setTotalPoints(initialScores);
+    setTotalScores(initialScores);
 
     // First team is next to play
     props.setCurrentTeamNumber(0);
@@ -863,7 +852,7 @@ const Numble = (props: Props) => {
 
       <div className="numble-score-wrapper">
         <div className="teams-info-wrapper">
-          {totalPoints.map((teamPoints) => (
+          {totalScores.map((teamPoints) => (
             <div
               className="team-info"
               data-team-number={teamPoints.teamNumber}
@@ -878,7 +867,7 @@ const Numble = (props: Props) => {
               <label>
                 Score
                 <div className="numble-score">
-                  {totalPoints.find((x) => x.teamNumber === teamPoints.teamNumber)?.total}
+                  {totalScores.find((x) => x.teamNumber === teamPoints.teamNumber)?.total}
                 </div>
               </label>
               <label>
