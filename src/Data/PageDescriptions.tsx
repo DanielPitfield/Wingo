@@ -458,7 +458,7 @@ export const pageDescriptions: pageDescription[] = [
     page: "random",
     title: "Random",
     shortTitle: "Random",
-    categoryType: null,
+    categoryType: "Gameshow Presets",
     isDisplayed: true,
     isRandomlyPlayable: false,
   },

@@ -1,5 +1,4 @@
-import React from "react";
-import { pageDescriptions } from "../Data/PageDescriptions";
+import { GamemodeCategories, pageDescriptions } from "../Data/PageDescriptions";
 import { PageName } from "../Data/PageNames";
 import { BsInfoCircleFill } from "react-icons/bs";
 import { AllChallenges } from "../Data/Challenges/AllChallenges";
@@ -60,69 +59,22 @@ export const LobbyMenu = (props: Props) => {
           />
         </div>
 
-        <div className="sidebar">
-          <div className="sidebar-title">Daily / Weekly</div>
-          <ul className="widgets">
-            {renderGameModeTile("wingo/daily")}
-            {renderGameModeTile("wingo/crossword/daily")}
-            {renderGameModeTile("wingo/crossword/weekly")}
-          </ul>
-        </div>
-
-        <div className="sidebar">
-          <div className="sidebar-title">Wingo</div>
-          <ul className="widgets">
-            {renderGameModeTile("wingo/repeat")}
-            {renderGameModeTile("wingo/puzzle")}
-            {renderGameModeTile("wingo/increasing")}
-            {renderGameModeTile("wingo/limitless")}
-            {renderGameModeTile("wingo/category")}
-            {renderGameModeTile("wingo/interlinked")}
-            {renderGameModeTile("wingo/crossword")}
-          </ul>
-        </div>
-
-        <div className="sidebar">
-          <div className="sidebar-title">Letters</div>
-          <ul className="widgets">
-            {renderGameModeTile("OnlyConnect")}
-            {renderGameModeTile("LettersGame")}
-            {renderGameModeTile("Conundrum")}
-            {renderGameModeTile("LettersCategories")}
-            {renderGameModeTile("SameLetters")}
-            {renderGameModeTile("WordCodes/Question")}
-            {renderGameModeTile("WordCodes/Match")}
-            {renderGameModeTile("wingo/crossword/fit")}
-          </ul>
-        </div>
-
-        <div className="sidebar">
-          <div className="sidebar-title">Numbers</div>
-          <ul className="widgets">
-            {renderGameModeTile("ArithmeticReveal")}
-            {renderGameModeTile("Numble")}
-            {renderGameModeTile("NumbersGame")}
-            {renderGameModeTile("ArithmeticDrag/Order")}
-            {renderGameModeTile("ArithmeticDrag/Match")}
-            {renderGameModeTile("NumberSets")}
-            {renderGameModeTile("Algebra")}
-          </ul>
-        </div>
-
-        <div className="sidebar">
-          <div className="sidebar-title">Puzzle</div>
-          <ul className="widgets">{renderGameModeTile("PuzzleSequence")}</ul>
-        </div>
-
-        <div className="sidebar">
-          <div className="sidebar-title">Gameshow Presets</div>
-          <ul className="widgets">
-            {renderGameModeTile("Wingo/Gameshow")}
-            {renderGameModeTile("LettersNumbersGameshow")}
-            {renderGameModeTile("Custom/Gameshow")}
-            {renderGameModeTile("random")}
-          </ul>
-        </div>
+        {GamemodeCategories.filter((category) => category !== null).map((category) => {
+          // For each gamemode category, render a sidebar with the category name
+          return (
+            <div className="sidebar">
+              <div className="sidebar-title">{category}</div>
+              <ul className="widgets">
+                {pageDescriptions
+                  .filter((page) => page.categoryType === category && page.isDisplayed)
+                  .map((page) => {
+                    // Get all the gamemodes within this category and render a tile for each of them
+                    return renderGameModeTile(page.page);
+                  })}
+              </ul>
+            </div>
+          );
+        })}
       </div>
 
       <section className="challenges">
