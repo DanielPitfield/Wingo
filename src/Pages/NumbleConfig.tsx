@@ -78,13 +78,42 @@ const NumbleConfig = (props: Props) => {
 
   const [status, setStatus] = useState<NumbleStatus>("dice-rolled-awaiting-pick");
 
-  // Guess Timer
   const [remainingGuessTimerSeconds, setRemainingGuessTimerSeconds] = useState(
     props.gamemodeSettings?.guessTimerConfig?.isTimed === true
       ? props.gamemodeSettings?.guessTimerConfig.seconds
       : DEFAULT_NUMBLE_GUESS_TIMER_VALUE
   );
 
+  const INITIAL_TEAM_TIMER_VALUE =
+    props.gamemodeSettings?.timerConfig?.isTimed === true
+      ? props.gamemodeSettings?.timerConfig.seconds
+      : getGamemodeDefaultTimerValue(props.page);
+
+  // Each team starts with the same initial amount of time
+  const initialTeamTimers = Array.from({ length: gamemodeSettings.numTeams }).map((_, i) => ({
+    teamNumber: i,
+    remainingSeconds: INITIAL_TEAM_TIMER_VALUE,
+    totalSeconds: INITIAL_TEAM_TIMER_VALUE,
+  }));
+
+  const [teamTimers, setTeamTimers] = useState(initialTeamTimers);
+
+  // Determine and set the next team to play
+  const nextTeamTurn = () => {
+    const newCurrentTeamNumber = getNextTeamNumberWithRemainingTime(currentTeamNumber, teamTimers);
+
+    // No team with time left
+    if (!newCurrentTeamNumber) {
+      setStatus("game-over-timer-ended");
+      return;
+    }
+
+    setCurrentTeamNumber(newCurrentTeamNumber);
+    // Next team rolls their own dice values
+    setStatus("picked-awaiting-dice-roll");
+  };
+
+  // Guess Timer
   React.useEffect(() => {
     if (!gamemodeSettings.guessTimerConfig.isTimed) {
       return;
@@ -95,33 +124,46 @@ const NumbleConfig = (props: Props) => {
       return;
     }
 
+    // Ran out of time making guess
+    if (remainingGuessTimerSeconds <= 0) {
+      // Game ends when you run out of time is OFF
+      if (!gamemodeSettings.guessTimerConfig.timerBehaviour.isGameOverWhenNoTimeLeft) {
+        return;
+      }
+
+      // Set current team's remaining time to zero
+      const newTeamTimers = teamTimers.map((teamTimerInfo) => {
+        if (teamTimerInfo.teamNumber === currentTeamNumber) {
+          return { ...teamTimerInfo, remainingSeconds: 0 };
+        }
+        return teamTimerInfo;
+      });
+      updateTeamTimers(newTeamTimers);
+
+      // Game ends when you run out of time is ON
+      if (gamemodeSettings.numTeams === 1) {
+        // End game using status
+        setStatus("game-over-timer-ended");
+        return;
+      }
+
+      if (gamemodeSettings.numTeams > 1) {
+        nextTeamTurn();
+      }
+    }
+
     const guessTimer = setInterval(() => {
       if (remainingGuessTimerSeconds > 0) {
         setRemainingGuessTimerSeconds(remainingGuessTimerSeconds - 1);
       }
     }, 1000);
+
     return () => {
       clearInterval(guessTimer);
     };
-  }, [setRemainingGuessTimerSeconds, remainingGuessTimerSeconds, gamemodeSettings.guessTimerConfig.isTimed]);
-
-  function updateRemainingGuessTimerSeconds(newGuessTimerSeconds: number) {
-    setRemainingGuessTimerSeconds(newGuessTimerSeconds);
-  }
+  }, [setRemainingGuessTimerSeconds, remainingGuessTimerSeconds, gamemodeSettings.guessTimerConfig.isTimed, status]);
 
   // Game Timer
-  const INITIAL_TIMER_VALUE =
-    props.gamemodeSettings?.timerConfig?.isTimed === true
-      ? props.gamemodeSettings?.timerConfig.seconds
-      : getGamemodeDefaultTimerValue(props.page);
-  // Each team starts with the same initial amount of time
-  const initialTeamTimers = Array.from({ length: gamemodeSettings.numTeams }).map((_, i) => ({
-    teamNumber: i,
-    remainingSeconds: INITIAL_TIMER_VALUE,
-    totalSeconds: INITIAL_TIMER_VALUE,
-  }));
-  const [teamTimers, setTeamTimers] = useState(initialTeamTimers);
-
   React.useEffect(() => {
     if (!gamemodeSettings.timerConfig.isTimed) {
       return;
@@ -132,15 +174,15 @@ const NumbleConfig = (props: Props) => {
       return;
     }
 
-    // Run out of time whilst making guess
+    // Ran out of total time
     if (teamTimers[currentTeamNumber].remainingSeconds <= 0) {
-      // Next team's turn
-      const newCurrentTeamNumber = getNextTeamNumberWithRemainingTime(currentTeamNumber, teamTimers);
-      if (newCurrentTeamNumber !== null) {
-        setCurrentTeamNumber(newCurrentTeamNumber);
-        // Next team rolls their own dice values
-        setStatus("picked-awaiting-dice-roll");
+      if (gamemodeSettings.numTeams === 1) {
+        // End game using status
+        setStatus("game-over-timer-ended");
+        return;
       }
+
+      nextTeamTurn();
     }
 
     const timer = setInterval(() => {
@@ -156,6 +198,7 @@ const NumbleConfig = (props: Props) => {
         setTeamTimers(newTeamTimers);
       }
     }, 1000);
+
     return () => {
       clearInterval(timer);
     };
@@ -193,6 +236,10 @@ const NumbleConfig = (props: Props) => {
     setTeamTimers(newTeamTimers);
   }
 
+  function updateRemainingGuessTimerSeconds(newGuessTimerSeconds: number) {
+    setRemainingGuessTimerSeconds(newGuessTimerSeconds);
+  }
+
   function updateGamemodeSettings(newGamemodeSettings: NumbleConfigProps["gamemodeSettings"]) {
     setGamemodeSettings(newGamemodeSettings);
   }
@@ -210,6 +257,7 @@ const NumbleConfig = (props: Props) => {
       updateRemainingGuessTimerSeconds={updateRemainingGuessTimerSeconds}
       teamTimers={teamTimers}
       updateTeamTimers={updateTeamTimers}
+      nextTeamTurn={nextTeamTurn}
       onComplete={props.onComplete}
       theme={props.theme}
       settings={props.settings}
