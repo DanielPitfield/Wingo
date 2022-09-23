@@ -1,4 +1,3 @@
-import { GamemodeCategories, pageDescriptions } from "../Data/PageDescriptions";
 import { PageName } from "../Data/PageNames";
 import { BsInfoCircleFill } from "react-icons/bs";
 import { AllChallenges } from "../Data/Challenges/AllChallenges";
@@ -10,6 +9,7 @@ import { Theme } from "../Data/Themes";
 import { AreaConfig } from "./Area";
 import { LevelConfig } from "../Components/Level";
 import { FiPlay } from "react-icons/fi";
+import { gamemodeCategories, pageDescriptions } from "../Data/PageDescriptions";
 
 interface Props {
   theme: Theme;
@@ -59,22 +59,31 @@ export const LobbyMenu = (props: Props) => {
           />
         </div>
 
-        {GamemodeCategories.filter((category) => category !== null).map((category) => {
-          // For each gamemode category, render a sidebar with the category name
-          return (
-            <div className="sidebar">
-              <div className="sidebar-title">{category}</div>
-              <ul className="widgets">
-                {pageDescriptions
-                  .filter((page) => page.categoryType === category && page.isDisplayed)
-                  .map((page) => {
-                    // Get all the gamemodes within this category and render a tile for each of them
-                    return renderGameModeTile(page.page);
-                  })}
-              </ul>
-            </div>
-          );
-        })}
+        {gamemodeCategories
+          .filter((category) => category !== null)
+          // For each category
+          .map((category) => {
+            // Get all the gamemodes within the category
+            const gamemodePages = pageDescriptions.filter((page) => page.categoryType === category && page.isDisplayed);
+
+            // If there are gamemodes for this category, render a sidebar with the category name
+            if (gamemodePages.length > 0) {
+              return (
+                <div className="sidebar">
+                  <div className="sidebar-title">{category}</div>
+                  <ul className="widgets">
+                    {gamemodePages.map((page) => {
+                      // And then render a tile for each gamemode (nested within this sidebar)
+                      return renderGameModeTile(page.page);
+                    })}
+                  </ul>
+                </div>
+              );
+            }
+
+            // No gamemodes for this category, don't even render a sidebar for the category
+            return null;
+          })}
       </div>
 
       <section className="challenges">
