@@ -1,7 +1,7 @@
 import { PageName } from "./PageNames";
 import { gameshowType } from "../Pages/CustomGameshow";
 
-export const GamemodeCategories = [
+export const gamemodeCategories = [
   "Daily / Weekly",
   "Wingo",
   "Letters",
@@ -11,14 +11,14 @@ export const GamemodeCategories = [
   null,
 ] as const;
 
-export type GamemodeCategory = typeof GamemodeCategories[number];
+export type gamemodeCategory = typeof gamemodeCategories[number];
 
 export type pageDescription = {
   page: PageName;
   title: string;
   shortTitle?: string;
   // What category best describes this gamemode (the tile to select the gamemode will be under a title with this name)?
-  categoryType: GamemodeCategory;
+  categoryType: gamemodeCategory;
   // Is the gamemode shown on the gamemode selection screen (is it available to play/enabled?)
   isDisplayed: boolean;
   // Can the gamemode be selected during a random session?
@@ -416,7 +416,7 @@ export const pageDescriptions: pageDescription[] = [
     title: "Sequence Puzzle",
     shortTitle: "Sequence",
     categoryType: "Puzzle",
-    isDisplayed: true,
+    isDisplayed: false,
     isRandomlyPlayable: true,
     description: "Find what comes next in the sequence",
   },
