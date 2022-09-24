@@ -1,5 +1,4 @@
 import { PageName } from "./PageNames";
-import { gameshowType } from "../Pages/CustomGameshow";
 
 export const gamemodeCategories = [
   "Daily / Weekly",
@@ -23,12 +22,6 @@ export type pageDescription = {
   isDisplayed: boolean;
   // Can the gamemode be selected during a random session?
   isRandomlyPlayable: boolean;
-
-  /* TODO: Remove gameshowType?
-  This is only used to determine which gamemodes appear when you use the filter within the Custom Gameshow configuration
-  But pretty sure it's not needed as Custom preset should allow any gamemode?
-  */
-  gameshowType?: gameshowType;
   description?: string;
   helpInfo?: JSX.Element;
 };
@@ -103,7 +96,6 @@ export const pageDescriptions: pageDescription[] = [
     categoryType: "Wingo",
     isDisplayed: true,
     isRandomlyPlayable: true,
-    gameshowType: "Wingo",
     description: "Guess a word",
     helpInfo: (
       <>
@@ -118,7 +110,6 @@ export const pageDescriptions: pageDescription[] = [
     categoryType: "Wingo",
     isDisplayed: true,
     isRandomlyPlayable: true,
-    gameshowType: "Wingo",
     description: "Use a cryptic clue to guess the word as fast as possible!",
     helpInfo: (
       <>
@@ -135,7 +126,6 @@ export const pageDescriptions: pageDescription[] = [
     categoryType: "Wingo",
     isDisplayed: true,
     isRandomlyPlayable: true,
-    gameshowType: "Wingo",
     description: "Increase the word length to guess with every correct answer",
     helpInfo: (
       <>
@@ -150,7 +140,6 @@ export const pageDescriptions: pageDescription[] = [
     categoryType: "Wingo",
     isDisplayed: true,
     isRandomlyPlayable: true,
-    gameshowType: "Wingo",
     description: "Gain lives with correct, early answers; how long can you survive?",
     helpInfo: (
       <>
@@ -167,7 +156,6 @@ export const pageDescriptions: pageDescription[] = [
     categoryType: "Wingo",
     isDisplayed: true,
     isRandomlyPlayable: true,
-    gameshowType: "Wingo",
     description: "Guess a word related to a category",
     helpInfo: (
       <>
@@ -187,7 +175,6 @@ export const pageDescriptions: pageDescription[] = [
     categoryType: "Wingo",
     isDisplayed: true,
     isRandomlyPlayable: true,
-    gameshowType: "Wingo",
     description: "Guess two words interlinked by a shared letter",
     helpInfo: (
       <>
@@ -205,7 +192,6 @@ export const pageDescriptions: pageDescription[] = [
     categoryType: "Wingo",
     isDisplayed: true,
     isRandomlyPlayable: true,
-    gameshowType: "Wingo",
     description: "Guess a crossword of words",
     helpInfo: (
       <>
@@ -233,7 +219,6 @@ export const pageDescriptions: pageDescription[] = [
     categoryType: "Letters",
     isDisplayed: true,
     isRandomlyPlayable: true,
-    gameshowType: "LettersNumbers",
     description: "Find the highest scoring word from the list of random letters",
     helpInfo: (
       // https://en.wikipedia.org/wiki/Countdown_(game_show)#Letters_round
@@ -257,7 +242,6 @@ export const pageDescriptions: pageDescription[] = [
     categoryType: "Letters",
     isDisplayed: true,
     isRandomlyPlayable: true,
-    gameshowType: "LettersNumbers",
     description: "Find a single word which uses all the letters",
     helpInfo: (
       // https://en.wikipedia.org/wiki/Countdown_(game_show)#Conundrum
@@ -317,7 +301,6 @@ export const pageDescriptions: pageDescription[] = [
     categoryType: "Letters",
     isDisplayed: true,
     isRandomlyPlayable: true,
-    gameshowType: "Wingo",
     description: "Fill the crossword with the provided words",
     helpInfo: (
       <>
@@ -353,7 +336,6 @@ export const pageDescriptions: pageDescription[] = [
     categoryType: "Numbers",
     isDisplayed: true,
     isRandomlyPlayable: true,
-    gameshowType: "LettersNumbers",
     description: "Get the target number using a list of random numbers",
     helpInfo: (
       // https://en.wikipedia.org/wiki/Countdown_(game_show)#Numbers_round
