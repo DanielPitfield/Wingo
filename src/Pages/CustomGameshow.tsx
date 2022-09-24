@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { SettingsData } from "../Data/SaveData";
 import { PageName } from "../Data/PageNames";
 import { Theme } from "../Data/Themes";
-import { pageDescription, pageDescriptions } from "../Data/PageDescriptions";
+import { gamemodeCategories, gamemodeCategory, pageDescription, pageDescriptions } from "../Data/PageDescriptions";
 import { OrderGroup } from "react-draggable-order";
 import { GameshowToolboxItem } from "../Components/GameshowToolboxItem";
 import { GameshowOrderItem } from "../Components/GameshowOrderItem";
@@ -27,51 +27,48 @@ interface Props extends CustomGameshowProps {
   onComplete: (wasCorrect: boolean) => void;
 }
 
-const gameshowTypes = ["Custom", "Wingo", "LettersNumbers"] as const;
-export type gameshowType = typeof gameshowTypes[number];
-
 export const CustomGameshow = (props: Props) => {
-  const [currentGameshowType, setCurrentGameshowType] = useState<gameshowType>("Custom");
-  const [availableModes, setAvailableModes] = useState<pageDescription[]>(getAvailableModes());
+  const [currentGameshowCategoryFilter, setCurrentGameshowCategoryFilter] = useState<gamemodeCategory>(null);
+  const [filteredModes, setFilteredModes] = useState<pageDescription[]>(getFilteredModes());
   const [queuedModes, setQueuedModes] = useState<pageDescription[]>([]);
 
   React.useEffect(() => {
-    // The type of gameshow has now changed, start with an empty queue
-    setQueuedModes([]);
     // Update the modes which can be added to the queue
-    setAvailableModes(getAvailableModes());
-  }, [currentGameshowType]);
+    setFilteredModes(getFilteredModes());
+  }, [currentGameshowCategoryFilter]);
 
-  // Which gamemodes can be added to the CustomGameshow queue (based on the gameshow type)?
-  function getAvailableModes(): pageDescription[] {
-    return currentGameshowType === "Custom"
+  // Which gamemodes appear in the toolbox and can be added to the queue?
+  function getFilteredModes(): pageDescription[] {
+    return currentGameshowCategoryFilter === null
       ? // Any playable mode
-        pageDescriptions.filter((page) => page.isRandomlyPlayable)
-      : // Any mode tagged with the current gameshow type
-        pageDescriptions.filter((page) => page.gameshowType === currentGameshowType && page.isRandomlyPlayable);
+        pageDescriptions.filter((page) => page.isRandomlyPlayable && page.isDisplayed)
+      : // Any mode tagged with the current filter
+        pageDescriptions.filter(
+          (page) => page.categoryType === currentGameshowCategoryFilter && page.isRandomlyPlayable && page.isDisplayed
+        );
   }
 
   // Append mode (the available mode which was clicked) to queue
-  function addModeToQueue(gameshowMode: pageDescription) {
+  const addModeToQueue = (gameshowMode: pageDescription) => {
     const newQueuedModes = queuedModes.slice();
     newQueuedModes.push(gameshowMode);
     setQueuedModes(newQueuedModes);
-  }
+  };
 
   // Delete the mode from the current queue
-  function removeModeFromQueue(index: number) {
+  const removeModeFromQueue = (index: number) => {
     // Take copy
     const newQueuedModes = queuedModes.slice();
     // Remove clicked mode
     newQueuedModes.splice(index, 1);
     setQueuedModes(newQueuedModes);
-  }
+  };
 
   // List of buttons (which add to the queue when clicked)
-  function displayAvailableModes(): React.ReactNode {
+  function displayFilteredModes(): React.ReactNode {
     return (
       <div className="gameshow-available-modes-wrapper">
-        {availableModes.map((gameshowMode) => (
+        {filteredModes.map((gameshowMode) => (
           <GameshowToolboxItem gameshowMode={gameshowMode} onClick={addModeToQueue}></GameshowToolboxItem>
         ))}
       </div>
@@ -97,29 +94,46 @@ export const CustomGameshow = (props: Props) => {
     );
   }
 
+  // Which gamemode categories can be used as filters?
+  const gamemodeCategoryFilters: gamemodeCategory[] = gamemodeCategories.filter(
+    (category) =>
+      // Don't allow daily/weekly modes in a CustomGameshow
+      category !== "Daily / Weekly" &&
+      // Don't allow entire gameshow presets in a CustomGameshow
+      category !== "Gameshow Presets" &&
+      // Add this on at the end (so it's always the first option)
+      category !== null &&
+      // No point offering a filter for a gamemode category which has no playable modes
+      pageDescriptions.filter((page) => page.categoryType === category && page.isDisplayed).length > 0
+  );
+
+  // Add the null (any) filter as the first option
+  gamemodeCategoryFilters.unshift(null);
+
+  // null as the gamemodeCategory acting as a filter is given the option text of "Any"
   return (
     <>
       <label>
         <select
           onChange={(e) => {
-            setCurrentGameshowType(e.target.value as gameshowType);
+            setCurrentGameshowCategoryFilter(e.target.value === "Any" ? null : (e.target.value as gamemodeCategory));
           }}
-          className="gameshowType-input"
-          name="gameshowType"
-          value={currentGameshowType}
+          className="gameshowCategoryFilter-input"
+          name="gameshowCategoryFilter"
+          value={currentGameshowCategoryFilter ?? "Any"}
         >
-          {gameshowTypes.map((gameshowType) => (
-            <option key={gameshowType} value={gameshowType}>
-              {gameshowType}
+          {gamemodeCategoryFilters.map((gamemodeCategoryFilter) => (
+            <option key={gamemodeCategoryFilter} value={gamemodeCategoryFilter ?? "Any"}>
+              {gamemodeCategoryFilter ?? "Any"}
             </option>
           ))}
         </select>
-        Gameshow type
+        Gamemode category type
       </label>
 
       <div className="custom-gameshow-wrapper">
         {displayQueuedModes()}
-        {displayAvailableModes()}
+        {displayFilteredModes()}
       </div>
     </>
   );
