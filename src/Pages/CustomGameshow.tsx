@@ -6,6 +6,7 @@ import { gamemodeCategories, gamemodeCategory, pageDescription, pageDescriptions
 import { OrderGroup } from "react-draggable-order";
 import { GameshowToolboxItem } from "../Components/GameshowToolboxItem";
 import { GameshowOrderItem } from "../Components/GameshowOrderItem";
+import { Button } from "../Components/Button";
 
 export interface CustomGameshowProps {
   campaignConfig:
@@ -63,6 +64,10 @@ export const CustomGameshow = (props: Props) => {
     newQueuedModes.splice(index, 1);
     setQueuedModes(newQueuedModes);
   };
+
+  const clearQueue = () => {
+    setQueuedModes([]);
+  }
 
   // List of buttons (which add to the queue when clicked)
   function displayFilteredModes(): React.ReactNode {
@@ -130,6 +135,10 @@ export const CustomGameshow = (props: Props) => {
         </select>
         Gamemode category type
       </label>
+
+      <Button mode="destructive" onClick={clearQueue} settings={props.settings}>
+        Clear
+      </Button>
 
       <div className="custom-gameshow-wrapper">
         {displayQueuedModes()}
