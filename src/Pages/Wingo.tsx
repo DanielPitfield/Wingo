@@ -46,7 +46,6 @@ interface Props {
   page: PageName;
   theme?: Theme;
   settings: SettingsData;
-  setPage: (page: PageName) => void;
   onEnter: () => void;
   onSubmitLetter: (letter: string) => void;
   onSubmitTargetCategory: (category: string) => void;

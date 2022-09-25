@@ -9,6 +9,7 @@ import { getGamemodeDefaultWordLength } from "../Helper Functions/getGamemodeDef
 import { displayGameshowSummary } from "../Helper Functions/getGameshowSummary";
 import { getPageGamemodeSettings } from "../Helper Functions/getPageGamemodeSettings";
 import { getWingoGameshowRoundOrder } from "../Helper Functions/getWingoGameshowRoundOrder";
+import { useNavigate } from "react-router-dom";
 
 export interface WingoGameshowProps {
   campaignConfig:
@@ -38,13 +39,14 @@ interface Props extends WingoGameshowProps {
   page: PageName;
   theme: Theme;
   settings: SettingsData;
-  setPage: (page: PageName) => void;
   setTheme: (theme: Theme) => void;
   addGold: (gold: number) => void;
   onComplete: (wasCorrect: boolean) => void;
 }
 
 export const WingoGameshow = (props: Props) => {
+  const navigate = useNavigate();
+  
   const [inProgress, setInProgress] = useState(true);
   const [roundOrder, setRoundOrder] = useState<
     { isPuzzle: boolean; wordLength: number; basePoints: number; pointsLostPerGuess: number }[]
@@ -157,7 +159,6 @@ export const WingoGameshow = (props: Props) => {
       isCampaignLevel: false,
       page: props.page,
       settings: props.settings,
-      setPage: props.setPage,
       setTheme: props.setTheme,
       addGold: props.addGold,
       onComplete: props.onComplete,
@@ -214,7 +215,7 @@ export const WingoGameshow = (props: Props) => {
     props.onComplete(wasCorrect);
 
     // Navigate away from gameshow
-    props.campaignConfig.isCampaignLevel ? props.setPage("campaign/area/level") : props.setPage("home");
+    props.campaignConfig.isCampaignLevel ? navigate("/campaign/area/level") : navigate("/home");
   }
 
   return (

@@ -11,6 +11,7 @@ import { getGamemodeDefaultNumGuesses } from "../Helper Functions/getGamemodeDef
 import { getGamemodeDefaultWordLength } from "../Helper Functions/getGamemodeDefaultWordLength";
 import { displayGameshowSummary } from "../Helper Functions/getGameshowSummary";
 import { getPageGamemodeSettings } from "../Helper Functions/getPageGamemodeSettings";
+import { useNavigate } from "react-router-dom";
 
 type RoundType = "number" | "letter" | "conundrum";
 
@@ -34,13 +35,14 @@ interface Props extends LettersNumbersGameshowProps {
   page: PageName;
   themes: Theme[];
   settings: SettingsData;
-  setPage: (page: PageName) => void;
   setTheme: (theme: Theme) => void;
   addGold: (gold: number) => void;
   onComplete: (wasCorrect: boolean) => void;
 }
 
 export const LettersNumbersGameshow = (props: Props) => {
+  const navigate = useNavigate();
+
   const [inProgress, setInProgress] = useState(true);
   const [roundOrder, setRoundOrder] = useState<RoundType[]>([]);
   const [roundNumberIndex, setRoundNumberIndex] = useState(0);
@@ -151,7 +153,6 @@ export const LettersNumbersGameshow = (props: Props) => {
       campaignConfig: { isCampaignLevel: false as false },
       page: props.page,
       settings: props.settings,
-      setPage: props.setPage,
       setTheme: props.setTheme,
       addGold: props.addGold,
       onComplete: props.onComplete,
@@ -216,7 +217,7 @@ export const LettersNumbersGameshow = (props: Props) => {
     props.onComplete(wasCorrect);
 
     // Navigate away from gameshow
-    props.campaignConfig.isCampaignLevel ? props.setPage("campaign/area/level") : props.setPage("home");
+    props.campaignConfig.isCampaignLevel ? navigate("/campaign/area/level") : navigate("/home");
   }
 
   return (

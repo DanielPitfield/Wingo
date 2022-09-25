@@ -49,7 +49,6 @@ interface Props {
   clearGrid: () => void;
   submitBestGuess: () => void;
   setTheme: (theme: Theme) => void;
-  setPage: (page: PageName) => void;
   onSubmitNumbersGameNumber: (number: number) => void;
   onSubmitNumbersGameSelection: (numberExpression: number[]) => void;
   onSubmitNumber: (number: number) => void;

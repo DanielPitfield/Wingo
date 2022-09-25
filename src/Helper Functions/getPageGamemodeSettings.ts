@@ -30,6 +30,7 @@ import { SameLetterWordsProps } from "../Pages/SameLetterWords";
 import { WingoConfigProps } from "../Pages/WingoConfig";
 import { WordCodesProps } from "../Pages/WordCodes";
 
+// TODO: Uses the path not the PageName?
 export function getPageGamemodeSettings(page: PageName) {
   switch (page) {
     case "wingo/daily":

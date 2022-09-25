@@ -33,7 +33,6 @@ interface Props extends LettersGameConfigProps {
   page: PageName;
   theme: Theme;
   settings: SettingsData;
-  setPage: (page: PageName) => void;
   setTheme: (theme: Theme) => void;
   addGold: (gold: number) => void;
   onComplete: (wasCorrect: boolean) => void;
@@ -386,7 +385,6 @@ const LettersGameConfig = (props: Props) => {
       updateRemainingSeconds={updateRemainingSeconds}
       ResetGame={ResetGame}
       ContinueGame={ContinueGame}
-      setPage={props.setPage}
       addGold={props.addGold}
       gameshowScore={props.gameshowScore}
     ></LettersGame>

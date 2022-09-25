@@ -19,6 +19,7 @@ import { AreaConfig } from "../Pages/Area";
 import { LettersNumbersGameshow, LettersNumbersGameshowProps } from "../Pages/LettersNumbersGameshow";
 import { WingoGameshow, WingoGameshowProps } from "../Pages/WingoGameshow";
 import SequencePuzzle, { SequencePuzzleProps } from "../Pages/SequencePuzzle";
+import { useNavigate } from "react-router-dom";
 
 export type LevelConfig = {
   hint?: React.ReactNode;
@@ -177,20 +178,20 @@ interface LevelProps {
   theme: Theme;
   settings: SettingsData;
   setTheme: (theme: Theme) => void;
-  setPage: (page: PageName) => void;
   addGold: (gold: number) => void;
   onCompleteCampaignLevel: (isUnlockLevel: boolean, level: LevelConfig) => void;
 }
 
 /** A level within an area (e.g. one game) */
 export const Level = (props: LevelProps) => {
+  const navigate = useNavigate();
+
   function renderGame() {
     const commonProps = {
       isCampaignLevel: true,
       page: props.page,
       theme: props.theme,
       settings: props.settings,
-      setPage: props.setPage,
       setTheme: props.setTheme,
       addGold: props.addGold,
       onComplete: (wasCorrect: boolean) => {
@@ -199,7 +200,7 @@ export const Level = (props: LevelProps) => {
           props.onCompleteCampaignLevel(props.level.type === "unlock-level", props.level);
         }
         // Then, go to level selection (to rety level or to choose next level)
-        props.setPage("campaign/area");
+        navigate("/campaign/area");
       },
     };
 

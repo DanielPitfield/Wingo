@@ -53,7 +53,6 @@ interface Props extends NumbleConfigProps {
   page: PageName;
   theme: Theme;
   settings: SettingsData;
-  setPage: (page: PageName) => void;
   setTheme: (theme: Theme) => void;
   addGold: (gold: number) => void;
   onComplete: (wasCorrect: boolean) => void;

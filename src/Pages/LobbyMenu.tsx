@@ -10,18 +10,20 @@ import { AreaConfig } from "./Area";
 import { LevelConfig } from "../Components/Level";
 import { FiPlay } from "react-icons/fi";
 import { gamemodeCategories, pageDescriptions } from "../Data/PageDescriptions";
+import { useNavigate } from "react-router-dom";
 
 interface Props {
   theme: Theme;
   settings: SettingsData;
   setTheme: (theme: Theme) => void;
-  setPage: (page: PageName) => void;
   setSelectedArea: (areaConfig: AreaConfig) => void;
   setSelectedCampaignLevel: (level: LevelConfig) => void;
   addGold: (gold: number) => void;
 }
 
 export const LobbyMenu = (props: Props) => {
+  const navigate = useNavigate();
+
   const history = SaveData.getHistory();
 
   function renderGameModeTile(page: PageName) {
@@ -35,7 +37,7 @@ export const LobbyMenu = (props: Props) => {
           <p className="tooltip">{pageInfo?.description}</p>
         </span>
         <div className="widget-button-wrapper">
-          <Button mode="accept" data-game-mode={page} settings={props.settings} onClick={() => props.setPage(page)}>
+          <Button mode="accept" data-game-mode={page} settings={props.settings} onClick={() => navigate(page)}>
             <FiPlay />
             Play
           </Button>
@@ -55,7 +57,6 @@ export const LobbyMenu = (props: Props) => {
             theme={props.theme}
             settings={props.settings}
             setTheme={props.setTheme}
-            setPage={props.setPage}
           />
         </div>
 
@@ -99,7 +100,7 @@ export const LobbyMenu = (props: Props) => {
                 mode="default"
                 challenge={challenge}
                 settings={props.settings}
-                onClick={() => props.setPage("challenges")}
+                onClick={() => navigate("/challenges")}
                 addGold={props.addGold}
               />
             ),

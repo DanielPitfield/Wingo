@@ -33,7 +33,6 @@ interface Props extends NumbersGameConfigProps {
   page: PageName;
   theme: Theme;
   settings: SettingsData;
-  setPage: (page: PageName) => void;
   setTheme: (theme: Theme) => void;
   addGold: (gold: number) => void;
   onComplete: (wasCorrect: boolean) => void;
@@ -581,7 +580,6 @@ const NumbersGameConfig = (props: Props) => {
       ResetGame={ResetGame}
       clearGrid={clearGrid}
       submitBestGuess={submitBestGuess}
-      setPage={props.setPage}
       setOperator={(operator) => setCurrentGuess({ ...currentGuess, operator })}
       addGold={props.addGold}
       gameshowScore={props.gameshowScore}

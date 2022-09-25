@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { pageDescriptions } from "../Data/PageDescriptions";
-import { PageName } from "../Data/PageNames";
 import { getId, LevelConfig } from "./Level";
 import { SaveData, SettingsData } from "../Data/SaveData";
 import { Theme } from "../Data/Themes";
 import { usePopper } from "react-popper";
 import { useClickChime } from "../Data/Sounds";
 import { AreaConfig } from "../Pages/Area";
+import { useNavigate } from "react-router-dom";
 
 interface LevelNodeProps {
   level: LevelConfig;
@@ -17,10 +17,11 @@ interface LevelNodeProps {
   onHoverLevel: (level: LevelConfig | null) => void;
   setTheme: (theme: Theme) => void;
   setSelectedCampaignLevel: (level: LevelConfig) => void;
-  setPage: (page: PageName) => void;
 }
 
 export const LevelNode = (props: LevelNodeProps) => {
+  const navigate = useNavigate();
+
   const [referenceElement, setReferenceElement] = useState(null);
   const [popperElement, setPopperElement] = useState(null);
   const [arrowElement, setArrowElement] = useState(null);
@@ -65,7 +66,7 @@ export const LevelNode = (props: LevelNodeProps) => {
           if (isLevelUnlocked && !isLevelCompleted) {
             playClickSoundEffect();
             props.setSelectedCampaignLevel(props.level);
-            props.setPage("campaign/area/level");
+            navigate("/campaign/area/level");
           }
         }}
         onMouseOver={() => props.onHoverLevel(props.isSelected ? null : props.level)}

@@ -32,7 +32,6 @@ interface Props extends LetterCategoriesConfigProps {
   page: PageName;
   theme: Theme;
   settings: SettingsData;
-  setPage: (page: PageName) => void;
   setTheme: (theme: Theme) => void;
   addGold: (gold: number) => void;
   onComplete: (wasCorrect: boolean) => void;
@@ -301,7 +300,6 @@ const LetterCategoriesConfig = (props: Props) => {
       updateGamemodeSettings={updateGamemodeSettings}
       updateRemainingSeconds={updateRemainingSeconds}
       ResetGame={ResetGame}
-      setPage={props.setPage}
     />
   );
 };

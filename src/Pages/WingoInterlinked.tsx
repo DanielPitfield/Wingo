@@ -80,7 +80,6 @@ interface Props extends WingoInterlinkedProps {
   page: PageName;
   theme?: Theme;
   settings: SettingsData;
-  setPage: (page: PageName) => void;
   addGold: (gold: number) => void;
   setTheme: (theme: Theme) => void;
   onSave?: (

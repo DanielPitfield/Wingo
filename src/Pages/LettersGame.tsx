@@ -40,7 +40,6 @@ interface Props {
   theme: Theme;
   settings: SettingsData;
   setTheme: (theme: Theme) => void;
-  setPage: (page: PageName) => void;
   addGold: (gold: number) => void;
   onEnter: () => void;
 

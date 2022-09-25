@@ -18,7 +18,6 @@ interface AreaProps {
   settings: SettingsData;
   setTheme: (theme: Theme) => void;
   setSelectedCampaignLevel: (level: LevelConfig) => void;
-  setPage: (page: PageName) => void;
 }
 
 /** Portion of the campaign, with many levels */
@@ -46,7 +45,6 @@ export const Area = (props: AreaProps) => {
             index={index}
             area={props.area}
             setTheme={props.setTheme}
-            setPage={props.setPage}
             settings={props.settings}
             setSelectedCampaignLevel={props.setSelectedCampaignLevel}
             onHoverLevel={setSelectedLevel}

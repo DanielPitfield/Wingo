@@ -7,6 +7,7 @@ import { Theme } from "../Data/Themes";
 import { AllCampaignAreas } from "../Data/CampaignAreas/AllCampaignAreas";
 import BackgroundImageSrc from "../Data/Images/background.png";
 import { FiCheck, FiLock, FiPlay } from "react-icons/fi";
+import { useNavigate } from "react-router-dom";
 
 interface CampaignProps {
   theme: Theme;
@@ -15,11 +16,12 @@ interface CampaignProps {
   setTheme: (theme: Theme) => void;
   setSelectedArea: (areaConfig: AreaConfig) => void;
   setSelectedCampaignLevel: (level: LevelConfig) => void;
-  setPage: (page: PageName) => void;
 }
 
 /** The entire campaign, showing the list of areas */
 export const Campaign = (props: CampaignProps) => {
+  const navigate = useNavigate();
+
   /** */
   function onAreaClick(area: AreaConfig, unlockStatus: CampaignSaveData["areas"][0]["status"]) {
     // Button should be disabled, but just in case
@@ -33,12 +35,12 @@ export const Campaign = (props: CampaignProps) => {
     if (unlockStatus === "unlockable") {
       props.setSelectedArea(area);
       props.setSelectedCampaignLevel(area.unlock_level);
-      props.setPage("campaign/area/level");
+      navigate("/campaign/area/level");
     }
     // Already unlocked, go to level selection screen
     else {
       props.setSelectedArea(area);
-      props.setPage("campaign/area");
+      navigate("/campaign/area");
     }
   }
 

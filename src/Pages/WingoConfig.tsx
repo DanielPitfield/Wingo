@@ -87,7 +87,6 @@ interface Props extends WingoConfigProps {
   page: PageName;
   theme?: Theme;
   settings: SettingsData;
-  setPage: (page: PageName) => void;
   setTheme: (theme: Theme) => void;
   addGold: (gold: number) => void;
   onComplete: (wasCorrect: boolean) => void;
@@ -853,7 +852,6 @@ const WingoConfig = (props: Props) => {
     isCampaignLevel: props.isCampaignLevel,
     page: props.page,
     theme: props.theme,
-    setPage: props.setPage,
     setTheme: props.setTheme,
     addGold: props.addGold,
     settings: props.settings,
@@ -974,7 +972,6 @@ const WingoConfig = (props: Props) => {
       updateGamemodeSettings={updateGamemodeSettings}
       ResetGame={ResetGame}
       ContinueGame={ContinueGame}
-      setPage={props.setPage}
       setTheme={props.setTheme}
       gameshowScore={props.gameshowScore}
     ></Wingo>
