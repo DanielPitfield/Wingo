@@ -295,7 +295,7 @@ export const App = () => {
   return (
     <Routes>
       <Route path="/" element={<Navigate to={getNewEntryPage()} />} />
-      
+
       <Route path="/TitlePage" element={<TitlePage settings={settings} />} />
       <Route path="/splash-screen" element={<SplashScreen loadingState={loadingState} settings={settings} />} />
       <Route
@@ -641,6 +641,17 @@ export const App = () => {
         }
       />
       <Route path="/Custom/Gameshow" element={<CustomGameshow {...commonProps} />} />
+      <Route
+        path="*"
+        element={
+          <ErrorFallback
+            error={new Error("Page not found")}
+            resetErrorBoundary={() => navigate("/home")}
+            settingsData={SaveData.getSettings()}
+            version={VERSION}
+          />
+        }
+      />
     </Routes>
   );
 };
