@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { Keyboard } from "../Components/Keyboard";
-import { PageName } from "../Data/PageNames";
 import { WordRow } from "../Components/WordRow";
 import { Button } from "../Components/Button";
 import { MessageNotification } from "../Components/MessageNotification";
@@ -12,6 +11,8 @@ import { LetterCategoriesConfigProps } from "./LetterCategoriesConfig";
 import { getGamemodeDefaultTimerValue } from "../Helper Functions/getGamemodeDefaultTimerValue";
 import LetterCategoriesGamemodeSettings from "../Components/GamemodeSettingsOptions/LetterCategoriesGamemodeSettings";
 import { getNewGamemodeSettingValue } from "../Helper Functions/getGamemodeSettingsNewValue";
+import { useLocation } from "react-router-dom";
+import { PagePath } from "../Data/PageNames";
 
 interface Props {
   campaignConfig: LetterCategoriesConfigProps["campaignConfig"];
@@ -28,7 +29,6 @@ interface Props {
   categoryRequiredStartingLetter: string;
   chosenCategoryMappings: { name: string; targetWordArray: string[] }[];
 
-  page: PageName;
   theme: Theme;
   settings: SettingsData;
   onEnter: () => void;
@@ -42,10 +42,12 @@ interface Props {
 }
 
 const LetterCategories = (props: Props) => {
+  const location = useLocation().pathname as PagePath;
+
   const [mostRecentTotalSeconds, setMostRecentTotalSeconds] = useState(
     props.gamemodeSettings?.timerConfig?.isTimed === true
       ? props.gamemodeSettings?.timerConfig.seconds
-      : getGamemodeDefaultTimerValue(props.page)
+      : getGamemodeDefaultTimerValue(location)
   );
 
   // Create grid of rows (for guessing words)
@@ -81,7 +83,6 @@ const LetterCategories = (props: Props) => {
       const wordRow = (
         <WordRow
           key={`letters_categories/row/${index}`}
-          page={props.page}
           isReadOnly={false}
           inProgress={props.inProgress}
           isVertical={false}
@@ -200,7 +201,6 @@ const LetterCategories = (props: Props) => {
       {props.settings.gameplay.keyboard && (
         <div className="keyboard">
           <Keyboard
-            page={props.page}
             onEnter={props.onEnter}
             onSubmitLetter={props.onSubmitLetter}
             onBackspace={props.onBackspace}

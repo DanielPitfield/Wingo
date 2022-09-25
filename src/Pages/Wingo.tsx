@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Keyboard } from "../Components/Keyboard";
-import { PageName } from "../Data/PageNames";
+import { PagePath } from "../Data/PageNames";
 import { WordRow } from "../Components/WordRow";
 import { Button } from "../Components/Button";
 import { MessageNotification } from "../Components/MessageNotification";
@@ -17,6 +17,7 @@ import { LetterStatus } from "../Components/LetterTile";
 import { getGamemodeDefaultTimerValue } from "../Helper Functions/getGamemodeDefaultTimerValue";
 import { getNumNewLimitlessLives } from "../Helper Functions/getNumNewLimitlessLives";
 import WingoGamemodeSettings from "../Components/GamemodeSettingsOptions/WingoGamemodeSettings";
+import { useLocation } from "react-router-dom";
 
 interface Props {
   isCampaignLevel: boolean;
@@ -43,7 +44,6 @@ interface Props {
   }[];
   revealedLetterIndexes: number[];
 
-  page: PageName;
   theme?: Theme;
   settings: SettingsData;
   onEnter: () => void;
@@ -61,6 +61,8 @@ interface Props {
 }
 
 const Wingo = (props: Props) => {
+  const location = useLocation().pathname as PagePath;
+
   const [secondsUntilNextDailyWingo, setSecondsUntilNextDailyWingo] = useState(getSecondsUntilMidnight());
   const [playCorrectChimeSoundEffect] = useCorrectChime(props.settings);
   const [playFailureChimeSoundEffect] = useFailureChime(props.settings);
@@ -74,7 +76,7 @@ const Wingo = (props: Props) => {
   const [mostRecentTotalSeconds, setMostRecentTotalSeconds] = useState(
     props.gamemodeSettings?.timerConfig?.isTimed === true
       ? props.gamemodeSettings?.timerConfig.seconds
-      : getGamemodeDefaultTimerValue(props.page)
+      : getGamemodeDefaultTimerValue(location)
   );
 
   const [mostRecentMaxLives, setMostRecentMaxLives] = useState(
@@ -107,7 +109,6 @@ const Wingo = (props: Props) => {
       return (
         <WordRow
           key={"wingo/read-only"}
-          page={props.page}
           isReadOnly={true}
           inProgress={props.inProgress}
           word={displayWord}
@@ -129,7 +130,6 @@ const Wingo = (props: Props) => {
         <div className="letters-game-wrapper" key={"conundrum/reveal"}>
           <WordRow
             key={"conundrum/read-only"}
-            page={props.page}
             isReadOnly={true}
             inProgress={props.inProgress}
             word={props.conundrum}
@@ -187,7 +187,6 @@ const Wingo = (props: Props) => {
       Grid.push(
         <WordRow
           key={`wingo/row/${i}`}
-          page={props.page}
           isReadOnly={false}
           inProgress={props.inProgress}
           isVertical={false}
@@ -497,7 +496,6 @@ const Wingo = (props: Props) => {
 
       {props.settings.gameplay.keyboard && (
         <Keyboard
-          page={props.page}
           onEnter={props.onEnter}
           onSubmitLetter={(letter) => {
             props.onSubmitLetter(letter);

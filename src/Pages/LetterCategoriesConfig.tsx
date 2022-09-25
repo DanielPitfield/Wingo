@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { PageName } from "../Data/PageNames";
+import { PagePath } from "../Data/PageNames";
 import LetterCategories from "./LetterCategories";
 import { SaveData, SettingsData } from "../Data/SaveData";
 import { DEFAULT_ALPHABET } from "./WingoConfig";
@@ -10,6 +10,7 @@ import { shuffleArray } from "../Helper Functions/shuffleArray";
 import { getGamemodeDefaultTimerValue } from "../Helper Functions/getGamemodeDefaultTimerValue";
 import { getGamemodeDefaultWordLength } from "../Helper Functions/getGamemodeDefaultWordLength";
 import { getRandomElementFrom } from "../Helper Functions/getRandomElementFrom";
+import { useLocation } from "react-router-dom";
 
 export interface LetterCategoriesConfigProps {
   campaignConfig:
@@ -29,7 +30,6 @@ export interface LetterCategoriesConfigProps {
 }
 
 interface Props extends LetterCategoriesConfigProps {
-  page: PageName;
   theme: Theme;
   settings: SettingsData;
   setTheme: (theme: Theme) => void;
@@ -38,8 +38,10 @@ interface Props extends LetterCategoriesConfigProps {
 }
 
 const LetterCategoriesConfig = (props: Props) => {
+  const location = useLocation().pathname as PagePath;
+
   const [inProgress, setInProgress] = useState(true);
-  const [wordLength, setWordLength] = useState(getGamemodeDefaultWordLength(props.page));
+  const [wordLength, setWordLength] = useState(getGamemodeDefaultWordLength(location));
   const [guesses, setGuesses] = useState<string[]>([]);
   const [wordIndex, setWordIndex] = useState(0);
   const [hasSubmitLetter, sethasSubmitLetter] = useState(false);
@@ -57,7 +59,7 @@ const LetterCategoriesConfig = (props: Props) => {
   const [remainingSeconds, setRemainingSeconds] = useState(
     props.gamemodeSettings?.timerConfig?.isTimed === true
       ? props.gamemodeSettings?.timerConfig.seconds
-      : getGamemodeDefaultTimerValue(props.page)
+      : getGamemodeDefaultTimerValue(location)
   );
 
   // Timer Setup
@@ -109,7 +111,7 @@ const LetterCategoriesConfig = (props: Props) => {
 
   // Reset game after change of settings (stops cheating by changing settings partway through a game)
   React.useEffect(() => {
-    if (props.page === "campaign/area/level") {
+    if (location === "/campaign/area/level") {
       return;
     }
 
@@ -291,7 +293,6 @@ const LetterCategoriesConfig = (props: Props) => {
       correctGuessesCount={correctGuessesCount}
       categoryRequiredStartingLetter={requiredStartingLetter}
       chosenCategoryMappings={chosenCategoryMappings}
-      page={props.page}
       theme={props.theme}
       settings={props.settings}
       onEnter={onEnter}

@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { PageName } from "../Data/PageNames";
 import { SaveData, SettingsData } from "../Data/SaveData";
 import { Theme } from "../Data/Themes";
 import Numble from "./Numble";
@@ -7,6 +6,8 @@ import { DEFAULT_NUMBLE_GUESS_TIMER_VALUE } from "../Data/DefaultGamemodeSetting
 import { getGamemodeDefaultTimerValue } from "../Helper Functions/getGamemodeDefaultTimerValue";
 import { getNextTeamNumberWithRemainingTime } from "../Helper Functions/getNextTeamWithRemainingTime";
 import { MAX_NUM_NUMBLE_TEAMS } from "../Components/GamemodeSettingsOptions/NumbleGamemodeSettings";
+import { useLocation } from "react-router-dom";
+import { PagePath } from "../Data/PageNames";
 
 export const numbleGridShapes = ["square", "hexagon"] as const;
 export type numbleGridShape = typeof numbleGridShapes[number];
@@ -50,7 +51,6 @@ export interface NumbleConfigProps {
 }
 
 interface Props extends NumbleConfigProps {
-  page: PageName;
   theme: Theme;
   settings: SettingsData;
   setTheme: (theme: Theme) => void;
@@ -68,6 +68,8 @@ export type NumbleStatus =
   | "game-over-timer-ended";
 
 const NumbleConfig = (props: Props) => {
+  const location = useLocation().pathname as PagePath;
+  
   const [gamemodeSettings, setGamemodeSettings] = useState<NumbleConfigProps["gamemodeSettings"]>(
     props.gamemodeSettings
   );
@@ -87,7 +89,7 @@ const NumbleConfig = (props: Props) => {
   const INITIAL_TEAM_TIMER_VALUE =
     props.gamemodeSettings?.timerConfig?.isTimed === true
       ? props.gamemodeSettings?.timerConfig.seconds
-      : getGamemodeDefaultTimerValue(props.page);
+      : getGamemodeDefaultTimerValue(location);
 
   // Each team starts with the same initial amount of time
   const initialTeamTimers = Array.from({ length: gamemodeSettings.numTeams }).map((_, i) => ({

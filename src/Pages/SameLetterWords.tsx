@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { PageName } from "../Data/PageNames";
 import { Button } from "../Components/Button";
 import { MessageNotification } from "../Components/MessageNotification";
 import ProgressBar, { GreenToRedColorTransition } from "../Components/ProgressBar";
@@ -13,7 +12,12 @@ import { getGamemodeDefaultTimerValue } from "../Helper Functions/getGamemodeDef
 import { getRandomElementFrom } from "../Helper Functions/getRandomElementFrom";
 import { getPrettyText } from "../Helper Functions/getPrettyText";
 import { getNewGamemodeSettingValue } from "../Helper Functions/getGamemodeSettingsNewValue";
-import SameLetterWordsGamemodeSettings, { MIN_NUM_SAME_LETTER_MATCHING_WORDS, MIN_NUM_SAME_LETTER_TOTAL_WORDS } from "../Components/GamemodeSettingsOptions/SameLetterWordsGamemodeSettings";
+import SameLetterWordsGamemodeSettings, {
+  MIN_NUM_SAME_LETTER_MATCHING_WORDS,
+  MIN_NUM_SAME_LETTER_TOTAL_WORDS,
+} from "../Components/GamemodeSettingsOptions/SameLetterWordsGamemodeSettings";
+import { useLocation } from "react-router-dom";
+import { PagePath } from "../Data/PageNames";
 
 export interface SameLetterWordsProps {
   gamemodeSettings: {
@@ -28,7 +32,6 @@ export interface SameLetterWordsProps {
 
 interface Props extends SameLetterWordsProps {
   isCampaignLevel: boolean;
-  page: PageName;
   theme: Theme;
   settings: SettingsData;
   setTheme: (theme: Theme) => void;
@@ -38,6 +41,8 @@ interface Props extends SameLetterWordsProps {
 
 /** */
 const SameLetterWords = (props: Props) => {
+  const location = useLocation().pathname as PagePath;
+
   const [inProgress, setInProgress] = useState(true);
   const [selectedWords, setSelectedWords] = useState<string[]>([]);
   const [validWords, setValidWords] = useState<string[]>([]);
@@ -50,13 +55,13 @@ const SameLetterWords = (props: Props) => {
   const [remainingSeconds, setRemainingSeconds] = useState(
     props.gamemodeSettings?.timerConfig?.isTimed === true
       ? props.gamemodeSettings?.timerConfig.seconds
-      : getGamemodeDefaultTimerValue(props.page)
+      : getGamemodeDefaultTimerValue(location)
   );
   const [remainingGuesses, setRemainingGuesses] = useState(gamemodeSettings.numGuesses);
   const [mostRecentTotalSeconds, setMostRecentTotalSeconds] = useState(
     props.gamemodeSettings?.timerConfig?.isTimed === true
       ? props.gamemodeSettings?.timerConfig.seconds
-      : getGamemodeDefaultTimerValue(props.page)
+      : getGamemodeDefaultTimerValue(location)
   );
 
   // Sounds

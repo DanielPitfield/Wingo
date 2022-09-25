@@ -50,7 +50,7 @@ export const LevelNode = (props: LevelNodeProps) => {
     : areaInfo?.completedLevelIds.some((x) => x === getId(previousLevel.level)) || false;
 
   // Get the level page info
-  const levelInfo = pageDescriptions.find((x) => x.page === props.level.level.page);
+  const levelInfo = pageDescriptions.find((x) => x.path === props.level.level.page);
 
   if (props.level.type !== "level") {
     return null;

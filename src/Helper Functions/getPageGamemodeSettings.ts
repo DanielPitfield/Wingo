@@ -15,7 +15,7 @@ import {
   defaultWordCodesQuestionGamemodeSettings,
   defaultWordCodesMatchGamemodeSettings,
 } from "../Data/DefaultGamemodeSettings";
-import { PageName } from "../Data/PageNames";
+import { PagePath } from "../Data/PageNames";
 import { SaveData } from "../Data/SaveData";
 import { AlgebraProps } from "../Pages/Algebra";
 import { ArithmeticDragProps } from "../Pages/ArithmeticDrag";
@@ -30,85 +30,85 @@ import { SameLetterWordsProps } from "../Pages/SameLetterWords";
 import { WingoConfigProps } from "../Pages/WingoConfig";
 import { WordCodesProps } from "../Pages/WordCodes";
 
-// TODO: Uses the path not the PageName?
-export function getPageGamemodeSettings(page: PageName) {
+// TODO: Uses
+export function getPageGamemodeSettings(page: PagePath) {
   switch (page) {
-    case "wingo/daily":
+    case "/wingo/daily":
       // Daily mode should always use the same settings (never from SaveData)
       return (defaultWingoGamemodeSettings.find((x) => x.page === page)?.settings ??
         fallbackWingoSettings) as WingoConfigProps["gamemodeSettings"];
 
-    case "wingo/repeat":
-    case "wingo/category":
-    case "wingo/increasing":
-    case "wingo/limitless":
-    case "wingo/puzzle":
-    case "Conundrum":
+    case "/wingo/repeat":
+    case "/wingo/category":
+    case "/wingo/increasing":
+    case "/wingo/limitless":
+    case "/wingo/puzzle":
+    case "/Conundrum":
       return (SaveData.getWingoConfigGamemodeSettings(page) ??
         defaultWingoGamemodeSettings.find((x) => x.page === page)?.settings ??
         fallbackWingoSettings) as WingoConfigProps["gamemodeSettings"];
 
-    case "wingo/interlinked":
-    case "wingo/crossword":
-    case "wingo/crossword/fit":
-    case "wingo/crossword/daily":
-    case "wingo/crossword/weekly":
+    case "/wingo/interlinked":
+    case "/wingo/crossword":
+    case "/wingo/crossword/fit":
+    case "/wingo/crossword/daily":
+    case "/wingo/crossword/weekly":
       /*
         The gamemode settings are redefined in WingoConfig (when rendering a WingoInterlinked component)
         Just pass fallback settings through, because gamemodeSettings can't be left undefined
       */
       return fallbackWingoSettings as WingoConfigProps["gamemodeSettings"];
 
-    case "LettersCategories":
+    case "/LettersCategories":
       return (SaveData.getLetterCategoriesConfigGamemodeSettings() ??
         defaultLetterCategoriesGamemodeSettings) as LetterCategoriesConfigProps["gamemodeSettings"];
 
-    case "LettersGame":
+    case "/LettersGame":
       return (SaveData.getLettersGameConfigGamemodeSettings() ??
         defaultLettersGameGamemodeSettings) as LettersGameConfigProps["gamemodeSettings"];
 
-    case "NumbersGame":
+    case "/NumbersGame":
       return (SaveData.getNumbersGameConfigGamemodeSettings() ??
         defaultNumbersGameGamemodeSettings) as NumbersGameConfigProps["gamemodeSettings"];
 
-    case "ArithmeticReveal":
+    case "/ArithmeticReveal":
       return (SaveData.getArithmeticRevealGamemodeSettings() ??
         defaultArithmeticRevealGamemodeSettings) as ArithmeticRevealProps["gamemodeSettings"];
 
-    case "ArithmeticDrag/Order":
-      return (SaveData.getArithmeticDragGamemodeSettings("ArithmeticDrag/Order") ??
+    case "/ArithmeticDrag/Order":
+      return (SaveData.getArithmeticDragGamemodeSettings("/ArithmeticDrag/Order") ??
         defaultArithmeticDragOrderGamemodeSettings) as ArithmeticDragProps["gamemodeSettings"];
 
-    case "ArithmeticDrag/Match":
-      return (SaveData.getArithmeticDragGamemodeSettings("ArithmeticDrag/Match") ??
+    case "/ArithmeticDrag/Match":
+      return (SaveData.getArithmeticDragGamemodeSettings("/ArithmeticDrag/Match") ??
         defaultArithmeticDragMatchGamemodeSettings) as ArithmeticDragProps["gamemodeSettings"];
 
-    case "Numble":
+    case "/Numble":
       return (SaveData.getNumbleConfigGamemodeSettings() ??
         defaultNumbleGamemodeSettings) as NumbleConfigProps["gamemodeSettings"];
 
-    case "OnlyConnect":
+    case "/OnlyConnect":
       return (SaveData.getOnlyConnectGamemodeSettings() ??
         defaultOnlyConnectGamemodeSettings) as OnlyConnectProps["gamemodeSettings"];
 
-    case "SameLetters":
+    case "/SameLetters":
       return (SaveData.getSameLetterWordsGamemodeSettings() ??
         defaultSameLetterWordsGamemodeSettings) as SameLetterWordsProps["gamemodeSettings"];
 
-    case "NumberSets":
+    case "/NumberSets":
       return (SaveData.getNumberSetsGamemodeSettings() ??
         defaultNumberSetsGamemodeSettings) as NumberSetsProps["gamemodeSettings"];
 
-    case "Algebra":
+    case "/Algebra":
       return (SaveData.getAlgebraGamemodeSettings() ??
         defaultAlgebraGamemodeSettings) as AlgebraProps["gamemodeSettings"];
 
-    case "WordCodes/Question":
-      return (SaveData.getWordCodesGamemodeSettings("WordCodes/Question") ??
+    case "/WordCodes/Question":
+      return (SaveData.getWordCodesGamemodeSettings("/WordCodes/Question") ??
         defaultWordCodesQuestionGamemodeSettings) as WordCodesProps["gamemodeSettings"];
 
-    case "WordCodes/Match":
-      return (SaveData.getWordCodesGamemodeSettings("WordCodes/Match") ??
+    case "/WordCodes/Match":
+      return (SaveData.getWordCodesGamemodeSettings("/WordCodes/Match") ??
         defaultWordCodesMatchGamemodeSettings) as WordCodesProps["gamemodeSettings"];
 
     default:

@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { PageName } from "../Data/PageNames";
 import { Button } from "../Components/Button";
 import { MessageNotification } from "../Components/MessageNotification";
 import ProgressBar, { GreenToRedColorTransition } from "../Components/ProgressBar";
@@ -13,6 +12,8 @@ import { getPrettyText } from "../Helper Functions/getPrettyText";
 import { getGamemodeDefaultTimerValue } from "../Helper Functions/getGamemodeDefaultTimerValue";
 import { getNewGamemodeSettingValue } from "../Helper Functions/getGamemodeSettingsNewValue";
 import OnlyConnectGamemodeSettings from "../Components/GamemodeSettingsOptions/OnlyConnectGamemodeSettings";
+import { useLocation } from "react-router-dom";
+import { PagePath } from "../Data/PageNames";
 
 export interface OnlyConnectProps {
   gamemodeSettings: {
@@ -33,7 +34,6 @@ type GridWord = {
 
 interface Props extends OnlyConnectProps {
   isCampaignLevel: boolean;
-  page: PageName;
   theme: Theme;
   settings: SettingsData;
   setTheme: (theme: Theme) => void;
@@ -42,6 +42,8 @@ interface Props extends OnlyConnectProps {
 }
 
 const OnlyConnect = (props: Props) => {
+  const location = useLocation().pathname as PagePath;
+
   const [inProgress, setInProgress] = useState(true);
   const [gridWords, setGridWords] = useState<GridWord[]>([]);
   const [selectedWords, setSelectedWords] = useState<{ word: string; categoryName: string }[]>([]);
@@ -56,13 +58,13 @@ const OnlyConnect = (props: Props) => {
   const [remainingSeconds, setRemainingSeconds] = useState(
     props.gamemodeSettings?.timerConfig?.isTimed === true
       ? props.gamemodeSettings?.timerConfig.seconds
-      : getGamemodeDefaultTimerValue(props.page)
+      : getGamemodeDefaultTimerValue(location)
   );
 
   const [mostRecentTotalSeconds, setMostRecentTotalSeconds] = useState(
     props.gamemodeSettings?.timerConfig?.isTimed === true
       ? props.gamemodeSettings?.timerConfig.seconds
-      : getGamemodeDefaultTimerValue(props.page)
+      : getGamemodeDefaultTimerValue(location)
   );
 
   // Sounds

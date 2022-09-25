@@ -1,15 +1,17 @@
-import React from "react";
 import { pageDescriptions } from "../Data/PageDescriptions";
-import { PageName } from "../Data/PageNames";
 import { Modal } from "./Modal";
 
+import { useLocation } from "react-router-dom";
+import { PagePath } from "../Data/PageNames";
+
 interface Props {
-  page: PageName;
   onClose: () => void;
 }
 
 export const HelpInformation = (props: Props) => {
-  const pageInfo = pageDescriptions.find((x) => x.page === props.page);
+  const location = useLocation().pathname as PagePath;
+
+  const pageInfo = pageDescriptions.find((x) => x.path === location);
 
   return (
     <Modal
@@ -17,7 +19,7 @@ export const HelpInformation = (props: Props) => {
       name="help"
       title={
         <>
-          <strong>{pageInfo?.title || props.page}</strong>
+          <strong>{pageInfo?.title || location}</strong>
         </>
       }
       onClose={props.onClose}

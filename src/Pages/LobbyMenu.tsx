@@ -1,4 +1,4 @@
-import { PageName } from "../Data/PageNames";
+import { PagePath } from "../Data/PageNames";
 import { BsInfoCircleFill } from "react-icons/bs";
 import { AllChallenges } from "../Data/Challenges/AllChallenges";
 import { SaveData, SettingsData } from "../Data/SaveData";
@@ -26,8 +26,8 @@ export const LobbyMenu = (props: Props) => {
 
   const history = SaveData.getHistory();
 
-  function renderGameModeTile(page: PageName) {
-    const pageInfo = pageDescriptions.find((x) => x.page === page);
+  function renderGameModeTile(page: PagePath) {
+    const pageInfo = pageDescriptions.find((x) => x.path === page);
 
     return (
       <li className="widget">
@@ -75,7 +75,7 @@ export const LobbyMenu = (props: Props) => {
                   <ul className="widgets">
                     {gamemodePages.map((page) => {
                       // And then render a tile for each gamemode (nested within this sidebar)
-                      return renderGameModeTile(page.page);
+                      return renderGameModeTile(page.path);
                     })}
                   </ul>
                 </div>

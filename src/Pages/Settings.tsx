@@ -2,7 +2,7 @@ import { useState } from "react";
 import { IconType } from "react-icons";
 import { FiCompass, FiHeadphones, FiInfo, FiMonitor } from "react-icons/fi";
 import { pageDescriptions } from "../Data/PageDescriptions";
-import { PageName } from "../Data/PageNames";
+import { PagePath } from "../Data/PageNames";
 import { Button } from "../Components/Button";
 import { SettingsData } from "../Data/SaveData";
 import { StudioLogo } from "../Components/StudioLogo";
@@ -34,9 +34,9 @@ export const Settings = (props: Props) => {
   const { settings } = props;
 
   // The available choices for which page is loaded on launch
-  const entryPages: PageName[] = ["TitlePage", "campaign", "wingo/daily"];
+  const entryPages: PagePath[] = ["TitlePage", "campaign", "wingo/daily"];
   // More user friendly to use title values (for dropdown in settings)
-  const entryPageValues = pageDescriptions.filter((page) => entryPages.includes(page.page))?.map((page) => page.title);
+  const entryPageValues = pageDescriptions.filter((page) => entryPages.includes(page.path))?.map((page) => page.title);
 
   // All the setting areas and their settings
   const SETTINGS: (

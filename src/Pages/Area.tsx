@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { PageName } from "../Data/PageNames";
+import { PagePath } from "../Data/PageNames";
 import { LevelConfig } from "../Components/Level";
 import { MessageNotification } from "../Components/MessageNotification";
 import { SettingsData } from "../Data/SaveData";

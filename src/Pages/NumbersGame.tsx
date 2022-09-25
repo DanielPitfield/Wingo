@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { PageName } from "../Data/PageNames";
+import { PagePath } from "../Data/PageNames";
 import { Button } from "../Components/Button";
 import { MessageNotification } from "../Components/MessageNotification";
 import ProgressBar, { GreenToRedColorTransition } from "../Components/ProgressBar";
@@ -19,6 +19,7 @@ import { NumberPuzzleValue, NumberPuzzle } from "../Helper Functions/NumbersGame
 import { getNumbersGameScore } from "../Helper Functions/getNumbersGameScore";
 import { getNewGamemodeSettingValue } from "../Helper Functions/getGamemodeSettingsNewValue";
 import NumbersGameGamemodeSettings from "../Components/GamemodeSettingsOptions/NumbersGameGamemodeSettings";
+import { useLocation } from "react-router-dom";
 
 interface Props {
   campaignConfig: NumbersGameConfigProps["campaignConfig"];
@@ -39,7 +40,6 @@ interface Props {
   hasSubmitNumber: boolean;
   targetNumber: number | null;
 
-  page: PageName;
   theme: Theme;
   settings: SettingsData;
   onClick: (
@@ -69,6 +69,8 @@ interface Props {
  * @returns
  */
 const NumbersGame = (props: Props) => {
+  const location = useLocation().pathname as PagePath;
+
   // The number of operands the numberPuzzle can compute a solution for (with no noticeable delay)
   const NUMBERPUZZLE_MAX_NUM_OPERANDS_WITHHOUT_DELAY = 6;
   // The maximum possible number of operands the numberPuzzle can a compute solution for (without the browser crashing)
@@ -79,7 +81,7 @@ const NumbersGame = (props: Props) => {
   const [mostRecentTotalSeconds, setMostRecentTotalSeconds] = useState(
     props.gamemodeSettings?.timerConfig?.isTimed === true
       ? props.gamemodeSettings?.timerConfig.seconds
-      : getGamemodeDefaultTimerValue(props.page)
+      : getGamemodeDefaultTimerValue(location)
   );
 
   const [isComputeSolutionButtonClicked, setIsComputeSolutionButtonClicked] = useState(false);

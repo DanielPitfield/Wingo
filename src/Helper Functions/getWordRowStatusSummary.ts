@@ -1,10 +1,10 @@
-import { PageName } from "../Data/PageNames";
+import { PagePath } from "../Data/PageNames";
 import { LetterStatus } from "../Components/LetterTile";
 import { getLetterStatus } from "./getLetterStatus";
 
-const isSimpleStatusMode = (page: PageName) => {
+const isSimpleStatusMode = (page: PagePath) => {
   // The modes where the letter statuses should be either correct or incorrect (green or red statuses) and nothing inbetween
-  const simpleStatusModes: PageName[] = ["LettersCategories"];
+  const simpleStatusModes: PagePath[] = ["/LettersCategories"];
   return simpleStatusModes.includes(page);
 };
 
@@ -17,7 +17,7 @@ export type WordRowStatusSummary = {
 // The information which determine/influence the LetterStatuses within WordRowStatusSummary
 export type WordRowStatusChecks = {
   isReadOnly: boolean;
-  page: PageName;
+  page: PagePath;
   word: string;
   targetWord: string;
   inDictionary: boolean;
@@ -42,7 +42,7 @@ export function getWordRowStatusSummary(statusChecks: WordRowStatusChecks): Word
         characterStatus.character !== " ";
 
       // The read only WordRow in puzzle mode slowly reveals the correct answer (signify this by showing the status as correct)
-      if (hasCharacter && page === "wingo/puzzle") {
+      if (hasCharacter && page === "/wingo/puzzle") {
         characterStatus.status = "correct";
         return characterStatus;
       }

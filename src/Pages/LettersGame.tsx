@@ -7,7 +7,7 @@ import { LEVEL_FINISHING_TEXT } from "../Components/Level";
 import { MessageNotification } from "../Components/MessageNotification";
 import ProgressBar, { GreenToRedColorTransition } from "../Components/ProgressBar";
 import { WordRow } from "../Components/WordRow";
-import { PageName } from "../Data/PageNames";
+import { PagePath } from "../Data/PageNames";
 import { SettingsData } from "../Data/SaveData";
 import { Theme } from "../Data/Themes";
 import { getAllWordsOfLength } from "../Helper Functions/getAllWordsOfLength";
@@ -17,6 +17,7 @@ import { getRandomElementFrom } from "../Helper Functions/getRandomElementFrom";
 import { isLettersGameGuessValid } from "../Helper Functions/isLettersGameGuessValid";
 import { shuffleArray } from "../Helper Functions/shuffleArray";
 import { LettersGameConfigProps } from "./LettersGameConfig";
+import { useLocation } from "react-router-dom";
 
 interface Props {
   campaignConfig: LettersGameConfigProps["campaignConfig"];
@@ -36,7 +37,6 @@ interface Props {
   targetWord: string;
   remainingSeconds: number;
 
-  page: PageName;
   theme: Theme;
   settings: SettingsData;
   setTheme: (theme: Theme) => void;
@@ -60,6 +60,8 @@ interface Props {
 }
 
 const LettersGame = (props: Props) => {
+  const location = useLocation().pathname as PagePath;
+
   // Currently selected guess, to be used as the final guess when time runs out
   const [bestGuess, setBestGuess] = useState("");
 
@@ -72,7 +74,7 @@ const LettersGame = (props: Props) => {
   const [mostRecentTotalSeconds, setMostRecentTotalSeconds] = useState(
     props.gamemodeSettings?.timerConfig?.isTimed === true
       ? props.gamemodeSettings?.timerConfig.seconds
-      : getGamemodeDefaultTimerValue(props.page)
+      : getGamemodeDefaultTimerValue(location)
   );
 
   function getWeightedLetter(letterWeightings: { letter: string; weighting: number }[]) {
@@ -206,7 +208,6 @@ const LettersGame = (props: Props) => {
     const inputRow = (
       <WordRow
         key={"letters-game/input"}
-        page={props.page}
         isReadOnly={false}
         inProgress={props.inProgress}
         isVertical={false}
@@ -396,7 +397,6 @@ const LettersGame = (props: Props) => {
 
       {props.settings.gameplay.keyboard && (
         <Keyboard
-          page={props.page}
           onEnter={props.onEnter}
           onSubmitLetter={props.onSubmitKeyboardLetter}
           onBackspace={props.onBackspace}

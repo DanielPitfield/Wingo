@@ -1,5 +1,5 @@
 import React from "react";
-import { PageName } from "../Data/PageNames";
+import { PagePath } from "../Data/PageNames";
 import LettersGameConfig, { LettersGameConfigProps } from "../Pages/LettersGameConfig";
 import NumbersGameConfig, { NumbersGameConfigProps } from "../Pages/NumbersGameConfig";
 import LetterCategoriesConfig, { LetterCategoriesConfigProps } from "../Pages/LetterCategoriesConfig";
@@ -26,77 +26,77 @@ export type LevelConfig = {
   level:
     | {
         gameCategory: "Wingo";
-        page: PageName;
+        page: PagePath;
         levelProps: WingoConfigProps;
       }
     | {
         gameCategory: "LetterCategories";
-        page: PageName;
+        page: PagePath;
         levelProps: LetterCategoriesConfigProps;
       }
     | {
         gameCategory: "LettersGame";
-        page: PageName;
+        page: PagePath;
         levelProps: LettersGameConfigProps;
       }
     | {
         gameCategory: "NumbersGame";
-        page: PageName;
+        page: PagePath;
         levelProps: NumbersGameConfigProps;
       }
     | {
         gameCategory: "ArithmeticReveal";
-        page: PageName;
+        page: PagePath;
         levelProps: ArithmeticRevealProps;
       }
     | {
         gameCategory: "ArithmeticDrag/Match";
-        page: PageName;
+        page: PagePath;
         levelProps: ArithmeticDragProps;
       }
     | {
         gameCategory: "GroupWall";
-        page: PageName;
+        page: PagePath;
         levelProps: OnlyConnectProps;
       }
     | {
         gameCategory: "SameLetterWords";
-        page: PageName;
+        page: PagePath;
         levelProps: SameLetterWordsProps;
       }
     | {
         gameCategory: "NumberSets";
-        page: PageName;
+        page: PagePath;
         levelProps: NumberSetsProps;
       }
     | {
         gameCategory: "Algebra";
-        page: PageName;
+        page: PagePath;
         levelProps: AlgebraProps;
       }
     | {
         gameCategory: "WordCodes";
-        page: PageName;
+        page: PagePath;
         levelProps: WordCodesProps;
       }
     | {
         gameCategory: "Numble";
-        page: PageName;
+        page: PagePath;
         levelProps: NumbleConfigProps;
       }
     | {
         gameCategory: "LettersNumbersGameshow";
-        page: PageName;
+        page: PagePath;
         levelProps: LettersNumbersGameshowProps;
       }
     | {
         gameCategory: "WingoGameshow";
-        page: PageName;
+        page: PagePath;
         levelProps: WingoGameshowProps;
       }
     | {
         gameCategory: "SequencePuzzle";
-        page: PageName;
+        page: PagePath;
         levelProps: SequencePuzzleProps;
       };
 } & (
@@ -174,7 +174,6 @@ export const LEVEL_FINISHING_TEXT = "Back to area";
 interface LevelProps {
   area: AreaConfig;
   level: LevelConfig;
-  page: PageName;
   theme: Theme;
   settings: SettingsData;
   setTheme: (theme: Theme) => void;
@@ -189,7 +188,6 @@ export const Level = (props: LevelProps) => {
   function renderGame() {
     const commonProps = {
       isCampaignLevel: true,
-      page: props.page,
       theme: props.theme,
       settings: props.settings,
       setTheme: props.setTheme,

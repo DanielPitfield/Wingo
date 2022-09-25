@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { PageName } from "../Data/PageNames";
+import { PagePath } from "../Data/PageNames";
 import { MessageNotification } from "../Components/MessageNotification";
 import LetterTile from "../Components/LetterTile";
 import { NumPad } from "../Components/NumPad";
@@ -17,6 +17,7 @@ import { getRandomElementFrom } from "../Helper Functions/getRandomElementFrom";
 import { getRandomIntFromRange } from "../Helper Functions/getRandomIntFromRange";
 import ArithmeticRevealGamemodeSettings from "../Components/GamemodeSettingsOptions/ArithmeticRevealGamemodeSettings";
 import { getNewGamemodeSettingValue } from "../Helper Functions/getGamemodeSettingsNewValue";
+import { useLocation } from "react-router-dom";
 
 export interface ArithmeticRevealProps {
   campaignConfig:
@@ -50,7 +51,6 @@ export interface ArithmeticRevealProps {
 }
 
 interface Props extends ArithmeticRevealProps {
-  page: PageName;
   theme: Theme;
   settings: SettingsData;
   setTheme: (theme: Theme) => void;
@@ -60,6 +60,8 @@ interface Props extends ArithmeticRevealProps {
 
 /** */
 const ArithmeticReveal = (props: Props) => {
+  const location = useLocation().pathname as PagePath;
+
   const [targetNumbers, setTargetNumbers] = useState<number[]>([]);
   const [revealState, setRevealState] = useState<{ type: "in-progress"; revealedTiles: number } | { type: "finished" }>(
     { type: "in-progress", revealedTiles: 0 }
@@ -81,13 +83,13 @@ const ArithmeticReveal = (props: Props) => {
   const [remainingSeconds, setRemainingSeconds] = useState(
     props.gamemodeSettings?.timerConfig?.isTimed === true
       ? props.gamemodeSettings?.timerConfig.seconds
-      : getGamemodeDefaultTimerValue(props.page)
+      : getGamemodeDefaultTimerValue(location)
   );
 
   const [mostRecentTotalSeconds, setMostRecentTotalSeconds] = useState(
     props.gamemodeSettings?.timerConfig?.isTimed === true
       ? props.gamemodeSettings?.timerConfig.seconds
-      : getGamemodeDefaultTimerValue(props.page)
+      : getGamemodeDefaultTimerValue(location)
   );
 
   // What is the maximum starting number which should be used (based on difficulty)?

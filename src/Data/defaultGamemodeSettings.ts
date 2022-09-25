@@ -1,4 +1,4 @@
-import { PageName } from "../Data/PageNames";
+import { PagePath } from "../Data/PageNames";
 import { NumbleConfigProps, numbleGridShape, numbleGridSize } from "../Pages/NumbleConfig";
 import { WingoConfigProps } from "../Pages/WingoConfig";
 import { WingoInterlinkedProps } from "../Pages/WingoInterlinked";
@@ -46,53 +46,53 @@ export const fallbackWingoSettings = {
   ...commonWingoSettings,
 };
 
-export const defaultWingoGamemodeSettings: { page: PageName; settings: WingoConfigProps["gamemodeSettings"] }[] = [
+export const defaultWingoGamemodeSettings: { page: PagePath; settings: WingoConfigProps["gamemodeSettings"] }[] = [
   {
-    page: "wingo/daily",
-    settings: { ...commonWingoSettings, wordLength: getGamemodeDefaultWordLength("wingo/daily") },
+    page: "/wingo/daily",
+    settings: { ...commonWingoSettings, wordLength: getGamemodeDefaultWordLength("/wingo/daily") },
   },
   {
-    page: "wingo/repeat",
-    settings: { ...commonWingoSettings, wordLength: getGamemodeDefaultWordLength("wingo/repeat") },
+    page: "/wingo/repeat",
+    settings: { ...commonWingoSettings, wordLength: getGamemodeDefaultWordLength("/wingo/repeat") },
   },
   {
-    page: "wingo/category",
-    settings: { ...commonWingoSettings, wordLength: getGamemodeDefaultWordLength("wingo/category") },
+    page: "/wingo/category",
+    settings: { ...commonWingoSettings, wordLength: getGamemodeDefaultWordLength("/wingo/category") },
   },
   {
-    page: "wingo/increasing",
-    settings: { ...commonWingoSettings, wordLength: getGamemodeDefaultWordLength("wingo/increasing") },
+    page: "/wingo/increasing",
+    settings: { ...commonWingoSettings, wordLength: getGamemodeDefaultWordLength("/wingo/increasing") },
   },
   {
-    page: "wingo/limitless",
-    settings: { ...commonWingoSettings, wordLength: getGamemodeDefaultWordLength("wingo/limitless") },
+    page: "/wingo/limitless",
+    settings: { ...commonWingoSettings, wordLength: getGamemodeDefaultWordLength("/wingo/limitless") },
   },
   {
-    page: "wingo/puzzle",
+    page: "/wingo/puzzle",
     settings: {
       ...commonWingoSettings,
-      wordLength: getGamemodeDefaultWordLength("wingo/puzzle"),
+      wordLength: getGamemodeDefaultWordLength("/wingo/puzzle"),
 
       isHintShown: true,
     },
   },
   // The conundrum mode is actually a mode of WingoConfig
   {
-    page: "Conundrum",
+    page: "/Conundrum",
     settings: {
       ...commonWingoSettings,
-      wordLength: getGamemodeDefaultWordLength("Conundrum"),
-      timerConfig: { isTimed: true, seconds: getGamemodeDefaultTimerValue("wingo/puzzle") },
+      wordLength: getGamemodeDefaultWordLength("/Conundrum"),
+      timerConfig: { isTimed: true, seconds: getGamemodeDefaultTimerValue("/wingo/puzzle") },
     },
   },
 ];
 
 export const defaultWingoInterlinkedGamemodeSettings: WingoInterlinkedProps["gamemodeSettings"] = {
   numWords: 2,
-  minWordLength: getGamemodeDefaultWordLength("wingo/interlinked"),
-  maxWordLength: getGamemodeDefaultWordLength("wingo/interlinked"),
+  minWordLength: getGamemodeDefaultWordLength("/wingo/interlinked"),
+  maxWordLength: getGamemodeDefaultWordLength("/wingo/interlinked"),
   numWordGuesses: 0,
-  numGridGuesses: getGamemodeDefaultNumGuesses("wingo/interlinked"),
+  numGridGuesses: getGamemodeDefaultNumGuesses("/wingo/interlinked"),
   isFirstLetterProvided: false,
   isHintShown: false,
   timerConfig: { isTimed: false },
@@ -113,8 +113,8 @@ export const defaultWingoCrosswordGamemodeSettings: WingoInterlinkedProps["gamem
 
 export const defaultWingoCrosswordFitGamemodeSettings: WingoInterlinkedProps["gamemodeSettings"] = {
   numWords: 6,
-  minWordLength: getGamemodeDefaultWordLength("wingo/crossword/fit"),
-  maxWordLength: getGamemodeDefaultWordLength("wingo/crossword/fit"),
+  minWordLength: getGamemodeDefaultWordLength("/wingo/crossword/fit"),
+  maxWordLength: getGamemodeDefaultWordLength("/wingo/crossword/fit"),
   numWordGuesses: 0,
   numGridGuesses: 1,
   isFirstLetterProvided: false,
@@ -153,15 +153,15 @@ export const defaultLetterCategoriesGamemodeSettings: LetterCategoriesConfigProp
 };
 
 export const defaultLettersGameGamemodeSettings: LettersGameConfigProps["gamemodeSettings"] = {
-  numLetters: getGamemodeDefaultWordLength("LettersGame"),
-  timerConfig: { isTimed: true, seconds: getGamemodeDefaultTimerValue("LettersGame") },
+  numLetters: getGamemodeDefaultWordLength("/LettersGame"),
+  timerConfig: { isTimed: true, seconds: getGamemodeDefaultTimerValue("/LettersGame") },
 };
 
 export const defaultNumbersGameGamemodeSettings: NumbersGameConfigProps["gamemodeSettings"] = {
   hasScaryNumbers: false,
   scoringMethod: "standard",
   numOperands: 6,
-  timerConfig: { isTimed: true, seconds: getGamemodeDefaultTimerValue("NumbersGame") },
+  timerConfig: { isTimed: true, seconds: getGamemodeDefaultTimerValue("/NumbersGame") },
 };
 
 export const defaultArithmeticRevealGamemodeSettings: ArithmeticRevealProps["gamemodeSettings"] = {
@@ -169,37 +169,37 @@ export const defaultArithmeticRevealGamemodeSettings: ArithmeticRevealProps["gam
   numTiles: 5,
   numberSize: "medium",
   revealIntervalSeconds: 3,
-  timerConfig: { isTimed: true, seconds: getGamemodeDefaultTimerValue("ArithmeticReveal") },
+  timerConfig: { isTimed: true, seconds: getGamemodeDefaultTimerValue("/ArithmeticReveal") },
 };
 
 export const defaultArithmeticDragOrderGamemodeSettings: ArithmeticDragProps["gamemodeSettings"] = {
   numTiles: 6,
-  numGuesses: getGamemodeDefaultNumGuesses("ArithmeticDrag/Order"),
+  numGuesses: getGamemodeDefaultNumGuesses("/ArithmeticDrag/Order"),
   numOperands: 2,
   numberSize: "medium",
-  timerConfig: { isTimed: true, seconds: getGamemodeDefaultTimerValue("ArithmeticDrag/Order") },
+  timerConfig: { isTimed: true, seconds: getGamemodeDefaultTimerValue("/ArithmeticDrag/Order") },
 };
 
 export const defaultArithmeticDragMatchGamemodeSettings: ArithmeticDragProps["gamemodeSettings"] = {
   numTiles: 6,
-  numGuesses: getGamemodeDefaultNumGuesses("ArithmeticDrag/Match"),
+  numGuesses: getGamemodeDefaultNumGuesses("/ArithmeticDrag/Match"),
   numOperands: 2,
   numberSize: "medium",
-  timerConfig: { isTimed: true, seconds: getGamemodeDefaultTimerValue("ArithmeticDrag/Match") },
+  timerConfig: { isTimed: true, seconds: getGamemodeDefaultTimerValue("/ArithmeticDrag/Match") },
 };
 
 export const defaultOnlyConnectGamemodeSettings: OnlyConnectProps["gamemodeSettings"] = {
   numGroups: 4,
   groupSize: 4,
-  numGuesses: getGamemodeDefaultNumGuesses("OnlyConnect"),
+  numGuesses: getGamemodeDefaultNumGuesses("/OnlyConnect"),
   timerConfig: { isTimed: false },
 };
 
 export const defaultSameLetterWordsGamemodeSettings: SameLetterWordsProps["gamemodeSettings"] = {
-  wordLength: getGamemodeDefaultWordLength("SameLetters"),
+  wordLength: getGamemodeDefaultWordLength("/SameLetters"),
   numMatchingWords: 4,
   numTotalWords: 16,
-  numGuesses: getGamemodeDefaultNumGuesses("SameLetters"),
+  numGuesses: getGamemodeDefaultNumGuesses("/SameLetters"),
   timerConfig: { isTimed: false },
 };
 
@@ -223,7 +223,7 @@ export const defaultWordCodesQuestionGamemodeSettings: WordCodesProps["gamemodeS
   codeLength: 4,
   numCodesToMatch: 4,
   numAdditionalLetters: 2,
-  numGuesses: getGamemodeDefaultNumGuesses("WordCodes/Question"),
+  numGuesses: getGamemodeDefaultNumGuesses("/WordCodes/Question"),
   timerConfig: { isTimed: false },
 };
 
@@ -235,7 +235,7 @@ export const defaultWordCodesMatchGamemodeSettings: WordCodesProps["gamemodeSett
   codeLength: 4,
   numCodesToMatch: 4,
   numAdditionalLetters: 2,
-  numGuesses: getGamemodeDefaultNumGuesses("WordCodes/Match"),
+  numGuesses: getGamemodeDefaultNumGuesses("/WordCodes/Match"),
   timerConfig: { isTimed: false },
 };
 
@@ -252,7 +252,7 @@ export const defaultNumbleGamemodeSettings: NumbleConfigProps["gamemodeSettings"
   // How long to make a guess after the dice have been rolled?
   guessTimerConfig: { isTimed: false },
   // How long overall until the game ends?
-  timerConfig: { isTimed: true, seconds: getGamemodeDefaultTimerValue("Numble") },
+  timerConfig: { isTimed: true, seconds: getGamemodeDefaultTimerValue("/Numble") },
 };
 
 export const defaultWingoGameshowRoundOrder = {

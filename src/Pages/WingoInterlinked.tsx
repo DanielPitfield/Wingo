@@ -11,7 +11,6 @@ import {
   crosswordGenerator as crossWordGenerator,
 } from "../Helper Functions/CrossWordGenerator";
 import ProgressBar, { GreenToRedColorTransition } from "../Components/ProgressBar";
-import { PageName } from "../Data/PageNames";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
 import { categoryMappings, wordLengthMappingsTargets } from "../Data/WordArrayMappings";
 import { DEFAULT_FIT_RESTRICTION } from "../Data/DefaultGamemodeSettings";
@@ -20,6 +19,8 @@ import { shuffleArray } from "../Helper Functions/shuffleArray";
 import { getGamemodeDefaultTimerValue } from "../Helper Functions/getGamemodeDefaultTimerValue";
 import { getNewGamemodeSettingValue } from "../Helper Functions/getGamemodeSettingsNewValue";
 import WingoInterlinkedGamemodeSettings from "../Components/GamemodeSettingsOptions/WingoInterlinkedGamemodeSettings";
+import { useLocation } from "react-router-dom";
+import { PagePath } from "../Data/PageNames";
 
 type Orientation = "vertical" | "horizontal";
 
@@ -77,7 +78,6 @@ export interface WingoInterlinkedProps {
 
 interface Props extends WingoInterlinkedProps {
   isCampaignLevel: boolean;
-  page: PageName;
   theme?: Theme;
   settings: SettingsData;
   addGold: (gold: number) => void;
@@ -95,6 +95,8 @@ interface Props extends WingoInterlinkedProps {
 }
 
 export const WingoInterlinked = (props: Props) => {
+  const location = useLocation().pathname as PagePath;
+
   // Specified amount of word guesses from initialConfig takes precedence
   const STARTING_NUM_WORD_GUESSES = props.initialConfig?.remainingWordGuesses ?? props.gamemodeSettings.numWordGuesses;
 
@@ -108,7 +110,7 @@ export const WingoInterlinked = (props: Props) => {
   const [remainingSeconds, setRemainingSeconds] = useState(
     props.gamemodeSettings?.timerConfig?.isTimed === true
       ? props.gamemodeSettings?.timerConfig.seconds
-      : getGamemodeDefaultTimerValue(props.page)
+      : getGamemodeDefaultTimerValue(location)
   );
 
   /*
@@ -119,7 +121,7 @@ export const WingoInterlinked = (props: Props) => {
   const [mostRecentTotalSeconds, setMostRecentTotalSeconds] = useState(
     props.gamemodeSettings?.timerConfig?.isTimed === true
       ? props.gamemodeSettings?.timerConfig.seconds
-      : getGamemodeDefaultTimerValue(props.page)
+      : getGamemodeDefaultTimerValue(location)
   );
 
   const [mostRecentFitRestriction, setMostRecentFitRestriction] = useState(
@@ -250,7 +252,7 @@ export const WingoInterlinked = (props: Props) => {
     ResetGame();
 
     // Save the latest gamemode settings for this mode
-    SaveData.setWingoInterlinkedGamemodeSettings(props.page, gamemodeSettings);
+    SaveData.setWingoInterlinkedGamemodeSettings(location, gamemodeSettings);
   }, [gamemodeSettings]);
 
   // Validate the value of props.gamemodeSettings.numGridGuesses
@@ -598,7 +600,7 @@ export const WingoInterlinked = (props: Props) => {
 
       const statusChecks: WordRowStatusChecks = {
         isReadOnly: false,
-        page: props.page,
+        page: location,
         word: guess,
         targetWord: targetWordInfo.word,
         inDictionary: true,
@@ -981,7 +983,6 @@ export const WingoInterlinked = (props: Props) => {
 
       {props.settings.gameplay.keyboard && (
         <Keyboard
-          page={props.page}
           onEnter={onEnter}
           onSubmitLetter={onSubmitLetter}
           onBackspace={onBackspace}

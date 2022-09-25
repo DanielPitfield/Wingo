@@ -15,7 +15,7 @@ import { SameLetterWordsProps } from "../Pages/SameLetterWords";
 import { WordCodesProps } from "../Pages/WordCodes";
 import { WingoConfigProps } from "../Pages/WingoConfig";
 import { TileStatus, WingoInterlinkedProps } from "../Pages/WingoInterlinked";
-import { PageName } from "./PageNames";
+import { PagePath } from "./PageNames";
 
 export type CampaignSaveData = {
   areas: { name: string; status: "locked" | "unlockable" | "unlocked"; completedLevelIds: string[] }[];
@@ -68,7 +68,7 @@ export type HistorySaveData = {
     id: string;
 
     /** Page/mode of the game */
-    page: PageName;
+    page: PagePath;
 
     /** Configuration at the start of the game */
     configAtStartOfGame: {
@@ -101,8 +101,8 @@ export function newGuid(): string {
     .join("");
 }
 
-function determineLocalStorageItemName(page: PageName): string | null {
-  const modeName = pageDescriptions.find((x) => x.page === page)?.title;
+function determineLocalStorageItemName(page: PagePath): string | null {
+  const modeName = pageDescriptions.find((x) => x.path === page)?.title;
 
   if (!modeName) {
     return null;
@@ -221,7 +221,7 @@ export class SaveData {
    * @returns Identifier of the game.
    */
   public static addGameToHistory(
-    page: PageName,
+    page: PagePath,
     configAtStartOfGame: HistorySaveData["games"][0]["configAtStartOfGame"]
   ): string {
     const history = SaveData.getHistory();
@@ -399,7 +399,7 @@ export class SaveData {
    * Saves the gamemode settings for Wingo Config.
    * @param gameSettings The latest gamemode settings for Wingo Config to save.
    */
-  public static setWingoConfigGamemodeSettings(page: PageName, gameSettings: WingoConfigProps["gamemodeSettings"]) {
+  public static setWingoConfigGamemodeSettings(page: PagePath, gameSettings: WingoConfigProps["gamemodeSettings"]) {
     const itemName = determineLocalStorageItemName(page);
 
     if (!itemName) {
@@ -413,7 +413,7 @@ export class SaveData {
    * Gets the saved gamemode settings for Wingo Config, or null if no saved gamemode settings were found.
    * @returns The saved gamemode settings for Wingo Config to save.
    */
-  public static getWingoConfigGamemodeSettings(page: PageName): WingoConfigProps["gamemodeSettings"] | null {
+  public static getWingoConfigGamemodeSettings(page: PagePath): WingoConfigProps["gamemodeSettings"] | null {
     const itemName = determineLocalStorageItemName(page);
 
     if (!itemName) {
@@ -432,7 +432,7 @@ export class SaveData {
   }
 
   public static setWingoInterlinkedGamemodeSettings(
-    page: PageName,
+    page: PagePath,
     gameSettings: WingoInterlinkedProps["gamemodeSettings"]
   ) {
     const itemName = determineLocalStorageItemName(page);
@@ -444,7 +444,7 @@ export class SaveData {
     localStorage.setItem(itemName, JSON.stringify(gameSettings));
   }
 
-  public static getWingoInterlinkedGamemodeSettings(page: PageName): WingoInterlinkedProps["gamemodeSettings"] | null {
+  public static getWingoInterlinkedGamemodeSettings(page: PagePath): WingoInterlinkedProps["gamemodeSettings"] | null {
     const itemName = determineLocalStorageItemName(page);
 
     if (!itemName) {
@@ -535,7 +535,7 @@ export class SaveData {
   }
 
   public static setArithmeticDragGamemodeSettings(
-    page: PageName,
+    page: PagePath,
     gameSettings: ArithmeticDragProps["gamemodeSettings"]
   ) {
     const itemName = determineLocalStorageItemName(page);
@@ -547,7 +547,7 @@ export class SaveData {
     localStorage.setItem(itemName, JSON.stringify(gameSettings));
   }
 
-  public static getArithmeticDragGamemodeSettings(page: PageName): ArithmeticDragProps["gamemodeSettings"] | null {
+  public static getArithmeticDragGamemodeSettings(page: PagePath): ArithmeticDragProps["gamemodeSettings"] | null {
     const itemName = determineLocalStorageItemName(page);
 
     if (!itemName) {
@@ -621,7 +621,7 @@ export class SaveData {
     return null;
   }
 
-  public static setWordCodesGamemodeSettings(page: PageName, gameSettings: WordCodesProps["gamemodeSettings"]) {
+  public static setWordCodesGamemodeSettings(page: PagePath, gameSettings: WordCodesProps["gamemodeSettings"]) {
     const itemName = determineLocalStorageItemName(page);
 
     if (!itemName) {
@@ -631,7 +631,7 @@ export class SaveData {
     localStorage.setItem(itemName, JSON.stringify(gameSettings));
   }
 
-  public static getWordCodesGamemodeSettings(page: PageName): WordCodesProps["gamemodeSettings"] | null {
+  public static getWordCodesGamemodeSettings(page: PagePath): WordCodesProps["gamemodeSettings"] | null {
     const itemName = determineLocalStorageItemName(page);
 
     if (!itemName) {

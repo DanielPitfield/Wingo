@@ -1,4 +1,4 @@
-import { PageName } from "../Data/PageNames";
+import { PagePath } from "../Data/PageNames";
 import { AreaConfig } from "./Area";
 import { Button } from "../Components/Button";
 import { getId, LevelConfig } from "../Components/Level";

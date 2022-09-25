@@ -1,11 +1,12 @@
 import React, { useState } from "react";
-import { PageName } from "../Data/PageNames";
+import { PagePath } from "../Data/PageNames";
 import LettersGame from "./LettersGame";
 import { Theme } from "../Data/Themes";
 import { SaveData, SettingsData } from "../Data/SaveData";
 import { getAllWordsOfLength } from "../Helper Functions/getAllWordsOfLength";
 import { getGamemodeDefaultTimerValue } from "../Helper Functions/getGamemodeDefaultTimerValue";
 import { isLettersGameGuessValid } from "../Helper Functions/isLettersGameGuessValid";
+import { useLocation } from "react-router-dom";
 
 export interface LettersGameConfigProps {
   campaignConfig:
@@ -30,7 +31,6 @@ export interface LettersGameConfigProps {
 }
 
 interface Props extends LettersGameConfigProps {
-  page: PageName;
   theme: Theme;
   settings: SettingsData;
   setTheme: (theme: Theme) => void;
@@ -40,6 +40,8 @@ interface Props extends LettersGameConfigProps {
 }
 
 const LettersGameConfig = (props: Props) => {
+  const location = useLocation().pathname as PagePath;
+
   const [guesses, setGuesses] = useState<string[]>([]);
   const [currentWord, setCurrentWord] = useState("");
   const [inProgress, setInProgress] = useState(true);
@@ -54,7 +56,7 @@ const LettersGameConfig = (props: Props) => {
   const [remainingSeconds, setRemainingSeconds] = useState(
     props.gamemodeSettings?.timerConfig?.isTimed === true
       ? props.gamemodeSettings?.timerConfig.seconds
-      : getGamemodeDefaultTimerValue(props.page)
+      : getGamemodeDefaultTimerValue(location)
   );
 
   const defaultLetterTileStatuses: {
@@ -104,7 +106,7 @@ const LettersGameConfig = (props: Props) => {
 
   // Reset game after change of settings (stops cheating by changing settings partway through a game)
   React.useEffect(() => {
-    if (props.page === "campaign/area/level" || props.gameshowScore !== undefined) {
+    if (location === "/campaign/area/level" || props.gameshowScore !== undefined) {
       return;
     }
 
@@ -371,7 +373,6 @@ const LettersGameConfig = (props: Props) => {
       inDictionary={inDictionary}
       hasSubmitLetter={hasSubmitLetter}
       targetWord={targetWord || ""}
-      page={props.page}
       theme={props.theme}
       settings={props.settings}
       setTheme={props.setTheme}

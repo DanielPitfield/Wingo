@@ -5,7 +5,7 @@ import { Puzzles } from "../Data/Puzzles";
 import { Theme, ThemeIcons } from "../Data/Themes";
 import { SettingsData } from "../Data/SaveData";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
-import { PageName } from "../Data/PageNames";
+import { PagePath } from "../Data/PageNames";
 import { Difficulty } from "../Data/DefaultGamemodeSettings";
 
 /** Config for a specific puzzle (exported for config from campaign) */
@@ -36,7 +36,6 @@ export interface SequencePuzzleProps {
 }
 
 interface Props extends SequencePuzzleProps {
-  page: PageName;
   theme: Theme;
   settings: SettingsData;
   setTheme: (theme: Theme) => void;

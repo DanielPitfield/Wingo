@@ -1,4 +1,4 @@
-import { PageName } from "./PageNames";
+import { PagePath } from "./PageNames";
 
 export const gamemodeCategories = [
   "Daily / Weekly",
@@ -13,7 +13,7 @@ export const gamemodeCategories = [
 export type gamemodeCategory = typeof gamemodeCategories[number];
 
 export type pageDescription = {
-  page: PageName;
+  path: PagePath;
   title: string;
   shortTitle?: string;
   // What category best describes this gamemode (the tile to select the gamemode will be under a title with this name)?
@@ -32,11 +32,11 @@ Other than ensuring they are in the correct order here (within pageDescriptions)
 */
 
 export const pageDescriptions: pageDescription[] = [
-  { page: "splash-screen", title: "Wingo", categoryType: null, isDisplayed: false, isRandomlyPlayable: false },
-  { page: "TitlePage", title: "Home", categoryType: null, isDisplayed: false, isRandomlyPlayable: false },
-  //{ page: "home", title: "", isDisplayed: false, isRandomlyPlayable: false },
+  { path: "/splash-screen", title: "Wingo", categoryType: null, isDisplayed: false, isRandomlyPlayable: false },
+  { path: "/TitlePage", title: "Home", categoryType: null, isDisplayed: false, isRandomlyPlayable: false },
+  //{ page: "/home", title: "", isDisplayed: false, isRandomlyPlayable: false },
   {
-    page: "wingo/daily",
+    path: "/wingo/daily",
     title: "Daily Wingo",
     shortTitle: "Daily",
     categoryType: "Daily / Weekly",
@@ -52,7 +52,7 @@ export const pageDescriptions: pageDescription[] = [
     ),
   },
   {
-    page: "wingo/crossword/daily",
+    path: "/wingo/crossword/daily",
     title: "Wingo Crossword (Daily)",
     shortTitle: "Daily Crossword",
     categoryType: "Daily / Weekly",
@@ -71,7 +71,7 @@ export const pageDescriptions: pageDescription[] = [
     ),
   },
   {
-    page: "wingo/crossword/weekly",
+    path: "/wingo/crossword/weekly",
     title: "Wingo Crossword (Weekly)",
     shortTitle: "Weekly Crossword",
     categoryType: "Daily / Weekly",
@@ -90,7 +90,7 @@ export const pageDescriptions: pageDescription[] = [
     ),
   },
   {
-    page: "wingo/repeat",
+    path: "/wingo/repeat",
     title: "Standard/Normal Wingo",
     shortTitle: "Standard",
     categoryType: "Wingo",
@@ -104,7 +104,7 @@ export const pageDescriptions: pageDescription[] = [
     ),
   },
   {
-    page: "wingo/puzzle",
+    path: "/wingo/puzzle",
     title: "Wingo Puzzle",
     shortTitle: "Puzzle",
     categoryType: "Wingo",
@@ -120,7 +120,7 @@ export const pageDescriptions: pageDescription[] = [
     ),
   },
   {
-    page: "wingo/increasing",
+    path: "/wingo/increasing",
     title: "Wingo Increasing Length",
     shortTitle: "Increasing",
     categoryType: "Wingo",
@@ -134,7 +134,7 @@ export const pageDescriptions: pageDescription[] = [
     ),
   },
   {
-    page: "wingo/limitless",
+    path: "/wingo/limitless",
     title: "Wingo Limitless/Survival",
     shortTitle: "Limitless",
     categoryType: "Wingo",
@@ -150,7 +150,7 @@ export const pageDescriptions: pageDescription[] = [
     ),
   },
   {
-    page: "wingo/category",
+    path: "/wingo/category",
     title: "Wingo Categories",
     shortTitle: "Categories",
     categoryType: "Wingo",
@@ -169,7 +169,7 @@ export const pageDescriptions: pageDescription[] = [
     ),
   },
   {
-    page: "wingo/interlinked",
+    path: "/wingo/interlinked",
     title: "Wingo Interlinked",
     shortTitle: "Interlinked",
     categoryType: "Wingo",
@@ -186,7 +186,7 @@ export const pageDescriptions: pageDescription[] = [
     ),
   },
   {
-    page: "wingo/crossword",
+    path: "/wingo/crossword",
     title: "Wingo Crossword",
     shortTitle: "Crossword",
     categoryType: "Wingo",
@@ -204,7 +204,7 @@ export const pageDescriptions: pageDescription[] = [
     ),
   },
   {
-    page: "OnlyConnect",
+    path: "/OnlyConnect",
     title: "Only Connect",
     shortTitle: "Only Connect",
     categoryType: "Letters",
@@ -213,7 +213,7 @@ export const pageDescriptions: pageDescription[] = [
     description: "Find groups of words from a scrambled word grid",
   },
   {
-    page: "LettersGame",
+    path: "/LettersGame",
     title: "Letters Game",
     shortTitle: "Letters Game",
     categoryType: "Letters",
@@ -236,7 +236,7 @@ export const pageDescriptions: pageDescription[] = [
     ),
   },
   {
-    page: "Conundrum",
+    path: "/Conundrum",
     title: "Conundrum",
     shortTitle: "Conundrum",
     categoryType: "Letters",
@@ -252,7 +252,7 @@ export const pageDescriptions: pageDescription[] = [
     ),
   },
   {
-    page: "LettersCategories",
+    path: "/LettersCategories",
     title: "Letters Categories",
     shortTitle: "Categories (5)",
     categoryType: "Letters",
@@ -268,7 +268,7 @@ export const pageDescriptions: pageDescription[] = [
     ),
   },
   {
-    page: "SameLetters",
+    path: "/SameLetters",
     title: "Same Letter Words",
     shortTitle: "Same Letter Words",
     categoryType: "Letters",
@@ -277,7 +277,7 @@ export const pageDescriptions: pageDescription[] = [
     description: "Find the words which are made from the same letters",
   },
   {
-    page: "WordCodes/Question",
+    path: "/WordCodes/Question",
     title: "Word Codes",
     shortTitle: "Word Codes",
     categoryType: "Letters",
@@ -286,7 +286,7 @@ export const pageDescriptions: pageDescription[] = [
     description: "Decipher codes to find words (and vice versa)",
   },
   {
-    page: "WordCodes/Match",
+    path: "/WordCodes/Match",
     title: "Word Codes (Match)",
     shortTitle: "Word Codes (Match)",
     categoryType: "Letters",
@@ -295,7 +295,7 @@ export const pageDescriptions: pageDescription[] = [
     description: "Match the words to their codes",
   },
   {
-    page: "wingo/crossword/fit",
+    path: "/wingo/crossword/fit",
     title: "Wingo Crossword Fit",
     shortTitle: "Crossword Fit",
     categoryType: "Letters",
@@ -312,7 +312,7 @@ export const pageDescriptions: pageDescription[] = [
     ),
   },
   {
-    page: "ArithmeticReveal",
+    path: "/ArithmeticReveal",
     title: "Quick Maths",
     shortTitle: "Quick Maths",
     categoryType: "Numbers",
@@ -321,7 +321,7 @@ export const pageDescriptions: pageDescription[] = [
     description: "Test your arithmetic with quickfire calculations",
   },
   {
-    page: "Numble",
+    path: "/Numble",
     title: "Numble",
     shortTitle: "Numble",
     categoryType: "Numbers",
@@ -330,7 +330,7 @@ export const pageDescriptions: pageDescription[] = [
     description: "Find the highest scoring number from a list of random numbers",
   },
   {
-    page: "NumbersGame",
+    path: "/NumbersGame",
     title: "Numbers Game",
     shortTitle: "Numbers Game",
     categoryType: "Numbers",
@@ -358,7 +358,7 @@ export const pageDescriptions: pageDescription[] = [
   },
 
   {
-    page: "ArithmeticDrag/Order",
+    path: "/ArithmeticDrag/Order",
     title: "Arithmetic (Order)",
     shortTitle: "Arithmetic (Order)",
     categoryType: "Numbers",
@@ -367,7 +367,7 @@ export const pageDescriptions: pageDescription[] = [
     description: "Put the arithmetic expressions in order from smallest to largest",
   },
   {
-    page: "ArithmeticDrag/Match",
+    path: "/ArithmeticDrag/Match",
     title: "Arithmetic (Match)",
     shortTitle: "Arithmetic (Match)",
     categoryType: "Numbers",
@@ -376,7 +376,7 @@ export const pageDescriptions: pageDescription[] = [
     description: "Match the arithmetic expressions with the results they evaluate to",
   },
   {
-    page: "NumberSets",
+    path: "/NumberSets",
     title: "Number Sets",
     shortTitle: "Number Sets",
     categoryType: "Numbers",
@@ -385,7 +385,7 @@ export const pageDescriptions: pageDescription[] = [
     description: "Find the answer to a unique number set",
   },
   {
-    page: "Algebra",
+    path: "/Algebra",
     title: "Algebra",
     shortTitle: "Algebra",
     categoryType: "Numbers",
@@ -394,7 +394,7 @@ export const pageDescriptions: pageDescription[] = [
     description: "Find the answer to a unique number set",
   },
   {
-    page: "PuzzleSequence",
+    path: "/PuzzleSequence",
     title: "Sequence Puzzle",
     shortTitle: "Sequence",
     categoryType: "Puzzle",
@@ -403,7 +403,7 @@ export const pageDescriptions: pageDescription[] = [
     description: "Find what comes next in the sequence",
   },
   {
-    page: "Wingo/Gameshow",
+    path: "/Wingo/Gameshow",
     title: "Wingo Gameshow",
     shortTitle: "Wingo Gameshow",
     categoryType: "Gameshow Presets",
@@ -411,7 +411,7 @@ export const pageDescriptions: pageDescription[] = [
     isRandomlyPlayable: false,
   },
   {
-    page: "LettersNumbersGameshow",
+    path: "/LettersNumbersGameshow",
     title: "Letters Numbers Gameshow",
     shortTitle: "Letters Numbers Gameshow",
     categoryType: "Gameshow Presets",
@@ -419,7 +419,7 @@ export const pageDescriptions: pageDescription[] = [
     isRandomlyPlayable: false,
   },
   {
-    page: "Custom/Gameshow",
+    path: "/Custom/Gameshow",
     title: "Custom Gameshow",
     shortTitle: "Custom Gameshow",
     categoryType: "Gameshow Presets",
@@ -427,7 +427,7 @@ export const pageDescriptions: pageDescription[] = [
     isRandomlyPlayable: false,
   },
   {
-    page: "random",
+    path: "/random",
     title: "Random",
     shortTitle: "Random",
     categoryType: "Gameshow Presets",
@@ -436,7 +436,7 @@ export const pageDescriptions: pageDescription[] = [
   },
 
   {
-    page: "campaign",
+    path: "/campaign",
     title: "Campaign",
     shortTitle: "Campaign",
     categoryType: null,
@@ -444,7 +444,7 @@ export const pageDescriptions: pageDescription[] = [
     isRandomlyPlayable: false,
   },
   {
-    page: "campaign/area",
+    path: "/campaign/area",
     title: "Campaign Areas",
     shortTitle: "Areas",
     categoryType: null,
@@ -452,7 +452,7 @@ export const pageDescriptions: pageDescription[] = [
     isRandomlyPlayable: false,
   },
   {
-    page: "campaign/area/level",
+    path: "/campaign/area/level",
     title: "Campaign Level",
     shortTitle: "Level",
     categoryType: null,
@@ -460,7 +460,7 @@ export const pageDescriptions: pageDescription[] = [
     isRandomlyPlayable: false,
   },
   {
-    page: "challenges",
+    path: "/challenges",
     title: "Challenges",
     shortTitle: "Challenges",
     categoryType: null,
@@ -468,7 +468,7 @@ export const pageDescriptions: pageDescription[] = [
     isRandomlyPlayable: false,
   },
   {
-    page: "settings",
+    path: "/settings",
     title: "Settings",
     shortTitle: "Settings",
     categoryType: null,

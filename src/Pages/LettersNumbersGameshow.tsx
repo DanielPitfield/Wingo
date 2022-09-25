@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { SettingsData } from "../Data/SaveData";
-import { PageName } from "../Data/PageNames";
+import { PagePath } from "../Data/PageNames";
 import LettersGameConfig, { LettersGameConfigProps } from "./LettersGameConfig";
 import NumbersGameConfig, { NumbersGameConfigProps } from "./NumbersGameConfig";
 import { Theme } from "../Data/Themes";
@@ -32,7 +32,6 @@ export interface LettersNumbersGameshowProps {
 }
 
 interface Props extends LettersNumbersGameshowProps {
-  page: PageName;
   themes: Theme[];
   settings: SettingsData;
   setTheme: (theme: Theme) => void;
@@ -151,7 +150,6 @@ export const LettersNumbersGameshow = (props: Props) => {
       The pass criteria for a gameshow campaign level is that the gameshow score has reached the target score
       */
       campaignConfig: { isCampaignLevel: false as false },
-      page: props.page,
       settings: props.settings,
       setTheme: props.setTheme,
       addGold: props.addGold,
@@ -165,7 +163,7 @@ export const LettersNumbersGameshow = (props: Props) => {
           {...commonProps}
           theme={props.themes[0]}
           gameshowScore={gameshowScore}
-          gamemodeSettings={getPageGamemodeSettings("LettersGame") as LettersGameConfigProps["gamemodeSettings"]}
+          gamemodeSettings={getPageGamemodeSettings("/LettersGame") as LettersGameConfigProps["gamemodeSettings"]}
         />
       );
     } else if (roundType === "number") {
@@ -174,7 +172,7 @@ export const LettersNumbersGameshow = (props: Props) => {
           {...commonProps}
           theme={props.themes[1]}
           gameshowScore={gameshowScore}
-          gamemodeSettings={getPageGamemodeSettings("NumbersGame") as NumbersGameConfigProps["gamemodeSettings"]}
+          gamemodeSettings={getPageGamemodeSettings("/NumbersGame") as NumbersGameConfigProps["gamemodeSettings"]}
         />
       );
     } else if (roundType === "conundrum") {
@@ -183,9 +181,9 @@ export const LettersNumbersGameshow = (props: Props) => {
           {...commonProps}
           isCampaignLevel={false}
           mode="conundrum"
-          gamemodeSettings={getPageGamemodeSettings("Conundrum") as WingoConfigProps["gamemodeSettings"]}
-          defaultWordLength={getGamemodeDefaultWordLength("Conundrum")}
-          defaultNumGuesses={getGamemodeDefaultNumGuesses("Conundrum")}
+          gamemodeSettings={getPageGamemodeSettings("/Conundrum") as WingoConfigProps["gamemodeSettings"]}
+          defaultWordLength={getGamemodeDefaultWordLength("/Conundrum")}
+          defaultNumGuesses={getGamemodeDefaultNumGuesses("/Conundrum")}
           enforceFullLengthGuesses={true}
         />
       );

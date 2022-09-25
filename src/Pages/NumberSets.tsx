@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { PageName } from "../Data/PageNames";
 import { Button } from "../Components/Button";
 import LetterTile from "../Components/LetterTile";
 import { MessageNotification } from "../Components/MessageNotification";
@@ -17,6 +16,8 @@ import { getQuestionSetOutcome } from "../Helper Functions/getQuestionSetOutcome
 import { getNumberSetTemplates } from "../Helper Functions/getNumberSetTemplates";
 import { getNewGamemodeSettingValue } from "../Helper Functions/getGamemodeSettingsNewValue";
 import NumberSetsGamemodeSettings from "../Components/GamemodeSettingsOptions/NumberSetsGamemodeSettings";
+import { useLocation } from "react-router-dom";
+import { PagePath } from "../Data/PageNames";
 
 export interface NumberSetsProps {
   campaignConfig:
@@ -37,7 +38,6 @@ export interface NumberSetsProps {
 }
 
 interface Props extends NumberSetsProps {
-  page: PageName;
   theme: Theme;
   settings: SettingsData;
   setTheme: (theme: Theme) => void;
@@ -47,6 +47,8 @@ interface Props extends NumberSetsProps {
 
 /** */
 const NumberSets = (props: Props) => {
+  const location = useLocation().pathname as PagePath;
+
   const [gamemodeSettings, setGamemodeSettings] = useState<NumberSetsProps["gamemodeSettings"]>(props.gamemodeSettings);
 
   const [inProgress, setInProgress] = useState(true);
@@ -61,13 +63,13 @@ const NumberSets = (props: Props) => {
   const [remainingSeconds, setRemainingSeconds] = useState(
     props.gamemodeSettings?.timerConfig?.isTimed === true
       ? props.gamemodeSettings?.timerConfig.seconds
-      : getGamemodeDefaultTimerValue(props.page)
+      : getGamemodeDefaultTimerValue(location)
   );
 
   const [mostRecentTotalSeconds, setMostRecentTotalSeconds] = useState(
     props.gamemodeSettings?.timerConfig?.isTimed === true
       ? props.gamemodeSettings?.timerConfig.seconds
-      : getGamemodeDefaultTimerValue(props.page)
+      : getGamemodeDefaultTimerValue(location)
   );
 
   // Sounds

@@ -2,18 +2,18 @@ import React from "react";
 import { Button } from "./Button";
 import { SettingsData } from "../Data/SaveData";
 import { useClickChime } from "../Data/Sounds";
-import { PageName } from "../Data/PageNames";
+import { PagePath } from "../Data/PageNames";
 import { FiChevronLeft, FiCornerDownLeft } from "react-icons/fi";
 import { getWordRowStatusSummary, WordRowStatusChecks } from "../Helper Functions/getWordRowStatusSummary";
 import { LetterStatus } from "./LetterTile";
 import { DEFAULT_ALPHABET } from "../Pages/WingoConfig";
+import { useLocation } from "react-router-dom";
 
 interface Props {
   settings: SettingsData;
   onSubmitLetter: (letter: string) => void;
   onEnter: () => void;
   onBackspace: () => void;
-  page: PageName;
   guesses: string[];
   targetWord: string;
   inDictionary: boolean;
@@ -31,13 +31,15 @@ const DEFAULT_KEYBOARD_FIRST_ROW = "QWERTYUIOP";
 const DEFAULT_KEYBOARD_SECOND_ROW = "ASDFGHJKL";
 const DEFAULT_KEYBOARD_THIRD_ROW = "ZXCVBNM";
 
-const isModeWithoutKeyboardStatuses = (page: PageName) => {
+const isModeWithoutKeyboardStatuses = (page: PagePath) => {
   // Don't need updated keyboard statuses for some modes
-  const modesWithoutKeyboardStatuses: PageName[] = ["LettersCategories", "LettersGame", "wingo/interlinked"];
+  const modesWithoutKeyboardStatuses: PagePath[] = ["/LettersCategories", "/LettersGame", "/wingo/interlinked"];
   return modesWithoutKeyboardStatuses.includes(page);
 };
 
 export const Keyboard = (props: Props) => {
+  const location = useLocation().pathname as PagePath;
+
   const alphabet = props.customAlphabet ?? DEFAULT_ALPHABET;
 
   const hasApostrophe = props.targetWord.includes("'");
@@ -111,7 +113,7 @@ export const Keyboard = (props: Props) => {
       status: "not set",
     }));
 
-    if (isModeWithoutKeyboardStatuses(props.page)) {
+    if (isModeWithoutKeyboardStatuses(location)) {
       // Just use standard statuses (where all are "not set")
       return keyboardStatuses;
     }
@@ -125,7 +127,7 @@ export const Keyboard = (props: Props) => {
     for (const guess of props.guesses) {
       const statusChecks: WordRowStatusChecks = {
         isReadOnly: false,
-        page: props.page,
+        page: location,
         word: guess,
         targetWord: props.targetWord,
         inDictionary: props.inDictionary,
