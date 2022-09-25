@@ -83,8 +83,6 @@ export const App = () => {
   const [playBackgroundMusic, stopBackgroundMusic] = useBackgroundMusic(settings, theme);
 
   function getNewEntryPage() {
-
-
     // Find the page that has the title of the option chosen in the settings menu (dropdown)
     const entryPageSelection = pageDescriptions.find((page) => page.title === settings.gameplay.entryPage)?.page;
     // TitlePage as default
@@ -125,14 +123,26 @@ export const App = () => {
   }, [page]);
 
   React.useEffect(() => {
-    SaveData.setGold(gold);
-  }, [gold]);
+    // Clicking 'Back' in the browser
+    window.onpopstate = () => navigate(-1);
+  }, []);
+
+  React.useEffect(() => {
+    if (loadingState === "loaded") {
+      playBackgroundMusic();
+    }
+
+    return () => stopBackgroundMusic();
+  }, [selectedCampaignArea, playBackgroundMusic, stopBackgroundMusic, loadingState]);
 
   React.useEffect(() => {
     SaveData.setSettings(settings);
     setThemeIfNoPreferredSet(getHighestCampaignArea()?.theme || Themes.GenericWingo);
   }, [settings]);
 
+  React.useEffect(() => {
+    SaveData.setGold(gold);
+  }, [gold]);
   function setThemeIfNoPreferredSet(theme: Theme) {
     setTheme(settings.graphics.preferredTheme ? Themes[settings.graphics.preferredTheme] : theme);
   }
@@ -158,14 +168,6 @@ export const App = () => {
       }
     }
   }
-
-  React.useEffect(() => {
-    if (loadingState === "loaded") {
-      playBackgroundMusic();
-    }
-
-    return () => stopBackgroundMusic();
-  }, [selectedCampaignArea, playBackgroundMusic, stopBackgroundMusic, loadingState]);
 
   function addGold(additionalGold: number) {
     setGold(gold + additionalGold);
