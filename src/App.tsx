@@ -41,7 +41,7 @@ import { getGamemodeDefaultNumGuesses } from "./Helper Functions/getGamemodeDefa
 import { getGamemodeDefaultWordLength } from "./Helper Functions/getGamemodeDefaultWordLength";
 import { getPageGamemodeSettings } from "./Helper Functions/getPageGamemodeSettings";
 import { getRandomElementFrom } from "./Helper Functions/getRandomElementFrom";
-import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
+import { Routes, Route, useNavigate, useLocation, Navigate } from "react-router-dom";
 
 // TODO: With React ROuter, the state Page shouldn't be needed anymore
 
@@ -293,9 +293,9 @@ export const App = () => {
   };
 
   return (
-    // TODO: The entry point is hardcoded as TitlePage, try to use result of getNewEntryPage()
     <Routes>
-      <Route path="/" element={<TitlePage settings={settings} />} />
+      <Route path="/" element={<Navigate to={getNewEntryPage()} />} />
+      
       <Route path="/TitlePage" element={<TitlePage settings={settings} />} />
       <Route path="/splash-screen" element={<SplashScreen loadingState={loadingState} settings={settings} />} />
       <Route
