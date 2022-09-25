@@ -349,7 +349,8 @@ $data-statuses: (
   min-width: 15em;
 }
 
-.keyboard_wrapper, .numPad_wrapper {
+.keyboard_wrapper,
+.numPad_wrapper {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -359,12 +360,12 @@ $data-statuses: (
   margin: 0.5em;
 }
 
-.keyboard_row, .numPad_row {
-
+.keyboard_row,
+.numPad_row {
 }
 
-.keyboard_button, .numPad_button {
-
+.keyboard_button,
+.numPad_button {
 }
 
 .keyboard_space {
@@ -655,6 +656,7 @@ $data-statuses: (
 .title-page {
   display: flex;
   background-size: 100%;
+  flex-grow: 1;
   .sidebar {
     display: flex;
     flex-direction: column;
