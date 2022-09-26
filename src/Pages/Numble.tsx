@@ -21,6 +21,8 @@ import { NumberPuzzle } from "../Helper Functions/NumbersGameSolver";
 import { getRandomIntFromRange } from "../Helper Functions/getRandomIntFromRange";
 import { getNewGamemodeSettingValue } from "../Helper Functions/getGamemodeSettingsNewValue";
 import NumbleGamemodeSettings from "../Components/GamemodeSettingsOptions/NumbleGamemodeSettings";
+import { useLocation } from "react-router-dom";
+import { PagePath } from "../Data/PageNames";
 
 interface Props {
   campaignConfig: NumbleConfigProps["campaignConfig"];
@@ -59,6 +61,8 @@ interface Props {
 }
 
 const Numble = (props: Props) => {
+  const location = useLocation().pathname as PagePath;
+
   // Information as to how the pins are displayed and what pins are on each row
   const rowValues = getNumbleRowValues(props.gamemodeSettings.gridShape, props.gamemodeSettings.gridSize);
 
@@ -106,7 +110,7 @@ const Numble = (props: Props) => {
   const [mostRecentTotalSeconds, setMostRecentTotalSeconds] = useState(
     props.gamemodeSettings?.timerConfig?.isTimed === true
       ? props.gamemodeSettings?.timerConfig?.seconds
-      : getGamemodeDefaultTimerValue("/Numble")
+      : getGamemodeDefaultTimerValue(location)
   );
 
   const teamNumberColourMappings = [
