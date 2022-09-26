@@ -88,7 +88,7 @@ const NumbleConfig = (props: Props) => {
 
   const INITIAL_TEAM_TIMER_VALUE =
     props.gamemodeSettings?.timerConfig?.isTimed === true
-      ? props.gamemodeSettings?.timerConfig.seconds
+      ? props.gamemodeSettings?.timerConfig?.seconds
       : getGamemodeDefaultTimerValue(location);
 
   // Each team starts with the same initial amount of time

@@ -109,7 +109,7 @@ export const WingoInterlinked = (props: Props) => {
 
   const [remainingSeconds, setRemainingSeconds] = useState(
     props.gamemodeSettings?.timerConfig?.isTimed === true
-      ? props.gamemodeSettings?.timerConfig.seconds
+      ? props.gamemodeSettings?.timerConfig?.seconds
       : getGamemodeDefaultTimerValue(location)
   );
 
@@ -120,13 +120,13 @@ export const WingoInterlinked = (props: Props) => {
   */
   const [mostRecentTotalSeconds, setMostRecentTotalSeconds] = useState(
     props.gamemodeSettings?.timerConfig?.isTimed === true
-      ? props.gamemodeSettings?.timerConfig.seconds
+      ? props.gamemodeSettings?.timerConfig?.seconds
       : getGamemodeDefaultTimerValue(location)
   );
 
   const [mostRecentFitRestriction, setMostRecentFitRestriction] = useState(
     props.gamemodeSettings?.fitRestrictionConfig?.isRestricted === true
-      ? props.gamemodeSettings?.fitRestrictionConfig.fitRestriction
+      ? props.gamemodeSettings?.fitRestrictionConfig?.fitRestriction
       : DEFAULT_FIT_RESTRICTION
   );
 

@@ -73,7 +73,7 @@ const LettersGame = (props: Props) => {
 
   const [mostRecentTotalSeconds, setMostRecentTotalSeconds] = useState(
     props.gamemodeSettings?.timerConfig?.isTimed === true
-      ? props.gamemodeSettings?.timerConfig.seconds
+      ? props.gamemodeSettings?.timerConfig?.seconds
       : getGamemodeDefaultTimerValue(location)
   );
 

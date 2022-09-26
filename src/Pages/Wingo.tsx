@@ -75,13 +75,13 @@ const Wingo = (props: Props) => {
   */
   const [mostRecentTotalSeconds, setMostRecentTotalSeconds] = useState(
     props.gamemodeSettings?.timerConfig?.isTimed === true
-      ? props.gamemodeSettings?.timerConfig.seconds
+      ? props.gamemodeSettings?.timerConfig?.seconds
       : getGamemodeDefaultTimerValue(location)
   );
 
   const [mostRecentMaxLives, setMostRecentMaxLives] = useState(
-    props.gamemodeSettings?.maxLivesConfig.isLimited === true
-      ? props.gamemodeSettings.maxLivesConfig.maxLives
+    props.gamemodeSettings?.maxLivesConfig?.isLimited === true
+      ? props.gamemodeSettings?.maxLivesConfig?.maxLives
       : DEFAULT_WINGO_INCREASING_MAX_NUM_LIVES
   );
 
