@@ -30,14 +30,22 @@ export const LobbyMenu = (props: Props) => {
     const pageInfo = pageDescriptions.find((x) => x.path === page);
 
     return (
-      <li className="widget">
+      <li className="widget" key={page}>
         <span className="widget-title">
           {pageInfo?.shortTitle || pageInfo?.title || "(Unnamed)"}
           {pageInfo?.description && <BsInfoCircleFill className="icon tooltip-icon" />}
           <p className="tooltip">{pageInfo?.description}</p>
         </span>
         <div className="widget-button-wrapper">
-          <Button mode="accept" data-game-mode={page} settings={props.settings} onClick={() => navigate(page)}>
+          <Button
+            mode="accept"
+            data-game-mode={page}
+            settings={props.settings}
+            onClick={() => {
+              console.log(page);
+              navigate(page);
+            }}
+          >
             <FiPlay />
             Play
           </Button>
@@ -63,14 +71,14 @@ export const LobbyMenu = (props: Props) => {
         {gamemodeCategories
           .filter((category) => category !== null)
           // For each category
-          .map((category) => {
+          .map((category, index) => {
             // Get all the gamemodes within the category
             const gamemodePages = pageDescriptions.filter((page) => page.categoryType === category && page.isDisplayed);
 
             // If there are gamemodes for this category, render a sidebar with the category name
             if (gamemodePages.length > 0) {
               return (
-                <div className="sidebar">
+                <div className="sidebar" key={`${category}${index}`}>
                   <div className="sidebar-title">{category}</div>
                   <ul className="widgets">
                     {gamemodePages.map((page) => {
