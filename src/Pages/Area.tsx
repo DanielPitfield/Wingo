@@ -42,7 +42,6 @@ export const Area = (props: AreaProps) => {
     return <></>;
   }
 
-  // LEVEL SELECTION
   return (
     <div
       className="area"

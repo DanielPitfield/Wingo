@@ -214,10 +214,10 @@ export const Level = (props: LevelProps) => {
   // Find the selected area using the areaName paramater (the dynamic segment of the URL)
   const selectedLevel: LevelConfig | null = getLevelConfig(params.areaName, params.levelNumber);
 
-  // The area couldn't be found
+  // Either, the area or level couldn't be found
   if (selectedArea! === null || selectedLevel! === null) {
-    // Go back to campaign page
-    navigate("/campaign/areas/:areaName");
+    // Go back to area (if that can be found), otherwise go back to campaign
+    navigate(selectedArea ? `/campaign/areas/:${selectedArea.name}` : "/campaign");
     // TODO: Gone back to a previous page, but must render something here?
     return <></>;
   }

@@ -186,6 +186,7 @@ export const App = () => {
   }
 
   function isCampaignLevel() {
+    // TODO: Need to update this, the location will have unique values in the dynamic segments
     return location === "/campaign/areas/:areaName/levels/:levelNumber";
   }
 
