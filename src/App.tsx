@@ -38,6 +38,7 @@ import { getPageGamemodeSettings } from "./Helper Functions/getPageGamemodeSetti
 import { getRandomElementFrom } from "./Helper Functions/getRandomElementFrom";
 import { Routes, Route, useNavigate, useLocation, Navigate } from "react-router-dom";
 import { PageWrapper } from "./Components/PageWrapper";
+import { isCampaignLevelPath } from "./Helper Functions/isCampaignLevelPath";
 
 // TODO: With React ROuter, the state Page shouldn't be needed anymore
 
@@ -185,12 +186,14 @@ export const App = () => {
     return highestCampaignArea;
   }
 
-  function isCampaignLevel() {
-    return location.toString().includes("/campaign/areas/:") && location.toString().includes("levels/:");
-  }
-
   const commonProps = {
-    isCampaignLevel: isCampaignLevel(),
+    /* TODO: Campaign Level location check
+    This may only check the path which renders <App />
+    (the path of the route which renders this element)
+    NOT the path of the route which may be taken
+    */
+
+    isCampaignLevel: isCampaignLevelPath(location),
     campaignConfig: { isCampaignLevel: false as false },
     defaultNumGuesses: getGamemodeDefaultNumGuesses(location),
     theme: theme,
