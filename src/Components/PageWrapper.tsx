@@ -11,6 +11,7 @@ import { PagePath } from "../Data/PageNames";
 import GoldCoin from "../Data/Images/gold.png";
 import { useState } from "react";
 import { isCampaignAreaPath, isCampaignLevelPath } from "../Helper Functions/CampaignPathChecks";
+import { getAreaBacktrackPath } from "../Helper Functions/TrimCampaignPaths";
 
 interface Props {
   settings: SettingsData;
@@ -43,7 +44,7 @@ export const PageWrapper = (props: Props) => {
                     setIsHelpInfoShown(false);
 
                     if (isCampaignLevelPath(location)) {
-                      navigate("/campaign/areas/:areaName");
+                      navigate(getAreaBacktrackPath(location));
                     } else if (isCampaignAreaPath(location)) {
                       navigate("/campaign");
                     } else {
