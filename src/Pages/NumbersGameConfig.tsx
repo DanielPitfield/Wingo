@@ -43,7 +43,7 @@ export type Guess = { operand1: number | null; operand2: number | null; operator
 
 const NumbersGameConfig = (props: Props) => {
   const location = useLocation().pathname as PagePath;
-  
+
   const [gamemodeSettings, setGamemodeSettings] = useState<NumbersGameConfigProps["gamemodeSettings"]>(
     props.gamemodeSettings
   );
@@ -155,7 +155,7 @@ const NumbersGameConfig = (props: Props) => {
 
   // Reset game after change of settings (stops cheating by changing settings partway through a game)
   React.useEffect(() => {
-    if (location === "/campaign/area/level" || props.gameshowScore !== undefined) {
+    if (location === "/campaign/areas/:areaName/levels/:levelNumber" || props.gameshowScore !== undefined) {
       return;
     }
 

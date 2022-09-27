@@ -41,9 +41,9 @@ export const PageWrapper = (props: Props) => {
                   onClick={() => {
                     setIsHelpInfoShown(false);
 
-                    if (location === "/campaign/area/level") {
-                      navigate("/campaign/area");
-                    } else if (location === "/campaign/area") {
+                    if (location === "/campaign/areas/:areaName/levels/:levelNumber") {
+                      navigate("/campaign/areas/:areaName");
+                    } else if (location === "/campaign/areas/:areaName") {
                       navigate("/campaign");
                     } else {
                       navigate("/home");

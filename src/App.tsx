@@ -69,9 +69,6 @@ export const App = () => {
   // Is a session of randomly selecting a gamemode after completion, currently in progress?
   const [isRandomSession, setIsRandomSession] = useState(false);
 
-  const [selectedCampaignArea, setSelectedCampaignArea] = useState<AreaConfig | null>(null);
-  const [selectedCampaignLevel, setSelectedCampaignLevel] = useState<LevelConfig | null>(null);
-
   const [theme, setTheme] = useState<Theme>(
     getHighestCampaignArea()?.theme ||
       (settings.graphics.preferredTheme ? Themes[settings.graphics.preferredTheme] : Themes.GenericWingo)
@@ -131,7 +128,7 @@ export const App = () => {
     }
 
     return () => stopBackgroundMusic();
-  }, [selectedCampaignArea, playBackgroundMusic, stopBackgroundMusic, loadingState]);
+  }, [playBackgroundMusic, stopBackgroundMusic, loadingState]);
 
   React.useEffect(() => {
     SaveData.setSettings(settings);
@@ -156,15 +153,21 @@ export const App = () => {
   }
 
   // Update campaign progress (when a campaign level is successfully completed)
-  function onCompleteCampaignLevel(isUnlockLevel: boolean, levelConfig: LevelConfig) {
-    if (selectedCampaignArea) {
-      if (isUnlockLevel) {
-        SaveData.addCompletedCampaignAreaUnlockLevel(selectedCampaignArea.name);
-      } else {
-        const levelId = getId(levelConfig.level);
-        SaveData.addCompletedCampaignAreaLevel(selectedCampaignArea.name, levelId);
-      }
+  function onCompleteCampaignLevel(areaConfig: AreaConfig, levelConfig: LevelConfig, isUnlockLevel: boolean) {
+    if (!areaConfig) {
+      return;
     }
+
+    if (!levelConfig) {
+      return;
+    }
+
+    if (isUnlockLevel) {
+      SaveData.addCompletedCampaignAreaUnlockLevel(areaConfig.name);
+    }
+
+    const levelId = getId(levelConfig.level);
+    SaveData.addCompletedCampaignAreaLevel(areaConfig.name, levelId);
   }
 
   function addGold(additionalGold: number) {
@@ -183,7 +186,7 @@ export const App = () => {
   }
 
   function isCampaignLevel() {
-    return location === "/campaign/area/level";
+    return location === "/campaign/areas/:areaName/levels/:levelNumber";
   }
 
   const commonProps = {
@@ -212,14 +215,7 @@ export const App = () => {
         path="/home"
         element={
           <PageWrapper gold={gold} settings={settings}>
-            <LobbyMenu
-              setSelectedArea={setSelectedCampaignArea}
-              setSelectedCampaignLevel={setSelectedCampaignLevel}
-              setTheme={setThemeIfNoPreferredSet}
-              theme={theme}
-              addGold={addGold}
-              settings={settings}
-            />
+            <LobbyMenu setTheme={setThemeIfNoPreferredSet} theme={theme} addGold={addGold} settings={settings} />
           </PageWrapper>
         }
       />
@@ -227,47 +223,30 @@ export const App = () => {
         path="/campaign"
         element={
           <PageWrapper gold={gold} settings={settings}>
-            <Campaign
-              theme={theme}
-              setTheme={setThemeIfNoPreferredSet}
-              setSelectedArea={setSelectedCampaignArea}
-              setSelectedCampaignLevel={setSelectedCampaignLevel}
-              settings={settings}
-            />
+            <Campaign theme={theme} setTheme={setThemeIfNoPreferredSet} settings={settings} />
           </PageWrapper>
         }
       />
       <Route
-        path="/campaign/area"
+        path="/campaign/areas/:areaName"
         element={
-          selectedCampaignArea && (
-            <PageWrapper gold={gold} settings={settings}>
-              <Area
-                area={selectedCampaignArea}
-                setTheme={setThemeIfNoPreferredSet}
-                setSelectedCampaignLevel={setSelectedCampaignLevel}
-                settings={settings}
-              />
-            </PageWrapper>
-          )
+          <PageWrapper gold={gold} settings={settings}>
+            <Area setTheme={setThemeIfNoPreferredSet} settings={settings} />
+          </PageWrapper>
         }
       />
       <Route
-        path="/campaign/area/level"
+        path="/campaign/areas/:areaName/levels/:levelNumber"
         element={
-          selectedCampaignLevel && (
-            <PageWrapper gold={gold} settings={settings}>
-              <Level
-                area={selectedCampaignArea!}
-                level={selectedCampaignLevel}
-                theme={theme}
-                setTheme={setThemeIfNoPreferredSet}
-                addGold={addGold}
-                onCompleteCampaignLevel={onCompleteCampaignLevel}
-                settings={settings}
-              />
-            </PageWrapper>
-          )
+          <PageWrapper gold={gold} settings={settings}>
+            <Level
+              theme={theme}
+              setTheme={setThemeIfNoPreferredSet}
+              addGold={addGold}
+              onCompleteCampaignLevel={onCompleteCampaignLevel}
+              settings={settings}
+            />
+          </PageWrapper>
         }
       />
       <Route

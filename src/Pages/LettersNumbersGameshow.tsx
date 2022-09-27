@@ -214,7 +214,9 @@ export const LettersNumbersGameshow = (props: Props) => {
     props.onComplete(wasCorrect);
 
     // Navigate away from gameshow
-    props.campaignConfig.isCampaignLevel ? navigate("/campaign/area/level") : navigate("/home");
+    props.campaignConfig.isCampaignLevel
+      ? navigate("/campaign/areas/:areaName/levels/:levelNumber")
+      : navigate("/home");
   }
 
   return (

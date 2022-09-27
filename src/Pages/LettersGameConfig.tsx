@@ -106,7 +106,7 @@ const LettersGameConfig = (props: Props) => {
 
   // Reset game after change of settings (stops cheating by changing settings partway through a game)
   React.useEffect(() => {
-    if (location === "/campaign/area/level" || props.gameshowScore !== undefined) {
+    if (location === "/campaign/areas/:areaName/levels/:levelNumber" || props.gameshowScore !== undefined) {
       return;
     }
 

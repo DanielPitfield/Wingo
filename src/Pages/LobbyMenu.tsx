@@ -6,8 +6,6 @@ import { Challenge } from "../Components/Challenge";
 import { Button } from "../Components/Button";
 import { Campaign } from "./Campaign";
 import { Theme } from "../Data/Themes";
-import { AreaConfig } from "./Area";
-import { LevelConfig } from "../Components/Level";
 import { FiPlay } from "react-icons/fi";
 import { gamemodeCategories, pageDescriptions } from "../Data/PageDescriptions";
 import { useNavigate } from "react-router-dom";
@@ -16,8 +14,6 @@ interface Props {
   theme: Theme;
   settings: SettingsData;
   setTheme: (theme: Theme) => void;
-  setSelectedArea: (areaConfig: AreaConfig) => void;
-  setSelectedCampaignLevel: (level: LevelConfig) => void;
   addGold: (gold: number) => void;
 }
 
@@ -59,9 +55,6 @@ export const LobbyMenu = (props: Props) => {
       <div className="games">
         <div className="sidebar campaign-sidebar">
           <Campaign
-            onlyShowCurrentArea
-            setSelectedArea={props.setSelectedArea}
-            setSelectedCampaignLevel={props.setSelectedCampaignLevel}
             theme={props.theme}
             settings={props.settings}
             setTheme={props.setTheme}

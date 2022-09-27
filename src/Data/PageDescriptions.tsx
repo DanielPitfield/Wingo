@@ -444,7 +444,7 @@ export const pageDescriptions: pageDescription[] = [
     isRandomlyPlayable: false,
   },
   {
-    path: "/campaign/area",
+    path: "/campaign/areas/:areaName",
     title: "Campaign Areas",
     shortTitle: "Areas",
     categoryType: null,
@@ -452,7 +452,7 @@ export const pageDescriptions: pageDescription[] = [
     isRandomlyPlayable: false,
   },
   {
-    path: "/campaign/area/level",
+    path: "/campaign/areas/:areaName/levels/:levelNumber",
     title: "Campaign Level",
     shortTitle: "Level",
     categoryType: null,

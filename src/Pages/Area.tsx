@@ -1,10 +1,11 @@
 import { useState } from "react";
-import { PagePath } from "../Data/PageNames";
 import { LevelConfig } from "../Components/Level";
 import { MessageNotification } from "../Components/MessageNotification";
 import { SettingsData } from "../Data/SaveData";
 import { Theme } from "../Data/Themes";
 import { LevelNode } from "../Components/LevelNode";
+import { useNavigate, useParams } from "react-router-dom";
+import { AllCampaignAreas } from "../Data/CampaignAreas/AllCampaignAreas";
 
 export interface AreaConfig {
   name: string;
@@ -14,46 +15,63 @@ export interface AreaConfig {
 }
 
 interface AreaProps {
-  area: AreaConfig;
   settings: SettingsData;
   setTheme: (theme: Theme) => void;
-  setSelectedCampaignLevel: (level: LevelConfig) => void;
 }
 
 /** Portion of the campaign, with many levels */
 export const Area = (props: AreaProps) => {
+  // TODO: Remove this once params is used for Levels too
   const [selectedLevel, setSelectedLevel] = useState<LevelConfig | null>(null);
+
+  const navigate = useNavigate();
+  const params = useParams();
+
+  const getAreaConfig = (areaName: string | undefined): AreaConfig | null => {
+    return AllCampaignAreas.find((area) => area.name === areaName) ?? null;
+  };
+
+  // Find the selected area using the areaName paramater (the dynamic segment of the URL)
+  const selectedArea: AreaConfig | null = getAreaConfig(params.areaName);
+
+  // The area couldn't be found
+  if (selectedArea === null) {
+    // Go back to campaign page
+    navigate("/campaign");
+    // TODO: Gone back to a previous page, but must render something here?
+    return <></>;
+  }
 
   // LEVEL SELECTION
   return (
     <div
       className="area"
       style={{
-        backgroundImage: `url(${props.area.theme.backgroundImageSrc})`,
+        backgroundImage: `url(${selectedArea.theme.backgroundImageSrc})`,
         backgroundSize: "100%",
       }}
     >
       <section className="area-header">
-        <h2 className="area-header-title">{props.area.name}</h2>
+        <h2 className="area-header-title">{selectedArea.name}</h2>
       </section>
       <div className="widgets">
-        {props.area.levels.map((l, index) => (
+        {selectedArea.levels.map((level, index) => (
           <LevelNode
             key={index}
-            level={l}
-            isSelected={selectedLevel === l}
+            level={level}
+            isSelected={selectedLevel === level}
             index={index}
-            area={props.area}
+            area={selectedArea}
             setTheme={props.setTheme}
             settings={props.settings}
-            setSelectedCampaignLevel={props.setSelectedCampaignLevel}
+            // TODO: Does this setSelectedLevel to level?
             onHoverLevel={setSelectedLevel}
           />
         ))}
-        {props.area.levels.length === 0 && (
+        {selectedArea.levels.length === 0 && (
           <span>
             <MessageNotification type="default">
-              No levels defined for area <strong>{props.area.name}</strong>
+              No levels defined for area <strong>{selectedArea.name}</strong>
             </MessageNotification>
           </span>
         )}

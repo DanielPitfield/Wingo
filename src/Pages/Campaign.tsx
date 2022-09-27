@@ -1,6 +1,6 @@
 import { AreaConfig } from "./Area";
 import { Button } from "../Components/Button";
-import { getId, LevelConfig } from "../Components/Level";
+import { getId } from "../Components/Level";
 import { CampaignSaveData, SaveData, SettingsData } from "../Data/SaveData";
 import { Theme } from "../Data/Themes";
 import { AllCampaignAreas } from "../Data/CampaignAreas/AllCampaignAreas";
@@ -13,8 +13,6 @@ interface CampaignProps {
   settings: SettingsData;
   onlyShowCurrentArea?: boolean;
   setTheme: (theme: Theme) => void;
-  setSelectedArea: (areaConfig: AreaConfig) => void;
-  setSelectedCampaignLevel: (level: LevelConfig) => void;
 }
 
 /** The entire campaign, showing the list of areas */
@@ -22,25 +20,22 @@ export const Campaign = (props: CampaignProps) => {
   const navigate = useNavigate();
 
   /** */
-  function onAreaClick(area: AreaConfig, unlockStatus: CampaignSaveData["areas"][0]["status"]) {
-    // Button should be disabled, but just in case
-    if (unlockStatus === "locked") {
+  function onAreaClick(area: AreaConfig, unlockLevelStatus: CampaignSaveData["areas"][0]["status"]) {
+    // The button to start the level should be disabled, but just in case
+    if (unlockLevelStatus === "locked") {
       return;
     }
 
     props.setTheme(area.theme);
 
-    // Go straight to level to unlock/discover the theme
-    if (unlockStatus === "unlockable") {
-      props.setSelectedArea(area);
-      props.setSelectedCampaignLevel(area.unlock_level);
-      navigate("/campaign/area/level");
+    // Go straight to unlock level
+    if (unlockLevelStatus === "unlockable") {
+      // TODO: Navigate to the unlock level
+      navigate("/campaign/areas/:areaName/levels/:levelNumber");
     }
-    // Already unlocked, go to level selection screen
-    else {
-      props.setSelectedArea(area);
-      navigate("/campaign/area");
-    }
+
+    // Already completed unlock level, go to level selection screen
+    navigate("/campaign/areas/:areaName");
   }
 
   return (

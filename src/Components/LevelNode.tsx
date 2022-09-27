@@ -16,7 +16,6 @@ interface LevelNodeProps {
   settings: SettingsData;
   onHoverLevel: (level: LevelConfig | null) => void;
   setTheme: (theme: Theme) => void;
-  setSelectedCampaignLevel: (level: LevelConfig) => void;
 }
 
 export const LevelNode = (props: LevelNodeProps) => {
@@ -65,8 +64,7 @@ export const LevelNode = (props: LevelNodeProps) => {
         onClick={() => {
           if (isLevelUnlocked && !isLevelCompleted) {
             playClickSoundEffect();
-            props.setSelectedCampaignLevel(props.level);
-            navigate("/campaign/area/level");
+            navigate("/campaign/areas/:areaName/levels/:levelNumber");
           }
         }}
         onMouseOver={() => props.onHoverLevel(props.isSelected ? null : props.level)}
