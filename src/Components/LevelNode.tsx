@@ -64,7 +64,7 @@ export const LevelNode = (props: LevelNodeProps) => {
         onClick={() => {
           if (isLevelUnlocked && !isLevelCompleted) {
             playClickSoundEffect();
-            navigate("/campaign/areas/:areaName/levels/:levelNumber");
+            navigate(`/campaign/areas/${areaInfo?.name}/levels/${props.index + 1}`);
           }
         }}
         onMouseOver={() => props.onHoverLevel(props.isSelected ? null : props.level)}

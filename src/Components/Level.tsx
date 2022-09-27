@@ -216,7 +216,7 @@ export const Level = (props: LevelProps) => {
           props.onCompleteCampaignLevel(selectedArea!, selectedLevel!, selectedLevel!.type === "unlock-level");
         }
         // Then, go to level selection (to rety level or to choose next level)
-        navigate("/campaign/areas/:areaName");
+        navigate(`/campaign/areas/${selectedArea?.name}`);
       },
     };
 
