@@ -21,7 +21,8 @@ import { WingoGameshow, WingoGameshowProps } from "../Pages/WingoGameshow";
 import SequencePuzzle, { SequencePuzzleProps } from "../Pages/SequencePuzzle";
 import { useNavigate } from "react-router-dom";
 import { useParams } from "react-router";
-import { AllCampaignAreas } from "../Data/CampaignAreas/AllCampaignAreas";
+import { getAreaConfig } from "../Helper Functions/getAreaConfig";
+import { getLevelConfig } from "../Helper Functions/getLevelConfig";
 
 export type LevelConfig = {
   hint?: React.ReactNode;
@@ -187,26 +188,6 @@ interface LevelProps {
 export const Level = (props: LevelProps) => {
   const navigate = useNavigate();
   const params = useParams();
-
-  const getAreaConfig = (areaName: string | undefined): AreaConfig | null => {
-    return AllCampaignAreas.find((area) => area.name === areaName) ?? null;
-  };
-
-  const getLevelConfig = (areaName: string | undefined, levelNumber: string | undefined): LevelConfig | null => {
-    // TODO: Are these checks needed?
-    if (!areaName) {
-      return null;
-    }
-
-    if (!levelNumber) {
-      return null;
-    }
-
-    // LevelNumber 1 will be the first index of levels
-    const levelNumberIndex: number = parseInt(levelNumber) - 1;
-
-    return getAreaConfig(areaName)?.levels[levelNumberIndex] ?? null;
-  };
 
   // Find the selected area using the areaName paramater (the dynamic segment of the URL)
   const selectedArea: AreaConfig | null = getAreaConfig(params.areaName);

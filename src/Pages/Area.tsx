@@ -5,7 +5,7 @@ import { SettingsData } from "../Data/SaveData";
 import { Theme } from "../Data/Themes";
 import { LevelNode } from "../Components/LevelNode";
 import { useNavigate, useParams } from "react-router-dom";
-import { AllCampaignAreas } from "../Data/CampaignAreas/AllCampaignAreas";
+import { getAreaConfig } from "../Helper Functions/getAreaConfig";
 
 export interface AreaConfig {
   name: string;
@@ -26,10 +26,6 @@ export const Area = (props: AreaProps) => {
 
   const navigate = useNavigate();
   const params = useParams();
-
-  const getAreaConfig = (areaName: string | undefined): AreaConfig | null => {
-    return AllCampaignAreas.find((area) => area.name === areaName) ?? null;
-  };
 
   // Find the selected area using the areaName paramater (the dynamic segment of the URL)
   const selectedArea: AreaConfig | null = getAreaConfig(params.areaName);
