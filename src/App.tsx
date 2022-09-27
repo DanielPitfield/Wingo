@@ -38,7 +38,7 @@ import { getPageGamemodeSettings } from "./Helper Functions/getPageGamemodeSetti
 import { getRandomElementFrom } from "./Helper Functions/getRandomElementFrom";
 import { Routes, Route, useNavigate, useLocation, Navigate } from "react-router-dom";
 import { PageWrapper } from "./Components/PageWrapper";
-import { isCampaignLevelPath } from "./Helper Functions/isCampaignLevelPath";
+import { isCampaignLevelPath } from "./Helper Functions/CampaignPathChecks";
 
 // TODO: With React ROuter, the state Page shouldn't be needed anymore
 

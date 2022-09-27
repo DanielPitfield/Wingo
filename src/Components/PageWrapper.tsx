@@ -10,6 +10,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { PagePath } from "../Data/PageNames";
 import GoldCoin from "../Data/Images/gold.png";
 import { useState } from "react";
+import { isCampaignAreaPath, isCampaignLevelPath } from "../Helper Functions/CampaignPathChecks";
 
 interface Props {
   settings: SettingsData;
@@ -41,9 +42,9 @@ export const PageWrapper = (props: Props) => {
                   onClick={() => {
                     setIsHelpInfoShown(false);
 
-                    if (location === "/campaign/areas/:areaName/levels/:levelNumber") {
+                    if (isCampaignLevelPath(location)) {
                       navigate("/campaign/areas/:areaName");
-                    } else if (location === "/campaign/areas/:areaName") {
+                    } else if (isCampaignAreaPath(location)) {
                       navigate("/campaign");
                     } else {
                       navigate("/home");

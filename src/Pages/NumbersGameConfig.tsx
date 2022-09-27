@@ -9,6 +9,7 @@ import { getNumbersGameGuessTotal } from "../Helper Functions/getNumbersGameGues
 import { getNumbersGameScore } from "../Helper Functions/getNumbersGameScore";
 import { useLocation } from "react-router-dom";
 import { PagePath } from "../Data/PageNames";
+import { isCampaignLevelPath } from "../Helper Functions/CampaignPathChecks";
 
 export interface NumbersGameConfigProps {
   campaignConfig:
@@ -155,7 +156,7 @@ const NumbersGameConfig = (props: Props) => {
 
   // Reset game after change of settings (stops cheating by changing settings partway through a game)
   React.useEffect(() => {
-    if (location === "/campaign/areas/:areaName/levels/:levelNumber" || props.gameshowScore !== undefined) {
+    if (isCampaignLevelPath(location) || props.gameshowScore !== undefined) {
       return;
     }
 

@@ -7,6 +7,7 @@ import { getAllWordsOfLength } from "../Helper Functions/getAllWordsOfLength";
 import { getGamemodeDefaultTimerValue } from "../Helper Functions/getGamemodeDefaultTimerValue";
 import { isLettersGameGuessValid } from "../Helper Functions/isLettersGameGuessValid";
 import { useLocation } from "react-router-dom";
+import { isCampaignLevelPath } from "../Helper Functions/CampaignPathChecks";
 
 export interface LettersGameConfigProps {
   campaignConfig:
@@ -106,7 +107,7 @@ const LettersGameConfig = (props: Props) => {
 
   // Reset game after change of settings (stops cheating by changing settings partway through a game)
   React.useEffect(() => {
-    if (location === "/campaign/areas/:areaName/levels/:levelNumber" || props.gameshowScore !== undefined) {
+    if (isCampaignLevelPath(location) || props.gameshowScore !== undefined) {
       return;
     }
 

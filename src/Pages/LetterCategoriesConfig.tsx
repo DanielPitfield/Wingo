@@ -11,6 +11,7 @@ import { getGamemodeDefaultTimerValue } from "../Helper Functions/getGamemodeDef
 import { getGamemodeDefaultWordLength } from "../Helper Functions/getGamemodeDefaultWordLength";
 import { getRandomElementFrom } from "../Helper Functions/getRandomElementFrom";
 import { useLocation } from "react-router-dom";
+import { isCampaignLevelPath } from "../Helper Functions/CampaignPathChecks";
 
 export interface LetterCategoriesConfigProps {
   campaignConfig:
@@ -111,7 +112,7 @@ const LetterCategoriesConfig = (props: Props) => {
 
   // Reset game after change of settings (stops cheating by changing settings partway through a game)
   React.useEffect(() => {
-    if (location === "/campaign/areas/:areaName/levels/:levelNumber") {
+    if (isCampaignLevelPath(location)) {
       return;
     }
 

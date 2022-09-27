@@ -25,6 +25,7 @@ import { getNumNewLimitlessLives } from "../Helper Functions/getNumNewLimitlessL
 import { getDailyWeeklyWingoModes } from "../Helper Functions/getDailyWeeklyWingoModes";
 import { useLocation } from "react-router-dom";
 import { PagePath } from "../Data/PageNames";
+import { isCampaignLevelPath } from "../Helper Functions/CampaignPathChecks";
 
 export const wingoModes = [
   "daily",
@@ -357,7 +358,7 @@ const WingoConfig = (props: Props) => {
 
   // Reset game after change of settings (stops cheating by changing settings partway through a game)
   React.useEffect(() => {
-    if (location === "/campaign/areas/:areaName/levels/:levelNumber") {
+    if (isCampaignLevelPath(location)) {
       return;
     }
 
