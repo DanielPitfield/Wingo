@@ -183,11 +183,7 @@ export const App = () => {
   }
 
   function isCampaignLevel() {
-    if (location === "/campaign/area/level") {
-      return true;
-    } else {
-      return false;
-    }
+    return location === "/campaign/area/level";
   }
 
   const commonProps = {

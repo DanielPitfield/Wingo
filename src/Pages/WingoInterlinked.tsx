@@ -541,11 +541,7 @@ export const WingoInterlinked = (props: Props) => {
       position.y <= wordInfo.startingYPos + wordInfo.word.length &&
       position.x === wordInfo.startingXPos;
 
-    if (horizontalCondition || verticalCondition) {
-      return true;
-    } else {
-      return false;
-    }
+    return horizontalCondition || verticalCondition;
   }
 
   function checkInput(wordsToCheck: "current" | "all") {
