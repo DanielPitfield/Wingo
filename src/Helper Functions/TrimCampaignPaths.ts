@@ -1,13 +1,11 @@
 import { PagePath } from "../Data/PageNames";
-import { isCampaignLevelPath } from "./CampaignPathChecks";
+import { isCampaignAreaPath, isCampaignLevelPath } from "./CampaignPathChecks";
 
 export function getAreaBacktrackPath(path: PagePath) {
   // To go back to area, it must be a campaign level path
-  /*
   if (!isCampaignLevelPath(path)) {
-    return null;
+    return isCampaignAreaPath(path) ? path : "/campaign" as PagePath;
   }
-  */
 
   const pathString = path.toString();
 
