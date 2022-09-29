@@ -33,7 +33,7 @@ export const Area = (props: AreaProps) => {
   // The area couldn't be found
   if (selectedArea === null) {
     // Go back to campaign page
-    navigate("/campaign");
+    navigate("/Campaign");
     // TODO: Gone back to a previous page, but must render something here?
     return <></>;
   }

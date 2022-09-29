@@ -31,10 +31,10 @@ export const PageWrapper = (props: Props) => {
 
   return (
     <div className="app" data-automation-id="app" data-automation-page-name={location}>
-      {location !== "/splash-screen" && location !== "/TitlePage" && (
+      {location !== "/Splashscreen" && location !== "/TitlePage" && (
         <>
           <div className="toolbar">
-            {location !== "/home" && (
+            {location !== "/Home" && (
               <nav className="navigation">
                 <Button
                   mode="default"
@@ -46,9 +46,9 @@ export const PageWrapper = (props: Props) => {
                     if (isCampaignLevelPath(location)) {
                       navigate(getAreaBacktrackPath(location));
                     } else if (isCampaignAreaPath(location)) {
-                      navigate("/campaign");
+                      navigate("/Campaign");
                     } else {
-                      navigate("/home");
+                      navigate("/Home");
                     }
                   }}
                 >
@@ -79,7 +79,7 @@ export const PageWrapper = (props: Props) => {
             >
               <FiSettings /> Settings
             </Button>
-            <div className="gold_counter" onClick={() => navigate("/challenges")}>
+            <div className="gold_counter" onClick={() => navigate("/Challenges")}>
               <img className="gold_coin_image" src={GoldCoin} alt="Gold" />
               {props.gold.toLocaleString("en-GB")}
             </div>
@@ -100,7 +100,7 @@ export const PageWrapper = (props: Props) => {
       >
         {/*pageComponent*/}
       </ErrorBoundary>
-      {Boolean(isHelpInfoShown && location !== "/home" && location !== "/TitlePage" && location !== "/settings") && (
+      {Boolean(isHelpInfoShown && location !== "/Home" && location !== "/TitlePage" && location !== "/Settings") && (
         <HelpInformation onClose={() => setIsHelpInfoShown(false)}></HelpInformation>
       )}
       <div className="version">{VERSION}</div>

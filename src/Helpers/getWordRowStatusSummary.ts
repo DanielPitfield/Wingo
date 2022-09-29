@@ -42,7 +42,7 @@ export function getWordRowStatusSummary(statusChecks: WordRowStatusChecks): Word
         characterStatus.character !== " ";
 
       // The read only WordRow in puzzle mode slowly reveals the correct answer (signify this by showing the status as correct)
-      if (hasCharacter && page === "/wingo/puzzle") {
+      if (hasCharacter && page === "/Wingo/Puzzle") {
         characterStatus.status = "correct";
         return characterStatus;
       }

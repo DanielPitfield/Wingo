@@ -33,7 +33,7 @@ const DEFAULT_KEYBOARD_THIRD_ROW = "ZXCVBNM";
 
 const isModeWithoutKeyboardStatuses = (page: PagePath) => {
   // Don't need updated keyboard statuses for some modes
-  const modesWithoutKeyboardStatuses: PagePath[] = ["/LettersCategories", "/LettersGame", "/wingo/interlinked"];
+  const modesWithoutKeyboardStatuses: PagePath[] = ["/LettersCategories", "/LettersGame", "/Wingo/Interlinked"];
   return modesWithoutKeyboardStatuses.includes(page);
 };
 

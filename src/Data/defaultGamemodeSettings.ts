@@ -48,30 +48,30 @@ export const fallbackWingoSettings = {
 
 export const defaultWingoGamemodeSettings: { page: PagePath; settings: WingoConfigProps["gamemodeSettings"] }[] = [
   {
-    page: "/wingo/daily",
-    settings: { ...commonWingoSettings, wordLength: getGamemodeDefaultWordLength("/wingo/daily") },
+    page: "/Wingo/Daily",
+    settings: { ...commonWingoSettings, wordLength: getGamemodeDefaultWordLength("/Wingo/Daily") },
   },
   {
-    page: "/wingo/repeat",
-    settings: { ...commonWingoSettings, wordLength: getGamemodeDefaultWordLength("/wingo/repeat") },
+    page: "/Wingo/Repeat",
+    settings: { ...commonWingoSettings, wordLength: getGamemodeDefaultWordLength("/Wingo/Repeat") },
   },
   {
-    page: "/wingo/category",
-    settings: { ...commonWingoSettings, wordLength: getGamemodeDefaultWordLength("/wingo/category") },
+    page: "/Wingo/Category",
+    settings: { ...commonWingoSettings, wordLength: getGamemodeDefaultWordLength("/Wingo/Category") },
   },
   {
-    page: "/wingo/increasing",
-    settings: { ...commonWingoSettings, wordLength: getGamemodeDefaultWordLength("/wingo/increasing") },
+    page: "/Wingo/Increasing",
+    settings: { ...commonWingoSettings, wordLength: getGamemodeDefaultWordLength("/Wingo/Increasing") },
   },
   {
-    page: "/wingo/limitless",
-    settings: { ...commonWingoSettings, wordLength: getGamemodeDefaultWordLength("/wingo/limitless") },
+    page: "/Wingo/Limitless",
+    settings: { ...commonWingoSettings, wordLength: getGamemodeDefaultWordLength("/Wingo/Limitless") },
   },
   {
-    page: "/wingo/puzzle",
+    page: "/Wingo/Puzzle",
     settings: {
       ...commonWingoSettings,
-      wordLength: getGamemodeDefaultWordLength("/wingo/puzzle"),
+      wordLength: getGamemodeDefaultWordLength("/Wingo/Puzzle"),
 
       isHintShown: true,
     },
@@ -82,17 +82,17 @@ export const defaultWingoGamemodeSettings: { page: PagePath; settings: WingoConf
     settings: {
       ...commonWingoSettings,
       wordLength: getGamemodeDefaultWordLength("/Conundrum"),
-      timerConfig: { isTimed: true, seconds: getGamemodeDefaultTimerValue("/wingo/puzzle") },
+      timerConfig: { isTimed: true, seconds: getGamemodeDefaultTimerValue("/Wingo/Puzzle") },
     },
   },
 ];
 
 export const defaultWingoInterlinkedGamemodeSettings: WingoInterlinkedProps["gamemodeSettings"] = {
   numWords: 2,
-  minWordLength: getGamemodeDefaultWordLength("/wingo/interlinked"),
-  maxWordLength: getGamemodeDefaultWordLength("/wingo/interlinked"),
+  minWordLength: getGamemodeDefaultWordLength("/Wingo/Interlinked"),
+  maxWordLength: getGamemodeDefaultWordLength("/Wingo/Interlinked"),
   numWordGuesses: 0,
-  numGridGuesses: getGamemodeDefaultNumGuesses("/wingo/interlinked"),
+  numGridGuesses: getGamemodeDefaultNumGuesses("/Wingo/Interlinked"),
   isFirstLetterProvided: false,
   isHintShown: false,
   timerConfig: { isTimed: false },
@@ -113,8 +113,8 @@ export const defaultWingoCrosswordGamemodeSettings: WingoInterlinkedProps["gamem
 
 export const defaultWingoCrosswordFitGamemodeSettings: WingoInterlinkedProps["gamemodeSettings"] = {
   numWords: 6,
-  minWordLength: getGamemodeDefaultWordLength("/wingo/crossword/fit"),
-  maxWordLength: getGamemodeDefaultWordLength("/wingo/crossword/fit"),
+  minWordLength: getGamemodeDefaultWordLength("/Wingo/Crossword/Fit"),
+  maxWordLength: getGamemodeDefaultWordLength("/Wingo/Crossword/Fit"),
   numWordGuesses: 0,
   numGridGuesses: 1,
   isFirstLetterProvided: false,

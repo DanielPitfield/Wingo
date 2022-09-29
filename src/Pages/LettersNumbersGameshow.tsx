@@ -215,8 +215,8 @@ export const LettersNumbersGameshow = (props: Props) => {
 
     // Navigate away from gameshow
     props.campaignConfig.isCampaignLevel
-      ? navigate("/campaign/areas/:areaName/levels/:levelNumber")
-      : navigate("/home");
+      ? navigate("/Campaign/Areas/:areaName/Levels/:levelNumber")
+      : navigate("/Home");
   }
 
   return (

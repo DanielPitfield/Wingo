@@ -30,12 +30,12 @@ export const Campaign = (props: CampaignProps) => {
 
     // Go straight to unlock level
     if (unlockLevelStatus === "unlockable") {
-      navigate(`/campaign/areas/${area.name}/levels/0`);
+      navigate(`/Campaign/Areas/${area.name}/Levels/0`);
       return;
     }
 
     // Already completed unlock level, go to level selection screen
-    navigate(`/campaign/areas/${area.name}`);
+    navigate(`/Campaign/Areas/${area.name}`);
   }
 
   return (

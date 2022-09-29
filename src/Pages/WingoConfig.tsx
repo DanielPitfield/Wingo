@@ -223,12 +223,12 @@ const WingoConfig = (props: Props) => {
           // Don't reset otherwise the number of lives would be lost, just go back to starting wordLength
           const newGamemodeSettings = {
             ...gamemodeSettings,
-            wordLength: getGamemodeDefaultWordLength("/wingo/limitless"),
+            wordLength: getGamemodeDefaultWordLength("/Wingo/Limitless"),
           };
           setGamemodeSettings(newGamemodeSettings);
 
           targetLengthWordArray = wordLengthMappingsTargets
-            .find((x) => x.value === getGamemodeDefaultWordLength("/wingo/limitless"))
+            .find((x) => x.value === getGamemodeDefaultWordLength("/Wingo/Limitless"))
             ?.array.map((x) => ({ word: x, hint: "" }))!;
         }
 
@@ -867,7 +867,7 @@ const WingoConfig = (props: Props) => {
         wordArrayConfig={{ type: "length" }}
         provideWords={false}
         gamemodeSettings={
-          SaveData.getWingoInterlinkedGamemodeSettings("/wingo/interlinked") ?? defaultWingoInterlinkedGamemodeSettings
+          SaveData.getWingoInterlinkedGamemodeSettings("/Wingo/Interlinked") ?? defaultWingoInterlinkedGamemodeSettings
         }
       />
     );
@@ -880,7 +880,7 @@ const WingoConfig = (props: Props) => {
         wordArrayConfig={{ type: "category" }}
         provideWords={false}
         gamemodeSettings={
-          SaveData.getWingoInterlinkedGamemodeSettings("/wingo/crossword") ?? defaultWingoCrosswordGamemodeSettings
+          SaveData.getWingoInterlinkedGamemodeSettings("/Wingo/Crossword") ?? defaultWingoCrosswordGamemodeSettings
         }
       />
     );
@@ -937,7 +937,7 @@ const WingoConfig = (props: Props) => {
         wordArrayConfig={{ type: "length" }}
         provideWords={true}
         gamemodeSettings={
-          SaveData.getWingoInterlinkedGamemodeSettings("/wingo/crossword/fit") ??
+          SaveData.getWingoInterlinkedGamemodeSettings("/Wingo/Crossword/Fit") ??
           defaultWingoCrosswordFitGamemodeSettings
         }
       />

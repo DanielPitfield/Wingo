@@ -196,7 +196,7 @@ export const Level = (props: LevelProps) => {
   // Either, the area or level couldn't be found
   if (selectedArea! === null || selectedLevel! === null) {
     // Go back to area (if that can be found), otherwise go back to campaign
-    navigate(selectedArea ? `/campaign/areas/:${selectedArea.name}` : "/campaign");
+    navigate(selectedArea ? `/Campaign/Areas/:${selectedArea.name}` : "/Campaign");
     // TODO: Gone back to a previous page, but must render something here?
     return <></>;
   }
@@ -214,7 +214,7 @@ export const Level = (props: LevelProps) => {
           props.onCompleteCampaignLevel(selectedArea!, selectedLevel!, selectedLevel!.type === "unlock-level");
         }
         // Then, go to level selection (to rety level or to choose next level)
-        navigate(`/campaign/areas/${selectedArea?.name}`);
+        navigate(`/Campaign/Areas/${selectedArea?.name}`);
       },
     };
 

@@ -32,11 +32,11 @@ Other than ensuring they are in the correct order here (within pageDescriptions)
 */
 
 export const pageDescriptions: pageDescription[] = [
-  { path: "/splash-screen", title: "Wingo", categoryType: null, isDisplayed: false, isRandomlyPlayable: false },
+  { path: "/Splashscreen", title: "Wingo", categoryType: null, isDisplayed: false, isRandomlyPlayable: false },
   { path: "/TitlePage", title: "Home", categoryType: null, isDisplayed: false, isRandomlyPlayable: false },
-  //{ page: "/home", title: "", isDisplayed: false, isRandomlyPlayable: false },
+  //{ page: "/Home", title: "", isDisplayed: false, isRandomlyPlayable: false },
   {
-    path: "/wingo/daily",
+    path: "/Wingo/Daily",
     title: "Daily Wingo",
     shortTitle: "Daily",
     categoryType: "Daily / Weekly",
@@ -52,7 +52,7 @@ export const pageDescriptions: pageDescription[] = [
     ),
   },
   {
-    path: "/wingo/crossword/daily",
+    path: "/Wingo/Crossword/Daily",
     title: "Wingo Crossword (Daily)",
     shortTitle: "Daily Crossword",
     categoryType: "Daily / Weekly",
@@ -71,7 +71,7 @@ export const pageDescriptions: pageDescription[] = [
     ),
   },
   {
-    path: "/wingo/crossword/weekly",
+    path: "/Wingo/Crossword/Weekly",
     title: "Wingo Crossword (Weekly)",
     shortTitle: "Weekly Crossword",
     categoryType: "Daily / Weekly",
@@ -90,7 +90,7 @@ export const pageDescriptions: pageDescription[] = [
     ),
   },
   {
-    path: "/wingo/repeat",
+    path: "/Wingo/Repeat",
     title: "Standard/Normal Wingo",
     shortTitle: "Standard",
     categoryType: "Wingo",
@@ -104,7 +104,7 @@ export const pageDescriptions: pageDescription[] = [
     ),
   },
   {
-    path: "/wingo/puzzle",
+    path: "/Wingo/Puzzle",
     title: "Wingo Puzzle",
     shortTitle: "Puzzle",
     categoryType: "Wingo",
@@ -120,7 +120,7 @@ export const pageDescriptions: pageDescription[] = [
     ),
   },
   {
-    path: "/wingo/increasing",
+    path: "/Wingo/Increasing",
     title: "Wingo Increasing Length",
     shortTitle: "Increasing",
     categoryType: "Wingo",
@@ -134,7 +134,7 @@ export const pageDescriptions: pageDescription[] = [
     ),
   },
   {
-    path: "/wingo/limitless",
+    path: "/Wingo/Limitless",
     title: "Wingo Limitless/Survival",
     shortTitle: "Limitless",
     categoryType: "Wingo",
@@ -150,7 +150,7 @@ export const pageDescriptions: pageDescription[] = [
     ),
   },
   {
-    path: "/wingo/category",
+    path: "/Wingo/Category",
     title: "Wingo Categories",
     shortTitle: "Categories",
     categoryType: "Wingo",
@@ -169,7 +169,7 @@ export const pageDescriptions: pageDescription[] = [
     ),
   },
   {
-    path: "/wingo/interlinked",
+    path: "/Wingo/Interlinked",
     title: "Wingo Interlinked",
     shortTitle: "Interlinked",
     categoryType: "Wingo",
@@ -186,7 +186,7 @@ export const pageDescriptions: pageDescription[] = [
     ),
   },
   {
-    path: "/wingo/crossword",
+    path: "/Wingo/Crossword",
     title: "Wingo Crossword",
     shortTitle: "Crossword",
     categoryType: "Wingo",
@@ -295,7 +295,7 @@ export const pageDescriptions: pageDescription[] = [
     description: "Match the words to their codes",
   },
   {
-    path: "/wingo/crossword/fit",
+    path: "/Wingo/Crossword/Fit",
     title: "Wingo Crossword Fit",
     shortTitle: "Crossword Fit",
     categoryType: "Letters",
@@ -403,7 +403,7 @@ export const pageDescriptions: pageDescription[] = [
     description: "Find what comes next in the sequence",
   },
   {
-    path: "/Wingo/Gameshow",
+    path: "/WingoGameshow",
     title: "Wingo Gameshow",
     shortTitle: "Wingo Gameshow",
     categoryType: "Gameshow Presets",
@@ -419,7 +419,7 @@ export const pageDescriptions: pageDescription[] = [
     isRandomlyPlayable: false,
   },
   {
-    path: "/Custom/Gameshow",
+    path: "/CustomGameshow",
     title: "Custom Gameshow",
     shortTitle: "Custom Gameshow",
     categoryType: "Gameshow Presets",
@@ -427,7 +427,7 @@ export const pageDescriptions: pageDescription[] = [
     isRandomlyPlayable: false,
   },
   {
-    path: "/random",
+    path: "/Random",
     title: "Random",
     shortTitle: "Random",
     categoryType: "Gameshow Presets",
@@ -436,7 +436,7 @@ export const pageDescriptions: pageDescription[] = [
   },
 
   {
-    path: "/campaign",
+    path: "/Campaign",
     title: "Campaign",
     shortTitle: "Campaign",
     categoryType: null,
@@ -444,7 +444,7 @@ export const pageDescriptions: pageDescription[] = [
     isRandomlyPlayable: false,
   },
   {
-    path: "/campaign/areas/:areaName",
+    path: "/Campaign/Areas/:areaName",
     title: "Campaign Areas",
     shortTitle: "Areas",
     categoryType: null,
@@ -452,7 +452,7 @@ export const pageDescriptions: pageDescription[] = [
     isRandomlyPlayable: false,
   },
   {
-    path: "/campaign/areas/:areaName/levels/:levelNumber",
+    path: "/Campaign/Areas/:areaName/Levels/:levelNumber",
     title: "Campaign Level",
     shortTitle: "Level",
     categoryType: null,
@@ -460,7 +460,7 @@ export const pageDescriptions: pageDescription[] = [
     isRandomlyPlayable: false,
   },
   {
-    path: "/challenges",
+    path: "/Challenges",
     title: "Challenges",
     shortTitle: "Challenges",
     categoryType: null,
@@ -468,7 +468,7 @@ export const pageDescriptions: pageDescription[] = [
     isRandomlyPlayable: false,
   },
   {
-    path: "/settings",
+    path: "/Settings",
     title: "Settings",
     shortTitle: "Settings",
     categoryType: null,

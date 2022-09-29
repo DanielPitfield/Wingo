@@ -21,23 +21,23 @@ export const TitlePage = (props: TitlePageProps) => {
         </div>
         <ul className="sidebar-links">
           <li className="sidebar-link">
-            <Button mode="accept" onClick={() => navigate("/campaign")}>
+            <Button mode="accept" onClick={() => navigate("/Campaign")}>
               <FiPlay /> Campaign
             </Button>
           </li>
           <li className="sidebar-link">
-            <Button mode="default" onClick={() => navigate("/random")}>
+            <Button mode="default" onClick={() => navigate("/Random")}>
               <FiShuffle /> Quick game
             </Button>
           </li>
           <li className="sidebar-link">
-            <Button mode="default" onClick={() => navigate("/home")}>
+            <Button mode="default" onClick={() => navigate("/Home")}>
               <FiCodesandbox /> Custom game
             </Button>
           </li>
           <li className="sidebar-link spacer"></li>
           <li className="sidebar-link">
-            <Button mode="default" onClick={() => navigate("/settings")}>
+            <Button mode="default" onClick={() => navigate("/Settings")}>
               <FiSettings /> Settings
             </Button>
           </li>

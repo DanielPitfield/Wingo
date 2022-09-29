@@ -102,7 +102,7 @@ export const LobbyMenu = (props: Props) => {
                 mode="default"
                 challenge={challenge}
                 settings={props.settings}
-                onClick={() => navigate("/challenges")}
+                onClick={() => navigate("/Challenges")}
                 addGold={props.addGold}
               />
             ),

@@ -41,7 +41,7 @@ export const WordRow = (props: Props) => {
     }
 
     // Daily mode, when the game reports as having ended
-    const dailyModeEnd = location === "/wingo/daily" && !props.inProgress && props.word && props.hasSubmit;
+    const dailyModeEnd = location === "/Wingo/Daily" && !props.inProgress && props.word && props.hasSubmit;
 
     if (dailyModeEnd) {
       return false;

@@ -33,26 +33,26 @@ import { WordCodesProps } from "../Pages/WordCodes";
 // TODO: Uses
 export function getPageGamemodeSettings(page: PagePath) {
   switch (page) {
-    case "/wingo/daily":
+    case "/Wingo/Daily":
       // Daily mode should always use the same settings (never from SaveData)
       return (defaultWingoGamemodeSettings.find((x) => x.page === page)?.settings ??
         fallbackWingoSettings) as WingoConfigProps["gamemodeSettings"];
 
-    case "/wingo/repeat":
-    case "/wingo/category":
-    case "/wingo/increasing":
-    case "/wingo/limitless":
-    case "/wingo/puzzle":
+    case "/Wingo/Repeat":
+    case "/Wingo/Category":
+    case "/Wingo/Increasing":
+    case "/Wingo/Limitless":
+    case "/Wingo/Puzzle":
     case "/Conundrum":
       return (SaveData.getWingoConfigGamemodeSettings(page) ??
         defaultWingoGamemodeSettings.find((x) => x.page === page)?.settings ??
         fallbackWingoSettings) as WingoConfigProps["gamemodeSettings"];
 
-    case "/wingo/interlinked":
-    case "/wingo/crossword":
-    case "/wingo/crossword/fit":
-    case "/wingo/crossword/daily":
-    case "/wingo/crossword/weekly":
+    case "/Wingo/Interlinked":
+    case "/Wingo/Crossword":
+    case "/Wingo/Crossword/Fit":
+    case "/Wingo/Crossword/Daily":
+    case "/Wingo/Crossword/Weekly":
       /*
         The gamemode settings are redefined in WingoConfig (when rendering a WingoInterlinked component)
         Just pass fallback settings through, because gamemodeSettings can't be left undefined

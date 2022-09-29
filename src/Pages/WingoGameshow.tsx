@@ -169,7 +169,7 @@ export const WingoGameshow = (props: Props) => {
         <WingoConfig
           {...commonProps}
           mode="puzzle"
-          gamemodeSettings={getPageGamemodeSettings("/wingo/puzzle") as WingoConfigProps["gamemodeSettings"]}
+          gamemodeSettings={getPageGamemodeSettings("/Wingo/Puzzle") as WingoConfigProps["gamemodeSettings"]}
           defaultWordLength={wordLength}
           defaultNumGuesses={1}
           enforceFullLengthGuesses={true}
@@ -182,7 +182,7 @@ export const WingoGameshow = (props: Props) => {
         <WingoConfig
           {...commonProps}
           mode="repeat"
-          gamemodeSettings={getPageGamemodeSettings("/wingo/repeat") as WingoConfigProps["gamemodeSettings"]}
+          gamemodeSettings={getPageGamemodeSettings("/Wingo/Repeat") as WingoConfigProps["gamemodeSettings"]}
           defaultWordLength={wordLength}
           defaultNumGuesses={5}
           enforceFullLengthGuesses={true}
@@ -215,8 +215,8 @@ export const WingoGameshow = (props: Props) => {
 
     // Navigate away from gameshow
     props.campaignConfig.isCampaignLevel
-      ? navigate("/campaign/areas/:areaName/levels/:levelNumber")
-      : navigate("/home");
+      ? navigate("/Campaign/Areas/:areaName/Levels/:levelNumber")
+      : navigate("/Home");
   }
 
   return (

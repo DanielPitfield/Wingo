@@ -100,21 +100,21 @@ export const App = () => {
     }
 
     // First, show splashscreen
-    navigate("/splash-screen")
+    navigate("/Splashscreen");
     // After delay, navigate to entry page
     window.setTimeout(() => navigate(newEntryPage), LOADING_TIMEOUT_MS + FADE_OUT_DURATION_MS);
   }, [saveData]);
 
   React.useEffect(() => {
     // Set the page to any playable page
-    if (location === "/random") {
+    if (location === "/Random") {
       const playablePages = pageDescriptions.filter((page) => page.isRandomlyPlayable);
       const newPage = getRandomElementFrom(playablePages)?.path;
       navigate(newPage);
       setIsRandomSession(true);
     }
     // Pressing back (returning to home) should stop any sessions (which dictate the next gamemode)
-    else if (location === "/home") {
+    else if (location === "/Home") {
       setIsRandomSession(false);
     }
   }, [location]);
@@ -150,7 +150,7 @@ export const App = () => {
       return;
     } else {
       // New random page
-      navigate("/random");
+      navigate("/Random");
     }
   }
 
@@ -214,9 +214,9 @@ export const App = () => {
     <Routes>
       <Route path="/" element={<Navigate to={getNewEntryPage()} />} />
       <Route path="/TitlePage" element={<TitlePage settings={settings} />} />
-      <Route path="/splash-screen" element={<SplashScreen loadingState={loadingState} settings={settings} />} />
+      <Route path="/Splashscreen" element={<SplashScreen loadingState={loadingState} settings={settings} />} />
       <Route
-        path="/home"
+        path="/Home"
         element={
           <PageWrapper gold={gold} settings={settings}>
             <LobbyMenu setTheme={setThemeIfNoPreferredSet} theme={theme} addGold={addGold} settings={settings} />
@@ -224,7 +224,7 @@ export const App = () => {
         }
       />
       <Route
-        path="/campaign"
+        path="/Campaign"
         element={
           <PageWrapper gold={gold} settings={settings}>
             <Campaign theme={theme} setTheme={setThemeIfNoPreferredSet} settings={settings} />
@@ -232,7 +232,7 @@ export const App = () => {
         }
       />
       <Route
-        path="/campaign/areas/:areaName"
+        path="/Campaign/Areas/:areaName"
         element={
           <PageWrapper gold={gold} settings={settings}>
             <Area setTheme={setThemeIfNoPreferredSet} settings={settings} />
@@ -240,7 +240,7 @@ export const App = () => {
         }
       />
       <Route
-        path="/campaign/areas/:areaName/levels/:levelNumber"
+        path="/Campaign/Areas/:areaName/Levels/:levelNumber"
         element={
           <PageWrapper gold={gold} settings={settings}>
             <Level
@@ -254,7 +254,7 @@ export const App = () => {
         }
       />
       <Route
-        path="/wingo/daily"
+        path="/Wingo/Daily"
         element={
           <PageWrapper gold={gold} settings={settings}>
             <WingoConfig
@@ -267,7 +267,7 @@ export const App = () => {
         }
       />
       <Route
-        path="/wingo/repeat"
+        path="/Wingo/Repeat"
         element={
           <PageWrapper gold={gold} settings={settings}>
             <WingoConfig
@@ -280,7 +280,7 @@ export const App = () => {
         }
       />
       <Route
-        path="/wingo/category"
+        path="/Wingo/Category"
         element={
           <PageWrapper gold={gold} settings={settings}>
             <WingoConfig
@@ -294,7 +294,7 @@ export const App = () => {
         }
       />
       <Route
-        path="/wingo/increasing"
+        path="/Wingo/Increasing"
         element={
           <PageWrapper gold={gold} settings={settings}>
             <WingoConfig
@@ -307,7 +307,7 @@ export const App = () => {
         }
       />
       <Route
-        path="/wingo/limitless"
+        path="/Wingo/Limitless"
         element={
           <PageWrapper gold={gold} settings={settings}>
             <WingoConfig
@@ -320,7 +320,7 @@ export const App = () => {
         }
       />
       <Route
-        path="/wingo/puzzle"
+        path="/Wingo/Puzzle"
         element={
           <PageWrapper gold={gold} settings={settings}>
             <WingoConfig
@@ -346,7 +346,7 @@ export const App = () => {
         }
       />
       <Route
-        path="/wingo/interlinked"
+        path="/Wingo/Interlinked"
         element={
           <PageWrapper gold={gold} settings={settings}>
             <WingoConfig
@@ -359,7 +359,7 @@ export const App = () => {
         }
       />
       <Route
-        path="/wingo/crossword"
+        path="/Wingo/Crossword"
         element={
           <PageWrapper gold={gold} settings={settings}>
             <WingoConfig
@@ -372,7 +372,7 @@ export const App = () => {
         }
       />
       <Route
-        path="/wingo/crossword/fit"
+        path="/Wingo/Crossword/Fit"
         element={
           <PageWrapper gold={gold} settings={settings}>
             <WingoConfig
@@ -385,7 +385,7 @@ export const App = () => {
         }
       />
       <Route
-        path="/wingo/crossword/daily"
+        path="/Wingo/Crossword/Daily"
         element={
           <PageWrapper gold={gold} settings={settings}>
             <WingoConfig
@@ -398,7 +398,7 @@ export const App = () => {
         }
       />
       <Route
-        path="/wingo/crossword/weekly"
+        path="/Wingo/Crossword/Weekly"
         element={
           <PageWrapper gold={gold} settings={settings}>
             <WingoConfig
@@ -569,7 +569,7 @@ export const App = () => {
         }
       />
       <Route
-        path="/settings"
+        path="/Settings"
         element={
           <PageWrapper gold={gold} settings={settings}>
             <Settings settings={settings} onSettingsChange={setSettings} />
@@ -577,7 +577,7 @@ export const App = () => {
         }
       />
       <Route
-        path="/challenges"
+        path="/Challenges"
         element={
           <PageWrapper gold={gold} settings={settings}>
             <ChallengesInfo settings={settings} addGold={addGold} />
@@ -585,7 +585,7 @@ export const App = () => {
         }
       />
 
-      <Route path="/random" element={null} />
+      <Route path="/Random" element={null} />
       <Route
         path="/LettersNumbersGameshow"
         element={
@@ -605,7 +605,7 @@ export const App = () => {
         }
       />
       <Route
-        path="/Wingo/Gameshow"
+        path="/WingoGameshow"
         element={
           <PageWrapper gold={gold} settings={settings}>
             <WingoGameshow
@@ -617,13 +617,13 @@ export const App = () => {
           </PageWrapper>
         }
       />
-      <Route path="/Custom/Gameshow" element={<CustomGameshow {...commonProps} />} />
+      <Route path="/CustomGameshow" element={<CustomGameshow {...commonProps} />} />
       <Route
         path="*"
         element={
           <ErrorFallback
             error={new Error("Page not found")}
-            resetErrorBoundary={() => navigate("/home")}
+            resetErrorBoundary={() => navigate("/Home")}
             settingsData={SaveData.getSettings()}
             version={VERSION}
           />

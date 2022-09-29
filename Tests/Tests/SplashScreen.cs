@@ -30,7 +30,7 @@ namespace Wingo.Tests
         {
             this.wait.Until(ExpectedConditions.ElementIsVisible(By.CssSelector("[data-automation-id=\"app\"][data-automation-page-name=\"home\"]")));
 
-            Assert.AreEqual(expected: "/home", actual: new Uri(this.driver.Url).AbsolutePath);
+            Assert.AreEqual(expected: "/Home", actual: new Uri(this.driver.Url).AbsolutePath);
         }
     }
 }
