@@ -2,17 +2,26 @@ import { LevelConfig } from "../Components/Level";
 import { getAreaConfig } from "./getAreaConfig";
 
 export function getLevelConfig(areaName: string | undefined, levelNumber: string | undefined): LevelConfig | null {
-  // TODO: Are these checks needed?
-  if (!areaName) {
+  if (areaName === undefined) {
     return null;
   }
 
-  if (!levelNumber) {
+  if (levelNumber === undefined) {
     return null;
   }
 
-  // LevelNumber 1 will be the first index of levels
+  const areaConfig = getAreaConfig(areaName);
+
+  if (areaConfig === null) {
+    return null;
+  }
+
+  if (parseInt(levelNumber) === 0) {
+    return areaConfig.unlock_level;
+  }
+
+  // levelNumber 1 will be the first index of levels
   const levelNumberIndex: number = parseInt(levelNumber) - 1;
 
-  return getAreaConfig(areaName)?.levels[levelNumberIndex] ?? null;
+  return areaConfig.levels[levelNumberIndex] ?? null;
 };
