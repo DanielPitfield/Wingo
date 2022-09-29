@@ -92,16 +92,17 @@ export const App = () => {
     window.setTimeout(() => setLoadingState("loaded"), LOADING_TIMEOUT_MS);
 
     const newEntryPage = getNewEntryPage();
-    console.log(newEntryPage);
 
     if (settings.gameplay.skipSplashscreen) {
-      // Change immediately
+      // Don't show splashscreen, navigate to entry page immediately
       navigate(newEntryPage);
-    } else {
-      // Delay setting of new page (until after splashscreen)
-      // TOOD: Renable splashscreen?
-      // window.setTimeout(() => navigate(newEntryPage), LOADING_TIMEOUT_MS + FADE_OUT_DURATION_MS);
+      return;
     }
+
+    // First, show splashscreen
+    navigate("/splash-screen")
+    // After delay, navigate to entry page
+    window.setTimeout(() => navigate(newEntryPage), LOADING_TIMEOUT_MS + FADE_OUT_DURATION_MS);
   }, [saveData]);
 
   React.useEffect(() => {
