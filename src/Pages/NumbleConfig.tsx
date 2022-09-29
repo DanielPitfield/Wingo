@@ -69,7 +69,7 @@ export type NumbleStatus =
 
 const NumbleConfig = (props: Props) => {
   const location = useLocation().pathname as PagePath;
-  
+
   const [gamemodeSettings, setGamemodeSettings] = useState<NumbleConfigProps["gamemodeSettings"]>(
     props.gamemodeSettings
   );
@@ -105,7 +105,7 @@ const NumbleConfig = (props: Props) => {
     const newCurrentTeamNumber = getNextTeamNumberWithRemainingTime(currentTeamNumber, teamTimers);
 
     // No team with time left
-    if (!newCurrentTeamNumber) {
+    if (newCurrentTeamNumber === null) {
       setStatus("game-over-timer-ended");
       return;
     }
