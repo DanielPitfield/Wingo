@@ -55,6 +55,7 @@ export const LobbyMenu = (props: Props) => {
       <div className="games">
         <div className="sidebar campaign-sidebar">
           <Campaign
+            onlyShowCurrentArea={true}
             theme={props.theme}
             settings={props.settings}
             setTheme={props.setTheme}
