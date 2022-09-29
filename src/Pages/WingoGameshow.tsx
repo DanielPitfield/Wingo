@@ -4,10 +4,10 @@ import { Theme } from "../Data/Themes";
 import WingoConfig, { WingoConfigProps } from "./WingoConfig";
 import { Button } from "../Components/Button";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
-import { getGamemodeDefaultWordLength } from "../Helper Functions/getGamemodeDefaultWordLength";
-import { displayGameshowSummary } from "../Helper Functions/getGameshowSummary";
-import { getPageGamemodeSettings } from "../Helper Functions/getPageGamemodeSettings";
-import { getWingoGameshowRoundOrder } from "../Helper Functions/getWingoGameshowRoundOrder";
+import { getGamemodeDefaultWordLength } from "../Helpers/getGamemodeDefaultWordLength";
+import { displayGameshowSummary } from "../Helpers/getGameshowSummary";
+import { getPageGamemodeSettings } from "../Helpers/getPageGamemodeSettings";
+import { getWingoGameshowRoundOrder } from "../Helpers/getWingoGameshowRoundOrder";
 import { useNavigate, useLocation } from "react-router-dom";
 import { PagePath } from "../Data/PageNames";
 

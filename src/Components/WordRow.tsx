@@ -1,6 +1,6 @@
 import LetterTile from "./LetterTile";
 import { SettingsData } from "../Data/SaveData";
-import { getWordRowStatusSummary, WordRowStatusChecks } from "../Helper Functions/getWordRowStatusSummary";
+import { getWordRowStatusSummary, WordRowStatusChecks } from "../Helpers/getWordRowStatusSummary";
 import { useLocation } from "react-router-dom";
 import { PagePath } from "../Data/PageNames";
 

@@ -5,7 +5,7 @@ import { SettingsData } from "../Data/SaveData";
 import { Theme } from "../Data/Themes";
 import { LevelNode } from "../Components/LevelNode";
 import { useNavigate, useParams } from "react-router-dom";
-import { getAreaConfig } from "../Helper Functions/getAreaConfig";
+import { getAreaConfig } from "../Helpers/getAreaConfig";
 
 export interface AreaConfig {
   name: string;

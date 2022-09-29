@@ -1,4 +1,4 @@
-import { NumblePointColourRange } from "../Helper Functions/getNumblePointColourMappings";
+import { NumblePointColourRange } from "../Helpers/getNumblePointColourMappings";
 
 export const hexagon25_pointColourRanges: NumblePointColourRange[] = [
   { start: 1, end: 6, points: 20, colour: "orange" },

@@ -7,11 +7,11 @@ import { useClickChime, useCorrectChime, useFailureChime, useLightPingChime } fr
 import { Theme } from "../Data/Themes";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
 import { wordLengthMappingsTargets } from "../Data/WordArrayMappings";
-import { shuffleArray } from "../Helper Functions/shuffleArray";
-import { getGamemodeDefaultTimerValue } from "../Helper Functions/getGamemodeDefaultTimerValue";
-import { getRandomElementFrom } from "../Helper Functions/getRandomElementFrom";
-import { getPrettyText } from "../Helper Functions/getPrettyText";
-import { getNewGamemodeSettingValue } from "../Helper Functions/getGamemodeSettingsNewValue";
+import { shuffleArray } from "../Helpers/shuffleArray";
+import { getGamemodeDefaultTimerValue } from "../Helpers/getGamemodeDefaultTimerValue";
+import { getRandomElementFrom } from "../Helpers/getRandomElementFrom";
+import { getPrettyText } from "../Helpers/getPrettyText";
+import { getNewGamemodeSettingValue } from "../Helpers/getGamemodeSettingsNewValue";
 import SameLetterWordsGamemodeSettings, {
   MIN_NUM_SAME_LETTER_MATCHING_WORDS,
   MIN_NUM_SAME_LETTER_TOTAL_WORDS,

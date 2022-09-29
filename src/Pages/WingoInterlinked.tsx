@@ -9,15 +9,15 @@ import { MessageNotification } from "../Components/MessageNotification";
 import {
   CrosswordGenerationResult,
   crosswordGenerator as crossWordGenerator,
-} from "../Helper Functions/CrossWordGenerator";
+} from "../Helpers/CrossWordGenerator";
 import ProgressBar, { GreenToRedColorTransition } from "../Components/ProgressBar";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
 import { categoryMappings, wordLengthMappingsTargets } from "../Data/WordArrayMappings";
 import { DEFAULT_FIT_RESTRICTION } from "../Data/DefaultGamemodeSettings";
-import { getWordRowStatusSummary, WordRowStatusChecks } from "../Helper Functions/getWordRowStatusSummary";
-import { shuffleArray } from "../Helper Functions/shuffleArray";
-import { getGamemodeDefaultTimerValue } from "../Helper Functions/getGamemodeDefaultTimerValue";
-import { getNewGamemodeSettingValue } from "../Helper Functions/getGamemodeSettingsNewValue";
+import { getWordRowStatusSummary, WordRowStatusChecks } from "../Helpers/getWordRowStatusSummary";
+import { shuffleArray } from "../Helpers/shuffleArray";
+import { getGamemodeDefaultTimerValue } from "../Helpers/getGamemodeDefaultTimerValue";
+import { getNewGamemodeSettingValue } from "../Helpers/getGamemodeSettingsNewValue";
 import WingoInterlinkedGamemodeSettings from "../Components/GamemodeSettingsOptions/WingoInterlinkedGamemodeSettings";
 import { useLocation } from "react-router-dom";
 import { PagePath } from "../Data/PageNames";

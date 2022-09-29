@@ -3,11 +3,11 @@ import { PagePath } from "../Data/PageNames";
 import LettersGame from "./LettersGame";
 import { Theme } from "../Data/Themes";
 import { SaveData, SettingsData } from "../Data/SaveData";
-import { getAllWordsOfLength } from "../Helper Functions/getAllWordsOfLength";
-import { getGamemodeDefaultTimerValue } from "../Helper Functions/getGamemodeDefaultTimerValue";
-import { isLettersGameGuessValid } from "../Helper Functions/isLettersGameGuessValid";
+import { getAllWordsOfLength } from "../Helpers/getAllWordsOfLength";
+import { getGamemodeDefaultTimerValue } from "../Helpers/getGamemodeDefaultTimerValue";
+import { isLettersGameGuessValid } from "../Helpers/isLettersGameGuessValid";
 import { useLocation } from "react-router-dom";
-import { isCampaignLevelPath } from "../Helper Functions/CampaignPathChecks";
+import { isCampaignLevelPath } from "../Helpers/CampaignPathChecks";
 
 export interface LettersGameConfigProps {
   campaignConfig:

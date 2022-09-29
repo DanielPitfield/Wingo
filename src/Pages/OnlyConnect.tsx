@@ -7,10 +7,10 @@ import { useClickChime, useCorrectChime, useFailureChime, useLightPingChime } fr
 import { Theme } from "../Data/Themes";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
 import { categoryMappings } from "../Data/WordArrayMappings";
-import { shuffleArray } from "../Helper Functions/shuffleArray";
-import { getPrettyText } from "../Helper Functions/getPrettyText";
-import { getGamemodeDefaultTimerValue } from "../Helper Functions/getGamemodeDefaultTimerValue";
-import { getNewGamemodeSettingValue } from "../Helper Functions/getGamemodeSettingsNewValue";
+import { shuffleArray } from "../Helpers/shuffleArray";
+import { getPrettyText } from "../Helpers/getPrettyText";
+import { getGamemodeDefaultTimerValue } from "../Helpers/getGamemodeDefaultTimerValue";
+import { getNewGamemodeSettingValue } from "../Helpers/getGamemodeSettingsNewValue";
 import OnlyConnectGamemodeSettings from "../Components/GamemodeSettingsOptions/OnlyConnectGamemodeSettings";
 import { useLocation } from "react-router-dom";
 import { PagePath } from "../Data/PageNames";

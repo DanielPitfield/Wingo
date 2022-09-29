@@ -6,10 +6,10 @@ import { Theme } from "../Data/Themes";
 import { Button } from "../Components/Button";
 import WingoConfig, { WingoConfigProps } from "./WingoConfig";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
-import { getGamemodeDefaultNumGuesses } from "../Helper Functions/getGamemodeDefaultNumGuesses";
-import { getGamemodeDefaultWordLength } from "../Helper Functions/getGamemodeDefaultWordLength";
-import { displayGameshowSummary } from "../Helper Functions/getGameshowSummary";
-import { getPageGamemodeSettings } from "../Helper Functions/getPageGamemodeSettings";
+import { getGamemodeDefaultNumGuesses } from "../Helpers/getGamemodeDefaultNumGuesses";
+import { getGamemodeDefaultWordLength } from "../Helpers/getGamemodeDefaultWordLength";
+import { displayGameshowSummary } from "../Helpers/getGameshowSummary";
+import { getPageGamemodeSettings } from "../Helpers/getPageGamemodeSettings";
 import { useNavigate } from "react-router-dom";
 
 type RoundType = "number" | "letter" | "conundrum";

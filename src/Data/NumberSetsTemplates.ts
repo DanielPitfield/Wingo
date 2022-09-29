@@ -1,4 +1,4 @@
-import { getRandomIntFromRange } from "../Helper Functions/getRandomIntFromRange";
+import { getRandomIntFromRange } from "../Helpers/getRandomIntFromRange";
 import { Difficulty } from "./DefaultGamemodeSettings";
 import { operators } from "./Operators";
 

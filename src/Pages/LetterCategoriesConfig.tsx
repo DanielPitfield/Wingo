@@ -6,12 +6,12 @@ import { DEFAULT_ALPHABET } from "./WingoConfig";
 import { Theme } from "../Data/Themes";
 import { categoryMappings } from "../Data/WordArrayMappings";
 import { MAX_NUM_CATEGORIES } from "../Data/GamemodeSettingsInputLimits";
-import { shuffleArray } from "../Helper Functions/shuffleArray";
-import { getGamemodeDefaultTimerValue } from "../Helper Functions/getGamemodeDefaultTimerValue";
-import { getGamemodeDefaultWordLength } from "../Helper Functions/getGamemodeDefaultWordLength";
-import { getRandomElementFrom } from "../Helper Functions/getRandomElementFrom";
+import { shuffleArray } from "../Helpers/shuffleArray";
+import { getGamemodeDefaultTimerValue } from "../Helpers/getGamemodeDefaultTimerValue";
+import { getGamemodeDefaultWordLength } from "../Helpers/getGamemodeDefaultWordLength";
+import { getRandomElementFrom } from "../Helpers/getRandomElementFrom";
 import { useLocation } from "react-router-dom";
-import { isCampaignLevelPath } from "../Helper Functions/CampaignPathChecks";
+import { isCampaignLevelPath } from "../Helpers/CampaignPathChecks";
 
 export interface LetterCategoriesConfigProps {
   campaignConfig:

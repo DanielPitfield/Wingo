@@ -11,12 +11,12 @@ import { arithmeticNumberSize } from "./ArithmeticDrag";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
 import { MAX_NUMPAD_GUESS_LENGTH } from "../Data/GamemodeSettingsInputLimits";
 import { operators } from "../Data/Operators";
-import { getGamemodeDefaultTimerValue } from "../Helper Functions/getGamemodeDefaultTimerValue";
-import { getQuestionSetOutcome } from "../Helper Functions/getQuestionSetOutcome";
-import { getRandomElementFrom } from "../Helper Functions/getRandomElementFrom";
-import { getRandomIntFromRange } from "../Helper Functions/getRandomIntFromRange";
+import { getGamemodeDefaultTimerValue } from "../Helpers/getGamemodeDefaultTimerValue";
+import { getQuestionSetOutcome } from "../Helpers/getQuestionSetOutcome";
+import { getRandomElementFrom } from "../Helpers/getRandomElementFrom";
+import { getRandomIntFromRange } from "../Helpers/getRandomIntFromRange";
 import ArithmeticRevealGamemodeSettings from "../Components/GamemodeSettingsOptions/ArithmeticRevealGamemodeSettings";
-import { getNewGamemodeSettingValue } from "../Helper Functions/getGamemodeSettingsNewValue";
+import { getNewGamemodeSettingValue } from "../Helpers/getGamemodeSettingsNewValue";
 import { useLocation } from "react-router-dom";
 
 export interface ArithmeticRevealProps {

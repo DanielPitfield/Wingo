@@ -3,13 +3,13 @@ import NumbersGame from "./NumbersGame";
 import { Theme } from "../Data/Themes";
 import { SaveData, SettingsData } from "../Data/SaveData";
 import { operators } from "../Data/Operators";
-import { getGamemodeDefaultTimerValue } from "../Helper Functions/getGamemodeDefaultTimerValue";
-import { hasNumberSelectionFinished } from "../Helper Functions/hasNumberSelectionFinished";
-import { getNumbersGameGuessTotal } from "../Helper Functions/getNumbersGameGuessTotal";
-import { getNumbersGameScore } from "../Helper Functions/getNumbersGameScore";
+import { getGamemodeDefaultTimerValue } from "../Helpers/getGamemodeDefaultTimerValue";
+import { hasNumberSelectionFinished } from "../Helpers/hasNumberSelectionFinished";
+import { getNumbersGameGuessTotal } from "../Helpers/getNumbersGameGuessTotal";
+import { getNumbersGameScore } from "../Helpers/getNumbersGameScore";
 import { useLocation } from "react-router-dom";
 import { PagePath } from "../Data/PageNames";
-import { isCampaignLevelPath } from "../Helper Functions/CampaignPathChecks";
+import { isCampaignLevelPath } from "../Helpers/CampaignPathChecks";
 
 export interface NumbersGameConfigProps {
   campaignConfig:

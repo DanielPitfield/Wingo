@@ -4,7 +4,7 @@ import { SettingsData } from "../Data/SaveData";
 import { useClickChime } from "../Data/Sounds";
 import { PagePath } from "../Data/PageNames";
 import { FiChevronLeft, FiCornerDownLeft } from "react-icons/fi";
-import { getWordRowStatusSummary, WordRowStatusChecks } from "../Helper Functions/getWordRowStatusSummary";
+import { getWordRowStatusSummary, WordRowStatusChecks } from "../Helpers/getWordRowStatusSummary";
 import { LetterStatus } from "./LetterTile";
 import { DEFAULT_ALPHABET } from "../Pages/WingoConfig";
 import { useLocation } from "react-router-dom";

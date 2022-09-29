@@ -9,12 +9,12 @@ import { SaveData, SettingsData } from "../Data/SaveData";
 import { Theme } from "../Data/Themes";
 import { DraggableItem } from "../Components/DraggableItem";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
-import { shuffleArray } from "../Helper Functions/shuffleArray";
+import { shuffleArray } from "../Helpers/shuffleArray";
 import { operatorSymbols, operators } from "../Data/Operators";
-import { getGamemodeDefaultTimerValue } from "../Helper Functions/getGamemodeDefaultTimerValue";
-import { getRandomElementFrom } from "../Helper Functions/getRandomElementFrom";
-import { getRandomIntFromRange } from "../Helper Functions/getRandomIntFromRange";
-import { getNewGamemodeSettingValue } from "../Helper Functions/getGamemodeSettingsNewValue";
+import { getGamemodeDefaultTimerValue } from "../Helpers/getGamemodeDefaultTimerValue";
+import { getRandomElementFrom } from "../Helpers/getRandomElementFrom";
+import { getRandomIntFromRange } from "../Helpers/getRandomIntFromRange";
+import { getNewGamemodeSettingValue } from "../Helpers/getGamemodeSettingsNewValue";
 import ArithmeticDragGamemodeSettings from "../Components/GamemodeSettingsOptions/ArithmeticDragGamemodeSettings";
 import { useLocation } from "react-router-dom";
 

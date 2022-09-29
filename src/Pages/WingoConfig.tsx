@@ -12,20 +12,20 @@ import {
 } from "../Data/DefaultGamemodeSettings";
 import { MIN_TARGET_WORD_LENGTH } from "../Data/GamemodeSettingsInputLimits";
 import { categoryMappings, wordLengthMappingsTargets } from "../Data/WordArrayMappings";
-import { getDeterministicArrayItems } from "../Helper Functions/DeterministicSeeding";
+import { getDeterministicArrayItems } from "../Helpers/DeterministicSeeding";
 import { LetterStatus } from "../Components/LetterTile";
-import { getAllWordsOfLength } from "../Helper Functions/getAllWordsOfLength";
-import { getGamemodeDefaultTimerValue } from "../Helper Functions/getGamemodeDefaultTimerValue";
-import { getGamemodeDefaultWordLength } from "../Helper Functions/getGamemodeDefaultWordLength";
-import { getConundrum } from "../Helper Functions/getConundrum";
-import { getRandomElementFrom } from "../Helper Functions/getRandomElementFrom";
+import { getAllWordsOfLength } from "../Helpers/getAllWordsOfLength";
+import { getGamemodeDefaultTimerValue } from "../Helpers/getGamemodeDefaultTimerValue";
+import { getGamemodeDefaultWordLength } from "../Helpers/getGamemodeDefaultWordLength";
+import { getConundrum } from "../Helpers/getConundrum";
+import { getRandomElementFrom } from "../Helpers/getRandomElementFrom";
 import { puzzles_ten } from "../Data/WordArrays/Puzzles/Puzzles10";
-import { getLetterStatus } from "../Helper Functions/getLetterStatus";
-import { getNumNewLimitlessLives } from "../Helper Functions/getNumNewLimitlessLives";
-import { getDailyWeeklyWingoModes } from "../Helper Functions/getDailyWeeklyWingoModes";
+import { getLetterStatus } from "../Helpers/getLetterStatus";
+import { getNumNewLimitlessLives } from "../Helpers/getNumNewLimitlessLives";
+import { getDailyWeeklyWingoModes } from "../Helpers/getDailyWeeklyWingoModes";
 import { useLocation } from "react-router-dom";
 import { PagePath } from "../Data/PageNames";
-import { isCampaignLevelPath } from "../Helper Functions/CampaignPathChecks";
+import { isCampaignLevelPath } from "../Helpers/CampaignPathChecks";
 
 export const wingoModes = [
   "daily",

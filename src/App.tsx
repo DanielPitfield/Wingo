@@ -32,13 +32,13 @@ import { pageDescriptions } from "./Data/PageDescriptions";
 import SequencePuzzle from "./Pages/SequencePuzzle";
 import { CustomGameshow } from "./Pages/CustomGameshow";
 import { PagePath } from "./Data/PageNames";
-import { getGamemodeDefaultNumGuesses } from "./Helper Functions/getGamemodeDefaultNumGuesses";
-import { getGamemodeDefaultWordLength } from "./Helper Functions/getGamemodeDefaultWordLength";
-import { getPageGamemodeSettings } from "./Helper Functions/getPageGamemodeSettings";
-import { getRandomElementFrom } from "./Helper Functions/getRandomElementFrom";
+import { getGamemodeDefaultNumGuesses } from "./Helpers/getGamemodeDefaultNumGuesses";
+import { getGamemodeDefaultWordLength } from "./Helpers/getGamemodeDefaultWordLength";
+import { getPageGamemodeSettings } from "./Helpers/getPageGamemodeSettings";
+import { getRandomElementFrom } from "./Helpers/getRandomElementFrom";
 import { Routes, Route, useNavigate, useLocation, Navigate } from "react-router-dom";
 import { PageWrapper } from "./Components/PageWrapper";
-import { isCampaignLevelPath } from "./Helper Functions/CampaignPathChecks";
+import { isCampaignLevelPath } from "./Helpers/CampaignPathChecks";
 
 // TODO: With React ROuter, the state Page shouldn't be needed anymore
 

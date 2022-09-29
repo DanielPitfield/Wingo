@@ -21,8 +21,8 @@ import { WingoGameshow, WingoGameshowProps } from "../Pages/WingoGameshow";
 import SequencePuzzle, { SequencePuzzleProps } from "../Pages/SequencePuzzle";
 import { useNavigate } from "react-router-dom";
 import { useParams } from "react-router";
-import { getAreaConfig } from "../Helper Functions/getAreaConfig";
-import { getLevelConfig } from "../Helper Functions/getLevelConfig";
+import { getAreaConfig } from "../Helpers/getAreaConfig";
+import { getLevelConfig } from "../Helpers/getLevelConfig";
 
 export type LevelConfig = {
   hint?: React.ReactNode;

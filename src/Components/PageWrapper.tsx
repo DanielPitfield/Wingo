@@ -10,8 +10,8 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { PagePath } from "../Data/PageNames";
 import GoldCoin from "../Data/Images/gold.png";
 import { useState } from "react";
-import { isCampaignAreaPath, isCampaignLevelPath } from "../Helper Functions/CampaignPathChecks";
-import { getAreaBacktrackPath } from "../Helper Functions/TrimCampaignPaths";
+import { isCampaignAreaPath, isCampaignLevelPath } from "../Helpers/CampaignPathChecks";
+import { getAreaBacktrackPath } from "../Helpers/TrimCampaignPaths";
 
 interface Props {
   settings: SettingsData;

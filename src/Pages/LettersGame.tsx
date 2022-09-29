@@ -10,12 +10,12 @@ import { WordRow } from "../Components/WordRow";
 import { PagePath } from "../Data/PageNames";
 import { SettingsData } from "../Data/SaveData";
 import { Theme } from "../Data/Themes";
-import { getAllWordsOfLength } from "../Helper Functions/getAllWordsOfLength";
-import { getGamemodeDefaultTimerValue } from "../Helper Functions/getGamemodeDefaultTimerValue";
-import { getNewGamemodeSettingValue } from "../Helper Functions/getGamemodeSettingsNewValue";
-import { getRandomElementFrom } from "../Helper Functions/getRandomElementFrom";
-import { isLettersGameGuessValid } from "../Helper Functions/isLettersGameGuessValid";
-import { shuffleArray } from "../Helper Functions/shuffleArray";
+import { getAllWordsOfLength } from "../Helpers/getAllWordsOfLength";
+import { getGamemodeDefaultTimerValue } from "../Helpers/getGamemodeDefaultTimerValue";
+import { getNewGamemodeSettingValue } from "../Helpers/getGamemodeSettingsNewValue";
+import { getRandomElementFrom } from "../Helpers/getRandomElementFrom";
+import { isLettersGameGuessValid } from "../Helpers/isLettersGameGuessValid";
+import { shuffleArray } from "../Helpers/shuffleArray";
 import { LettersGameConfigProps } from "./LettersGameConfig";
 import { useLocation } from "react-router-dom";
 
