@@ -10,7 +10,7 @@ import { CrosswordGenerationResult, crosswordGenerator as crossWordGenerator } f
 import ProgressBar, { GreenToRedColorTransition } from "../Components/ProgressBar";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
 import { categoryMappings, wordLengthMappingsTargets } from "../Data/WordArrayMappings";
-import { DEFAULT_FIT_RESTRICTION } from "../Data/DefaultGamemodeSettings1";
+import { DEFAULT_FIT_RESTRICTION } from "../Data/DefaultGamemodeSettings";
 import { getWordRowStatusSummary, WordRowStatusChecks } from "../Helpers/getWordRowStatusSummary";
 import { shuffleArray } from "../Helpers/shuffleArray";
 import { getGamemodeDefaultTimerValue } from "../Helpers/getGamemodeDefaultTimerValue";

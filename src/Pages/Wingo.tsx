@@ -12,7 +12,7 @@ import { useCorrectChime, useFailureChime, useLightPingChime } from "../Data/Sou
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
 import { categoryMappings } from "../Data/WordArrayMappings";
 import { getNewGamemodeSettingValue } from "../Helpers/getGamemodeSettingsNewValue";
-import { DEFAULT_WINGO_INCREASING_MAX_NUM_LIVES } from "../Data/DefaultGamemodeSettings1";
+import { DEFAULT_WINGO_INCREASING_MAX_NUM_LIVES } from "../Data/DefaultGamemodeSettings";
 import { LetterStatus } from "../Components/LetterTile";
 import { getGamemodeDefaultTimerValue } from "../Helpers/getGamemodeDefaultTimerValue";
 import { getNumNewLimitlessLives } from "../Helpers/getNumNewLimitlessLives";

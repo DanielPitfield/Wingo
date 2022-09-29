@@ -1,4 +1,4 @@
-import { difficultyOptions } from "../../Data/DefaultGamemodeSettings1";
+import { difficultyOptions } from "../../Data/DefaultGamemodeSettings";
 import { NumberSetsProps } from "../../Pages/NumberSets";
 import GamemodeSettingsMenu from "../GamemodeSettingsMenu";
 

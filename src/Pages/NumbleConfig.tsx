@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { SaveData, SettingsData } from "../Data/SaveData";
 import { Theme } from "../Data/Themes";
 import Numble from "./Numble";
-import { DEFAULT_NUMBLE_GUESS_TIMER_VALUE } from "../Data/DefaultGamemodeSettings1";
+import { DEFAULT_NUMBLE_GUESS_TIMER_VALUE } from "../Data/DefaultGamemodeSettings";
 import { getGamemodeDefaultTimerValue } from "../Helpers/getGamemodeDefaultTimerValue";
 import { getNextTeamNumberWithRemainingTime } from "../Helpers/getNextTeamWithRemainingTime";
 import { MAX_NUM_NUMBLE_TEAMS } from "../Components/GamemodeSettingsOptions/NumbleGamemodeSettings";

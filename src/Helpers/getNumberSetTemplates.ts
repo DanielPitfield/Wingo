@@ -1,4 +1,4 @@
-import { Difficulty } from "../Data/DefaultGamemodeSettings1";
+import { Difficulty } from "../Data/DefaultGamemodeSettings";
 import { NumberSetTemplate, NumberSetsTemplates } from "../Data/NumberSetsTemplates";
 import { shuffleArray } from "./shuffleArray";
 

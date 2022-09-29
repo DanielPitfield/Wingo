@@ -10,7 +10,7 @@ import { NumberSelectionRow } from "../Components/NumberSelectionRow";
 import { Theme } from "../Data/Themes";
 import { SettingsData } from "../Data/SaveData";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
-import { DEFAULT_NUMBERS_GAME_NUM_ROWS } from "../Data/DefaultGamemodeSettings1";
+import { DEFAULT_NUMBERS_GAME_NUM_ROWS } from "../Data/DefaultGamemodeSettings";
 import { getGamemodeDefaultTimerValue } from "../Helpers/getGamemodeDefaultTimerValue";
 import { getRandomElementFrom } from "../Helpers/getRandomElementFrom";
 import { hasNumberSelectionFinished } from "../Helpers/hasNumberSelectionFinished";
