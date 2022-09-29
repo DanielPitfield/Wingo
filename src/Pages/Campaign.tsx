@@ -30,7 +30,6 @@ export const Campaign = (props: CampaignProps) => {
 
     // Go straight to unlock level
     if (unlockLevelStatus === "unlockable") {
-      // TODO: Navigate to the unlock level
       navigate(`/campaign/areas/${area.name}/levels/0`);
     }
 
@@ -54,13 +53,19 @@ export const Campaign = (props: CampaignProps) => {
           ? undefined
           : campaignProgress.areas.find((x) => x.name === AllCampaignAreas[index - 1].name);
 
-        // Get the unlock status from the save data, or if not found, determine if all levels from the previous area are completed (unless this is the first area)
-        const unlockStatus =
-          areaInfo?.status ||
-          (isFirstArea ||
-          AllCampaignAreas[index - 1].levels.every((l) => previousAreaInfo?.completedLevelIds.includes(getId(l.level)))
-            ? "unlockable"
-            : "locked");
+        const isPreviousAreaCompleted = !previousAreaInfo
+          ? // If the information about the previous area couldn't be found
+            false
+          : // Have all the levels in the previous area been completed?
+            AllCampaignAreas[index - 1].levels.every((level) =>
+              previousAreaInfo?.completedLevelIds.includes(getId(level.level))
+            );
+
+        // If there is no save data for status, what will the unlock status be?
+        const fallbackUnlockStatus = isFirstArea || isPreviousAreaCompleted ? "unlockable" : "locked";
+
+        // Try and get the unlock status from the save data, or if not found, use above fallback
+        const unlockStatus = areaInfo?.status ?? fallbackUnlockStatus;
 
         const currentLevelCount = areaInfo?.completedLevelIds.filter((x) => x !== "unlock").length || 0;
         const isCompleted = area.levels.every((l) => areaInfo?.completedLevelIds.includes(getId(l.level)));
