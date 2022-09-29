@@ -11,11 +11,12 @@ export function getAreaBacktrackPath(path: PagePath) {
 
   // What are the sub-directories of the path?
   const directories = pathString.split("/");
+  
   // How many directories (how many / to go back and remove anything after)
   const numDirectoriesToTrim = 2;
   // Remove the last two sub-directories
-  const trimmedDirectories = directories.splice(directories.length - numDirectoriesToTrim, numDirectoriesToTrim);
+  directories.splice(directories.length - numDirectoriesToTrim, numDirectoriesToTrim);
 
   // Reconstruct the trimmed path
-  return trimmedDirectories.join("/") as PagePath;
+  return directories.join("/") as PagePath;
 }
