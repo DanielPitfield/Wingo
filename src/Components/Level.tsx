@@ -175,8 +175,6 @@ export function getId(level: LevelConfig["level"]): string {
 export const LEVEL_FINISHING_TEXT = "Back to area";
 
 interface LevelProps {
-  //areaConfig: AreaConfig;
-  //levelConfig: LevelConfig;
   theme: Theme;
   settings: SettingsData;
   setTheme: (theme: Theme) => void;
