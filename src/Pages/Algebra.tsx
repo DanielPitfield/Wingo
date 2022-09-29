@@ -12,7 +12,7 @@ import { AlgebraTemplate, answerType, AlgebraQuestion } from "../Data/AlgebraTem
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
 import { MAX_NUMPAD_GUESS_LENGTH } from "../Data/GamemodeSettingsInputLimits";
 import { DEFAULT_ALPHABET, DEFAULT_ALPHABET_STRING } from "./WingoConfig";
-import { Difficulty } from "../Data/DefaultGamemodeSettings";
+import { Difficulty } from "../Data/DefaultGamemodeSettings1";
 import { getAlgebraTemplates } from "../Helpers/getAlgebraTemplates";
 import { getGamemodeDefaultTimerValue } from "../Helpers/getGamemodeDefaultTimerValue";
 import { getQuestionSetOutcome } from "../Helpers/getQuestionSetOutcome";

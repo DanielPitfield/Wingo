@@ -9,7 +9,7 @@ import {
   defaultWingoCrosswordFitGamemodeSettings,
   defaultWingoCrosswordGamemodeSettings,
   defaultWingoInterlinkedGamemodeSettings,
-} from "../Data/DefaultGamemodeSettings";
+} from "../Data/DefaultGamemodeSettings1";
 import { MIN_TARGET_WORD_LENGTH } from "../Data/GamemodeSettingsInputLimits";
 import { categoryMappings, wordLengthMappingsTargets } from "../Data/WordArrayMappings";
 import { getDeterministicArrayItems } from "../Helpers/DeterministicSeeding";

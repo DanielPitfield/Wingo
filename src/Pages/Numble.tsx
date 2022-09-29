@@ -7,7 +7,7 @@ import { Theme } from "../Data/Themes";
 import DiceGrid from "../Components/DiceGrid";
 import { NumbleConfigProps, numbleGridShape, numbleGridSize, NumbleStatus } from "./NumbleConfig";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
-import { DEFAULT_NUMBLE_GUESS_TIMER_VALUE } from "../Data/DefaultGamemodeSettings";
+import { DEFAULT_NUMBLE_GUESS_TIMER_VALUE } from "../Data/DefaultGamemodeSettings1";
 import { getGamemodeDefaultTimerValue } from "../Helpers/getGamemodeDefaultTimerValue";
 import { getHexagonAdjacentPins } from "../Helpers/getHexagonAdjacentPins";
 import {

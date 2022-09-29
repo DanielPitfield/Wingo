@@ -27,7 +27,7 @@ import WordCodes, { WordCodesProps } from "./Pages/WordCodes";
 import { LettersNumbersGameshow } from "./Pages/LettersNumbersGameshow";
 import { WingoGameshow } from "./Pages/WingoGameshow";
 import { TitlePage } from "./Pages/TitlePage";
-import { defaultWingoGameshowRoundOrder } from "./Data/DefaultGamemodeSettings";
+import { defaultWingoGameshowRoundOrder } from "./Data/DefaultGamemodeSettings1";
 import { pageDescriptions } from "./Data/PageDescriptions";
 import SequencePuzzle from "./Pages/SequencePuzzle";
 import { CustomGameshow } from "./Pages/CustomGameshow";

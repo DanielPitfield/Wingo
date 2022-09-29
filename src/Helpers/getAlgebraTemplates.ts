@@ -1,5 +1,5 @@
 import { AlgebraTemplate, AlgebraTemplates } from "../Data/AlgebraTemplates";
-import { Difficulty } from "../Data/DefaultGamemodeSettings";
+import { Difficulty } from "../Data/DefaultGamemodeSettings1";
 import { shuffleArray } from "./shuffleArray";
 
 export function getAlgebraTemplates(numTemplates: number, difficulty: Difficulty): AlgebraTemplate[] {

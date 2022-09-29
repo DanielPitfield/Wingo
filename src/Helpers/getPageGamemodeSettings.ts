@@ -14,7 +14,7 @@ import {
   defaultAlgebraGamemodeSettings,
   defaultWordCodesQuestionGamemodeSettings,
   defaultWordCodesMatchGamemodeSettings,
-} from "../Data/DefaultGamemodeSettings";
+} from "../Data/DefaultGamemodeSettings1";
 import { PagePath } from "../Data/PageNames";
 import { SaveData } from "../Data/SaveData";
 import { AlgebraProps } from "../Pages/Algebra";

@@ -6,14 +6,11 @@ import { Keyboard } from "../Components/Keyboard";
 import { Button } from "../Components/Button";
 import React from "react";
 import { MessageNotification } from "../Components/MessageNotification";
-import {
-  CrosswordGenerationResult,
-  crosswordGenerator as crossWordGenerator,
-} from "../Helpers/CrossWordGenerator";
+import { CrosswordGenerationResult, crosswordGenerator as crossWordGenerator } from "../Helpers/CrossWordGenerator";
 import ProgressBar, { GreenToRedColorTransition } from "../Components/ProgressBar";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
 import { categoryMappings, wordLengthMappingsTargets } from "../Data/WordArrayMappings";
-import { DEFAULT_FIT_RESTRICTION } from "../Data/DefaultGamemodeSettings";
+import { DEFAULT_FIT_RESTRICTION } from "../Data/DefaultGamemodeSettings1";
 import { getWordRowStatusSummary, WordRowStatusChecks } from "../Helpers/getWordRowStatusSummary";
 import { shuffleArray } from "../Helpers/shuffleArray";
 import { getGamemodeDefaultTimerValue } from "../Helpers/getGamemodeDefaultTimerValue";

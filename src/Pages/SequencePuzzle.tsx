@@ -6,7 +6,7 @@ import { Theme, ThemeIcons } from "../Data/Themes";
 import { SettingsData } from "../Data/SaveData";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
 import { PagePath } from "../Data/PageNames";
-import { Difficulty } from "../Data/DefaultGamemodeSettings";
+import { Difficulty } from "../Data/DefaultGamemodeSettings1";
 
 /** Config for a specific puzzle (exported for config from campaign) */
 export type PuzzleConfigProps = {

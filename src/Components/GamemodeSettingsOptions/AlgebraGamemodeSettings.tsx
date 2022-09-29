@@ -1,4 +1,4 @@
-import { difficultyOptions } from "../../Data/DefaultGamemodeSettings";
+import { difficultyOptions } from "../../Data/DefaultGamemodeSettings1";
 import { AlgebraProps } from "../../Pages/Algebra";
 import GamemodeSettingsMenu from "../GamemodeSettingsMenu";
 
@@ -42,7 +42,7 @@ const AlgebraGamemodeSettings = (props: Props) => {
           ></input>
           Timer
         </label>
-        
+
         {props.gamemodeSettings.timerConfig.isTimed && (
           <label>
             <input
