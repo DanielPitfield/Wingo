@@ -1,45 +1,41 @@
-import { PageName } from "../Data/PageNames";
 import { AreaConfig } from "./Area";
 import { Button } from "../Components/Button";
-import { getId, LevelConfig } from "../Components/Level";
+import { getId } from "../Components/Level";
 import { CampaignSaveData, SaveData, SettingsData } from "../Data/SaveData";
 import { Theme } from "../Data/Themes";
 import { AllCampaignAreas } from "../Data/CampaignAreas/AllCampaignAreas";
 import BackgroundImageSrc from "../Data/Images/background.png";
 import { FiCheck, FiLock, FiPlay } from "react-icons/fi";
+import { useNavigate } from "react-router-dom";
 
 interface CampaignProps {
   theme: Theme;
   settings: SettingsData;
   onlyShowCurrentArea?: boolean;
   setTheme: (theme: Theme) => void;
-  setSelectedArea: (areaConfig: AreaConfig) => void;
-  setSelectedCampaignLevel: (level: LevelConfig) => void;
-  setPage: (page: PageName) => void;
 }
 
 /** The entire campaign, showing the list of areas */
 export const Campaign = (props: CampaignProps) => {
+  const navigate = useNavigate();
+
   /** */
-  function onAreaClick(area: AreaConfig, unlockStatus: CampaignSaveData["areas"][0]["status"]) {
-    // Button should be disabled, but just in case
-    if (unlockStatus === "locked") {
+  function onAreaClick(area: AreaConfig, unlockLevelStatus: CampaignSaveData["areas"][0]["status"]) {
+    // The button to start the level should be disabled, but just in case
+    if (unlockLevelStatus === "locked") {
       return;
     }
 
     props.setTheme(area.theme);
 
-    // Go straight to level to unlock/discover the theme
-    if (unlockStatus === "unlockable") {
-      props.setSelectedArea(area);
-      props.setSelectedCampaignLevel(area.unlock_level);
-      props.setPage("campaign/area/level");
+    // Go straight to unlock level
+    if (unlockLevelStatus === "unlockable") {
+      navigate(`/Campaign/Areas/${area.name}/Levels/0`);
+      return;
     }
-    // Already unlocked, go to level selection screen
-    else {
-      props.setSelectedArea(area);
-      props.setPage("campaign/area");
-    }
+
+    // Already completed unlock level, go to level selection screen
+    navigate(`/Campaign/Areas/${area.name}`);
   }
 
   return (
@@ -58,13 +54,19 @@ export const Campaign = (props: CampaignProps) => {
           ? undefined
           : campaignProgress.areas.find((x) => x.name === AllCampaignAreas[index - 1].name);
 
-        // Get the unlock status from the save data, or if not found, determine if all levels from the previous area are completed (unless this is the first area)
-        const unlockStatus =
-          areaInfo?.status ||
-          (isFirstArea ||
-          AllCampaignAreas[index - 1].levels.every((l) => previousAreaInfo?.completedLevelIds.includes(getId(l.level)))
-            ? "unlockable"
-            : "locked");
+        const isPreviousAreaCompleted = !previousAreaInfo
+          ? // If the information about the previous area couldn't be found
+            false
+          : // Have all the levels in the previous area been completed?
+            AllCampaignAreas[index - 1].levels.every((level) =>
+              previousAreaInfo?.completedLevelIds.includes(getId(level.level))
+            );
+
+        // If there is no save data for status, what will the unlock status be?
+        const fallbackUnlockStatus = isFirstArea || isPreviousAreaCompleted ? "unlockable" : "locked";
+
+        // Try and get the unlock status from the save data, or if not found, use above fallback
+        const unlockStatus = areaInfo?.status ?? fallbackUnlockStatus;
 
         const currentLevelCount = areaInfo?.completedLevelIds.filter((x) => x !== "unlock").length || 0;
         const isCompleted = area.levels.every((l) => areaInfo?.completedLevelIds.includes(getId(l.level)));

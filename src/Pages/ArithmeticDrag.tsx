@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { arrayMove, OrderGroup } from "react-draggable-order";
-import { PageName } from "../Data/PageNames";
+import { PagePath } from "../Data/PageNames";
 import { Button } from "../Components/Button";
 import LetterTile from "../Components/LetterTile";
 import { MessageNotification } from "../Components/MessageNotification";
@@ -9,13 +9,14 @@ import { SaveData, SettingsData } from "../Data/SaveData";
 import { Theme } from "../Data/Themes";
 import { DraggableItem } from "../Components/DraggableItem";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
-import { shuffleArray } from "../Helper Functions/shuffleArray";
+import { shuffleArray } from "../Helpers/shuffleArray";
 import { operatorSymbols, operators } from "../Data/Operators";
-import { getGamemodeDefaultTimerValue } from "../Helper Functions/getGamemodeDefaultTimerValue";
-import { getRandomElementFrom } from "../Helper Functions/getRandomElementFrom";
-import { getRandomIntFromRange } from "../Helper Functions/getRandomIntFromRange";
-import { getNewGamemodeSettingValue } from "../Helper Functions/getGamemodeSettingsNewValue";
+import { getGamemodeDefaultTimerValue } from "../Helpers/getGamemodeDefaultTimerValue";
+import { getRandomElementFrom } from "../Helpers/getRandomElementFrom";
+import { getRandomIntFromRange } from "../Helpers/getRandomIntFromRange";
+import { getNewGamemodeSettingValue } from "../Helpers/getGamemodeSettingsNewValue";
 import ArithmeticDragGamemodeSettings from "../Components/GamemodeSettingsOptions/ArithmeticDragGamemodeSettings";
+import { useLocation } from "react-router-dom";
 
 // Const Contexts: https://stackoverflow.com/questions/44497388/typescript-array-to-string-literal-type
 export const arithmeticNumberSizes = ["small", "medium", "large"] as const;
@@ -59,10 +60,8 @@ export interface ArithmeticDragProps {
 }
 
 interface Props extends ArithmeticDragProps {
-  page: PageName;
   theme: Theme;
   settings: SettingsData;
-  setPage: (page: PageName) => void;
   setTheme: (theme: Theme) => void;
   addGold: (gold: number) => void;
   onComplete: (wasCorrect: boolean) => void;
@@ -70,6 +69,8 @@ interface Props extends ArithmeticDragProps {
 
 /** */
 const ArithmeticDrag = (props: Props) => {
+  const location = useLocation().pathname as PagePath;
+
   const [inProgress, setInProgress] = useState(true);
   const [expressionTiles, setExpressionTiles] = useState<
     { expression: string; total: number; status: "incorrect" | "correct" | "not set" }[]
@@ -85,14 +86,14 @@ const ArithmeticDrag = (props: Props) => {
 
   const [remainingSeconds, setRemainingSeconds] = useState(
     props.gamemodeSettings?.timerConfig?.isTimed === true
-      ? props.gamemodeSettings?.timerConfig.seconds
-      : getGamemodeDefaultTimerValue(props.page)
+      ? props.gamemodeSettings?.timerConfig?.seconds
+      : getGamemodeDefaultTimerValue(location)
   );
 
   const [mostRecentTotalSeconds, setMostRecentTotalSeconds] = useState(
     props.gamemodeSettings?.timerConfig?.isTimed === true
-      ? props.gamemodeSettings?.timerConfig.seconds
-      : getGamemodeDefaultTimerValue(props.page)
+      ? props.gamemodeSettings?.timerConfig?.seconds
+      : getGamemodeDefaultTimerValue(location)
   );
 
   // What is the maximum starting number which should be used (based on difficulty)?
@@ -285,7 +286,7 @@ const ArithmeticDrag = (props: Props) => {
     ResetGame();
 
     // Save the latest gamemode settings for this mode
-    SaveData.setArithmeticDragGamemodeSettings(props.page, gamemodeSettings);
+    SaveData.setArithmeticDragGamemodeSettings(location, gamemodeSettings);
   }, [gamemodeSettings]);
 
   // Create the tiles to be revealed (only once on start)

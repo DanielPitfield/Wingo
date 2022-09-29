@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { SettingsData } from "../Data/SaveData";
-import { PageName } from "../Data/PageNames";
 import { Theme } from "../Data/Themes";
 import { gamemodeCategories, gamemodeCategory, pageDescription, pageDescriptions } from "../Data/PageDescriptions";
 import { OrderGroup } from "react-draggable-order";
@@ -19,10 +18,8 @@ export interface CustomGameshowProps {
 }
 
 interface Props extends CustomGameshowProps {
-  page: PageName;
   theme: Theme;
   settings: SettingsData;
-  setPage: (page: PageName) => void;
   setTheme: (theme: Theme) => void;
   addGold: (gold: number) => void;
   onComplete: (wasCorrect: boolean) => void;
@@ -67,7 +64,7 @@ export const CustomGameshow = (props: Props) => {
 
   const clearQueue = () => {
     setQueuedModes([]);
-  }
+  };
 
   // List of buttons (which add to the queue when clicked)
   function displayFilteredModes(): React.ReactNode {

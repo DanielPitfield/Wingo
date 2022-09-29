@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { PageName } from "../Data/PageNames";
 import { Button } from "../Components/Button";
 import { MessageNotification } from "../Components/MessageNotification";
 import ProgressBar, { GreenToRedColorTransition } from "../Components/ProgressBar";
@@ -8,11 +7,13 @@ import { useClickChime, useCorrectChime, useFailureChime, useLightPingChime } fr
 import { Theme } from "../Data/Themes";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
 import { categoryMappings } from "../Data/WordArrayMappings";
-import { shuffleArray } from "../Helper Functions/shuffleArray";
-import { getPrettyText } from "../Helper Functions/getPrettyText";
-import { getGamemodeDefaultTimerValue } from "../Helper Functions/getGamemodeDefaultTimerValue";
-import { getNewGamemodeSettingValue } from "../Helper Functions/getGamemodeSettingsNewValue";
+import { shuffleArray } from "../Helpers/shuffleArray";
+import { getPrettyText } from "../Helpers/getPrettyText";
+import { getGamemodeDefaultTimerValue } from "../Helpers/getGamemodeDefaultTimerValue";
+import { getNewGamemodeSettingValue } from "../Helpers/getGamemodeSettingsNewValue";
 import OnlyConnectGamemodeSettings from "../Components/GamemodeSettingsOptions/OnlyConnectGamemodeSettings";
+import { useLocation } from "react-router-dom";
+import { PagePath } from "../Data/PageNames";
 
 export interface OnlyConnectProps {
   gamemodeSettings: {
@@ -33,16 +34,16 @@ type GridWord = {
 
 interface Props extends OnlyConnectProps {
   isCampaignLevel: boolean;
-  page: PageName;
   theme: Theme;
   settings: SettingsData;
-  setPage: (page: PageName) => void;
   setTheme: (theme: Theme) => void;
   addGold: (gold: number) => void;
   onComplete: (wasCorrect: boolean) => void;
 }
 
 const OnlyConnect = (props: Props) => {
+  const location = useLocation().pathname as PagePath;
+
   const [inProgress, setInProgress] = useState(true);
   const [gridWords, setGridWords] = useState<GridWord[]>([]);
   const [selectedWords, setSelectedWords] = useState<{ word: string; categoryName: string }[]>([]);
@@ -56,14 +57,14 @@ const OnlyConnect = (props: Props) => {
 
   const [remainingSeconds, setRemainingSeconds] = useState(
     props.gamemodeSettings?.timerConfig?.isTimed === true
-      ? props.gamemodeSettings?.timerConfig.seconds
-      : getGamemodeDefaultTimerValue(props.page)
+      ? props.gamemodeSettings?.timerConfig?.seconds
+      : getGamemodeDefaultTimerValue(location)
   );
 
   const [mostRecentTotalSeconds, setMostRecentTotalSeconds] = useState(
     props.gamemodeSettings?.timerConfig?.isTimed === true
-      ? props.gamemodeSettings?.timerConfig.seconds
-      : getGamemodeDefaultTimerValue(props.page)
+      ? props.gamemodeSettings?.timerConfig?.seconds
+      : getGamemodeDefaultTimerValue(location)
   );
 
   // Sounds

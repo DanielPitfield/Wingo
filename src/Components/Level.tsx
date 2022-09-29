@@ -1,5 +1,5 @@
 import React from "react";
-import { PageName } from "../Data/PageNames";
+import { PagePath } from "../Data/PageNames";
 import LettersGameConfig, { LettersGameConfigProps } from "../Pages/LettersGameConfig";
 import NumbersGameConfig, { NumbersGameConfigProps } from "../Pages/NumbersGameConfig";
 import LetterCategoriesConfig, { LetterCategoriesConfigProps } from "../Pages/LetterCategoriesConfig";
@@ -19,83 +19,87 @@ import { AreaConfig } from "../Pages/Area";
 import { LettersNumbersGameshow, LettersNumbersGameshowProps } from "../Pages/LettersNumbersGameshow";
 import { WingoGameshow, WingoGameshowProps } from "../Pages/WingoGameshow";
 import SequencePuzzle, { SequencePuzzleProps } from "../Pages/SequencePuzzle";
+import { useNavigate } from "react-router-dom";
+import { useParams } from "react-router";
+import { getAreaConfig } from "../Helpers/getAreaConfig";
+import { getLevelConfig } from "../Helpers/getLevelConfig";
 
 export type LevelConfig = {
   hint?: React.ReactNode;
   level:
     | {
         gameCategory: "Wingo";
-        page: PageName;
+        page: PagePath;
         levelProps: WingoConfigProps;
       }
     | {
         gameCategory: "LetterCategories";
-        page: PageName;
+        page: PagePath;
         levelProps: LetterCategoriesConfigProps;
       }
     | {
         gameCategory: "LettersGame";
-        page: PageName;
+        page: PagePath;
         levelProps: LettersGameConfigProps;
       }
     | {
         gameCategory: "NumbersGame";
-        page: PageName;
+        page: PagePath;
         levelProps: NumbersGameConfigProps;
       }
     | {
         gameCategory: "ArithmeticReveal";
-        page: PageName;
+        page: PagePath;
         levelProps: ArithmeticRevealProps;
       }
     | {
         gameCategory: "ArithmeticDrag/Match";
-        page: PageName;
+        page: PagePath;
         levelProps: ArithmeticDragProps;
       }
     | {
         gameCategory: "GroupWall";
-        page: PageName;
+        page: PagePath;
         levelProps: OnlyConnectProps;
       }
     | {
         gameCategory: "SameLetterWords";
-        page: PageName;
+        page: PagePath;
         levelProps: SameLetterWordsProps;
       }
     | {
         gameCategory: "NumberSets";
-        page: PageName;
+        page: PagePath;
         levelProps: NumberSetsProps;
       }
     | {
         gameCategory: "Algebra";
-        page: PageName;
+        page: PagePath;
         levelProps: AlgebraProps;
       }
     | {
         gameCategory: "WordCodes";
-        page: PageName;
+        page: PagePath;
         levelProps: WordCodesProps;
       }
     | {
         gameCategory: "Numble";
-        page: PageName;
+        page: PagePath;
         levelProps: NumbleConfigProps;
       }
     | {
         gameCategory: "LettersNumbersGameshow";
-        page: PageName;
+        page: PagePath;
         levelProps: LettersNumbersGameshowProps;
       }
     | {
         gameCategory: "WingoGameshow";
-        page: PageName;
+        page: PagePath;
         levelProps: WingoGameshowProps;
       }
     | {
         gameCategory: "SequencePuzzle";
-        page: PageName;
+        page: PagePath;
         levelProps: SequencePuzzleProps;
       };
 } & (
@@ -171,89 +175,100 @@ export function getId(level: LevelConfig["level"]): string {
 export const LEVEL_FINISHING_TEXT = "Back to area";
 
 interface LevelProps {
-  area: AreaConfig;
-  level: LevelConfig;
-  page: PageName;
   theme: Theme;
   settings: SettingsData;
   setTheme: (theme: Theme) => void;
-  setPage: (page: PageName) => void;
   addGold: (gold: number) => void;
-  onCompleteCampaignLevel: (isUnlockLevel: boolean, level: LevelConfig) => void;
+  onCompleteCampaignLevel: (areaConfig: AreaConfig, levelConfig: LevelConfig, isUnlockLevel: boolean) => void;
 }
 
 /** A level within an area (e.g. one game) */
 export const Level = (props: LevelProps) => {
+  const navigate = useNavigate();
+  const params = useParams();
+
+  // Find the selected area using the areaName paramater (the dynamic segment of the URL)
+  const selectedArea: AreaConfig | null = getAreaConfig(params.areaName);
+
+  // Find the selected area using the areaName paramater (the dynamic segment of the URL)
+  const selectedLevel: LevelConfig | null = getLevelConfig(params.areaName, params.levelNumber);
+
+  // Either, the area or level couldn't be found
+  if (selectedArea! === null || selectedLevel! === null) {
+    // Go back to area (if that can be found), otherwise go back to campaign
+    navigate(selectedArea ? `/Campaign/Areas/:${selectedArea.name}` : "/Campaign");
+    // TODO: Gone back to a previous page, but must render something here?
+    return <></>;
+  }
+
   function renderGame() {
     const commonProps = {
       isCampaignLevel: true,
-      page: props.page,
       theme: props.theme,
       settings: props.settings,
-      setPage: props.setPage,
       setTheme: props.setTheme,
       addGold: props.addGold,
       onComplete: (wasCorrect: boolean) => {
         // Update progress to next level (if correct answer)
         if (wasCorrect) {
-          props.onCompleteCampaignLevel(props.level.type === "unlock-level", props.level);
+          props.onCompleteCampaignLevel(selectedArea!, selectedLevel!, selectedLevel!.type === "unlock-level");
         }
         // Then, go to level selection (to rety level or to choose next level)
-        props.setPage("campaign/area");
+        navigate(`/Campaign/Areas/${selectedArea?.name}`);
       },
     };
 
-    switch (props.level.level.gameCategory) {
+    switch (selectedLevel!.level.gameCategory) {
       case "Wingo":
-        return <WingoConfig {...props.level.level.levelProps} {...commonProps} />;
+        return <WingoConfig {...selectedLevel!.level.levelProps} {...commonProps} />;
 
       case "LetterCategories":
-        return <LetterCategoriesConfig {...props.level.level.levelProps} {...commonProps} />;
+        return <LetterCategoriesConfig {...selectedLevel!.level.levelProps} {...commonProps} />;
 
       case "LettersGame":
-        return <LettersGameConfig {...props.level.level.levelProps} {...commonProps} />;
+        return <LettersGameConfig {...selectedLevel!.level.levelProps} {...commonProps} />;
 
       case "NumbersGame":
-        return <NumbersGameConfig {...props.level.level.levelProps} {...commonProps} />;
+        return <NumbersGameConfig {...selectedLevel!.level.levelProps} {...commonProps} />;
 
       case "ArithmeticReveal":
-        return <ArithmeticReveal {...props.level.level.levelProps} {...commonProps} />;
+        return <ArithmeticReveal {...selectedLevel!.level.levelProps} {...commonProps} />;
 
       case "ArithmeticDrag/Match":
-        return <ArithmeticDrag {...props.level.level.levelProps} {...commonProps} />;
+        return <ArithmeticDrag {...selectedLevel!.level.levelProps} {...commonProps} />;
 
       case "GroupWall":
-        return <OnlyConnect {...props.level.level.levelProps} {...commonProps} />;
+        return <OnlyConnect {...selectedLevel!.level.levelProps} {...commonProps} />;
 
       case "SameLetterWords":
-        return <SameLetterWords {...props.level.level.levelProps} {...commonProps} />;
+        return <SameLetterWords {...selectedLevel!.level.levelProps} {...commonProps} />;
 
       case "NumberSets":
-        return <NumberSets {...props.level.level.levelProps} {...commonProps} />;
+        return <NumberSets {...selectedLevel!.level.levelProps} {...commonProps} />;
 
       case "Algebra":
-        return <Algebra {...props.level.level.levelProps} {...commonProps} />;
+        return <Algebra {...selectedLevel!.level.levelProps} {...commonProps} />;
 
       case "WordCodes":
-        return <WordCodes {...props.level.level.levelProps} {...commonProps} />;
+        return <WordCodes {...selectedLevel!.level.levelProps} {...commonProps} />;
 
       case "Numble":
-        return <NumbleConfig {...props.level.level.levelProps} {...commonProps} />;
+        return <NumbleConfig {...selectedLevel!.level.levelProps} {...commonProps} />;
 
       case "LettersNumbersGameshow":
         return (
           <LettersNumbersGameshow
             themes={[Themes.GenericLettersGame, Themes.GenericNumbersGame]}
-            {...props.level.level.levelProps}
+            {...selectedLevel!.level.levelProps}
             {...commonProps}
           />
         );
 
       case "WingoGameshow":
-        return <WingoGameshow {...props.level.level.levelProps} {...commonProps} />;
+        return <WingoGameshow {...selectedLevel!.level.levelProps} {...commonProps} />;
 
       case "SequencePuzzle":
-        return <SequencePuzzle {...props.level.level.levelProps} {...commonProps} />;
+        return <SequencePuzzle {...selectedLevel!.level.levelProps} {...commonProps} />;
     }
   }
   return (
@@ -262,9 +277,9 @@ export const Level = (props: LevelProps) => {
       style={{ backgroundImage: `url(${props.theme.backgroundImageSrc})`, backgroundSize: "100% 100%" }}
     >
       <section className="area-header">
-        <h2 className="area-header-title">{props.area.name}</h2>
+        <h2 className="area-header-title">{selectedArea!.name}</h2>
       </section>
-      {props.level.hint && <MessageNotification type="default">{props.level.hint}</MessageNotification>}
+      {selectedLevel!.hint && <MessageNotification type="default">{selectedLevel!.hint}</MessageNotification>}
       {renderGame()}
     </div>
   );

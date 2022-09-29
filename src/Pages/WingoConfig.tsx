@@ -3,7 +3,6 @@ import Wingo from "./Wingo";
 import { SaveData, SettingsData } from "../Data/SaveData";
 import { Theme } from "../Data/Themes";
 import { WingoInterlinked } from "./WingoInterlinked";
-import { PageName } from "../Data/PageNames";
 import {
   defaultDailyCrosswordGamemodeSettings,
   defaultWeeklyCrosswordGamemodeSettings,
@@ -13,17 +12,20 @@ import {
 } from "../Data/DefaultGamemodeSettings";
 import { MIN_TARGET_WORD_LENGTH } from "../Data/GamemodeSettingsInputLimits";
 import { categoryMappings, wordLengthMappingsTargets } from "../Data/WordArrayMappings";
-import { getDeterministicArrayItems } from "../Helper Functions/DeterministicSeeding";
+import { getDeterministicArrayItems } from "../Helpers/DeterministicSeeding";
 import { LetterStatus } from "../Components/LetterTile";
-import { getAllWordsOfLength } from "../Helper Functions/getAllWordsOfLength";
-import { getGamemodeDefaultTimerValue } from "../Helper Functions/getGamemodeDefaultTimerValue";
-import { getGamemodeDefaultWordLength } from "../Helper Functions/getGamemodeDefaultWordLength";
-import { getConundrum } from "../Helper Functions/getConundrum";
-import { getRandomElementFrom } from "../Helper Functions/getRandomElementFrom";
+import { getAllWordsOfLength } from "../Helpers/getAllWordsOfLength";
+import { getGamemodeDefaultTimerValue } from "../Helpers/getGamemodeDefaultTimerValue";
+import { getGamemodeDefaultWordLength } from "../Helpers/getGamemodeDefaultWordLength";
+import { getConundrum } from "../Helpers/getConundrum";
+import { getRandomElementFrom } from "../Helpers/getRandomElementFrom";
 import { puzzles_ten } from "../Data/WordArrays/Puzzles/Puzzles10";
-import { getLetterStatus } from "../Helper Functions/getLetterStatus";
-import { getNumNewLimitlessLives } from "../Helper Functions/getNumNewLimitlessLives";
-import { getDailyWeeklyWingoModes } from "../Helper Functions/getDailyWeeklyWingoModes";
+import { getLetterStatus } from "../Helpers/getLetterStatus";
+import { getNumNewLimitlessLives } from "../Helpers/getNumNewLimitlessLives";
+import { getDailyWeeklyWingoModes } from "../Helpers/getDailyWeeklyWingoModes";
+import { useLocation } from "react-router-dom";
+import { PagePath } from "../Data/PageNames";
+import { isCampaignLevelPath } from "../Helpers/CampaignPathChecks";
 
 export const wingoModes = [
   "daily",
@@ -84,10 +86,8 @@ export interface WingoConfigProps {
 
 interface Props extends WingoConfigProps {
   isCampaignLevel: boolean;
-  page: PageName;
   theme?: Theme;
   settings: SettingsData;
-  setPage: (page: PageName) => void;
   setTheme: (theme: Theme) => void;
   addGold: (gold: number) => void;
   onComplete: (wasCorrect: boolean) => void;
@@ -98,6 +98,8 @@ export const DEFAULT_ALPHABET_STRING = "abcdefghijklmnopqrstuvwxyz";
 export const DEFAULT_ALPHABET = DEFAULT_ALPHABET_STRING.split("");
 
 const WingoConfig = (props: Props) => {
+  const location = useLocation().pathname as PagePath;
+
   const [guesses, setGuesses] = useState<string[]>(props.guesses ?? []);
   const [numGuesses, setNumGuesses] = useState(props.defaultNumGuesses);
   const [gameId, setGameId] = useState<string | null>(null);
@@ -108,8 +110,8 @@ const WingoConfig = (props: Props) => {
 
   const [remainingSeconds, setRemainingSeconds] = useState(
     props.gamemodeSettings?.timerConfig?.isTimed === true
-      ? props.gamemodeSettings?.timerConfig.seconds
-      : getGamemodeDefaultTimerValue(props.page)
+      ? props.gamemodeSettings?.timerConfig?.seconds
+      : getGamemodeDefaultTimerValue(location)
   );
 
   /*
@@ -119,8 +121,8 @@ const WingoConfig = (props: Props) => {
   */
   const [mostRecentTotalSeconds, setMostRecentTotalSeconds] = useState(
     props.gamemodeSettings?.timerConfig?.isTimed === true
-      ? props.gamemodeSettings?.timerConfig.seconds
-      : getGamemodeDefaultTimerValue(props.page)
+      ? props.gamemodeSettings?.timerConfig?.seconds
+      : getGamemodeDefaultTimerValue(location)
   );
 
   const [currentWord, setCurrentWord] = useState("");
@@ -221,12 +223,12 @@ const WingoConfig = (props: Props) => {
           // Don't reset otherwise the number of lives would be lost, just go back to starting wordLength
           const newGamemodeSettings = {
             ...gamemodeSettings,
-            wordLength: getGamemodeDefaultWordLength("wingo/limitless"),
+            wordLength: getGamemodeDefaultWordLength("/Wingo/Limitless"),
           };
           setGamemodeSettings(newGamemodeSettings);
 
           targetLengthWordArray = wordLengthMappingsTargets
-            .find((x) => x.value === getGamemodeDefaultWordLength("wingo/limitless"))
+            .find((x) => x.value === getGamemodeDefaultWordLength("/Wingo/Limitless"))
             ?.array.map((x) => ({ word: x, hint: "" }))!;
         }
 
@@ -356,14 +358,14 @@ const WingoConfig = (props: Props) => {
 
   // Reset game after change of settings (stops cheating by changing settings partway through a game)
   React.useEffect(() => {
-    if (props.page === "campaign/area/level") {
+    if (isCampaignLevelPath(location)) {
       return;
     }
 
     ResetGame();
 
     // Save the latest gamemode settings for this mode
-    SaveData.setWingoConfigGamemodeSettings(props.page, gamemodeSettings);
+    SaveData.setWingoConfigGamemodeSettings(location, gamemodeSettings);
   }, [gamemodeSettings]);
 
   // Update targetWord every time the targetCategory changes
@@ -501,10 +503,10 @@ const WingoConfig = (props: Props) => {
     }
 
     // TODO: Page is its own parameter but is also in the levelProps
-    const gameId = SaveData.addGameToHistory(props.page, {
+    const gameId = SaveData.addGameToHistory(location, {
       timestamp: new Date().toISOString(),
       gameCategory: "Wingo",
-      page: props.page,
+      page: location,
       levelProps: {
         mode: props.mode,
         gamemodeSettings: {
@@ -529,7 +531,7 @@ const WingoConfig = (props: Props) => {
     });
 
     setGameId(gameId);
-  }, [props.page, targetWord]);
+  }, [location, targetWord]);
 
   function determineScore(): number | null {
     // Correct conundrum
@@ -799,7 +801,7 @@ const WingoConfig = (props: Props) => {
       SaveData.addCompletedRoundToGameHistory(gameId, {
         timestamp: new Date().toISOString(),
         gameCategory: "Wingo",
-        page: props.page,
+        page: location,
         outcome,
         levelProps: {
           mode: props.mode,
@@ -851,9 +853,7 @@ const WingoConfig = (props: Props) => {
 
   const commonWingoInterlinkedProps = {
     isCampaignLevel: props.isCampaignLevel,
-    page: props.page,
     theme: props.theme,
-    setPage: props.setPage,
     setTheme: props.setTheme,
     addGold: props.addGold,
     settings: props.settings,
@@ -867,7 +867,7 @@ const WingoConfig = (props: Props) => {
         wordArrayConfig={{ type: "length" }}
         provideWords={false}
         gamemodeSettings={
-          SaveData.getWingoInterlinkedGamemodeSettings("wingo/interlinked") ?? defaultWingoInterlinkedGamemodeSettings
+          SaveData.getWingoInterlinkedGamemodeSettings("/Wingo/Interlinked") ?? defaultWingoInterlinkedGamemodeSettings
         }
       />
     );
@@ -880,7 +880,7 @@ const WingoConfig = (props: Props) => {
         wordArrayConfig={{ type: "category" }}
         provideWords={false}
         gamemodeSettings={
-          SaveData.getWingoInterlinkedGamemodeSettings("wingo/crossword") ?? defaultWingoCrosswordGamemodeSettings
+          SaveData.getWingoInterlinkedGamemodeSettings("/Wingo/Crossword") ?? defaultWingoCrosswordGamemodeSettings
         }
       />
     );
@@ -937,7 +937,7 @@ const WingoConfig = (props: Props) => {
         wordArrayConfig={{ type: "length" }}
         provideWords={true}
         gamemodeSettings={
-          SaveData.getWingoInterlinkedGamemodeSettings("wingo/crossword/fit") ??
+          SaveData.getWingoInterlinkedGamemodeSettings("/Wingo/Crossword/Fit") ??
           defaultWingoCrosswordFitGamemodeSettings
         }
       />
@@ -964,7 +964,6 @@ const WingoConfig = (props: Props) => {
       targetCategory={targetCategory || ""}
       revealedLetterIndexes={revealedLetterIndexes}
       letterStatuses={letterStatuses}
-      page={props.page}
       theme={props.theme}
       settings={props.settings}
       onEnter={onEnter}
@@ -974,7 +973,6 @@ const WingoConfig = (props: Props) => {
       updateGamemodeSettings={updateGamemodeSettings}
       ResetGame={ResetGame}
       ContinueGame={ContinueGame}
-      setPage={props.setPage}
       setTheme={props.setTheme}
       gameshowScore={props.gameshowScore}
     ></Wingo>

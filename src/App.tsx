@@ -2,9 +2,7 @@ import React, { useState } from "react";
 import { SplashScreen } from "./Pages/SplashScreen";
 import { LobbyMenu } from "./Pages/LobbyMenu";
 import WingoConfig, { WingoConfigProps } from "./Pages/WingoConfig";
-import { Button } from "./Components/Button";
 import NumbleConfig, { NumbleConfigProps } from "./Pages/NumbleConfig";
-import GoldCoin from "./Data/Images/gold.png";
 import { SaveData, SettingsData } from "./Data/SaveData";
 import LettersGameConfig, { LettersGameConfigProps } from "./Pages/LettersGameConfig";
 import NumbersGameConfig, { NumbersGameConfigProps } from "./Pages/NumbersGameConfig";
@@ -20,7 +18,6 @@ import { Settings } from "./Pages/Settings";
 import OnlyConnect, { OnlyConnectProps } from "./Pages/OnlyConnect";
 import { useBackgroundMusic } from "./Data/Sounds";
 import { VERSION } from "./Data/Version";
-import { ErrorBoundary } from "react-error-boundary";
 import { ErrorFallback } from "./Pages/ErrorFallback";
 import SameLetterWords, { SameLetterWordsProps } from "./Pages/SameLetterWords";
 import NumberSets, { NumberSetsProps } from "./Pages/NumberSets";
@@ -29,20 +26,28 @@ import { ChallengesInfo } from "./Components/ChallengesInfo";
 import WordCodes, { WordCodesProps } from "./Pages/WordCodes";
 import { LettersNumbersGameshow } from "./Pages/LettersNumbersGameshow";
 import { WingoGameshow } from "./Pages/WingoGameshow";
-import { FiArrowLeft, FiHelpCircle, FiSettings } from "react-icons/fi";
-import HelpInformation from "./Components/HelpInformation";
 import { TitlePage } from "./Pages/TitlePage";
 import { defaultWingoGameshowRoundOrder } from "./Data/DefaultGamemodeSettings";
 import { pageDescriptions } from "./Data/PageDescriptions";
 import SequencePuzzle from "./Pages/SequencePuzzle";
 import { CustomGameshow } from "./Pages/CustomGameshow";
-import { PageName } from "./Data/PageNames";
-import { getGamemodeDefaultNumGuesses } from "./Helper Functions/getGamemodeDefaultNumGuesses";
-import { getGamemodeDefaultWordLength } from "./Helper Functions/getGamemodeDefaultWordLength";
-import { getPageGamemodeSettings } from "./Helper Functions/getPageGamemodeSettings";
-import { getRandomElementFrom } from "./Helper Functions/getRandomElementFrom";
+import { PagePath } from "./Data/PageNames";
+import { getGamemodeDefaultNumGuesses } from "./Helpers/getGamemodeDefaultNumGuesses";
+import { getGamemodeDefaultWordLength } from "./Helpers/getGamemodeDefaultWordLength";
+import { getPageGamemodeSettings } from "./Helpers/getPageGamemodeSettings";
+import { getRandomElementFrom } from "./Helpers/getRandomElementFrom";
+import { Routes, Route, useNavigate, useLocation, Navigate } from "react-router-dom";
+import { PageWrapper } from "./Components/PageWrapper";
+import { isCampaignLevelPath } from "./Helpers/CampaignPathChecks";
+
+// TODO: With React ROuter, the state Page shouldn't be needed anymore
 
 export const App = () => {
+  // What is the current path?
+  const location = useLocation().pathname as PagePath;
+  // Use this to change the path
+  const navigate = useNavigate();
+
   // App wide listener for right click event
   // TODO: Decide whether right click should be enabled
   //document.addEventListener("contextmenu", handleRightClick);
@@ -62,16 +67,8 @@ export const App = () => {
 
   const [loadingState, setLoadingState] = useState<"loading" | "loaded">("loading");
 
-  const [page, setPage] = useState<PageName>(getNewEntryPage());
-
-  // Modal explaining current gamemode is shown?
-  const [isHelpInfoShown, setIsHelpInfoShown] = useState(false);
-
   // Is a session of randomly selecting a gamemode after completion, currently in progress?
   const [isRandomSession, setIsRandomSession] = useState(false);
-
-  const [selectedCampaignArea, setSelectedCampaignArea] = useState<AreaConfig | null>(null);
-  const [selectedCampaignLevel, setSelectedCampaignLevel] = useState<LevelConfig | null>(null);
 
   const [theme, setTheme] = useState<Theme>(
     getHighestCampaignArea()?.theme ||
@@ -80,18 +77,11 @@ export const App = () => {
   const [gold, setGold] = useState<number>(SaveData.readGold());
   const [playBackgroundMusic, stopBackgroundMusic] = useBackgroundMusic(settings, theme);
 
-  function getNewEntryPage(): PageName {
-    let pageFromUrl = getPageFromUrl();
-
-    // Redirect to the campaign page if loaded from a level/area
-    if (pageFromUrl === "campaign/area/level" || pageFromUrl === "campaign/area") {
-      pageFromUrl = "campaign";
-    }
-
+  function getNewEntryPage() {
     // Find the page that has the title of the option chosen in the settings menu (dropdown)
-    const entryPageSelection = pageDescriptions.find((page) => page.title === settings.gameplay.entryPage)?.page;
-    // The new entry page (in order of precedence, from left to right)
-    return (pageFromUrl || entryPageSelection) ?? "TitlePage";
+    const entryPageSelection = pageDescriptions.find((page) => page.title === settings.gameplay.entryPage)?.path;
+    // TitlePage as default
+    return entryPageSelection ?? "/TitlePage";
   }
 
   React.useEffect(() => {
@@ -104,90 +94,34 @@ export const App = () => {
     const newEntryPage = getNewEntryPage();
 
     if (settings.gameplay.skipSplashscreen) {
-      // Change immediately
-      setPage(newEntryPage);
-    } else {
-      // Delay setting of new page (until after splashscreen)
-      // TOOD: Renable splashscreen?
-      // window.setTimeout(() => setPage(newEntryPage), LOADING_TIMEOUT_MS + FADE_OUT_DURATION_MS);
+      // Don't show splashscreen, navigate to entry page immediately
+      navigate(newEntryPage);
+      return;
     }
+
+    // First, show splashscreen
+    navigate("/Splashscreen");
+    // After delay, navigate to entry page
+    window.setTimeout(() => navigate(newEntryPage), LOADING_TIMEOUT_MS + FADE_OUT_DURATION_MS);
   }, [saveData]);
 
   React.useEffect(() => {
     // Set the page to any playable page
-    if (page === "random") {
+    if (location === "/Random") {
       const playablePages = pageDescriptions.filter((page) => page.isRandomlyPlayable);
-      const newPage = getRandomElementFrom(playablePages)?.page;
-      setPage(newPage);
+      const newPage = getRandomElementFrom(playablePages)?.path;
+      navigate(newPage);
       setIsRandomSession(true);
     }
     // Pressing back (returning to home) should stop any sessions (which dictate the next gamemode)
-    else if (page === "home") {
+    else if (location === "/Home") {
       setIsRandomSession(false);
     }
-  }, [page]);
+  }, [location]);
 
   React.useEffect(() => {
-    SaveData.setGold(gold);
-  }, [gold]);
-
-  React.useEffect(() => {
-    SaveData.setSettings(settings);
-    setThemeIfNoPreferredSet(getHighestCampaignArea()?.theme || Themes.GenericWingo);
-  }, [settings]);
-
-  function setThemeIfNoPreferredSet(theme: Theme) {
-    setTheme(settings.graphics.preferredTheme ? Themes[settings.graphics.preferredTheme] : theme);
-  }
-
-  /**
-   *
-   * @returns
-   */
-  function getPageFromUrl(): PageName | undefined {
-    const urlPathWithoutLeadingTrailingSlashes = window.location.pathname.replace(/^\//g, "").replace(/\/$/g, "");
-
-    return pageDescriptions.find((page) => page.page === urlPathWithoutLeadingTrailingSlashes)?.page;
-  }
-
-  // Default (free play)
-  function onComplete() {
-    if (!isRandomSession) {
-      return;
-    } else {
-      // New random page
-      setPage("random");
-    }
-  }
-
-  // Update campaign progress (when a campaign level is successfully completed)
-  function onCompleteCampaignLevel(isUnlockLevel: boolean, levelConfig: LevelConfig) {
-    if (selectedCampaignArea) {
-      if (isUnlockLevel) {
-        SaveData.addCompletedCampaignAreaUnlockLevel(selectedCampaignArea.name);
-      } else {
-        const levelId = getId(levelConfig.level);
-        SaveData.addCompletedCampaignAreaLevel(selectedCampaignArea.name, levelId);
-      }
-    }
-  }
-
-  React.useEffect(() => {
-    const DEFAULT_PAGE_TITLE = "Wingo";
-
-    // If the page has changed (and its not the splash screen)
-    if (getPageFromUrl() !== page && page !== "splash-screen") {
-      // Update the URL in the browser to the new page
-      window.history.pushState({}, "", `/${page}`);
-
-      // Update the window title in the browser
-      document.title = pageDescriptions.find((x) => x.page === page)?.title || DEFAULT_PAGE_TITLE;
-    }
-  }, [page]);
-
-  React.useEffect(() => {
-    // On clicking 'Back' in the browser, update the page from the URL
-    window.onpopstate = () => setPage(getPageFromUrl() || "home");
+    // Clicking 'Back' in the browser
+    window.onpopstate = () => navigate(-1);
   }, []);
 
   React.useEffect(() => {
@@ -196,7 +130,47 @@ export const App = () => {
     }
 
     return () => stopBackgroundMusic();
-  }, [selectedCampaignArea, playBackgroundMusic, stopBackgroundMusic, loadingState]);
+  }, [playBackgroundMusic, stopBackgroundMusic, loadingState]);
+
+  React.useEffect(() => {
+    SaveData.setSettings(settings);
+    setThemeIfNoPreferredSet(getHighestCampaignArea()?.theme || Themes.GenericWingo);
+  }, [settings]);
+
+  React.useEffect(() => {
+    SaveData.setGold(gold);
+  }, [gold]);
+  function setThemeIfNoPreferredSet(theme: Theme) {
+    setTheme(settings.graphics.preferredTheme ? Themes[settings.graphics.preferredTheme] : theme);
+  }
+
+  // Default (free play)
+  function onComplete() {
+    if (!isRandomSession) {
+      return;
+    } else {
+      // New random page
+      navigate("/Random");
+    }
+  }
+
+  // Update campaign progress (when a campaign level is successfully completed)
+  function onCompleteCampaignLevel(areaConfig: AreaConfig, levelConfig: LevelConfig, isUnlockLevel: boolean) {
+    if (!areaConfig) {
+      return;
+    }
+
+    if (!levelConfig) {
+      return;
+    }
+
+    if (isUnlockLevel) {
+      SaveData.addCompletedCampaignAreaUnlockLevel(areaConfig.name);
+    }
+
+    const levelId = getId(levelConfig.level);
+    SaveData.addCompletedCampaignAreaLevel(areaConfig.name, levelId);
+  }
 
   function addGold(additionalGold: number) {
     setGold(gold + additionalGold);
@@ -213,444 +187,455 @@ export const App = () => {
     return highestCampaignArea;
   }
 
-  function isCampaignLevel(pageName: PageName) {
-    if (pageName === "campaign/area/level") {
-      return true;
-    } else {
-      return false;
-    }
-  }
+  const commonProps = {
+    /* TODO: Campaign Level location check
+    This may only check the path which renders <App />
+    (the path of the route which renders this element)
+    NOT the path of the route which may be taken
+    */
 
-  const pageComponent = (() => {
-    const commonProps = {
-      isCampaignLevel: isCampaignLevel(page),
-      campaignConfig: { isCampaignLevel: false as false },
-      defaultNumGuesses: getGamemodeDefaultNumGuesses(page),
-      page: page,
-      theme: theme,
-      setPage: setPage,
-      setTheme: setThemeIfNoPreferredSet,
-      addGold: addGold,
-      settings: settings,
-      onComplete: onComplete,
-    };
+    isCampaignLevel: isCampaignLevelPath(location),
+    campaignConfig: { isCampaignLevel: false as false },
+    defaultNumGuesses: getGamemodeDefaultNumGuesses(location),
+    theme: theme,
+    setTheme: setThemeIfNoPreferredSet,
+    addGold: addGold,
+    settings: settings,
+    onComplete: onComplete,
+  };
 
-    // Overwrite properties for specific modes where required
-    const commonWingoProps = {
-      defaultWordLength: getGamemodeDefaultWordLength(page),
-      enforceFullLengthGuesses: true,
-    };
+  // Overwrite properties for specific modes where required
+  const commonWingoProps = {
+    defaultWordLength: getGamemodeDefaultWordLength(location),
+    enforceFullLengthGuesses: true,
+  };
 
-    switch (page) {
-      case "splash-screen":
-        return <SplashScreen loadingState={loadingState} settings={settings} />;
-
-      case "TitlePage":
-        return <TitlePage setPage={setPage} settings={settings} />;
-
-      case "home":
-        return (
-          <LobbyMenu
-            setSelectedArea={setSelectedCampaignArea}
-            setSelectedCampaignLevel={setSelectedCampaignLevel}
-            setTheme={setThemeIfNoPreferredSet}
-            theme={theme}
-            setPage={setPage}
-            addGold={addGold}
-            settings={settings}
-          />
-        );
-
-      case "campaign":
-        return (
-          <Campaign
-            theme={theme}
-            setTheme={setThemeIfNoPreferredSet}
-            setPage={setPage}
-            setSelectedArea={setSelectedCampaignArea}
-            setSelectedCampaignLevel={setSelectedCampaignLevel}
-            settings={settings}
-          />
-        );
-
-      case "campaign/area":
-        return (
-          selectedCampaignArea && (
-            <Area
-              area={selectedCampaignArea}
-              setTheme={setThemeIfNoPreferredSet}
-              setSelectedCampaignLevel={setSelectedCampaignLevel}
-              setPage={setPage}
-              settings={settings}
-            />
-          )
-        );
-
-      case "campaign/area/level":
-        return (
-          selectedCampaignLevel && (
+  return (
+    <Routes>
+      <Route path="/" element={<Navigate to={getNewEntryPage()} />} />
+      <Route path="/TitlePage" element={<TitlePage settings={settings} />} />
+      <Route path="/Splashscreen" element={<SplashScreen loadingState={loadingState} settings={settings} />} />
+      <Route
+        path="/Home"
+        element={
+          <PageWrapper gold={gold} settings={settings}>
+            <LobbyMenu setTheme={setThemeIfNoPreferredSet} theme={theme} addGold={addGold} settings={settings} />
+          </PageWrapper>
+        }
+      />
+      <Route
+        path="/Campaign"
+        element={
+          <PageWrapper gold={gold} settings={settings}>
+            <Campaign theme={theme} setTheme={setThemeIfNoPreferredSet} settings={settings} />
+          </PageWrapper>
+        }
+      />
+      <Route
+        path="/Campaign/Areas/:areaName"
+        element={
+          <PageWrapper gold={gold} settings={settings}>
+            <Area setTheme={setThemeIfNoPreferredSet} settings={settings} />
+          </PageWrapper>
+        }
+      />
+      <Route
+        path="/Campaign/Areas/:areaName/Levels/:levelNumber"
+        element={
+          <PageWrapper gold={gold} settings={settings}>
             <Level
-              area={selectedCampaignArea!}
-              level={selectedCampaignLevel}
-              page={page}
               theme={theme}
-              setPage={setPage}
               setTheme={setThemeIfNoPreferredSet}
               addGold={addGold}
               onCompleteCampaignLevel={onCompleteCampaignLevel}
               settings={settings}
             />
-          )
-        );
+          </PageWrapper>
+        }
+      />
+      <Route
+        path="/Wingo/Daily"
+        element={
+          <PageWrapper gold={gold} settings={settings}>
+            <WingoConfig
+              {...commonProps}
+              {...commonWingoProps}
+              mode="daily"
+              gamemodeSettings={getPageGamemodeSettings(location) as WingoConfigProps["gamemodeSettings"]}
+            />
+          </PageWrapper>
+        }
+      />
+      <Route
+        path="/Wingo/Repeat"
+        element={
+          <PageWrapper gold={gold} settings={settings}>
+            <WingoConfig
+              {...commonProps}
+              {...commonWingoProps}
+              mode="repeat"
+              gamemodeSettings={getPageGamemodeSettings(location) as WingoConfigProps["gamemodeSettings"]}
+            />
+          </PageWrapper>
+        }
+      />
+      <Route
+        path="/Wingo/Category"
+        element={
+          <PageWrapper gold={gold} settings={settings}>
+            <WingoConfig
+              {...commonProps}
+              {...commonWingoProps}
+              mode="category"
+              enforceFullLengthGuesses={false}
+              gamemodeSettings={getPageGamemodeSettings(location) as WingoConfigProps["gamemodeSettings"]}
+            />
+          </PageWrapper>
+        }
+      />
+      <Route
+        path="/Wingo/Increasing"
+        element={
+          <PageWrapper gold={gold} settings={settings}>
+            <WingoConfig
+              {...commonProps}
+              {...commonWingoProps}
+              mode="increasing"
+              gamemodeSettings={getPageGamemodeSettings(location) as WingoConfigProps["gamemodeSettings"]}
+            />
+          </PageWrapper>
+        }
+      />
+      <Route
+        path="/Wingo/Limitless"
+        element={
+          <PageWrapper gold={gold} settings={settings}>
+            <WingoConfig
+              {...commonProps}
+              {...commonWingoProps}
+              mode="limitless"
+              gamemodeSettings={getPageGamemodeSettings(location) as WingoConfigProps["gamemodeSettings"]}
+            />
+          </PageWrapper>
+        }
+      />
+      <Route
+        path="/Wingo/Puzzle"
+        element={
+          <PageWrapper gold={gold} settings={settings}>
+            <WingoConfig
+              {...commonProps}
+              {...commonWingoProps}
+              mode="puzzle"
+              gamemodeSettings={getPageGamemodeSettings(location) as WingoConfigProps["gamemodeSettings"]}
+            />
+          </PageWrapper>
+        }
+      />
+      <Route
+        path="/Conundrum"
+        element={
+          <PageWrapper gold={gold} settings={settings}>
+            <WingoConfig
+              {...commonProps}
+              {...commonWingoProps}
+              mode="conundrum"
+              gamemodeSettings={getPageGamemodeSettings(location) as WingoConfigProps["gamemodeSettings"]}
+            />
+          </PageWrapper>
+        }
+      />
+      <Route
+        path="/Wingo/Interlinked"
+        element={
+          <PageWrapper gold={gold} settings={settings}>
+            <WingoConfig
+              {...commonProps}
+              {...commonWingoProps}
+              mode="interlinked"
+              gamemodeSettings={getPageGamemodeSettings(location) as WingoConfigProps["gamemodeSettings"]}
+            />
+          </PageWrapper>
+        }
+      />
+      <Route
+        path="/Wingo/Crossword"
+        element={
+          <PageWrapper gold={gold} settings={settings}>
+            <WingoConfig
+              {...commonProps}
+              {...commonWingoProps}
+              mode="crossword"
+              gamemodeSettings={getPageGamemodeSettings(location) as WingoConfigProps["gamemodeSettings"]}
+            />
+          </PageWrapper>
+        }
+      />
+      <Route
+        path="/Wingo/Crossword/Fit"
+        element={
+          <PageWrapper gold={gold} settings={settings}>
+            <WingoConfig
+              {...commonProps}
+              {...commonWingoProps}
+              mode="crossword/fit"
+              gamemodeSettings={getPageGamemodeSettings(location) as WingoConfigProps["gamemodeSettings"]}
+            />
+          </PageWrapper>
+        }
+      />
+      <Route
+        path="/Wingo/Crossword/Daily"
+        element={
+          <PageWrapper gold={gold} settings={settings}>
+            <WingoConfig
+              {...commonProps}
+              {...commonWingoProps}
+              mode="crossword/daily"
+              gamemodeSettings={getPageGamemodeSettings(location) as WingoConfigProps["gamemodeSettings"]}
+            />
+          </PageWrapper>
+        }
+      />
+      <Route
+        path="/Wingo/Crossword/Weekly"
+        element={
+          <PageWrapper gold={gold} settings={settings}>
+            <WingoConfig
+              {...commonProps}
+              {...commonWingoProps}
+              mode="crossword/weekly"
+              gamemodeSettings={getPageGamemodeSettings(location) as WingoConfigProps["gamemodeSettings"]}
+            />
+          </PageWrapper>
+        }
+      />
+      <Route
+        path="/LettersCategories"
+        element={
+          <PageWrapper gold={gold} settings={settings}>
+            <LetterCategoriesConfig
+              {...commonProps}
+              enforceFullLengthGuesses={false}
+              gamemodeSettings={getPageGamemodeSettings(location) as LetterCategoriesConfigProps["gamemodeSettings"]}
+            />
+          </PageWrapper>
+        }
+      />
+      <Route
+        path="/LettersGame"
+        element={
+          <PageWrapper gold={gold} settings={settings}>
+            <LettersGameConfig
+              {...commonProps}
+              theme={Themes.GenericLettersGame}
+              gamemodeSettings={getPageGamemodeSettings(location) as LettersGameConfigProps["gamemodeSettings"]}
+            />
+          </PageWrapper>
+        }
+      />
+      <Route
+        path="/NumbersGame"
+        element={
+          <PageWrapper gold={gold} settings={settings}>
+            <NumbersGameConfig
+              {...commonProps}
+              theme={Themes.GenericNumbersGame}
+              gamemodeSettings={getPageGamemodeSettings(location) as NumbersGameConfigProps["gamemodeSettings"]}
+            />
+          </PageWrapper>
+        }
+      />
+      <Route
+        path="/ArithmeticReveal"
+        element={
+          <PageWrapper gold={gold} settings={settings}>
+            <ArithmeticReveal
+              {...commonProps}
+              gamemodeSettings={getPageGamemodeSettings(location) as ArithmeticRevealProps["gamemodeSettings"]}
+            />
+          </PageWrapper>
+        }
+      />
+      <Route
+        path="/ArithmeticDrag/Order"
+        element={
+          <PageWrapper gold={gold} settings={settings}>
+            <ArithmeticDrag
+              {...commonProps}
+              mode="order"
+              gamemodeSettings={getPageGamemodeSettings(location) as ArithmeticDragProps["gamemodeSettings"]}
+            />
+          </PageWrapper>
+        }
+      />
+      <Route
+        path="/ArithmeticDrag/Match"
+        element={
+          <PageWrapper gold={gold} settings={settings}>
+            <ArithmeticDrag
+              {...commonProps}
+              mode="match"
+              gamemodeSettings={getPageGamemodeSettings(location) as ArithmeticDragProps["gamemodeSettings"]}
+            />
+          </PageWrapper>
+        }
+      />
+      <Route
+        path="/Numble"
+        element={
+          <PageWrapper gold={gold} settings={settings}>
+            <NumbleConfig
+              {...commonProps}
+              gamemodeSettings={getPageGamemodeSettings(location) as NumbleConfigProps["gamemodeSettings"]}
+            />
+          </PageWrapper>
+        }
+      />
+      <Route
+        path="/OnlyConnect"
+        element={
+          <PageWrapper gold={gold} settings={settings}>
+            <OnlyConnect
+              {...commonProps}
+              gamemodeSettings={getPageGamemodeSettings(location) as OnlyConnectProps["gamemodeSettings"]}
+            />
+          </PageWrapper>
+        }
+      />
+      <Route
+        path="/SameLetters"
+        element={
+          <PageWrapper gold={gold} settings={settings}>
+            <SameLetterWords
+              {...commonProps}
+              gamemodeSettings={getPageGamemodeSettings(location) as SameLetterWordsProps["gamemodeSettings"]}
+            />
+          </PageWrapper>
+        }
+      />
+      <Route
+        path="/NumberSets"
+        element={
+          <PageWrapper gold={gold} settings={settings}>
+            <NumberSets
+              {...commonProps}
+              gamemodeSettings={getPageGamemodeSettings(location) as NumberSetsProps["gamemodeSettings"]}
+            />
+          </PageWrapper>
+        }
+      />
+      <Route
+        path="/Algebra"
+        element={
+          <PageWrapper gold={gold} settings={settings}>
+            <Algebra
+              {...commonProps}
+              gamemodeSettings={getPageGamemodeSettings(location) as AlgebraProps["gamemodeSettings"]}
+            />
+          </PageWrapper>
+        }
+      />
+      <Route
+        path="/WordCodes/Question"
+        element={
+          <PageWrapper gold={gold} settings={settings}>
+            <WordCodes
+              {...commonProps}
+              mode={"question"}
+              gamemodeSettings={getPageGamemodeSettings(location) as WordCodesProps["gamemodeSettings"]}
+            />
+          </PageWrapper>
+        }
+      />
+      <Route
+        path="/WordCodes/Match"
+        element={
+          <PageWrapper gold={gold} settings={settings}>
+            <WordCodes
+              {...commonProps}
+              mode={"match"}
+              gamemodeSettings={getPageGamemodeSettings(location) as WordCodesProps["gamemodeSettings"]}
+            />
+          </PageWrapper>
+        }
+      />
+      <Route
+        path="/PuzzleSequence"
+        element={
+          <PageWrapper gold={gold} settings={settings}>
+            <SequencePuzzle {...commonProps} />
+          </PageWrapper>
+        }
+      />
+      <Route
+        path="/Settings"
+        element={
+          <PageWrapper gold={gold} settings={settings}>
+            <Settings settings={settings} onSettingsChange={setSettings} />
+          </PageWrapper>
+        }
+      />
+      <Route
+        path="/Challenges"
+        element={
+          <PageWrapper gold={gold} settings={settings}>
+            <ChallengesInfo settings={settings} addGold={addGold} />
+          </PageWrapper>
+        }
+      />
 
-      case "wingo/daily":
-        return (
-          <WingoConfig
-            {...commonProps}
-            {...commonWingoProps}
-            mode="daily"
-            gamemodeSettings={getPageGamemodeSettings(page) as WingoConfigProps["gamemodeSettings"]}
-          />
-        );
-
-      case "wingo/repeat":
-        return (
-          <WingoConfig
-            {...commonProps}
-            {...commonWingoProps}
-            mode="repeat"
-            gamemodeSettings={getPageGamemodeSettings(page) as WingoConfigProps["gamemodeSettings"]}
-          />
-        );
-
-      case "wingo/category":
-        return (
-          <WingoConfig
-            {...commonProps}
-            {...commonWingoProps}
-            mode="category"
-            enforceFullLengthGuesses={false}
-            gamemodeSettings={getPageGamemodeSettings(page) as WingoConfigProps["gamemodeSettings"]}
-          />
-        );
-
-      case "wingo/increasing":
-        return (
-          <WingoConfig
-            {...commonProps}
-            {...commonWingoProps}
-            mode="increasing"
-            gamemodeSettings={getPageGamemodeSettings(page) as WingoConfigProps["gamemodeSettings"]}
-          />
-        );
-
-      case "wingo/limitless":
-        return (
-          <WingoConfig
-            {...commonProps}
-            {...commonWingoProps}
-            mode="limitless"
-            gamemodeSettings={getPageGamemodeSettings(page) as WingoConfigProps["gamemodeSettings"]}
-          />
-        );
-
-      case "wingo/puzzle":
-        return (
-          <WingoConfig
-            {...commonProps}
-            {...commonWingoProps}
-            mode="puzzle"
-            gamemodeSettings={getPageGamemodeSettings(page) as WingoConfigProps["gamemodeSettings"]}
-          />
-        );
-
-      case "Conundrum":
-        return (
-          <WingoConfig
-            {...commonProps}
-            {...commonWingoProps}
-            mode="conundrum"
-            gamemodeSettings={getPageGamemodeSettings(page) as WingoConfigProps["gamemodeSettings"]}
-          />
-        );
-
-      case "wingo/interlinked":
-        return (
-          <WingoConfig
-            {...commonProps}
-            {...commonWingoProps}
-            mode="interlinked"
-            gamemodeSettings={getPageGamemodeSettings(page) as WingoConfigProps["gamemodeSettings"]}
-          />
-        );
-
-      case "wingo/crossword":
-        return (
-          <WingoConfig
-            {...commonProps}
-            {...commonWingoProps}
-            mode="crossword"
-            gamemodeSettings={getPageGamemodeSettings(page) as WingoConfigProps["gamemodeSettings"]}
-          />
-        );
-
-      case "wingo/crossword/fit":
-        return (
-          <WingoConfig
-            {...commonProps}
-            {...commonWingoProps}
-            mode="crossword/fit"
-            gamemodeSettings={getPageGamemodeSettings(page) as WingoConfigProps["gamemodeSettings"]}
-          />
-        );
-
-      case "wingo/crossword/daily":
-        return (
-          <WingoConfig
-            {...commonProps}
-            {...commonWingoProps}
-            mode="crossword/daily"
-            gamemodeSettings={getPageGamemodeSettings(page) as WingoConfigProps["gamemodeSettings"]}
-          />
-        );
-
-      case "wingo/crossword/weekly":
-        return (
-          <WingoConfig
-            {...commonProps}
-            {...commonWingoProps}
-            mode="crossword/weekly"
-            gamemodeSettings={getPageGamemodeSettings(page) as WingoConfigProps["gamemodeSettings"]}
-          />
-        );
-
-      case "LettersCategories":
-        return (
-          <LetterCategoriesConfig
-            {...commonProps}
-            enforceFullLengthGuesses={false}
-            gamemodeSettings={getPageGamemodeSettings(page) as LetterCategoriesConfigProps["gamemodeSettings"]}
-          />
-        );
-
-      case "LettersGame":
-        return (
-          <LettersGameConfig
-            {...commonProps}
-            theme={Themes.GenericLettersGame}
-            gamemodeSettings={getPageGamemodeSettings(page) as LettersGameConfigProps["gamemodeSettings"]}
-          />
-        );
-
-      case "NumbersGame":
-        return (
-          <NumbersGameConfig
-            {...commonProps}
-            theme={Themes.GenericNumbersGame}
-            gamemodeSettings={getPageGamemodeSettings(page) as NumbersGameConfigProps["gamemodeSettings"]}
-          />
-        );
-
-      case "ArithmeticReveal":
-        return (
-          <ArithmeticReveal
-            {...commonProps}
-            gamemodeSettings={getPageGamemodeSettings(page) as ArithmeticRevealProps["gamemodeSettings"]}
-          />
-        );
-
-      case "ArithmeticDrag/Order":
-        return (
-          <ArithmeticDrag
-            {...commonProps}
-            mode="order"
-            gamemodeSettings={getPageGamemodeSettings(page) as ArithmeticDragProps["gamemodeSettings"]}
-          />
-        );
-
-      case "ArithmeticDrag/Match":
-        return (
-          <ArithmeticDrag
-            {...commonProps}
-            mode="match"
-            gamemodeSettings={getPageGamemodeSettings(page) as ArithmeticDragProps["gamemodeSettings"]}
-          />
-        );
-
-      case "Numble":
-        return (
-          <NumbleConfig
-            {...commonProps}
-            gamemodeSettings={getPageGamemodeSettings(page) as NumbleConfigProps["gamemodeSettings"]}
-          />
-        );
-
-      case "OnlyConnect":
-        return (
-          <OnlyConnect
-            {...commonProps}
-            gamemodeSettings={getPageGamemodeSettings(page) as OnlyConnectProps["gamemodeSettings"]}
-          />
-        );
-
-      case "SameLetters":
-        return (
-          <SameLetterWords
-            {...commonProps}
-            gamemodeSettings={getPageGamemodeSettings(page) as SameLetterWordsProps["gamemodeSettings"]}
-          />
-        );
-
-      case "NumberSets":
-        return (
-          <NumberSets
-            {...commonProps}
-            gamemodeSettings={getPageGamemodeSettings(page) as NumberSetsProps["gamemodeSettings"]}
-          />
-        );
-
-      case "Algebra":
-        return (
-          <Algebra
-            {...commonProps}
-            gamemodeSettings={getPageGamemodeSettings(page) as AlgebraProps["gamemodeSettings"]}
-          />
-        );
-
-      case "WordCodes/Question":
-        return (
-          <WordCodes
-            {...commonProps}
-            mode={"question"}
-            gamemodeSettings={getPageGamemodeSettings(page) as WordCodesProps["gamemodeSettings"]}
-          />
-        );
-
-      case "WordCodes/Match":
-        return (
-          <WordCodes
-            {...commonProps}
-            mode={"match"}
-            gamemodeSettings={getPageGamemodeSettings(page) as WordCodesProps["gamemodeSettings"]}
-          />
-        );
-
-      case "PuzzleSequence":
-        return <SequencePuzzle {...commonProps} />;
-
-      case "challenges":
-        return <ChallengesInfo settings={settings} addGold={addGold} />;
-
-      case "settings":
-        return <Settings settings={settings} onSettingsChange={setSettings} />;
-
-      case "random":
-        return null;
-
-      case "LettersNumbersGameshow":
-        return (
-          <LettersNumbersGameshow
-            {...commonProps}
-            {...commonWingoProps}
-            themes={[Themes.GenericLettersGame, Themes.GenericNumbersGame]}
-            // TODO: Should LettersNumbersGameshow have gamemodeSettings like other gamemodes or an initial configuration page?
-            numSets={5}
-            numLetterRoundsPerSet={2}
-            numNumberRoundsPerSet={1}
-            numConundrumRoundsPerSet={0}
-            hasFinishingConundrum={true}
-          />
-        );
-
-      case "Wingo/Gameshow":
-        return (
-          <WingoGameshow
-            {...commonProps}
-            {...commonWingoProps}
-            // TODO: Should WingoGameshow have gamemodeSettings like other gamemodes or an initial configuration page?
-            roundOrderConfig={defaultWingoGameshowRoundOrder}
-          />
-        );
-
-      case "Custom/Gameshow":
-        return <CustomGameshow {...commonProps} />;
-    }
-  })();
-
-  return (
-    <div className="app" data-automation-id="app" data-automation-page-name={page}>
-      {page !== "splash-screen" && page !== "TitlePage" && (
-        <>
-          <div className="toolbar">
-            {page !== "home" && (
-              <nav className="navigation">
-                <Button
-                  mode="default"
-                  className="back-button"
-                  settings={settings}
-                  onClick={() => {
-                    setIsHelpInfoShown(false);
-
-                    if (page === "campaign/area/level") {
-                      setPage("campaign/area");
-                    } else if (page === "campaign/area") {
-                      setPage("campaign");
-                    } else {
-                      setPage("home");
-                    }
-                  }}
-                >
-                  <FiArrowLeft /> Back
-                </Button>
-              </nav>
-            )}
-            <h1 className="title">{pageDescriptions.find((x) => x.page === page)?.title}</h1>
-            {Boolean(pageDescriptions.find((x) => x.page === page)?.helpInfo) && (
-              <Button
-                mode="default"
-                className="help-info-button"
-                settings={settings}
-                onClick={() => setIsHelpInfoShown(true)}
-                additionalProps={{ "aria-label": "help", title: "Get help with this game mode" }}
-              >
-                <FiHelpCircle /> Help
-              </Button>
-            )}
-            <Button
-              mode="default"
-              className="settings-button"
-              settings={settings}
-              onClick={() => {
-                setPage("settings");
-                setIsHelpInfoShown(false);
-              }}
-            >
-              <FiSettings /> Settings
-            </Button>
-            <div className="gold_counter" onClick={() => setPage("challenges")}>
-              <img className="gold_coin_image" src={GoldCoin} alt="Gold" />
-              {gold.toLocaleString("en-GB")}
-            </div>
-          </div>
-        </>
-      )}
-      <ErrorBoundary
-        fallbackRender={({ error, resetErrorBoundary }) => (
+      <Route path="/Random" element={null} />
+      <Route
+        path="/LettersNumbersGameshow"
+        element={
+          <PageWrapper gold={gold} settings={settings}>
+            <LettersNumbersGameshow
+              {...commonProps}
+              {...commonWingoProps}
+              themes={[Themes.GenericLettersGame, Themes.GenericNumbersGame]}
+              // TODO: Should LettersNumbersGameshow have gamemodeSettings like other gamemodes or an initial configuration page?
+              numSets={5}
+              numLetterRoundsPerSet={2}
+              numNumberRoundsPerSet={1}
+              numConundrumRoundsPerSet={0}
+              hasFinishingConundrum={true}
+            />
+          </PageWrapper>
+        }
+      />
+      <Route
+        path="/WingoGameshow"
+        element={
+          <PageWrapper gold={gold} settings={settings}>
+            <WingoGameshow
+              {...commonProps}
+              {...commonWingoProps}
+              // TODO: Should WingoGameshow have gamemodeSettings like other gamemodes or an initial configuration page?
+              roundOrderConfig={defaultWingoGameshowRoundOrder}
+            />
+          </PageWrapper>
+        }
+      />
+      <Route
+        path="/CustomGameshow"
+        element={
+          <PageWrapper gold={gold} settings={settings}>
+            <CustomGameshow {...commonProps} />
+          </PageWrapper>
+        }
+      />
+      <Route
+        path="*"
+        element={
           <ErrorFallback
-            error={error}
-            resetErrorBoundary={resetErrorBoundary}
+            error={new Error("Page not found")}
+            resetErrorBoundary={() => navigate("/Home")}
             settingsData={SaveData.getSettings()}
             version={VERSION}
-          ></ErrorFallback>
-        )}
-        onReset={() => window.location.reload()}
-      >
-        {pageComponent}
-      </ErrorBoundary>
-      {Boolean(isHelpInfoShown && page !== "home" && page !== "TitlePage" && page !== "settings") && (
-        <HelpInformation page={page} onClose={() => setIsHelpInfoShown(false)}></HelpInformation>
-      )}
-      <div className="version">{VERSION}</div>
-    </div>
+          />
+        }
+      />
+    </Routes>
   );
 };

@@ -1,13 +1,15 @@
 import React, { useState } from "react";
-import { PageName } from "../Data/PageNames";
 import NumbersGame from "./NumbersGame";
 import { Theme } from "../Data/Themes";
 import { SaveData, SettingsData } from "../Data/SaveData";
 import { operators } from "../Data/Operators";
-import { getGamemodeDefaultTimerValue } from "../Helper Functions/getGamemodeDefaultTimerValue";
-import { hasNumberSelectionFinished } from "../Helper Functions/hasNumberSelectionFinished";
-import { getNumbersGameGuessTotal } from "../Helper Functions/getNumbersGameGuessTotal";
-import { getNumbersGameScore } from "../Helper Functions/getNumbersGameScore";
+import { getGamemodeDefaultTimerValue } from "../Helpers/getGamemodeDefaultTimerValue";
+import { hasNumberSelectionFinished } from "../Helpers/hasNumberSelectionFinished";
+import { getNumbersGameGuessTotal } from "../Helpers/getNumbersGameGuessTotal";
+import { getNumbersGameScore } from "../Helpers/getNumbersGameScore";
+import { useLocation } from "react-router-dom";
+import { PagePath } from "../Data/PageNames";
+import { isCampaignLevelPath } from "../Helpers/CampaignPathChecks";
 
 export interface NumbersGameConfigProps {
   campaignConfig:
@@ -30,10 +32,8 @@ export interface NumbersGameConfigProps {
 }
 
 interface Props extends NumbersGameConfigProps {
-  page: PageName;
   theme: Theme;
   settings: SettingsData;
-  setPage: (page: PageName) => void;
   setTheme: (theme: Theme) => void;
   addGold: (gold: number) => void;
   onComplete: (wasCorrect: boolean) => void;
@@ -43,14 +43,16 @@ interface Props extends NumbersGameConfigProps {
 export type Guess = { operand1: number | null; operand2: number | null; operator: typeof operators[0]["name"] };
 
 const NumbersGameConfig = (props: Props) => {
+  const location = useLocation().pathname as PagePath;
+
   const [gamemodeSettings, setGamemodeSettings] = useState<NumbersGameConfigProps["gamemodeSettings"]>(
     props.gamemodeSettings
   );
 
   const [remainingSeconds, setRemainingSeconds] = useState(
     props.gamemodeSettings?.timerConfig?.isTimed === true
-      ? props.gamemodeSettings?.timerConfig.seconds
-      : getGamemodeDefaultTimerValue(props.page)
+      ? props.gamemodeSettings?.timerConfig?.seconds
+      : getGamemodeDefaultTimerValue(location)
   );
 
   const [inProgress, setInProgress] = useState(true);
@@ -154,7 +156,7 @@ const NumbersGameConfig = (props: Props) => {
 
   // Reset game after change of settings (stops cheating by changing settings partway through a game)
   React.useEffect(() => {
-    if (props.page === "campaign/area/level" || props.gameshowScore !== undefined) {
+    if (isCampaignLevelPath(location) || props.gameshowScore !== undefined) {
       return;
     }
 
@@ -567,7 +569,6 @@ const NumbersGameConfig = (props: Props) => {
       hasTimerEnded={hasTimerEnded}
       hasSubmitNumber={hasSubmitNumber}
       targetNumber={targetNumber}
-      page={props.page}
       theme={props.theme}
       settings={props.settings}
       setTheme={props.setTheme}
@@ -581,7 +582,6 @@ const NumbersGameConfig = (props: Props) => {
       ResetGame={ResetGame}
       clearGrid={clearGrid}
       submitBestGuess={submitBestGuess}
-      setPage={props.setPage}
       setOperator={(operator) => setCurrentGuess({ ...currentGuess, operator })}
       addGold={props.addGold}
       gameshowScore={props.gameshowScore}

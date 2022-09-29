@@ -1,14 +1,15 @@
 import React, { useState } from "react";
 import { SettingsData } from "../Data/SaveData";
-import { PageName } from "../Data/PageNames";
 import { Theme } from "../Data/Themes";
 import WingoConfig, { WingoConfigProps } from "./WingoConfig";
 import { Button } from "../Components/Button";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
-import { getGamemodeDefaultWordLength } from "../Helper Functions/getGamemodeDefaultWordLength";
-import { displayGameshowSummary } from "../Helper Functions/getGameshowSummary";
-import { getPageGamemodeSettings } from "../Helper Functions/getPageGamemodeSettings";
-import { getWingoGameshowRoundOrder } from "../Helper Functions/getWingoGameshowRoundOrder";
+import { getGamemodeDefaultWordLength } from "../Helpers/getGamemodeDefaultWordLength";
+import { displayGameshowSummary } from "../Helpers/getGameshowSummary";
+import { getPageGamemodeSettings } from "../Helpers/getPageGamemodeSettings";
+import { getWingoGameshowRoundOrder } from "../Helpers/getWingoGameshowRoundOrder";
+import { useNavigate, useLocation } from "react-router-dom";
+import { PagePath } from "../Data/PageNames";
 
 export interface WingoGameshowProps {
   campaignConfig:
@@ -35,22 +36,23 @@ export interface WingoGameshowProps {
 }
 
 interface Props extends WingoGameshowProps {
-  page: PageName;
   theme: Theme;
   settings: SettingsData;
-  setPage: (page: PageName) => void;
   setTheme: (theme: Theme) => void;
   addGold: (gold: number) => void;
   onComplete: (wasCorrect: boolean) => void;
 }
 
 export const WingoGameshow = (props: Props) => {
+  const navigate = useNavigate();
+  const location = useLocation().pathname as PagePath;
+
   const [inProgress, setInProgress] = useState(true);
   const [roundOrder, setRoundOrder] = useState<
     { isPuzzle: boolean; wordLength: number; basePoints: number; pointsLostPerGuess: number }[]
   >([]);
   const [roundNumberIndex, setRoundNumberIndex] = useState(0);
-  const [wordLength, setWordLength] = useState(getGamemodeDefaultWordLength(props.page));
+  const [wordLength, setWordLength] = useState(getGamemodeDefaultWordLength(location));
   const [gameshowScore, setGameshowScore] = useState(0);
   const [summary, setSummary] = useState<
     {
@@ -155,9 +157,7 @@ export const WingoGameshow = (props: Props) => {
       The pass criteria for a gameshow campaign level is that the gameshow score has reached the target score
       */
       isCampaignLevel: false,
-      page: props.page,
       settings: props.settings,
-      setPage: props.setPage,
       setTheme: props.setTheme,
       addGold: props.addGold,
       onComplete: props.onComplete,
@@ -169,7 +169,7 @@ export const WingoGameshow = (props: Props) => {
         <WingoConfig
           {...commonProps}
           mode="puzzle"
-          gamemodeSettings={getPageGamemodeSettings("wingo/puzzle") as WingoConfigProps["gamemodeSettings"]}
+          gamemodeSettings={getPageGamemodeSettings("/Wingo/Puzzle") as WingoConfigProps["gamemodeSettings"]}
           defaultWordLength={wordLength}
           defaultNumGuesses={1}
           enforceFullLengthGuesses={true}
@@ -182,7 +182,7 @@ export const WingoGameshow = (props: Props) => {
         <WingoConfig
           {...commonProps}
           mode="repeat"
-          gamemodeSettings={getPageGamemodeSettings("wingo/repeat") as WingoConfigProps["gamemodeSettings"]}
+          gamemodeSettings={getPageGamemodeSettings("/Wingo/Repeat") as WingoConfigProps["gamemodeSettings"]}
           defaultWordLength={wordLength}
           defaultNumGuesses={5}
           enforceFullLengthGuesses={true}
@@ -214,7 +214,9 @@ export const WingoGameshow = (props: Props) => {
     props.onComplete(wasCorrect);
 
     // Navigate away from gameshow
-    props.campaignConfig.isCampaignLevel ? props.setPage("campaign/area/level") : props.setPage("home");
+    props.campaignConfig.isCampaignLevel
+      ? navigate("/Campaign/Areas/:areaName/Levels/:levelNumber")
+      : navigate("/Home");
   }
 
   return (

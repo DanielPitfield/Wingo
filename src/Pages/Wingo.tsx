@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Keyboard } from "../Components/Keyboard";
-import { PageName } from "../Data/PageNames";
+import { PagePath } from "../Data/PageNames";
 import { WordRow } from "../Components/WordRow";
 import { Button } from "../Components/Button";
 import { MessageNotification } from "../Components/MessageNotification";
@@ -11,12 +11,13 @@ import { SettingsData } from "../Data/SaveData";
 import { useCorrectChime, useFailureChime, useLightPingChime } from "../Data/Sounds";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
 import { categoryMappings } from "../Data/WordArrayMappings";
-import { getNewGamemodeSettingValue } from "../Helper Functions/getGamemodeSettingsNewValue";
+import { getNewGamemodeSettingValue } from "../Helpers/getGamemodeSettingsNewValue";
 import { DEFAULT_WINGO_INCREASING_MAX_NUM_LIVES } from "../Data/DefaultGamemodeSettings";
 import { LetterStatus } from "../Components/LetterTile";
-import { getGamemodeDefaultTimerValue } from "../Helper Functions/getGamemodeDefaultTimerValue";
-import { getNumNewLimitlessLives } from "../Helper Functions/getNumNewLimitlessLives";
+import { getGamemodeDefaultTimerValue } from "../Helpers/getGamemodeDefaultTimerValue";
+import { getNumNewLimitlessLives } from "../Helpers/getNumNewLimitlessLives";
 import WingoGamemodeSettings from "../Components/GamemodeSettingsOptions/WingoGamemodeSettings";
+import { useLocation } from "react-router-dom";
 
 interface Props {
   isCampaignLevel: boolean;
@@ -43,10 +44,8 @@ interface Props {
   }[];
   revealedLetterIndexes: number[];
 
-  page: PageName;
   theme?: Theme;
   settings: SettingsData;
-  setPage: (page: PageName) => void;
   onEnter: () => void;
   onSubmitLetter: (letter: string) => void;
   onSubmitTargetCategory: (category: string) => void;
@@ -62,6 +61,8 @@ interface Props {
 }
 
 const Wingo = (props: Props) => {
+  const location = useLocation().pathname as PagePath;
+
   const [secondsUntilNextDailyWingo, setSecondsUntilNextDailyWingo] = useState(getSecondsUntilMidnight());
   const [playCorrectChimeSoundEffect] = useCorrectChime(props.settings);
   const [playFailureChimeSoundEffect] = useFailureChime(props.settings);
@@ -74,13 +75,13 @@ const Wingo = (props: Props) => {
   */
   const [mostRecentTotalSeconds, setMostRecentTotalSeconds] = useState(
     props.gamemodeSettings?.timerConfig?.isTimed === true
-      ? props.gamemodeSettings?.timerConfig.seconds
-      : getGamemodeDefaultTimerValue(props.page)
+      ? props.gamemodeSettings?.timerConfig?.seconds
+      : getGamemodeDefaultTimerValue(location)
   );
 
   const [mostRecentMaxLives, setMostRecentMaxLives] = useState(
-    props.gamemodeSettings?.maxLivesConfig.isLimited === true
-      ? props.gamemodeSettings.maxLivesConfig.maxLives
+    props.gamemodeSettings?.maxLivesConfig?.isLimited === true
+      ? props.gamemodeSettings?.maxLivesConfig?.maxLives
       : DEFAULT_WINGO_INCREASING_MAX_NUM_LIVES
   );
 
@@ -108,7 +109,6 @@ const Wingo = (props: Props) => {
       return (
         <WordRow
           key={"wingo/read-only"}
-          page={props.page}
           isReadOnly={true}
           inProgress={props.inProgress}
           word={displayWord}
@@ -130,7 +130,6 @@ const Wingo = (props: Props) => {
         <div className="letters-game-wrapper" key={"conundrum/reveal"}>
           <WordRow
             key={"conundrum/read-only"}
-            page={props.page}
             isReadOnly={true}
             inProgress={props.inProgress}
             word={props.conundrum}
@@ -188,7 +187,6 @@ const Wingo = (props: Props) => {
       Grid.push(
         <WordRow
           key={`wingo/row/${i}`}
-          page={props.page}
           isReadOnly={false}
           inProgress={props.inProgress}
           isVertical={false}
@@ -498,7 +496,6 @@ const Wingo = (props: Props) => {
 
       {props.settings.gameplay.keyboard && (
         <Keyboard
-          page={props.page}
           onEnter={props.onEnter}
           onSubmitLetter={(letter) => {
             props.onSubmitLetter(letter);

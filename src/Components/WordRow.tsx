@@ -1,10 +1,10 @@
-import { PageName } from "../Data/PageNames";
 import LetterTile from "./LetterTile";
 import { SettingsData } from "../Data/SaveData";
-import { getWordRowStatusSummary, WordRowStatusChecks } from "../Helper Functions/getWordRowStatusSummary";
+import { getWordRowStatusSummary, WordRowStatusChecks } from "../Helpers/getWordRowStatusSummary";
+import { useLocation } from "react-router-dom";
+import { PagePath } from "../Data/PageNames";
 
 interface Props {
-  page: PageName;
   isReadOnly: boolean;
   inProgress?: boolean;
   length: number;
@@ -21,9 +21,11 @@ interface Props {
 }
 
 export const WordRow = (props: Props) => {
+  const location = useLocation().pathname as PagePath;
+
   const statusChecks: WordRowStatusChecks = {
     isReadOnly: props.isReadOnly,
-    page: props.page,
+    page: location,
     word: props.word,
     targetWord: props.targetWord,
     inDictionary: props.inDictionary,
@@ -34,12 +36,12 @@ export const WordRow = (props: Props) => {
   const guessSummary = getWordRowStatusSummary(statusChecks);
 
   function isAnimationEnabled(letterIndex: number): boolean {
-    if (props.page === "LettersGame") {
+    if (location === "/LettersGame") {
       return false;
     }
 
     // Daily mode, when the game reports as having ended
-    const dailyModeEnd = props.page === "wingo/daily" && !props.inProgress && props.word && props.hasSubmit;
+    const dailyModeEnd = location === "/Wingo/Daily" && !props.inProgress && props.word && props.hasSubmit;
 
     if (dailyModeEnd) {
       return false;

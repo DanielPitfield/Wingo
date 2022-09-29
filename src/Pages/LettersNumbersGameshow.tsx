@@ -1,16 +1,16 @@
 import React, { useState } from "react";
 import { SettingsData } from "../Data/SaveData";
-import { PageName } from "../Data/PageNames";
 import LettersGameConfig, { LettersGameConfigProps } from "./LettersGameConfig";
 import NumbersGameConfig, { NumbersGameConfigProps } from "./NumbersGameConfig";
 import { Theme } from "../Data/Themes";
 import { Button } from "../Components/Button";
 import WingoConfig, { WingoConfigProps } from "./WingoConfig";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
-import { getGamemodeDefaultNumGuesses } from "../Helper Functions/getGamemodeDefaultNumGuesses";
-import { getGamemodeDefaultWordLength } from "../Helper Functions/getGamemodeDefaultWordLength";
-import { displayGameshowSummary } from "../Helper Functions/getGameshowSummary";
-import { getPageGamemodeSettings } from "../Helper Functions/getPageGamemodeSettings";
+import { getGamemodeDefaultNumGuesses } from "../Helpers/getGamemodeDefaultNumGuesses";
+import { getGamemodeDefaultWordLength } from "../Helpers/getGamemodeDefaultWordLength";
+import { displayGameshowSummary } from "../Helpers/getGameshowSummary";
+import { getPageGamemodeSettings } from "../Helpers/getPageGamemodeSettings";
+import { useNavigate } from "react-router-dom";
 
 type RoundType = "number" | "letter" | "conundrum";
 
@@ -31,16 +31,16 @@ export interface LettersNumbersGameshowProps {
 }
 
 interface Props extends LettersNumbersGameshowProps {
-  page: PageName;
   themes: Theme[];
   settings: SettingsData;
-  setPage: (page: PageName) => void;
   setTheme: (theme: Theme) => void;
   addGold: (gold: number) => void;
   onComplete: (wasCorrect: boolean) => void;
 }
 
 export const LettersNumbersGameshow = (props: Props) => {
+  const navigate = useNavigate();
+
   const [inProgress, setInProgress] = useState(true);
   const [roundOrder, setRoundOrder] = useState<RoundType[]>([]);
   const [roundNumberIndex, setRoundNumberIndex] = useState(0);
@@ -149,9 +149,7 @@ export const LettersNumbersGameshow = (props: Props) => {
       The pass criteria for a gameshow campaign level is that the gameshow score has reached the target score
       */
       campaignConfig: { isCampaignLevel: false as false },
-      page: props.page,
       settings: props.settings,
-      setPage: props.setPage,
       setTheme: props.setTheme,
       addGold: props.addGold,
       onComplete: props.onComplete,
@@ -164,7 +162,7 @@ export const LettersNumbersGameshow = (props: Props) => {
           {...commonProps}
           theme={props.themes[0]}
           gameshowScore={gameshowScore}
-          gamemodeSettings={getPageGamemodeSettings("LettersGame") as LettersGameConfigProps["gamemodeSettings"]}
+          gamemodeSettings={getPageGamemodeSettings("/LettersGame") as LettersGameConfigProps["gamemodeSettings"]}
         />
       );
     } else if (roundType === "number") {
@@ -173,7 +171,7 @@ export const LettersNumbersGameshow = (props: Props) => {
           {...commonProps}
           theme={props.themes[1]}
           gameshowScore={gameshowScore}
-          gamemodeSettings={getPageGamemodeSettings("NumbersGame") as NumbersGameConfigProps["gamemodeSettings"]}
+          gamemodeSettings={getPageGamemodeSettings("/NumbersGame") as NumbersGameConfigProps["gamemodeSettings"]}
         />
       );
     } else if (roundType === "conundrum") {
@@ -182,9 +180,9 @@ export const LettersNumbersGameshow = (props: Props) => {
           {...commonProps}
           isCampaignLevel={false}
           mode="conundrum"
-          gamemodeSettings={getPageGamemodeSettings("Conundrum") as WingoConfigProps["gamemodeSettings"]}
-          defaultWordLength={getGamemodeDefaultWordLength("Conundrum")}
-          defaultNumGuesses={getGamemodeDefaultNumGuesses("Conundrum")}
+          gamemodeSettings={getPageGamemodeSettings("/Conundrum") as WingoConfigProps["gamemodeSettings"]}
+          defaultWordLength={getGamemodeDefaultWordLength("/Conundrum")}
+          defaultNumGuesses={getGamemodeDefaultNumGuesses("/Conundrum")}
           enforceFullLengthGuesses={true}
         />
       );
@@ -216,7 +214,9 @@ export const LettersNumbersGameshow = (props: Props) => {
     props.onComplete(wasCorrect);
 
     // Navigate away from gameshow
-    props.campaignConfig.isCampaignLevel ? props.setPage("campaign/area/level") : props.setPage("home");
+    props.campaignConfig.isCampaignLevel
+      ? navigate("/Campaign/Areas/:areaName/Levels/:levelNumber")
+      : navigate("/Home");
   }
 
   return (

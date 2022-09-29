@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { DEFAULT_ALPHABET } from "./WingoConfig";
-import { PageName } from "../Data/PageNames";
+import { PagePath } from "../Data/PageNames";
 import { Button } from "../Components/Button";
 import { Keyboard } from "../Components/Keyboard";
 import LetterTile from "../Components/LetterTile";
@@ -14,14 +14,15 @@ import { arrayMove, OrderGroup } from "react-draggable-order";
 import { DraggableItem } from "../Components/DraggableItem";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
 import { MAX_CODE_LENGTH } from "../Data/GamemodeSettingsInputLimits";
-import { shuffleArray } from "../Helper Functions/shuffleArray";
-import { getAllWordsOfLength } from "../Helper Functions/getAllWordsOfLength";
-import { getGamemodeDefaultTimerValue } from "../Helper Functions/getGamemodeDefaultTimerValue";
-import { getGamemodeDefaultWordLength } from "../Helper Functions/getGamemodeDefaultWordLength";
-import { getQuestionSetOutcome } from "../Helper Functions/getQuestionSetOutcome";
-import { getRandomElementFrom } from "../Helper Functions/getRandomElementFrom";
-import { getNewGamemodeSettingValue } from "../Helper Functions/getGamemodeSettingsNewValue";
+import { shuffleArray } from "../Helpers/shuffleArray";
+import { getAllWordsOfLength } from "../Helpers/getAllWordsOfLength";
+import { getGamemodeDefaultTimerValue } from "../Helpers/getGamemodeDefaultTimerValue";
+import { getGamemodeDefaultWordLength } from "../Helpers/getGamemodeDefaultWordLength";
+import { getQuestionSetOutcome } from "../Helpers/getQuestionSetOutcome";
+import { getRandomElementFrom } from "../Helpers/getRandomElementFrom";
+import { getNewGamemodeSettingValue } from "../Helpers/getGamemodeSettingsNewValue";
 import WordCodesGamemodeSettings from "../Components/GamemodeSettingsOptions/WordCodesGamemodeSettings";
+import { useLocation } from "react-router-dom";
 
 const wordCodesModes = ["match", "question"] as const;
 export type wordCodesMode = typeof wordCodesModes[number];
@@ -60,10 +61,8 @@ export interface WordCodesProps {
 }
 
 interface Props extends WordCodesProps {
-  page: PageName;
   theme: Theme;
   settings: SettingsData;
-  setPage: (page: PageName) => void;
   setTheme: (theme: Theme) => void;
   addGold: (gold: number) => void;
   onComplete: (wasCorrect: boolean) => void;
@@ -73,6 +72,8 @@ interface Props extends WordCodesProps {
 
 /** */
 const WordCodes = (props: Props) => {
+  const location = useLocation().pathname as PagePath;
+
   const [inProgress, setInProgress] = useState(true);
   const [guess, setGuess] = useState("");
 
@@ -102,14 +103,14 @@ const WordCodes = (props: Props) => {
 
   const [remainingSeconds, setRemainingSeconds] = useState(
     props.gamemodeSettings?.timerConfig?.isTimed === true
-      ? props.gamemodeSettings?.timerConfig.seconds
-      : getGamemodeDefaultTimerValue(props.page)
+      ? props.gamemodeSettings?.timerConfig?.seconds
+      : getGamemodeDefaultTimerValue(location)
   );
 
   const [mostRecentTotalSeconds, setMostRecentTotalSeconds] = useState(
     props.gamemodeSettings?.timerConfig?.isTimed === true
-      ? props.gamemodeSettings?.timerConfig.seconds
-      : getGamemodeDefaultTimerValue(props.page)
+      ? props.gamemodeSettings?.timerConfig?.seconds
+      : getGamemodeDefaultTimerValue(location)
   );
 
   // Sounds
@@ -127,7 +128,7 @@ const WordCodes = (props: Props) => {
     ResetGame();
 
     // Save the latest gamemode settings for this mode
-    SaveData.setWordCodesGamemodeSettings(props.page, gamemodeSettings);
+    SaveData.setWordCodesGamemodeSettings(location, gamemodeSettings);
   }, [gamemodeSettings]);
 
   // Validate the value of props.gamemodeSettings.numDisplayWords
@@ -201,7 +202,7 @@ const WordCodes = (props: Props) => {
       // Set code length to default gamemode settings value
       const newGamemodeSettings = {
         ...gamemodeSettings,
-        codeLength: getGamemodeDefaultWordLength(props.page),
+        codeLength: getGamemodeDefaultWordLength(location),
       };
       setGamemodeSettings(newGamemodeSettings);
     }
@@ -744,7 +745,6 @@ const WordCodes = (props: Props) => {
           settings={props.settings}
           onSubmitLetter={onSubmitLetter}
           targetWord={""}
-          page={props.page}
           guesses={[]}
           letterStatuses={[]}
           inDictionary

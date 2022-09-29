@@ -8,19 +8,21 @@ import DiceGrid from "../Components/DiceGrid";
 import { NumbleConfigProps, numbleGridShape, numbleGridSize, NumbleStatus } from "./NumbleConfig";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
 import { DEFAULT_NUMBLE_GUESS_TIMER_VALUE } from "../Data/DefaultGamemodeSettings";
-import { getGamemodeDefaultTimerValue } from "../Helper Functions/getGamemodeDefaultTimerValue";
-import { getHexagonAdjacentPins } from "../Helper Functions/getHexagonAdjacentPins";
+import { getGamemodeDefaultTimerValue } from "../Helpers/getGamemodeDefaultTimerValue";
+import { getHexagonAdjacentPins } from "../Helpers/getHexagonAdjacentPins";
 import {
   getNumblePointColourMapping,
   NumblePointColourRange,
   NumbleColour,
-} from "../Helper Functions/getNumblePointColourMappings";
-import { getNumbleRowValues } from "../Helper Functions/getNumbleRowValues";
-import { getSquareAdjacentPins } from "../Helper Functions/getSquareAdjacentPins";
-import { NumberPuzzle } from "../Helper Functions/NumbersGameSolver";
-import { getRandomIntFromRange } from "../Helper Functions/getRandomIntFromRange";
-import { getNewGamemodeSettingValue } from "../Helper Functions/getGamemodeSettingsNewValue";
+} from "../Helpers/getNumblePointColourMappings";
+import { getNumbleRowValues } from "../Helpers/getNumbleRowValues";
+import { getSquareAdjacentPins } from "../Helpers/getSquareAdjacentPins";
+import { NumberPuzzle } from "../Helpers/NumbersGameSolver";
+import { getRandomIntFromRange } from "../Helpers/getRandomIntFromRange";
+import { getNewGamemodeSettingValue } from "../Helpers/getGamemodeSettingsNewValue";
 import NumbleGamemodeSettings from "../Components/GamemodeSettingsOptions/NumbleGamemodeSettings";
+import { useLocation } from "react-router-dom";
+import { PagePath } from "../Data/PageNames";
 
 interface Props {
   campaignConfig: NumbleConfigProps["campaignConfig"];
@@ -59,6 +61,8 @@ interface Props {
 }
 
 const Numble = (props: Props) => {
+  const location = useLocation().pathname as PagePath;
+
   // Information as to how the pins are displayed and what pins are on each row
   const rowValues = getNumbleRowValues(props.gamemodeSettings.gridShape, props.gamemodeSettings.gridSize);
 
@@ -105,8 +109,8 @@ const Numble = (props: Props) => {
 
   const [mostRecentTotalSeconds, setMostRecentTotalSeconds] = useState(
     props.gamemodeSettings?.timerConfig?.isTimed === true
-      ? props.gamemodeSettings?.timerConfig.seconds
-      : getGamemodeDefaultTimerValue("Numble")
+      ? props.gamemodeSettings?.timerConfig?.seconds
+      : getGamemodeDefaultTimerValue(location)
   );
 
   const teamNumberColourMappings = [

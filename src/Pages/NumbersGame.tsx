@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { PageName } from "../Data/PageNames";
+import { PagePath } from "../Data/PageNames";
 import { Button } from "../Components/Button";
 import { MessageNotification } from "../Components/MessageNotification";
 import ProgressBar, { GreenToRedColorTransition } from "../Components/ProgressBar";
@@ -11,14 +11,15 @@ import { Theme } from "../Data/Themes";
 import { SettingsData } from "../Data/SaveData";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
 import { DEFAULT_NUMBERS_GAME_NUM_ROWS } from "../Data/DefaultGamemodeSettings";
-import { getGamemodeDefaultTimerValue } from "../Helper Functions/getGamemodeDefaultTimerValue";
-import { getRandomElementFrom } from "../Helper Functions/getRandomElementFrom";
-import { hasNumberSelectionFinished } from "../Helper Functions/hasNumberSelectionFinished";
-import { hasNumberSelectionStarted } from "../Helper Functions/hasNumberSelectionStarted";
-import { NumberPuzzleValue, NumberPuzzle } from "../Helper Functions/NumbersGameSolver";
-import { getNumbersGameScore } from "../Helper Functions/getNumbersGameScore";
-import { getNewGamemodeSettingValue } from "../Helper Functions/getGamemodeSettingsNewValue";
+import { getGamemodeDefaultTimerValue } from "../Helpers/getGamemodeDefaultTimerValue";
+import { getRandomElementFrom } from "../Helpers/getRandomElementFrom";
+import { hasNumberSelectionFinished } from "../Helpers/hasNumberSelectionFinished";
+import { hasNumberSelectionStarted } from "../Helpers/hasNumberSelectionStarted";
+import { NumberPuzzleValue, NumberPuzzle } from "../Helpers/NumbersGameSolver";
+import { getNumbersGameScore } from "../Helpers/getNumbersGameScore";
+import { getNewGamemodeSettingValue } from "../Helpers/getGamemodeSettingsNewValue";
 import NumbersGameGamemodeSettings from "../Components/GamemodeSettingsOptions/NumbersGameGamemodeSettings";
+import { useLocation } from "react-router-dom";
 
 interface Props {
   campaignConfig: NumbersGameConfigProps["campaignConfig"];
@@ -39,7 +40,6 @@ interface Props {
   hasSubmitNumber: boolean;
   targetNumber: number | null;
 
-  page: PageName;
   theme: Theme;
   settings: SettingsData;
   onClick: (
@@ -49,7 +49,6 @@ interface Props {
   clearGrid: () => void;
   submitBestGuess: () => void;
   setTheme: (theme: Theme) => void;
-  setPage: (page: PageName) => void;
   onSubmitNumbersGameNumber: (number: number) => void;
   onSubmitNumbersGameSelection: (numberExpression: number[]) => void;
   onSubmitNumber: (number: number) => void;
@@ -70,6 +69,8 @@ interface Props {
  * @returns
  */
 const NumbersGame = (props: Props) => {
+  const location = useLocation().pathname as PagePath;
+
   // The number of operands the numberPuzzle can compute a solution for (with no noticeable delay)
   const NUMBERPUZZLE_MAX_NUM_OPERANDS_WITHHOUT_DELAY = 6;
   // The maximum possible number of operands the numberPuzzle can a compute solution for (without the browser crashing)
@@ -79,8 +80,8 @@ const NumbersGame = (props: Props) => {
 
   const [mostRecentTotalSeconds, setMostRecentTotalSeconds] = useState(
     props.gamemodeSettings?.timerConfig?.isTimed === true
-      ? props.gamemodeSettings?.timerConfig.seconds
-      : getGamemodeDefaultTimerValue(props.page)
+      ? props.gamemodeSettings?.timerConfig?.seconds
+      : getGamemodeDefaultTimerValue(location)
   );
 
   const [isComputeSolutionButtonClicked, setIsComputeSolutionButtonClicked] = useState(false);

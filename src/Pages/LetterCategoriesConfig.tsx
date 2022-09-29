@@ -1,15 +1,17 @@
 import React, { useState } from "react";
-import { PageName } from "../Data/PageNames";
+import { PagePath } from "../Data/PageNames";
 import LetterCategories from "./LetterCategories";
 import { SaveData, SettingsData } from "../Data/SaveData";
 import { DEFAULT_ALPHABET } from "./WingoConfig";
 import { Theme } from "../Data/Themes";
 import { categoryMappings } from "../Data/WordArrayMappings";
 import { MAX_NUM_CATEGORIES } from "../Data/GamemodeSettingsInputLimits";
-import { shuffleArray } from "../Helper Functions/shuffleArray";
-import { getGamemodeDefaultTimerValue } from "../Helper Functions/getGamemodeDefaultTimerValue";
-import { getGamemodeDefaultWordLength } from "../Helper Functions/getGamemodeDefaultWordLength";
-import { getRandomElementFrom } from "../Helper Functions/getRandomElementFrom";
+import { shuffleArray } from "../Helpers/shuffleArray";
+import { getGamemodeDefaultTimerValue } from "../Helpers/getGamemodeDefaultTimerValue";
+import { getGamemodeDefaultWordLength } from "../Helpers/getGamemodeDefaultWordLength";
+import { getRandomElementFrom } from "../Helpers/getRandomElementFrom";
+import { useLocation } from "react-router-dom";
+import { isCampaignLevelPath } from "../Helpers/CampaignPathChecks";
 
 export interface LetterCategoriesConfigProps {
   campaignConfig:
@@ -29,18 +31,18 @@ export interface LetterCategoriesConfigProps {
 }
 
 interface Props extends LetterCategoriesConfigProps {
-  page: PageName;
   theme: Theme;
   settings: SettingsData;
-  setPage: (page: PageName) => void;
   setTheme: (theme: Theme) => void;
   addGold: (gold: number) => void;
   onComplete: (wasCorrect: boolean) => void;
 }
 
 const LetterCategoriesConfig = (props: Props) => {
+  const location = useLocation().pathname as PagePath;
+
   const [inProgress, setInProgress] = useState(true);
-  const [wordLength, setWordLength] = useState(getGamemodeDefaultWordLength(props.page));
+  const [wordLength, setWordLength] = useState(getGamemodeDefaultWordLength(location));
   const [guesses, setGuesses] = useState<string[]>([]);
   const [wordIndex, setWordIndex] = useState(0);
   const [hasSubmitLetter, sethasSubmitLetter] = useState(false);
@@ -57,8 +59,8 @@ const LetterCategoriesConfig = (props: Props) => {
 
   const [remainingSeconds, setRemainingSeconds] = useState(
     props.gamemodeSettings?.timerConfig?.isTimed === true
-      ? props.gamemodeSettings?.timerConfig.seconds
-      : getGamemodeDefaultTimerValue(props.page)
+      ? props.gamemodeSettings?.timerConfig?.seconds
+      : getGamemodeDefaultTimerValue(location)
   );
 
   // Timer Setup
@@ -110,7 +112,7 @@ const LetterCategoriesConfig = (props: Props) => {
 
   // Reset game after change of settings (stops cheating by changing settings partway through a game)
   React.useEffect(() => {
-    if (props.page === "campaign/area/level") {
+    if (isCampaignLevelPath(location)) {
       return;
     }
 
@@ -292,7 +294,6 @@ const LetterCategoriesConfig = (props: Props) => {
       correctGuessesCount={correctGuessesCount}
       categoryRequiredStartingLetter={requiredStartingLetter}
       chosenCategoryMappings={chosenCategoryMappings}
-      page={props.page}
       theme={props.theme}
       settings={props.settings}
       onEnter={onEnter}
@@ -301,7 +302,6 @@ const LetterCategoriesConfig = (props: Props) => {
       updateGamemodeSettings={updateGamemodeSettings}
       updateRemainingSeconds={updateRemainingSeconds}
       ResetGame={ResetGame}
-      setPage={props.setPage}
     />
   );
 };

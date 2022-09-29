@@ -2,7 +2,7 @@ import NumberTile from "./NumberTile";
 import OperatorTile from "./OperatorTile";
 import { Guess } from "../Pages/NumbersGameConfig";
 import { operators } from "../Data/Operators";
-import { getNumbersGameGuessTotal } from "../Helper Functions/getNumbersGameGuessTotal";
+import { getNumbersGameGuessTotal } from "../Helpers/getNumbersGameGuessTotal";
 
 interface Props {
   onClick: (

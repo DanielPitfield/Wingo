@@ -13,12 +13,13 @@ import { LEVEL_FINISHING_TEXT } from "../Components/Level";
 import { MAX_NUMPAD_GUESS_LENGTH } from "../Data/GamemodeSettingsInputLimits";
 import { DEFAULT_ALPHABET, DEFAULT_ALPHABET_STRING } from "./WingoConfig";
 import { Difficulty } from "../Data/DefaultGamemodeSettings";
-import { PageName } from "../Data/PageNames";
-import { getAlgebraTemplates } from "../Helper Functions/getAlgebraTemplates";
-import { getGamemodeDefaultTimerValue } from "../Helper Functions/getGamemodeDefaultTimerValue";
-import { getQuestionSetOutcome } from "../Helper Functions/getQuestionSetOutcome";
-import { getNewGamemodeSettingValue } from "../Helper Functions/getGamemodeSettingsNewValue";
+import { getAlgebraTemplates } from "../Helpers/getAlgebraTemplates";
+import { getGamemodeDefaultTimerValue } from "../Helpers/getGamemodeDefaultTimerValue";
+import { getQuestionSetOutcome } from "../Helpers/getQuestionSetOutcome";
+import { getNewGamemodeSettingValue } from "../Helpers/getGamemodeSettingsNewValue";
 import AlgebraGamemodeSettings from "../Components/GamemodeSettingsOptions/AlgebraGamemodeSettings";
+import { useLocation } from "react-router-dom";
+import { PagePath } from "../Data/PageNames";
 
 export interface AlgebraProps {
   campaignConfig:
@@ -39,16 +40,16 @@ export interface AlgebraProps {
 }
 
 interface Props extends AlgebraProps {
-  page: PageName;
   theme: Theme;
   settings: SettingsData;
-  setPage: (page: PageName) => void;
   setTheme: (theme: Theme) => void;
   addGold: (gold: number) => void;
   onComplete: (wasCorrect: boolean) => void;
 }
 
 const Algebra = (props: Props) => {
+  const location = useLocation().pathname as PagePath;
+
   const [gamemodeSettings, setGamemodeSettings] = useState<AlgebraProps["gamemodeSettings"]>(props.gamemodeSettings);
 
   const [inProgress, setInProgress] = useState(true);
@@ -69,14 +70,14 @@ const Algebra = (props: Props) => {
 
   const [remainingSeconds, setRemainingSeconds] = useState(
     props.gamemodeSettings?.timerConfig?.isTimed === true
-      ? props.gamemodeSettings?.timerConfig.seconds
-      : getGamemodeDefaultTimerValue(props.page)
+      ? props.gamemodeSettings?.timerConfig?.seconds
+      : getGamemodeDefaultTimerValue(location)
   );
 
   const [mostRecentTotalSeconds, setMostRecentTotalSeconds] = useState(
     props.gamemodeSettings?.timerConfig?.isTimed === true
-      ? props.gamemodeSettings?.timerConfig.seconds
-      : getGamemodeDefaultTimerValue(props.page)
+      ? props.gamemodeSettings?.timerConfig?.seconds
+      : getGamemodeDefaultTimerValue(location)
   );
 
   // Sounds
@@ -401,7 +402,6 @@ const Algebra = (props: Props) => {
           .slice(0, getCurrentAlgebraTemplate().inputs.length)
           .split("")}
         targetWord=""
-        page="Algebra"
         guesses={[]}
         letterStatuses={[]}
         inDictionary

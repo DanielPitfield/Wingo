@@ -1,16 +1,17 @@
-import { PageName } from "../Data/PageNames";
 import { Button } from "../Components/Button";
 import { Logo } from "../Components/Logo";
 import { SettingsData } from "../Data/SaveData";
 import BackgroundSrc from "../Data/Images/background.png";
 import { FiCodesandbox, FiPlay, FiSettings, FiShuffle } from "react-icons/fi";
+import { useNavigate } from "react-router-dom";
 
 interface TitlePageProps {
-  setPage: (page: PageName) => void;
   settings: SettingsData;
 }
 
 export const TitlePage = (props: TitlePageProps) => {
+  const navigate = useNavigate();
+
   return (
     <div className="title-page" style={{ backgroundImage: `url(${BackgroundSrc})` }}>
       <div className="sidebar">
@@ -20,23 +21,23 @@ export const TitlePage = (props: TitlePageProps) => {
         </div>
         <ul className="sidebar-links">
           <li className="sidebar-link">
-            <Button mode="accept" onClick={() => props.setPage("campaign")}>
+            <Button mode="accept" onClick={() => navigate("/Campaign")}>
               <FiPlay /> Campaign
             </Button>
           </li>
           <li className="sidebar-link">
-            <Button mode="default" onClick={() => props.setPage("random")}>
+            <Button mode="default" onClick={() => navigate("/Random")}>
               <FiShuffle /> Quick game
             </Button>
           </li>
           <li className="sidebar-link">
-            <Button mode="default" onClick={() => props.setPage("home")}>
+            <Button mode="default" onClick={() => navigate("/Home")}>
               <FiCodesandbox /> Custom game
             </Button>
           </li>
           <li className="sidebar-link spacer"></li>
           <li className="sidebar-link">
-            <Button mode="default" onClick={() => props.setPage("settings")}>
+            <Button mode="default" onClick={() => navigate("/Settings")}>
               <FiSettings /> Settings
             </Button>
           </li>
