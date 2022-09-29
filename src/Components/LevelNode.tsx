@@ -11,7 +11,7 @@ import { useNavigate } from "react-router-dom";
 interface LevelNodeProps {
   level: LevelConfig;
   isSelected: boolean;
-  index: number;
+  levelNumber: number;
   area: AreaConfig;
   settings: SettingsData;
   onHoverLevel: (level: LevelConfig | null) => void;
@@ -35,10 +35,10 @@ export const LevelNode = (props: LevelNodeProps) => {
   const areaInfo = campaignProgress.areas.find((x) => x.name === props.area.name);
 
   // Determine whether this is the first level
-  const isFirstLevel = props.index === 0;
+  const isFirstLevel = props.levelNumber === 1;
 
   // Find the previous level (unless this is the first level)
-  const previousLevel = isFirstLevel ? undefined : props.area.levels[props.index - 1];
+  const previousLevel = isFirstLevel ? undefined : props.area.levels[props.levelNumber - 1];
 
   // Determine whether the level has already been completed
   const isLevelCompleted = areaInfo?.completedLevelIds.some((x) => x === getId(props.level.level)) || false;
@@ -60,11 +60,11 @@ export const LevelNode = (props: LevelNodeProps) => {
       <button
         className="level-button button-node"
         ref={setReferenceElement as any}
-        key={`Area ${areaInfo?.name} Level ${props.index + 1}`}
+        key={`Area ${areaInfo?.name} Level ${props.levelNumber}`}
         onClick={() => {
           if (isLevelUnlocked && !isLevelCompleted) {
             playClickSoundEffect();
-            navigate(`/campaign/areas/${areaInfo?.name}/levels/${props.index + 1}`);
+            navigate(`/campaign/areas/${areaInfo?.name}/levels/${props.levelNumber}`);
           }
         }}
         onMouseOver={() => props.onHoverLevel(props.isSelected ? null : props.level)}
@@ -78,14 +78,14 @@ export const LevelNode = (props: LevelNodeProps) => {
           left: `${props.level.levelButtonCoords.x}%`,
         }}
       >
-        {props.index + 1}
+        {props.levelNumber}
       </button>
 
       {props.isSelected && (
         <div className="popper-overlay" ref={setPopperElement as any} style={styles.popper} {...attributes.popper}>
           <div
             className="level-button widget"
-            key={`Area ${areaInfo?.name} Level ${props.index + 1}`}
+            key={`Area ${areaInfo?.name} Level ${props.levelNumber}`}
             data-is-completed={isLevelCompleted}
             data-is-unlocked={isLevelUnlocked}
           >
@@ -93,7 +93,7 @@ export const LevelNode = (props: LevelNodeProps) => {
               <span className="level-status">
                 {isLevelCompleted ? "Completed" : isLevelUnlocked ? "Unlocked!" : "Locked"}
               </span>
-              <span className="level-number">Level {props.index + 1}</span>
+              <span className="level-number">Level {props.levelNumber}</span>
             </strong>
             <p className="level-mode">{levelInfo?.title || levelInfo?.shortTitle}</p>
             <div ref={setArrowElement as any} style={styles.arrow} />
