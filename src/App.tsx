@@ -617,7 +617,14 @@ export const App = () => {
           </PageWrapper>
         }
       />
-      <Route path="/CustomGameshow" element={<CustomGameshow {...commonProps} />} />
+      <Route
+        path="/CustomGameshow"
+        element={
+          <PageWrapper gold={gold} settings={settings}>
+            <CustomGameshow {...commonProps} />
+          </PageWrapper>
+        }
+      />
       <Route
         path="*"
         element={
