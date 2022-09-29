@@ -21,7 +21,7 @@ interface AreaProps {
 
 /** Portion of the campaign, with many levels */
 export const Area = (props: AreaProps) => {
-  // TODO: Remove this once params is used for Levels too
+  // Keep track of which level node has most recently been hovered over
   const [selectedLevel, setSelectedLevel] = useState<LevelConfig | null>(null);
 
   const navigate = useNavigate();
@@ -55,11 +55,10 @@ export const Area = (props: AreaProps) => {
             key={index}
             level={level}
             isSelected={selectedLevel === level}
-            index={index}
+            levelNumber={index + 1}
             area={selectedArea}
             setTheme={props.setTheme}
             settings={props.settings}
-            // TODO: Does this setSelectedLevel to level?
             onHoverLevel={setSelectedLevel}
           />
         ))}
