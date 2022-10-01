@@ -169,6 +169,7 @@ const WingoConfig = (props: Props) => {
     switch (props.mode) {
       case "daily":
         const newTarget = getDeterministicArrayItems({ seedType: "today" }, 1, targetLengthWordArray)[0];
+
         // Load previous attempts at daily (if applicable)
         const daily_word_storage = SaveData.getDailyWordGuesses();
 
@@ -359,6 +360,11 @@ const WingoConfig = (props: Props) => {
   // Reset game after change of settings (stops cheating by changing settings partway through a game)
   React.useEffect(() => {
     if (isCampaignLevelPath(location)) {
+      return;
+    }
+
+    if (props.mode === "daily" || props.mode === "crossword/weekly") {
+      // Do not reset the game if the gamemode is daily/weekly, as the gamemodeSettings are instead loaded from localStorage (#304, #305)
       return;
     }
 
