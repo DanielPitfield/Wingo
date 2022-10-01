@@ -30,6 +30,7 @@ interface Props {
 const DEFAULT_KEYBOARD_FIRST_ROW = "QWERTYUIOP";
 const DEFAULT_KEYBOARD_SECOND_ROW = "ASDFGHJKL";
 const DEFAULT_KEYBOARD_THIRD_ROW = "ZXCVBNM";
+const IGNORE_KEYS = ["f1", "f2", "f3", "f4", "f5", "f6", "f7", "f8", "f9", "f10", "f11", "f12"];
 
 const isModeWithoutKeyboardStatuses = (page: PagePath) => {
   // Don't need updated keyboard statuses for some modes
@@ -53,10 +54,14 @@ export const Keyboard = (props: Props) => {
     }
 
     const handleKeyDown = (event: KeyboardEvent) => {
+      const inputKey = event.key.toString().toLowerCase();
+
+      if (IGNORE_KEYS.includes(inputKey)) {
+        return;
+      }
+
       event.preventDefault();
       event.stopPropagation();
-
-      const inputKey = event.key.toString().toLowerCase();
 
       // Enter
       if (inputKey === "enter") {
