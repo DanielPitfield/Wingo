@@ -363,7 +363,7 @@ const WingoConfig = (props: Props) => {
       return;
     }
 
-    if (props.mode === "daily" || props.mode === "crossword/weekly") {
+    if (props.mode === "daily" || props.mode === "crossword/weekly" || props.mode === "crossword/daily") {
       // Do not reset the game if the gamemode is daily/weekly, as the gamemodeSettings are instead loaded from localStorage (#304, #305)
       return;
     }

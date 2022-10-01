@@ -127,8 +127,8 @@ export const WingoInterlinked = (props: Props) => {
       : DEFAULT_FIT_RESTRICTION
   );
 
-  const [remainingGridGuesses, setRemainingGridGuesses] = useState(0);
-  const [remainingWordGuesses, setRemainingWordGuesses] = useState(0);
+  const [remainingGridGuesses, setRemainingGridGuesses] = useState(props.initialConfig?.remainingGridGuesses ?? 0);
+  const [remainingWordGuesses, setRemainingWordGuesses] = useState(props.initialConfig?.remainingWordGuesses ?? 0);
 
   // The entered words of the crossword
   const [currentWords, setCurrentWords] = useState<string[]>(
@@ -246,6 +246,12 @@ export const WingoInterlinked = (props: Props) => {
       return;
     }
 
+    if (props.initialConfig) {
+      // If an initialConfig was specified, do not (re)set the game,
+      // instead the words have been loaded from config (#304, #305)
+      return;
+    }
+
     ResetGame();
 
     // Save the latest gamemode settings for this mode
@@ -262,6 +268,12 @@ export const WingoInterlinked = (props: Props) => {
       numGridGuesses: newNumGridGuesses,
     };
 
+    if (props.initialConfig?.remainingGridGuesses !== undefined) {
+      // If an initialConfig.remainingGridGuesses was specified, do not (re)set the words,
+      // instead the words have been loaded from config (#304, #305)
+      return;
+    }
+
     setGamemodeSettings(newGamemodeSettings);
     setRemainingGridGuesses(newNumGridGuesses);
   }, [props.gamemodeSettings.numGridGuesses]);
@@ -276,6 +288,12 @@ export const WingoInterlinked = (props: Props) => {
       numWordGuesses: newNumWordGuesses,
     };
 
+    if (props.initialConfig !== undefined) {
+      // If an initialConfig was specified, do not (re)set the words,
+      // instead the words have been loaded from config (#304, #305)
+      return;
+    }
+
     setGamemodeSettings(newGamemodeSettings);
     setRemainingWordGuesses(newNumWordGuesses);
   }, [props.gamemodeSettings.numWordGuesses]);
@@ -284,6 +302,12 @@ export const WingoInterlinked = (props: Props) => {
     // Update information about which letters should be at which grid positions
     const correctLetterGrid = getCorrectLetterGrid();
     setCorrectGrid(correctLetterGrid);
+
+    if (props.initialConfig?.tileStatuses.length || props.initialConfig?.currentWords.length) {
+      // If an initialConfig.tileStatuses or initialConfig.currentWords were specified, do not
+      // (re)set the words, instead the words have been loaded from config (#304, #305)
+      return;
+    }
 
     // Reset all tile statuses to not set
     setTileStatuses(
@@ -306,6 +330,12 @@ export const WingoInterlinked = (props: Props) => {
   // Each time a word is highlighted/picked
   React.useEffect(() => {
     if (!inProgress) {
+      return;
+    }
+
+    if (props.initialConfig?.tileStatuses.length) {
+      // If an initialConfig.tileStatuses was specified, do not (re)set the words,
+      // instead the words have been loaded from config (#304, #305)
       return;
     }
 
@@ -349,6 +379,12 @@ export const WingoInterlinked = (props: Props) => {
   // Check if the grid has been completed each time the tileStatuses are updated
   React.useEffect(() => {
     if (!inProgress) {
+      return;
+    }
+
+    if (props.initialConfig?.inProgress !== undefined) {
+      // If an initialConfig.inProgress was specified, do not (re)set the words,
+      // instead the words have been loaded from config (#304, #305)
       return;
     }
 
