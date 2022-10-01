@@ -28,6 +28,7 @@ export type SettingsData = {
     effectsVolume: number;
   };
   graphics: {
+    darkMode: boolean;
     preferredTheme: keyof typeof Themes | null;
     animation: boolean;
   };
@@ -116,14 +117,14 @@ export class SaveData {
   /** Settings with everything disabled */
   public static DISABLED_SETTINGS: SettingsData = {
     sound: { masterVolume: 0, effectsVolume: 0, backgroundVolume: 0 },
-    graphics: { preferredTheme: null, animation: false },
+    graphics: { darkMode: false, preferredTheme: null, animation: false },
     gameplay: { keyboard: false, skipSplashscreen: true, entryPage: "Home" },
   };
 
   /** Default settings */
   public static DEFAULT_SETTINGS: SettingsData = {
     sound: { masterVolume: 0.5, effectsVolume: 0.5, backgroundVolume: 0.35 },
-    graphics: { preferredTheme: null, animation: true },
+    graphics: { darkMode: false, preferredTheme: null, animation: true },
     gameplay: { keyboard: true, skipSplashscreen: false, entryPage: "Home" },
   };
 

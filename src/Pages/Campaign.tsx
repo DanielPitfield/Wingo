@@ -5,6 +5,7 @@ import { CampaignSaveData, SaveData, SettingsData } from "../Data/SaveData";
 import { Theme } from "../Data/Themes";
 import { AllCampaignAreas } from "../Data/CampaignAreas/AllCampaignAreas";
 import BackgroundImageSrc from "../Data/Images/background.png";
+import BackgroundDarkThemeSrc from "../Data/Images/background-dark-theme.png";
 import { FiCheck, FiLock, FiPlay } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 
@@ -82,7 +83,11 @@ export const Campaign = (props: CampaignProps) => {
             key={area.name}
             style={{
               backgroundImage: `url(${
-                unlockStatus === "unlockable" ? BackgroundImageSrc : area.theme.backgroundImageSrc
+                unlockStatus === "unlockable"
+                  ? !props.settings.graphics.darkMode
+                    ? BackgroundImageSrc
+                    : BackgroundDarkThemeSrc
+                  : area.theme.backgroundImageSrc
               })`,
               backgroundSize: "100%",
             }}

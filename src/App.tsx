@@ -211,431 +211,433 @@ export const App = () => {
   };
 
   return (
-    <Routes>
-      <Route path="/" element={<Navigate to={getNewEntryPage()} />} />
-      <Route path="/TitlePage" element={<TitlePage settings={settings} />} />
-      <Route path="/Splashscreen" element={<SplashScreen loadingState={loadingState} settings={settings} />} />
-      <Route
-        path="/Home"
-        element={
-          <PageWrapper gold={gold} settings={settings}>
-            <LobbyMenu setTheme={setThemeIfNoPreferredSet} theme={theme} addGold={addGold} settings={settings} />
-          </PageWrapper>
-        }
-      />
-      <Route
-        path="/Campaign"
-        element={
-          <PageWrapper gold={gold} settings={settings}>
-            <Campaign theme={theme} setTheme={setThemeIfNoPreferredSet} settings={settings} />
-          </PageWrapper>
-        }
-      />
-      <Route
-        path="/Campaign/Areas/:areaName"
-        element={
-          <PageWrapper gold={gold} settings={settings}>
-            <Area setTheme={setThemeIfNoPreferredSet} settings={settings} />
-          </PageWrapper>
-        }
-      />
-      <Route
-        path="/Campaign/Areas/:areaName/Levels/:levelNumber"
-        element={
-          <PageWrapper gold={gold} settings={settings}>
-            <Level
-              theme={theme}
-              setTheme={setThemeIfNoPreferredSet}
-              addGold={addGold}
-              onCompleteCampaignLevel={onCompleteCampaignLevel}
-              settings={settings}
-            />
-          </PageWrapper>
-        }
-      />
-      <Route
-        path="/Wingo/Daily"
-        element={
-          <PageWrapper gold={gold} settings={settings}>
-            <WingoConfig
-              {...commonProps}
-              {...commonWingoProps}
-              mode="daily"
-              gamemodeSettings={getPageGamemodeSettings(location) as WingoConfigProps["gamemodeSettings"]}
-            />
-          </PageWrapper>
-        }
-      />
-      <Route
-        path="/Wingo/Repeat"
-        element={
-          <PageWrapper gold={gold} settings={settings}>
-            <WingoConfig
-              {...commonProps}
-              {...commonWingoProps}
-              mode="repeat"
-              gamemodeSettings={getPageGamemodeSettings(location) as WingoConfigProps["gamemodeSettings"]}
-            />
-          </PageWrapper>
-        }
-      />
-      <Route
-        path="/Wingo/Category"
-        element={
-          <PageWrapper gold={gold} settings={settings}>
-            <WingoConfig
-              {...commonProps}
-              {...commonWingoProps}
-              mode="category"
-              enforceFullLengthGuesses={false}
-              gamemodeSettings={getPageGamemodeSettings(location) as WingoConfigProps["gamemodeSettings"]}
-            />
-          </PageWrapper>
-        }
-      />
-      <Route
-        path="/Wingo/Increasing"
-        element={
-          <PageWrapper gold={gold} settings={settings}>
-            <WingoConfig
-              {...commonProps}
-              {...commonWingoProps}
-              mode="increasing"
-              gamemodeSettings={getPageGamemodeSettings(location) as WingoConfigProps["gamemodeSettings"]}
-            />
-          </PageWrapper>
-        }
-      />
-      <Route
-        path="/Wingo/Limitless"
-        element={
-          <PageWrapper gold={gold} settings={settings}>
-            <WingoConfig
-              {...commonProps}
-              {...commonWingoProps}
-              mode="limitless"
-              gamemodeSettings={getPageGamemodeSettings(location) as WingoConfigProps["gamemodeSettings"]}
-            />
-          </PageWrapper>
-        }
-      />
-      <Route
-        path="/Wingo/Puzzle"
-        element={
-          <PageWrapper gold={gold} settings={settings}>
-            <WingoConfig
-              {...commonProps}
-              {...commonWingoProps}
-              mode="puzzle"
-              gamemodeSettings={getPageGamemodeSettings(location) as WingoConfigProps["gamemodeSettings"]}
-            />
-          </PageWrapper>
-        }
-      />
-      <Route
-        path="/Conundrum"
-        element={
-          <PageWrapper gold={gold} settings={settings}>
-            <WingoConfig
-              {...commonProps}
-              {...commonWingoProps}
-              mode="conundrum"
-              gamemodeSettings={getPageGamemodeSettings(location) as WingoConfigProps["gamemodeSettings"]}
-            />
-          </PageWrapper>
-        }
-      />
-      <Route
-        path="/Wingo/Interlinked"
-        element={
-          <PageWrapper gold={gold} settings={settings}>
-            <WingoConfig
-              {...commonProps}
-              {...commonWingoProps}
-              mode="interlinked"
-              gamemodeSettings={getPageGamemodeSettings(location) as WingoConfigProps["gamemodeSettings"]}
-            />
-          </PageWrapper>
-        }
-      />
-      <Route
-        path="/Wingo/Crossword"
-        element={
-          <PageWrapper gold={gold} settings={settings}>
-            <WingoConfig
-              {...commonProps}
-              {...commonWingoProps}
-              mode="crossword"
-              gamemodeSettings={getPageGamemodeSettings(location) as WingoConfigProps["gamemodeSettings"]}
-            />
-          </PageWrapper>
-        }
-      />
-      <Route
-        path="/Wingo/Crossword/Fit"
-        element={
-          <PageWrapper gold={gold} settings={settings}>
-            <WingoConfig
-              {...commonProps}
-              {...commonWingoProps}
-              mode="crossword/fit"
-              gamemodeSettings={getPageGamemodeSettings(location) as WingoConfigProps["gamemodeSettings"]}
-            />
-          </PageWrapper>
-        }
-      />
-      <Route
-        path="/Wingo/Crossword/Daily"
-        element={
-          <PageWrapper gold={gold} settings={settings}>
-            <WingoConfig
-              {...commonProps}
-              {...commonWingoProps}
-              mode="crossword/daily"
-              gamemodeSettings={getPageGamemodeSettings(location) as WingoConfigProps["gamemodeSettings"]}
-            />
-          </PageWrapper>
-        }
-      />
-      <Route
-        path="/Wingo/Crossword/Weekly"
-        element={
-          <PageWrapper gold={gold} settings={settings}>
-            <WingoConfig
-              {...commonProps}
-              {...commonWingoProps}
-              mode="crossword/weekly"
-              gamemodeSettings={getPageGamemodeSettings(location) as WingoConfigProps["gamemodeSettings"]}
-            />
-          </PageWrapper>
-        }
-      />
-      <Route
-        path="/LettersCategories"
-        element={
-          <PageWrapper gold={gold} settings={settings}>
-            <LetterCategoriesConfig
-              {...commonProps}
-              enforceFullLengthGuesses={false}
-              gamemodeSettings={getPageGamemodeSettings(location) as LetterCategoriesConfigProps["gamemodeSettings"]}
-            />
-          </PageWrapper>
-        }
-      />
-      <Route
-        path="/LettersGame"
-        element={
-          <PageWrapper gold={gold} settings={settings}>
-            <LettersGameConfig
-              {...commonProps}
-              theme={Themes.GenericLettersGame}
-              gamemodeSettings={getPageGamemodeSettings(location) as LettersGameConfigProps["gamemodeSettings"]}
-            />
-          </PageWrapper>
-        }
-      />
-      <Route
-        path="/NumbersGame"
-        element={
-          <PageWrapper gold={gold} settings={settings}>
-            <NumbersGameConfig
-              {...commonProps}
-              theme={Themes.GenericNumbersGame}
-              gamemodeSettings={getPageGamemodeSettings(location) as NumbersGameConfigProps["gamemodeSettings"]}
-            />
-          </PageWrapper>
-        }
-      />
-      <Route
-        path="/ArithmeticReveal"
-        element={
-          <PageWrapper gold={gold} settings={settings}>
-            <ArithmeticReveal
-              {...commonProps}
-              gamemodeSettings={getPageGamemodeSettings(location) as ArithmeticRevealProps["gamemodeSettings"]}
-            />
-          </PageWrapper>
-        }
-      />
-      <Route
-        path="/ArithmeticDrag/Order"
-        element={
-          <PageWrapper gold={gold} settings={settings}>
-            <ArithmeticDrag
-              {...commonProps}
-              mode="order"
-              gamemodeSettings={getPageGamemodeSettings(location) as ArithmeticDragProps["gamemodeSettings"]}
-            />
-          </PageWrapper>
-        }
-      />
-      <Route
-        path="/ArithmeticDrag/Match"
-        element={
-          <PageWrapper gold={gold} settings={settings}>
-            <ArithmeticDrag
-              {...commonProps}
-              mode="match"
-              gamemodeSettings={getPageGamemodeSettings(location) as ArithmeticDragProps["gamemodeSettings"]}
-            />
-          </PageWrapper>
-        }
-      />
-      <Route
-        path="/Numble"
-        element={
-          <PageWrapper gold={gold} settings={settings}>
-            <NumbleConfig
-              {...commonProps}
-              gamemodeSettings={getPageGamemodeSettings(location) as NumbleConfigProps["gamemodeSettings"]}
-            />
-          </PageWrapper>
-        }
-      />
-      <Route
-        path="/OnlyConnect"
-        element={
-          <PageWrapper gold={gold} settings={settings}>
-            <OnlyConnect
-              {...commonProps}
-              gamemodeSettings={getPageGamemodeSettings(location) as OnlyConnectProps["gamemodeSettings"]}
-            />
-          </PageWrapper>
-        }
-      />
-      <Route
-        path="/SameLetters"
-        element={
-          <PageWrapper gold={gold} settings={settings}>
-            <SameLetterWords
-              {...commonProps}
-              gamemodeSettings={getPageGamemodeSettings(location) as SameLetterWordsProps["gamemodeSettings"]}
-            />
-          </PageWrapper>
-        }
-      />
-      <Route
-        path="/NumberSets"
-        element={
-          <PageWrapper gold={gold} settings={settings}>
-            <NumberSets
-              {...commonProps}
-              gamemodeSettings={getPageGamemodeSettings(location) as NumberSetsProps["gamemodeSettings"]}
-            />
-          </PageWrapper>
-        }
-      />
-      <Route
-        path="/Algebra"
-        element={
-          <PageWrapper gold={gold} settings={settings}>
-            <Algebra
-              {...commonProps}
-              gamemodeSettings={getPageGamemodeSettings(location) as AlgebraProps["gamemodeSettings"]}
-            />
-          </PageWrapper>
-        }
-      />
-      <Route
-        path="/WordCodes/Question"
-        element={
-          <PageWrapper gold={gold} settings={settings}>
-            <WordCodes
-              {...commonProps}
-              mode={"question"}
-              gamemodeSettings={getPageGamemodeSettings(location) as WordCodesProps["gamemodeSettings"]}
-            />
-          </PageWrapper>
-        }
-      />
-      <Route
-        path="/WordCodes/Match"
-        element={
-          <PageWrapper gold={gold} settings={settings}>
-            <WordCodes
-              {...commonProps}
-              mode={"match"}
-              gamemodeSettings={getPageGamemodeSettings(location) as WordCodesProps["gamemodeSettings"]}
-            />
-          </PageWrapper>
-        }
-      />
-      <Route
-        path="/PuzzleSequence"
-        element={
-          <PageWrapper gold={gold} settings={settings}>
-            <SequencePuzzle {...commonProps} />
-          </PageWrapper>
-        }
-      />
-      <Route
-        path="/Settings"
-        element={
-          <PageWrapper gold={gold} settings={settings}>
-            <Settings settings={settings} onSettingsChange={setSettings} />
-          </PageWrapper>
-        }
-      />
-      <Route
-        path="/Challenges"
-        element={
-          <PageWrapper gold={gold} settings={settings}>
-            <ChallengesInfo settings={settings} addGold={addGold} />
-          </PageWrapper>
-        }
-      />
+    <div id="global-wrapper" data-dark-mode={settings.graphics.darkMode}>
+      <Routes>
+        <Route path="/" element={<Navigate to={getNewEntryPage()} />} />
+        <Route path="/TitlePage" element={<TitlePage settings={settings} />} />
+        <Route path="/Splashscreen" element={<SplashScreen loadingState={loadingState} settings={settings} />} />
+        <Route
+          path="/Home"
+          element={
+            <PageWrapper gold={gold} settings={settings}>
+              <LobbyMenu setTheme={setThemeIfNoPreferredSet} theme={theme} addGold={addGold} settings={settings} />
+            </PageWrapper>
+          }
+        />
+        <Route
+          path="/Campaign"
+          element={
+            <PageWrapper gold={gold} settings={settings}>
+              <Campaign theme={theme} setTheme={setThemeIfNoPreferredSet} settings={settings} />
+            </PageWrapper>
+          }
+        />
+        <Route
+          path="/Campaign/Areas/:areaName"
+          element={
+            <PageWrapper gold={gold} settings={settings}>
+              <Area setTheme={setThemeIfNoPreferredSet} settings={settings} />
+            </PageWrapper>
+          }
+        />
+        <Route
+          path="/Campaign/Areas/:areaName/Levels/:levelNumber"
+          element={
+            <PageWrapper gold={gold} settings={settings}>
+              <Level
+                theme={theme}
+                setTheme={setThemeIfNoPreferredSet}
+                addGold={addGold}
+                onCompleteCampaignLevel={onCompleteCampaignLevel}
+                settings={settings}
+              />
+            </PageWrapper>
+          }
+        />
+        <Route
+          path="/Wingo/Daily"
+          element={
+            <PageWrapper gold={gold} settings={settings}>
+              <WingoConfig
+                {...commonProps}
+                {...commonWingoProps}
+                mode="daily"
+                gamemodeSettings={getPageGamemodeSettings(location) as WingoConfigProps["gamemodeSettings"]}
+              />
+            </PageWrapper>
+          }
+        />
+        <Route
+          path="/Wingo/Repeat"
+          element={
+            <PageWrapper gold={gold} settings={settings}>
+              <WingoConfig
+                {...commonProps}
+                {...commonWingoProps}
+                mode="repeat"
+                gamemodeSettings={getPageGamemodeSettings(location) as WingoConfigProps["gamemodeSettings"]}
+              />
+            </PageWrapper>
+          }
+        />
+        <Route
+          path="/Wingo/Category"
+          element={
+            <PageWrapper gold={gold} settings={settings}>
+              <WingoConfig
+                {...commonProps}
+                {...commonWingoProps}
+                mode="category"
+                enforceFullLengthGuesses={false}
+                gamemodeSettings={getPageGamemodeSettings(location) as WingoConfigProps["gamemodeSettings"]}
+              />
+            </PageWrapper>
+          }
+        />
+        <Route
+          path="/Wingo/Increasing"
+          element={
+            <PageWrapper gold={gold} settings={settings}>
+              <WingoConfig
+                {...commonProps}
+                {...commonWingoProps}
+                mode="increasing"
+                gamemodeSettings={getPageGamemodeSettings(location) as WingoConfigProps["gamemodeSettings"]}
+              />
+            </PageWrapper>
+          }
+        />
+        <Route
+          path="/Wingo/Limitless"
+          element={
+            <PageWrapper gold={gold} settings={settings}>
+              <WingoConfig
+                {...commonProps}
+                {...commonWingoProps}
+                mode="limitless"
+                gamemodeSettings={getPageGamemodeSettings(location) as WingoConfigProps["gamemodeSettings"]}
+              />
+            </PageWrapper>
+          }
+        />
+        <Route
+          path="/Wingo/Puzzle"
+          element={
+            <PageWrapper gold={gold} settings={settings}>
+              <WingoConfig
+                {...commonProps}
+                {...commonWingoProps}
+                mode="puzzle"
+                gamemodeSettings={getPageGamemodeSettings(location) as WingoConfigProps["gamemodeSettings"]}
+              />
+            </PageWrapper>
+          }
+        />
+        <Route
+          path="/Conundrum"
+          element={
+            <PageWrapper gold={gold} settings={settings}>
+              <WingoConfig
+                {...commonProps}
+                {...commonWingoProps}
+                mode="conundrum"
+                gamemodeSettings={getPageGamemodeSettings(location) as WingoConfigProps["gamemodeSettings"]}
+              />
+            </PageWrapper>
+          }
+        />
+        <Route
+          path="/Wingo/Interlinked"
+          element={
+            <PageWrapper gold={gold} settings={settings}>
+              <WingoConfig
+                {...commonProps}
+                {...commonWingoProps}
+                mode="interlinked"
+                gamemodeSettings={getPageGamemodeSettings(location) as WingoConfigProps["gamemodeSettings"]}
+              />
+            </PageWrapper>
+          }
+        />
+        <Route
+          path="/Wingo/Crossword"
+          element={
+            <PageWrapper gold={gold} settings={settings}>
+              <WingoConfig
+                {...commonProps}
+                {...commonWingoProps}
+                mode="crossword"
+                gamemodeSettings={getPageGamemodeSettings(location) as WingoConfigProps["gamemodeSettings"]}
+              />
+            </PageWrapper>
+          }
+        />
+        <Route
+          path="/Wingo/Crossword/Fit"
+          element={
+            <PageWrapper gold={gold} settings={settings}>
+              <WingoConfig
+                {...commonProps}
+                {...commonWingoProps}
+                mode="crossword/fit"
+                gamemodeSettings={getPageGamemodeSettings(location) as WingoConfigProps["gamemodeSettings"]}
+              />
+            </PageWrapper>
+          }
+        />
+        <Route
+          path="/Wingo/Crossword/Daily"
+          element={
+            <PageWrapper gold={gold} settings={settings}>
+              <WingoConfig
+                {...commonProps}
+                {...commonWingoProps}
+                mode="crossword/daily"
+                gamemodeSettings={getPageGamemodeSettings(location) as WingoConfigProps["gamemodeSettings"]}
+              />
+            </PageWrapper>
+          }
+        />
+        <Route
+          path="/Wingo/Crossword/Weekly"
+          element={
+            <PageWrapper gold={gold} settings={settings}>
+              <WingoConfig
+                {...commonProps}
+                {...commonWingoProps}
+                mode="crossword/weekly"
+                gamemodeSettings={getPageGamemodeSettings(location) as WingoConfigProps["gamemodeSettings"]}
+              />
+            </PageWrapper>
+          }
+        />
+        <Route
+          path="/LettersCategories"
+          element={
+            <PageWrapper gold={gold} settings={settings}>
+              <LetterCategoriesConfig
+                {...commonProps}
+                enforceFullLengthGuesses={false}
+                gamemodeSettings={getPageGamemodeSettings(location) as LetterCategoriesConfigProps["gamemodeSettings"]}
+              />
+            </PageWrapper>
+          }
+        />
+        <Route
+          path="/LettersGame"
+          element={
+            <PageWrapper gold={gold} settings={settings}>
+              <LettersGameConfig
+                {...commonProps}
+                theme={Themes.GenericLettersGame}
+                gamemodeSettings={getPageGamemodeSettings(location) as LettersGameConfigProps["gamemodeSettings"]}
+              />
+            </PageWrapper>
+          }
+        />
+        <Route
+          path="/NumbersGame"
+          element={
+            <PageWrapper gold={gold} settings={settings}>
+              <NumbersGameConfig
+                {...commonProps}
+                theme={Themes.GenericNumbersGame}
+                gamemodeSettings={getPageGamemodeSettings(location) as NumbersGameConfigProps["gamemodeSettings"]}
+              />
+            </PageWrapper>
+          }
+        />
+        <Route
+          path="/ArithmeticReveal"
+          element={
+            <PageWrapper gold={gold} settings={settings}>
+              <ArithmeticReveal
+                {...commonProps}
+                gamemodeSettings={getPageGamemodeSettings(location) as ArithmeticRevealProps["gamemodeSettings"]}
+              />
+            </PageWrapper>
+          }
+        />
+        <Route
+          path="/ArithmeticDrag/Order"
+          element={
+            <PageWrapper gold={gold} settings={settings}>
+              <ArithmeticDrag
+                {...commonProps}
+                mode="order"
+                gamemodeSettings={getPageGamemodeSettings(location) as ArithmeticDragProps["gamemodeSettings"]}
+              />
+            </PageWrapper>
+          }
+        />
+        <Route
+          path="/ArithmeticDrag/Match"
+          element={
+            <PageWrapper gold={gold} settings={settings}>
+              <ArithmeticDrag
+                {...commonProps}
+                mode="match"
+                gamemodeSettings={getPageGamemodeSettings(location) as ArithmeticDragProps["gamemodeSettings"]}
+              />
+            </PageWrapper>
+          }
+        />
+        <Route
+          path="/Numble"
+          element={
+            <PageWrapper gold={gold} settings={settings}>
+              <NumbleConfig
+                {...commonProps}
+                gamemodeSettings={getPageGamemodeSettings(location) as NumbleConfigProps["gamemodeSettings"]}
+              />
+            </PageWrapper>
+          }
+        />
+        <Route
+          path="/OnlyConnect"
+          element={
+            <PageWrapper gold={gold} settings={settings}>
+              <OnlyConnect
+                {...commonProps}
+                gamemodeSettings={getPageGamemodeSettings(location) as OnlyConnectProps["gamemodeSettings"]}
+              />
+            </PageWrapper>
+          }
+        />
+        <Route
+          path="/SameLetters"
+          element={
+            <PageWrapper gold={gold} settings={settings}>
+              <SameLetterWords
+                {...commonProps}
+                gamemodeSettings={getPageGamemodeSettings(location) as SameLetterWordsProps["gamemodeSettings"]}
+              />
+            </PageWrapper>
+          }
+        />
+        <Route
+          path="/NumberSets"
+          element={
+            <PageWrapper gold={gold} settings={settings}>
+              <NumberSets
+                {...commonProps}
+                gamemodeSettings={getPageGamemodeSettings(location) as NumberSetsProps["gamemodeSettings"]}
+              />
+            </PageWrapper>
+          }
+        />
+        <Route
+          path="/Algebra"
+          element={
+            <PageWrapper gold={gold} settings={settings}>
+              <Algebra
+                {...commonProps}
+                gamemodeSettings={getPageGamemodeSettings(location) as AlgebraProps["gamemodeSettings"]}
+              />
+            </PageWrapper>
+          }
+        />
+        <Route
+          path="/WordCodes/Question"
+          element={
+            <PageWrapper gold={gold} settings={settings}>
+              <WordCodes
+                {...commonProps}
+                mode={"question"}
+                gamemodeSettings={getPageGamemodeSettings(location) as WordCodesProps["gamemodeSettings"]}
+              />
+            </PageWrapper>
+          }
+        />
+        <Route
+          path="/WordCodes/Match"
+          element={
+            <PageWrapper gold={gold} settings={settings}>
+              <WordCodes
+                {...commonProps}
+                mode={"match"}
+                gamemodeSettings={getPageGamemodeSettings(location) as WordCodesProps["gamemodeSettings"]}
+              />
+            </PageWrapper>
+          }
+        />
+        <Route
+          path="/PuzzleSequence"
+          element={
+            <PageWrapper gold={gold} settings={settings}>
+              <SequencePuzzle {...commonProps} />
+            </PageWrapper>
+          }
+        />
+        <Route
+          path="/Settings"
+          element={
+            <PageWrapper gold={gold} settings={settings}>
+              <Settings settings={settings} onSettingsChange={setSettings} />
+            </PageWrapper>
+          }
+        />
+        <Route
+          path="/Challenges"
+          element={
+            <PageWrapper gold={gold} settings={settings}>
+              <ChallengesInfo settings={settings} addGold={addGold} />
+            </PageWrapper>
+          }
+        />
 
-      <Route path="/Random" element={null} />
-      <Route
-        path="/LettersNumbersGameshow"
-        element={
-          <PageWrapper gold={gold} settings={settings}>
-            <LettersNumbersGameshow
-              {...commonProps}
-              {...commonWingoProps}
-              themes={[Themes.GenericLettersGame, Themes.GenericNumbersGame]}
-              // TODO: Should LettersNumbersGameshow have gamemodeSettings like other gamemodes or an initial configuration page?
-              numSets={5}
-              numLetterRoundsPerSet={2}
-              numNumberRoundsPerSet={1}
-              numConundrumRoundsPerSet={0}
-              hasFinishingConundrum={true}
+        <Route path="/Random" element={null} />
+        <Route
+          path="/LettersNumbersGameshow"
+          element={
+            <PageWrapper gold={gold} settings={settings}>
+              <LettersNumbersGameshow
+                {...commonProps}
+                {...commonWingoProps}
+                themes={[Themes.GenericLettersGame, Themes.GenericNumbersGame]}
+                // TODO: Should LettersNumbersGameshow have gamemodeSettings like other gamemodes or an initial configuration page?
+                numSets={5}
+                numLetterRoundsPerSet={2}
+                numNumberRoundsPerSet={1}
+                numConundrumRoundsPerSet={0}
+                hasFinishingConundrum={true}
+              />
+            </PageWrapper>
+          }
+        />
+        <Route
+          path="/WingoGameshow"
+          element={
+            <PageWrapper gold={gold} settings={settings}>
+              <WingoGameshow
+                {...commonProps}
+                {...commonWingoProps}
+                // TODO: Should WingoGameshow have gamemodeSettings like other gamemodes or an initial configuration page?
+                roundOrderConfig={defaultWingoGameshowRoundOrder}
+              />
+            </PageWrapper>
+          }
+        />
+        <Route
+          path="/CustomGameshow"
+          element={
+            <PageWrapper gold={gold} settings={settings}>
+              <CustomGameshow {...commonProps} />
+            </PageWrapper>
+          }
+        />
+        <Route
+          path="*"
+          element={
+            <ErrorFallback
+              error={new Error("Page not found")}
+              resetErrorBoundary={() => navigate("/Home")}
+              settingsData={SaveData.getSettings()}
+              version={VERSION}
             />
-          </PageWrapper>
-        }
-      />
-      <Route
-        path="/WingoGameshow"
-        element={
-          <PageWrapper gold={gold} settings={settings}>
-            <WingoGameshow
-              {...commonProps}
-              {...commonWingoProps}
-              // TODO: Should WingoGameshow have gamemodeSettings like other gamemodes or an initial configuration page?
-              roundOrderConfig={defaultWingoGameshowRoundOrder}
-            />
-          </PageWrapper>
-        }
-      />
-      <Route
-        path="/CustomGameshow"
-        element={
-          <PageWrapper gold={gold} settings={settings}>
-            <CustomGameshow {...commonProps} />
-          </PageWrapper>
-        }
-      />
-      <Route
-        path="*"
-        element={
-          <ErrorFallback
-            error={new Error("Page not found")}
-            resetErrorBoundary={() => navigate("/Home")}
-            settingsData={SaveData.getSettings()}
-            version={VERSION}
-          />
-        }
-      />
-    </Routes>
+          }
+        />
+      </Routes>
+    </div>
   );
 };

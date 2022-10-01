@@ -2292,3 +2292,96 @@ $numble-colors-names: (
     mask-position: left;
   }
 }
+
+#global-wrapper {
+  display: flex;
+  flex-grow: 1;
+  &[data-dark-mode="true"] {
+    background-color: #555;
+    .sidebar-header {
+      background-color: #111;
+      border-bottom-color: #555;
+    }
+    .sidebar {
+      background-color: #333;
+    }
+    .sidebar-title {
+      color: #aaa;
+    }
+    .widget {
+      background-color: #222;
+      border-color: #555;
+    }
+    .btn.default {
+      background-color: #252525;
+      color: #eee;
+      border-color: #555;
+      &:hover {
+        background-color: #111;
+        color: #fff;
+      }
+    }
+    .word_grid {
+      background-color: #333;
+      background-image: linear-gradient(318deg, #222, transparent);
+      border-color: #656565;
+    }
+    .letter_tile {
+      &[data-status="not in word"] {
+        background-color: #333;
+        border-color: #444;
+        color: #aaa;
+        box-shadow: 0px 3px 2px 0px #333;
+        text-shadow: 0 4px 1px #444;
+      }
+      &[data-new-letter-added="true"],
+      &[data-new-letter-added="false"][data-status="not set"] {
+        background-color: #222;
+        border-color: #444;
+        color: #ccc;
+        box-shadow: 0px 3px 2px 0px #333;
+        text-shadow: 0 4px 1px #444;
+      }
+    }
+    .setting-section-links {
+      background-color: #333;
+    }
+    .settings-section-title {
+      background-color: #333;
+      color: #eee;
+    }
+    .settings-section {
+      background-color: #404040;
+      color: #eee;
+    }
+    .setting {
+      &:hover {
+        background-color: #222;
+      }
+      input,
+      select {
+        color: #333;
+      }
+    }
+    .gamemode-settings-button {
+      background-color: #444;
+      color: #ddd;
+      &:hover {
+        background-color: #333;
+        color: #fff;
+      }
+    }
+    .message-notification[data-type="default"] {
+      background-color: #333;
+      color: #aaa;
+      input {
+        color: #444;
+      }
+    }
+    .studio-logo {
+      background-color: #444;
+      color: #aaa;
+      border-color: #555;
+    }
+  }
+}

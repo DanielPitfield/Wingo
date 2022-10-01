@@ -34,7 +34,7 @@ export const Settings = (props: Props) => {
   const { settings } = props;
 
   // The available choices for which page is loaded on launch
-  const entryPages: PagePath[] = ["TitlePage", "campaign", "wingo/daily"];
+  const entryPages: PagePath[] = ["/TitlePage", "/Campaign", "/Wingo/Daily"];
   // More user friendly to use title values (for dropdown in settings)
   const entryPageValues = pageDescriptions.filter((page) => entryPages.includes(page.path))?.map((page) => page.title);
 
@@ -86,6 +86,12 @@ export const Settings = (props: Props) => {
       type: "settings",
       icon: FiMonitor,
       settings: [
+        {
+          name: "Dark Mode?",
+          type: "boolean",
+          value: props.settings.graphics.darkMode,
+          onChange: (darkMode) => ({ ...settings, graphics: { ...settings.graphics, darkMode } }),
+        },
         {
           name: "Preferred Theme",
           type: "option",

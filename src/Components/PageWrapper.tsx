@@ -73,7 +73,7 @@ export const PageWrapper = (props: Props) => {
               className="props.settings-button"
               settings={props.settings}
               onClick={() => {
-                navigate("/props.settings");
+                navigate("/Settings");
                 setIsHelpInfoShown(false);
               }}
             >
