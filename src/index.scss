@@ -905,9 +905,7 @@ $data-statuses: (
   flex-grow: 0;
   border-bottom: 1px solid #444;
   color: #bbb;
-  .settings-button,
-  .help-info-button,
-  .back-button {
+  .btn {
     padding: 0.52em 0.6em;
     margin: 0.3em;
   }
