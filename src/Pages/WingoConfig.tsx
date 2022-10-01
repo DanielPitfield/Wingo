@@ -385,6 +385,12 @@ const WingoConfig = (props: Props) => {
 
     const newTarget = getRandomElementFrom(categoryMappings.find((x) => x.name === targetCategory)?.array ?? []);
 
+    if (!newTarget) {
+      // If the categopryMappings have not yet loaded,
+      // do not set the targetWord and targetHint (#400)
+      return;
+    }
+
     console.log(
       `%cMode:%c ${props.mode}\n%cHint:%c ${newTarget.hint}\n%cWord:%c ${newTarget.word}`,
       "font-weight: bold",
