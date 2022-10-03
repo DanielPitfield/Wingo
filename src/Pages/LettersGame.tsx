@@ -196,7 +196,7 @@ const LettersGame = (props: Props) => {
     }
 
     const bestWords = getBestLettersGameWords(getSelectionWord());
-    
+
     // Create a list of the longest words that can be made with the available letters
     const bestWordsList = (
       <ul className="best_words_list">
@@ -206,40 +206,22 @@ const LettersGame = (props: Props) => {
       </ul>
     );
 
-    const GOLD_PER_LETTER = 30;
-
-    // TODO: Refactor?
-
-    let outcomeNotification;
-
     if (bestGuess) {
+      const GOLD_PER_LETTER = 30;
       // Reward gold based on how long the selected guess is
       props.addGold(bestGuess.length * GOLD_PER_LETTER);
-
-      outcomeNotification = (
-        <>
-          <MessageNotification type="success">
-            <strong>{bestGuess.toUpperCase()}</strong>
-            <br />
-            <strong>{bestGuess.length} points</strong>
-          </MessageNotification>
-          {bestWordsList}
-        </>
-      );
-    } else {
-      outcomeNotification = (
-        <>
-          <MessageNotification type="error">
-            <strong>No guess was made</strong>
-            <br />
-            <strong>0 points</strong>
-          </MessageNotification>
-          {bestWordsList}
-        </>
-      );
     }
 
-    return outcomeNotification;
+    return (
+      <>
+        <MessageNotification type="success">
+          <strong>{bestGuess ? bestGuess.toUpperCase() : "No guess was made"}</strong>
+          <br />
+          <strong>{bestGuess ? bestGuess.length : "0"} points</strong>
+        </MessageNotification>
+        {bestWordsList}
+      </>
+    );
   }
 
   // Automatically choose the best word guessed so far
