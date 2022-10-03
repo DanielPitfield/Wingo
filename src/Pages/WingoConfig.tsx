@@ -512,7 +512,6 @@ const WingoConfig = (props: Props) => {
       return;
     }
 
-    // TODO: Page is its own parameter but is also in the levelProps
     const gameId = SaveData.addGameToHistory(location, {
       timestamp: new Date().toISOString(),
       gameCategory: "Wingo",

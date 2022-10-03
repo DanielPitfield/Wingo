@@ -4,7 +4,7 @@ import { MessageNotification } from "../Components/MessageNotification";
 import { SettingsData } from "../Data/SaveData";
 import { Theme } from "../Data/Themes";
 import { LevelNode } from "../Components/LevelNode";
-import { Navigate, useNavigate, useParams } from "react-router-dom";
+import { Navigate, useParams } from "react-router-dom";
 import { getAreaConfig } from "../Helpers/getAreaConfig";
 
 export interface AreaConfig {
