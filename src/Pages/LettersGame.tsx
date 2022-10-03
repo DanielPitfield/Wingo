@@ -13,11 +13,12 @@ import { Theme } from "../Data/Themes";
 import { getAllWordsOfLength } from "../Helpers/getAllWordsOfLength";
 import { getGamemodeDefaultTimerValue } from "../Helpers/getGamemodeDefaultTimerValue";
 import { getNewGamemodeSettingValue } from "../Helpers/getGamemodeSettingsNewValue";
-import { getRandomElementFrom } from "../Helpers/getRandomElementFrom";
 import { isLettersGameGuessValid } from "../Helpers/isLettersGameGuessValid";
 import { shuffleArray } from "../Helpers/shuffleArray";
 import { LettersGameConfigProps } from "./LettersGameConfig";
 import { useLocation } from "react-router-dom";
+import { getWeightedLetter } from "../Helpers/getWeightedLetter";
+import { consonantWeightings, vowelWeightings } from "../Data/LettersGameWeightings";
 
 interface Props {
   campaignConfig: LettersGameConfigProps["campaignConfig"];
@@ -33,7 +34,6 @@ interface Props {
   inProgress: boolean;
   inDictionary: boolean;
   hasSubmitLetter: boolean;
-  // TODO: Target word needed?
   targetWord: string;
   remainingSeconds: number;
 
@@ -65,86 +65,41 @@ const LettersGame = (props: Props) => {
   // Currently selected guess, to be used as the final guess when time runs out
   const [bestGuess, setBestGuess] = useState("");
 
-  const SELECTION_WORD_NUM_LETTERS = props.letterTileStatuses.filter(
-    (letterStatus) => letterStatus.letter !== null
-  ).length;
-  // Check if letter selection has finished
-  const IS_SELECTION_FINISHED = SELECTION_WORD_NUM_LETTERS === props.gamemodeSettings.numLetters;
-
   const [mostRecentTotalSeconds, setMostRecentTotalSeconds] = useState(
     props.gamemodeSettings?.timerConfig?.isTimed === true
       ? props.gamemodeSettings?.timerConfig?.seconds
       : getGamemodeDefaultTimerValue(location)
   );
 
-  function getWeightedLetter(letterWeightings: { letter: string; weighting: number }[]) {
-    let weightedArray: string[] = [];
+  const getNumSelectedLetters = (): number => {
+    // How many letters have been selected so far?
+    return props.letterTileStatuses.filter((letterStatus) => letterStatus.letter !== null).length;
+  };
 
-    // For each object in input array
-    for (let i = 0; i < letterWeightings.length; i++) {
-      // For the 'weighting' value number of times
-      for (let j = 0; j < letterWeightings[i].weighting; j++) {
-        // Push the related letter to the array
-        weightedArray.push(letterWeightings[i].letter);
-      }
-    }
+  const isLetterSelectionFinished = (): boolean => {
+    return getNumSelectedLetters() === props.gamemodeSettings.numLetters;
+  };
 
-    // Select a random value from this array
-    return getRandomElementFrom(weightedArray);
-  }
-
-  function getVowel(): string {
+  const getVowel = (): string => {
     // Already have enough letters, don't add any more
-    if (SELECTION_WORD_NUM_LETTERS === props.gamemodeSettings.numLetters) {
+    if (isLetterSelectionFinished()) {
       return "";
     }
-
-    // Scrabble distribution (https://en.wikipedia.org/wiki/Scrabble_letter_distributions)
-    let vowelWeightings = [
-      { letter: "a", weighting: 9 },
-      { letter: "e", weighting: 12 },
-      { letter: "i", weighting: 9 },
-      { letter: "o", weighting: 8 },
-      { letter: "u", weighting: 4 },
-    ];
 
     return getWeightedLetter(vowelWeightings);
-  }
+  };
 
-  function getConsonant(): string {
+  const getConsonant = (): string => {
     // Already have enough letters, don't add any more
-    if (SELECTION_WORD_NUM_LETTERS === props.gamemodeSettings.numLetters) {
+    if (isLetterSelectionFinished()) {
       return "";
     }
 
-    let consonantWeightings = [
-      { letter: "b", weighting: 2 },
-      { letter: "c", weighting: 2 },
-      { letter: "d", weighting: 4 },
-      { letter: "f", weighting: 2 },
-      { letter: "g", weighting: 3 },
-      { letter: "h", weighting: 2 },
-      { letter: "j", weighting: 1 },
-      { letter: "k", weighting: 1 },
-      { letter: "l", weighting: 4 },
-      { letter: "m", weighting: 2 },
-      { letter: "n", weighting: 6 },
-      { letter: "p", weighting: 2 },
-      { letter: "q", weighting: 1 },
-      { letter: "r", weighting: 6 },
-      { letter: "s", weighting: 4 },
-      { letter: "t", weighting: 6 },
-      { letter: "v", weighting: 2 },
-      { letter: "w", weighting: 2 },
-      { letter: "x", weighting: 1 },
-      { letter: "y", weighting: 2 },
-      { letter: "z", weighting: 1 },
-    ];
-
     return getWeightedLetter(consonantWeightings);
-  }
+  };
 
-  function quickLetterSelection() {
+  const quickLetterSelection = () => {
+    // TODO: Refactor?
     let newLettersGameWord = "";
 
     // Build word by randomly adding vowels and consonants
@@ -160,7 +115,7 @@ const LettersGame = (props: Props) => {
 
     // Set the entire word at once
     props.onSubmitSelectionWord(newLettersGameWord);
-  }
+  };
 
   function displayGrid(): React.ReactNode {
     // Read only letter selection WordRow
@@ -179,7 +134,7 @@ const LettersGame = (props: Props) => {
       <div className="add-letter-buttons-wrapper">
         <Button
           mode={"default"}
-          disabled={IS_SELECTION_FINISHED}
+          disabled={isLetterSelectionFinished()}
           settings={props.settings}
           onClick={() => props.onSubmitSelectionLetter(getVowel())}
         >
@@ -187,7 +142,7 @@ const LettersGame = (props: Props) => {
         </Button>
         <Button
           mode={"default"}
-          disabled={IS_SELECTION_FINISHED}
+          disabled={isLetterSelectionFinished()}
           settings={props.settings}
           onClick={() => props.onSubmitSelectionLetter(getConsonant())}
         >
@@ -195,7 +150,7 @@ const LettersGame = (props: Props) => {
         </Button>
         <Button
           mode={"default"}
-          disabled={SELECTION_WORD_NUM_LETTERS !== 0 || IS_SELECTION_FINISHED}
+          disabled={getNumSelectedLetters() !== 0 || isLetterSelectionFinished()}
           settings={props.settings}
           onClick={quickLetterSelection}
         >
@@ -231,6 +186,7 @@ const LettersGame = (props: Props) => {
   }
 
   function getBestWords(lettersGameSelectionWord: string) {
+    // TODO: Refactor?
     const MAX_WORDS_TO_RETURN = 5;
 
     // Array to store best words that are found
@@ -279,6 +235,8 @@ const LettersGame = (props: Props) => {
     );
 
     const GOLD_PER_LETTER = 30;
+
+    // TODO: Refactor?
 
     let outcomeNotification;
 
