@@ -99,22 +99,17 @@ const LettersGame = (props: Props) => {
   };
 
   const quickLetterSelection = () => {
-    // TODO: Refactor?
-    let newLettersGameWord = "";
-
-    // Build word by randomly adding vowels and consonants
-    for (let i = 0; i < props.gamemodeSettings.numLetters; i++) {
-      let x = Math.floor(Math.random() * 2) === 0;
-      // Equal chance (to add a vowel or consonant)
-      if (x) {
-        newLettersGameWord += getVowel();
-      } else {
-        newLettersGameWord += getConsonant();
-      }
-    }
+    const selectionWordLetters = Array(props.gamemodeSettings.numLetters)
+      .fill("")
+      .map((letter) => {
+        // Equal chance to be true or false
+        const x = Math.floor(Math.random() * 2) === 0;
+        // Equal chance (to add a vowel or consonant)
+        return x ? getVowel() : getConsonant();
+      });
 
     // Set the entire word at once
-    props.onSubmitSelectionWord(newLettersGameWord);
+    props.onSubmitSelectionWord(selectionWordLetters.join(""));
   };
 
   function displayGrid(): React.ReactNode {
