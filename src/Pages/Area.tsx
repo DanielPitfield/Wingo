@@ -4,7 +4,7 @@ import { MessageNotification } from "../Components/MessageNotification";
 import { SettingsData } from "../Data/SaveData";
 import { Theme } from "../Data/Themes";
 import { LevelNode } from "../Components/LevelNode";
-import { useNavigate, useParams } from "react-router-dom";
+import { Navigate, useNavigate, useParams } from "react-router-dom";
 import { getAreaConfig } from "../Helpers/getAreaConfig";
 
 export interface AreaConfig {
@@ -21,11 +21,10 @@ interface AreaProps {
 
 /** Portion of the campaign, with many levels */
 export const Area = (props: AreaProps) => {
+  const { areaName } = useParams();
+
   // Keep track of which level node has most recently been hovered over
   const [selectedLevel, setSelectedLevel] = useState<LevelConfig | null>(null);
-
-  const navigate = useNavigate();
-  const { areaName } = useParams();
 
   // Find the selected area using the areaName paramater (the dynamic segment of the URL)
   const selectedArea: AreaConfig | null = getAreaConfig(areaName);
@@ -33,9 +32,7 @@ export const Area = (props: AreaProps) => {
   // The area couldn't be found
   if (selectedArea === null) {
     // Go back to campaign page
-    navigate("/Campaign");
-    // TODO: Gone back to a previous page, but must render something here?
-    return <></>;
+    return <Navigate to="/Campaign" />;
   }
 
   return (

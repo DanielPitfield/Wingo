@@ -19,10 +19,11 @@ import { AreaConfig } from "../Pages/Area";
 import { LettersNumbersGameshow, LettersNumbersGameshowProps } from "../Pages/LettersNumbersGameshow";
 import { WingoGameshow, WingoGameshowProps } from "../Pages/WingoGameshow";
 import SequencePuzzle, { SequencePuzzleProps } from "../Pages/SequencePuzzle";
-import { useNavigate } from "react-router-dom";
+import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import { useParams } from "react-router";
 import { getAreaConfig } from "../Helpers/getAreaConfig";
 import { getLevelConfig } from "../Helpers/getLevelConfig";
+import { getAreaBacktrackPath } from "../Helpers/getAreaBacktrackPath";
 
 export type LevelConfig = {
   hint?: React.ReactNode;
@@ -183,9 +184,11 @@ interface LevelProps {
 }
 
 /** A level within an area (e.g. one game) */
-export const Level = (props: LevelProps) => {
-  const navigate = useNavigate();
+export const Level = (props: LevelProps) => {  
   const { areaName, levelNumber } = useParams();
+
+  const location = useLocation().pathname as PagePath;
+  const navigate = useNavigate();
 
   // Find the selected area using the areaName paramater (the dynamic segment of the URL)
   const selectedArea: AreaConfig | null = getAreaConfig(areaName);
@@ -196,9 +199,7 @@ export const Level = (props: LevelProps) => {
   // Either, the area or level couldn't be found
   if (selectedArea! === null || selectedLevel! === null) {
     // Go back to area (if that can be found), otherwise go back to campaign
-    navigate(selectedArea ? `/Campaign/Areas/:${selectedArea.name}` : "/Campaign");
-    // TODO: Gone back to a previous page, but must render something here?
-    return <></>;
+    return <Navigate to={selectedArea ? getAreaBacktrackPath(location) : "/Campaign"} />;
   }
 
   function renderGame() {
@@ -271,6 +272,7 @@ export const Level = (props: LevelProps) => {
         return <SequencePuzzle {...selectedLevel!.level.levelProps} {...commonProps} />;
     }
   }
+
   return (
     <div
       className="level"

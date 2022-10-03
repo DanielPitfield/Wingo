@@ -11,7 +11,7 @@ import { PagePath } from "../Data/PageNames";
 import GoldCoin from "../Data/Images/gold.png";
 import { useState } from "react";
 import { isCampaignAreaPath, isCampaignLevelPath } from "../Helpers/CampaignPathChecks";
-import { getAreaBacktrackPath } from "../Helpers/TrimCampaignPaths";
+import { getAreaBacktrackPath } from "../Helpers/getAreaBacktrackPath";
 
 interface Props {
   settings: SettingsData;
