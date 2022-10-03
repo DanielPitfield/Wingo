@@ -19,14 +19,13 @@ interface Props {
   children: React.ReactNode;
 }
 
-// TODO: The components in each route should be nested inside this div
 export const PageWrapper = (props: Props) => {
   // What is the current path?
   const location = useLocation().pathname as PagePath;
 
   const navigate = useNavigate();
 
-  // Modal explaining current gamemode is shown?
+  // Modal explaining current gamemode, should it be currently shown?
   const [isHelpInfoShown, setIsHelpInfoShown] = useState(false);
 
   return (

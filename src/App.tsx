@@ -40,8 +40,6 @@ import { Routes, Route, useNavigate, useLocation, Navigate } from "react-router-
 import { PageWrapper } from "./Components/PageWrapper";
 import { isCampaignLevelPath } from "./Helpers/CampaignPathChecks";
 
-// TODO: With React ROuter, the state Page shouldn't be needed anymore
-
 export const App = () => {
   // What is the current path?
   const location = useLocation().pathname as PagePath;

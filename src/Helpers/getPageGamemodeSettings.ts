@@ -30,7 +30,6 @@ import { SameLetterWordsProps } from "../Pages/SameLetterWords";
 import { WingoConfigProps } from "../Pages/WingoConfig";
 import { WordCodesProps } from "../Pages/WordCodes";
 
-// TODO: Uses
 export function getPageGamemodeSettings(page: PagePath) {
   switch (page) {
     case "/Wingo/Daily":
