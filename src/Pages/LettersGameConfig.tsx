@@ -3,7 +3,7 @@ import { PagePath } from "../Data/PageNames";
 import LettersGame from "./LettersGame";
 import { Theme } from "../Data/Themes";
 import { SaveData, SettingsData } from "../Data/SaveData";
-import { getAllWordsOfLength } from "../Helpers/getAllWordsOfLength";
+import { getAllWordsOfLength } from "../Helpers/getWordsOfLength";
 import { getGamemodeDefaultTimerValue } from "../Helpers/getGamemodeDefaultTimerValue";
 import { isLettersGameGuessValid } from "../Helpers/isLettersGameGuessValid";
 import { useLocation } from "react-router-dom";

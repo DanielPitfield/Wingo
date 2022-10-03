@@ -14,7 +14,7 @@ import { MIN_TARGET_WORD_LENGTH } from "../Data/GamemodeSettingsInputLimits";
 import { categoryMappings, targetWordLengthMappings } from "../Data/WordArrayMappings";
 import { getDeterministicArrayItems } from "../Helpers/DeterministicSeeding";
 import { LetterStatus } from "../Components/LetterTile";
-import { getAllWordsOfLength } from "../Helpers/getAllWordsOfLength";
+import { getAllPuzzleWordsOfLength, getAllWordsOfLength, getTargetWordsOfLength } from "../Helpers/getWordsOfLength";
 import { getGamemodeDefaultTimerValue } from "../Helpers/getGamemodeDefaultTimerValue";
 import { getGamemodeDefaultWordLength } from "../Helpers/getGamemodeDefaultWordLength";
 import { getConundrum } from "../Helpers/getConundrum";
@@ -162,9 +162,9 @@ const WingoConfig = (props: Props) => {
   // Returns the newly determined target word
   function getTargetWord() {
     // Array of words of the current gamemode length (most modes will choose a word from this array)
-    let targetLengthWordArray: { word: string; hint: string }[] = targetWordLengthMappings
-      .find((x) => x.value === gamemodeSettings.wordLength)
-      ?.array.map((x) => ({ word: x, hint: "" }))!;
+    let targetLengthWordArray: { word: string; hint: string }[] = getTargetWordsOfLength(
+      gamemodeSettings.wordLength
+    ).map((x) => ({ word: x, hint: "" }))!;
 
     switch (props.mode) {
       case "daily":
@@ -186,9 +186,8 @@ const WingoConfig = (props: Props) => {
         return newTarget;
 
       case "puzzle":
-        // Get a random puzzle (from puzzles_ten.ts)
-        // TODO: Expand to have 9, 10 and 11 length puzzles
-        return getRandomElementFrom(Puzzles10);
+        // Get a random puzzle
+        return getRandomElementFrom(getAllPuzzleWordsOfLength(gamemodeSettings.wordLength));
 
       case "category":
         // A target category has been manually selected from dropdown

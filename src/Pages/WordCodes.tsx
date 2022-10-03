@@ -15,7 +15,7 @@ import { DraggableItem } from "../Components/DraggableItem";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
 import { MAX_CODE_LENGTH } from "../Data/GamemodeSettingsInputLimits";
 import { shuffleArray } from "../Helpers/shuffleArray";
-import { getAllWordsOfLength } from "../Helpers/getAllWordsOfLength";
+import { getAllWordsOfLength } from "../Helpers/getWordsOfLength";
 import { getGamemodeDefaultTimerValue } from "../Helpers/getGamemodeDefaultTimerValue";
 import { getGamemodeDefaultWordLength } from "../Helpers/getGamemodeDefaultWordLength";
 import { getQuestionSetOutcome } from "../Helpers/getQuestionSetOutcome";

@@ -1,4 +1,4 @@
-import { getAllWordsOfLength } from "./getAllWordsOfLength";
+import { getAllWordsOfLength } from "./getWordsOfLength";
 import { isLettersGameGuessValid } from "./isLettersGameGuessValid";
 import { shuffleArray } from "./shuffleArray";
 

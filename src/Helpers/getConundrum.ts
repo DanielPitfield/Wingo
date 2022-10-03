@@ -1,4 +1,4 @@
-import { getAllWordsOfLength } from "./getAllWordsOfLength";
+import { getAllWordsOfLength } from "./getWordsOfLength";
 import { getRandomElementFrom } from "./getRandomElementFrom";
 import { isAnagram } from "./isAnagram";
 
