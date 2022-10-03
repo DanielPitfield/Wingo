@@ -19,7 +19,6 @@ import { getGamemodeDefaultTimerValue } from "../Helpers/getGamemodeDefaultTimer
 import { getGamemodeDefaultWordLength } from "../Helpers/getGamemodeDefaultWordLength";
 import { getConundrum } from "../Helpers/getConundrum";
 import { getRandomElementFrom } from "../Helpers/getRandomElementFrom";
-import { Puzzles10 } from "../Data/WordArrays/Puzzles/Puzzles10";
 import { getLetterStatus } from "../Helpers/getLetterStatus";
 import { getNumNewLimitlessLives } from "../Helpers/getNumNewLimitlessLives";
 import { getDailyWeeklyWingoModes } from "../Helpers/getDailyWeeklyWingoModes";
