@@ -185,13 +185,13 @@ interface LevelProps {
 /** A level within an area (e.g. one game) */
 export const Level = (props: LevelProps) => {
   const navigate = useNavigate();
-  const params = useParams();
+  const { areaName, levelNumber } = useParams();
 
   // Find the selected area using the areaName paramater (the dynamic segment of the URL)
-  const selectedArea: AreaConfig | null = getAreaConfig(params.areaName);
+  const selectedArea: AreaConfig | null = getAreaConfig(areaName);
 
   // Find the selected area using the areaName paramater (the dynamic segment of the URL)
-  const selectedLevel: LevelConfig | null = getLevelConfig(params.areaName, params.levelNumber);
+  const selectedLevel: LevelConfig | null = getLevelConfig(areaName, levelNumber);
 
   // Either, the area or level couldn't be found
   if (selectedArea! === null || selectedLevel! === null) {

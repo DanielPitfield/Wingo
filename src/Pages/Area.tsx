@@ -25,10 +25,10 @@ export const Area = (props: AreaProps) => {
   const [selectedLevel, setSelectedLevel] = useState<LevelConfig | null>(null);
 
   const navigate = useNavigate();
-  const params = useParams();
+  const { areaName } = useParams();
 
   // Find the selected area using the areaName paramater (the dynamic segment of the URL)
-  const selectedArea: AreaConfig | null = getAreaConfig(params.areaName);
+  const selectedArea: AreaConfig | null = getAreaConfig(areaName);
 
   // The area couldn't be found
   if (selectedArea === null) {
