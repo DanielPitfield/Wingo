@@ -10,15 +10,13 @@ import { WordRow } from "../Components/WordRow";
 import { PagePath } from "../Data/PageNames";
 import { SettingsData } from "../Data/SaveData";
 import { Theme } from "../Data/Themes";
-import { getAllWordsOfLength } from "../Helpers/getAllWordsOfLength";
 import { getGamemodeDefaultTimerValue } from "../Helpers/getGamemodeDefaultTimerValue";
 import { getNewGamemodeSettingValue } from "../Helpers/getGamemodeSettingsNewValue";
-import { isLettersGameGuessValid } from "../Helpers/isLettersGameGuessValid";
-import { shuffleArray } from "../Helpers/shuffleArray";
 import { LettersGameConfigProps } from "./LettersGameConfig";
 import { useLocation } from "react-router-dom";
 import { getWeightedLetter } from "../Helpers/getWeightedLetter";
 import { consonantWeightings, vowelWeightings } from "../Data/LettersGameWeightings";
+import { getBestLettersGameWords } from "../Helpers/getBestLettersGameWords";
 
 interface Props {
   campaignConfig: LettersGameConfigProps["campaignConfig"];
@@ -112,6 +110,13 @@ const LettersGame = (props: Props) => {
     props.onSubmitSelectionWord(selectionWordLetters.join(""));
   };
 
+  const getSelectionWord = (): string => {
+    return props.letterTileStatuses
+      .filter((letterStatus) => letterStatus.letter !== null)
+      .map((letterStatus) => letterStatus.letter)
+      .join("");
+  };
+
   function displayGrid(): React.ReactNode {
     // Read only letter selection WordRow
     const letterSelection = (
@@ -180,30 +185,6 @@ const LettersGame = (props: Props) => {
     );
   }
 
-  function getBestWords(lettersGameSelectionWord: string) {
-    // TODO: Refactor?
-    const MAX_WORDS_TO_RETURN = 5;
-
-    // Array to store best words that are found
-    let bestWords: string[] = [];
-
-    // Start with bigger words first
-    for (let wordLength = lettersGameSelectionWord.length; wordLength >= 4; wordLength--) {
-      // The words which can be made with the selected letters
-      const validWords: string[] = getAllWordsOfLength(wordLength).filter((word) =>
-        isLettersGameGuessValid(word, lettersGameSelectionWord)
-      );
-
-      bestWords = bestWords.concat(validWords);
-
-      if (bestWords.length >= MAX_WORDS_TO_RETURN) {
-        break;
-      }
-    }
-
-    return shuffleArray(bestWords).slice(0, MAX_WORDS_TO_RETURN);
-  }
-
   function displayOutcome(): React.ReactNode {
     // Game has not yet ended (currently only when when timer runs out)
     if (props.inProgress) {
@@ -214,13 +195,9 @@ const LettersGame = (props: Props) => {
       return;
     }
 
+    const bestWords = getBestLettersGameWords(getSelectionWord());
+    
     // Create a list of the longest words that can be made with the available letters
-    const bestWords = getBestWords(
-      props.letterTileStatuses
-        .filter((letterStatus) => letterStatus.letter !== null)
-        .map((letterStatus) => letterStatus.letter)
-        .join("")
-    );
     const bestWordsList = (
       <ul className="best_words_list">
         {bestWords.map((bestWord) => (
