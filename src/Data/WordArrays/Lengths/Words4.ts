@@ -1,4 +1,4 @@
-const words_four = [
+const Words4 = [
   { word: "aahs", canBeTargetWord: true },
   { word: "aals", canBeTargetWord: true },
   { word: "aani", canBeTargetWord: true },
@@ -10,5 +10,5 @@ const words_four = [
   // Temporarily moved; copy from WordArrays folder at root of repo if needed
 ];
 
-export const words_four_guessable = words_four.map((x) => x.word);
-export const words_four_targets = words_four.filter((x) => x.canBeTargetWord).map((x) => x.word);
+export const guessableWords4 = Words4.map((x) => x.word);
+export const targetWords4 = Words4.filter((x) => x.canBeTargetWord).map((x) => x.word);

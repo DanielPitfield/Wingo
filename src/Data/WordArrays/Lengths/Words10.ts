@@ -1,4 +1,4 @@
-const words_ten = [
+const Words10 = [
   { word: "aardwolves", canBeTargetWord: true },
   { word: "abacterial", canBeTargetWord: true },
   { word: "abalienate", canBeTargetWord: true },
@@ -11,5 +11,5 @@ const words_ten = [
   // Temporarily moved; copy from WordArrays folder at root of repo if needed
 ];
 
-export const words_ten_guessable = words_ten.map((x) => x.word);
-export const words_ten_targets = words_ten.filter((x) => x.canBeTargetWord).map((x) => x.word);
+export const guessableWords10 = Words10.map((x) => x.word);
+export const targetWords10 = Words10.filter((x) => x.canBeTargetWord).map((x) => x.word);

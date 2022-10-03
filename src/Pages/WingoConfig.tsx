@@ -11,7 +11,7 @@ import {
   defaultWingoInterlinkedGamemodeSettings,
 } from "../Data/DefaultGamemodeSettings";
 import { MIN_TARGET_WORD_LENGTH } from "../Data/GamemodeSettingsInputLimits";
-import { categoryMappings, wordLengthMappingsTargets } from "../Data/WordArrayMappings";
+import { categoryMappings, targetWordLengthMappings } from "../Data/WordArrayMappings";
 import { getDeterministicArrayItems } from "../Helpers/DeterministicSeeding";
 import { LetterStatus } from "../Components/LetterTile";
 import { getAllWordsOfLength } from "../Helpers/getAllWordsOfLength";
@@ -19,7 +19,7 @@ import { getGamemodeDefaultTimerValue } from "../Helpers/getGamemodeDefaultTimer
 import { getGamemodeDefaultWordLength } from "../Helpers/getGamemodeDefaultWordLength";
 import { getConundrum } from "../Helpers/getConundrum";
 import { getRandomElementFrom } from "../Helpers/getRandomElementFrom";
-import { puzzles_ten } from "../Data/WordArrays/Puzzles/Puzzles10";
+import { Puzzles10 } from "../Data/WordArrays/Puzzles/Puzzles10";
 import { getLetterStatus } from "../Helpers/getLetterStatus";
 import { getNumNewLimitlessLives } from "../Helpers/getNumNewLimitlessLives";
 import { getDailyWeeklyWingoModes } from "../Helpers/getDailyWeeklyWingoModes";
@@ -162,7 +162,7 @@ const WingoConfig = (props: Props) => {
   // Returns the newly determined target word
   function getTargetWord() {
     // Array of words of the current gamemode length (most modes will choose a word from this array)
-    let targetLengthWordArray: { word: string; hint: string }[] = wordLengthMappingsTargets
+    let targetLengthWordArray: { word: string; hint: string }[] = targetWordLengthMappings
       .find((x) => x.value === gamemodeSettings.wordLength)
       ?.array.map((x) => ({ word: x, hint: "" }))!;
 
@@ -188,7 +188,7 @@ const WingoConfig = (props: Props) => {
       case "puzzle":
         // Get a random puzzle (from puzzles_ten.ts)
         // TODO: Expand to have 9, 10 and 11 length puzzles
-        return getRandomElementFrom(puzzles_ten);
+        return getRandomElementFrom(Puzzles10);
 
       case "category":
         // A target category has been manually selected from dropdown
@@ -228,7 +228,7 @@ const WingoConfig = (props: Props) => {
           };
           setGamemodeSettings(newGamemodeSettings);
 
-          targetLengthWordArray = wordLengthMappingsTargets
+          targetLengthWordArray = targetWordLengthMappings
             .find((x) => x.value === getGamemodeDefaultWordLength("/Wingo/Limitless"))
             ?.array.map((x) => ({ word: x, hint: "" }))!;
         }

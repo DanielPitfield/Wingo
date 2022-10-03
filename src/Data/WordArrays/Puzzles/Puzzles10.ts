@@ -1,4 +1,4 @@
-export const puzzles_ten = [
+export const Puzzles10 = [
   { word: "acceptance", hint: "Be kind and understanding with this answer" },
   { word: "adrenaline", hint: "Fight or Flight" },
   { word: "accountant", hint: "This answer takes charge of company finances" },
@@ -105,15 +105,8 @@ export const puzzles_ten = [
   { word: "enthusiasm", hint: "This answer is full of energy" },
 ];
 
-/*
-  function CheckWordLength(inputArray: { word: string, hint: string}[]) {
-    // Find objects where the word is not 10 character long or a hint is not provided
-    const puzzle_errors = inputArray.filter(x => x.word.length != 10 || !x.hint)
-    return puzzle_errors;
-  }
-  */
-
-export const words_ten = [
+// TODO: Remaining words to add hints to
+const Words10 = [
   "equivalent",
   "evaluation",
   "everything",

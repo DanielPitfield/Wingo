@@ -1,7 +1,7 @@
-import { categoryMappings, wordLengthMappingsTargets } from "./WordArrayMappings";
+import { categoryMappings, targetWordLengthMappings } from "./WordArrayMappings";
 
 // The wordLengths of target word arrays that have at least one word
-const targetWordLengths = wordLengthMappingsTargets
+const targetWordLengths = targetWordLengthMappings
   .filter((mapping) => mapping.array.length > 0)
   .map((mapping) => mapping.value);
 

@@ -1,4 +1,4 @@
-const words_five = [
+const Words5 = [
   { word: "aahed", canBeTargetWord: true },
   { word: "aalii", canBeTargetWord: true },
   { word: "aargh", canBeTargetWord: true },
@@ -15745,5 +15745,5 @@ const words_five = [
   { word: "zunis", canBeTargetWord: true },
 ];
 
-export const words_five_guessable = words_five.map((x) => x.word);
-export const words_five_targets = words_five.filter((x) => x.canBeTargetWord).map((x) => x.word);
+export const guessableWords5 = Words5.map((x) => x.word);
+export const targetWords5 = Words5.filter((x) => x.canBeTargetWord).map((x) => x.word);

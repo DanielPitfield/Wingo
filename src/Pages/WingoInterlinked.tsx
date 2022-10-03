@@ -9,7 +9,7 @@ import { MessageNotification } from "../Components/MessageNotification";
 import { CrosswordGenerationResult, crosswordGenerator as crossWordGenerator } from "../Helpers/CrossWordGenerator";
 import ProgressBar, { GreenToRedColorTransition } from "../Components/ProgressBar";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
-import { categoryMappings, wordLengthMappingsTargets } from "../Data/WordArrayMappings";
+import { categoryMappings, targetWordLengthMappings } from "../Data/WordArrayMappings";
 import { DEFAULT_FIT_RESTRICTION } from "../Data/DefaultGamemodeSettings";
 import { getWordRowStatusSummary, WordRowStatusChecks } from "../Helpers/getWordRowStatusSummary";
 import { shuffleArray } from "../Helpers/shuffleArray";
@@ -192,7 +192,7 @@ export const WingoInterlinked = (props: Props) => {
 
       case "length": {
         // Combine all length word arrays between minimum and maximum length
-        targetWordArray = wordLengthMappingsTargets
+        targetWordArray = targetWordLengthMappings
           .filter(
             (mapping) =>
               mapping.value >= gamemodeSettings.minWordLength && mapping.value <= gamemodeSettings.maxWordLength

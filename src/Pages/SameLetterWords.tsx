@@ -6,7 +6,7 @@ import { SaveData, SettingsData } from "../Data/SaveData";
 import { useClickChime, useCorrectChime, useFailureChime, useLightPingChime } from "../Data/Sounds";
 import { Theme } from "../Data/Themes";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
-import { wordLengthMappingsTargets } from "../Data/WordArrayMappings";
+import { targetWordLengthMappings } from "../Data/WordArrayMappings";
 import { shuffleArray } from "../Helpers/shuffleArray";
 import { getGamemodeDefaultTimerValue } from "../Helpers/getGamemodeDefaultTimerValue";
 import { getRandomElementFrom } from "../Helpers/getRandomElementFrom";
@@ -227,7 +227,7 @@ const SameLetterWords = (props: Props) => {
   // Subset of words with same letters (the correct selection)
   function getMatchingWords(originalWord: string): string[] {
     // Matching words (anagrams) must be the same length, so pick from array of words with length of original word
-    const targetWordArray = wordLengthMappingsTargets.find((x) => x.value === originalWord.length)?.array;
+    const targetWordArray = targetWordLengthMappings.find((x) => x.value === originalWord.length)?.array;
 
     if (!targetWordArray) {
       return [];
@@ -246,7 +246,7 @@ const SameLetterWords = (props: Props) => {
   // Filler words which aren't made with same letters
   function getRandomWords(originalWord: string, numRandomWords: number): string[] {
     // Would be too easy to find words which don't have the same letters if they are a different length (to the original word)!
-    const targetWordArray = wordLengthMappingsTargets.find((x) => x.value === originalWord.length)?.array;
+    const targetWordArray = targetWordLengthMappings.find((x) => x.value === originalWord.length)?.array;
 
     if (!targetWordArray) {
       return [];
@@ -265,7 +265,7 @@ const SameLetterWords = (props: Props) => {
   // Combine a subset of matching words and filler words
   function getGridWords(): string[] {
     // The word array containing all the words of the specified length
-    const targetWordArray = wordLengthMappingsTargets.find((x) => x.value === gamemodeSettings.wordLength)?.array!;
+    const targetWordArray = targetWordLengthMappings.find((x) => x.value === gamemodeSettings.wordLength)?.array!;
 
     // The maximum number of attempts to try find a complete subset for each number of matching words
     const MAX_ATTEMPTS_BEFORE_TRYING_LOWER_NUM = 50;
