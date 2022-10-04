@@ -10,6 +10,8 @@ interface Props {
 
 export const GameshowOrderItem = (props: Props) => {
   // TODO: Add more sub-elements that allow configuration of the properties of the gamemode (e.g wordLength)
+  // TODO: CSS rule .gameshow-queued-gamemode
+  // TODO: Remove/close button can't be clicked
   return (
     <DraggableItem id={props.id}>
       <div className="gameshow-queued-gamemode">{props.gameshowMode.title}</div>
