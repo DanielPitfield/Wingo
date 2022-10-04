@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { arrayMove, OrderGroup } from "react-draggable-order";
 import { PagePath } from "../Data/PageNames";
 import { Button } from "../Components/Button";
 import LetterTile from "../Components/LetterTile";
@@ -17,6 +16,13 @@ import { getRandomIntFromRange } from "../Helpers/getRandomIntFromRange";
 import { getNewGamemodeSettingValue } from "../Helpers/getGamemodeSettingsNewValue";
 import ArithmeticDragGamemodeSettings from "../Components/GamemodeSettingsOptions/ArithmeticDragGamemodeSettings";
 import { useLocation } from "react-router-dom";
+import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors } from "@dnd-kit/core";
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
 
 // Const Contexts: https://stackoverflow.com/questions/44497388/typescript-array-to-string-literal-type
 export const arithmeticNumberSizes = ["small", "medium", "large"] as const;
@@ -324,40 +330,37 @@ const ArithmeticDrag = (props: Props) => {
   function displayTiles(): React.ReactNode {
     const draggableExpressionTiles = (
       <div className="draggable_expressions">
-        <OrderGroup mode={"between"}>
-          {expressionTiles.map((tile, index) => (
-            <DraggableItem
-              key={index}
-              index={index}
-              onMove={(toIndex) => {
-                if (inProgress) {
-                  // The new order after the drag + all statuses reset
-                  const newExpressionTiles = arrayMove(expressionTiles, index, toIndex).map((tile) => {
+        {expressionTiles.map((tile, index) => (
+          <DraggableItem
+            key={index}
+            index={index}
+            onMove={(toIndex) => {
+              if (inProgress) {
+                // The new order after the drag + all statuses reset
+                const newExpressionTiles = arrayMove(expressionTiles, index, toIndex).map((tile) => {
+                  tile.status = "not set";
+                  return tile;
+                });
+                setExpressionTiles(newExpressionTiles);
+
+                // Just statuses reset
+                setResultTiles(
+                  resultTiles.map((tile) => {
                     tile.status = "not set";
                     return tile;
-                  });
-                  setExpressionTiles(newExpressionTiles);
-
-                  // Just statuses reset
-                  setResultTiles(
-                    resultTiles.map((tile) => {
-                      tile.status = "not set";
-                      return tile;
-                    })
-                  );
-                }
-              }}
-            >
-              <LetterTile letter={tile.expression} status={tile.status} settings={props.settings} />
-            </DraggableItem>
-          ))}
-        </OrderGroup>
+                  })
+                );
+              }
+            }}
+          >
+            <LetterTile letter={tile.expression} status={tile.status} settings={props.settings} />
+          </DraggableItem>
+        ))}
       </div>
     );
 
     const draggableResultTiles = (
       <div className="draggable_results">
-        <OrderGroup mode={"between"}>
           {resultTiles.map((tile, index) => (
             <DraggableItem
               key={index}
@@ -384,7 +387,6 @@ const ArithmeticDrag = (props: Props) => {
               <LetterTile letter={tile.total.toString()} status={tile.status} settings={props.settings} />
             </DraggableItem>
           ))}
-        </OrderGroup>
       </div>
     );
 

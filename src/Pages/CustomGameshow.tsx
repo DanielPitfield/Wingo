@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { SettingsData } from "../Data/SaveData";
 import { Theme } from "../Data/Themes";
 import { gamemodeCategories, gamemodeCategory, pageDescription, pageDescriptions } from "../Data/PageDescriptions";
-import { OrderGroup } from "react-draggable-order";
 import { GameshowToolboxItem } from "../Components/GameshowToolboxItem";
 import { GameshowOrderItem } from "../Components/GameshowOrderItem";
 import { Button } from "../Components/Button";
@@ -87,11 +86,9 @@ export const CustomGameshow = (props: Props) => {
 
     return (
       <div className="gameshow-queued-modes-wrapper">
-        <OrderGroup mode={"between"}>
-          {queuedModes?.map((gameshowMode, index) => (
-            <GameshowOrderItem {...draggableItemProps} gameshowMode={gameshowMode} index={index}></GameshowOrderItem>
-          ))}
-        </OrderGroup>
+        {queuedModes?.map((gameshowMode, index) => (
+          <GameshowOrderItem {...draggableItemProps} gameshowMode={gameshowMode} index={index}></GameshowOrderItem>
+        ))}
       </div>
     );
   }
