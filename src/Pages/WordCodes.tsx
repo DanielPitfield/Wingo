@@ -557,28 +557,18 @@ const WordCodes = (props: Props) => {
       return;
     }
 
-    let newWordTiles = wordTiles.slice();
-    let newCodeTiles = codeTiles.slice();
-
-    newWordTiles = wordTiles.map((x, index) => {
+    const newWordTiles: WordTile[] = wordTiles.map((tile, index) => {
       // Word matches with code
-      if (wordTiles[index].code === codeTiles[index].code) {
-        // Change status to correct
-        x.status = "correct";
-      } else {
-        x.status = "incorrect";
-      }
-      return x;
+      const isTileCorrect = wordTiles[index].code === codeTiles[index].code;
+      tile.status = isTileCorrect ? "correct" : "incorrect";
+      return tile;
     });
 
-    // Also update status of result tiles
-    newCodeTiles = codeTiles.map((x, index) => {
-      if (codeTiles[index].code === wordTiles[index].code) {
-        x.status = "correct";
-      } else {
-        x.status = "incorrect";
-      }
-      return x;
+    const newCodeTiles: CodeTile[] = codeTiles.map((tile, index) => {
+      // Word matches with code
+      const isTileCorrect = wordTiles[index].code === codeTiles[index].code;
+      tile.status = isTileCorrect ? "correct" : "incorrect";
+      return tile;
     });
 
     // Set so that the change in statuses are rendered
