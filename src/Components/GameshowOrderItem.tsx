@@ -3,19 +3,17 @@ import { pageDescription } from "../Data/PageDescriptions";
 import { DraggableItem } from "./DraggableItem";
 
 interface Props {
+  id: number;
   gameshowMode: pageDescription;
-  index: number;
   onClick: (index: number) => void;
 }
 
 export const GameshowOrderItem = (props: Props) => {
   // TODO: Add more sub-elements that allow configuration of the properties of the gamemode (e.g wordLength)
   return (
-    <DraggableItem
-      id={props.index}
-    >
+    <DraggableItem id={props.id}>
       <div className="gameshow-queued-gamemode">{props.gameshowMode.title}</div>
-      <AiFillCloseSquare onClick={() => props.onClick(props.index)} />
+      <AiFillCloseSquare onClick={() => props.onClick(props.id)} />
     </DraggableItem>
   );
 };
