@@ -473,37 +473,38 @@ const WordCodes = (props: Props) => {
     const { active, over } = event;
 
     if (active.id !== over?.id) {
-      const oldWordTile = wordTiles.find((tile) => tile.id === active.id);
-      const newWordTile = wordTiles.find((tile) => tile.id === over?.id);
+      const oldTile: WordTile | undefined = wordTiles.find((tile) => tile.id === active.id);
+      const newTile: WordTile | undefined = wordTiles.find((tile) => tile.id === over?.id);
 
-      if (!oldWordTile || !newWordTile) {
+      if (!oldTile || !newTile) {
         return;
       }
 
-      const oldIndex = wordTiles.indexOf(oldWordTile);
-      const newIndex = wordTiles.indexOf(newWordTile);
+      const oldIndex: number = wordTiles.indexOf(oldTile);
+      const newIndex: number = wordTiles.indexOf(newTile);
 
-      const newWordTiles = arrayMove(wordTiles, oldIndex, newIndex);
+      const newWordTiles: WordTile[] = arrayMove(wordTiles, oldIndex, newIndex);
+
       setWordTiles(newWordTiles);
     }
   }
 
-  // TODO: Pass in the tiles to set, unify these two similar functions
   function handleCodeTileDragEnd(event: DragEndEvent) {
     const { active, over } = event;
 
     if (active.id !== over?.id) {
-      const oldCodeTile = codeTiles.find((tile) => tile.id === active.id);
-      const newCodeTile = codeTiles.find((tile) => tile.id === over?.id);
+      const oldTile: CodeTile | undefined = codeTiles.find((tile) => tile.id === active.id);
+      const newTile: CodeTile | undefined = codeTiles.find((tile) => tile.id === over?.id);
 
-      if (!oldCodeTile || !newCodeTile) {
+      if (!oldTile || !newTile) {
         return;
       }
 
-      const oldIndex = codeTiles.indexOf(oldCodeTile);
-      const newIndex = codeTiles.indexOf(newCodeTile);
+      const oldIndex: number = codeTiles.indexOf(oldTile);
+      const newIndex: number = codeTiles.indexOf(newTile);
 
-      const newCodeTiles = arrayMove(codeTiles, oldIndex, newIndex);
+      const newCodeTiles: CodeTile[] = arrayMove(codeTiles, oldIndex, newIndex);
+
       setCodeTiles(newCodeTiles);
     }
   }
@@ -516,8 +517,8 @@ const WordCodes = (props: Props) => {
 
     const draggableWordTiles = (
       <div className="draggable_words">
-        {wordTiles.map((tile, index) => (
-          <DraggableItem key={index} id={index}>
+        {wordTiles.map((tile) => (
+          <DraggableItem key={tile.id} id={tile.id}>
             <LetterTile letter={tile.word} status={tile.status} settings={props.settings} />
           </DraggableItem>
         ))}
@@ -526,8 +527,8 @@ const WordCodes = (props: Props) => {
 
     const draggableCodeTiles = (
       <div className="draggable_codes">
-        {codeTiles.map((tile, index) => (
-          <DraggableItem key={index} id={index}>
+        {codeTiles.map((tile) => (
+          <DraggableItem key={tile.id} id={tile.id}>
             <LetterTile letter={tile.code} status={tile.status} settings={props.settings} />
           </DraggableItem>
         ))}
