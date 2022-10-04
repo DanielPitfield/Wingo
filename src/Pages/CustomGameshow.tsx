@@ -122,8 +122,8 @@ export const CustomGameshow = (props: Props) => {
   function displayFilteredModes(): React.ReactNode {
     return (
       <div className="gameshow-available-modes-wrapper">
-        {filteredModes.map((gameshowMode) => (
-          <GameshowToolboxItem gameshowMode={gameshowMode} onClick={addModeToQueue}></GameshowToolboxItem>
+        {filteredModes.map((gameshowMode, index) => (
+          <GameshowToolboxItem key={index} gameshowMode={gameshowMode} onClick={addModeToQueue}></GameshowToolboxItem>
         ))}
       </div>
     );
