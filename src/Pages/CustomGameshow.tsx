@@ -2,10 +2,27 @@ import React, { useState } from "react";
 import { SettingsData } from "../Data/SaveData";
 import { Theme } from "../Data/Themes";
 import { gamemodeCategories, gamemodeCategory, pageDescription, pageDescriptions } from "../Data/PageDescriptions";
-import { OrderGroup } from "react-draggable-order";
 import { GameshowToolboxItem } from "../Components/GameshowToolboxItem";
 import { GameshowOrderItem } from "../Components/GameshowOrderItem";
 import { Button } from "../Components/Button";
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+} from "@dnd-kit/core";
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import { useAutoAnimate } from "@formkit/auto-animate/react";
+
+type GameshowModeTile = { id: number; pageDescription: pageDescription };
 
 export interface CustomGameshowProps {
   campaignConfig:
@@ -26,9 +43,19 @@ interface Props extends CustomGameshowProps {
 }
 
 export const CustomGameshow = (props: Props) => {
+  // dnd-kit
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
+
+  const [parent] = useAutoAnimate<HTMLDivElement>();
+
   const [currentGameshowCategoryFilter, setCurrentGameshowCategoryFilter] = useState<gamemodeCategory>(null);
   const [filteredModes, setFilteredModes] = useState<pageDescription[]>(getFilteredModes());
-  const [queuedModes, setQueuedModes] = useState<pageDescription[]>([]);
+  const [queuedModes, setQueuedModes] = useState<GameshowModeTile[]>([]);
 
   React.useEffect(() => {
     // Update the modes which can be added to the queue
@@ -48,17 +75,20 @@ export const CustomGameshow = (props: Props) => {
 
   // Append mode (the available mode which was clicked) to queue
   const addModeToQueue = (gameshowMode: pageDescription) => {
+    // What is the highest ID given to a mode currently in the queue?
+    const highestID = queuedModes.length === 0 ? 0 : Math.max(...queuedModes.map((mode) => mode.id));
+    // highestID + 1 is a unique ID (which can be used for the mode being added)
+    const newMode = { id: highestID + 1, pageDescription: gameshowMode };
+
     const newQueuedModes = queuedModes.slice();
-    newQueuedModes.push(gameshowMode);
+    newQueuedModes.push(newMode);
     setQueuedModes(newQueuedModes);
   };
 
   // Delete the mode from the current queue
-  const removeModeFromQueue = (index: number) => {
-    // Take copy
-    const newQueuedModes = queuedModes.slice();
+  const removeModeFromQueue = (id: number) => {
     // Remove clicked mode
-    newQueuedModes.splice(index, 1);
+    const newQueuedModes = queuedModes.filter((mode) => mode.id !== id);
     setQueuedModes(newQueuedModes);
   };
 
@@ -66,12 +96,34 @@ export const CustomGameshow = (props: Props) => {
     setQueuedModes([]);
   };
 
+  function handleDragEnd(event: DragEndEvent) {
+    const { active, over } = event;
+
+    if (active.id === over?.id) {
+      return;
+    }
+
+    const oldTile: GameshowModeTile | undefined = queuedModes.find((tile) => tile.id === active.id);
+    const newTile: GameshowModeTile | undefined = queuedModes.find((tile) => tile.id === over?.id);
+
+    if (!oldTile || !newTile) {
+      return;
+    }
+
+    const oldIndex: number = queuedModes.indexOf(oldTile);
+    const newIndex: number = queuedModes.indexOf(newTile);
+
+    // The new order after the drag
+    const newQueuedModes: GameshowModeTile[] = arrayMove(queuedModes, oldIndex, newIndex);
+    setQueuedModes(newQueuedModes);
+  }
+
   // List of buttons (which add to the queue when clicked)
   function displayFilteredModes(): React.ReactNode {
     return (
       <div className="gameshow-available-modes-wrapper">
-        {filteredModes.map((gameshowMode) => (
-          <GameshowToolboxItem gameshowMode={gameshowMode} onClick={addModeToQueue}></GameshowToolboxItem>
+        {filteredModes.map((gameshowMode, index) => (
+          <GameshowToolboxItem key={index} gameshowMode={gameshowMode} onClick={addModeToQueue}></GameshowToolboxItem>
         ))}
       </div>
     );
@@ -79,20 +131,24 @@ export const CustomGameshow = (props: Props) => {
 
   // The order of gamemodes (the CustomGameshow will have)
   function displayQueuedModes(): React.ReactNode {
-    const draggableItemProps = {
-      queuedModes: queuedModes,
-      setQueuedModes: setQueuedModes,
-      onClick: removeModeFromQueue,
-    };
+    const draggableGameshowModeTiles = (
+      <div className="gameshow-queued-modes-wrapper" ref={parent}>
+        {queuedModes?.map((gameshowMode) => (
+          <GameshowOrderItem
+            id={gameshowMode.id}
+            gameshowMode={gameshowMode.pageDescription}
+            onClick={removeModeFromQueue}
+          ></GameshowOrderItem>
+        ))}
+      </div>
+    );
 
     return (
-      <div className="gameshow-queued-modes-wrapper">
-        <OrderGroup mode={"between"}>
-          {queuedModes?.map((gameshowMode, index) => (
-            <GameshowOrderItem {...draggableItemProps} gameshowMode={gameshowMode} index={index}></GameshowOrderItem>
-          ))}
-        </OrderGroup>
-      </div>
+      <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+        <SortableContext items={queuedModes} strategy={verticalListSortingStrategy}>
+          {draggableGameshowModeTiles}
+        </SortableContext>
+      </DndContext>
     );
   }
 

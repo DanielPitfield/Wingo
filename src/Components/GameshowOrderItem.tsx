@@ -1,26 +1,21 @@
-import { arrayMove } from "react-draggable-order";
 import { AiFillCloseSquare } from "react-icons/ai";
 import { pageDescription } from "../Data/PageDescriptions";
 import { DraggableItem } from "./DraggableItem";
 
 interface Props {
+  id: number;
   gameshowMode: pageDescription;
-  index: number;
-  queuedModes: pageDescription[];
-  setQueuedModes: (queuedModes: pageDescription[]) => void;
-  onClick: (index: number) => void;
+  onClick: (id: number) => void;
 }
 
 export const GameshowOrderItem = (props: Props) => {
-  // TODO: Elements that allow configuration of the properties of the gamemode (e.g wordLength)
+  // TODO: Add more sub-elements that allow configuration of the properties of the gamemode (e.g wordLength)
+  // TODO: CSS rule .gameshow-queued-gamemode
+  // TODO: Remove/close button can't be clicked
   return (
-    <DraggableItem
-      key={props.index}
-      index={props.index}
-      onMove={(toIndex) => props.setQueuedModes(arrayMove(props.queuedModes, props.index, toIndex))}
-    >
+    <DraggableItem id={props.id}>
       <div className="gameshow-queued-gamemode">{props.gameshowMode.title}</div>
-      <AiFillCloseSquare onClick={() => props.onClick(props.index)} />
+      <AiFillCloseSquare onClick={() => props.onClick(props.id)} />
     </DraggableItem>
   );
 };

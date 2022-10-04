@@ -10,7 +10,6 @@ import ProgressBar, { GreenToRedColorTransition } from "../Components/ProgressBa
 import { SaveData, SettingsData } from "../Data/SaveData";
 import { useClickChime, useCorrectChime, useFailureChime, useLightPingChime } from "../Data/Sounds";
 import { Theme } from "../Data/Themes";
-import { arrayMove, OrderGroup } from "react-draggable-order";
 import { DraggableItem } from "../Components/DraggableItem";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
 import { MAX_CODE_LENGTH } from "../Data/GamemodeSettingsInputLimits";
@@ -23,9 +22,28 @@ import { getRandomElementFrom } from "../Helpers/getRandomElementFrom";
 import { getNewGamemodeSettingValue } from "../Helpers/getGamemodeSettingsNewValue";
 import WordCodesGamemodeSettings from "../Components/GamemodeSettingsOptions/WordCodesGamemodeSettings";
 import { useLocation } from "react-router-dom";
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+} from "@dnd-kit/core";
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import { useAutoAnimate } from "@formkit/auto-animate/react";
 
 const wordCodesModes = ["match", "question"] as const;
 export type wordCodesMode = typeof wordCodesModes[number];
+
+type WordTile = { id: number; word: string; code: string; status: "incorrect" | "correct" | "not set" };
+type CodeTile = { id: number; code: string; status: "incorrect" | "correct" | "not set" };
 
 export interface WordCodesProps {
   campaignConfig:
@@ -68,11 +86,16 @@ interface Props extends WordCodesProps {
   onComplete: (wasCorrect: boolean) => void;
 }
 
-// TODO: Refactor
-
-/** */
 const WordCodes = (props: Props) => {
   const location = useLocation().pathname as PagePath;
+
+  // dnd-kit
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
 
   const [inProgress, setInProgress] = useState(true);
   const [guess, setGuess] = useState("");
@@ -80,11 +103,11 @@ const WordCodes = (props: Props) => {
   // Generated words along with their respective codes
   const [wordCodes, setWordCodes] = useState<{ word: string; code: string }[]>([]);
 
+  const [parent] = useAutoAnimate<HTMLDivElement>();
+
   // Tiles for match gamemode
-  const [wordTiles, setWordTiles] = useState<
-    { word: string; code: string; status: "incorrect" | "correct" | "not set" }[]
-  >([]);
-  const [codeTiles, setCodeTiles] = useState<{ code: string; status: "incorrect" | "correct" | "not set" }[]>([]);
+  const [wordTiles, setWordTiles] = useState<WordTile[]>([]);
+  const [codeTiles, setCodeTiles] = useState<CodeTile[]>([]);
 
   // Display information for questions gamemode
   const [displayWords, setDisplayWords] = useState<string[]>([]);
@@ -219,7 +242,8 @@ const WordCodes = (props: Props) => {
 
     if (props.mode === "match") {
       // Word Tiles
-      const newWordTiles: { word: string; code: string; status: "not set" }[] = wordCodes.map((wordCode) => ({
+      const newWordTiles: WordTile[] = wordCodes.map((wordCode, index) => ({
+        id: index + 1,
         ...wordCode,
         status: "not set",
       }));
@@ -227,7 +251,8 @@ const WordCodes = (props: Props) => {
       setWordTiles(shuffleArray(newWordTiles));
 
       // Code tiles
-      const newCodeTiles: { code: string; status: "not set" }[] = wordCodes.map((wordCode) => ({
+      const newCodeTiles: CodeTile[] = wordCodes.map((wordCode, index) => ({
+        id: index + 1,
         code: wordCode.code,
         status: "not set",
       }));
@@ -446,48 +471,97 @@ const WordCodes = (props: Props) => {
     }
   };
 
+  function handleWordTileDragEnd(event: DragEndEvent) {
+    const { active, over } = event;
+
+    // Drag was started but the order of the tiles wasn't changed
+    if (active.id === over?.id) {
+      return;
+    }
+
+    // The tile which is being dragged
+    const oldTile: WordTile | undefined = wordTiles.find((tile) => tile.id === active.id);
+    // The tile below where the tile being dragged has been dragged to
+    const newTile: WordTile | undefined = wordTiles.find((tile) => tile.id === over?.id);
+
+    // Either of the required tiles for the switch to be made are missing
+    if (!oldTile || !newTile) {
+      return;
+    }
+
+    // Find the indexes of the tiles within the wordTiles array
+    const oldIndex: number = wordTiles.indexOf(oldTile);
+    const newIndex: number = wordTiles.indexOf(newTile);
+
+    // Switch the positions of the tiles (using the indexes)
+    const newWordTiles: WordTile[] = arrayMove(wordTiles, oldIndex, newIndex);
+
+    setWordTiles(newWordTiles);
+  }
+
+  // TODO: These functions are very similar, any way to unify them?
+  function handleCodeTileDragEnd(event: DragEndEvent) {
+    const { active, over } = event;
+
+    if (active.id === over?.id) {
+      return;
+    }
+
+    const oldTile: CodeTile | undefined = codeTiles.find((tile) => tile.id === active.id);
+    const newTile: CodeTile | undefined = codeTiles.find((tile) => tile.id === over?.id);
+
+    if (!oldTile || !newTile) {
+      return;
+    }
+
+    const oldIndex: number = codeTiles.indexOf(oldTile);
+    const newIndex: number = codeTiles.indexOf(newTile);
+
+    const newCodeTiles: CodeTile[] = arrayMove(codeTiles, oldIndex, newIndex);
+
+    setCodeTiles(newCodeTiles);
+  }
+
   // Draggable tiles for match gamemode
   function displayTiles(): React.ReactNode {
     if (props.mode !== "match") {
       return;
     }
 
+    // TODO: Fix last tile not being draggable
     const draggableWordTiles = (
-      <div className="draggable_words">
-        <OrderGroup mode={"between"}>
-          {wordTiles.map((tile, index) => (
-            <DraggableItem
-              key={index}
-              index={index}
-              onMove={(toIndex) => (inProgress ? setWordTiles(arrayMove(wordTiles, index, toIndex)) : undefined)}
-            >
-              <LetterTile letter={tile.word} status={tile.status} settings={props.settings} />
-            </DraggableItem>
-          ))}
-        </OrderGroup>
+      <div className="draggable_words" ref={parent}>
+        {wordTiles.map((tile) => (
+          <DraggableItem key={tile.id} id={tile.id}>
+            <LetterTile letter={tile.word} status={tile.status} settings={props.settings} />
+          </DraggableItem>
+        ))}
       </div>
     );
 
     const draggableCodeTiles = (
-      <div className="draggable_codes">
-        <OrderGroup mode={"between"}>
-          {codeTiles.map((tile, index) => (
-            <DraggableItem
-              key={index}
-              index={index}
-              onMove={(toIndex) => (inProgress ? setCodeTiles(arrayMove(codeTiles, index, toIndex)) : undefined)}
-            >
-              <LetterTile letter={tile.code} status={tile.status} settings={props.settings} />
-            </DraggableItem>
-          ))}
-        </OrderGroup>
+      <div className="draggable_codes" ref={parent}>
+        {codeTiles.map((tile) => (
+          <DraggableItem key={tile.id} id={tile.id}>
+            <LetterTile letter={tile.code} status={tile.status} settings={props.settings} />
+          </DraggableItem>
+        ))}
       </div>
     );
 
     return (
       <>
-        {draggableWordTiles}
-        {draggableCodeTiles}
+        <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleWordTileDragEnd}>
+          <SortableContext items={wordTiles} strategy={verticalListSortingStrategy}>
+            {draggableWordTiles}
+          </SortableContext>
+        </DndContext>
+
+        <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleCodeTileDragEnd}>
+          <SortableContext items={codeTiles} strategy={verticalListSortingStrategy}>
+            {draggableCodeTiles}
+          </SortableContext>
+        </DndContext>
       </>
     );
   }
@@ -497,27 +571,18 @@ const WordCodes = (props: Props) => {
       return;
     }
 
-    let newWordTiles = wordTiles.slice();
-    let newCodeTiles = codeTiles.slice();
-
-    newWordTiles = wordTiles.map((x, index) => {
+    const newWordTiles: WordTile[] = wordTiles.map((tile, index) => {
       // Word matches with code
-      if (wordTiles[index].code === codeTiles[index].code) {
-        // Change status to correct
-        x.status = "correct";
-      } else {
-        x.status = "incorrect";
-      }
-      return x;
+      const isTileCorrect = wordTiles[index].code === codeTiles[index].code;
+      tile.status = isTileCorrect ? "correct" : "incorrect";
+      return tile;
     });
-    // Also update status of result tiles
-    newCodeTiles = codeTiles.map((x, index) => {
-      if (wordTiles[index].code === codeTiles[index].code) {
-        x.status = "correct";
-      } else {
-        x.status = "incorrect";
-      }
-      return x;
+
+    const newCodeTiles: CodeTile[] = codeTiles.map((tile, index) => {
+      // Word matches with code
+      const isTileCorrect = wordTiles[index].code === codeTiles[index].code;
+      tile.status = isTileCorrect ? "correct" : "incorrect";
+      return tile;
     });
 
     // Set so that the change in statuses are rendered
@@ -541,6 +606,7 @@ const WordCodes = (props: Props) => {
     if (props.mode === "match") {
       return wordTiles.length ?? 0;
     }
+
     if (props.mode === "question") {
       return gamemodeSettings.numWordToCodeQuestions + gamemodeSettings.numCodeToWordQuestions;
     }
