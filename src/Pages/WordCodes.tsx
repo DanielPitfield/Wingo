@@ -41,6 +41,9 @@ import {
 const wordCodesModes = ["match", "question"] as const;
 export type wordCodesMode = typeof wordCodesModes[number];
 
+type WordTile = { id: number; word: string; code: string; status: "incorrect" | "correct" | "not set" };
+type CodeTile = { id: number; code: string; status: "incorrect" | "correct" | "not set" };
+
 export interface WordCodesProps {
   campaignConfig:
     | {
@@ -81,9 +84,6 @@ interface Props extends WordCodesProps {
   addGold: (gold: number) => void;
   onComplete: (wasCorrect: boolean) => void;
 }
-
-type WordTile = { id: number; word: string; code: string; status: "incorrect" | "correct" | "not set" };
-type CodeTile = { id: number; code: string; status: "incorrect" | "correct" | "not set" };
 
 const WordCodes = (props: Props) => {
   const location = useLocation().pathname as PagePath;
