@@ -104,7 +104,7 @@ const ArithmeticDrag = (props: Props) => {
 
   const [inProgress, setInProgress] = useState(true);
 
-  const [parent] = useAutoAnimate();
+  const [parent] = useAutoAnimate<HTMLDivElement>();
 
   const [expressionTiles, setExpressionTiles] = useState<ExpressionTile[]>([]);
   // For the match game mode type
@@ -433,7 +433,7 @@ const ArithmeticDrag = (props: Props) => {
    */
   function displayTiles(): React.ReactNode {
     const draggableExpressionTiles = (
-      <div className="draggable_expressions" ref={parent as any}>
+      <div className="draggable_expressions" ref={parent}>
         {expressionTiles.map((tile) => (
           <DraggableItem key={tile.id} id={tile.id}>
             <LetterTile letter={tile.expression} status={tile.status} settings={props.settings} />
@@ -443,7 +443,7 @@ const ArithmeticDrag = (props: Props) => {
     );
 
     const draggableResultTiles = (
-      <div className="draggable_results" ref={parent as any}>
+      <div className="draggable_results" ref={parent}>
         {resultTiles.map((tile) => (
           <DraggableItem key={tile.id} id={tile.id}>
             <LetterTile letter={tile.total.toString()} status={tile.status} settings={props.settings} />

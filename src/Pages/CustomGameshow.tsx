@@ -51,7 +51,7 @@ export const CustomGameshow = (props: Props) => {
     })
   );
 
-  const [parent] = useAutoAnimate();
+  const [parent] = useAutoAnimate<HTMLDivElement>();
 
   const [currentGameshowCategoryFilter, setCurrentGameshowCategoryFilter] = useState<gamemodeCategory>(null);
   const [filteredModes, setFilteredModes] = useState<pageDescription[]>(getFilteredModes());
@@ -132,7 +132,7 @@ export const CustomGameshow = (props: Props) => {
   // The order of gamemodes (the CustomGameshow will have)
   function displayQueuedModes(): React.ReactNode {
     const draggableGameshowModeTiles = (
-      <div className="gameshow-queued-modes-wrapper" ref={parent as any}>
+      <div className="gameshow-queued-modes-wrapper" ref={parent}>
         {queuedModes?.map((gameshowMode) => (
           <GameshowOrderItem
             id={gameshowMode.id}

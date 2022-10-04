@@ -103,7 +103,7 @@ const WordCodes = (props: Props) => {
   // Generated words along with their respective codes
   const [wordCodes, setWordCodes] = useState<{ word: string; code: string }[]>([]);
 
-  const [parent] = useAutoAnimate();
+  const [parent] = useAutoAnimate<HTMLDivElement>();
 
   // Tiles for match gamemode
   const [wordTiles, setWordTiles] = useState<WordTile[]>([]);
@@ -530,7 +530,7 @@ const WordCodes = (props: Props) => {
 
     // TODO: Fix last tile not being draggable
     const draggableWordTiles = (
-      <div className="draggable_words" ref={parent as any}>
+      <div className="draggable_words" ref={parent}>
         {wordTiles.map((tile) => (
           <DraggableItem key={tile.id} id={tile.id}>
             <LetterTile letter={tile.word} status={tile.status} settings={props.settings} />
@@ -540,7 +540,7 @@ const WordCodes = (props: Props) => {
     );
 
     const draggableCodeTiles = (
-      <div className="draggable_codes" ref={parent as any}>
+      <div className="draggable_codes" ref={parent}>
         {codeTiles.map((tile) => (
           <DraggableItem key={tile.id} id={tile.id}>
             <LetterTile letter={tile.code} status={tile.status} settings={props.settings} />
