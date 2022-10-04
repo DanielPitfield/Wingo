@@ -21,6 +21,8 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 
+type GameshowModeTile = { id: number; pageDescription: pageDescription };
+
 export interface CustomGameshowProps {
   campaignConfig:
     | {
@@ -49,8 +51,8 @@ export const CustomGameshow = (props: Props) => {
   );
 
   const [currentGameshowCategoryFilter, setCurrentGameshowCategoryFilter] = useState<gamemodeCategory>(null);
-  const [filteredModes, setFilteredModes] = useState<pageDescription[]>(getFilteredModes());
-  const [queuedModes, setQueuedModes] = useState<pageDescription[]>([]);
+  const [filteredModes, setFilteredModes] = useState<GameshowModeTile[]>(getFilteredModes());
+  const [queuedModes, setQueuedModes] = useState<GameshowModeTile[]>([]);
 
   React.useEffect(() => {
     // Update the modes which can be added to the queue
@@ -58,20 +60,33 @@ export const CustomGameshow = (props: Props) => {
   }, [currentGameshowCategoryFilter]);
 
   // Which gamemodes appear in the toolbox and can be added to the queue?
-  function getFilteredModes(): pageDescription[] {
+  function getFilteredModes(): GameshowModeTile[] {
     return currentGameshowCategoryFilter === null
       ? // Any playable mode
-        pageDescriptions.filter((page) => page.isRandomlyPlayable && page.isDisplayed)
+        pageDescriptions
+          .filter((page) => page.isRandomlyPlayable && page.isDisplayed)
+          .map((mode, index) => {
+            return { id: index + 1, pageDescription: mode } as GameshowModeTile;
+          })
       : // Any mode tagged with the current filter
-        pageDescriptions.filter(
-          (page) => page.categoryType === currentGameshowCategoryFilter && page.isRandomlyPlayable && page.isDisplayed
-        );
+        pageDescriptions
+          .filter(
+            (page) => page.categoryType === currentGameshowCategoryFilter && page.isRandomlyPlayable && page.isDisplayed
+          )
+          .map((mode, index) => {
+            return { id: index + 1, pageDescription: mode } as GameshowModeTile;
+          });
   }
 
   // Append mode (the available mode which was clicked) to queue
   const addModeToQueue = (gameshowMode: pageDescription) => {
+    // What is the highest ID given to a mode currently in the queue?
+    const highestID = queuedModes.length === 0 ? 0 : Math.max(...queuedModes.map(mode => mode.id));
+    // highestID + 1 is a unique ID (which can be used for the mode being added)
+    const newMode = {id: highestID + 1, pageDescription: gameshowMode};
+
     const newQueuedModes = queuedModes.slice();
-    newQueuedModes.push(gameshowMode);
+    newQueuedModes.push(newMode);
     setQueuedModes(newQueuedModes);
   };
 
@@ -95,8 +110,8 @@ export const CustomGameshow = (props: Props) => {
       return;
     }
 
-    const oldTile = queuedModes.find((tile) => tile.id === active.id);
-    const newTile = queuedModes.find((tile) => tile.id === over?.id);
+    const oldTile: GameshowModeTile | undefined = queuedModes.find((tile) => tile.id === active.id);
+    const newTile: GameshowModeTile | undefined = queuedModes.find((tile) => tile.id === over?.id);
 
     if (!oldTile || !newTile) {
       return;
@@ -106,8 +121,7 @@ export const CustomGameshow = (props: Props) => {
     const newIndex: number = queuedModes.indexOf(newTile);
 
     // The new order after the drag
-    const newQueuedModes = arrayMove(queuedModes, oldIndex, newIndex);
-
+    const newQueuedModes: GameshowModeTile[] = arrayMove(queuedModes, oldIndex, newIndex);
     setQueuedModes(newQueuedModes);
   }
 
@@ -116,7 +130,7 @@ export const CustomGameshow = (props: Props) => {
     return (
       <div className="gameshow-available-modes-wrapper">
         {filteredModes.map((gameshowMode) => (
-          <GameshowToolboxItem gameshowMode={gameshowMode} onClick={addModeToQueue}></GameshowToolboxItem>
+          <GameshowToolboxItem gameshowMode={gameshowMode.pageDescription} onClick={addModeToQueue}></GameshowToolboxItem>
         ))}
       </div>
     );
@@ -126,10 +140,10 @@ export const CustomGameshow = (props: Props) => {
   function displayQueuedModes(): React.ReactNode {
     return (
       <div className="gameshow-queued-modes-wrapper">
-        {queuedModes?.map((gameshowMode, index) => (
+        {queuedModes?.map((gameshowMode) => (
           <GameshowOrderItem
-            id={index + 1}
-            gameshowMode={gameshowMode}
+            id={gameshowMode.id}
+            gameshowMode={gameshowMode.pageDescription}
             onClick={removeModeFromQueue}
           ></GameshowOrderItem>
         ))}
