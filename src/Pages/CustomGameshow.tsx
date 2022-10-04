@@ -20,6 +20,7 @@ import {
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
+import { useAutoAnimate } from "@formkit/auto-animate/react";
 
 type GameshowModeTile = { id: number; pageDescription: pageDescription };
 
@@ -49,6 +50,8 @@ export const CustomGameshow = (props: Props) => {
       coordinateGetter: sortableKeyboardCoordinates,
     })
   );
+
+  const [parent] = useAutoAnimate();
 
   const [currentGameshowCategoryFilter, setCurrentGameshowCategoryFilter] = useState<gamemodeCategory>(null);
   const [filteredModes, setFilteredModes] = useState<pageDescription[]>(getFilteredModes());
@@ -129,7 +132,7 @@ export const CustomGameshow = (props: Props) => {
   // The order of gamemodes (the CustomGameshow will have)
   function displayQueuedModes(): React.ReactNode {
     const draggableGameshowModeTiles = (
-      <div className="gameshow-queued-modes-wrapper">
+      <div className="gameshow-queued-modes-wrapper" ref={parent as any}>
         {queuedModes?.map((gameshowMode) => (
           <GameshowOrderItem
             id={gameshowMode.id}

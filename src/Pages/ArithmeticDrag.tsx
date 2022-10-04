@@ -31,6 +31,7 @@ import {
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
+import { useAutoAnimate } from "@formkit/auto-animate/react";
 
 // Const Contexts: https://stackoverflow.com/questions/44497388/typescript-array-to-string-literal-type
 export const arithmeticNumberSizes = ["small", "medium", "large"] as const;
@@ -102,6 +103,9 @@ const ArithmeticDrag = (props: Props) => {
   );
 
   const [inProgress, setInProgress] = useState(true);
+
+  const [parent] = useAutoAnimate();
+
   const [expressionTiles, setExpressionTiles] = useState<ExpressionTile[]>([]);
   // For the match game mode type
   const [resultTiles, setResultTiles] = useState<ResultTile[]>([]);
@@ -429,7 +433,7 @@ const ArithmeticDrag = (props: Props) => {
    */
   function displayTiles(): React.ReactNode {
     const draggableExpressionTiles = (
-      <div className="draggable_expressions">
+      <div className="draggable_expressions" ref={parent as any}>
         {expressionTiles.map((tile) => (
           <DraggableItem key={tile.id} id={tile.id}>
             <LetterTile letter={tile.expression} status={tile.status} settings={props.settings} />
@@ -439,7 +443,7 @@ const ArithmeticDrag = (props: Props) => {
     );
 
     const draggableResultTiles = (
-      <div className="draggable_results">
+      <div className="draggable_results" ref={parent as any}>
         {resultTiles.map((tile) => (
           <DraggableItem key={tile.id} id={tile.id}>
             <LetterTile letter={tile.total.toString()} status={tile.status} settings={props.settings} />
