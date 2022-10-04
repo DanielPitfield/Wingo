@@ -5,7 +5,7 @@ import { DraggableItem } from "./DraggableItem";
 interface Props {
   id: number;
   gameshowMode: pageDescription;
-  onClick: (index: number) => void;
+  onClick: (id: number) => void;
 }
 
 export const GameshowOrderItem = (props: Props) => {

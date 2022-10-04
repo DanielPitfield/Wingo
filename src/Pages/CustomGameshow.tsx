@@ -83,11 +83,9 @@ export const CustomGameshow = (props: Props) => {
   };
 
   // Delete the mode from the current queue
-  const removeModeFromQueue = (index: number) => {
-    // Take copy
-    const newQueuedModes = queuedModes.slice();
+  const removeModeFromQueue = (id: number) => {
     // Remove clicked mode
-    newQueuedModes.splice(index, 1);
+    const newQueuedModes = queuedModes.filter((mode) => mode.id !== id);
     setQueuedModes(newQueuedModes);
   };
 
@@ -130,7 +128,7 @@ export const CustomGameshow = (props: Props) => {
 
   // The order of gamemodes (the CustomGameshow will have)
   function displayQueuedModes(): React.ReactNode {
-    return (
+    const draggableGameshowModeTiles = (
       <div className="gameshow-queued-modes-wrapper">
         {queuedModes?.map((gameshowMode) => (
           <GameshowOrderItem
@@ -140,6 +138,14 @@ export const CustomGameshow = (props: Props) => {
           ></GameshowOrderItem>
         ))}
       </div>
+    );
+
+    return (
+      <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+        <SortableContext items={queuedModes} strategy={verticalListSortingStrategy}>
+          {draggableGameshowModeTiles}
+        </SortableContext>
+      </DndContext>
     );
   }
 
