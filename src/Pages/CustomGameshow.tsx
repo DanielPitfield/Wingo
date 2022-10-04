@@ -5,6 +5,21 @@ import { gamemodeCategories, gamemodeCategory, pageDescription, pageDescriptions
 import { GameshowToolboxItem } from "../Components/GameshowToolboxItem";
 import { GameshowOrderItem } from "../Components/GameshowOrderItem";
 import { Button } from "../Components/Button";
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+} from "@dnd-kit/core";
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
 
 export interface CustomGameshowProps {
   campaignConfig:
@@ -25,6 +40,14 @@ interface Props extends CustomGameshowProps {
 }
 
 export const CustomGameshow = (props: Props) => {
+  // dnd-kit
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
+
   const [currentGameshowCategoryFilter, setCurrentGameshowCategoryFilter] = useState<gamemodeCategory>(null);
   const [filteredModes, setFilteredModes] = useState<pageDescription[]>(getFilteredModes());
   const [queuedModes, setQueuedModes] = useState<pageDescription[]>([]);
@@ -65,6 +88,29 @@ export const CustomGameshow = (props: Props) => {
     setQueuedModes([]);
   };
 
+  function handleDragEnd(event: DragEndEvent) {
+    const { active, over } = event;
+
+    if (active.id === over?.id) {
+      return;
+    }
+
+    const oldTile = queuedModes.find((tile) => tile.id === active.id);
+    const newTile = queuedModes.find((tile) => tile.id === over?.id);
+
+    if (!oldTile || !newTile) {
+      return;
+    }
+
+    const oldIndex: number = queuedModes.indexOf(oldTile);
+    const newIndex: number = queuedModes.indexOf(newTile);
+
+    // The new order after the drag
+    const newQueuedModes = arrayMove(queuedModes, oldIndex, newIndex);
+
+    setQueuedModes(newQueuedModes);
+  }
+
   // List of buttons (which add to the queue when clicked)
   function displayFilteredModes(): React.ReactNode {
     return (
@@ -78,16 +124,14 @@ export const CustomGameshow = (props: Props) => {
 
   // The order of gamemodes (the CustomGameshow will have)
   function displayQueuedModes(): React.ReactNode {
-    const draggableItemProps = {
-      queuedModes: queuedModes,
-      setQueuedModes: setQueuedModes,
-      onClick: removeModeFromQueue,
-    };
-
     return (
       <div className="gameshow-queued-modes-wrapper">
         {queuedModes?.map((gameshowMode, index) => (
-          <GameshowOrderItem {...draggableItemProps} gameshowMode={gameshowMode} index={index}></GameshowOrderItem>
+          <GameshowOrderItem
+            id={index + 1}
+            gameshowMode={gameshowMode}
+            onClick={removeModeFromQueue}
+          ></GameshowOrderItem>
         ))}
       </div>
     );
