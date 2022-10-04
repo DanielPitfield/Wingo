@@ -240,7 +240,7 @@ const WordCodes = (props: Props) => {
     if (props.mode === "match") {
       // Word Tiles
       const newWordTiles: WordTile[] = wordCodes.map((wordCode, index) => ({
-        id: index,
+        id: index + 1,
         ...wordCode,
         status: "not set",
       }));
@@ -249,7 +249,7 @@ const WordCodes = (props: Props) => {
 
       // Code tiles
       const newCodeTiles: CodeTile[] = wordCodes.map((wordCode, index) => ({
-        id: index,
+        id: index + 1,
         code: wordCode.code,
         status: "not set",
       }));
