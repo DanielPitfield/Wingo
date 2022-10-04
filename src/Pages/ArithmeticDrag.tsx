@@ -16,7 +16,15 @@ import { getRandomIntFromRange } from "../Helpers/getRandomIntFromRange";
 import { getNewGamemodeSettingValue } from "../Helpers/getGamemodeSettingsNewValue";
 import ArithmeticDragGamemodeSettings from "../Components/GamemodeSettingsOptions/ArithmeticDragGamemodeSettings";
 import { useLocation } from "react-router-dom";
-import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors } from "@dnd-kit/core";
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+} from "@dnd-kit/core";
 import {
   arrayMove,
   SortableContext,
@@ -30,6 +38,15 @@ export type arithmeticNumberSize = typeof arithmeticNumberSizes[number];
 
 const arithmeticModes = ["order", "match"] as const;
 export type arithmeticMode = typeof arithmeticModes[number];
+
+type ExpressionTile = {
+  id: number;
+  expression: string;
+  total: number;
+  status: "incorrect" | "correct" | "not set";
+};
+
+type ResultTile = { id: number; total: number; status: "incorrect" | "correct" | "not set" };
 
 export interface ArithmeticDragProps {
   campaignConfig:
@@ -73,16 +90,21 @@ interface Props extends ArithmeticDragProps {
   onComplete: (wasCorrect: boolean) => void;
 }
 
-/** */
 const ArithmeticDrag = (props: Props) => {
   const location = useLocation().pathname as PagePath;
 
+  // dnd-kit
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
+
   const [inProgress, setInProgress] = useState(true);
-  const [expressionTiles, setExpressionTiles] = useState<
-    { expression: string; total: number; status: "incorrect" | "correct" | "not set" }[]
-  >([]);
+  const [expressionTiles, setExpressionTiles] = useState<ExpressionTile[]>([]);
   // For the match game mode type
-  const [resultTiles, setResultTiles] = useState<{ total: number; status: "incorrect" | "correct" | "not set" }[]>([]);
+  const [resultTiles, setResultTiles] = useState<ResultTile[]>([]);
 
   const [gamemodeSettings, setGamemodeSettings] = useState<ArithmeticDragProps["gamemodeSettings"]>(
     props.gamemodeSettings
@@ -163,16 +185,16 @@ const ArithmeticDrag = (props: Props) => {
   }
 
   // How many operator symbols are there in the given expression string?
-  function countOperators(expression: string): number {
+  const countOperators = (expression: string): number => {
     const expressionSymbols = expression.split("");
     return expressionSymbols.filter((character) => operatorSymbols.includes(character)).length;
-  }
+  };
 
   /**
    * Generates a new valid tile
    * @returns Object of tile information (display string and evaluation result)
    */
-  function generateTile(): { expression: string; total: number; status: "not set" } {
+  function generateTile(id: number): ExpressionTile {
     // First number of the tile expression
     const startingNumber = getRandomIntFromRange(1, getStartingNumberLimit());
 
@@ -261,23 +283,25 @@ const ArithmeticDrag = (props: Props) => {
     }
 
     // Once expression is desired length, return
-    return { expression: expression, total: total, status: "not set" };
+    return { id: id, expression: expression, total: total, status: "not set" };
   }
 
   // Generate (all/numTiles number) of tiles
   function generateAllTiles() {
-    const newExpressionTiles: { expression: string; total: number; status: "not set" }[] = Array.from({
+    const newExpressionTiles: ExpressionTile[] = Array.from({
       length: gamemodeSettings.numTiles,
-    }).map((x) => generateTile());
+    }).map((_, index) => generateTile(index + 1));
 
     setExpressionTiles(newExpressionTiles);
 
     // Result tiles (only needed in match mode)
     if (props.mode === "match") {
       // Tiles displaying the expression totals, shuffled and all given the 'not set' status
-      const newResultTiles: { total: number; status: "not set" }[] = shuffleArray(
-        newExpressionTiles.map((x) => x.total)
-      ).map((total) => ({ total: total, status: "not set" }));
+      const newResultTiles: ResultTile[] = shuffleArray(newExpressionTiles).map((tile, index) => ({
+        id: index + 1,
+        total: tile.total,
+        status: "not set",
+      }));
 
       setResultTiles(newResultTiles);
     }
@@ -323,6 +347,82 @@ const ArithmeticDrag = (props: Props) => {
     };
   }, [setRemainingSeconds, remainingSeconds, gamemodeSettings.timerConfig.isTimed]);
 
+  function handleExpressionTileDragEnd(event: DragEndEvent) {
+    if (!inProgress) {
+      return;
+    }
+
+    const { active, over } = event;
+
+    if (active.id === over?.id) {
+      return;
+    }
+
+    const oldTile: ExpressionTile | undefined = expressionTiles.find((tile) => tile.id === active.id);
+    const newTile: ExpressionTile | undefined = expressionTiles.find((tile) => tile.id === over?.id);
+
+    if (!oldTile || !newTile) {
+      return;
+    }
+
+    const oldIndex: number = expressionTiles.indexOf(oldTile);
+    const newIndex: number = expressionTiles.indexOf(newTile);
+
+    // The new order after the drag + all statuses reset
+    const newExpressionTiles: ExpressionTile[] = arrayMove(expressionTiles, oldIndex, newIndex).map((tile) => {
+      tile.status = "not set";
+      return tile;
+    });
+
+    setExpressionTiles(newExpressionTiles);
+
+    // Reset status of result tiles too
+    setResultTiles(
+      resultTiles.map((tile) => {
+        tile.status = "not set";
+        return tile;
+      })
+    );
+  }
+
+  function handleResultTileDragEnd(event: DragEndEvent) {
+    if (!inProgress) {
+      return;
+    }
+
+    const { active, over } = event;
+
+    if (active.id === over?.id) {
+      return;
+    }
+
+    const oldTile: ResultTile | undefined = resultTiles.find((tile) => tile.id === active.id);
+    const newTile: ResultTile | undefined = resultTiles.find((tile) => tile.id === over?.id);
+
+    if (!oldTile || !newTile) {
+      return;
+    }
+
+    const oldIndex: number = resultTiles.indexOf(oldTile);
+    const newIndex: number = resultTiles.indexOf(newTile);
+
+    // The new order after the drag + all statuses reset
+    const newResultTiles: ResultTile[] = arrayMove(resultTiles, oldIndex, newIndex).map((tile) => {
+      tile.status = "not set";
+      return tile;
+    });
+
+    setResultTiles(newResultTiles);
+
+    // Reset status of expression tiles too
+    setExpressionTiles(
+      expressionTiles.map((tile) => {
+        tile.status = "not set";
+        return tile;
+      })
+    );
+  }
+
   /**
    * LetterTile Debug: letter={`R: ${tile.total}`}
    * @returns
@@ -330,29 +430,8 @@ const ArithmeticDrag = (props: Props) => {
   function displayTiles(): React.ReactNode {
     const draggableExpressionTiles = (
       <div className="draggable_expressions">
-        {expressionTiles.map((tile, index) => (
-          <DraggableItem
-            key={index}
-            index={index}
-            onMove={(toIndex) => {
-              if (inProgress) {
-                // The new order after the drag + all statuses reset
-                const newExpressionTiles = arrayMove(expressionTiles, index, toIndex).map((tile) => {
-                  tile.status = "not set";
-                  return tile;
-                });
-                setExpressionTiles(newExpressionTiles);
-
-                // Just statuses reset
-                setResultTiles(
-                  resultTiles.map((tile) => {
-                    tile.status = "not set";
-                    return tile;
-                  })
-                );
-              }
-            }}
-          >
+        {expressionTiles.map((tile) => (
+          <DraggableItem key={tile.id} id={tile.id}>
             <LetterTile letter={tile.expression} status={tile.status} settings={props.settings} />
           </DraggableItem>
         ))}
@@ -361,39 +440,18 @@ const ArithmeticDrag = (props: Props) => {
 
     const draggableResultTiles = (
       <div className="draggable_results">
-          {resultTiles.map((tile, index) => (
-            <DraggableItem
-              key={index}
-              index={index}
-              onMove={(toIndex) => {
-                if (inProgress) {
-                  // The new order after the drag + all statuses reset
-                  const newResultTiles = arrayMove(resultTiles, index, toIndex).map((tile) => {
-                    tile.status = "not set";
-                    return tile;
-                  });
-                  setResultTiles(newResultTiles);
-
-                  // Just statuses reset
-                  setExpressionTiles(
-                    expressionTiles.map((tile) => {
-                      tile.status = "not set";
-                      return tile;
-                    })
-                  );
-                }
-              }}
-            >
-              <LetterTile letter={tile.total.toString()} status={tile.status} settings={props.settings} />
-            </DraggableItem>
-          ))}
+        {resultTiles.map((tile) => (
+          <DraggableItem key={tile.id} id={tile.id}>
+            <LetterTile letter={tile.total.toString()} status={tile.status} settings={props.settings} />
+          </DraggableItem>
+        ))}
       </div>
     );
 
     return (
       <>
         {draggableExpressionTiles}
-        {props.mode === "match" && resultTiles.length > 0 && <>{draggableResultTiles}</>}
+        {props.mode === "match" && <>{draggableResultTiles}</>}
       </>
     );
   }
@@ -401,8 +459,8 @@ const ArithmeticDrag = (props: Props) => {
   function checkTiles() {
     const tileTotals = expressionTiles.map((x) => x.total);
 
-    let newExpressionTiles = expressionTiles.slice();
-    let newResultTiles = resultTiles.slice();
+    let newExpressionTiles: ExpressionTile[] = expressionTiles.slice();
+    let newResultTiles: ResultTile[] = resultTiles.slice();
 
     // Smallest to largest
     if (props.mode === "order") {
@@ -411,37 +469,28 @@ const ArithmeticDrag = (props: Props) => {
         return x - y;
       });
 
-      newExpressionTiles = expressionTiles.map((x, index) => {
+      newExpressionTiles = expressionTiles.map((tile, index) => {
         // Tile is in correct position
-        if (expressionTiles[index].total === sortedTotals[index]) {
-          // Change status to correct
-          x.status = "correct";
-        } else {
-          x.status = "incorrect";
-        }
-        return x;
+        const isTileCorrect = expressionTiles[index].total === sortedTotals[index];
+        tile.status = isTileCorrect ? "correct" : "incorrect";
+        return tile;
       });
     }
+
     // Match expression with result
-    else if (props.mode === "match") {
-      newExpressionTiles = expressionTiles.map((x, index) => {
+    if (props.mode === "match") {
+      newExpressionTiles = expressionTiles.map((tile, index) => {
         // Expression matched with correct result
-        if (expressionTiles[index].total === resultTiles[index].total) {
-          // Change status to correct
-          x.status = "correct";
-        } else {
-          x.status = "incorrect";
-        }
-        return x;
+        const isTileCorrect = expressionTiles[index].total === resultTiles[index].total;
+        tile.status = isTileCorrect ? "correct" : "incorrect";
+        return tile;
       });
+
       // Also update status of result tiles
-      newResultTiles = resultTiles.map((x, index) => {
-        if (expressionTiles[index].total === resultTiles[index].total) {
-          x.status = "correct";
-        } else {
-          x.status = "incorrect";
-        }
-        return x;
+      newResultTiles = resultTiles.map((tile, index) => {
+        const isTileCorrect = expressionTiles[index].total === resultTiles[index].total;
+        tile.status = isTileCorrect ? "correct" : "incorrect";
+        return tile;
       });
     }
 
@@ -462,10 +511,6 @@ const ArithmeticDrag = (props: Props) => {
     }
   }
 
-  /**
-   *
-   * @returns
-   */
   function displayOutcome(): React.ReactNode {
     // Game still in progress, don't display anything
     if (inProgress) {
