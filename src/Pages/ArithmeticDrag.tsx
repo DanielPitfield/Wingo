@@ -450,8 +450,19 @@ const ArithmeticDrag = (props: Props) => {
 
     return (
       <>
-        {draggableExpressionTiles}
-        {props.mode === "match" && <>{draggableResultTiles}</>}
+        <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleExpressionTileDragEnd}>
+          <SortableContext items={expressionTiles} strategy={verticalListSortingStrategy}>
+            {draggableExpressionTiles}
+          </SortableContext>
+        </DndContext>
+
+        {props.mode === "match" && (
+          <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleResultTileDragEnd}>
+            <SortableContext items={resultTiles} strategy={verticalListSortingStrategy}>
+              {draggableResultTiles}
+            </SortableContext>
+          </DndContext>
+        )}
       </>
     );
   }
