@@ -468,45 +468,55 @@ const WordCodes = (props: Props) => {
     }
   };
 
-  // TODO: Comment
   function handleWordTileDragEnd(event: DragEndEvent) {
     const { active, over } = event;
 
-    if (active.id !== over?.id) {
-      const oldTile: WordTile | undefined = wordTiles.find((tile) => tile.id === active.id);
-      const newTile: WordTile | undefined = wordTiles.find((tile) => tile.id === over?.id);
-
-      if (!oldTile || !newTile) {
-        return;
-      }
-
-      const oldIndex: number = wordTiles.indexOf(oldTile);
-      const newIndex: number = wordTiles.indexOf(newTile);
-
-      const newWordTiles: WordTile[] = arrayMove(wordTiles, oldIndex, newIndex);
-
-      setWordTiles(newWordTiles);
+    // Drag was started but the order of the tiles wasn't changed
+    if (active.id === over?.id) {
+      return;
     }
+
+    // The tile which is being dragged
+    const oldTile: WordTile | undefined = wordTiles.find((tile) => tile.id === active.id);
+    // The tile below where the tile being dragged has been dragged to
+    const newTile: WordTile | undefined = wordTiles.find((tile) => tile.id === over?.id);
+
+    // Either of the required tiles for the switch to be made are missing
+    if (!oldTile || !newTile) {
+      return;
+    }
+
+    // Find the indexes of the tiles within the wordTiles array
+    const oldIndex: number = wordTiles.indexOf(oldTile);
+    const newIndex: number = wordTiles.indexOf(newTile);
+
+    // Switch the positions of the tiles (using the indexes)
+    const newWordTiles: WordTile[] = arrayMove(wordTiles, oldIndex, newIndex);
+
+    setWordTiles(newWordTiles);
   }
 
+  // TODO: These functions are very similar, any way to unify them?
   function handleCodeTileDragEnd(event: DragEndEvent) {
     const { active, over } = event;
 
-    if (active.id !== over?.id) {
-      const oldTile: CodeTile | undefined = codeTiles.find((tile) => tile.id === active.id);
-      const newTile: CodeTile | undefined = codeTiles.find((tile) => tile.id === over?.id);
-
-      if (!oldTile || !newTile) {
-        return;
-      }
-
-      const oldIndex: number = codeTiles.indexOf(oldTile);
-      const newIndex: number = codeTiles.indexOf(newTile);
-
-      const newCodeTiles: CodeTile[] = arrayMove(codeTiles, oldIndex, newIndex);
-
-      setCodeTiles(newCodeTiles);
+    if (active.id === over?.id) {
+      return;
     }
+
+    const oldTile: CodeTile | undefined = codeTiles.find((tile) => tile.id === active.id);
+    const newTile: CodeTile | undefined = codeTiles.find((tile) => tile.id === over?.id);
+
+    if (!oldTile || !newTile) {
+      return;
+    }
+
+    const oldIndex: number = codeTiles.indexOf(oldTile);
+    const newIndex: number = codeTiles.indexOf(newTile);
+
+    const newCodeTiles: CodeTile[] = arrayMove(codeTiles, oldIndex, newIndex);
+
+    setCodeTiles(newCodeTiles);
   }
 
   // Draggable tiles for match gamemode
@@ -515,6 +525,7 @@ const WordCodes = (props: Props) => {
       return;
     }
 
+    // TODO: Fix last tile not being draggable
     const draggableWordTiles = (
       <div className="draggable_words">
         {wordTiles.map((tile) => (
