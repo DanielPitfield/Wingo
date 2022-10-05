@@ -26,14 +26,14 @@ export function getOnlyConnectGridWords(numGroups: number, groupSize: number): G
   // Randomly select the required number of categories
   const chosenCategories = shuffleArray(suitableCategories).slice(0, numCategories);
 
-  let gridWords: GridWord[] = [];
+  const gridWords: GridWord[][] = [];
 
   for (const category of chosenCategories) {
     const categorySubset: GridWord[] = shuffleArray(category.array)
       // The words from the category's array
       .map((x) => x.word)
       // Filter the words which aren't already included in gridWords (came from other categories)
-      .filter((word) => !gridWords.map((x) => x.word).includes(word))
+      .filter((word) => !gridWords.flatMap(gridWord => gridWord).map((x) => x.word).includes(word))
       // The subset of words chosen
       .slice(0, groupSize)
       // Attach category name to every word (in an object)
@@ -44,15 +44,15 @@ export function getOnlyConnectGridWords(numGroups: number, groupSize: number): G
         rowNumber: null,
       }));
 
-    gridWords = gridWords.concat(categorySubset);
+    gridWords.push(categorySubset);
   }
 
   // Initial shuffle (because the gridWords are created in the correct order)
-  let shuffledWords = shuffleArray(gridWords);
+  let shuffledWords = shuffleArray(gridWords.flatMap((gridWord) => gridWord));
 
   // Keep shuffling until every word on the first row is not from the same category
   while (isFirstRowSameCategory(shuffledWords)) {
-    shuffledWords = shuffleArray(gridWords);
+    shuffledWords = shuffleArray(shuffledWords);
   }
 
   return shuffledWords;
