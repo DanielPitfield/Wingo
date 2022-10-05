@@ -113,7 +113,6 @@ const OnlyConnect = (props: Props) => {
             return gridWord;
           })
         );
-        setSelectedWords([]);
 
         setInProgress(false);
         clearInterval(timerGuess);
@@ -228,11 +227,12 @@ const OnlyConnect = (props: Props) => {
         setNumCompletedGroups(numCompletedGroups + 1);
       }
     }
-
-    // Reset the selected words
-    setSelectedWords([]);
-    // TODO: Infinite loop?
   }, [selectedWords]);
+
+  React.useEffect(() => {
+    // Clear selection any time the grid updates
+    setSelectedWords([]);
+  }, [gridWords]);
 
   function handleSelection(gridItem: GridWord) {
     if (!inProgress) {
@@ -381,7 +381,6 @@ const OnlyConnect = (props: Props) => {
 
     setInProgress(true);
     setGridWords(getOnlyConnectGridWords(gamemodeSettings.numGroups, gamemodeSettings.groupSize));
-    setSelectedWords([]);
     setNumCompletedGroups(0);
     setRemainingGuesses(gamemodeSettings.numGuesses);
 
