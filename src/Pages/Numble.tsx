@@ -187,19 +187,6 @@ const Numble = (props: Props) => {
     }
   }, [pickedPins]);
 
-  // Reset game when any settings are changed
-  React.useEffect(() => {
-    // TODO: There is a very similar useEffect() to this within NumbleConfig
-    if (props.campaignConfig.isCampaignLevel) {
-      return;
-    }
-
-    ResetGame();
-
-    // Save the latest gamemode settings
-    SaveData.setNumbleConfigGamemodeSettings(props.gamemodeSettings);
-  }, [props.gamemodeSettings]);
-
   function rollDice() {
     // Dice is now being rolled
     props.setStatus("dice-rolling");
