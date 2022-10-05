@@ -43,14 +43,17 @@ interface Props extends OnlyConnectProps {
 const OnlyConnect = (props: Props) => {
   const location = useLocation().pathname as PagePath;
 
-  const [inProgress, setInProgress] = useState(true);
-  const [gridWords, setGridWords] = useState<GridWord[]>([]);
-  const [selectedWords, setSelectedWords] = useState<{ word: string; categoryName: string }[]>([]);
-  const [numCompletedGroups, setNumCompletedGroups] = useState(0);
-
   const [gamemodeSettings, setGamemodeSettings] = useState<OnlyConnectProps["gamemodeSettings"]>(
     props.gamemodeSettings
   );
+
+  const [inProgress, setInProgress] = useState(true);
+
+  const [gridWords, setGridWords] = useState<GridWord[]>(
+    getOnlyConnectGridWords(gamemodeSettings.numGroups, gamemodeSettings.groupSize)
+  );
+  const [selectedWords, setSelectedWords] = useState<{ word: string; categoryName: string }[]>([]);
+  const [numCompletedGroups, setNumCompletedGroups] = useState(0);
 
   const [remainingGuesses, setRemainingGuesses] = useState(gamemodeSettings.numGuesses);
 
@@ -116,17 +119,6 @@ const OnlyConnect = (props: Props) => {
       clearInterval(timerGuess);
     };
   }, [setRemainingSeconds, remainingSeconds, gamemodeSettings.timerConfig.isTimed]);
-
-  // Populate grid/wall
-  React.useEffect(() => {
-    // Grid words already initialised
-    if (gridWords.length > 0) {
-      return;
-    }
-
-    setGridWords(getOnlyConnectGridWords(gamemodeSettings.numGroups, gamemodeSettings.groupSize));
-    // TODO: Infinite loop?
-  }, [gridWords]);
 
   // Check selection
   React.useEffect(() => {
