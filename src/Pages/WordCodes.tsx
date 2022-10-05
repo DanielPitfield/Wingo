@@ -528,7 +528,6 @@ const WordCodes = (props: Props) => {
       return;
     }
 
-    // TODO: Fix last tile not being draggable
     const draggableWordTiles = (
       <div className="draggable_words" ref={parent}>
         {wordTiles.map((tile) => (
