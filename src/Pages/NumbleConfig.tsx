@@ -131,23 +131,19 @@ const NumbleConfig = (props: Props) => {
       return;
     }
 
-    // Ran out of time making guess
-    if (remainingGuessTimerSeconds <= 0) {
-      // Game ends when you run out of time is OFF
-      if (!gamemodeSettings.guessTimerConfig.timerBehaviour.isGameOverWhenNoTimeLeft) {
-        // Penalty will now get applied (invoked by Numble timer useEffect()s)
+    // Ran out of time making guess and game ends when you run out of time is OFF
+    if (remainingGuessTimerSeconds <= 0 && !gamemodeSettings.guessTimerConfig.timerBehaviour.isGameOverWhenNoTimeLeft) {
+      // Penalty will now get applied (invoked by Numble timer useEffect()s)
 
-        // Dice must be rolled again (ran out of time to use current roll)
-        setStatus("picked-awaiting-dice-roll");
+      // Dice must be rolled again (ran out of time to use current roll)
+      setStatus("picked-awaiting-dice-roll");
 
-        // Move on to next team (if multiplayer)
-        if (gamemodeSettings.numTeams > 1) {
-          nextTeamTurn();
-        }
+      nextTeamTurn();
 
-        return;
-      }
+      return;
+    }
 
+    if (remainingGuessTimerSeconds <= 0 && gamemodeSettings.guessTimerConfig.timerBehaviour.isGameOverWhenNoTimeLeft) {
       // Set current team's remaining time to zero
       const newTeamTimers = teamTimers.map((teamTimerInfo) => {
         if (teamTimerInfo.teamNumber === currentTeamNumber) {
@@ -157,16 +153,7 @@ const NumbleConfig = (props: Props) => {
       });
       updateTeamTimers(newTeamTimers);
 
-      // Game ends when you run out of time is ON
-      if (gamemodeSettings.numTeams === 1) {
-        // End game using status
-        setStatus("game-over-timer-ended");
-        return;
-      }
-
-      if (gamemodeSettings.numTeams > 1) {
-        nextTeamTurn();
-      }
+      nextTeamTurn();
     }
 
     const guessTimer = setInterval(() => {
@@ -191,14 +178,8 @@ const NumbleConfig = (props: Props) => {
       return;
     }
 
-    // Ran out of total time
+    // Current team ran out of total time
     if (teamTimers[currentTeamNumber].remainingSeconds <= 0) {
-      if (gamemodeSettings.numTeams === 1) {
-        // End game using status
-        setStatus("game-over-timer-ended");
-        return;
-      }
-
       nextTeamTurn();
     }
 

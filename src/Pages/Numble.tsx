@@ -131,15 +131,15 @@ const Numble = (props: Props) => {
       return;
     }
 
+    // Still time left
     if (props.remainingGuessTimerSeconds > 0) {
       return;
     }
 
-    if (!props.teamTimers || props.teamTimers.length <= 0) {
-      return;
-    }
-
-    // Only worried about deducting points (penalties) here, not ending the game which is handled in NumbleConfig
+    /*
+    Only worried about deducting points (penalties) here (which happens when the game doesn't end when there is no guess time left)
+    Ending the game is handled in NumbleConfig
+    */
     if (props.gamemodeSettings.guessTimerConfig.timerBehaviour.isGameOverWhenNoTimeLeft) {
       return;
     }
@@ -158,30 +158,6 @@ const Numble = (props: Props) => {
     setTotalScores(newTotalScores);
   }, [props.gamemodeSettings.guessTimerConfig.isTimed, props.remainingGuessTimerSeconds]);
 
-  const isGameOver = () => {
-    // How many teams have time left?
-    const numRemainingTeams = props.teamTimers.filter((team) => team.remainingSeconds > 0).length;
-    // Have all teams used all their time?
-    return numRemainingTeams === 0;
-  };
-
-  // Game timer
-  React.useEffect(() => {
-    // TODO: Move status to NumbleConfig and set within timer useEffect()?
-    if (!props.gamemodeSettings.timerConfig.isTimed) {
-      return;
-    }
-
-    if (!props.teamTimers || props.teamTimers.length <= 0) {
-      return;
-    }
-
-    // Game over when all timers have run out
-    if (isGameOver()) {
-      props.setStatus("game-over-timer-ended");
-    }
-  }, [props.gamemodeSettings.timerConfig.isTimed, props.teamTimers]);
-
   React.useEffect(() => {
     // Reset guess timer
     if (props.gamemodeSettings.guessTimerConfig.isTimed) {
@@ -193,7 +169,7 @@ const Numble = (props: Props) => {
       props.setStatus("game-over-no-more-pins");
     }
 
-    // Only campaign checks from now on
+    // Only campaign checks from now on, return early if not a campaign level
     if (!props.campaignConfig.isCampaignLevel) {
       return;
     }
