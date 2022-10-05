@@ -167,23 +167,20 @@ const OnlyConnect = (props: Props) => {
     const completedGroupCountPre = gridWords.filter((x) => x.inCompleteGroup).length / gamemodeSettings.groupSize;
 
     const newGridWords = gridWords
-      .map((x, index) => {
-        // If the word is not in the selected words
-        if (!selectedWords.some((y) => y.word === x.word)) {
-          // Ignore it
-          return x;
-        }
+      .map((gridWord, index) => {
+        // Word is in the current selection (selected words)
+        const inSelection = selectedWords.some((y) => y.word === gridWord.word);
+        // The category of the gridWord is the same as the category of the first word in the selection
+        const isCorrect = gridWords[index].categoryName === category;
 
-        // Every word of the category found (with the selection)
-        if (gridWords[index].categoryName === category) {
+        if (inSelection && isCorrect) {
           // Update the boolean flag to say it is part of a complete group
-          x.inCompleteGroup = true;
-
+          gridWord.inCompleteGroup = true;
           // Add the row number of the completed group
-          x.rowNumber = numCompletedGroups + 1;
+          gridWord.rowNumber = numCompletedGroups + 1;
         }
 
-        return x;
+        return gridWord;
       })
 
       /* 
