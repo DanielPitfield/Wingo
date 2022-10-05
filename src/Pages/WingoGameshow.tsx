@@ -10,6 +10,7 @@ import { getPageGamemodeSettings } from "../Helpers/getPageGamemodeSettings";
 import { getWingoGameshowRoundOrder } from "../Helpers/getWingoGameshowRoundOrder";
 import { useNavigate, useLocation } from "react-router-dom";
 import { PagePath } from "../Data/PageNames";
+import { getGamemodeDefaultNumGuesses } from "../Helpers/getGamemodeDefaultNumGuesses";
 
 export interface WingoGameshowProps {
   campaignConfig:
@@ -169,9 +170,11 @@ export const WingoGameshow = (props: Props) => {
         <WingoConfig
           {...commonProps}
           mode="puzzle"
-          gamemodeSettings={getPageGamemodeSettings("/Wingo/Puzzle") as WingoConfigProps["gamemodeSettings"]}
-          defaultWordLength={wordLength}
-          defaultNumGuesses={1}
+          gamemodeSettings={{
+            ...(getPageGamemodeSettings("/Wingo/Puzzle") as WingoConfigProps["gamemodeSettings"]),
+            wordLength: wordLength,
+          }}
+          defaultNumGuesses={getGamemodeDefaultNumGuesses("/Wingo/Puzzle")}
           enforceFullLengthGuesses={true}
           roundScoringInfo={roundScoringInfo}
           gameshowScore={gameshowScore}
@@ -182,9 +185,11 @@ export const WingoGameshow = (props: Props) => {
         <WingoConfig
           {...commonProps}
           mode="repeat"
-          gamemodeSettings={getPageGamemodeSettings("/Wingo/Repeat") as WingoConfigProps["gamemodeSettings"]}
-          defaultWordLength={wordLength}
-          defaultNumGuesses={5}
+          gamemodeSettings={{
+            ...(getPageGamemodeSettings("/Wingo/Repeat") as WingoConfigProps["gamemodeSettings"]),
+            wordLength: wordLength,
+          }}
+          defaultNumGuesses={getGamemodeDefaultNumGuesses("/Wingo/Repeat")}
           enforceFullLengthGuesses={true}
           roundScoringInfo={roundScoringInfo}
           gameshowScore={gameshowScore}

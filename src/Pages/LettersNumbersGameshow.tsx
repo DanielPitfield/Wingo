@@ -181,7 +181,6 @@ export const LettersNumbersGameshow = (props: Props) => {
           isCampaignLevel={false}
           mode="conundrum"
           gamemodeSettings={getPageGamemodeSettings("/Conundrum") as WingoConfigProps["gamemodeSettings"]}
-          defaultWordLength={getGamemodeDefaultWordLength("/Conundrum")}
           defaultNumGuesses={getGamemodeDefaultNumGuesses("/Conundrum")}
           enforceFullLengthGuesses={true}
         />

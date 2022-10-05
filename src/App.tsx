@@ -204,7 +204,6 @@ export const App = () => {
 
   // Overwrite properties for specific modes where required
   const commonWingoProps = {
-    defaultWordLength: getGamemodeDefaultWordLength(location),
     enforceFullLengthGuesses: true,
   };
 
