@@ -6,14 +6,13 @@ import { SaveData, SettingsData } from "../Data/SaveData";
 import { useClickChime, useCorrectChime, useFailureChime, useLightPingChime } from "../Data/Sounds";
 import { Theme } from "../Data/Themes";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
-import { categoryMappings } from "../Data/WordArrayMappings";
-import { shuffleArray } from "../Helpers/shuffleArray";
 import { getPrettyText } from "../Helpers/getPrettyText";
 import { getGamemodeDefaultTimerValue } from "../Helpers/getGamemodeDefaultTimerValue";
 import { getNewGamemodeSettingValue } from "../Helpers/getGamemodeSettingsNewValue";
 import OnlyConnectGamemodeSettings from "../Components/GamemodeSettingsOptions/OnlyConnectGamemodeSettings";
 import { useLocation } from "react-router-dom";
 import { PagePath } from "../Data/PageNames";
+import { getOnlyConnectGridWords } from "../Helpers/getOnlyConnectGridWords";
 
 export interface OnlyConnectProps {
   gamemodeSettings: {
@@ -25,7 +24,7 @@ export interface OnlyConnectProps {
   };
 }
 
-type GridWord = {
+export type GridWord = {
   word: string;
   categoryName: string;
   inCompleteGroup: boolean;
@@ -125,7 +124,8 @@ const OnlyConnect = (props: Props) => {
       return;
     }
 
-    setGridWords(getGridWords());
+    setGridWords(getOnlyConnectGridWords(gamemodeSettings.numGroups, gamemodeSettings.groupSize));
+    // TODO: Infinite loop?
   }, [gridWords]);
 
   // Check selection
@@ -235,6 +235,7 @@ const OnlyConnect = (props: Props) => {
 
     // Reset the selected words
     setSelectedWords([]);
+    // TODO: Infinite loop?
   }, [selectedWords]);
 
   function handleSelection(gridItem: GridWord) {
@@ -268,56 +269,6 @@ const OnlyConnect = (props: Props) => {
     }
 
     setSelectedWords(newSelectedWords);
-  }
-
-  // (gamemodeSettings.groupSize) words from (gamemodeSettings.numGroups) categories, shuffled
-  function getGridWords(): GridWord[] {
-    // Array to hold all the words for the grid (along with their categories)
-    let gridWords: GridWord[] = [];
-
-    // Use the specified number of categories (but never exceed the number of category word lists)
-    const numCategories = Math.min(gamemodeSettings.numGroups, categoryMappings.length);
-    // Filter the categories which have enough enough words in their word list
-    const suitableCategories = categoryMappings.filter(
-      (category) => category.array.length >= gamemodeSettings.groupSize /* TODO: Leeway for word replacements? */
-    );
-    // Randomly select the required number of categories
-    const chosenCategories = shuffleArray(suitableCategories).slice(0, numCategories);
-
-    for (const category of chosenCategories) {
-      /* 
-      Words from this category (which aren't already included in gridWords from other categories)
-      e.g The word 'Duck' can be from both the 'Meats and Fish' and 'Animals' categories
-      May need to add leeway to the condition of suitableCategories to accomodate for these kinds of replacements
-      */
-      const wordList: string[] = shuffleArray(category.array)
-        .map((x) => x.word)
-        .filter((word) => !gridWords.map((x) => x.word).includes(word));
-      // The subset of words chosen from this category
-      const wordSubset = wordList.slice(0, gamemodeSettings.groupSize);
-
-      // Attach category name to every word (in an object)
-      const categorySubset = wordSubset.map((word) => ({
-        word: word,
-        categoryName: category.name,
-        inCompleteGroup: false,
-        rowNumber: null,
-      }));
-
-      // Add group of words
-      gridWords = gridWords.concat(categorySubset);
-    }
-    const isFirstRowSameCategory = (shuffledWords: GridWord[]) => {
-      return shuffledWords.slice(0, 3).every((word) => word.categoryName === shuffledWords[0].categoryName);
-    };
-
-    let shuffledWords = shuffleArray(gridWords);
-
-    while (isFirstRowSameCategory(shuffledWords)) {
-      shuffledWords = shuffleArray(gridWords);
-    }
-
-    return shuffledWords;
   }
 
   function populateRow(rowNumber: number) {
@@ -394,10 +345,6 @@ const OnlyConnect = (props: Props) => {
     );
   }
 
-  /**
-   *
-   * @returns
-   */
   function displayOutcome(): React.ReactNode {
     // Game still in progress, don't display anything
     if (inProgress) {
@@ -438,7 +385,7 @@ const OnlyConnect = (props: Props) => {
     }
 
     setInProgress(true);
-    setGridWords(getGridWords());
+    setGridWords(getOnlyConnectGridWords(gamemodeSettings.numGroups, gamemodeSettings.groupSize));
     setSelectedWords([]);
     setNumCompletedGroups(0);
     setRemainingGuesses(gamemodeSettings.numGuesses);
