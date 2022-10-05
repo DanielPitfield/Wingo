@@ -63,8 +63,6 @@ export interface WingoConfigProps {
   };
 
   defaultNumGuesses: number;
-  // TODO: All gets a bit confusing with gamemodeSettings wordLength, defaultWordLength, targetWordLength
-  defaultWordLength?: number;
   enforceFullLengthGuesses: boolean;
 
   // Word to guess specified in some way?
@@ -446,34 +444,34 @@ const WingoConfig = (props: Props) => {
         if (
           // Stop revealing letters when there is only puzzleLeaveNumBlanks left to reveal
           revealedLetterIndexes.length >=
-          targetWord!.length - (gamemodeSettings.puzzleLeaveNumBlanks ?? gamemodeSettings.puzzleLeaveNumBlanks)
+          targetWord.length - gamemodeSettings.puzzleLeaveNumBlanks
         ) {
           return;
         }
 
-        const newrevealedLetterIndexes = revealedLetterIndexes.slice();
+        const newRevealedLetterIndexes = revealedLetterIndexes.slice();
 
         if (revealedLetterIndexes.length === 0) {
           // Start by revealing the first letter
-          newrevealedLetterIndexes.push(0);
+          newRevealedLetterIndexes.push(0);
         } else if (revealedLetterIndexes.length === 1) {
           // Next reveal the last letter
-          newrevealedLetterIndexes.push(targetWord!.length - 1);
+          newRevealedLetterIndexes.push(targetWord.length - 1);
         } else {
           let newIndex: number;
 
           // Keep looping to find a random index that hasn't been used yet
           do {
-            newIndex = Math.floor(Math.random() * targetWord!.length);
+            newIndex = Math.floor(Math.random() * targetWord.length);
           } while (revealedLetterIndexes.includes(newIndex));
 
           // Reveal a random letter
-          if (newIndex >= 0 && newIndex <= (props.defaultWordLength || props.targetWord?.length!) - 1) {
+          if (newIndex >= 0 && newIndex <= targetWord.length - 1) {
             // Check index is in the range (0, wordLength-1)
-            newrevealedLetterIndexes.push(newIndex);
+            newRevealedLetterIndexes.push(newIndex);
           }
         }
-        setRevealedLetterIndexes(newrevealedLetterIndexes);
+        setRevealedLetterIndexes(newRevealedLetterIndexes);
       }, gamemodeSettings.puzzleRevealSeconds * 1000);
     }
 
@@ -531,7 +529,6 @@ const WingoConfig = (props: Props) => {
             : { isTimed: false },
         },
         targetWord,
-        defaultWordLength: props.defaultWordLength,
         defaultNumGuesses: props.defaultNumGuesses,
         enforceFullLengthGuesses: props.enforceFullLengthGuesses,
         checkInDictionary: props.checkInDictionary,
@@ -816,7 +813,6 @@ const WingoConfig = (props: Props) => {
           mode: props.mode,
           gamemodeSettings: gamemodeSettings,
           targetWord,
-          defaultWordLength: props.defaultWordLength,
           defaultNumGuesses: props.defaultNumGuesses,
           enforceFullLengthGuesses: props.enforceFullLengthGuesses,
           checkInDictionary: props.checkInDictionary,
