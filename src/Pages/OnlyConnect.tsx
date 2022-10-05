@@ -89,7 +89,11 @@ const OnlyConnect = (props: Props) => {
 
   // (Guess) Timer Setup
   React.useEffect(() => {
-    if (!gamemodeSettings.timerConfig.isTimed || !inProgress) {
+    if (!gamemodeSettings.timerConfig.isTimed) {
+      return;
+    }
+
+    if (!inProgress) {
       return;
     }
 
@@ -244,22 +248,21 @@ const OnlyConnect = (props: Props) => {
       return;
     }
 
-    let newSelectedWords = selectedWords.slice();
+    // Selection is already full
+    if (selectedWords.length >= gamemodeSettings.groupSize) {
+      return;
+    }
 
     // Word is already selected
     if (selectedWords.includes(gridItem)) {
       // Remove word from selection (de-select)
-      newSelectedWords = newSelectedWords.filter((x) => x !== gridItem);
-    }
-    // Room for word to be added to selection
-    else if (selectedWords.length < gamemodeSettings.groupSize) {
-      newSelectedWords.push(gridItem);
-    }
-    // Selection is already full
-    else {
+      setSelectedWords(selectedWords.filter((x) => x !== gridItem));
       return;
     }
 
+    // Add word to selection
+    const newSelectedWords = selectedWords.slice();
+    newSelectedWords.push(gridItem);
     setSelectedWords(newSelectedWords);
   }
 
