@@ -33,8 +33,6 @@ export interface WingoGameshowProps {
     };
     hasFinalRound: boolean;
   };
-
-  defaultNumGuesses: number;
 }
 
 interface Props extends WingoGameshowProps {
@@ -220,9 +218,7 @@ export const WingoGameshow = (props: Props) => {
     props.onComplete(wasCorrect);
 
     // Navigate away from gameshow
-    props.campaignConfig.isCampaignLevel
-      ? navigate(getAreaBacktrackPath(location))
-      : navigate("/Home");
+    props.campaignConfig.isCampaignLevel ? navigate(getAreaBacktrackPath(location)) : navigate("/Home");
   }
 
   return (
