@@ -186,14 +186,12 @@ export const App = () => {
   }
 
   const commonProps = {
-    /* TODO: Campaign Level location check
-    This may only check the path which renders <App />
-    (the path of the route which renders this element)
+    isCampaignLevel: false,
+    campaignConfig: { isCampaignLevel: false as false },
+    /*
+    TODO: location is the path of the route which renders this element
     NOT the path of the route which may be taken
     */
-
-    isCampaignLevel: isCampaignLevelPath(location),
-    campaignConfig: { isCampaignLevel: false as false },
     defaultNumGuesses: getGamemodeDefaultNumGuesses(location),
     theme: theme,
     setTheme: setThemeIfNoPreferredSet,
