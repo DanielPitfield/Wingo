@@ -81,7 +81,8 @@ export const App = () => {
   };
 
   const getRandomPlayablePage = () => {
-    const playablePages = pageDescriptions.filter((page) => page.isRandomlyPlayable);
+    // The page must be suitable for the random session and there must be a tile displayed for the page on the LobbyMenu
+    const playablePages = pageDescriptions.filter((page) => page.isRandomlyPlayable && page.isDisplayed);
     return getRandomElementFrom(playablePages)?.path;
   };
 
