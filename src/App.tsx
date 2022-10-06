@@ -33,12 +33,10 @@ import SequencePuzzle from "./Pages/SequencePuzzle";
 import { CustomGameshow } from "./Pages/CustomGameshow";
 import { PagePath } from "./Data/PageNames";
 import { getGamemodeDefaultNumGuesses } from "./Helpers/getGamemodeDefaultNumGuesses";
-import { getGamemodeDefaultWordLength } from "./Helpers/getGamemodeDefaultWordLength";
 import { getPageGamemodeSettings } from "./Helpers/getPageGamemodeSettings";
 import { getRandomElementFrom } from "./Helpers/getRandomElementFrom";
 import { Routes, Route, useNavigate, useLocation, Navigate } from "react-router-dom";
 import { PageWrapper } from "./Components/PageWrapper";
-import { isCampaignLevelPath } from "./Helpers/CampaignPathChecks";
 
 export const App = () => {
   // What is the current path?
@@ -188,11 +186,6 @@ export const App = () => {
   const commonProps = {
     isCampaignLevel: false,
     campaignConfig: { isCampaignLevel: false as false },
-    /*
-    TODO: location is the path of the route which renders this element
-    NOT the path of the route which may be taken
-    */
-    defaultNumGuesses: getGamemodeDefaultNumGuesses(location),
     theme: theme,
     setTheme: setThemeIfNoPreferredSet,
     addGold: addGold,
@@ -257,7 +250,8 @@ export const App = () => {
                 {...commonProps}
                 {...commonWingoProps}
                 mode="daily"
-                gamemodeSettings={getPageGamemodeSettings(location) as WingoConfigProps["gamemodeSettings"]}
+                gamemodeSettings={getPageGamemodeSettings("/Wingo/Daily") as WingoConfigProps["gamemodeSettings"]}
+                defaultNumGuesses={getGamemodeDefaultNumGuesses("/Wingo/Daily")}
               />
             </PageWrapper>
           }
@@ -270,7 +264,8 @@ export const App = () => {
                 {...commonProps}
                 {...commonWingoProps}
                 mode="repeat"
-                gamemodeSettings={getPageGamemodeSettings(location) as WingoConfigProps["gamemodeSettings"]}
+                gamemodeSettings={getPageGamemodeSettings("/Wingo/Repeat") as WingoConfigProps["gamemodeSettings"]}
+                defaultNumGuesses={getGamemodeDefaultNumGuesses("/Wingo/Repeat")}
               />
             </PageWrapper>
           }
@@ -284,7 +279,8 @@ export const App = () => {
                 {...commonWingoProps}
                 mode="category"
                 enforceFullLengthGuesses={false}
-                gamemodeSettings={getPageGamemodeSettings(location) as WingoConfigProps["gamemodeSettings"]}
+                gamemodeSettings={getPageGamemodeSettings("/Wingo/Category") as WingoConfigProps["gamemodeSettings"]}
+                defaultNumGuesses={getGamemodeDefaultNumGuesses("/Wingo/Category")}
               />
             </PageWrapper>
           }
@@ -297,7 +293,8 @@ export const App = () => {
                 {...commonProps}
                 {...commonWingoProps}
                 mode="increasing"
-                gamemodeSettings={getPageGamemodeSettings(location) as WingoConfigProps["gamemodeSettings"]}
+                gamemodeSettings={getPageGamemodeSettings("/Wingo/Increasing") as WingoConfigProps["gamemodeSettings"]}
+                defaultNumGuesses={getGamemodeDefaultNumGuesses("/Wingo/Increasing")}
               />
             </PageWrapper>
           }
@@ -310,7 +307,8 @@ export const App = () => {
                 {...commonProps}
                 {...commonWingoProps}
                 mode="limitless"
-                gamemodeSettings={getPageGamemodeSettings(location) as WingoConfigProps["gamemodeSettings"]}
+                gamemodeSettings={getPageGamemodeSettings("/Wingo/Limitless") as WingoConfigProps["gamemodeSettings"]}
+                defaultNumGuesses={getGamemodeDefaultNumGuesses("/Wingo/Limitless")}
               />
             </PageWrapper>
           }
@@ -323,7 +321,8 @@ export const App = () => {
                 {...commonProps}
                 {...commonWingoProps}
                 mode="puzzle"
-                gamemodeSettings={getPageGamemodeSettings(location) as WingoConfigProps["gamemodeSettings"]}
+                gamemodeSettings={getPageGamemodeSettings("/Wingo/Puzzle") as WingoConfigProps["gamemodeSettings"]}
+                defaultNumGuesses={getGamemodeDefaultNumGuesses("/Wingo/Puzzle")}
               />
             </PageWrapper>
           }
@@ -336,7 +335,8 @@ export const App = () => {
                 {...commonProps}
                 {...commonWingoProps}
                 mode="conundrum"
-                gamemodeSettings={getPageGamemodeSettings(location) as WingoConfigProps["gamemodeSettings"]}
+                gamemodeSettings={getPageGamemodeSettings("/Conundrum") as WingoConfigProps["gamemodeSettings"]}
+                defaultNumGuesses={getGamemodeDefaultNumGuesses("/Conundrum")}
               />
             </PageWrapper>
           }
@@ -349,7 +349,8 @@ export const App = () => {
                 {...commonProps}
                 {...commonWingoProps}
                 mode="interlinked"
-                gamemodeSettings={getPageGamemodeSettings(location) as WingoConfigProps["gamemodeSettings"]}
+                gamemodeSettings={getPageGamemodeSettings("/Wingo/Interlinked") as WingoConfigProps["gamemodeSettings"]}
+                defaultNumGuesses={getGamemodeDefaultNumGuesses("/Wingo/Interlinked")}
               />
             </PageWrapper>
           }
@@ -362,7 +363,8 @@ export const App = () => {
                 {...commonProps}
                 {...commonWingoProps}
                 mode="crossword"
-                gamemodeSettings={getPageGamemodeSettings(location) as WingoConfigProps["gamemodeSettings"]}
+                gamemodeSettings={getPageGamemodeSettings("/Wingo/Crossword") as WingoConfigProps["gamemodeSettings"]}
+                defaultNumGuesses={getGamemodeDefaultNumGuesses("/Wingo/Crossword")}
               />
             </PageWrapper>
           }
@@ -375,7 +377,10 @@ export const App = () => {
                 {...commonProps}
                 {...commonWingoProps}
                 mode="crossword/fit"
-                gamemodeSettings={getPageGamemodeSettings(location) as WingoConfigProps["gamemodeSettings"]}
+                gamemodeSettings={
+                  getPageGamemodeSettings("/Wingo/Crossword/Fit") as WingoConfigProps["gamemodeSettings"]
+                }
+                defaultNumGuesses={getGamemodeDefaultNumGuesses("/Wingo/Crossword/Fit")}
               />
             </PageWrapper>
           }
@@ -388,7 +393,10 @@ export const App = () => {
                 {...commonProps}
                 {...commonWingoProps}
                 mode="crossword/daily"
-                gamemodeSettings={getPageGamemodeSettings(location) as WingoConfigProps["gamemodeSettings"]}
+                gamemodeSettings={
+                  getPageGamemodeSettings("/Wingo/Crossword/Daily") as WingoConfigProps["gamemodeSettings"]
+                }
+                defaultNumGuesses={getGamemodeDefaultNumGuesses("/Wingo/Crossword/Daily")}
               />
             </PageWrapper>
           }
@@ -401,7 +409,8 @@ export const App = () => {
                 {...commonProps}
                 {...commonWingoProps}
                 mode="crossword/weekly"
-                gamemodeSettings={getPageGamemodeSettings(location) as WingoConfigProps["gamemodeSettings"]}
+                gamemodeSettings={getPageGamemodeSettings("/Wingo/Crossword/Weekly") as WingoConfigProps["gamemodeSettings"]}
+                defaultNumGuesses={getGamemodeDefaultNumGuesses("/Wingo/Crossword/Weekly")}
               />
             </PageWrapper>
           }
@@ -413,7 +422,7 @@ export const App = () => {
               <LetterCategoriesConfig
                 {...commonProps}
                 enforceFullLengthGuesses={false}
-                gamemodeSettings={getPageGamemodeSettings(location) as LetterCategoriesConfigProps["gamemodeSettings"]}
+                gamemodeSettings={getPageGamemodeSettings("/LettersCategories") as LetterCategoriesConfigProps["gamemodeSettings"]}
               />
             </PageWrapper>
           }
@@ -425,7 +434,7 @@ export const App = () => {
               <LettersGameConfig
                 {...commonProps}
                 theme={Themes.GenericLettersGame}
-                gamemodeSettings={getPageGamemodeSettings(location) as LettersGameConfigProps["gamemodeSettings"]}
+                gamemodeSettings={getPageGamemodeSettings("/LettersGame") as LettersGameConfigProps["gamemodeSettings"]}
               />
             </PageWrapper>
           }
@@ -437,7 +446,7 @@ export const App = () => {
               <NumbersGameConfig
                 {...commonProps}
                 theme={Themes.GenericNumbersGame}
-                gamemodeSettings={getPageGamemodeSettings(location) as NumbersGameConfigProps["gamemodeSettings"]}
+                gamemodeSettings={getPageGamemodeSettings("/NumbersGame") as NumbersGameConfigProps["gamemodeSettings"]}
               />
             </PageWrapper>
           }
@@ -448,7 +457,7 @@ export const App = () => {
             <PageWrapper gold={gold} settings={settings}>
               <ArithmeticReveal
                 {...commonProps}
-                gamemodeSettings={getPageGamemodeSettings(location) as ArithmeticRevealProps["gamemodeSettings"]}
+                gamemodeSettings={getPageGamemodeSettings("/ArithmeticReveal") as ArithmeticRevealProps["gamemodeSettings"]}
               />
             </PageWrapper>
           }
@@ -460,7 +469,7 @@ export const App = () => {
               <ArithmeticDrag
                 {...commonProps}
                 mode="order"
-                gamemodeSettings={getPageGamemodeSettings(location) as ArithmeticDragProps["gamemodeSettings"]}
+                gamemodeSettings={getPageGamemodeSettings("/ArithmeticDrag/Order") as ArithmeticDragProps["gamemodeSettings"]}
               />
             </PageWrapper>
           }
@@ -472,7 +481,7 @@ export const App = () => {
               <ArithmeticDrag
                 {...commonProps}
                 mode="match"
-                gamemodeSettings={getPageGamemodeSettings(location) as ArithmeticDragProps["gamemodeSettings"]}
+                gamemodeSettings={getPageGamemodeSettings("/ArithmeticDrag/Match") as ArithmeticDragProps["gamemodeSettings"]}
               />
             </PageWrapper>
           }
@@ -483,7 +492,7 @@ export const App = () => {
             <PageWrapper gold={gold} settings={settings}>
               <NumbleConfig
                 {...commonProps}
-                gamemodeSettings={getPageGamemodeSettings(location) as NumbleConfigProps["gamemodeSettings"]}
+                gamemodeSettings={getPageGamemodeSettings("/Numble") as NumbleConfigProps["gamemodeSettings"]}
               />
             </PageWrapper>
           }
@@ -494,7 +503,7 @@ export const App = () => {
             <PageWrapper gold={gold} settings={settings}>
               <OnlyConnect
                 {...commonProps}
-                gamemodeSettings={getPageGamemodeSettings(location) as OnlyConnectProps["gamemodeSettings"]}
+                gamemodeSettings={getPageGamemodeSettings("/OnlyConnect") as OnlyConnectProps["gamemodeSettings"]}
               />
             </PageWrapper>
           }
@@ -505,7 +514,7 @@ export const App = () => {
             <PageWrapper gold={gold} settings={settings}>
               <SameLetterWords
                 {...commonProps}
-                gamemodeSettings={getPageGamemodeSettings(location) as SameLetterWordsProps["gamemodeSettings"]}
+                gamemodeSettings={getPageGamemodeSettings("/SameLetters") as SameLetterWordsProps["gamemodeSettings"]}
               />
             </PageWrapper>
           }
@@ -516,7 +525,7 @@ export const App = () => {
             <PageWrapper gold={gold} settings={settings}>
               <NumberSets
                 {...commonProps}
-                gamemodeSettings={getPageGamemodeSettings(location) as NumberSetsProps["gamemodeSettings"]}
+                gamemodeSettings={getPageGamemodeSettings("/NumberSets") as NumberSetsProps["gamemodeSettings"]}
               />
             </PageWrapper>
           }
@@ -527,7 +536,7 @@ export const App = () => {
             <PageWrapper gold={gold} settings={settings}>
               <Algebra
                 {...commonProps}
-                gamemodeSettings={getPageGamemodeSettings(location) as AlgebraProps["gamemodeSettings"]}
+                gamemodeSettings={getPageGamemodeSettings("/Algebra") as AlgebraProps["gamemodeSettings"]}
               />
             </PageWrapper>
           }
@@ -539,7 +548,7 @@ export const App = () => {
               <WordCodes
                 {...commonProps}
                 mode={"question"}
-                gamemodeSettings={getPageGamemodeSettings(location) as WordCodesProps["gamemodeSettings"]}
+                gamemodeSettings={getPageGamemodeSettings("/WordCodes/Question") as WordCodesProps["gamemodeSettings"]}
               />
             </PageWrapper>
           }
@@ -551,7 +560,7 @@ export const App = () => {
               <WordCodes
                 {...commonProps}
                 mode={"match"}
-                gamemodeSettings={getPageGamemodeSettings(location) as WordCodesProps["gamemodeSettings"]}
+                gamemodeSettings={getPageGamemodeSettings("/WordCodes/Match") as WordCodesProps["gamemodeSettings"]}
               />
             </PageWrapper>
           }
