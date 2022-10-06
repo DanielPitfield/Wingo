@@ -471,7 +471,18 @@ const WordCodes = (props: Props) => {
     }
   };
 
-  function handleWordTileDragEnd(event: DragEndEvent) {
+  function handleDragEnd<
+    T extends { id: number },
+    TOpposite extends { id: number; status: "incorrect" | "correct" | "not set" }
+  >(
+    event: DragEndEvent,
+    // tiles uses generic type (which extends id as a general constraint)
+    tiles: T[],
+    // oppositeTiles uses another generic type (with id and status as general constraints)
+    oppositeTiles: TOpposite[],
+    setTiles: (tiles: T[]) => void,
+    setOppositeTiles: (oppositeTiles: TOpposite[]) => void
+  ) {
     const { active, over } = event;
 
     // Drag was started but the order of the tiles wasn't changed
@@ -480,9 +491,9 @@ const WordCodes = (props: Props) => {
     }
 
     // The tile which is being dragged
-    const oldTile: WordTile | undefined = wordTiles.find((tile) => tile.id === active.id);
+    const oldTile: T | undefined = tiles.find((tile) => tile.id === active.id);
     // The tile below where the tile being dragged has been dragged to
-    const newTile: WordTile | undefined = wordTiles.find((tile) => tile.id === over?.id);
+    const newTile: T | undefined = tiles.find((tile) => tile.id === over?.id);
 
     // Either of the required tiles for the switch to be made are missing
     if (!oldTile || !newTile) {
@@ -490,36 +501,15 @@ const WordCodes = (props: Props) => {
     }
 
     // Find the indexes of the tiles within the wordTiles array
-    const oldIndex: number = wordTiles.indexOf(oldTile);
-    const newIndex: number = wordTiles.indexOf(newTile);
+    const oldIndex: number = tiles.indexOf(oldTile);
+    const newIndex: number = tiles.indexOf(newTile);
 
     // Switch the positions of the tiles (using the indexes)
-    const newWordTiles: WordTile[] = arrayMove(wordTiles, oldIndex, newIndex);
+    const newTiles: T[] = arrayMove(tiles, oldIndex, newIndex);
 
-    setWordTiles(newWordTiles);
-  }
-
-  // TODO: These functions are very similar, any way to unify them?
-  function handleCodeTileDragEnd(event: DragEndEvent) {
-    const { active, over } = event;
-
-    if (active.id === over?.id) {
-      return;
-    }
-
-    const oldTile: CodeTile | undefined = codeTiles.find((tile) => tile.id === active.id);
-    const newTile: CodeTile | undefined = codeTiles.find((tile) => tile.id === over?.id);
-
-    if (!oldTile || !newTile) {
-      return;
-    }
-
-    const oldIndex: number = codeTiles.indexOf(oldTile);
-    const newIndex: number = codeTiles.indexOf(newTile);
-
-    const newCodeTiles: CodeTile[] = arrayMove(codeTiles, oldIndex, newIndex);
-
-    setCodeTiles(newCodeTiles);
+    // Reset status of tiles when moved
+    setTiles(newTiles.map((tile) => ({ ...tile, status: "not set" })));
+    setOppositeTiles(oppositeTiles.map((tile) => ({ ...tile, status: "not set" })));
   }
 
   // Draggable tiles for match gamemode
@@ -550,13 +540,21 @@ const WordCodes = (props: Props) => {
 
     return (
       <>
-        <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleWordTileDragEnd}>
+        <DndContext
+          sensors={sensors}
+          collisionDetection={closestCenter}
+          onDragEnd={(event) => handleDragEnd(event, wordTiles, codeTiles, setWordTiles, setCodeTiles)}
+        >
           <SortableContext items={wordTiles} strategy={verticalListSortingStrategy}>
             {draggableWordTiles}
           </SortableContext>
         </DndContext>
 
-        <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleCodeTileDragEnd}>
+        <DndContext
+          sensors={sensors}
+          collisionDetection={closestCenter}
+          onDragEnd={(event) => handleDragEnd(event, codeTiles, wordTiles, setCodeTiles, setWordTiles)}
+        >
           <SortableContext items={codeTiles} strategy={verticalListSortingStrategy}>
             {draggableCodeTiles}
           </SortableContext>

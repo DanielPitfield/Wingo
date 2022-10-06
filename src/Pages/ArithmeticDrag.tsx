@@ -351,80 +351,45 @@ const ArithmeticDrag = (props: Props) => {
     };
   }, [setRemainingSeconds, remainingSeconds, gamemodeSettings.timerConfig.isTimed]);
 
-  function handleExpressionTileDragEnd(event: DragEndEvent) {
-    if (!inProgress) {
-      return;
-    }
-
+  function handleDragEnd<
+    T extends { id: number },
+    TOpposite extends { id: number; status: "incorrect" | "correct" | "not set" }
+  >(
+    event: DragEndEvent,
+    // tiles uses generic type which extends id (acting as a general constraint)
+    tiles: T[],
+    // oppositeTiles uses another generic type (with id and status general constraints)
+    oppositeTiles: TOpposite[],
+    setTiles: (tiles: T[]) => void,
+    setOppositeTiles: (oppositeTiles: TOpposite[]) => void
+  ) {
     const { active, over } = event;
 
+    // Drag was started but the order of the tiles wasn't changed
     if (active.id === over?.id) {
       return;
     }
 
-    const oldTile: ExpressionTile | undefined = expressionTiles.find((tile) => tile.id === active.id);
-    const newTile: ExpressionTile | undefined = expressionTiles.find((tile) => tile.id === over?.id);
+    // The tile which is being dragged
+    const oldTile: T | undefined = tiles.find((tile) => tile.id === active.id);
+    // The tile below where the tile being dragged has been dragged to
+    const newTile: T | undefined = tiles.find((tile) => tile.id === over?.id);
 
+    // Either of the required tiles for the switch to be made are missing
     if (!oldTile || !newTile) {
       return;
     }
 
-    const oldIndex: number = expressionTiles.indexOf(oldTile);
-    const newIndex: number = expressionTiles.indexOf(newTile);
+    // Find the indexes of the tiles within the wordTiles array
+    const oldIndex: number = tiles.indexOf(oldTile);
+    const newIndex: number = tiles.indexOf(newTile);
 
-    // The new order after the drag + all statuses reset
-    const newExpressionTiles: ExpressionTile[] = arrayMove(expressionTiles, oldIndex, newIndex).map((tile) => {
-      tile.status = "not set";
-      return tile;
-    });
+    // Switch the positions of the tiles (using the indexes)
+    const newTiles: T[] = arrayMove(tiles, oldIndex, newIndex);
 
-    setExpressionTiles(newExpressionTiles);
-
-    // Reset status of result tiles too
-    setResultTiles(
-      resultTiles.map((tile) => {
-        tile.status = "not set";
-        return tile;
-      })
-    );
-  }
-
-  function handleResultTileDragEnd(event: DragEndEvent) {
-    if (!inProgress) {
-      return;
-    }
-
-    const { active, over } = event;
-
-    if (active.id === over?.id) {
-      return;
-    }
-
-    const oldTile: ResultTile | undefined = resultTiles.find((tile) => tile.id === active.id);
-    const newTile: ResultTile | undefined = resultTiles.find((tile) => tile.id === over?.id);
-
-    if (!oldTile || !newTile) {
-      return;
-    }
-
-    const oldIndex: number = resultTiles.indexOf(oldTile);
-    const newIndex: number = resultTiles.indexOf(newTile);
-
-    // The new order after the drag + all statuses reset
-    const newResultTiles: ResultTile[] = arrayMove(resultTiles, oldIndex, newIndex).map((tile) => {
-      tile.status = "not set";
-      return tile;
-    });
-
-    setResultTiles(newResultTiles);
-
-    // Reset status of expression tiles too
-    setExpressionTiles(
-      expressionTiles.map((tile) => {
-        tile.status = "not set";
-        return tile;
-      })
-    );
+    // Reset status of tiles when moved
+    setTiles(newTiles.map((tile) => ({ ...tile, status: "not set" })));
+    setOppositeTiles(oppositeTiles.map((tile) => ({ ...tile, status: "not set" })));
   }
 
   /**
@@ -454,14 +419,24 @@ const ArithmeticDrag = (props: Props) => {
 
     return (
       <>
-        <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleExpressionTileDragEnd}>
+        <DndContext
+          sensors={sensors}
+          collisionDetection={closestCenter}
+          onDragEnd={(event) => handleDragEnd(event, expressionTiles, resultTiles, setExpressionTiles, setResultTiles)}
+        >
           <SortableContext items={expressionTiles} strategy={verticalListSortingStrategy}>
             {draggableExpressionTiles}
           </SortableContext>
         </DndContext>
 
         {props.mode === "match" && (
-          <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleResultTileDragEnd}>
+          <DndContext
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragEnd={(event) =>
+              handleDragEnd(event, resultTiles, expressionTiles, setResultTiles, setExpressionTiles)
+            }
+          >
             <SortableContext items={resultTiles} strategy={verticalListSortingStrategy}>
               {draggableResultTiles}
             </SortableContext>
