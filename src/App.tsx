@@ -115,8 +115,21 @@ export const App = () => {
       return;
     }
 
-    // Pressing back (returning to home) should stop any sessions (which dictate the next gamemode)
-    if (location === "/Home") {
+    /*
+    Pressing the back button element (to return to home)
+    OR somehow navigating to any of the unplayable pages below (endSessionPages), 
+    should stop any sessions (which dictate the next gamemode)
+    */
+
+    // Viewing/redeeming challenges or changing settings shouldn't end a session
+    const endSessionExclusions = ["Challenges", "Settings"];
+    
+    // Pages which aren't suitable for a random session (but not the exclusions above)
+    const endSessionPages = pageDescriptions
+      .filter((page) => !page.isRandomlyPlayable && !endSessionExclusions.includes(page.title))
+      .map((page) => page.path);
+
+    if (endSessionPages.includes(location)) {
       setIsRandomSession(false);
       return;
     }
