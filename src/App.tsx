@@ -73,12 +73,17 @@ export const App = () => {
   const [gold, setGold] = useState<number>(SaveData.readGold());
   const [playBackgroundMusic, stopBackgroundMusic] = useBackgroundMusic(settings, theme);
 
-  function getNewEntryPage() {
+  const getNewEntryPage = () => {
     // Find the page that has the title of the option chosen in the settings menu (dropdown)
     const entryPageSelection = pageDescriptions.find((page) => page.title === settings.gameplay.entryPage)?.path;
     // TitlePage as default
     return entryPageSelection ?? "/TitlePage";
-  }
+  };
+
+  const getRandomPlayablePage = () => {
+    const playablePages = pageDescriptions.filter((page) => page.isRandomlyPlayable);
+    return getRandomElementFrom(playablePages)?.path;
+  };
 
   React.useEffect(() => {
     const LOADING_TIMEOUT_MS = 2000;
@@ -102,22 +107,28 @@ export const App = () => {
   }, [saveData]);
 
   React.useEffect(() => {
-    // Set the page to any playable page
+    // Navigate to a randomly selected playable page
     if (location === "/Random") {
-      const playablePages = pageDescriptions.filter((page) => page.isRandomlyPlayable);
-      const newPage = getRandomElementFrom(playablePages)?.path;
-      navigate(newPage);
+      navigate(getRandomPlayablePage());
       setIsRandomSession(true);
+      return;
     }
+
     // Pressing back (returning to home) should stop any sessions (which dictate the next gamemode)
-    else if (location === "/Home") {
+    if (location === "/Home") {
       setIsRandomSession(false);
+      return;
     }
   }, [location]);
 
   React.useEffect(() => {
     // Clicking 'Back' in the browser
-    window.onpopstate = () => navigate(-1);
+    window.onpopstate = () => {
+      // Navigate back using the history
+      navigate(-1);
+      // Always stop/cancel random session
+      setIsRandomSession(false);
+    };
   }, []);
 
   React.useEffect(() => {
@@ -142,11 +153,10 @@ export const App = () => {
 
   // Default (free play)
   function onComplete() {
-    if (!isRandomSession) {
-      return;
-    } else {
+    if (isRandomSession) {
       // New random page
       navigate("/Random");
+      return;
     }
   }
 
@@ -409,7 +419,9 @@ export const App = () => {
                 {...commonProps}
                 {...commonWingoProps}
                 mode="crossword/weekly"
-                gamemodeSettings={getPageGamemodeSettings("/Wingo/Crossword/Weekly") as WingoConfigProps["gamemodeSettings"]}
+                gamemodeSettings={
+                  getPageGamemodeSettings("/Wingo/Crossword/Weekly") as WingoConfigProps["gamemodeSettings"]
+                }
                 defaultNumGuesses={getGamemodeDefaultNumGuesses("/Wingo/Crossword/Weekly")}
               />
             </PageWrapper>
@@ -422,7 +434,9 @@ export const App = () => {
               <LetterCategoriesConfig
                 {...commonProps}
                 enforceFullLengthGuesses={false}
-                gamemodeSettings={getPageGamemodeSettings("/LettersCategories") as LetterCategoriesConfigProps["gamemodeSettings"]}
+                gamemodeSettings={
+                  getPageGamemodeSettings("/LettersCategories") as LetterCategoriesConfigProps["gamemodeSettings"]
+                }
               />
             </PageWrapper>
           }
@@ -457,7 +471,9 @@ export const App = () => {
             <PageWrapper gold={gold} settings={settings}>
               <ArithmeticReveal
                 {...commonProps}
-                gamemodeSettings={getPageGamemodeSettings("/ArithmeticReveal") as ArithmeticRevealProps["gamemodeSettings"]}
+                gamemodeSettings={
+                  getPageGamemodeSettings("/ArithmeticReveal") as ArithmeticRevealProps["gamemodeSettings"]
+                }
               />
             </PageWrapper>
           }
@@ -469,7 +485,9 @@ export const App = () => {
               <ArithmeticDrag
                 {...commonProps}
                 mode="order"
-                gamemodeSettings={getPageGamemodeSettings("/ArithmeticDrag/Order") as ArithmeticDragProps["gamemodeSettings"]}
+                gamemodeSettings={
+                  getPageGamemodeSettings("/ArithmeticDrag/Order") as ArithmeticDragProps["gamemodeSettings"]
+                }
               />
             </PageWrapper>
           }
@@ -481,7 +499,9 @@ export const App = () => {
               <ArithmeticDrag
                 {...commonProps}
                 mode="match"
-                gamemodeSettings={getPageGamemodeSettings("/ArithmeticDrag/Match") as ArithmeticDragProps["gamemodeSettings"]}
+                gamemodeSettings={
+                  getPageGamemodeSettings("/ArithmeticDrag/Match") as ArithmeticDragProps["gamemodeSettings"]
+                }
               />
             </PageWrapper>
           }
