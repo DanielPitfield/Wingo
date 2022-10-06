@@ -7,10 +7,11 @@ import { Button } from "../Components/Button";
 import WingoConfig, { WingoConfigProps } from "./WingoConfig";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
 import { getGamemodeDefaultNumGuesses } from "../Helpers/getGamemodeDefaultNumGuesses";
-import { getGamemodeDefaultWordLength } from "../Helpers/getGamemodeDefaultWordLength";
 import { displayGameshowSummary } from "../Helpers/getGameshowSummary";
 import { getPageGamemodeSettings } from "../Helpers/getPageGamemodeSettings";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import { getAreaBacktrackPath } from "../Helpers/getAreaBacktrackPath";
+import { PagePath } from "../Data/PageNames";
 
 type RoundType = "number" | "letter" | "conundrum";
 
@@ -40,6 +41,7 @@ interface Props extends LettersNumbersGameshowProps {
 
 export const LettersNumbersGameshow = (props: Props) => {
   const navigate = useNavigate();
+  const location = useLocation().pathname as PagePath;
 
   const [inProgress, setInProgress] = useState(true);
   const [roundOrder, setRoundOrder] = useState<RoundType[]>([]);
@@ -214,7 +216,7 @@ export const LettersNumbersGameshow = (props: Props) => {
 
     // Navigate away from gameshow
     props.campaignConfig.isCampaignLevel
-      ? navigate("/Campaign/Areas/:areaName/Levels/:levelNumber")
+      ? navigate(getAreaBacktrackPath(location))
       : navigate("/Home");
   }
 

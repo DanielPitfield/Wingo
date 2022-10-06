@@ -11,6 +11,7 @@ import { getWingoGameshowRoundOrder } from "../Helpers/getWingoGameshowRoundOrde
 import { useNavigate, useLocation } from "react-router-dom";
 import { PagePath } from "../Data/PageNames";
 import { getGamemodeDefaultNumGuesses } from "../Helpers/getGamemodeDefaultNumGuesses";
+import { getAreaBacktrackPath } from "../Helpers/getAreaBacktrackPath";
 
 export interface WingoGameshowProps {
   campaignConfig:
@@ -220,7 +221,7 @@ export const WingoGameshow = (props: Props) => {
 
     // Navigate away from gameshow
     props.campaignConfig.isCampaignLevel
-      ? navigate("/Campaign/Areas/:areaName/Levels/:levelNumber")
+      ? navigate(getAreaBacktrackPath(location))
       : navigate("/Home");
   }
 
