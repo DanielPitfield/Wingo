@@ -20,6 +20,7 @@ import { getNewGamemodeSettingValue } from "../Helpers/getGamemodeSettingsNewVal
 import AlgebraGamemodeSettings from "../Components/GamemodeSettingsOptions/AlgebraGamemodeSettings";
 import { useLocation } from "react-router-dom";
 import { PagePath } from "../Data/PageNames";
+import { useCountdown } from "usehooks-ts";
 
 export interface AlgebraProps {
   campaignConfig:
@@ -68,17 +69,17 @@ const Algebra = (props: Props) => {
   // How many questions (across all templates) have been answered correctly?
   const [numCorrectAnswers, setNumCorrectAnswers] = useState(0);
 
-  const [remainingSeconds, setRemainingSeconds] = useState(
+  const [totalSeconds, setTotalSeconds] = useState(
     props.gamemodeSettings?.timerConfig?.isTimed === true
       ? props.gamemodeSettings?.timerConfig?.seconds
       : getGamemodeDefaultTimerValue(location)
   );
 
-  const [mostRecentTotalSeconds, setMostRecentTotalSeconds] = useState(
-    props.gamemodeSettings?.timerConfig?.isTimed === true
-      ? props.gamemodeSettings?.timerConfig?.seconds
-      : getGamemodeDefaultTimerValue(location)
-  );
+  const [remainingSeconds, { startCountdown, stopCountdown, resetCountdown }] = useCountdown({
+    countStart: totalSeconds,
+    countStop: 0,
+    intervalMs: 1000,
+  });
 
   // Sounds
   const [playCorrectChimeSoundEffect] = useCorrectChime(props.settings);
@@ -98,25 +99,36 @@ const Algebra = (props: Props) => {
     SaveData.setAlgebraGamemodeSettings(gamemodeSettings);
   }, [gamemodeSettings]);
 
-  // (Guess) Timer Setup
+  // Start timer
   React.useEffect(() => {
-    if (!gamemodeSettings.timerConfig.isTimed || !inProgress) {
+    if (!gamemodeSettings.timerConfig.isTimed) {
       return;
     }
 
-    const timerGuess = setInterval(() => {
-      if (remainingSeconds > 0) {
-        setRemainingSeconds(remainingSeconds - 1);
-      } else {
-        playFailureChimeSoundEffect();
-        setInProgress(false);
-        clearInterval(timerGuess);
-      }
-    }, 1000);
-    return () => {
-      clearInterval(timerGuess);
-    };
-  }, [setRemainingSeconds, remainingSeconds, gamemodeSettings.timerConfig.isTimed]);
+    startCountdown();
+  }, [gamemodeSettings.timerConfig.isTimed, resetCountdown]);
+
+  // Check for when timer ends
+  // TODO: stopCountdown() in dependency array?
+  React.useEffect(() => {
+    if (!gamemodeSettings.timerConfig.isTimed) {
+      return;
+    }
+
+    if (!inProgress) {
+      return;
+    }
+
+    if (remainingSeconds <= 0) {
+      playFailureChimeSoundEffect();
+      setInProgress(false);
+    }
+  }, [remainingSeconds]);
+
+  // Reset timer back to full (when the total time value is changed)
+  React.useEffect(() => {
+    resetCountdown();
+  }, [setTotalSeconds]);
 
   const getCurrentAlgebraTemplate = (): AlgebraTemplate => {
     return algebraTemplates[templateIndex];
@@ -307,7 +319,7 @@ const Algebra = (props: Props) => {
 
     if (gamemodeSettings.timerConfig.isTimed) {
       // Reset the timer if it is enabled in the game options
-      setRemainingSeconds(gamemodeSettings.timerConfig.seconds);
+      resetCountdown();
     }
   }
 
@@ -453,7 +465,7 @@ const Algebra = (props: Props) => {
   const handleTimerToggle = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newGamemodeSettings: AlgebraProps["gamemodeSettings"] = {
       ...gamemodeSettings,
-      timerConfig: e.target.checked ? { isTimed: true, seconds: mostRecentTotalSeconds } : { isTimed: false },
+      timerConfig: e.target.checked ? { isTimed: true, seconds: totalSeconds } : { isTimed: false },
     };
 
     setGamemodeSettings(newGamemodeSettings);
@@ -480,8 +492,7 @@ const Algebra = (props: Props) => {
             handleDifficultyChange={handleDifficultyChange}
             handleTimerToggle={handleTimerToggle}
             handleSimpleGamemodeSettingsChange={handleSimpleGamemodeSettingsChange}
-            setMostRecentTotalSeconds={setMostRecentTotalSeconds}
-            setRemainingSeconds={setRemainingSeconds}
+            setTotalSeconds={setTotalSeconds}
           ></AlgebraGamemodeSettings>
         </div>
       )}

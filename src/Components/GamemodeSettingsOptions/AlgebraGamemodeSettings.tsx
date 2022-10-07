@@ -9,8 +9,7 @@ interface Props {
   handleTimerToggle: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleSimpleGamemodeSettingsChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 
-  setRemainingSeconds: (numSeconds: number) => void;
-  setMostRecentTotalSeconds: (numSeconds: number) => void;
+  setTotalSeconds: (numSeconds: number) => void;
 }
 
 const AlgebraGamemodeSettings = (props: Props) => {
@@ -53,8 +52,7 @@ const AlgebraGamemodeSettings = (props: Props) => {
               max={120}
               step={5}
               onChange={(e) => {
-                props.setRemainingSeconds(e.target.valueAsNumber);
-                props.setMostRecentTotalSeconds(e.target.valueAsNumber);
+                props.setTotalSeconds(e.target.valueAsNumber);
                 props.handleSimpleGamemodeSettingsChange(e);
               }}
             ></input>
