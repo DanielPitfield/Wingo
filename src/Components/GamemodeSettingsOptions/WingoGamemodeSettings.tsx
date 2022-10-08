@@ -35,31 +35,50 @@ const MIN_PUZZLE_LEAVE_NUM_BLANKS = 1;
 
 const WingoGamemodeSettings = (props: Props) => {
   const location = useLocation();
-  const [showPresetModal, setShowPresetModal] = useState(false);
+  const [showLoadPresetModal, setShowLoadPresetModal] = useState(false);
+  const [showNewPresetModal, setNewShowPresetModal] = useState(false);
   const [presetName, setPresetName] = useState("");
   const [presetModalErrorMessage, setPresetModalErrorMessage] = useState("");
 
   const presets = useMemo(() => {
     return SaveData.getWingoConfigGamemodeSettingsPresets(location.pathname as PagePath);
-  }, [showPresetModal]);
+  }, [showNewPresetModal]);
 
   if (props.mode === "puzzle") {
     return (
       <GamemodeSettingsMenu>
         <>
-          <div className="presets">
-            {presets
-              .sort((a, b) => a.name.localeCompare(b.name))
-              .map((preset) => (
-                <div key={preset.name} className="preset">
-                  {preset.name} {new Date(preset.timestamp).toLocaleDateString()}{" "}
-                  <span title={JSON.stringify(preset.gameSettings, undefined, 4)}>Info</span>
-                  <Button mode="default" onClick={() => props.onLoadGamemodeSettingsPreset(preset.gameSettings)}>
-                    Load
-                  </Button>
-                </div>
-              ))}
-          </div>
+          <Button mode="default" onClick={() => setShowLoadPresetModal(true)}>
+            Presets
+          </Button>
+          {showLoadPresetModal && (
+            <Modal mode="default" name="Load preset" title="Load preset" onClose={() => setShowLoadPresetModal(false)}>
+              <table className="presets">
+                {presets
+                  .sort((a, b) => a.name.localeCompare(b.name))
+                  .map((preset) => (
+                    <tr key={preset.name} className="preset">
+                      <td className="preset-name">{preset.name}</td>
+                      <td className="preset-date">{new Date(preset.timestamp).toLocaleDateString()}</td>
+                      <td className="preset-info">
+                        <span title={JSON.stringify(preset.gameSettings, undefined, 4)}>Info</span>
+                      </td>
+                      <td className="preset-load">
+                        <Button
+                          mode="default"
+                          onClick={() => {
+                            props.onLoadGamemodeSettingsPreset(preset.gameSettings);
+                            setShowLoadPresetModal(false);
+                          }}
+                        >
+                          Load
+                        </Button>
+                      </td>
+                    </tr>
+                  ))}
+              </table>
+            </Modal>
+          )}
           <label>
             <input
               type="number"
@@ -96,14 +115,16 @@ const WingoGamemodeSettings = (props: Props) => {
             ></input>
             Number of letters left blank
           </label>
-          <button onClick={() => setShowPresetModal(true)}>Save as preset</button>
-          {showPresetModal && (
+          <Button mode="accept" onClick={() => setNewShowPresetModal(true)}>
+            Save as preset
+          </Button>
+          {showNewPresetModal && (
             <Modal
               mode="default"
               name="Save preset"
               title="Save preset"
               onClose={() => {
-                setShowPresetModal(false);
+                setNewShowPresetModal(false);
               }}
             >
               {presetModalErrorMessage && (
@@ -141,7 +162,7 @@ const WingoGamemodeSettings = (props: Props) => {
                     gameSettings: props.gamemodeSettings,
                   });
 
-                  setShowPresetModal(false);
+                  setNewShowPresetModal(false);
                   setPresetName("");
                 }}
               >
