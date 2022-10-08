@@ -1,11 +1,18 @@
+import { useMemo, useState } from "react";
+import { useLocation } from "react-router-dom";
 import {
   MAX_TARGET_WORD_LENGTH,
   MIN_PUZZLE_WORD_LENGTH,
   MAX_PUZZLE_WORD_LENGTH,
   MIN_TARGET_WORD_LENGTH,
 } from "../../Data/GamemodeSettingsInputLimits";
+import { PagePath } from "../../Data/PageNames";
+import { SaveData } from "../../Data/SaveData";
 import { WingoConfigProps, WingoMode } from "../../Pages/WingoConfig";
+import { Button } from "../Button";
 import GamemodeSettingsMenu from "../GamemodeSettingsMenu";
+import { MessageNotification } from "../MessageNotification";
+import { Modal } from "../Modal";
 
 interface Props {
   mode: WingoMode;
@@ -17,6 +24,7 @@ interface Props {
 
   setMostRecentMaxLives: (numLives: number) => void;
   setMostRecentTotalSeconds: (numSeconds: number) => void;
+  onLoadGamemodeSettingsPreset: (gamemodeSettings: WingoConfigProps["gamemodeSettings"]) => void;
 }
 
 const MIN_PUZZLE_REVEAL_INTERVAL_SECONDS = 1;
@@ -26,10 +34,32 @@ const MAX_PUZZLE_REVEAL_INTERVAL_SECONDS = 10;
 const MIN_PUZZLE_LEAVE_NUM_BLANKS = 1;
 
 const WingoGamemodeSettings = (props: Props) => {
+  const location = useLocation();
+  const [showPresetModal, setShowPresetModal] = useState(false);
+  const [presetName, setPresetName] = useState("");
+  const [presetModalErrorMessage, setPresetModalErrorMessage] = useState("");
+
+  const presets = useMemo(() => {
+    return SaveData.getWingoConfigGamemodeSettingsPresets(location.pathname as PagePath);
+  }, [showPresetModal]);
+
   if (props.mode === "puzzle") {
     return (
       <GamemodeSettingsMenu>
         <>
+          <div className="presets">
+            {presets
+              .sort((a, b) => a.name.localeCompare(b.name))
+              .map((preset) => (
+                <div key={preset.name} className="preset">
+                  {preset.name} {new Date(preset.timestamp).toLocaleDateString()}{" "}
+                  <span title={JSON.stringify(preset.gameSettings, undefined, 4)}>Info</span>
+                  <Button mode="default" onClick={() => props.onLoadGamemodeSettingsPreset(preset.gameSettings)}>
+                    Load
+                  </Button>
+                </div>
+              ))}
+          </div>
           <label>
             <input
               type="number"
@@ -66,6 +96,59 @@ const WingoGamemodeSettings = (props: Props) => {
             ></input>
             Number of letters left blank
           </label>
+          <button onClick={() => setShowPresetModal(true)}>Save as preset</button>
+          {showPresetModal && (
+            <Modal
+              mode="default"
+              name="Save preset"
+              title="Save preset"
+              onClose={() => {
+                setShowPresetModal(false);
+              }}
+            >
+              {presetModalErrorMessage && (
+                <MessageNotification type="error">{presetModalErrorMessage}</MessageNotification>
+              )}
+
+              <label>
+                Name
+                <input
+                  type="text"
+                  onChange={(e) => setPresetName(e.target.value)}
+                  value={presetName}
+                  placeholder="Name"
+                />
+              </label>
+
+              <Button
+                mode="accept"
+                onClick={() => {
+                  setPresetModalErrorMessage("");
+
+                  if (!presetName) {
+                    setPresetModalErrorMessage(`Provide a name for the preset`);
+                    return;
+                  }
+
+                  if (presets.some((preset) => preset.name.toLowerCase() === presetName.toLowerCase())) {
+                    setPresetModalErrorMessage(`Name '${presetName}' has already been used`);
+                    return;
+                  }
+
+                  SaveData.addWingoConfigGamemodeSettingsPreset(location.pathname as PagePath, {
+                    name: presetName,
+                    timestamp: new Date().toISOString(),
+                    gameSettings: props.gamemodeSettings,
+                  });
+
+                  setShowPresetModal(false);
+                  setPresetName("");
+                }}
+              >
+                Save
+              </Button>
+            </Modal>
+          )}
         </>
       </GamemodeSettingsMenu>
     );
@@ -172,7 +255,7 @@ const WingoGamemodeSettings = (props: Props) => {
             ></input>
             Timer
           </label>
-          
+
           {props.gamemodeSettings.timerConfig.isTimed && (
             <label>
               <input

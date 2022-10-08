@@ -63,6 +63,12 @@ export type RedeemedChallengesData = {
   redeemedTimestamp: string;
 }[];
 
+export type GamemodeSettingsPreset = {
+  name: string;
+  timestamp: string;
+  gameSettings: WingoConfigProps["gamemodeSettings"];
+};
+
 export type HistorySaveData = {
   games: {
     /** Unique identifer of the game */
@@ -430,6 +436,48 @@ export class SaveData {
 
     // Else if not found; return null
     return null;
+  }
+
+  /**
+   * Saves the gamemode settings preset for Wingo Config.
+   * @param page Page.
+   * @param preset The gamemode setting preset for Wingo Config to save.
+   */
+  public static addWingoConfigGamemodeSettingsPreset(page: PagePath, preset: GamemodeSettingsPreset) {
+    const itemName = `${determineLocalStorageItemName(page)}-preset-${preset.name}`;
+
+    if (!itemName) {
+      return;
+    }
+
+    localStorage.setItem(itemName, JSON.stringify(preset));
+  }
+
+  /**
+   * Gets the saved gamemode settings presets for Wingo Config, or null if no saved gamemode settings were found.
+   * @returns The saved gamemode settings presets for Wingo Config to save.
+   */
+  public static getWingoConfigGamemodeSettingsPresets(page: PagePath): GamemodeSettingsPreset[] {
+    const gamemodeSettingPresets = Object.entries(localStorage)
+      .filter(([key, _]) => key.startsWith(`${determineLocalStorageItemName(page)}-preset-`))
+      .map(([_, value]) => JSON.parse(value) as GamemodeSettingsPreset);
+
+    return gamemodeSettingPresets;
+  }
+
+  /**
+   * Removes the saved gamemode settings preset for Wingo Config, or null if no saved gamemode settings were found.
+   * @param page Page.
+   * @param presetName The gamemode setting preset name for Wingo Config to save.
+   */
+  public static removeWingoConfigGamemodeSettingPreset(page: PagePath, presetName: string) {
+    const itemName = `${determineLocalStorageItemName(page)}-preset-${presetName}`;
+
+    if (!itemName) {
+      return null;
+    }
+
+    localStorage.removeItem(itemName);
   }
 
   public static setWingoInterlinkedGamemodeSettings(

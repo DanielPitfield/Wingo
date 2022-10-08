@@ -487,6 +487,7 @@ const Wingo = (props: Props) => {
                 handleSimpleGamemodeSettingsChange={handleSimpleGamemodeSettingsChange}
                 setMostRecentMaxLives={setMostRecentMaxLives}
                 setMostRecentTotalSeconds={setMostRecentTotalSeconds}
+                onLoadGamemodeSettingsPreset={props.updateGamemodeSettings}
               ></WingoGamemodeSettings>
             </div>
           )
