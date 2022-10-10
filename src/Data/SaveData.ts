@@ -111,11 +111,11 @@ export function newGuid(): string {
 function determineLocalStorageItemName(page: PagePath): string | null {
   const modeName = pageDescriptions.find((x) => x.path === page)?.title;
 
-  if (!modeName) {
-    return null;
+  if (modeName) {
+    return modeName + "gamemodeSettings";
   }
 
-  return modeName + "gamemodeSettings";
+  return null;
 }
 
 /** */
@@ -388,11 +388,11 @@ export class SaveData {
   }
 
   /**
-   * Adds a redeemed challeng.
+   * Adds a redeemed challenge.
    * @param challege Redeemed challenge.
    */
   public static addRedeemedChallenge(challenge: BaseChallenge) {
-    const redeemedChallenges = SaveData.getRedeemedChallenges() || [];
+    const redeemedChallenges = SaveData.getRedeemedChallenges() ?? [];
 
     redeemedChallenges.push({
       id: challenge.id(),
@@ -403,17 +403,15 @@ export class SaveData {
   }
 
   /**
-   * Saves the gamemode settings for Wingo Config.
+   * Saves the most recent gamemode settings for Wingo Config.
    * @param gameSettings The latest gamemode settings for Wingo Config to save.
    */
   public static setWingoConfigGamemodeSettings(page: PagePath, gameSettings: WingoConfigProps["gamemodeSettings"]) {
     const itemName = determineLocalStorageItemName(page);
 
-    if (!itemName) {
-      return;
+    if (itemName) {
+      localStorage.setItem(itemName, JSON.stringify(gameSettings));
     }
-
-    localStorage.setItem(itemName, JSON.stringify(gameSettings));
   }
 
   /**
@@ -423,15 +421,13 @@ export class SaveData {
   public static getWingoConfigGamemodeSettings(page: PagePath): WingoConfigProps["gamemodeSettings"] | null {
     const itemName = determineLocalStorageItemName(page);
 
-    if (!itemName) {
-      return null;
-    }
+    if (itemName) {
+      const wingoConfigGamemodeSettings = localStorage.getItem(itemName);
 
-    const wingoConfigGamemodeSettings = localStorage.getItem(itemName);
-
-    // If saved gamemode settings were found
-    if (wingoConfigGamemodeSettings) {
-      return JSON.parse(wingoConfigGamemodeSettings) as WingoConfigProps["gamemodeSettings"];
+      // If saved gamemode settings were found
+      if (wingoConfigGamemodeSettings) {
+        return JSON.parse(wingoConfigGamemodeSettings) as WingoConfigProps["gamemodeSettings"];
+      }
     }
 
     // Else if not found; return null
@@ -446,11 +442,9 @@ export class SaveData {
   public static addWingoConfigGamemodeSettingsPreset(page: PagePath, preset: GamemodeSettingsPreset) {
     const itemName = `${determineLocalStorageItemName(page)}-preset-${preset.name}`;
 
-    if (!itemName) {
-      return;
+    if (itemName) {
+      localStorage.setItem(itemName, JSON.stringify(preset));
     }
-
-    localStorage.setItem(itemName, JSON.stringify(preset));
   }
 
   /**
@@ -471,10 +465,11 @@ export class SaveData {
    * @param presetName The gamemode setting preset name for Wingo Config to save.
    */
   public static removeWingoConfigGamemodeSettingPreset(page: PagePath, presetName: string) {
+    // TODO: Interpolating item name which could be null, this will never be falsy
     const itemName = `${determineLocalStorageItemName(page)}-preset-${presetName}`;
 
     if (!itemName) {
-      return null;
+      return;
     }
 
     localStorage.removeItem(itemName);
@@ -486,28 +481,22 @@ export class SaveData {
   ) {
     const itemName = determineLocalStorageItemName(page);
 
-    if (!itemName) {
-      return;
+    if (itemName) {
+      localStorage.setItem(itemName, JSON.stringify(gameSettings));
     }
-
-    localStorage.setItem(itemName, JSON.stringify(gameSettings));
   }
 
   public static getWingoInterlinkedGamemodeSettings(page: PagePath): WingoInterlinkedProps["gamemodeSettings"] | null {
     const itemName = determineLocalStorageItemName(page);
 
-    if (!itemName) {
-      return null;
+    if (itemName) {
+      const wingoInterlinkedConfigGamemodeSettings = localStorage.getItem(itemName);
+
+      if (wingoInterlinkedConfigGamemodeSettings) {
+        return JSON.parse(wingoInterlinkedConfigGamemodeSettings) as WingoInterlinkedProps["gamemodeSettings"];
+      }
     }
 
-    const wingoInterlinkedConfigGamemodeSettings = localStorage.getItem(itemName);
-
-    // If saved gamemode settings were found
-    if (wingoInterlinkedConfigGamemodeSettings) {
-      return JSON.parse(wingoInterlinkedConfigGamemodeSettings) as WingoInterlinkedProps["gamemodeSettings"];
-    }
-
-    // Else if not found; return null
     return null;
   }
 
@@ -589,28 +578,22 @@ export class SaveData {
   ) {
     const itemName = determineLocalStorageItemName(page);
 
-    if (!itemName) {
-      return;
+    if (itemName) {
+      localStorage.setItem(itemName, JSON.stringify(gameSettings));
     }
-
-    localStorage.setItem(itemName, JSON.stringify(gameSettings));
   }
 
   public static getArithmeticDragGamemodeSettings(page: PagePath): ArithmeticDragProps["gamemodeSettings"] | null {
     const itemName = determineLocalStorageItemName(page);
 
-    if (!itemName) {
-      return null;
+    if (itemName) {
+      const arithmeticDragGamemodeSettings = localStorage.getItem(itemName);
+
+      if (arithmeticDragGamemodeSettings) {
+        return JSON.parse(arithmeticDragGamemodeSettings) as ArithmeticDragProps["gamemodeSettings"];
+      }
     }
 
-    const arithmeticDragGamemodeSettings = localStorage.getItem(itemName);
-
-    // If saved gamemode settings were found
-    if (arithmeticDragGamemodeSettings) {
-      return JSON.parse(arithmeticDragGamemodeSettings) as ArithmeticDragProps["gamemodeSettings"];
-    }
-
-    // Else if not found; return null
     return null;
   }
 
@@ -673,28 +656,22 @@ export class SaveData {
   public static setWordCodesGamemodeSettings(page: PagePath, gameSettings: WordCodesProps["gamemodeSettings"]) {
     const itemName = determineLocalStorageItemName(page);
 
-    if (!itemName) {
-      return;
+    if (itemName) {
+      localStorage.setItem(itemName, JSON.stringify(gameSettings));
     }
-
-    localStorage.setItem(itemName, JSON.stringify(gameSettings));
   }
 
   public static getWordCodesGamemodeSettings(page: PagePath): WordCodesProps["gamemodeSettings"] | null {
     const itemName = determineLocalStorageItemName(page);
 
-    if (!itemName) {
-      return null;
+    if (itemName) {
+      const wordCodesGamemodeSettings = localStorage.getItem(itemName);
+
+      if (wordCodesGamemodeSettings) {
+        return JSON.parse(wordCodesGamemodeSettings) as WordCodesProps["gamemodeSettings"];
+      }
     }
 
-    const wordCodesGamemodeSettings = localStorage.getItem(itemName);
-
-    // If saved gamemode settings were found
-    if (wordCodesGamemodeSettings) {
-      return JSON.parse(wordCodesGamemodeSettings) as WordCodesProps["gamemodeSettings"];
-    }
-
-    // Else if not found; return null
     return null;
   }
 
