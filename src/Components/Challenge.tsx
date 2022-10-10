@@ -1,7 +1,7 @@
 import ProgressBar from "./ProgressBar";
 import Star from "../Data/Images/star.png";
 import GoldCoin from "../Data/Images/gold.png";
-import { SaveData, SettingsData } from "../Data/SaveData";
+import { SaveData, SettingsData } from "../Data/SaveData/SaveData";
 import { BaseChallenge } from "../Data/Challenges/BaseChallenge";
 import { Button } from "./Button";
 import { useNotificationChime } from "../Data/Sounds";

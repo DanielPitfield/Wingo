@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { SettingsData } from "../Data/SaveData";
+import { SettingsData } from "../Data/SaveData/SaveData";
 import { Theme } from "../Data/Themes";
 import WingoConfig, { WingoConfigProps } from "./WingoConfig";
 import { Button } from "../Components/Button";

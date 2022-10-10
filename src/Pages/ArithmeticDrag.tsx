@@ -4,7 +4,7 @@ import { Button } from "../Components/Button";
 import LetterTile from "../Components/LetterTile";
 import { MessageNotification } from "../Components/MessageNotification";
 import ProgressBar, { GreenToRedColorTransition } from "../Components/ProgressBar";
-import { SaveData, SettingsData } from "../Data/SaveData";
+import { SaveData, SettingsData } from "../Data/SaveData/SaveData";
 import { Theme } from "../Data/Themes";
 import { DraggableItem } from "../Components/DraggableItem";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";

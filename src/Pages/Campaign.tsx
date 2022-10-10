@@ -1,7 +1,7 @@
 import { AreaConfig } from "./Area";
 import { Button } from "../Components/Button";
 import { getId } from "../Components/Level";
-import { CampaignSaveData, SaveData, SettingsData } from "../Data/SaveData";
+import { CampaignSaveData, SaveData, SettingsData } from "../Data/SaveData/SaveData";
 import { Theme } from "../Data/Themes";
 import { AllCampaignAreas } from "../Data/CampaignAreas/AllCampaignAreas";
 import BackgroundImageSrc from "../Data/Images/background.png";

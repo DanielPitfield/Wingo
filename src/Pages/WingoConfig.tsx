@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import Wingo from "./Wingo";
-import { SaveData, SettingsData } from "../Data/SaveData";
+import { SaveData, SettingsData } from "../Data/SaveData/SaveData";
 import { Theme } from "../Data/Themes";
 import { WingoInterlinked } from "./WingoInterlinked";
 import {

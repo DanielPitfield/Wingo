@@ -1,5 +1,5 @@
 import { AllChallenges } from "../Data/Challenges/AllChallenges";
-import { SaveData, SettingsData } from "../Data/SaveData";
+import { SaveData, SettingsData } from "../Data/SaveData/SaveData";
 import { Challenge, ChallengeReward } from "./Challenge";
 import { useState } from "react";
 import { BaseChallenge } from "../Data/Challenges/BaseChallenge";
@@ -7,7 +7,7 @@ import { BaseChallenge } from "../Data/Challenges/BaseChallenge";
 interface ChallengesInfoProps {
   settings: SettingsData;
   addGold: (gold: number) => void;
-};
+}
 
 export const ChallengesInfo = (props: ChallengesInfoProps) => {
   const history = SaveData.getHistory();

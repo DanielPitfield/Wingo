@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { PagePath } from "../Data/PageNames";
 import LetterCategories from "./LetterCategories";
-import { SaveData, SettingsData } from "../Data/SaveData";
+import { SaveData, SettingsData } from "../Data/SaveData/SaveData";
 import { DEFAULT_ALPHABET } from "./WingoConfig";
 import { Theme } from "../Data/Themes";
 import { categoryMappings } from "../Data/WordArrayMappings";

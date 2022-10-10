@@ -1,5 +1,5 @@
 import { ChallengeReward } from "../Components/Challenge";
-import { SettingsData } from "../Data/SaveData";
+import { SettingsData } from "../Data/SaveData/SaveData";
 import Success from "../Data/Images/success.svg";
 import Error from "../Data/Images/error.svg";
 

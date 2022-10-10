@@ -8,7 +8,7 @@ import { MessageNotification } from "../Components/MessageNotification";
 import ProgressBar, { GreenToRedColorTransition } from "../Components/ProgressBar";
 import { WordRow } from "../Components/WordRow";
 import { PagePath } from "../Data/PageNames";
-import { SettingsData } from "../Data/SaveData";
+import { SettingsData } from "../Data/SaveData/SaveData";
 import { Theme } from "../Data/Themes";
 import { getGamemodeDefaultTimerValue } from "../Helpers/getGamemodeDefaultTimerValue";
 import { getNewGamemodeSettingValue } from "../Helpers/getGamemodeSettingsNewValue";

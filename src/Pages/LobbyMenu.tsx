@@ -1,7 +1,7 @@
 import { PagePath } from "../Data/PageNames";
 import { BsInfoCircleFill } from "react-icons/bs";
 import { AllChallenges } from "../Data/Challenges/AllChallenges";
-import { SaveData, SettingsData } from "../Data/SaveData";
+import { SaveData, SettingsData } from "../Data/SaveData/SaveData";
 import { Challenge } from "../Components/Challenge";
 import { Button } from "../Components/Button";
 import { Campaign } from "./Campaign";

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { SaveData, SettingsData } from "../Data/SaveData";
+import { SaveData, SettingsData } from "../Data/SaveData/SaveData";
 import { Theme } from "../Data/Themes";
 import Numble from "./Numble";
 import { DEFAULT_NUMBLE_GUESS_TIMER_VALUE } from "../Data/DefaultGamemodeSettings";

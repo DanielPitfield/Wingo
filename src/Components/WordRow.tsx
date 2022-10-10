@@ -1,5 +1,5 @@
 import LetterTile, { LetterStatus } from "./LetterTile";
-import { SettingsData } from "../Data/SaveData";
+import { SettingsData } from "../Data/SaveData/SaveData";
 import { getWordRowStatusSummary, WordRowStatusChecks, WordRowStatusSummary } from "../Helpers/getWordRowStatusSummary";
 import { useLocation } from "react-router-dom";
 import { PagePath } from "../Data/PageNames";

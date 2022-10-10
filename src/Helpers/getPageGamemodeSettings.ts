@@ -16,7 +16,7 @@ import {
   defaultWordCodesMatchGamemodeSettings,
 } from "../Data/DefaultGamemodeSettings";
 import { PagePath } from "../Data/PageNames";
-import { SaveData } from "../Data/SaveData";
+import { SaveData } from "../Data/SaveData/SaveData";
 import { AlgebraProps } from "../Pages/Algebra";
 import { ArithmeticDragProps } from "../Pages/ArithmeticDrag";
 import { ArithmeticRevealProps } from "../Pages/ArithmeticReveal";

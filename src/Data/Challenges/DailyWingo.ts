@@ -1,4 +1,4 @@
-import { HistorySaveData } from "../SaveData";
+import { HistorySaveData } from "../SaveData/SaveData";
 import { BaseChallenge } from "./BaseChallenge";
 
 /** Completion of the Daily Wingo */

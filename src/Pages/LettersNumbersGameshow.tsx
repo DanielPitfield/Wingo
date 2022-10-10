@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { SettingsData } from "../Data/SaveData";
+import { SettingsData } from "../Data/SaveData/SaveData";
 import LettersGameConfig, { LettersGameConfigProps } from "./LettersGameConfig";
 import NumbersGameConfig, { NumbersGameConfigProps } from "./NumbersGameConfig";
 import { Theme } from "../Data/Themes";
@@ -215,9 +215,7 @@ export const LettersNumbersGameshow = (props: Props) => {
     props.onComplete(wasCorrect);
 
     // Navigate away from gameshow
-    props.campaignConfig.isCampaignLevel
-      ? navigate(getAreaBacktrackPath(location))
-      : navigate("/Home");
+    props.campaignConfig.isCampaignLevel ? navigate(getAreaBacktrackPath(location)) : navigate("/Home");
   }
 
   return (

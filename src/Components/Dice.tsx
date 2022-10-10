@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { SettingsData } from "../Data/SaveData";
+import { SettingsData } from "../Data/SaveData/SaveData";
 
 interface Props {
   value: number;

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { pageDescriptions } from "../Data/PageDescriptions";
 import { getId, LevelConfig } from "./Level";
-import { SaveData, SettingsData } from "../Data/SaveData";
+import { SaveData, SettingsData } from "../Data/SaveData/SaveData";
 import { Theme } from "../Data/Themes";
 import { usePopper } from "react-popper";
 import { useClickChime } from "../Data/Sounds";

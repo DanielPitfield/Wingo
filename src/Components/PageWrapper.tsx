@@ -1,7 +1,7 @@
 import { ErrorBoundary } from "react-error-boundary";
 import { FiArrowLeft, FiHelpCircle, FiSettings } from "react-icons/fi";
 import { pageDescriptions } from "../Data/PageDescriptions";
-import { SaveData, SettingsData } from "../Data/SaveData";
+import { SaveData, SettingsData } from "../Data/SaveData/SaveData";
 import { VERSION } from "../Data/Version";
 import { ErrorFallback } from "../Pages/ErrorFallback";
 import { Button } from "./Button";

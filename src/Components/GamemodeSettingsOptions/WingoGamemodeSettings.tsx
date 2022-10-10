@@ -7,7 +7,7 @@ import {
   MIN_TARGET_WORD_LENGTH,
 } from "../../Data/GamemodeSettingsInputLimits";
 import { PagePath } from "../../Data/PageNames";
-import { SaveData } from "../../Data/SaveData";
+import { SaveData } from "../../Data/SaveData/SaveData";
 import { WingoConfigProps, WingoMode } from "../../Pages/WingoConfig";
 import { Button } from "../Button";
 import GamemodeSettingsMenu from "../GamemodeSettingsMenu";

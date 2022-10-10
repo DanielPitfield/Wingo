@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Button } from "../Components/Button";
 import { MessageNotification, MessageNotificationProps } from "../Components/MessageNotification";
 import ProgressBar, { GreenToRedColorTransition } from "../Components/ProgressBar";
-import { SaveData, SettingsData } from "../Data/SaveData";
+import { SaveData, SettingsData } from "../Data/SaveData/SaveData";
 import { Theme } from "../Data/Themes";
 import DiceGrid from "../Components/DiceGrid";
 import { NumbleConfigProps, numbleGridShape, numbleGridSize, NumbleStatus } from "./NumbleConfig";

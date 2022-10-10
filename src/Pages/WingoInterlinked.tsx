@@ -1,5 +1,5 @@
 import LetterTile, { LetterStatus } from "../Components/LetterTile";
-import { SaveData, SettingsData } from "../Data/SaveData";
+import { SaveData, SettingsData } from "../Data/SaveData/SaveData";
 import { useState } from "react";
 import { Theme } from "../Data/Themes";
 import { Keyboard } from "../Components/Keyboard";

@@ -1,5 +1,5 @@
 import useSound from "use-sound";
-import { SettingsData } from "./SaveData";
+import { SettingsData } from "./SaveData/SaveData";
 import { Theme } from "./Themes";
 import CorrectChimeSrc from "../Data/Sounds/Chimes/correct.mp3";
 import SuccessChimeSrc from "../Data/Sounds/Chimes/success.mp3";

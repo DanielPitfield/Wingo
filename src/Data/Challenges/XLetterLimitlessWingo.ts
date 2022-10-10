@@ -1,4 +1,4 @@
-import { HistorySaveData } from "../SaveData";
+import { HistorySaveData } from "../SaveData/SaveData";
 import { BaseChallenge, ChallengeReward } from "./BaseChallenge";
 
 /** Completion an x letter limitless wingo */

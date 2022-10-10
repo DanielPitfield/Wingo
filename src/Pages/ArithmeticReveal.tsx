@@ -6,7 +6,7 @@ import { NumPad } from "../Components/NumPad";
 import ProgressBar, { GreenToRedColorTransition } from "../Components/ProgressBar";
 import { Button } from "../Components/Button";
 import { Theme } from "../Data/Themes";
-import { SaveData, SettingsData } from "../Data/SaveData";
+import { SaveData, SettingsData } from "../Data/SaveData/SaveData";
 import { arithmeticNumberSize } from "./ArithmeticDrag";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
 import { MAX_NUMPAD_GUESS_LENGTH } from "../Data/GamemodeSettingsInputLimits";

@@ -1,6 +1,6 @@
 import React from "react";
 import { Button } from "./Button";
-import { SettingsData } from "../Data/SaveData";
+import { SettingsData } from "../Data/SaveData/SaveData";
 import { useClickChime } from "../Data/Sounds";
 import { FiChevronLeft, FiCornerDownLeft } from "react-icons/fi";
 

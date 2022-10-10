@@ -3,7 +3,7 @@ import { SplashScreen } from "./Pages/SplashScreen";
 import { LobbyMenu } from "./Pages/LobbyMenu";
 import WingoConfig, { WingoConfigProps } from "./Pages/WingoConfig";
 import NumbleConfig, { NumbleConfigProps } from "./Pages/NumbleConfig";
-import { SaveData, SettingsData } from "./Data/SaveData";
+import { SaveData, SettingsData } from "./Data/SaveData/SaveData";
 import LettersGameConfig, { LettersGameConfigProps } from "./Pages/LettersGameConfig";
 import NumbersGameConfig, { NumbersGameConfigProps } from "./Pages/NumbersGameConfig";
 import { Campaign } from "./Pages/Campaign";
@@ -123,7 +123,7 @@ export const App = () => {
 
     // Viewing/redeeming challenges or changing settings shouldn't end a session
     const endSessionExclusions = ["Challenges", "Settings"];
-    
+
     // Pages which aren't suitable for a random session (but not the exclusions above)
     const endSessionPages = pageDescriptions
       .filter((page) => !page.isRandomlyPlayable && !endSessionExclusions.includes(page.title))

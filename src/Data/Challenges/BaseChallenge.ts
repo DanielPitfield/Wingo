@@ -1,4 +1,4 @@
-import { HistorySaveData, SaveData } from "../SaveData";
+import { HistorySaveData, SaveData } from "../SaveData/SaveData";
 import { AllChallenges } from "./AllChallenges";
 
 export type ChallengeReward = { goldCoins: number; xp: number };

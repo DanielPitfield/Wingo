@@ -5,7 +5,7 @@ import { Button } from "../Components/Button";
 import { MessageNotification } from "../Components/MessageNotification";
 import ProgressBar, { GreenToRedColorTransition } from "../Components/ProgressBar";
 import { Theme } from "../Data/Themes";
-import { SettingsData } from "../Data/SaveData";
+import { SettingsData } from "../Data/SaveData/SaveData";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
 import { LetterCategoriesConfigProps } from "./LetterCategoriesConfig";
 import { getGamemodeDefaultTimerValue } from "../Helpers/getGamemodeDefaultTimerValue";

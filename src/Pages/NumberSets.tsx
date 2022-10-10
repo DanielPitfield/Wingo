@@ -4,7 +4,7 @@ import LetterTile from "../Components/LetterTile";
 import { MessageNotification } from "../Components/MessageNotification";
 import { NumPad } from "../Components/NumPad";
 import ProgressBar, { GreenToRedColorTransition } from "../Components/ProgressBar";
-import { SaveData, SettingsData } from "../Data/SaveData";
+import { SaveData, SettingsData } from "../Data/SaveData/SaveData";
 import { useClickChime, useCorrectChime, useFailureChime, useLightPingChime } from "../Data/Sounds";
 import { Theme } from "../Data/Themes";
 import { NumberSetTemplate } from "../Data/NumberSetsTemplates";
