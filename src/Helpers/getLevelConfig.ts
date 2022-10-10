@@ -24,4 +24,4 @@ export function getLevelConfig(areaName: string | undefined, levelNumber: string
   const levelNumberIndex: number = parseInt(levelNumber) - 1;
 
   return areaConfig.levels[levelNumberIndex] ?? null;
-};
+}

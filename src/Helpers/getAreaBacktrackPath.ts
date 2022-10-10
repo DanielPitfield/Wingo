@@ -25,5 +25,5 @@ export function getAreaBacktrackPath(path: PagePath): PagePath {
   // Reconstruct the trimmed path
   const areaBacktrackPath = directories.join("/");
 
-  return areaBacktrackPath as PagePath ?? "/Campaign" as PagePath;
+  return (areaBacktrackPath as PagePath) ?? ("/Campaign" as PagePath);
 }

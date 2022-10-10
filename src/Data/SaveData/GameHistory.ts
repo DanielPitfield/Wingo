@@ -38,7 +38,7 @@ const newGuid = (): string => {
       return char;
     })
     .join("");
-}
+};
 
 /**
  * Adds a game to the save history.

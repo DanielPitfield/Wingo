@@ -7,7 +7,11 @@ import {
   MIN_TARGET_WORD_LENGTH,
 } from "../../Data/GamemodeSettingsInputLimits";
 import { PagePath } from "../../Data/PageNames";
-import { addWingoConfigGamemodeSettingsPreset, getWingoConfigGamemodeSettingsPresets, removeWingoConfigGamemodeSettingPreset } from "../../Data/SaveData/Presets";
+import {
+  addWingoConfigGamemodeSettingsPreset,
+  getWingoConfigGamemodeSettingsPresets,
+  removeWingoConfigGamemodeSettingPreset,
+} from "../../Data/SaveData/Presets";
 import { WingoConfigProps, WingoMode } from "../../Pages/WingoConfig";
 import { Button } from "../Button";
 import GamemodeSettingsMenu from "../GamemodeSettingsMenu";

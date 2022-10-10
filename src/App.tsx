@@ -36,7 +36,11 @@ import { getPageGamemodeSettings } from "./Helpers/getPageGamemodeSettings";
 import { getRandomElementFrom } from "./Helpers/getRandomElementFrom";
 import { Routes, Route, useNavigate, useLocation, Navigate } from "react-router-dom";
 import { PageWrapper } from "./Components/PageWrapper";
-import { addCompletedCampaignAreaUnlockLevel, addCompletedCampaignAreaLevel, getCampaignProgress } from "./Data/SaveData/CampaignProgress";
+import {
+  addCompletedCampaignAreaUnlockLevel,
+  addCompletedCampaignAreaLevel,
+  getCampaignProgress,
+} from "./Data/SaveData/CampaignProgress";
 import { getSettings, SettingsData } from "./Data/SaveData/Settings";
 import { readGold } from "./Data/SaveData/Gold";
 

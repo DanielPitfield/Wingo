@@ -51,7 +51,7 @@ const LetterCategoriesGamemodeSettings = (props: Props) => {
                 onChange={(e) => {
                   props.updateRemainingSeconds(e.target.valueAsNumber);
                   props.setMostRecentTotalSeconds(e.target.valueAsNumber);
-                  props.handleSimpleGamemodeSettingsChange(e)
+                  props.handleSimpleGamemodeSettingsChange(e);
                 }}
               ></input>
               Seconds

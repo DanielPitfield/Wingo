@@ -33,7 +33,13 @@ export function getOnlyConnectGridWords(numGroups: number, groupSize: number): G
       // The words from the category's array
       .map((x) => x.word)
       // Filter the words which aren't already included in gridWords (came from other categories)
-      .filter((word) => !gridWords.flatMap(gridWord => gridWord).map((x) => x.word).includes(word))
+      .filter(
+        (word) =>
+          !gridWords
+            .flatMap((gridWord) => gridWord)
+            .map((x) => x.word)
+            .includes(word)
+      )
       // The subset of words chosen
       .slice(0, groupSize)
       // Attach category name to every word (in an object)

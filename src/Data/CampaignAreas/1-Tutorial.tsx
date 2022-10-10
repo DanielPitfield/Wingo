@@ -3,7 +3,6 @@ import { AreaConfig } from "../../Pages/Area";
 
 // TODO: Is there a way for the list of levels to be the components to return themselves (e.g a WingoConfig with these specified settings)
 
-
 export const area: AreaConfig = {
   name: "Tutorial",
   theme: Themes.GenericWingo,

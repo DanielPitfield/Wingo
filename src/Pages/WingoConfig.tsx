@@ -26,9 +26,19 @@ import { useLocation } from "react-router-dom";
 import { PagePath } from "../Data/PageNames";
 import { isCampaignLevelPath } from "../Helpers/CampaignPathChecks";
 import { SettingsData } from "../Data/SaveData/Settings";
-import { getDailyWordGuesses, setDailyWordGuesses, setDailyCrossWordGuesses, getDailyCrossWordGuesses, setWeeklyCrossWordGuesses, getWeeklyCrossWordGuesses } from "../Data/SaveData/DailyWeeklyGuesses";
+import {
+  getDailyWordGuesses,
+  setDailyWordGuesses,
+  setDailyCrossWordGuesses,
+  getDailyCrossWordGuesses,
+  setWeeklyCrossWordGuesses,
+  getWeeklyCrossWordGuesses,
+} from "../Data/SaveData/DailyWeeklyGuesses";
 import { addGameToHistory, addCompletedRoundToGameHistory } from "../Data/SaveData/GameHistory";
-import { setWingoConfigGamemodeSettings, getWingoInterlinkedGamemodeSettings } from "../Data/SaveData/MostRecentGamemodeSettings";
+import {
+  setWingoConfigGamemodeSettings,
+  getWingoInterlinkedGamemodeSettings,
+} from "../Data/SaveData/MostRecentGamemodeSettings";
 
 export const wingoModes = [
   "daily",
@@ -946,8 +956,7 @@ const WingoConfig = (props: Props) => {
         wordArrayConfig={{ type: "length" }}
         provideWords={true}
         gamemodeSettings={
-          getWingoInterlinkedGamemodeSettings("/Wingo/Crossword/Fit") ??
-          defaultWingoCrosswordFitGamemodeSettings
+          getWingoInterlinkedGamemodeSettings("/Wingo/Crossword/Fit") ?? defaultWingoCrosswordFitGamemodeSettings
         }
       />
     );
