@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useLocation } from "react-router-dom";
 import {
   MAX_TARGET_WORD_LENGTH,
@@ -9,6 +9,7 @@ import {
 import { PagePath } from "../../Data/PageNames";
 import {
   addWingoConfigGamemodeSettingsPreset,
+  GamemodeSettingsPreset,
   getWingoConfigGamemodeSettingsPresets,
   removeWingoConfigGamemodeSettingPreset,
 } from "../../Data/SaveData/Presets";
@@ -44,10 +45,23 @@ const WingoGamemodeSettings = (props: Props) => {
   const [showSavePresetModal, setShowSavePresetModal] = useState(false);
   const [presetName, setPresetName] = useState("");
   const [savePresetModalErrorMessage, setPresetModalErrorMessage] = useState("");
+  const [presets, setPresets] = useState<GamemodeSettingsPreset[]>([]);
 
-  const presets = useMemo(() => {
-    return getWingoConfigGamemodeSettingsPresets(location.pathname as PagePath);
-  }, [showLoadPresetModal, showSavePresetModal]);
+  // Define a function to call to re-retrieve the presets
+  // Note: `useCallback` prevents infinite loop
+  const updatePresets = useCallback(() => {
+    const presets = getWingoConfigGamemodeSettingsPresets(location.pathname as PagePath);
+
+    setPresets(presets);
+  }, [setPresets, location.pathname]);
+
+  // Update the presets on load of the component
+  useEffect(() => updatePresets(), [updatePresets]);
+
+  // Re-retrieve the presets when the preset modal is loaded (e.g. one may have been recently added)
+  useEffect(() => {
+    updatePresets();
+  }, [showLoadPresetModal, updatePresets]);
 
   if (props.mode === "puzzle") {
     return (
@@ -89,6 +103,9 @@ const WingoGamemodeSettings = (props: Props) => {
                                 onClick={() => {
                                   // TODO: How to update the list of presets (not show this preset) after it has been deleted?
                                   removeWingoConfigGamemodeSettingPreset(location.pathname as PagePath, preset.name);
+
+                                  // Update list
+                                  updatePresets();
                                 }}
                               >
                                 Delete
