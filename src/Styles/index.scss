@@ -1,0 +1,239 @@
+@use "sass:map";
+@import url("https://fonts.googleapis.com/css2?family=Ubuntu&display=swap");
+
+@import "Algebra.scss";
+@import "Area.scss";
+@import "Button.scss";
+@import "Campaign.scss";
+@import "Challenges.scss";
+@import "DraggableItem.scss";
+@import "ErrorFallback.scss";
+@import "GamemodeSettings.scss";
+@import "GameshowSummary.scss";
+@import "Keyboard.scss";
+@import "LettersGame.scss";
+@import "LetterTile.scss";
+@import "Level.scss";
+@import "LobbyMenu.scss";
+@import "MessageNotification.scss";
+@import "Modal.scss";
+@import "NumberSets.scss";
+@import "NumbersGame.scss";
+@import "Numble.scss";
+@import "NumPad.scss";
+@import "OnlyConnect.scss";
+@import "ProgressBar.scss";
+@import "PuzzleSequence.scss";
+@import "Settings.scss";
+@import "SplashScreen.scss";
+@import "TitlePage.scss";
+@import "WingoInterlinked.scss";
+@import "WordCodes.scss";
+@import "WordRow.scss";
+
+.App {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5em;
+}
+
+#app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.app {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  & > * {
+    flex-grow: 1;
+  }
+}
+
+body {
+  margin: 0;
+  font-family: "Ubuntu", -apple-system, BlinkMacSystemFont, "Segoe UI Semilight", "Segoe UI", "Roboto", "Oxygen",
+    "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+select,
+input {
+  font-size: 1rem;
+  color: inherit;
+  padding: 0.35em;
+  border-radius: 0;
+  &[type="checkbox"] {
+    font-size: 1.2rem;
+    height: 1.2em;
+    width: 1.2em;
+  }
+}
+
+.title {
+  font-weight: bold;
+  font-size: 60px;
+  text-transform: uppercase;
+  margin: 20px 0 20px 0;
+}
+
+.version {
+  position: fixed;
+  user-select: none;
+  bottom: 0;
+  right: 0;
+  opacity: 0.3;
+  margin: 0.3em;
+  pointer-events: none;
+}
+
+.toolbar {
+  display: flex;
+  align-items: stretch;
+  background-color: #333;
+  flex-grow: 0;
+  border-bottom: 1px solid #444;
+  color: #bbb;
+  .btn {
+    padding: 0.52em 0.6em;
+    margin: 0.3em;
+  }
+  .help-info-button {
+    cursor: help;
+  }
+  .title {
+    display: flex;
+    flex-grow: 1;
+    font-size: 1.2rem;
+    font-weight: normal;
+    margin: 0;
+    padding: 0.5em;
+    padding-left: 7.5em;
+    justify-content: center;
+    align-items: center;
+    text-transform: none;
+  }
+  .gold_counter {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    background: linear-gradient(122deg, #d1b600 0%, #d5bb01 18%, #e3c800 46%);
+    border-bottom: 3px solid #d8bf00;
+    color: white;
+    font-size: 1.4em;
+    user-select: none;
+    padding: 0.25em;
+    padding-right: 0.7em;
+    min-width: 4em;
+    color: #fffdda;
+    text-shadow: #111 1px 0px 3px;
+    &:hover {
+      background: linear-gradient(122deg, lighten(#d1b600, 2%) 0%, lighten(#d5bb01, 2%) 18%, lighten(#e3c800, 2%) 46%);
+      border-bottom-color: #dbc200;
+    }
+  }
+  .gold_coin_image {
+    height: 0.8em;
+    width: 0.8em;
+    padding: 0 6px;
+  }
+}
+
+#global-wrapper {
+  display: flex;
+  flex-grow: 1;
+  &[data-dark-mode="true"] {
+    background-color: #555;
+    .sidebar-header {
+      background-color: #111;
+      border-bottom-color: #555;
+    }
+    .sidebar {
+      background-color: #333;
+    }
+    .sidebar-title {
+      color: #aaa;
+    }
+    .widget {
+      background-color: #222;
+      border-color: #555;
+    }
+    .btn.default {
+      background-color: #252525;
+      color: #eee;
+      border-color: #555;
+      &:hover {
+        background-color: #111;
+        color: #fff;
+      }
+    }
+    .word_grid {
+      background-color: #333;
+      background-image: linear-gradient(318deg, #222, transparent);
+      border-color: #656565;
+    }
+    .letter_tile {
+      &[data-status="not in word"] {
+        background-color: #333;
+        border-color: #444;
+        color: #aaa;
+        box-shadow: 0px 3px 2px 0px #333;
+        text-shadow: 0 4px 1px #444;
+      }
+      &[data-new-letter-added="true"],
+      &[data-new-letter-added="false"][data-status="not set"] {
+        background-color: #222;
+        border-color: #444;
+        color: #ccc;
+        box-shadow: 0px 3px 2px 0px #333;
+        text-shadow: 0 4px 1px #444;
+      }
+    }
+    .setting-section-links {
+      background-color: #333;
+    }
+    .settings-section-title {
+      background-color: #333;
+      color: #eee;
+    }
+    .settings-section {
+      background-color: #404040;
+      color: #eee;
+    }
+    .setting {
+      &:hover {
+        background-color: #222;
+      }
+      input,
+      select {
+        color: #333;
+      }
+    }
+    .gamemode-settings-button {
+      background-color: #444;
+      color: #ddd;
+      &:hover {
+        background-color: #333;
+        color: #fff;
+      }
+    }
+    .message-notification[data-type="default"] {
+      background-color: #333;
+      color: #aaa;
+      input {
+        color: #444;
+      }
+    }
+    .studio-logo {
+      background-color: #444;
+      color: #aaa;
+      border-color: #555;
+    }
+  }
+}

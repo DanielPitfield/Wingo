@@ -1,0 +1,168 @@
+.letter_tile {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.6em;
+  height: 1.6em;
+  border: 2px solid #6664;
+  border-radius: 3px;
+  margin: 2px;
+  vertical-align: middle;
+  font-family: "Ubuntu", sans-serif;
+  font-size: 2.5em;
+  font-weight: bold;
+  color: #444;
+  text-transform: uppercase;
+  user-select: none;
+  text-shadow: 0 3px 1px #999a;
+  background-color: #e0e4e7;
+  box-shadow: 0px 3px 2px 0px #646464dd;
+  /*
+  transition: transform 0.8s;
+  transform-style: preserve-3d;
+  */
+  &[data-disabled="false"] {
+    cursor: pointer;
+    &:hover {
+      background-color: #fff;
+    }
+  }
+}
+
+$data-statuses: (
+  "correct": #4ca150,
+  "contains": #dc8d37,
+  "incorrect": #cc2132,
+  "not in word": #cbcbcb,
+);
+
+.letter_tile[data-status="correct"] {
+  color: white;
+  background-color: map.get($data-statuses, "correct");
+  box-shadow: 0px 3px 2px 0px darken(map.get($data-statuses, "correct"), 20%);
+  text-shadow: 0 4px 1px darken(map.get($data-statuses, "correct"), 12%);
+  &[data-disabled="false"]:hover {
+    background-color: lighten(map.get($data-statuses, "correct"), 10%);
+  }
+}
+
+.letter_tile[data-status="contains"] {
+  color: white;
+  background-color: map.get($data-statuses, "contains");
+  box-shadow: 0px 3px 2px 0px darken(map.get($data-statuses, "contains"), 20%);
+  text-shadow: 0 4px 1px darken(map.get($data-statuses, "contains"), 12%);
+  &[data-disabled="false"]:hover {
+    background-color: lighten(map.get($data-statuses, "contains"), 10%);
+  }
+}
+
+.letter_tile[data-status="incorrect"] {
+  color: white;
+  background-color: map.get($data-statuses, "incorrect");
+  box-shadow: 0px 3px 2px 0px darken(map.get($data-statuses, "incorrect"), 20%);
+  text-shadow: 0 4px 1px darken(map.get($data-statuses, "incorrect"), 12%);
+  &[data-disabled="false"]:hover {
+    background-color: lighten(map.get($data-statuses, "incorrect"), 10%);
+  }
+}
+
+.letter_tile[data-status="not in word"] {
+  color: white;
+  background-color: map.get($data-statuses, "not in word");
+  box-shadow: 0px 3px 2px 0px darken(map.get($data-statuses, "not in word"), 20%);
+  text-shadow: 0 4px 1px darken(map.get($data-statuses, "not in word"), 12%);
+  &[data-disabled="false"]:hover {
+    background-color: lighten(map.get($data-statuses, "not in word"), 10%);
+  }
+}
+
+// TODO: This can be nested below?
+// For the target tile on Number Arithmetic
+.target {
+  .letter_tile[data-new-letter-added="true"][data-apply-animation="true"][data-animation-setting="true"] {
+    animation: flipRevealLetter 1.5s;
+  }
+}
+
+// The reveal tiles and guess tiles (Number Arithmetic)
+.numbers_arithmetic {
+  .target {
+    .letter_tile {
+      margin-top: 0.5em;
+      margin-bottom: 0.3em;
+      width: 2em;
+    }
+  }
+  .guess {
+    .letter_tile {
+      width: 3.5em;
+    }
+  }
+}
+
+// The letter tiles of Letters Game (read only selection row and input row)
+.letters-game-wrapper .letter_row .letter_tile,
+.letters-game-wrapper .word_row .letter_tile {
+  border: none;
+  border-radius: 0px;
+  background-color: #2c2cb8;
+  color: white;
+  text-shadow: none;
+  &[data-disabled="true"] {
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+  &[data-disabled="false"] {
+    cursor: pointer;
+    &:hover {
+      background-color: darken(#2c2cb8, 10%);
+    }
+  }
+}
+
+// Jump every LetterTile in WordRow when a correct word is submitted
+.word_row[data-correct-word-submitted="true"][data-apply-animation="true"] .letter_tile[data-animation-setting="true"] {
+  animation: jumpCorrectInput 1.2s;
+}
+
+// Pop LetterTile when a letter is added
+.letter_tile[data-new-letter-added="true"][data-apply-animation="true"][data-animation-setting="true"] {
+  animation: popLetterInput 0.2s;
+}
+
+// Flip LetterTile after submmited a WordRow
+.letter_tile[data-has-been-submitted="true"][data-apply-animation="true"][data-animation-setting="true"] {
+  animation: flipRevealLetter 1.5s;
+}
+
+// For when checking a guess in Wingo (each letter tile flips to reveal status)
+@keyframes flipRevealLetter {
+  0% {
+    transform: perspective(400px) rotateX(90deg);
+  }
+  40% {
+    transform: perspective(400px) rotateX(-20deg);
+  }
+  70% {
+    transform: perspective(400px) rotateX(20deg);
+  }
+  100% {
+    transform: perspective(400px) rotateX(0deg);
+  }
+}
+
+// For when a letter is entered during Wingo
+@keyframes popLetterInput {
+  0% {
+    -ms-transform: scale(1);
+    transform: scale(1);
+  }
+  50% {
+    -ms-transform: scale(1.2);
+    transform: scale(1.2);
+  }
+  100% {
+    -ms-transform: scale(1);
+    transform: scale(1);
+  }
+}

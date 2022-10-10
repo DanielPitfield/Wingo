@@ -1,0 +1,57 @@
+.gamemode-settings-body {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin: 0.2em;
+  & > label {
+    display: flex;
+    align-items: center;
+    margin: 0.2em;
+    & > input,
+    & > select {
+      margin-right: 0.4em;
+      text-transform: capitalize;
+      &[type="checkbox"] {
+        cursor: pointer;
+      }
+    }
+  }
+}
+
+.gamemode-settings-button {
+  display: inline-block;
+  cursor: pointer;
+  background-color: white;
+  color: #444;
+  text-decoration: underline;
+  border: 2px solid #676767;
+  padding: 0.5em;
+  margin: 0.2em;
+  &:hover {
+    background-color: #e0e0e0;
+  }
+}
+
+.presets {
+  table-layout: fixed;
+  width: 100%;
+  .preset {
+    border: 1px solid black;
+    & > * {
+      padding: 0 0.5em;
+    }
+    .preset-name {
+      text-align: left;
+      width: 35%;
+    }
+    .preset-date {
+      width: 10%;
+    }
+    .preset-info {
+      width: 10%;
+    }
+    .preset-load {
+      width: 10%;
+    }
+  }
+}

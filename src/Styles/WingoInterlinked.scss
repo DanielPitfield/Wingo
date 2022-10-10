@@ -1,0 +1,36 @@
+.wingo_interlinked {
+  background-repeat: no-repeat;
+  background-size: 100%;
+  //background-size: cover;
+  .word_grid {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: #111;
+    border-color: #000;
+    background-image: none;
+    padding: 1em;
+    margin: 1em;
+    .word-grid-row {
+      display: flex;
+      .letter-tile-wrapper {
+        background-color: #111;
+        &[data-is-focussed="true"] {
+          .letter_tile[data-status="not set"] {
+            background-color: #fff;
+          }
+        }
+        &[data-is-focussed="false"] {
+          .letter_tile {
+            opacity: 0.85;
+          }
+        }
+        .letter_tile {
+          font-size: 1.7em !important;
+          border-radius: 0;
+        }
+      }
+    }
+  }
+}

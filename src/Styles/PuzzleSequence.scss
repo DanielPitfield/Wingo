@@ -1,0 +1,49 @@
+.puzzle-config {
+  flex-grow: 1;
+  justify-content: flex-start;
+  & > * {
+    flex-grow: 0;
+  }
+  .sequence {
+    display: flex;
+    margin-bottom: 2em;
+  }
+  .answer-options {
+    display: flex;
+  }
+  .sequence-tile {
+    padding: 0.5em;
+    margin: 0.4em;
+    width: 10em;
+    height: 10em;
+    background-color: white;
+    position: relative;
+    box-shadow: 0 0 2px #999;
+    opacity: 0.75;
+    &[data-tile-type$="answer-option"] {
+      border-left: 3px solid #777a;
+      border-bottom: 3px solid #777a;
+      opacity: 0.9;
+      &[data-is-readonly="false"]:hover {
+        background-color: #f2f2f2;
+        opacity: 0.75;
+        cursor: pointer;
+      }
+    }
+    &[data-is-readonly="true"] {
+      &[data-is-incorrect-answer="true"] {
+        background-color: #f07676;
+      }
+      &[data-is-correct-answer="true"] {
+        background-color: #7af076;
+      }
+    }
+    .icon {
+      position: absolute;
+      background-repeat: no-repeat;
+      background-size: 100% 100%;
+      width: 35px;
+      height: 35px;
+    }
+  }
+}

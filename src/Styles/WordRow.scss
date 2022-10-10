@@ -1,0 +1,102 @@
+.word_row,
+.letter_row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  vertical-align: middle;
+}
+
+.tile_row {
+  display: flex;
+}
+
+.word_row_vertical {
+  align-items: center;
+  justify-content: center;
+  vertical-align: middle;
+}
+
+.word-row-category-wrapper {
+  display: flex;
+  align-items: center;
+  .word-row-category-name {
+    padding: 0.3em;
+    min-width: 12em;
+    text-align: left;
+    font-size: 1.15em;
+    color: #333;
+  }
+}
+
+.category_label {
+  display: flex;
+  align-items: center;
+  strong {
+    margin-right: 0.5em;
+    margin-bottom: 0.1em;
+  }
+  select {
+    flex-grow: 1;
+  }
+}
+
+.word_grid {
+  margin-top: 1em;
+  margin-bottom: 1em;
+  background-color: #e6e6e6;
+  padding: 20px 20px;
+  background-image: linear-gradient(318deg, #ccc, transparent);
+  border-bottom: 3px solid #bbb;
+  border-right: 3px solid #bbb;
+  max-width: 95vw;
+}
+
+// Shake entire WordRow with invalid word
+.word_row[data-invalid-word-submitted="true"][data-apply-animation="true"][data-animation-setting="true"] {
+  animation: shakeIncorrectInput 0.4s;
+}
+
+// For when an incomplete guess is entered during Wingo
+@keyframes shakeIncorrectInput {
+  0% {
+    -ms-transform: translateX(0);
+    transform: translateX(0);
+  }
+  20% {
+    -ms-transform: translateX(-10px);
+    transform: translateX(-10px);
+  }
+  40% {
+    -ms-transform: translateX(10px);
+    transform: translateX(10px);
+  }
+  60% {
+    -ms-transform: translateX(0);
+    transform: translateX(0);
+  }
+}
+
+// For when the target word is correctly guessed during Wingo
+@keyframes jumpCorrectInput {
+  0% {
+    transform: translateY(0);
+  }
+  20% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-25px);
+  }
+  50% {
+    transform: translateY(0);
+  }
+  60% {
+    transform: translateY(-20px);
+  }
+  80% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}

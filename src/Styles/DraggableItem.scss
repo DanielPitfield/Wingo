@@ -1,0 +1,33 @@
+.draggable-item-wrapper {
+  $spacing-between-draggable-items: 8px;
+  $drag-border-line-height: 4px;
+  &[data-is-hovered-over="true"] {
+    .draggable-item[data-is-grabbed="false"] {
+      .content {
+        margin-top: 0;
+        border-top: $drag-border-line-height solid #555;
+        margin-top: $spacing-between-draggable-items - $drag-border-line-height;
+      }
+    }
+  }
+  .draggable-item {
+    display: flex;
+    .content {
+      display: flex;
+      margin-top: $spacing-between-draggable-items;
+      background-color: #efefef;
+      box-shadow: 0 0 4px #777d;
+      .handle {
+        width: 2.5em;
+        margin: 0.7em;
+        color: #777;
+      }
+      .letter_tile {
+        padding-left: 0.3em;
+        width: 6em;
+        justify-content: flex-start;
+        margin: 0;
+      }
+    }
+  }
+}

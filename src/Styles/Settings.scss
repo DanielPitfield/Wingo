@@ -1,0 +1,54 @@
+.settings {
+  display: flex;
+  .setting-section-links {
+    display: flex;
+    flex-direction: column;
+    border-right: 2px solid #c0c0c0;
+    min-width: 10em;
+    background-color: #ccc;
+    padding-bottom: 0.5em;
+    .setting-section-link {
+      margin: 0.5em;
+      margin-bottom: 0;
+    }
+    .setting-section-link-spacer {
+      flex-grow: 1;
+    }
+  }
+  .settings-section {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    background-color: #f8f8f8;
+    .settings-section-title {
+      background-color: #eee;
+      margin: 0;
+      padding: 0.7em 0.9em;
+      border-bottom: 1px solid #ddd;
+      text-transform: uppercase;
+      color: #333;
+    }
+    .selected-setting {
+      display: flex;
+      flex-direction: column;
+      padding: 0.7em;
+      .setting {
+        display: flex;
+        flex-direction: column;
+        padding: 0.8em;
+        &:hover {
+          background-color: #e8e8e8;
+        }
+        .setting-name {
+          padding-bottom: 0.3em;
+        }
+        .setting-control {
+          input[type="range"],
+          select {
+            min-width: 15em;
+          }
+        }
+      }
+    }
+  }
+}

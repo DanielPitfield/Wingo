@@ -1,0 +1,55 @@
+.splash-screen {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-grow: 1;
+  font-size: calc(10px + 2vmin);
+  min-height: 100vh;
+  background-color: #ddd;
+  background-size: 100%;
+  .studio-logo {
+    align-self: center;
+  }
+}
+
+[data-loading-state="loading"] {
+  opacity: 1;
+}
+
+[data-loading-state="loaded"] {
+  opacity: 0;
+}
+
+.game-name {
+  display: flex;
+  padding: 1em;
+  padding-top: 0.5em;
+  align-items: center;
+  justify-content: center;
+}
+
+.game-name-label {
+  margin-top: 0.5em;
+  font-size: 3rem;
+}
+
+.logo {
+  display: flex;
+  .letter_tile[data-animation-setting="true"] {
+    animation: flipRevealLetter 1.5s;
+  }
+}
+
+.studio-logo {
+  display: flex;
+  border: 2px solid;
+  border-color: #cccccc;
+  color: #b3b3b3;
+  background-color: #e6e6e6;
+  padding: 0.5em 3em;
+  margin: 0.5em 0;
+  flex-grow: 0;
+  flex-shrink: 0;
+  user-select: none;
+  align-self: flex-start;
+}

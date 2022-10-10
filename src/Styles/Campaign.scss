@@ -1,0 +1,66 @@
+.campaign {
+  background: #ddd;
+  padding: 1.2em;
+  padding-bottom: 2em;
+  margin: 0.6em;
+  margin-bottom: 0;
+  .widget {
+    min-height: 19em;
+    min-width: 25vw;
+  }
+}
+
+.campaign,
+.area {
+  .widgets,
+  .area-button {
+    flex-grow: 1;
+    background-repeat: no-repeat;
+    background-size: 100%;
+    &[data-unlock-status="locked"] {
+      background: #999 !important;
+      opacity: 0.45;
+      &:hover {
+        opacity: 0.5;
+      }
+    }
+    .widget {
+      height: 10em;
+    }
+    .level-count {
+      display: flex;
+      align-items: center;
+      color: #ddd;
+      .btn {
+        margin-right: 1em;
+      }
+    }
+  }
+}
+
+.area-button.widget {
+  border-bottom: 3px solid #888;
+  border-left: 3px solid #888;
+  cursor: pointer;
+  &:hover {
+    opacity: 0.9;
+    .widget-title,
+    .widget-subtitle {
+      color: #fff;
+    }
+  }
+  .widget-subtitle {
+    font-size: 1.1em;
+    flex-grow: 0;
+    color: #ddd;
+    margin: 0.5em;
+  }
+  .widget-title {
+    font-size: 3em;
+    color: #ddd;
+    justify-content: flex-start;
+  }
+  .widget-button-wrapper {
+    margin-bottom: 3em;
+  }
+}
