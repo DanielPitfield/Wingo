@@ -68,6 +68,7 @@ const Wingo = (props: Props) => {
   const [playCorrectChimeSoundEffect] = useCorrectChime(props.settings);
   const [playFailureChimeSoundEffect] = useFailureChime(props.settings);
   const [playLightPingSoundEffect] = useLightPingChime(props.settings);
+  const [keyboardDisabled, setKeyboardDisabled] = useState(false);
 
   /*
   Keep track of the most recent value for the timer
@@ -489,6 +490,8 @@ const Wingo = (props: Props) => {
                 setMostRecentMaxLives={setMostRecentMaxLives}
                 setMostRecentTotalSeconds={setMostRecentTotalSeconds}
                 onLoadGamemodeSettingsPreset={props.updateGamemodeSettings}
+                onShowOfAddPresetModal={() => setKeyboardDisabled(true)}
+                onHideOfAddPresetModal={() => setKeyboardDisabled(false)}
               ></WingoGamemodeSettings>
             </div>
           )
@@ -509,7 +512,7 @@ const Wingo = (props: Props) => {
           inDictionary={props.inDictionary}
           letterStatuses={props.letterStatuses}
           settings={props.settings}
-          disabled={!props.inProgress}
+          disabled={!props.inProgress || keyboardDisabled}
           hasBackspace={true}
           hasEnter={true}
         />

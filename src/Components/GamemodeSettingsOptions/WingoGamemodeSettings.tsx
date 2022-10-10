@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import {
   MAX_TARGET_WORD_LENGTH,
@@ -30,6 +30,9 @@ interface Props {
   setMostRecentMaxLives: (numLives: number) => void;
   setMostRecentTotalSeconds: (numSeconds: number) => void;
   onLoadGamemodeSettingsPreset: (gamemodeSettings: WingoConfigProps["gamemodeSettings"]) => void;
+
+  onShowOfAddPresetModal: () => void;
+  onHideOfAddPresetModal: () => void;
 }
 
 const MIN_PUZZLE_REVEAL_INTERVAL_SECONDS = 1;
@@ -59,6 +62,15 @@ const WingoGamemodeSettings = (props: Props) => {
   useEffect(() => {
     updatePresets();
   }, [showLoadPresetModal, updatePresets]);
+
+  // Call the `onSettingsModalShown` or `onSettingsModalHide` callback when the save modal is displayed
+  useEffect(() => {
+    if (showSavePresetModal) {
+      props.onShowOfAddPresetModal();
+    } else {
+      props.onHideOfAddPresetModal();
+    }
+  }, [showSavePresetModal, props]);
 
   if (props.mode === "puzzle") {
     return (
