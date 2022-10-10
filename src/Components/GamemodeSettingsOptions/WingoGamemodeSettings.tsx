@@ -36,49 +36,71 @@ const MIN_PUZZLE_LEAVE_NUM_BLANKS = 1;
 const WingoGamemodeSettings = (props: Props) => {
   const location = useLocation();
   const [showLoadPresetModal, setShowLoadPresetModal] = useState(false);
-  const [showNewPresetModal, setNewShowPresetModal] = useState(false);
+  const [showSavePresetModal, setShowSavePresetModal] = useState(false);
   const [presetName, setPresetName] = useState("");
-  const [presetModalErrorMessage, setPresetModalErrorMessage] = useState("");
+  const [savePresetModalErrorMessage, setPresetModalErrorMessage] = useState("");
 
   const presets = useMemo(() => {
     return SaveData.getWingoConfigGamemodeSettingsPresets(location.pathname as PagePath);
-  }, [showNewPresetModal]);
+  }, [showLoadPresetModal, showSavePresetModal]);
 
   if (props.mode === "puzzle") {
     return (
       <GamemodeSettingsMenu>
         <>
-          <Button mode="default" onClick={() => setShowLoadPresetModal(true)}>
-            Presets
-          </Button>
-          {showLoadPresetModal && (
-            <Modal mode="default" name="Load preset" title="Load preset" onClose={() => setShowLoadPresetModal(false)}>
-              <table className="presets">
-                {presets
-                  .sort((a, b) => a.name.localeCompare(b.name))
-                  .map((preset) => (
-                    <tr key={preset.name} className="preset">
-                      <td className="preset-name">{preset.name}</td>
-                      <td className="preset-date">{new Date(preset.timestamp).toLocaleDateString()}</td>
-                      <td className="preset-info">
-                        <span title={JSON.stringify(preset.gameSettings, undefined, 4)}>Info</span>
-                      </td>
-                      <td className="preset-load">
-                        <Button
-                          mode="default"
-                          onClick={() => {
-                            props.onLoadGamemodeSettingsPreset(preset.gameSettings);
-                            setShowLoadPresetModal(false);
-                          }}
-                        >
-                          Load
-                        </Button>
-                      </td>
-                    </tr>
-                  ))}
-              </table>
-            </Modal>
+          {presets.length > 0 && (
+            <>
+              <Button mode="default" onClick={() => setShowLoadPresetModal(true)}>
+                Presets
+              </Button>
+
+              {showLoadPresetModal && (
+                <Modal mode="default" name="Load preset" title="Presets" onClose={() => setShowLoadPresetModal(false)}>
+                  <table className="presets">
+                    <tbody>
+                      {presets
+                        .sort((a, b) => a.name.localeCompare(b.name))
+                        .map((preset) => (
+                          <tr key={preset.name} className="preset">
+                            <td className="preset-name">{preset.name}</td>
+                            <td className="preset-date">{new Date(preset.timestamp).toLocaleDateString()}</td>
+                            <td className="preset-info">
+                              <span title={JSON.stringify(preset.gameSettings, undefined, 4)}>Info</span>
+                            </td>
+                            <td className="preset-load">
+                              <Button
+                                mode="default"
+                                onClick={() => {
+                                  props.onLoadGamemodeSettingsPreset(preset.gameSettings);
+                                  setShowLoadPresetModal(false);
+                                }}
+                              >
+                                Load
+                              </Button>
+                            </td>
+                            <td className="preset-delete">
+                              <Button
+                                mode="destructive"
+                                onClick={() => {
+                                  SaveData.removeWingoConfigGamemodeSettingPreset(
+                                    // TODO: Can't use location of WingoGamemodeSettings, has to be the mode
+                                    location.pathname as PagePath,
+                                    preset.name
+                                  );
+                                }}
+                              >
+                                Delete
+                              </Button>
+                            </td>
+                          </tr>
+                        ))}
+                    </tbody>
+                  </table>
+                </Modal>
+              )}
+            </>
           )}
+
           <label>
             <input
               type="number"
@@ -115,20 +137,22 @@ const WingoGamemodeSettings = (props: Props) => {
             ></input>
             Number of letters left blank
           </label>
-          <Button mode="accept" onClick={() => setNewShowPresetModal(true)}>
+
+          <Button mode="accept" onClick={() => setShowSavePresetModal(true)}>
             Save as preset
           </Button>
-          {showNewPresetModal && (
+
+          {showSavePresetModal && (
             <Modal
               mode="default"
               name="Save preset"
               title="Save preset"
               onClose={() => {
-                setNewShowPresetModal(false);
+                setShowSavePresetModal(false);
               }}
             >
-              {presetModalErrorMessage && (
-                <MessageNotification type="error">{presetModalErrorMessage}</MessageNotification>
+              {savePresetModalErrorMessage && (
+                <MessageNotification type="error">{savePresetModalErrorMessage}</MessageNotification>
               )}
 
               <label>
@@ -162,7 +186,7 @@ const WingoGamemodeSettings = (props: Props) => {
                     gameSettings: props.gamemodeSettings,
                   });
 
-                  setNewShowPresetModal(false);
+                  setShowSavePresetModal(false);
                   setPresetName("");
                 }}
               >
