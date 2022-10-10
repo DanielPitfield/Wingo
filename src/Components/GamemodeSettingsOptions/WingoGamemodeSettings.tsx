@@ -87,13 +87,8 @@ const WingoGamemodeSettings = (props: Props) => {
                               <Button
                                 mode="destructive"
                                 onClick={() => {
-                                  console.log("Delete location: " + location.pathname.toString());
-
-                                  removeWingoConfigGamemodeSettingPreset(
-                                    // TODO: Can't use location of WingoGamemodeSettings, has to be the mode location
-                                    location.pathname as PagePath,
-                                    preset.name
-                                  );
+                                  // TODO: How to update the list of presets (not show this preset) after it has been deleted?
+                                  removeWingoConfigGamemodeSettingPreset(location.pathname as PagePath, preset.name);
                                 }}
                               >
                                 Delete
