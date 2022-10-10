@@ -55,10 +55,7 @@ const WingoGamemodeSettings = (props: Props) => {
     setPresets(presets);
   }, [setPresets, location.pathname]);
 
-  // Update the presets on load of the component
-  useEffect(() => updatePresets(), [updatePresets]);
-
-  // Re-retrieve the presets when the preset modal is loaded (e.g. one may have been recently added)
+  // (Re)retrieve the presets when the preset modal is loaded (e.g. one may have been recently added)
   useEffect(() => {
     updatePresets();
   }, [showLoadPresetModal, updatePresets]);
@@ -67,57 +64,56 @@ const WingoGamemodeSettings = (props: Props) => {
     return (
       <GamemodeSettingsMenu>
         <>
-          {presets.length > 0 && (
-            <>
-              <Button mode="default" onClick={() => setShowLoadPresetModal(true)}>
-                Presets
-              </Button>
+          <Button mode="default" onClick={() => setShowLoadPresetModal(true)}>
+            Presets
+          </Button>
+          {showLoadPresetModal && (
+            <Modal mode="default" name="Load preset" title="Presets" onClose={() => setShowLoadPresetModal(false)}>
+              {presets.length > 0 ? (
+                <table className="presets">
+                  <tbody>
+                    {presets
+                      .sort((a, b) => a.name.localeCompare(b.name))
+                      .map((preset) => (
+                        <tr key={preset.name} className="preset">
+                          <td className="preset-name">{preset.name}</td>
+                          <td className="preset-date">{new Date(preset.timestamp).toLocaleDateString()}</td>
+                          <td className="preset-info">
+                            <span title={JSON.stringify(preset.gameSettings, undefined, 4)}>Info</span>
+                          </td>
+                          <td className="preset-load">
+                            <Button
+                              mode="default"
+                              onClick={() => {
+                                props.onLoadGamemodeSettingsPreset(preset.gameSettings);
+                                setShowLoadPresetModal(false);
+                              }}
+                            >
+                              Load
+                            </Button>
+                          </td>
+                          <td className="preset-delete">
+                            <Button
+                              mode="destructive"
+                              onClick={() => {
+                                // TODO: How to update the list of presets (not show this preset) after it has been deleted?
+                                removeWingoConfigGamemodeSettingPreset(location.pathname as PagePath, preset.name);
 
-              {showLoadPresetModal && (
-                <Modal mode="default" name="Load preset" title="Presets" onClose={() => setShowLoadPresetModal(false)}>
-                  <table className="presets">
-                    <tbody>
-                      {presets
-                        .sort((a, b) => a.name.localeCompare(b.name))
-                        .map((preset) => (
-                          <tr key={preset.name} className="preset">
-                            <td className="preset-name">{preset.name}</td>
-                            <td className="preset-date">{new Date(preset.timestamp).toLocaleDateString()}</td>
-                            <td className="preset-info">
-                              <span title={JSON.stringify(preset.gameSettings, undefined, 4)}>Info</span>
-                            </td>
-                            <td className="preset-load">
-                              <Button
-                                mode="default"
-                                onClick={() => {
-                                  props.onLoadGamemodeSettingsPreset(preset.gameSettings);
-                                  setShowLoadPresetModal(false);
-                                }}
-                              >
-                                Load
-                              </Button>
-                            </td>
-                            <td className="preset-delete">
-                              <Button
-                                mode="destructive"
-                                onClick={() => {
-                                  // TODO: How to update the list of presets (not show this preset) after it has been deleted?
-                                  removeWingoConfigGamemodeSettingPreset(location.pathname as PagePath, preset.name);
-
-                                  // Update list
-                                  updatePresets();
-                                }}
-                              >
-                                Delete
-                              </Button>
-                            </td>
-                          </tr>
-                        ))}
-                    </tbody>
-                  </table>
-                </Modal>
+                                // Update list
+                                updatePresets();
+                              }}
+                            >
+                              Delete
+                            </Button>
+                          </td>
+                        </tr>
+                      ))}
+                  </tbody>
+                </table>
+              ) : (
+                <>No presets saved</>
               )}
-            </>
+            </Modal>
           )}
 
           <label>
