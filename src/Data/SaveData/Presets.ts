@@ -1,6 +1,6 @@
+import { getLocalStorageItemName } from "../../Helpers/getLocalStorageItemName";
 import { WingoConfigProps } from "../../Pages/WingoConfig";
 import { PagePath } from "../PageNames";
-import { determineLocalStorageItemName } from "./SaveData";
 
 export type GamemodeSettingsPreset = {
   name: string;
@@ -14,7 +14,7 @@ export type GamemodeSettingsPreset = {
  * @param preset The gamemode setting preset for Wingo Config to save.
  */
 export function addWingoConfigGamemodeSettingsPreset(page: PagePath, preset: GamemodeSettingsPreset) {
-  const itemName = `${determineLocalStorageItemName(page)}-preset-${preset.name}`;
+  const itemName = `${getLocalStorageItemName(page)}-preset-${preset.name}`;
 
   if (itemName) {
     localStorage.setItem(itemName, JSON.stringify(preset));
@@ -27,7 +27,7 @@ export function addWingoConfigGamemodeSettingsPreset(page: PagePath, preset: Gam
  */
 export function getWingoConfigGamemodeSettingsPresets(page: PagePath): GamemodeSettingsPreset[] {
   const gamemodeSettingPresets = Object.entries(localStorage)
-    .filter(([key, _]) => key.startsWith(`${determineLocalStorageItemName(page)}-preset-`))
+    .filter(([key, _]) => key.startsWith(`${getLocalStorageItemName(page)}-preset-`))
     .map(([_, value]) => JSON.parse(value) as GamemodeSettingsPreset);
 
   return gamemodeSettingPresets;
@@ -39,7 +39,7 @@ export function getWingoConfigGamemodeSettingsPresets(page: PagePath): GamemodeS
  * @param presetName The gamemode setting preset name for Wingo Config to save.
  */
 export function removeWingoConfigGamemodeSettingPreset(page: PagePath, presetName: string) {
-  const itemNamePagePrefix = determineLocalStorageItemName(page);
+  const itemNamePagePrefix = getLocalStorageItemName(page);
 
   if (itemNamePagePrefix && presetName) {
     const itemName = `${itemNamePagePrefix}-preset-${presetName}`;

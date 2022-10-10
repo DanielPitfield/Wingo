@@ -1,13 +1,14 @@
 import { AreaConfig } from "./Area";
 import { Button } from "../Components/Button";
 import { getId } from "../Components/Level";
-import { CampaignSaveData, SaveData, SettingsData } from "../Data/SaveData/SaveData";
 import { Theme } from "../Data/Themes";
 import { AllCampaignAreas } from "../Data/CampaignAreas/AllCampaignAreas";
 import BackgroundImageSrc from "../Data/Images/background.png";
 import BackgroundDarkThemeSrc from "../Data/Images/background-dark-theme.png";
 import { FiCheck, FiLock, FiPlay } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
+import { CampaignSaveData, getCampaignProgress } from "../Data/SaveData/CampaignProgress";
+import { SettingsData } from "../Data/SaveData/Settings";
 
 interface CampaignProps {
   theme: Theme;
@@ -44,7 +45,7 @@ export const Campaign = (props: CampaignProps) => {
     <div className="campaign widgets">
       {AllCampaignAreas.filter((x) => x.levels.length > 0).map((area, index) => {
         // Find out if area is locked, unlockable or unlocked
-        const campaignProgress = SaveData.getCampaignProgress();
+        const campaignProgress = getCampaignProgress();
         const areaInfo = campaignProgress.areas.find((x) => x.name === area.name);
 
         // Determine whether this is the first area

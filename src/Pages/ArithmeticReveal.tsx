@@ -6,7 +6,6 @@ import { NumPad } from "../Components/NumPad";
 import ProgressBar, { GreenToRedColorTransition } from "../Components/ProgressBar";
 import { Button } from "../Components/Button";
 import { Theme } from "../Data/Themes";
-import { SaveData, SettingsData } from "../Data/SaveData/SaveData";
 import { arithmeticNumberSize } from "./ArithmeticDrag";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
 import { MAX_NUMPAD_GUESS_LENGTH } from "../Data/GamemodeSettingsInputLimits";
@@ -18,6 +17,8 @@ import { getRandomIntFromRange } from "../Helpers/getRandomIntFromRange";
 import ArithmeticRevealGamemodeSettings from "../Components/GamemodeSettingsOptions/ArithmeticRevealGamemodeSettings";
 import { getNewGamemodeSettingValue } from "../Helpers/getGamemodeSettingsNewValue";
 import { useLocation } from "react-router-dom";
+import { setArithmeticRevealGamemodeSettings } from "../Data/SaveData/MostRecentGamemodeSettings";
+import { SettingsData } from "../Data/SaveData/Settings";
 
 export interface ArithmeticRevealProps {
   campaignConfig:
@@ -289,7 +290,7 @@ const ArithmeticReveal = (props: Props) => {
     ResetGame();
 
     // Save the latest gamemode settings for this mode
-    SaveData.setArithmeticRevealGamemodeSettings(gamemodeSettings);
+    setArithmeticRevealGamemodeSettings(gamemodeSettings);
   }, [gamemodeSettings]);
 
   // Create the tiles to be revealed (only once on start)

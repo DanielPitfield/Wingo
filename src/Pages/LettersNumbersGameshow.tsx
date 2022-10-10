@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { SettingsData } from "../Data/SaveData/SaveData";
+
 import LettersGameConfig, { LettersGameConfigProps } from "./LettersGameConfig";
 import NumbersGameConfig, { NumbersGameConfigProps } from "./NumbersGameConfig";
 import { Theme } from "../Data/Themes";
@@ -12,6 +12,7 @@ import { getPageGamemodeSettings } from "../Helpers/getPageGamemodeSettings";
 import { useLocation, useNavigate } from "react-router-dom";
 import { getAreaBacktrackPath } from "../Helpers/getAreaBacktrackPath";
 import { PagePath } from "../Data/PageNames";
+import { SettingsData } from "../Data/SaveData/Settings";
 
 type RoundType = "number" | "letter" | "conundrum";
 

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { SettingsData } from "../Data/SaveData/SaveData";
+import { SettingsData } from "../Data/SaveData/Settings";
 
 export type LetterStatus = "incorrect" | "contains" | "correct" | "not set" | "not in word";
 

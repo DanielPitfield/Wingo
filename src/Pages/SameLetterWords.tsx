@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Button } from "../Components/Button";
 import { MessageNotification } from "../Components/MessageNotification";
 import ProgressBar, { GreenToRedColorTransition } from "../Components/ProgressBar";
-import { SaveData, SettingsData } from "../Data/SaveData/SaveData";
+
 import { useClickChime, useCorrectChime, useFailureChime, useLightPingChime } from "../Data/Sounds";
 import { Theme } from "../Data/Themes";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
@@ -18,6 +18,8 @@ import SameLetterWordsGamemodeSettings, {
 } from "../Components/GamemodeSettingsOptions/SameLetterWordsGamemodeSettings";
 import { useLocation } from "react-router-dom";
 import { PagePath } from "../Data/PageNames";
+import { SettingsData } from "../Data/SaveData/Settings";
+import { setSameLetterWordsGamemodeSettings } from "../Data/SaveData/MostRecentGamemodeSettings";
 
 export interface SameLetterWordsProps {
   gamemodeSettings: {
@@ -79,7 +81,7 @@ const SameLetterWords = (props: Props) => {
     ResetGame();
 
     // Save the latest gamemode settings for this mode
-    SaveData.setSameLetterWordsGamemodeSettings(gamemodeSettings);
+    setSameLetterWordsGamemodeSettings(gamemodeSettings);
   }, [gamemodeSettings]);
 
   // Validate the values of props.gamemodeSettings.numTotalWords and props.gamemodeSettings.numMatchingWords

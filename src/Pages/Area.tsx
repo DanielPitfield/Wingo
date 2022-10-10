@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { LevelConfig } from "../Components/Level";
 import { MessageNotification } from "../Components/MessageNotification";
-import { SettingsData } from "../Data/SaveData/SaveData";
 import { Theme } from "../Data/Themes";
 import { LevelNode } from "../Components/LevelNode";
 import { Navigate, useParams } from "react-router-dom";
 import { getAreaConfig } from "../Helpers/getAreaConfig";
+import { SettingsData } from "../Data/SaveData/Settings";
 
 export interface AreaConfig {
   name: string;

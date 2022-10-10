@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import NumbersGame from "./NumbersGame";
 import { Theme } from "../Data/Themes";
-import { SaveData, SettingsData } from "../Data/SaveData/SaveData";
+
 import { operators } from "../Data/Operators";
 import { getGamemodeDefaultTimerValue } from "../Helpers/getGamemodeDefaultTimerValue";
 import { hasNumberSelectionFinished } from "../Helpers/hasNumberSelectionFinished";
@@ -10,6 +10,8 @@ import { getNumbersGameScore } from "../Helpers/getNumbersGameScore";
 import { useLocation } from "react-router-dom";
 import { PagePath } from "../Data/PageNames";
 import { isCampaignLevelPath } from "../Helpers/CampaignPathChecks";
+import { SettingsData } from "../Data/SaveData/Settings";
+import { setNumbersGameConfigGamemodeSettings } from "../Data/SaveData/MostRecentGamemodeSettings";
 
 export interface NumbersGameConfigProps {
   campaignConfig:
@@ -163,7 +165,7 @@ const NumbersGameConfig = (props: Props) => {
     ResetGame();
 
     // Save the latest gamemode settings for this mode
-    SaveData.setNumbersGameConfigGamemodeSettings(gamemodeSettings);
+    setNumbersGameConfigGamemodeSettings(gamemodeSettings);
   }, [gamemodeSettings]);
 
   React.useEffect(() => {

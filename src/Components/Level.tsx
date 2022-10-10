@@ -8,7 +8,7 @@ import NumbleConfig, { NumbleConfigProps } from "../Pages/NumbleConfig";
 import ArithmeticDrag, { ArithmeticDragProps } from "../Pages/ArithmeticDrag";
 import ArithmeticReveal, { ArithmeticRevealProps } from "../Pages/ArithmeticReveal";
 import OnlyConnect, { OnlyConnectProps } from "../Pages/OnlyConnect";
-import { SettingsData } from "../Data/SaveData/SaveData";
+
 import { Theme, Themes } from "../Data/Themes";
 import Algebra, { AlgebraProps } from "../Pages/Algebra";
 import NumberSets, { NumberSetsProps } from "../Pages/NumberSets";
@@ -24,6 +24,7 @@ import { useParams } from "react-router";
 import { getAreaConfig } from "../Helpers/getAreaConfig";
 import { getLevelConfig } from "../Helpers/getLevelConfig";
 import { getAreaBacktrackPath } from "../Helpers/getAreaBacktrackPath";
+import { SettingsData } from "../Data/SaveData/Settings";
 
 export type LevelConfig = {
   hint?: React.ReactNode;

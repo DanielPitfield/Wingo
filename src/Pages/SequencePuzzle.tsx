@@ -3,9 +3,9 @@ import { Button } from "../Components/Button";
 import { MessageNotification } from "../Components/MessageNotification";
 import { Puzzles } from "../Data/Puzzles";
 import { Theme, ThemeIcons } from "../Data/Themes";
-import { SettingsData } from "../Data/SaveData/SaveData";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
 import { Difficulty } from "../Data/DefaultGamemodeSettings";
+import { SettingsData } from "../Data/SaveData/Settings";
 
 /** Config for a specific puzzle (exported for config from campaign) */
 export type PuzzleConfigProps = {

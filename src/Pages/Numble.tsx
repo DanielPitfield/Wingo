@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Button } from "../Components/Button";
 import { MessageNotification, MessageNotificationProps } from "../Components/MessageNotification";
 import ProgressBar, { GreenToRedColorTransition } from "../Components/ProgressBar";
-import { SaveData, SettingsData } from "../Data/SaveData/SaveData";
+
 import { Theme } from "../Data/Themes";
 import DiceGrid from "../Components/DiceGrid";
 import { NumbleConfigProps, numbleGridShape, numbleGridSize, NumbleStatus } from "./NumbleConfig";
@@ -23,6 +23,7 @@ import { getNewGamemodeSettingValue } from "../Helpers/getGamemodeSettingsNewVal
 import NumbleGamemodeSettings from "../Components/GamemodeSettingsOptions/NumbleGamemodeSettings";
 import { useLocation } from "react-router-dom";
 import { PagePath } from "../Data/PageNames";
+import { SettingsData } from "../Data/SaveData/Settings";
 
 interface Props {
   campaignConfig: NumbleConfigProps["campaignConfig"];

@@ -1,5 +1,5 @@
+import { SettingsData } from "../Data/SaveData/Settings";
 import LetterTile from "./LetterTile";
-import { SettingsData } from "../Data/SaveData/SaveData";
 
 interface LogoProps {
   settings: SettingsData;

@@ -1,4 +1,4 @@
-import { HistorySaveData } from "../SaveData/SaveData";
+import { HistorySaveData } from "../SaveData/GameHistory";
 import { BaseChallenge } from "./BaseChallenge";
 
 /** Completion of the Daily Wingo */
@@ -30,7 +30,7 @@ export class DailyWingo extends BaseChallenge {
     // Return the count of 'wingo/daily' games started today
     return history.games.filter(
       (game) =>
-        game.page === "wingo/daily" &&
+        game.page === "/Wingo/Daily" &&
         new Date(game.configAtStartOfGame.timestamp).getDate() === today.getDate() &&
         game.completedRounds.at(-1)?.outcome === "success"
     ).length;

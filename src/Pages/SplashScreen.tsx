@@ -3,8 +3,9 @@ import { Logo } from "../Components/Logo";
 import BackgroundSrc from "../Data/Images/background.png";
 import BackgroundDarkThemeSrc from "../Data/Images/background-dark-theme.png";
 import { useIntroMusic } from "../Data/Sounds";
-import { SettingsData } from "../Data/SaveData/SaveData";
+
 import { StudioLogo } from "../Components/StudioLogo";
+import { SettingsData } from "../Data/SaveData/Settings";
 
 interface SplashScreenProps {
   loadingState: "loading" | "loaded";

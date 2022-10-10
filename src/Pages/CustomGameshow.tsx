@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { SettingsData } from "../Data/SaveData/SaveData";
+
 import { Theme } from "../Data/Themes";
 import { gamemodeCategories, gamemodeCategory, pageDescription, pageDescriptions } from "../Data/PageDescriptions";
 import { GameshowToolboxItem } from "../Components/GameshowToolboxItem";
@@ -21,6 +21,7 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
+import { SettingsData } from "../Data/SaveData/Settings";
 
 type GameshowModeTile = { id: number; pageDescription: pageDescription };
 

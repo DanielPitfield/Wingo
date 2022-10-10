@@ -1,5 +1,4 @@
 import { Themes } from "../Themes";
-import { SaveData } from "./SaveData";
 
 export type SettingsData = {
   sound: {
@@ -20,7 +19,7 @@ export type SettingsData = {
 };
 
 /** Settings with everything disabled */
-const DISABLED_SETTINGS: SettingsData = {
+export const DISABLED_SETTINGS: SettingsData = {
   sound: { masterVolume: 0, effectsVolume: 0, backgroundVolume: 0 },
   graphics: { darkMode: false, preferredTheme: null, animation: false },
   gameplay: { keyboard: false, skipSplashscreen: true, entryPage: "Home" },

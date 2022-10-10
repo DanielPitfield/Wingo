@@ -1,8 +1,9 @@
 import { AllChallenges } from "../Data/Challenges/AllChallenges";
-import { SaveData, SettingsData } from "../Data/SaveData/SaveData";
 import { Challenge, ChallengeReward } from "./Challenge";
 import { useState } from "react";
 import { BaseChallenge } from "../Data/Challenges/BaseChallenge";
+import { SettingsData } from "../Data/SaveData/Settings";
+import { getHistory } from "../Data/SaveData/GameHistory";
 
 interface ChallengesInfoProps {
   settings: SettingsData;
@@ -10,7 +11,7 @@ interface ChallengesInfoProps {
 }
 
 export const ChallengesInfo = (props: ChallengesInfoProps) => {
-  const history = SaveData.getHistory();
+  const history = getHistory();
   const [selectedChallenge, setSelectedChallenge] = useState<BaseChallenge | null>();
 
   const acheivedChallenges = AllChallenges.filter((challenge) => challenge.isAcheived(history));

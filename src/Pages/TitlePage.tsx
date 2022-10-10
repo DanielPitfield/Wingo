@@ -1,10 +1,11 @@
 import { Button } from "../Components/Button";
 import { Logo } from "../Components/Logo";
-import { SettingsData } from "../Data/SaveData/SaveData";
+
 import BackgroundSrc from "../Data/Images/background.png";
 import BackgroundDarkThemeSrc from "../Data/Images/background-dark-theme.png";
 import { FiCodesandbox, FiPlay, FiSettings, FiShuffle } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
+import { SettingsData } from "../Data/SaveData/Settings";
 
 interface TitlePageProps {
   settings: SettingsData;

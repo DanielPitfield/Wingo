@@ -1,6 +1,6 @@
 import React from "react";
 import { Button } from "./Button";
-import { SettingsData } from "../Data/SaveData/SaveData";
+
 import { useClickChime } from "../Data/Sounds";
 import { PagePath } from "../Data/PageNames";
 import { FiChevronLeft, FiCornerDownLeft } from "react-icons/fi";
@@ -8,6 +8,7 @@ import { getWordRowStatusSummary, WordRowStatusChecks } from "../Helpers/getWord
 import { LetterStatus } from "./LetterTile";
 import { DEFAULT_ALPHABET } from "../Pages/WingoConfig";
 import { useLocation } from "react-router-dom";
+import { SettingsData } from "../Data/SaveData/Settings";
 
 interface Props {
   settings: SettingsData;

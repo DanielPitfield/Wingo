@@ -1,5 +1,5 @@
 import LetterTile, { LetterStatus } from "../Components/LetterTile";
-import { SaveData, SettingsData } from "../Data/SaveData/SaveData";
+
 import { useState } from "react";
 import { Theme } from "../Data/Themes";
 import { Keyboard } from "../Components/Keyboard";
@@ -18,6 +18,8 @@ import { getNewGamemodeSettingValue } from "../Helpers/getGamemodeSettingsNewVal
 import WingoInterlinkedGamemodeSettings from "../Components/GamemodeSettingsOptions/WingoInterlinkedGamemodeSettings";
 import { useLocation } from "react-router-dom";
 import { PagePath } from "../Data/PageNames";
+import { SettingsData } from "../Data/SaveData/Settings";
+import { setWingoInterlinkedGamemodeSettings } from "../Data/SaveData/MostRecentGamemodeSettings";
 
 type Orientation = "vertical" | "horizontal";
 
@@ -255,7 +257,7 @@ export const WingoInterlinked = (props: Props) => {
     ResetGame();
 
     // Save the latest gamemode settings for this mode
-    SaveData.setWingoInterlinkedGamemodeSettings(location, gamemodeSettings);
+    setWingoInterlinkedGamemodeSettings(location, gamemodeSettings);
   }, [gamemodeSettings]);
 
   // Validate the value of props.gamemodeSettings.numGridGuesses

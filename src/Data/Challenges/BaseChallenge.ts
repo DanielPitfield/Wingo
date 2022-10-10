@@ -1,4 +1,5 @@
-import { HistorySaveData, SaveData } from "../SaveData/SaveData";
+import { addRedeemedChallenge, getRedeemedChallenges } from "../SaveData/ChallengeProgress";
+import { HistorySaveData } from "../SaveData/GameHistory";
 import { AllChallenges } from "./AllChallenges";
 
 export type ChallengeReward = { goldCoins: number; xp: number };
@@ -35,7 +36,7 @@ export abstract class BaseChallenge {
 
   /** Description of the reward of the challenge */
   public get isRedeemed(): boolean {
-    const redeemdedChallenges = SaveData.getRedeemedChallenges() || [];
+    const redeemdedChallenges = getRedeemedChallenges() ?? [];
 
     // Find a corresponding challenge in the save data
     return redeemdedChallenges.some((redeemedChallenge) => redeemedChallenge.id === this.id());
@@ -50,7 +51,7 @@ export abstract class BaseChallenge {
       throw new Error(`Setting isRedeemed to false is not yet implemented`);
     }
 
-    SaveData.addRedeemedChallenge(this);
+    addRedeemedChallenge(this);
   }
 
   /**

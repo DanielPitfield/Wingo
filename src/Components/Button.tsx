@@ -1,5 +1,5 @@
 import React, { MouseEventHandler } from "react";
-import { SaveData, SettingsData } from "../Data/SaveData/SaveData";
+import { DISABLED_SETTINGS, SettingsData } from "../Data/SaveData/Settings";
 import { useClickChime } from "../Data/Sounds";
 
 interface ButtonProps {
@@ -15,7 +15,7 @@ interface ButtonProps {
 }
 
 export const Button = (props: ButtonProps) => {
-  const [playClickSoundEffect] = useClickChime(props.settings || SaveData.DISABLED_SETTINGS);
+  const [playClickSoundEffect] = useClickChime(props.settings ?? DISABLED_SETTINGS);
 
   return (
     <button

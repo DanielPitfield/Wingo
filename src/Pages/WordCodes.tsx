@@ -7,7 +7,7 @@ import LetterTile from "../Components/LetterTile";
 import { MessageNotification } from "../Components/MessageNotification";
 import { NumPad } from "../Components/NumPad";
 import ProgressBar, { GreenToRedColorTransition } from "../Components/ProgressBar";
-import { SaveData, SettingsData } from "../Data/SaveData/SaveData";
+
 import { useClickChime, useCorrectChime, useFailureChime, useLightPingChime } from "../Data/Sounds";
 import { Theme } from "../Data/Themes";
 import { DraggableItem } from "../Components/DraggableItem";
@@ -38,6 +38,8 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
+import { SettingsData } from "../Data/SaveData/Settings";
+import { setWordCodesGamemodeSettings } from "../Data/SaveData/MostRecentGamemodeSettings";
 
 const wordCodesModes = ["match", "question"] as const;
 export type wordCodesMode = typeof wordCodesModes[number];
@@ -151,7 +153,7 @@ const WordCodes = (props: Props) => {
     ResetGame();
 
     // Save the latest gamemode settings for this mode
-    SaveData.setWordCodesGamemodeSettings(location, gamemodeSettings);
+    setWordCodesGamemodeSettings(location, gamemodeSettings);
   }, [gamemodeSettings]);
 
   // Validate the value of props.gamemodeSettings.numDisplayWords

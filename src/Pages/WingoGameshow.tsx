@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { SettingsData } from "../Data/SaveData/SaveData";
+
 import { Theme } from "../Data/Themes";
 import WingoConfig, { WingoConfigProps } from "./WingoConfig";
 import { Button } from "../Components/Button";
@@ -12,6 +12,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { PagePath } from "../Data/PageNames";
 import { getGamemodeDefaultNumGuesses } from "../Helpers/getGamemodeDefaultNumGuesses";
 import { getAreaBacktrackPath } from "../Helpers/getAreaBacktrackPath";
+import { SettingsData } from "../Data/SaveData/Settings";
 
 export interface WingoGameshowProps {
   campaignConfig:

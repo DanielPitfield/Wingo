@@ -1,3 +1,4 @@
+import { getLocalStorageItemName } from "../../Helpers/getLocalStorageItemName";
 import { AlgebraProps } from "../../Pages/Algebra";
 import { ArithmeticDragProps } from "../../Pages/ArithmeticDrag";
 import { ArithmeticRevealProps } from "../../Pages/ArithmeticReveal";
@@ -12,14 +13,13 @@ import { WingoConfigProps } from "../../Pages/WingoConfig";
 import { WingoInterlinkedProps } from "../../Pages/WingoInterlinked";
 import { WordCodesProps } from "../../Pages/WordCodes";
 import { PagePath } from "../PageNames";
-import { determineLocalStorageItemName } from "./SaveData";
 
 /**
  * Saves the most recent gamemode settings for Wingo Config.
  * @param gameSettings The latest gamemode settings for Wingo Config to save.
  */
 export function setWingoConfigGamemodeSettings(page: PagePath, gameSettings: WingoConfigProps["gamemodeSettings"]) {
-  const itemName = determineLocalStorageItemName(page);
+  const itemName = getLocalStorageItemName(page);
 
   if (itemName) {
     localStorage.setItem(itemName, JSON.stringify(gameSettings));
@@ -31,7 +31,7 @@ export function setWingoConfigGamemodeSettings(page: PagePath, gameSettings: Win
  * @returns The saved gamemode settings for Wingo Config to save.
  */
 export function getWingoConfigGamemodeSettings(page: PagePath): WingoConfigProps["gamemodeSettings"] | null {
-  const itemName = determineLocalStorageItemName(page);
+  const itemName = getLocalStorageItemName(page);
 
   if (itemName) {
     const wingoConfigGamemodeSettings = localStorage.getItem(itemName);
@@ -50,7 +50,7 @@ export function setWingoInterlinkedGamemodeSettings(
   page: PagePath,
   gameSettings: WingoInterlinkedProps["gamemodeSettings"]
 ) {
-  const itemName = determineLocalStorageItemName(page);
+  const itemName = getLocalStorageItemName(page);
 
   if (itemName) {
     localStorage.setItem(itemName, JSON.stringify(gameSettings));
@@ -58,7 +58,7 @@ export function setWingoInterlinkedGamemodeSettings(
 }
 
 export function getWingoInterlinkedGamemodeSettings(page: PagePath): WingoInterlinkedProps["gamemodeSettings"] | null {
-  const itemName = determineLocalStorageItemName(page);
+  const itemName = getLocalStorageItemName(page);
 
   if (itemName) {
     const wingoInterlinkedConfigGamemodeSettings = localStorage.getItem(itemName);
@@ -147,7 +147,7 @@ export function setArithmeticDragGamemodeSettings(
   page: PagePath,
   gameSettings: ArithmeticDragProps["gamemodeSettings"]
 ) {
-  const itemName = determineLocalStorageItemName(page);
+  const itemName = getLocalStorageItemName(page);
 
   if (itemName) {
     localStorage.setItem(itemName, JSON.stringify(gameSettings));
@@ -155,7 +155,7 @@ export function setArithmeticDragGamemodeSettings(
 }
 
 export function getArithmeticDragGamemodeSettings(page: PagePath): ArithmeticDragProps["gamemodeSettings"] | null {
-  const itemName = determineLocalStorageItemName(page);
+  const itemName = getLocalStorageItemName(page);
 
   if (itemName) {
     const arithmeticDragGamemodeSettings = localStorage.getItem(itemName);
@@ -225,7 +225,7 @@ export function getAlgebraGamemodeSettings(): AlgebraProps["gamemodeSettings"] |
 }
 
 export function setWordCodesGamemodeSettings(page: PagePath, gameSettings: WordCodesProps["gamemodeSettings"]) {
-  const itemName = determineLocalStorageItemName(page);
+  const itemName = getLocalStorageItemName(page);
 
   if (itemName) {
     localStorage.setItem(itemName, JSON.stringify(gameSettings));
@@ -233,7 +233,7 @@ export function setWordCodesGamemodeSettings(page: PagePath, gameSettings: WordC
 }
 
 export function getWordCodesGamemodeSettings(page: PagePath): WordCodesProps["gamemodeSettings"] | null {
-  const itemName = determineLocalStorageItemName(page);
+  const itemName = getLocalStorageItemName(page);
 
   if (itemName) {
     const wordCodesGamemodeSettings = localStorage.getItem(itemName);

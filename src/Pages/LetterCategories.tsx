@@ -5,7 +5,7 @@ import { Button } from "../Components/Button";
 import { MessageNotification } from "../Components/MessageNotification";
 import ProgressBar, { GreenToRedColorTransition } from "../Components/ProgressBar";
 import { Theme } from "../Data/Themes";
-import { SettingsData } from "../Data/SaveData/SaveData";
+
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
 import { LetterCategoriesConfigProps } from "./LetterCategoriesConfig";
 import { getGamemodeDefaultTimerValue } from "../Helpers/getGamemodeDefaultTimerValue";
@@ -13,6 +13,7 @@ import LetterCategoriesGamemodeSettings from "../Components/GamemodeSettingsOpti
 import { getNewGamemodeSettingValue } from "../Helpers/getGamemodeSettingsNewValue";
 import { useLocation } from "react-router-dom";
 import { PagePath } from "../Data/PageNames";
+import { SettingsData } from "../Data/SaveData/Settings";
 
 interface Props {
   campaignConfig: LetterCategoriesConfigProps["campaignConfig"];

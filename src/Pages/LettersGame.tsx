@@ -8,7 +8,7 @@ import { MessageNotification } from "../Components/MessageNotification";
 import ProgressBar, { GreenToRedColorTransition } from "../Components/ProgressBar";
 import { WordRow } from "../Components/WordRow";
 import { PagePath } from "../Data/PageNames";
-import { SettingsData } from "../Data/SaveData/SaveData";
+
 import { Theme } from "../Data/Themes";
 import { getGamemodeDefaultTimerValue } from "../Helpers/getGamemodeDefaultTimerValue";
 import { getNewGamemodeSettingValue } from "../Helpers/getGamemodeSettingsNewValue";
@@ -17,6 +17,7 @@ import { useLocation } from "react-router-dom";
 import { getWeightedLetter } from "../Helpers/getWeightedLetter";
 import { consonantWeightings, vowelWeightings } from "../Data/LettersGameWeightings";
 import { getBestLettersGameWords } from "../Helpers/getBestLettersGameWords";
+import { SettingsData } from "../Data/SaveData/Settings";
 
 interface Props {
   campaignConfig: LettersGameConfigProps["campaignConfig"];

@@ -7,7 +7,7 @@ import {
   MIN_TARGET_WORD_LENGTH,
 } from "../../Data/GamemodeSettingsInputLimits";
 import { PagePath } from "../../Data/PageNames";
-import { SaveData } from "../../Data/SaveData/SaveData";
+import { addWingoConfigGamemodeSettingsPreset, getWingoConfigGamemodeSettingsPresets, removeWingoConfigGamemodeSettingPreset } from "../../Data/SaveData/Presets";
 import { WingoConfigProps, WingoMode } from "../../Pages/WingoConfig";
 import { Button } from "../Button";
 import GamemodeSettingsMenu from "../GamemodeSettingsMenu";
@@ -35,13 +35,14 @@ const MIN_PUZZLE_LEAVE_NUM_BLANKS = 1;
 
 const WingoGamemodeSettings = (props: Props) => {
   const location = useLocation();
+
   const [showLoadPresetModal, setShowLoadPresetModal] = useState(false);
   const [showSavePresetModal, setShowSavePresetModal] = useState(false);
   const [presetName, setPresetName] = useState("");
   const [savePresetModalErrorMessage, setPresetModalErrorMessage] = useState("");
 
   const presets = useMemo(() => {
-    return SaveData.getWingoConfigGamemodeSettingsPresets(location.pathname as PagePath);
+    return getWingoConfigGamemodeSettingsPresets(location.pathname as PagePath);
   }, [showLoadPresetModal, showSavePresetModal]);
 
   if (props.mode === "puzzle") {
@@ -82,8 +83,10 @@ const WingoGamemodeSettings = (props: Props) => {
                               <Button
                                 mode="destructive"
                                 onClick={() => {
-                                  SaveData.removeWingoConfigGamemodeSettingPreset(
-                                    // TODO: Can't use location of WingoGamemodeSettings, has to be the mode
+                                  console.log("Delete location: " + location.pathname.toString());
+
+                                  removeWingoConfigGamemodeSettingPreset(
+                                    // TODO: Can't use location of WingoGamemodeSettings, has to be the mode location
                                     location.pathname as PagePath,
                                     preset.name
                                   );
@@ -180,7 +183,7 @@ const WingoGamemodeSettings = (props: Props) => {
                     return;
                   }
 
-                  SaveData.addWingoConfigGamemodeSettingsPreset(location.pathname as PagePath, {
+                  addWingoConfigGamemodeSettingsPreset(location.pathname as PagePath, {
                     name: presetName,
                     timestamp: new Date().toISOString(),
                     gameSettings: props.gamemodeSettings,

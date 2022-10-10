@@ -1,4 +1,4 @@
-import { HistorySaveData } from "../SaveData/SaveData";
+import { HistorySaveData } from "../SaveData/GameHistory";
 import { BaseChallenge, ChallengeReward } from "./BaseChallenge";
 
 /** Completion of a round of Standard/Normal in x guesses */
@@ -41,7 +41,7 @@ export class UnderXGuessesNormalWingo extends BaseChallenge {
     // Return the count of 'wingo/repeat' games completed successfully
     return history.games.filter(
       (game) =>
-        game.page === "wingo/repeat" &&
+        game.page === "/Wingo/Repeat" &&
         game.completedRounds.some(
           (x) =>
             (x.gameCategory === "Wingo" && x.levelProps.guesses

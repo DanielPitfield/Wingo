@@ -1,10 +1,11 @@
 import ProgressBar from "./ProgressBar";
 import Star from "../Data/Images/star.png";
 import GoldCoin from "../Data/Images/gold.png";
-import { SaveData, SettingsData } from "../Data/SaveData/SaveData";
 import { BaseChallenge } from "../Data/Challenges/BaseChallenge";
 import { Button } from "./Button";
 import { useNotificationChime } from "../Data/Sounds";
+import { SettingsData } from "../Data/SaveData/Settings";
+import { getHistory } from "../Data/SaveData/GameHistory";
 
 interface ChallengeProps {
   mode: "enhanced" | "default";
@@ -18,7 +19,7 @@ export const Challenge = (props: ChallengeProps) => {
   const [playNotificationChime] = useNotificationChime(props.settings);
 
   const { challenge } = props;
-  const history = SaveData.getHistory();
+  const history = getHistory();
   const currentProgress = challenge.currentProgress(history);
   const { status, statusDescription } = challenge.getStatus(history);
 

@@ -1,5 +1,4 @@
 import useSound from "use-sound";
-import { SettingsData } from "./SaveData/SaveData";
 import { Theme } from "./Themes";
 import CorrectChimeSrc from "../Data/Sounds/Chimes/correct.mp3";
 import SuccessChimeSrc from "../Data/Sounds/Chimes/success.mp3";
@@ -8,6 +7,7 @@ import NotificationChimeSrc from "../Data/Sounds/Chimes/notification.mp3";
 import LightPingSrc from "../Data/Sounds/light-ping.mp3";
 import ClickSrc from "../Data/Sounds/click.mp3";
 import IntroSrc from "../Data/Sounds/intro.mp3";
+import { SettingsData } from "./SaveData/Settings";
 
 export const useBackgroundMusic = (settings: SettingsData, theme?: Theme) => {
   const [play, { stop }] = useSound(theme?.backgroundAudio.src!, {

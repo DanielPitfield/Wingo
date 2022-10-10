@@ -3,7 +3,7 @@ import { Modal } from "../Components/Modal";
 import { FaRegCopy } from "react-icons/fa";
 import { AiOutlineMail } from "react-icons/ai";
 import { FiRefreshCw } from "react-icons/fi";
-import { SettingsData } from "../Data/SaveData/SaveData";
+import { SettingsData } from "../Data/SaveData/Settings";
 
 interface Props {
   error: Error;

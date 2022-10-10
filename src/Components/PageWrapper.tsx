@@ -1,7 +1,6 @@
 import { ErrorBoundary } from "react-error-boundary";
 import { FiArrowLeft, FiHelpCircle, FiSettings } from "react-icons/fi";
 import { pageDescriptions } from "../Data/PageDescriptions";
-import { SaveData, SettingsData } from "../Data/SaveData/SaveData";
 import { VERSION } from "../Data/Version";
 import { ErrorFallback } from "../Pages/ErrorFallback";
 import { Button } from "./Button";
@@ -12,6 +11,7 @@ import GoldCoin from "../Data/Images/gold.png";
 import { useState } from "react";
 import { isCampaignAreaPath, isCampaignLevelPath } from "../Helpers/CampaignPathChecks";
 import { getAreaBacktrackPath } from "../Helpers/getAreaBacktrackPath";
+import { getSettings, SettingsData } from "../Data/SaveData/Settings";
 
 interface Props {
   settings: SettingsData;
@@ -91,7 +91,7 @@ export const PageWrapper = (props: Props) => {
           <ErrorFallback
             error={error}
             resetErrorBoundary={resetErrorBoundary}
-            settingsData={SaveData.getSettings()}
+            settingsData={getSettings()}
             version={VERSION}
           ></ErrorFallback>
         )}

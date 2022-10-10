@@ -4,10 +4,10 @@ import { FiCompass, FiHeadphones, FiInfo, FiMonitor } from "react-icons/fi";
 import { pageDescriptions } from "../Data/PageDescriptions";
 import { PagePath } from "../Data/PageNames";
 import { Button } from "../Components/Button";
-import { SettingsData } from "../Data/SaveData/SaveData";
 import { StudioLogo } from "../Components/StudioLogo";
 import { Themes } from "../Data/Themes";
 import { VERSION } from "../Data/Version";
+import { SettingsData } from "../Data/SaveData/Settings";
 
 interface Props {
   settings: SettingsData;

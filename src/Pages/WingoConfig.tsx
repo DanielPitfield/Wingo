@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import Wingo from "./Wingo";
-import { SaveData, SettingsData } from "../Data/SaveData/SaveData";
+
 import { Theme } from "../Data/Themes";
 import { WingoInterlinked } from "./WingoInterlinked";
 import {
@@ -25,6 +25,10 @@ import { getDailyWeeklyWingoModes } from "../Helpers/getDailyWeeklyWingoModes";
 import { useLocation } from "react-router-dom";
 import { PagePath } from "../Data/PageNames";
 import { isCampaignLevelPath } from "../Helpers/CampaignPathChecks";
+import { SettingsData } from "../Data/SaveData/Settings";
+import { getDailyWordGuesses, setDailyWordGuesses, setDailyCrossWordGuesses, getDailyCrossWordGuesses, setWeeklyCrossWordGuesses, getWeeklyCrossWordGuesses } from "../Data/SaveData/DailyWeeklyGuesses";
+import { addGameToHistory, addCompletedRoundToGameHistory } from "../Data/SaveData/GameHistory";
+import { setWingoConfigGamemodeSettings, getWingoInterlinkedGamemodeSettings } from "../Data/SaveData/MostRecentGamemodeSettings";
 
 export const wingoModes = [
   "daily",
@@ -168,7 +172,7 @@ const WingoConfig = (props: Props) => {
         const newTarget = getDeterministicArrayItems({ seedType: "today" }, 1, targetLengthWordArray)[0];
 
         // Load previous attempts at daily (if applicable)
-        const daily_word_storage = SaveData.getDailyWordGuesses();
+        const daily_word_storage = getDailyWordGuesses();
 
         // The actual daily word and the daily word set in local storage are the same
         if (newTarget.word === daily_word_storage?.dailyWord) {
@@ -299,7 +303,7 @@ const WingoConfig = (props: Props) => {
   // Save gameplay progress of daily wingo
   React.useEffect(() => {
     if (props.mode === "daily" && targetWord) {
-      SaveData.setDailyWordGuesses(targetWord, guesses, wordIndex, inProgress, inDictionary, currentWord);
+      setDailyWordGuesses(targetWord, guesses, wordIndex, inProgress, inDictionary, currentWord);
     }
   }, [targetWord, currentWord, guesses, wordIndex, inProgress, inDictionary]);
 
@@ -367,7 +371,7 @@ const WingoConfig = (props: Props) => {
     ResetGame();
 
     // Save the latest gamemode settings for this mode
-    SaveData.setWingoConfigGamemodeSettings(location, gamemodeSettings);
+    setWingoConfigGamemodeSettings(location, gamemodeSettings);
   }, [gamemodeSettings]);
 
   // Update targetWord every time the targetCategory changes
@@ -510,7 +514,7 @@ const WingoConfig = (props: Props) => {
       return;
     }
 
-    const gameId = SaveData.addGameToHistory(location, {
+    const gameId = addGameToHistory(location, {
       timestamp: new Date().toISOString(),
       gameCategory: "Wingo",
       page: location,
@@ -804,7 +808,7 @@ const WingoConfig = (props: Props) => {
 
     // Save round to history
     if (outcome !== "in-progress" && gameId) {
-      SaveData.addCompletedRoundToGameHistory(gameId, {
+      addCompletedRoundToGameHistory(gameId, {
         timestamp: new Date().toISOString(),
         gameCategory: "Wingo",
         page: location,
@@ -872,7 +876,7 @@ const WingoConfig = (props: Props) => {
         wordArrayConfig={{ type: "length" }}
         provideWords={false}
         gamemodeSettings={
-          SaveData.getWingoInterlinkedGamemodeSettings("/Wingo/Interlinked") ?? defaultWingoInterlinkedGamemodeSettings
+          getWingoInterlinkedGamemodeSettings("/Wingo/Interlinked") ?? defaultWingoInterlinkedGamemodeSettings
         }
       />
     );
@@ -885,7 +889,7 @@ const WingoConfig = (props: Props) => {
         wordArrayConfig={{ type: "category" }}
         provideWords={false}
         gamemodeSettings={
-          SaveData.getWingoInterlinkedGamemodeSettings("/Wingo/Crossword") ?? defaultWingoCrosswordGamemodeSettings
+          getWingoInterlinkedGamemodeSettings("/Wingo/Crossword") ?? defaultWingoCrosswordGamemodeSettings
         }
       />
     );
@@ -905,8 +909,8 @@ const WingoConfig = (props: Props) => {
           useExact: true,
           canRestart: false,
         }}
-        onSave={SaveData.setDailyCrossWordGuesses}
-        initialConfig={SaveData.getDailyCrossWordGuesses() || undefined}
+        onSave={setDailyCrossWordGuesses}
+        initialConfig={getDailyCrossWordGuesses() ?? undefined}
         provideWords={false}
         gamemodeSettings={defaultDailyCrosswordGamemodeSettings}
       />
@@ -927,8 +931,8 @@ const WingoConfig = (props: Props) => {
           useExact: true,
           canRestart: false,
         }}
-        onSave={SaveData.setWeeklyCrossWordGuesses}
-        initialConfig={SaveData.getWeeklyCrossWordGuesses() || undefined}
+        onSave={setWeeklyCrossWordGuesses}
+        initialConfig={getWeeklyCrossWordGuesses() || undefined}
         provideWords={false}
         gamemodeSettings={defaultWeeklyCrosswordGamemodeSettings}
       />
@@ -942,7 +946,7 @@ const WingoConfig = (props: Props) => {
         wordArrayConfig={{ type: "length" }}
         provideWords={true}
         gamemodeSettings={
-          SaveData.getWingoInterlinkedGamemodeSettings("/Wingo/Crossword/Fit") ??
+          getWingoInterlinkedGamemodeSettings("/Wingo/Crossword/Fit") ??
           defaultWingoCrosswordFitGamemodeSettings
         }
       />

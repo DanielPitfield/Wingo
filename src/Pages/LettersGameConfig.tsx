@@ -2,12 +2,14 @@ import React, { useState } from "react";
 import { PagePath } from "../Data/PageNames";
 import LettersGame from "./LettersGame";
 import { Theme } from "../Data/Themes";
-import { SaveData, SettingsData } from "../Data/SaveData/SaveData";
+
 import { getAllWordsOfLength } from "../Helpers/getWordsOfLength";
 import { getGamemodeDefaultTimerValue } from "../Helpers/getGamemodeDefaultTimerValue";
 import { isLettersGameGuessValid } from "../Helpers/isLettersGameGuessValid";
 import { useLocation } from "react-router-dom";
 import { isCampaignLevelPath } from "../Helpers/CampaignPathChecks";
+import { SettingsData } from "../Data/SaveData/Settings";
+import { setLettersGameConfigGamemodeSettings } from "../Data/SaveData/MostRecentGamemodeSettings";
 
 export interface LettersGameConfigProps {
   campaignConfig:
@@ -114,7 +116,7 @@ const LettersGameConfig = (props: Props) => {
     ResetGame();
 
     // Save the latest gamemode settings for this mode
-    SaveData.setLettersGameConfigGamemodeSettings(gamemodeSettings);
+    setLettersGameConfigGamemodeSettings(gamemodeSettings);
   }, [gamemodeSettings]);
 
   function ResetGame() {

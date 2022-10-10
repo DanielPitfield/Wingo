@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { PagePath } from "../Data/PageNames";
 import LetterCategories from "./LetterCategories";
-import { SaveData, SettingsData } from "../Data/SaveData/SaveData";
 import { DEFAULT_ALPHABET } from "./WingoConfig";
 import { Theme } from "../Data/Themes";
 import { categoryMappings } from "../Data/WordArrayMappings";
@@ -12,6 +11,8 @@ import { getGamemodeDefaultWordLength } from "../Helpers/getGamemodeDefaultWordL
 import { getRandomElementFrom } from "../Helpers/getRandomElementFrom";
 import { useLocation } from "react-router-dom";
 import { isCampaignLevelPath } from "../Helpers/CampaignPathChecks";
+import { SettingsData } from "../Data/SaveData/Settings";
+import { setLetterCategoriesConfigGamemodeSettings } from "../Data/SaveData/MostRecentGamemodeSettings";
 
 export interface LetterCategoriesConfigProps {
   campaignConfig:
@@ -119,7 +120,7 @@ const LetterCategoriesConfig = (props: Props) => {
     ResetGame();
 
     // Save the latest gamemode settings for this mode
-    SaveData.setLetterCategoriesConfigGamemodeSettings(gamemodeSettings);
+    setLetterCategoriesConfigGamemodeSettings(gamemodeSettings);
   }, [gamemodeSettings]);
 
   // Picks a required starting letter and then target words from categories starting with this letter

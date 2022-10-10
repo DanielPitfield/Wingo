@@ -1,7 +1,7 @@
 import { PagePath } from "../Data/PageNames";
 import { BsInfoCircleFill } from "react-icons/bs";
 import { AllChallenges } from "../Data/Challenges/AllChallenges";
-import { SaveData, SettingsData } from "../Data/SaveData/SaveData";
+
 import { Challenge } from "../Components/Challenge";
 import { Button } from "../Components/Button";
 import { Campaign } from "./Campaign";
@@ -9,6 +9,8 @@ import { Theme } from "../Data/Themes";
 import { FiPlay } from "react-icons/fi";
 import { gamemodeCategories, pageDescriptions } from "../Data/PageDescriptions";
 import { useNavigate } from "react-router-dom";
+import { SettingsData } from "../Data/SaveData/Settings";
+import { getHistory } from "../Data/SaveData/GameHistory";
 
 interface Props {
   theme: Theme;
@@ -20,7 +22,7 @@ interface Props {
 export const LobbyMenu = (props: Props) => {
   const navigate = useNavigate();
 
-  const history = SaveData.getHistory();
+  const history = getHistory();
 
   function renderGameModeTile(page: PagePath) {
     const pageInfo = pageDescriptions.find((x) => x.path === page);

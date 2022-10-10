@@ -16,7 +16,20 @@ import {
   defaultWordCodesMatchGamemodeSettings,
 } from "../Data/DefaultGamemodeSettings";
 import { PagePath } from "../Data/PageNames";
-import { SaveData } from "../Data/SaveData/SaveData";
+import {
+  getWingoConfigGamemodeSettings,
+  getLetterCategoriesConfigGamemodeSettings,
+  getLettersGameConfigGamemodeSettings,
+  getNumbersGameConfigGamemodeSettings,
+  getArithmeticRevealGamemodeSettings,
+  getArithmeticDragGamemodeSettings,
+  getNumbleConfigGamemodeSettings,
+  getOnlyConnectGamemodeSettings,
+  getSameLetterWordsGamemodeSettings,
+  getNumberSetsGamemodeSettings,
+  getAlgebraGamemodeSettings,
+  getWordCodesGamemodeSettings,
+} from "../Data/SaveData/MostRecentGamemodeSettings";
 import { AlgebraProps } from "../Pages/Algebra";
 import { ArithmeticDragProps } from "../Pages/ArithmeticDrag";
 import { ArithmeticRevealProps } from "../Pages/ArithmeticReveal";
@@ -43,7 +56,7 @@ export function getPageGamemodeSettings(page: PagePath) {
     case "/Wingo/Limitless":
     case "/Wingo/Puzzle":
     case "/Conundrum":
-      return (SaveData.getWingoConfigGamemodeSettings(page) ??
+      return (getWingoConfigGamemodeSettings(page) ??
         defaultWingoGamemodeSettings.find((x) => x.page === page)?.settings ??
         fallbackWingoSettings) as WingoConfigProps["gamemodeSettings"];
 
@@ -59,55 +72,54 @@ export function getPageGamemodeSettings(page: PagePath) {
       return fallbackWingoSettings as WingoConfigProps["gamemodeSettings"];
 
     case "/LettersCategories":
-      return (SaveData.getLetterCategoriesConfigGamemodeSettings() ??
+      return (getLetterCategoriesConfigGamemodeSettings() ??
         defaultLetterCategoriesGamemodeSettings) as LetterCategoriesConfigProps["gamemodeSettings"];
 
     case "/LettersGame":
-      return (SaveData.getLettersGameConfigGamemodeSettings() ??
+      return (getLettersGameConfigGamemodeSettings() ??
         defaultLettersGameGamemodeSettings) as LettersGameConfigProps["gamemodeSettings"];
 
     case "/NumbersGame":
-      return (SaveData.getNumbersGameConfigGamemodeSettings() ??
+      return (getNumbersGameConfigGamemodeSettings() ??
         defaultNumbersGameGamemodeSettings) as NumbersGameConfigProps["gamemodeSettings"];
 
     case "/ArithmeticReveal":
-      return (SaveData.getArithmeticRevealGamemodeSettings() ??
+      return (getArithmeticRevealGamemodeSettings() ??
         defaultArithmeticRevealGamemodeSettings) as ArithmeticRevealProps["gamemodeSettings"];
 
     case "/ArithmeticDrag/Order":
-      return (SaveData.getArithmeticDragGamemodeSettings("/ArithmeticDrag/Order") ??
+      return (getArithmeticDragGamemodeSettings("/ArithmeticDrag/Order") ??
         defaultArithmeticDragOrderGamemodeSettings) as ArithmeticDragProps["gamemodeSettings"];
 
     case "/ArithmeticDrag/Match":
-      return (SaveData.getArithmeticDragGamemodeSettings("/ArithmeticDrag/Match") ??
+      return (getArithmeticDragGamemodeSettings("/ArithmeticDrag/Match") ??
         defaultArithmeticDragMatchGamemodeSettings) as ArithmeticDragProps["gamemodeSettings"];
 
     case "/Numble":
-      return (SaveData.getNumbleConfigGamemodeSettings() ??
+      return (getNumbleConfigGamemodeSettings() ??
         defaultNumbleGamemodeSettings) as NumbleConfigProps["gamemodeSettings"];
 
     case "/OnlyConnect":
-      return (SaveData.getOnlyConnectGamemodeSettings() ??
+      return (getOnlyConnectGamemodeSettings() ??
         defaultOnlyConnectGamemodeSettings) as OnlyConnectProps["gamemodeSettings"];
 
     case "/SameLetters":
-      return (SaveData.getSameLetterWordsGamemodeSettings() ??
+      return (getSameLetterWordsGamemodeSettings() ??
         defaultSameLetterWordsGamemodeSettings) as SameLetterWordsProps["gamemodeSettings"];
 
     case "/NumberSets":
-      return (SaveData.getNumberSetsGamemodeSettings() ??
+      return (getNumberSetsGamemodeSettings() ??
         defaultNumberSetsGamemodeSettings) as NumberSetsProps["gamemodeSettings"];
 
     case "/Algebra":
-      return (SaveData.getAlgebraGamemodeSettings() ??
-        defaultAlgebraGamemodeSettings) as AlgebraProps["gamemodeSettings"];
+      return (getAlgebraGamemodeSettings() ?? defaultAlgebraGamemodeSettings) as AlgebraProps["gamemodeSettings"];
 
     case "/WordCodes/Question":
-      return (SaveData.getWordCodesGamemodeSettings("/WordCodes/Question") ??
+      return (getWordCodesGamemodeSettings("/WordCodes/Question") ??
         defaultWordCodesQuestionGamemodeSettings) as WordCodesProps["gamemodeSettings"];
 
     case "/WordCodes/Match":
-      return (SaveData.getWordCodesGamemodeSettings("/WordCodes/Match") ??
+      return (getWordCodesGamemodeSettings("/WordCodes/Match") ??
         defaultWordCodesMatchGamemodeSettings) as WordCodesProps["gamemodeSettings"];
 
     default:

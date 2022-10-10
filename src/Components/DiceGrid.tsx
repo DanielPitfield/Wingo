@@ -1,6 +1,7 @@
 import React from "react";
+import { SettingsData } from "../Data/SaveData/Settings";
 import { Button } from "./Button";
-import { SettingsData } from "../Data/SaveData/SaveData";
+
 import Dice from "./Dice";
 
 interface Props {

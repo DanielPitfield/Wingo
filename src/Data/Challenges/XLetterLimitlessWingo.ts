@@ -1,4 +1,4 @@
-import { HistorySaveData } from "../SaveData/SaveData";
+import { HistorySaveData } from "../SaveData/GameHistory";
 import { BaseChallenge, ChallengeReward } from "./BaseChallenge";
 
 /** Completion an x letter limitless wingo */
@@ -42,7 +42,7 @@ export class XLetterLimitlessWingo extends BaseChallenge {
     const gameWordLengths = history.games
       .filter(
         (game) =>
-          game.page === "wingo/limitless" &&
+          game.page === "/Wingo/Limitless" &&
           game.completedRounds.some(
             (round) =>
               (round.gameCategory === "Wingo"

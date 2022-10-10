@@ -3,7 +3,6 @@ import { SplashScreen } from "./Pages/SplashScreen";
 import { LobbyMenu } from "./Pages/LobbyMenu";
 import WingoConfig, { WingoConfigProps } from "./Pages/WingoConfig";
 import NumbleConfig, { NumbleConfigProps } from "./Pages/NumbleConfig";
-import { SaveData, SettingsData } from "./Data/SaveData/SaveData";
 import LettersGameConfig, { LettersGameConfigProps } from "./Pages/LettersGameConfig";
 import NumbersGameConfig, { NumbersGameConfigProps } from "./Pages/NumbersGameConfig";
 import { Campaign } from "./Pages/Campaign";
@@ -37,6 +36,9 @@ import { getPageGamemodeSettings } from "./Helpers/getPageGamemodeSettings";
 import { getRandomElementFrom } from "./Helpers/getRandomElementFrom";
 import { Routes, Route, useNavigate, useLocation, Navigate } from "react-router-dom";
 import { PageWrapper } from "./Components/PageWrapper";
+import { addCompletedCampaignAreaUnlockLevel, addCompletedCampaignAreaLevel, getCampaignProgress } from "./Data/SaveData/CampaignProgress";
+import { getSettings, SettingsData } from "./Data/SaveData/Settings";
+import { readGold } from "./Data/SaveData/Gold";
 
 export const App = () => {
   // What is the current path?
@@ -59,7 +61,7 @@ export const App = () => {
   }
 
   const saveData = window.localStorage;
-  const [settings, setSettings] = useState<SettingsData>(SaveData.getSettings());
+  const [settings, setSettings] = useState<SettingsData>(getSettings());
 
   const [loadingState, setLoadingState] = useState<"loading" | "loaded">("loading");
 
@@ -70,7 +72,7 @@ export const App = () => {
     getHighestCampaignArea()?.theme ||
       (settings.graphics.preferredTheme ? Themes[settings.graphics.preferredTheme] : Themes.GenericWingo)
   );
-  const [gold, setGold] = useState<number>(SaveData.readGold());
+  const [gold, setGold] = useState<number>(readGold());
   const [playBackgroundMusic, stopBackgroundMusic] = useBackgroundMusic(settings, theme);
 
   const getNewEntryPage = () => {
@@ -154,12 +156,12 @@ export const App = () => {
   }, [playBackgroundMusic, stopBackgroundMusic, loadingState]);
 
   React.useEffect(() => {
-    SaveData.setSettings(settings);
+    setSettings(settings);
     setThemeIfNoPreferredSet(getHighestCampaignArea()?.theme || Themes.GenericWingo);
   }, [settings]);
 
   React.useEffect(() => {
-    SaveData.setGold(gold);
+    setGold(gold);
   }, [gold]);
   function setThemeIfNoPreferredSet(theme: Theme) {
     setTheme(settings.graphics.preferredTheme ? Themes[settings.graphics.preferredTheme] : theme);
@@ -185,11 +187,11 @@ export const App = () => {
     }
 
     if (isUnlockLevel) {
-      SaveData.addCompletedCampaignAreaUnlockLevel(areaConfig.name);
+      addCompletedCampaignAreaUnlockLevel(areaConfig.name);
     }
 
     const levelId = getId(levelConfig.level);
-    SaveData.addCompletedCampaignAreaLevel(areaConfig.name, levelId);
+    addCompletedCampaignAreaLevel(areaConfig.name, levelId);
   }
 
   function addGold(additionalGold: number) {
@@ -199,7 +201,7 @@ export const App = () => {
   function getHighestCampaignArea(): AreaConfig {
     const reversedCopy = AllCampaignAreas.slice().reverse();
     const highestCampaignArea = reversedCopy.filter((campaignArea) => {
-      const areaInfo = SaveData.getCampaignProgress().areas.find((area) => area.name === campaignArea.name);
+      const areaInfo = getCampaignProgress().areas.find((area) => area.name === campaignArea.name);
 
       return areaInfo?.status === "unlocked";
     })[0];
@@ -670,7 +672,7 @@ export const App = () => {
             <ErrorFallback
               error={new Error("Page not found")}
               resetErrorBoundary={() => navigate("/Home")}
-              settingsData={SaveData.getSettings()}
+              settingsData={getSettings()}
               version={VERSION}
             />
           }

@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { pageDescriptions } from "../Data/PageDescriptions";
 import { getId, LevelConfig } from "./Level";
-import { SaveData, SettingsData } from "../Data/SaveData/SaveData";
 import { Theme } from "../Data/Themes";
 import { usePopper } from "react-popper";
 import { useClickChime } from "../Data/Sounds";
 import { AreaConfig } from "../Pages/Area";
 import { useNavigate } from "react-router-dom";
+import { DISABLED_SETTINGS, SettingsData } from "../Data/SaveData/Settings";
+import { getCampaignProgress } from "../Data/SaveData/CampaignProgress";
 
 interface LevelNodeProps {
   level: LevelConfig;
@@ -29,9 +30,9 @@ export const LevelNode = (props: LevelNodeProps) => {
     strategy: "absolute",
     modifiers: [{ name: "arrow", options: { element: arrowElement } }],
   });
-  const [playClickSoundEffect] = useClickChime(props.settings || SaveData.DISABLED_SETTINGS);
+  const [playClickSoundEffect] = useClickChime(props.settings ?? DISABLED_SETTINGS);
 
-  const campaignProgress = SaveData.getCampaignProgress();
+  const campaignProgress = getCampaignProgress();
   const areaInfo = campaignProgress.areas.find((x) => x.name === props.area.name);
 
   // Determine whether this is the first level

@@ -1,4 +1,4 @@
-import { HistorySaveData } from "../SaveData/SaveData";
+import { HistorySaveData } from "../SaveData/GameHistory";
 import { BaseChallenge, ChallengeReward } from "./BaseChallenge";
 
 /** Completion of the x 'Standard/Normal' Wingos */
@@ -40,7 +40,7 @@ export class XNormalWingos extends BaseChallenge {
   public currentProgress(history: HistorySaveData): number {
     // Return the count of 'wingo/repeat' games completed successfully
     return history.games.filter(
-      (game) => game.page === "wingo/repeat" && game.completedRounds.at(-1)?.outcome === "success"
+      (game) => game.page === "/Wingo/Repeat" && game.completedRounds.at(-1)?.outcome === "success"
     ).length;
   }
 
