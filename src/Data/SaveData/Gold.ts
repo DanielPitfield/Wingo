@@ -2,13 +2,14 @@
  * Reads the stored amount of gold from storage.
  */
 export function readGold(): number {
-  const gold: number = parseInt(localStorage.getItem("gold") ?? "0");
+  const gold = localStorage.getItem("gold") ?? "0";
+  const parsedGold: number = parseInt(gold);
 
-  if (isNaN(gold)) {
+  if (isNaN(parsedGold)) {
     return 0;
   }
 
-  return gold;
+  return parsedGold;
 }
 
 /**
