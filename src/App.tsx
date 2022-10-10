@@ -41,7 +41,7 @@ import {
   addCompletedCampaignAreaLevel,
   getCampaignProgress,
 } from "./Data/SaveData/CampaignProgress";
-import { getSettings, SettingsData } from "./Data/SaveData/Settings";
+import { getSettings, saveSettings, SettingsData } from "./Data/SaveData/Settings";
 import { readGold } from "./Data/SaveData/Gold";
 
 export const App = () => {
@@ -160,7 +160,7 @@ export const App = () => {
   }, [playBackgroundMusic, stopBackgroundMusic, loadingState]);
 
   React.useEffect(() => {
-    setSettings(settings);
+    saveSettings(settings);
     setThemeIfNoPreferredSet(getHighestCampaignArea()?.theme || Themes.GenericWingo);
   }, [settings]);
 

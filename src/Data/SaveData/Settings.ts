@@ -50,7 +50,7 @@ export function getSettings(): SettingsData {
  * Sets saved settings.
  * @param updatedSettings Settings to update.
  */
-export function setSettings(updatedSettings: Partial<SettingsData>) {
+export function saveSettings(updatedSettings: Partial<SettingsData>) {
   const currentSettings = getSettings();
 
   const settings = { ...currentSettings, ...updatedSettings };
