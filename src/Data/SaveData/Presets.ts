@@ -8,7 +8,6 @@ export type GamemodeSettingsPreset = {
   gameSettings: WingoConfigProps["gamemodeSettings"];
 };
 
-
 /**
  * Saves the gamemode settings preset for Wingo Config.
  * @param page Page.
@@ -40,12 +39,10 @@ export function getWingoConfigGamemodeSettingsPresets(page: PagePath): GamemodeS
  * @param presetName The gamemode setting preset name for Wingo Config to save.
  */
 export function removeWingoConfigGamemodeSettingPreset(page: PagePath, presetName: string) {
-  // TODO: Interpolating item name which could be null, this will never be falsy
-  const itemName = `${determineLocalStorageItemName(page)}-preset-${presetName}`;
+  const itemNamePagePrefix = determineLocalStorageItemName(page);
 
-  if (!itemName) {
-    return;
+  if (itemNamePagePrefix && presetName) {
+    const itemName = `${itemNamePagePrefix}-preset-${presetName}`;
+    localStorage.removeItem(itemName);
   }
-
-  localStorage.removeItem(itemName);
 }
