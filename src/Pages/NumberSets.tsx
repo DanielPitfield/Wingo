@@ -357,7 +357,6 @@ const NumberSets = (props: Props) => {
         ></LetterTile>
       </div>
 
-      {props.settings.gameplay.keyboard && (
         <NumPad
           onEnter={() => setInProgress(false)}
           onBackspace={onBackspace}
@@ -367,8 +366,7 @@ const NumberSets = (props: Props) => {
           hasBackspace={true}
           hasEnter={true}
         />
-      )}
-
+        
       <div>
         {gamemodeSettings.timerConfig.isTimed && (
           <ProgressBar

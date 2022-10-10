@@ -773,10 +773,6 @@ const WordCodes = (props: Props) => {
   }
 
   function displayInputMethod(): React.ReactNode {
-    if (!props.settings.gameplay.keyboard) {
-      return;
-    }
-
     // No input method, the tiles are just dragged and dropped
     if (props.mode === "match") {
       return;

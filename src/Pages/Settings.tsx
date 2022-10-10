@@ -120,8 +120,8 @@ export const Settings = (props: Props) => {
         {
           name: "Display on-screen keyboard",
           type: "boolean",
-          value: props.settings.gameplay.keyboard,
-          onChange: (keyboard) => ({ ...settings, gameplay: { ...settings.gameplay, keyboard } }),
+          value: props.settings.gameplay.showKeyboardUi,
+          onChange: (keyboard) => ({ ...settings, gameplay: { ...settings.gameplay, showKeyboardUi: keyboard } }),
         },
         {
           name: "Skip splashscreen",

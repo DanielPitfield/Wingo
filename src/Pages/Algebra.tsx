@@ -387,10 +387,6 @@ const Algebra = (props: Props) => {
   }
 
   function displayInputMethods(): React.ReactNode {
-    if (!props.settings.gameplay.keyboard) {
-      return;
-    }
-
     const answerType: answerType = getCurrentQuestionTemplate().answerType;
 
     const letterKeyboard = (

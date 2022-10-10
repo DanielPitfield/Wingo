@@ -567,7 +567,7 @@ const ArithmeticReveal = (props: Props) => {
           ></LetterTile>
         </div>
       )}
-      {props.settings.gameplay.keyboard && revealState.type === "finished" && (
+      {revealState.type === "finished" && (
         <NumPad
           onEnter={() => setInProgress(false)}
           onBackspace={onBackspace}

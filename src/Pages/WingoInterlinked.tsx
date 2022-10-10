@@ -1012,21 +1012,19 @@ export const WingoInterlinked = (props: Props) => {
         </Button>
       )}
 
-      {props.settings.gameplay.keyboard && (
-        <Keyboard
-          onEnter={onEnter}
-          onSubmitLetter={onSubmitLetter}
-          onBackspace={onBackspace}
-          guesses={[]}
-          targetWord={""}
-          inDictionary={true}
-          letterStatuses={[]}
-          settings={props.settings}
-          disabled={!inProgress}
-          hasBackspace={true}
-          hasEnter={true}
-        />
-      )}
+      <Keyboard
+        onEnter={onEnter}
+        onSubmitLetter={onSubmitLetter}
+        onBackspace={onBackspace}
+        guesses={[]}
+        targetWord={""}
+        inDictionary={true}
+        letterStatuses={[]}
+        settings={props.settings}
+        disabled={!inProgress}
+        hasBackspace={true}
+        hasEnter={true}
+      />
 
       <div>
         {gamemodeSettings.timerConfig.isTimed && (

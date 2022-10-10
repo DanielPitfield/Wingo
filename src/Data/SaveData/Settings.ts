@@ -12,7 +12,7 @@ export type SettingsData = {
     animation: boolean;
   };
   gameplay: {
-    keyboard: boolean;
+    showKeyboardUi: boolean;
     skipSplashscreen: boolean;
     entryPage: string | null;
   };
@@ -22,14 +22,14 @@ export type SettingsData = {
 export const DISABLED_SETTINGS: SettingsData = {
   sound: { masterVolume: 0, effectsVolume: 0, backgroundVolume: 0 },
   graphics: { darkMode: false, preferredTheme: null, animation: false },
-  gameplay: { keyboard: false, skipSplashscreen: true, entryPage: "Home" },
+  gameplay: { showKeyboardUi: false, skipSplashscreen: true, entryPage: "Home" },
 };
 
 /** Default settings */
 const DEFAULT_SETTINGS: SettingsData = {
   sound: { masterVolume: 0.5, effectsVolume: 0.5, backgroundVolume: 0.35 },
   graphics: { darkMode: false, preferredTheme: null, animation: true },
-  gameplay: { keyboard: true, skipSplashscreen: false, entryPage: "Home" },
+  gameplay: { showKeyboardUi: true, skipSplashscreen: false, entryPage: "Home" },
 };
 
 /**

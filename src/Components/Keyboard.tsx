@@ -197,6 +197,10 @@ export const Keyboard = (props: Props) => {
     });
   }
 
+  if (!props.settings.gameplay.showKeyboardUi) {
+    return <></>;
+  }
+
   return (
     <div className="keyboard_wrapper">
       <div className="keyboard_row">

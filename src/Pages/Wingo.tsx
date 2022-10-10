@@ -499,24 +499,22 @@ const Wingo = (props: Props) => {
 
       <div className="word_grid">{displayGrid()}</div>
 
-      {props.settings.gameplay.keyboard && (
-        <Keyboard
-          onEnter={props.onEnter}
-          onSubmitLetter={(letter) => {
-            props.onSubmitLetter(letter);
-            playLightPingSoundEffect();
-          }}
-          onBackspace={props.onBackspace}
-          guesses={props.guesses}
-          targetWord={props.targetWord}
-          inDictionary={props.inDictionary}
-          letterStatuses={props.letterStatuses}
-          settings={props.settings}
-          disabled={!props.inProgress || keyboardDisabled}
-          hasBackspace={true}
-          hasEnter={true}
-        />
-      )}
+      <Keyboard
+        onEnter={props.onEnter}
+        onSubmitLetter={(letter) => {
+          props.onSubmitLetter(letter);
+          playLightPingSoundEffect();
+        }}
+        onBackspace={props.onBackspace}
+        guesses={props.guesses}
+        targetWord={props.targetWord}
+        inDictionary={props.inDictionary}
+        letterStatuses={props.letterStatuses}
+        settings={props.settings}
+        disabled={!props.inProgress || keyboardDisabled}
+        hasBackspace={true}
+        hasEnter={true}
+      />
 
       <div>
         {props.gamemodeSettings.timerConfig.isTimed && (

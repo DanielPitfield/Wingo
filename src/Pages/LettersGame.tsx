@@ -308,21 +308,19 @@ const LettersGame = (props: Props) => {
 
       <div className="letters-game-word-grid">{displayGrid()}</div>
 
-      {props.settings.gameplay.keyboard && (
-        <Keyboard
-          onEnter={props.onEnter}
-          onSubmitLetter={props.onSubmitKeyboardLetter}
-          onBackspace={props.onBackspace}
-          guesses={props.guesses}
-          targetWord={props.targetWord}
-          inDictionary={props.inDictionary}
-          letterStatuses={[]}
-          settings={props.settings}
-          disabled={!props.inProgress}
-          hasBackspace={true}
-          hasEnter={true}
-        />
-      )}
+      <Keyboard
+        onEnter={props.onEnter}
+        onSubmitLetter={props.onSubmitKeyboardLetter}
+        onBackspace={props.onBackspace}
+        guesses={props.guesses}
+        targetWord={props.targetWord}
+        inDictionary={props.inDictionary}
+        letterStatuses={[]}
+        settings={props.settings}
+        disabled={!props.inProgress}
+        hasBackspace={true}
+        hasEnter={true}
+      />
 
       <div>
         {props.gamemodeSettings.timerConfig.isTimed && (

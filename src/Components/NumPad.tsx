@@ -77,6 +77,10 @@ export const NumPad = (props: Props) => {
     ));
   }
 
+  if (!props.settings.gameplay.showKeyboardUi) {
+    return <></>;
+  }
+
   return (
     <div className="numPad_wrapper">
       <div className="numPad_row">{populateNumpad([7, 8, 9])}</div>
