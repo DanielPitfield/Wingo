@@ -16,13 +16,13 @@ import { PagePath } from "../PageNames";
 
 /**
  * Saves the most recent gamemode settings for Wingo Config.
- * @param gameSettings The latest gamemode settings for Wingo Config to save.
+ * @param gamemodeSettings The latest gamemode settings for Wingo Config to save.
  */
-export function setWingoConfigGamemodeSettings(page: PagePath, gameSettings: WingoConfigProps["gamemodeSettings"]) {
+export function setWingoConfigGamemodeSettings(page: PagePath, gamemodeSettings: WingoConfigProps["gamemodeSettings"]) {
   const itemName = getLocalStorageItemName(page);
 
   if (itemName) {
-    localStorage.setItem(itemName, JSON.stringify(gameSettings));
+    localStorage.setItem(itemName, JSON.stringify(gamemodeSettings));
   }
 }
 
@@ -48,12 +48,12 @@ export function getWingoConfigGamemodeSettings(page: PagePath): WingoConfigProps
 
 export function setWingoInterlinkedGamemodeSettings(
   page: PagePath,
-  gameSettings: WingoInterlinkedProps["gamemodeSettings"]
+  gamemodeSettings: WingoInterlinkedProps["gamemodeSettings"]
 ) {
   const itemName = getLocalStorageItemName(page);
 
   if (itemName) {
-    localStorage.setItem(itemName, JSON.stringify(gameSettings));
+    localStorage.setItem(itemName, JSON.stringify(gamemodeSettings));
   }
 }
 
@@ -71,8 +71,8 @@ export function getWingoInterlinkedGamemodeSettings(page: PagePath): WingoInterl
   return null;
 }
 
-export function setNumbleConfigGamemodeSettings(gameSettings: NumbleConfigProps["gamemodeSettings"]) {
-  localStorage.setItem("numbleConfigGamemodeSettings", JSON.stringify(gameSettings));
+export function setNumbleConfigGamemodeSettings(gamemodeSettings: NumbleConfigProps["gamemodeSettings"]) {
+  localStorage.setItem("numbleConfigGamemodeSettings", JSON.stringify(gamemodeSettings));
 }
 
 export function getNumbleConfigGamemodeSettings(): NumbleConfigProps["gamemodeSettings"] | null {
@@ -86,9 +86,9 @@ export function getNumbleConfigGamemodeSettings(): NumbleConfigProps["gamemodeSe
 }
 
 export function setLetterCategoriesConfigGamemodeSettings(
-  gameSettings: LetterCategoriesConfigProps["gamemodeSettings"]
+  gamemodeSettings: LetterCategoriesConfigProps["gamemodeSettings"]
 ) {
-  localStorage.setItem("letterCategoriesConfigGamemodeSettings", JSON.stringify(gameSettings));
+  localStorage.setItem("letterCategoriesConfigGamemodeSettings", JSON.stringify(gamemodeSettings));
 }
 
 export function getLetterCategoriesConfigGamemodeSettings(): LetterCategoriesConfigProps["gamemodeSettings"] | null {
@@ -101,8 +101,8 @@ export function getLetterCategoriesConfigGamemodeSettings(): LetterCategoriesCon
   return null;
 }
 
-export function setLettersGameConfigGamemodeSettings(gameSettings: LettersGameConfigProps["gamemodeSettings"]) {
-  localStorage.setItem("lettersGameConfigGamemodeSettings", JSON.stringify(gameSettings));
+export function setLettersGameConfigGamemodeSettings(gamemodeSettings: LettersGameConfigProps["gamemodeSettings"]) {
+  localStorage.setItem("lettersGameConfigGamemodeSettings", JSON.stringify(gamemodeSettings));
 }
 
 export function getLettersGameConfigGamemodeSettings(): LettersGameConfigProps["gamemodeSettings"] | null {
@@ -115,8 +115,8 @@ export function getLettersGameConfigGamemodeSettings(): LettersGameConfigProps["
   return null;
 }
 
-export function setNumbersGameConfigGamemodeSettings(gameSettings: NumbersGameConfigProps["gamemodeSettings"]) {
-  localStorage.setItem("numbersGameConfigGamemodeSettings", JSON.stringify(gameSettings));
+export function setNumbersGameConfigGamemodeSettings(gamemodeSettings: NumbersGameConfigProps["gamemodeSettings"]) {
+  localStorage.setItem("numbersGameConfigGamemodeSettings", JSON.stringify(gamemodeSettings));
 }
 
 export function getNumbersGameConfigGamemodeSettings(): NumbersGameConfigProps["gamemodeSettings"] | null {
@@ -129,8 +129,8 @@ export function getNumbersGameConfigGamemodeSettings(): NumbersGameConfigProps["
   return null;
 }
 
-export function setArithmeticRevealGamemodeSettings(gameSettings: ArithmeticRevealProps["gamemodeSettings"]) {
-  localStorage.setItem("arithmeticRevealGamemodeSettings", JSON.stringify(gameSettings));
+export function setArithmeticRevealGamemodeSettings(gamemodeSettings: ArithmeticRevealProps["gamemodeSettings"]) {
+  localStorage.setItem("arithmeticRevealGamemodeSettings", JSON.stringify(gamemodeSettings));
 }
 
 export function getArithmeticRevealGamemodeSettings(): ArithmeticRevealProps["gamemodeSettings"] | null {
@@ -145,12 +145,12 @@ export function getArithmeticRevealGamemodeSettings(): ArithmeticRevealProps["ga
 
 export function setArithmeticDragGamemodeSettings(
   page: PagePath,
-  gameSettings: ArithmeticDragProps["gamemodeSettings"]
+  gamemodeSettings: ArithmeticDragProps["gamemodeSettings"]
 ) {
   const itemName = getLocalStorageItemName(page);
 
   if (itemName) {
-    localStorage.setItem(itemName, JSON.stringify(gameSettings));
+    localStorage.setItem(itemName, JSON.stringify(gamemodeSettings));
   }
 }
 
@@ -168,8 +168,8 @@ export function getArithmeticDragGamemodeSettings(page: PagePath): ArithmeticDra
   return null;
 }
 
-export function setOnlyConnectGamemodeSettings(gameSettings: OnlyConnectProps["gamemodeSettings"]) {
-  localStorage.setItem("onlyConnectGamemodeSettings", JSON.stringify(gameSettings));
+export function setOnlyConnectGamemodeSettings(gamemodeSettings: OnlyConnectProps["gamemodeSettings"]) {
+  localStorage.setItem("onlyConnectGamemodeSettings", JSON.stringify(gamemodeSettings));
 }
 
 export function getOnlyConnectGamemodeSettings(): OnlyConnectProps["gamemodeSettings"] | null {
@@ -182,8 +182,8 @@ export function getOnlyConnectGamemodeSettings(): OnlyConnectProps["gamemodeSett
   return null;
 }
 
-export function setSameLetterWordsGamemodeSettings(gameSettings: SameLetterWordsProps["gamemodeSettings"]) {
-  localStorage.setItem("sameLetterWordsGamemodeSettings", JSON.stringify(gameSettings));
+export function setSameLetterWordsGamemodeSettings(gamemodeSettings: SameLetterWordsProps["gamemodeSettings"]) {
+  localStorage.setItem("sameLetterWordsGamemodeSettings", JSON.stringify(gamemodeSettings));
 }
 
 export function getSameLetterWordsGamemodeSettings(): SameLetterWordsProps["gamemodeSettings"] | null {
@@ -196,8 +196,8 @@ export function getSameLetterWordsGamemodeSettings(): SameLetterWordsProps["game
   return null;
 }
 
-export function setNumberSetsGamemodeSettings(gameSettings: NumberSetsProps["gamemodeSettings"]) {
-  localStorage.setItem("numberSetsGamemodeSettings", JSON.stringify(gameSettings));
+export function setNumberSetsGamemodeSettings(gamemodeSettings: NumberSetsProps["gamemodeSettings"]) {
+  localStorage.setItem("numberSetsGamemodeSettings", JSON.stringify(gamemodeSettings));
 }
 
 export function getNumberSetsGamemodeSettings(): NumberSetsProps["gamemodeSettings"] | null {
@@ -210,8 +210,8 @@ export function getNumberSetsGamemodeSettings(): NumberSetsProps["gamemodeSettin
   return null;
 }
 
-export function setAlgebraGamemodeSettings(gameSettings: AlgebraProps["gamemodeSettings"]) {
-  localStorage.setItem("algebraGamemodeSettings", JSON.stringify(gameSettings));
+export function setAlgebraGamemodeSettings(gamemodeSettings: AlgebraProps["gamemodeSettings"]) {
+  localStorage.setItem("algebraGamemodeSettings", JSON.stringify(gamemodeSettings));
 }
 
 export function getAlgebraGamemodeSettings(): AlgebraProps["gamemodeSettings"] | null {
@@ -224,11 +224,11 @@ export function getAlgebraGamemodeSettings(): AlgebraProps["gamemodeSettings"] |
   return null;
 }
 
-export function setWordCodesGamemodeSettings(page: PagePath, gameSettings: WordCodesProps["gamemodeSettings"]) {
+export function setWordCodesGamemodeSettings(page: PagePath, gamemodeSettings: WordCodesProps["gamemodeSettings"]) {
   const itemName = getLocalStorageItemName(page);
 
   if (itemName) {
-    localStorage.setItem(itemName, JSON.stringify(gameSettings));
+    localStorage.setItem(itemName, JSON.stringify(gamemodeSettings));
   }
 }
 
