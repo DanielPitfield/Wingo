@@ -6,10 +6,7 @@ import {
   MIN_TARGET_WORD_LENGTH,
 } from "../../Data/GamemodeSettingsInputLimits";
 import { PagePath } from "../../Data/PageNames";
-import {
-  getWingoConfigGamemodeSettingsPresets,
-  removeWingoConfigGamemodeSettingPreset,
-} from "../../Data/SaveData/Presets";
+import { getGamemodeSettingsPresets, removeGamemodeSettingPreset } from "../../Data/SaveData/Presets";
 import { WingoConfigProps, WingoMode } from "../../Pages/WingoConfig";
 
 import GamemodeSettingsMenu from "../GamemodeSettingsMenu";
@@ -42,7 +39,8 @@ const WingoGamemodeSettings = (props: Props) => {
   const location = useLocation().pathname as PagePath;
 
   const getPresets = () => {
-    const presets = getWingoConfigGamemodeSettingsPresets(location);
+    const presets = getGamemodeSettingsPresets<WingoConfigProps["gamemodeSettings"]>(location);
+    
     return presets.map((preset) => ({
       ...preset,
       preview: <span title={JSON.stringify(preset.gamemodeSettings, undefined, 4)}>Info</span>,
@@ -50,7 +48,7 @@ const WingoGamemodeSettings = (props: Props) => {
   };
 
   const removePreset = (presetName: string) => {
-    removeWingoConfigGamemodeSettingPreset(location, presetName);
+    removeGamemodeSettingPreset(location, presetName);
   };
 
   if (props.mode === "puzzle") {
@@ -102,7 +100,7 @@ const WingoGamemodeSettings = (props: Props) => {
 
           <SaveGamemodePresetModal
             currentGamemodeSettings={props.gamemodeSettings}
-            existingPresets={getWingoConfigGamemodeSettingsPresets(location)}
+            existingPresets={getGamemodeSettingsPresets(location)}
             onHide={props.onHideOfAddPresetModal}
             onShow={props.onShowOfAddPresetModal}
           ></SaveGamemodePresetModal>

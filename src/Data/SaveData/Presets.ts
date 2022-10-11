@@ -2,11 +2,11 @@ import { getLocalStorageItemName } from "../../Helpers/getLocalStorageItemName";
 import { WingoConfigProps } from "../../Pages/WingoConfig";
 import { PagePath } from "../PageNames";
 
-export type GamemodeSettingsPreset = {
+export type GamemodeSettingsPreset<TGamemodeSettings> = {
   name: string;
   timestamp: string;
   // TODO: Generic type
-  gamemodeSettings: WingoConfigProps["gamemodeSettings"];
+  gamemodeSettings: TGamemodeSettings;
 };
 
 /**
@@ -14,7 +14,7 @@ export type GamemodeSettingsPreset = {
  * @param page Page.
  * @param preset The gamemode setting preset for Wingo Config to save.
  */
-export function addWingoConfigGamemodeSettingsPreset(page: PagePath, preset: GamemodeSettingsPreset) {
+export function addGamemodeSettingsPreset<TGamemodeSettings>(page: PagePath, preset: GamemodeSettingsPreset<TGamemodeSettings>) {
   const itemName = `${getLocalStorageItemName(page)}-preset-${preset.name}`;
 
   if (itemName) {
@@ -26,10 +26,10 @@ export function addWingoConfigGamemodeSettingsPreset(page: PagePath, preset: Gam
  * Gets the saved gamemode settings presets for Wingo Config, or null if no saved gamemode settings were found.
  * @returns The saved gamemode settings presets for Wingo Config to save.
  */
-export function getWingoConfigGamemodeSettingsPresets(page: PagePath): GamemodeSettingsPreset[] {
+export function getGamemodeSettingsPresets<TGamemodeSettings>(page: PagePath): GamemodeSettingsPreset<TGamemodeSettings>[] {
   const gamemodeSettingPresets = Object.entries(localStorage)
     .filter(([key, _]) => key.startsWith(`${getLocalStorageItemName(page)}-preset-`))
-    .map(([_, value]) => JSON.parse(value) as GamemodeSettingsPreset);
+    .map(([_, value]) => JSON.parse(value));
 
   return gamemodeSettingPresets;
 }
@@ -39,7 +39,7 @@ export function getWingoConfigGamemodeSettingsPresets(page: PagePath): GamemodeS
  * @param page Page.
  * @param presetName The gamemode setting preset name for Wingo Config to save.
  */
-export function removeWingoConfigGamemodeSettingPreset(page: PagePath, presetName: string) {
+export function removeGamemodeSettingPreset(page: PagePath, presetName: string) {
   const itemNamePagePrefix = getLocalStorageItemName(page);
 
   if (itemNamePagePrefix && presetName) {

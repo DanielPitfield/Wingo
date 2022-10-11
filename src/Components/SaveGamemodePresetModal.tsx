@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { PagePath } from "../Data/PageNames";
-import { addWingoConfigGamemodeSettingsPreset, GamemodeSettingsPreset } from "../Data/SaveData/Presets";
+import { addGamemodeSettingsPreset, GamemodeSettingsPreset } from "../Data/SaveData/Presets";
 import { WingoConfigProps } from "../Pages/WingoConfig";
 import { Button } from "./Button";
 import { MessageNotification } from "./MessageNotification";
@@ -69,7 +69,7 @@ const SaveGamemodePresetModal = (props: Props) => {
                 return;
               }
 
-              addWingoConfigGamemodeSettingsPreset(location, {
+              addGamemodeSettingsPreset(location, {
                 name: presetName,
                 timestamp: new Date().toISOString(),
                 gamemodeSettings: props.currentGamemodeSettings,
