@@ -1,4 +1,3 @@
-import { useCallback, useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import {
   MAX_TARGET_WORD_LENGTH,
@@ -8,16 +7,14 @@ import {
 } from "../../Data/GamemodeSettingsInputLimits";
 import { PagePath } from "../../Data/PageNames";
 import {
-  addWingoConfigGamemodeSettingsPreset,
-  GamemodeSettingsPreset,
   getWingoConfigGamemodeSettingsPresets,
   removeWingoConfigGamemodeSettingPreset,
 } from "../../Data/SaveData/Presets";
 import { WingoConfigProps, WingoMode } from "../../Pages/WingoConfig";
-import { Button } from "../Button";
+
 import GamemodeSettingsMenu from "../GamemodeSettingsMenu";
-import { MessageNotification } from "../MessageNotification";
-import { Modal } from "../Modal";
+import LoadGamemodePresetModal from "../LoadGamemodePresetModal";
+import SaveGamemodePresetModal from "../SaveGamemodePresetModal";
 
 interface Props {
   mode: WingoMode;
@@ -29,8 +26,8 @@ interface Props {
 
   setMostRecentMaxLives: (numLives: number) => void;
   setMostRecentTotalSeconds: (numSeconds: number) => void;
-  onLoadGamemodeSettingsPreset: (gamemodeSettings: WingoConfigProps["gamemodeSettings"]) => void;
 
+  onLoadPresetGamemodeSettings: (gamemodeSettings: WingoConfigProps["gamemodeSettings"]) => void;
   onShowOfAddPresetModal: () => void;
   onHideOfAddPresetModal: () => void;
 }
@@ -42,91 +39,29 @@ const MAX_PUZZLE_REVEAL_INTERVAL_SECONDS = 10;
 const MIN_PUZZLE_LEAVE_NUM_BLANKS = 1;
 
 const WingoGamemodeSettings = (props: Props) => {
-  const location = useLocation();
+  const location = useLocation().pathname as PagePath;
 
-  const [showLoadPresetModal, setShowLoadPresetModal] = useState(false);
-  const [showSavePresetModal, setShowSavePresetModal] = useState(false);
-  const [presetName, setPresetName] = useState("");
-  const [savePresetModalErrorMessage, setPresetModalErrorMessage] = useState("");
-  const [presets, setPresets] = useState<GamemodeSettingsPreset[]>([]);
+  const getPresets = () => {
+    const presets = getWingoConfigGamemodeSettingsPresets(location);
+    return presets.map((preset) => ({
+      ...preset,
+      preview: <span title={JSON.stringify(preset.gamemodeSettings, undefined, 4)}>Info</span>,
+    }));
+  };
 
-  // Define a function to call to re-retrieve the presets
-  // Note: `useCallback` prevents infinite loop
-  const updatePresets = useCallback(() => {
-    const presets = getWingoConfigGamemodeSettingsPresets(location.pathname as PagePath);
-
-    setPresets(presets);
-  }, [setPresets, location.pathname]);
-
-  // (Re)retrieve the presets when the preset modal is loaded (e.g. one may have been recently added)
-  useEffect(() => {
-    updatePresets();
-  }, [showLoadPresetModal, updatePresets]);
-
-  // Call the `onSettingsModalShown` or `onSettingsModalHide` callback when the save modal is displayed
-  useEffect(() => {
-    if (showSavePresetModal) {
-      props.onShowOfAddPresetModal();
-    } else {
-      props.onHideOfAddPresetModal();
-    }
-  }, [showSavePresetModal, props]);
+  const removePreset = (presetName: string) => {
+    removeWingoConfigGamemodeSettingPreset(location, presetName);
+  };
 
   if (props.mode === "puzzle") {
     return (
       <GamemodeSettingsMenu>
         <>
-          <Button mode="default" onClick={() => setShowLoadPresetModal(true)}>
-            Presets
-          </Button>
-          {showLoadPresetModal && (
-            <Modal mode="default" name="Load preset" title="Presets" onClose={() => setShowLoadPresetModal(false)}>
-              {presets.length > 0 ? (
-                <table className="presets">
-                  <tbody>
-                    {presets
-                      .sort((a, b) => a.name.localeCompare(b.name))
-                      .map((preset) => (
-                        <tr key={preset.name} className="preset">
-                          <td className="preset-name">{preset.name}</td>
-                          <td className="preset-date">{new Date(preset.timestamp).toLocaleDateString()}</td>
-                          <td className="preset-info">
-                            <span title={JSON.stringify(preset.gameSettings, undefined, 4)}>Info</span>
-                          </td>
-                          <td className="preset-load">
-                            <Button
-                              mode="default"
-                              onClick={() => {
-                                props.onLoadGamemodeSettingsPreset(preset.gameSettings);
-                                setShowLoadPresetModal(false);
-                              }}
-                            >
-                              Load
-                            </Button>
-                          </td>
-                          <td className="preset-delete">
-                            <Button
-                              mode="destructive"
-                              onClick={() => {
-                                // TODO: How to update the list of presets (not show this preset) after it has been deleted?
-                                removeWingoConfigGamemodeSettingPreset(location.pathname as PagePath, preset.name);
-
-                                // Update list
-                                updatePresets();
-                              }}
-                            >
-                              Delete
-                            </Button>
-                          </td>
-                        </tr>
-                      ))}
-                  </tbody>
-                </table>
-              ) : (
-                <>No presets saved</>
-              )}
-            </Modal>
-          )}
+          <LoadGamemodePresetModal
+            getPresets={getPresets}
+            onSelectPreset={(preset) => props.onLoadPresetGamemodeSettings(preset.gamemodeSettings)}
+            removePreset={removePreset}
+          ></LoadGamemodePresetModal>
 
           <label>
             <input
@@ -165,62 +100,12 @@ const WingoGamemodeSettings = (props: Props) => {
             Number of letters left blank
           </label>
 
-          <Button mode="accept" onClick={() => setShowSavePresetModal(true)}>
-            Save as preset
-          </Button>
-
-          {showSavePresetModal && (
-            <Modal
-              mode="default"
-              name="Save preset"
-              title="Save preset"
-              onClose={() => {
-                setShowSavePresetModal(false);
-              }}
-            >
-              {savePresetModalErrorMessage && (
-                <MessageNotification type="error">{savePresetModalErrorMessage}</MessageNotification>
-              )}
-
-              <label>
-                Name
-                <input
-                  type="text"
-                  onChange={(e) => setPresetName(e.target.value)}
-                  value={presetName}
-                  placeholder="Name"
-                />
-              </label>
-
-              <Button
-                mode="accept"
-                onClick={() => {
-                  setPresetModalErrorMessage("");
-
-                  if (!presetName) {
-                    setPresetModalErrorMessage(`Provide a name for the preset`);
-                    return;
-                  }
-
-                  if (presets.some((preset) => preset.name.toLowerCase() === presetName.toLowerCase())) {
-                    setPresetModalErrorMessage(`Name '${presetName}' has already been used`);
-                    return;
-                  }
-
-                  addWingoConfigGamemodeSettingsPreset(location.pathname as PagePath, {
-                    name: presetName,
-                    timestamp: new Date().toISOString(),
-                    gameSettings: props.gamemodeSettings,
-                  });
-
-                  setShowSavePresetModal(false);
-                  setPresetName("");
-                }}
-              >
-                Save
-              </Button>
-            </Modal>
-          )}
+          <SaveGamemodePresetModal
+            currentGamemodeSettings={props.gamemodeSettings}
+            existingPresets={getWingoConfigGamemodeSettingsPresets(location)}
+            onHide={props.onHideOfAddPresetModal}
+            onShow={props.onShowOfAddPresetModal}
+          ></SaveGamemodePresetModal>
         </>
       </GamemodeSettingsMenu>
     );

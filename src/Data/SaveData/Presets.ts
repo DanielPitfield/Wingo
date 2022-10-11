@@ -5,7 +5,8 @@ import { PagePath } from "../PageNames";
 export type GamemodeSettingsPreset = {
   name: string;
   timestamp: string;
-  gameSettings: WingoConfigProps["gamemodeSettings"];
+  // TODO: Generic type
+  gamemodeSettings: WingoConfigProps["gamemodeSettings"];
 };
 
 /**

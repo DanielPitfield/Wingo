@@ -489,7 +489,7 @@ const Wingo = (props: Props) => {
                 handleSimpleGamemodeSettingsChange={handleSimpleGamemodeSettingsChange}
                 setMostRecentMaxLives={setMostRecentMaxLives}
                 setMostRecentTotalSeconds={setMostRecentTotalSeconds}
-                onLoadGamemodeSettingsPreset={props.updateGamemodeSettings}
+                onLoadPresetGamemodeSettings={props.updateGamemodeSettings}
                 onShowOfAddPresetModal={() => setKeyboardDisabled(true)}
                 onHideOfAddPresetModal={() => setKeyboardDisabled(false)}
               ></WingoGamemodeSettings>
