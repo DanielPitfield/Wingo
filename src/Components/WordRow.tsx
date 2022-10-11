@@ -79,7 +79,7 @@ export const WordRow = (props: Props) => {
     }
 
     // Unrevealed letters of the display row in Puzzle mode
-    if (location === "/Wingo/Puzzle" && props.isReadOnly && guessSummary[index].character === " ") {
+    if (location === "/Wingo/Puzzle" && props.isReadOnly && guessSummary[index]?.character === " ") {
       return "not set";
     }
 
