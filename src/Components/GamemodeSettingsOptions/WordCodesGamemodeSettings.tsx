@@ -11,6 +11,10 @@ interface Props {
   setRemainingGuesses: (newGuesses: number) => void;
   setRemainingSeconds: (newSeconds: number) => void;
   setMostRecentTotalSeconds: (numSeconds: number) => void;
+
+  onLoadPresetGamemodeSettings: (gamemodeSettings: WordCodesProps["gamemodeSettings"]) => void;
+  onShowOfAddPresetModal: () => void;
+  onHideOfAddPresetModal: () => void;
 }
 
 const WordCodesGamemodeSettings = (props: Props) => {

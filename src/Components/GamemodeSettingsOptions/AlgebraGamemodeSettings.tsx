@@ -11,6 +11,10 @@ interface Props {
 
   setRemainingSeconds: (numSeconds: number) => void;
   setMostRecentTotalSeconds: (numSeconds: number) => void;
+
+  onLoadPresetGamemodeSettings: (gamemodeSettings: AlgebraProps["gamemodeSettings"]) => void;
+  onShowOfAddPresetModal: () => void;
+  onHideOfAddPresetModal: () => void;
 }
 
 const AlgebraGamemodeSettings = (props: Props) => {

@@ -10,6 +10,10 @@ interface Props {
 
   setRemainingSeconds: (numSeconds: number) => void;
   setMostRecentTotalSeconds: (numSeconds: number) => void;
+
+  onLoadPresetGamemodeSettings: (gamemodeSettings: ArithmeticDragProps["gamemodeSettings"]) => void;
+  onShowOfAddPresetModal: () => void;
+  onHideOfAddPresetModal: () => void;
 }
 
 const MIN_NUM_TILES = 2;

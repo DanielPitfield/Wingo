@@ -20,6 +20,10 @@ interface Props {
 
   updateRemainingGuessTimerSeconds: (newSeconds: number) => void;
   setMostRecentGuessTimerTotalSeconds: (newSeconds: number) => void;
+
+  onLoadPresetGamemodeSettings: (gamemodeSettings: NumbleConfigProps["gamemodeSettings"]) => void;
+  onShowOfAddPresetModal: () => void;
+  onHideOfAddPresetModal: () => void;
 }
 
 export const MAX_NUM_NUMBLE_TEAMS = 4;

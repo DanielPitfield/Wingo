@@ -9,6 +9,10 @@ interface Props {
 
   updateRemainingSeconds: (newSeconds: number) => void;
   setMostRecentTotalSeconds: (numSeconds: number) => void;
+
+  onLoadPresetGamemodeSettings: (gamemodeSettings: NumbersGameConfigProps["gamemodeSettings"]) => void;
+  onShowOfAddPresetModal: () => void;
+  onHideOfAddPresetModal: () => void;
 }
 
 const NumbersGameGamemodeSettings = (props: Props) => {

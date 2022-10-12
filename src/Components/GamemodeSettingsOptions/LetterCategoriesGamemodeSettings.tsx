@@ -10,6 +10,10 @@ interface Props {
 
   updateRemainingSeconds: (newSeconds: number) => void;
   setMostRecentTotalSeconds: (numSeconds: number) => void;
+
+  onLoadPresetGamemodeSettings: (gamemodeSettings: LetterCategoriesConfigProps["gamemodeSettings"]) => void;
+  onShowOfAddPresetModal: () => void;
+  onHideOfAddPresetModal: () => void;
 }
 
 const LetterCategoriesGamemodeSettings = (props: Props) => {

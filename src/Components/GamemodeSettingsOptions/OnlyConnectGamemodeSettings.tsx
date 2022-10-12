@@ -9,6 +9,10 @@ interface Props {
 
   setRemainingSeconds: (newSeconds: number) => void;
   setMostRecentTotalSeconds: (numSeconds: number) => void;
+
+  onLoadPresetGamemodeSettings: (gamemodeSettings: OnlyConnectProps["gamemodeSettings"]) => void;
+  onShowOfAddPresetModal: () => void;
+  onHideOfAddPresetModal: () => void;
 }
 
 const MIN_NUM_GROUPS = 2;

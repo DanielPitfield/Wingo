@@ -13,6 +13,10 @@ interface Props {
   setMostRecentFitRestriction: (newFitRestrcition: number) => void;
   setRemainingSeconds: (newSeconds: number) => void;
   setMostRecentTotalSeconds: (numSeconds: number) => void;
+
+  onLoadPresetGamemodeSettings: (gamemodeSettings: WingoInterlinkedProps["gamemodeSettings"]) => void;
+  onShowOfAddPresetModal: () => void;
+  onHideOfAddPresetModal: () => void;
 }
 
 const WingoInterlinkedGamemodeSettings = (props: Props) => {

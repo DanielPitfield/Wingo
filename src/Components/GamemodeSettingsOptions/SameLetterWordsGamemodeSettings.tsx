@@ -10,6 +10,10 @@ interface Props {
   setRemainingGuesses: (newGuesses: number) => void;
   setRemainingSeconds: (newSeconds: number) => void;
   setMostRecentTotalSeconds: (numSeconds: number) => void;
+
+  onLoadPresetGamemodeSettings: (gamemodeSettings: SameLetterWordsProps["gamemodeSettings"]) => void;
+  onShowOfAddPresetModal: () => void;
+  onHideOfAddPresetModal: () => void;
 }
 
 export const MIN_NUM_SAME_LETTER_TOTAL_WORDS = 4;
