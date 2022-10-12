@@ -1,12 +1,11 @@
 import { getLocalStorageItemName } from "../../Helpers/getLocalStorageItemName";
-import { WingoConfigProps } from "../../Pages/WingoConfig";
 import { PagePath } from "../PageNames";
 
 export type GamemodeSettingsPreset<TGamemodeSettings> = {
   name: string;
   timestamp: string;
-  // TODO: Generic type
   gamemodeSettings: TGamemodeSettings;
+  preview: React.ReactNode;
 };
 
 /**
@@ -14,7 +13,10 @@ export type GamemodeSettingsPreset<TGamemodeSettings> = {
  * @param page Page.
  * @param preset The gamemode setting preset for Wingo Config to save.
  */
-export function addGamemodeSettingsPreset<TGamemodeSettings>(page: PagePath, preset: GamemodeSettingsPreset<TGamemodeSettings>) {
+export function addGamemodeSettingsPreset<TGamemodeSettings>(
+  page: PagePath,
+  preset: GamemodeSettingsPreset<TGamemodeSettings>
+) {
   const itemName = `${getLocalStorageItemName(page)}-preset-${preset.name}`;
 
   if (itemName) {
@@ -26,10 +28,19 @@ export function addGamemodeSettingsPreset<TGamemodeSettings>(page: PagePath, pre
  * Gets the saved gamemode settings presets for Wingo Config, or null if no saved gamemode settings were found.
  * @returns The saved gamemode settings presets for Wingo Config to save.
  */
-export function getGamemodeSettingsPresets<TGamemodeSettings>(page: PagePath): GamemodeSettingsPreset<TGamemodeSettings>[] {
+export function getGamemodeSettingsPresets<TGamemodeSettings>(
+  page: PagePath
+): GamemodeSettingsPreset<TGamemodeSettings>[] {
   const gamemodeSettingPresets = Object.entries(localStorage)
+    // Only the presets for this page
     .filter(([key, _]) => key.startsWith(`${getLocalStorageItemName(page)}-preset-`))
-    .map(([_, value]) => JSON.parse(value));
+    // TODO: Please explain (key, value) as opposed to (value, index)
+    .map(([_, value]) => JSON.parse(value))
+    // Create a preview for the preset
+    .map((preset) => ({
+      ...preset,
+      preview: <span title={JSON.stringify(preset.gamemodeSettings, undefined, 4)}>Info</span>,
+    }));
 
   return gamemodeSettingPresets;
 }
