@@ -330,7 +330,7 @@ const NumbersGame = (props: Props) => {
     }
 
     // Can just manage to find a solution with 7 operands, show a button to start finding the solution
-    else if (props.gamemodeSettings.numOperands === NUMBERPUZZLE_MAX_NUM_OPERANDS && solutions === null) {
+    if (props.gamemodeSettings.numOperands === NUMBERPUZZLE_MAX_NUM_OPERANDS && solutions === null) {
       return (
         <Button
           mode={"default"}
@@ -355,11 +355,11 @@ const NumbersGame = (props: Props) => {
           <br />
           <strong>
             <br />
-            {solutions?.best.toListOfSteps().map((step) => (
-              <>
+            {solutions?.best.toListOfSteps().map((step, index) => (
+              <React.Fragment key={`bestSolutionStep-${index}`}>
                 {step}
                 <br />
-              </>
+              </React.Fragment>
             ))}
           </strong>
         </MessageNotification>
