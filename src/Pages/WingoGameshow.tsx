@@ -223,7 +223,7 @@ export const WingoGameshow = (props: Props) => {
   }
 
   return (
-    <>
+    <div style={{ backgroundImage: `url(${props.theme.backgroundImageSrc})`, backgroundSize: "100% 100%" }}>
       {inProgress && <>{getNextRound()}</>}
       {!inProgress && (
         <>
@@ -233,6 +233,6 @@ export const WingoGameshow = (props: Props) => {
           </Button>
         </>
       )}
-    </>
+    </div>
   );
 };
