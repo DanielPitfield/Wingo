@@ -2,7 +2,7 @@ import React, { useState } from "react";
 
 import LettersGameConfig, { LettersGameConfigProps } from "./LettersGameConfig";
 import NumbersGameConfig, { NumbersGameConfigProps } from "./NumbersGameConfig";
-import { Theme } from "../Data/Themes";
+import { Theme, Themes } from "../Data/Themes";
 import { Button } from "../Components/Button";
 import WingoConfig, { WingoConfigProps } from "./WingoConfig";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
@@ -33,7 +33,6 @@ export interface LettersNumbersGameshowProps {
 }
 
 interface Props extends LettersNumbersGameshowProps {
-  themes: Theme[];
   settings: SettingsData;
   setTheme: (theme: Theme) => void;
   addGold: (gold: number) => void;
@@ -163,7 +162,7 @@ export const LettersNumbersGameshow = (props: Props) => {
       return (
         <LettersGameConfig
           {...commonProps}
-          theme={props.themes[0]}
+          theme={Themes.GenericLettersGame}
           gameshowScore={gameshowScore}
           gamemodeSettings={getPageGamemodeSettings("/LettersGame") as LettersGameConfigProps["gamemodeSettings"]}
         />
@@ -172,7 +171,7 @@ export const LettersNumbersGameshow = (props: Props) => {
       return (
         <NumbersGameConfig
           {...commonProps}
-          theme={props.themes[1]}
+          theme={Themes.GenericNumbersGame}
           gameshowScore={gameshowScore}
           gamemodeSettings={getPageGamemodeSettings("/NumbersGame") as NumbersGameConfigProps["gamemodeSettings"]}
         />

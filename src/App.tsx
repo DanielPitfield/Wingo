@@ -638,7 +638,6 @@ export const App = () => {
               <LettersNumbersGameshow
                 {...commonProps}
                 {...commonWingoProps}
-                themes={[Themes.GenericLettersGame, Themes.GenericNumbersGame]}
                 // TODO: Should LettersNumbersGameshow have gamemodeSettings like other gamemodes or an initial configuration page?
                 numSets={5}
                 numLetterRoundsPerSet={2}
