@@ -19,7 +19,7 @@ export const area: AreaConfig = {
     ),
     level: {
       gameCategory: "Wingo",
-      page: "wingo/repeat",
+      page: "/Wingo/Repeat",
       levelProps: {
         mode: "repeat",
         targetWord: "start",
@@ -47,7 +47,7 @@ export const area: AreaConfig = {
       },
       level: {
         gameCategory: "Wingo",
-        page: "wingo/repeat",
+        page: "/Wingo/Repeat",
         levelProps: {
           mode: "repeat",
           targetWord: "learn",
