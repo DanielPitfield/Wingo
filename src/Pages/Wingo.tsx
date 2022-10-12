@@ -91,6 +91,24 @@ const Wingo = (props: Props) => {
       : DEFAULT_WINGO_INCREASING_MAX_NUM_LIVES
   );
 
+  // Is the mode a mode which resets daily/weekly?
+  const isTimePeriodicMode = (): boolean => {
+    const timePeriodSearchStrings = ["daily", "weekly"];
+
+    // The mode contains any of the above timePeriodSearchStrings
+    return timePeriodSearchStrings.some((timePeriodString) => {
+      return props.mode.toLowerCase().includes(timePeriodString.toLowerCase());
+    });
+  };
+
+  const isDailyMode = (): boolean => {
+    return props.mode.toLowerCase().includes("daily");
+  };
+
+  const isWeeklyMode = (): boolean => {
+    return props.mode.toLowerCase().includes("weekly");
+  };
+
   const isModeWithDisplayRow = (): boolean => {
     const modesWithDisplayRow: typeof props.mode[] = ["puzzle", "conundrum"];
     return modesWithDisplayRow.includes(props.mode);
@@ -344,8 +362,8 @@ const Wingo = (props: Props) => {
 
   // Render the timer to the next periodic reset
   React.useEffect(() => {
-    // Not a daily or weekly mode
-    if (!props.mode.toLowerCase().includes("daily") && !props.mode.toLowerCase().includes("weekly")) {
+    // Not a daily/weekly mode
+    if (!isTimePeriodicMode()) {
       return;
     }
 
@@ -355,7 +373,7 @@ const Wingo = (props: Props) => {
 
     const intervalId = window.setInterval(
       () =>
-        props.mode.toLowerCase().includes("daily")
+        isDailyMode()
           ? setTimeUntilDailyReset(getTimeUntilPeriodicReset("Day"))
           : setTimeUntilWeeklyReset(getTimeUntilPeriodicReset("Week")),
       1000
@@ -413,13 +431,21 @@ const Wingo = (props: Props) => {
       }}
     >
       {props.gameshowScore !== undefined && <div className="gameshow-score">{displayGameshowScore()}</div>}
+
       {props.inProgress && <div>{displayHint()}</div>}
+
       <div>{displayOutcome()}</div>
-      {props.mode === "daily" && !props.inProgress && (
-        <MessageNotification type="default">Next Daily Wingo in: {timeUntilDailyReset}</MessageNotification>
+
+      {isDailyMode() && !props.inProgress && (
+        <MessageNotification type="default">Next Daily reset in: {timeUntilDailyReset}</MessageNotification>
       )}
+
+      {isWeeklyMode() && !props.inProgress && (
+        <MessageNotification type="default">Next Weekly reset in: {timeUntilWeeklyReset}</MessageNotification>
+      )}
+
       <div>
-        {!props.inProgress && props.mode !== "daily" && (
+        {!isTimePeriodicMode() && !props.inProgress && (
           <Button
             mode={"accept"}
             settings={props.settings}
