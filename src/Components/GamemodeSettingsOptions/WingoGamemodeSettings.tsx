@@ -40,7 +40,7 @@ const WingoGamemodeSettings = (props: Props) => {
 
   const getPresets = () => {
     const presets = getGamemodeSettingsPresets<WingoConfigProps["gamemodeSettings"]>(location);
-    
+
     return presets.map((preset) => ({
       ...preset,
       preview: <span title={JSON.stringify(preset.gamemodeSettings, undefined, 4)}>Info</span>,
@@ -100,7 +100,7 @@ const WingoGamemodeSettings = (props: Props) => {
 
           <SaveGamemodePresetModal
             currentGamemodeSettings={props.gamemodeSettings}
-            existingPresets={getGamemodeSettingsPresets(location)}
+            existingPresets={getGamemodeSettingsPresets<WingoConfigProps["gamemodeSettings"]>(location)}
             onHide={props.onHideOfAddPresetModal}
             onShow={props.onShowOfAddPresetModal}
           ></SaveGamemodePresetModal>

@@ -1,21 +1,22 @@
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { PagePath } from "../Data/PageNames";
-import { addGamemodeSettingsPreset, GamemodeSettingsPreset } from "../Data/SaveData/Presets";
-import { WingoConfigProps } from "../Pages/WingoConfig";
+import { addGamemodeSettingsPreset } from "../Data/SaveData/Presets";
 import { Button } from "./Button";
 import { MessageNotification } from "./MessageNotification";
 import { Modal } from "./Modal";
 
-interface Props {
-  existingPresets: GamemodeSettingsPreset[];
-  // TODO: Generic type
-  currentGamemodeSettings: WingoConfigProps["gamemodeSettings"];
+interface Props<TGamemodeSettingsPreset, TGamemodeSettings> {
+  existingPresets: TGamemodeSettingsPreset[];
+  currentGamemodeSettings: TGamemodeSettings;
   onShow: () => void;
   onHide: () => void;
 }
 
-const SaveGamemodePresetModal = (props: Props) => {
+function SaveGamemodePresetModal<
+  TGamemodeSettingsPreset extends { name: string; timestamp: string },
+  TGamemodeSettings
+>(props: Props<TGamemodeSettingsPreset, TGamemodeSettings>) {
   const location = useLocation().pathname as PagePath;
 
   const [isModalShown, setIsModalShown] = useState(false);
@@ -72,7 +73,7 @@ const SaveGamemodePresetModal = (props: Props) => {
               addGamemodeSettingsPreset(location, {
                 name: presetName,
                 timestamp: new Date().toISOString(),
-                gamemodeSettings: props.currentGamemodeSettings,
+                gamemodeSettings: props.currentGamemodeSettings as TGamemodeSettings,
               });
 
               setIsModalShown(false);
@@ -85,6 +86,6 @@ const SaveGamemodePresetModal = (props: Props) => {
       )}
     </>
   );
-};
+}
 
 export default SaveGamemodePresetModal;
