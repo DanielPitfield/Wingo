@@ -1,5 +1,9 @@
+import { useLocation } from "react-router-dom";
+import { PagePath } from "../../Data/PageNames";
+import { getGamemodeSettingsPresets } from "../../Data/SaveData/Presets";
 import { NumbersGameConfigProps } from "../../Pages/NumbersGameConfig";
 import GamemodeSettingsMenu from "../GamemodeSettingsMenu";
+import SaveGamemodePresetModal from "../SaveGamemodePresetModal";
 
 interface Props {
   gamemodeSettings: NumbersGameConfigProps["gamemodeSettings"];
@@ -16,6 +20,8 @@ interface Props {
 }
 
 const NumbersGameGamemodeSettings = (props: Props) => {
+  const location = useLocation().pathname as PagePath;
+  
   return (
     <GamemodeSettingsMenu>
       <>
@@ -71,6 +77,13 @@ const NumbersGameGamemodeSettings = (props: Props) => {
             </label>
           )}
         </>
+
+        <SaveGamemodePresetModal
+          currentGamemodeSettings={props.gamemodeSettings}
+          existingPresets={getGamemodeSettingsPresets<NumbersGameConfigProps["gamemodeSettings"]>(location)}
+          onHide={props.onHideOfAddPresetModal}
+          onShow={props.onShowOfAddPresetModal}
+        ></SaveGamemodePresetModal>
       </>
     </GamemodeSettingsMenu>
   );

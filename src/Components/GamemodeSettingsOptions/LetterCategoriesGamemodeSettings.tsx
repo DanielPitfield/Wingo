@@ -1,6 +1,10 @@
+import { useLocation } from "react-router-dom";
 import { MAX_NUM_CATEGORIES } from "../../Data/GamemodeSettingsInputLimits";
+import { PagePath } from "../../Data/PageNames";
+import { getGamemodeSettingsPresets } from "../../Data/SaveData/Presets";
 import { LetterCategoriesConfigProps } from "../../Pages/LetterCategoriesConfig";
 import GamemodeSettingsMenu from "../GamemodeSettingsMenu";
+import SaveGamemodePresetModal from "../SaveGamemodePresetModal";
 
 interface Props {
   gamemodeSettings: LetterCategoriesConfigProps["gamemodeSettings"];
@@ -17,6 +21,8 @@ interface Props {
 }
 
 const LetterCategoriesGamemodeSettings = (props: Props) => {
+  const location = useLocation().pathname as PagePath;
+  
   return (
     <GamemodeSettingsMenu>
       <>
@@ -62,6 +68,13 @@ const LetterCategoriesGamemodeSettings = (props: Props) => {
             </label>
           )}
         </>
+
+        <SaveGamemodePresetModal
+          currentGamemodeSettings={props.gamemodeSettings}
+          existingPresets={getGamemodeSettingsPresets<LetterCategoriesConfigProps["gamemodeSettings"]>(location)}
+          onHide={props.onHideOfAddPresetModal}
+          onShow={props.onShowOfAddPresetModal}
+        ></SaveGamemodePresetModal>
       </>
     </GamemodeSettingsMenu>
   );

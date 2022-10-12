@@ -1,5 +1,9 @@
+import { useLocation } from "react-router-dom";
+import { PagePath } from "../../Data/PageNames";
+import { getGamemodeSettingsPresets } from "../../Data/SaveData/Presets";
 import { wordCodesMode, WordCodesProps } from "../../Pages/WordCodes";
 import GamemodeSettingsMenu from "../GamemodeSettingsMenu";
+import SaveGamemodePresetModal from "../SaveGamemodePresetModal";
 
 interface Props {
   mode: wordCodesMode;
@@ -17,10 +21,13 @@ interface Props {
   onHideOfAddPresetModal: () => void;
 }
 
+const MIN_NUMBER_DISPLAY_CODES = 2;
+const MAX_NUM_DISPLAY_WORDS = 10;
+
 const WordCodesGamemodeSettings = (props: Props) => {
+  const location = useLocation().pathname as PagePath;
+
   const MIN_NUM_DISPLAY_WORDS = Math.max(2, props.gamemodeSettings.numDisplayCodes + 1);
-  const MAX_NUM_DISPLAY_WORDS = 10;
-  const MIN_NUMBER_DISPLAY_CODES = 2;
   const MAX_NUM_DISPLAY_CODES = props.gamemodeSettings.numDisplayWords - 1;
 
   return (
@@ -129,34 +136,43 @@ const WordCodesGamemodeSettings = (props: Props) => {
           Number of guesses
         </label>
 
-        <label>
-          <input
-            checked={props.gamemodeSettings.timerConfig.isTimed}
-            type="checkbox"
-            name="timerConfig"
-            onChange={props.handleTimerToggle}
-          ></input>
-          Timer
-        </label>
-
-        {props.gamemodeSettings.timerConfig.isTimed && (
+        <>
           <label>
             <input
-              type="number"
+              checked={props.gamemodeSettings.timerConfig.isTimed}
+              type="checkbox"
               name="timerConfig"
-              value={props.gamemodeSettings.timerConfig.seconds}
-              min={10}
-              max={120}
-              step={5}
-              onChange={(e) => {
-                props.setRemainingSeconds(e.target.valueAsNumber);
-                props.setMostRecentTotalSeconds(e.target.valueAsNumber);
-                props.handleSimpleGamemodeSettingsChange(e);
-              }}
+              onChange={props.handleTimerToggle}
             ></input>
-            Seconds
+            Timer
           </label>
-        )}
+
+          {props.gamemodeSettings.timerConfig.isTimed && (
+            <label>
+              <input
+                type="number"
+                name="timerConfig"
+                value={props.gamemodeSettings.timerConfig.seconds}
+                min={10}
+                max={120}
+                step={5}
+                onChange={(e) => {
+                  props.setRemainingSeconds(e.target.valueAsNumber);
+                  props.setMostRecentTotalSeconds(e.target.valueAsNumber);
+                  props.handleSimpleGamemodeSettingsChange(e);
+                }}
+              ></input>
+              Seconds
+            </label>
+          )}
+        </>
+
+        <SaveGamemodePresetModal
+          currentGamemodeSettings={props.gamemodeSettings}
+          existingPresets={getGamemodeSettingsPresets<WordCodesProps["gamemodeSettings"]>(location)}
+          onHide={props.onHideOfAddPresetModal}
+          onShow={props.onShowOfAddPresetModal}
+        ></SaveGamemodePresetModal>
       </>
     </GamemodeSettingsMenu>
   );

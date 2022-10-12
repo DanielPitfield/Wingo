@@ -1,5 +1,9 @@
+import { useLocation } from "react-router-dom";
+import { PagePath } from "../../Data/PageNames";
+import { getGamemodeSettingsPresets } from "../../Data/SaveData/Presets";
 import { NumbleConfigProps, numbleGridShapes, numbleGridSizes } from "../../Pages/NumbleConfig";
 import GamemodeSettingsMenu from "../GamemodeSettingsMenu";
+import SaveGamemodePresetModal from "../SaveGamemodePresetModal";
 
 interface Props {
   gamemodeSettings: NumbleConfigProps["gamemodeSettings"];
@@ -29,6 +33,8 @@ interface Props {
 export const MAX_NUM_NUMBLE_TEAMS = 4;
 
 const NumbleGamemodeSettings = (props: Props) => {
+  const location = useLocation().pathname as PagePath;
+  
   return (
     <GamemodeSettingsMenu>
       <>
@@ -210,6 +216,13 @@ const NumbleGamemodeSettings = (props: Props) => {
             </label>
           )}
         </>
+
+        <SaveGamemodePresetModal
+          currentGamemodeSettings={props.gamemodeSettings}
+          existingPresets={getGamemodeSettingsPresets<NumbleConfigProps["gamemodeSettings"]>(location)}
+          onHide={props.onHideOfAddPresetModal}
+          onShow={props.onShowOfAddPresetModal}
+        ></SaveGamemodePresetModal>
       </>
     </GamemodeSettingsMenu>
   );

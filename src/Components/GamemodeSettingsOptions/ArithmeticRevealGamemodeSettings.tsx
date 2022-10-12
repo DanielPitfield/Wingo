@@ -1,6 +1,10 @@
+import { useLocation } from "react-router-dom";
+import { PagePath } from "../../Data/PageNames";
+import { getGamemodeSettingsPresets } from "../../Data/SaveData/Presets";
 import { arithmeticNumberSizes } from "../../Pages/ArithmeticDrag";
 import { ArithmeticRevealProps } from "../../Pages/ArithmeticReveal";
 import GamemodeSettingsMenu from "../GamemodeSettingsMenu";
+import SaveGamemodePresetModal from "../SaveGamemodePresetModal";
 
 interface Props {
   gamemodeSettings: ArithmeticRevealProps["gamemodeSettings"];
@@ -17,15 +21,17 @@ interface Props {
   onHideOfAddPresetModal: () => void;
 }
 
+const MIN_NUM_TILES = 2;
+const MAX_NUM_TILES = 10;
+
+const MIN_NUM_CHECKPOINTS = 1;
+const MAX_NUM_CHECKPOINTS = 10;
+
+const MIN_REVEAL_INTERVAL = 1;
+const MAX_REVEAL_INTERVAL = 5;
+
 const ArithmeticRevealGamemodeSettings = (props: Props) => {
-  const MIN_NUM_TILES = 2;
-  const MAX_NUM_TILES = 10;
-
-  const MIN_NUM_CHECKPOINTS = 1;
-  const MAX_NUM_CHECKPOINTS = 10;
-
-  const MIN_REVEAL_INTERVAL = 1;
-  const MAX_REVEAL_INTERVAL = 5;
+  const location = useLocation().pathname as PagePath;
 
   return (
     <GamemodeSettingsMenu>
@@ -112,6 +118,13 @@ const ArithmeticRevealGamemodeSettings = (props: Props) => {
             </label>
           )}
         </>
+
+        <SaveGamemodePresetModal
+          currentGamemodeSettings={props.gamemodeSettings}
+          existingPresets={getGamemodeSettingsPresets<ArithmeticRevealProps["gamemodeSettings"]>(location)}
+          onHide={props.onHideOfAddPresetModal}
+          onShow={props.onShowOfAddPresetModal}
+        ></SaveGamemodePresetModal>
       </>
     </GamemodeSettingsMenu>
   );

@@ -1,5 +1,9 @@
+import { useLocation } from "react-router-dom";
+import { PagePath } from "../../Data/PageNames";
+import { getGamemodeSettingsPresets } from "../../Data/SaveData/Presets";
 import { OnlyConnectProps } from "../../Pages/OnlyConnect";
 import GamemodeSettingsMenu from "../GamemodeSettingsMenu";
+import SaveGamemodePresetModal from "../SaveGamemodePresetModal";
 
 interface Props {
   gamemodeSettings: OnlyConnectProps["gamemodeSettings"];
@@ -22,6 +26,8 @@ const MIN_GROUP_SIZE = 2;
 const MAX_GROUP_SIZE = 10;
 
 const OnlyConnectGamemodeSettings = (props: Props) => {
+  const location = useLocation().pathname as PagePath;
+  
   return (
     <GamemodeSettingsMenu>
       <>
@@ -61,34 +67,43 @@ const OnlyConnectGamemodeSettings = (props: Props) => {
           Number of guesses
         </label>
 
-        <label>
-          <input
-            checked={props.gamemodeSettings.timerConfig.isTimed}
-            type="checkbox"
-            name="timerConfig"
-            onChange={props.handleTimerToggle}
-          ></input>
-          Timer
-        </label>
-
-        {props.gamemodeSettings.timerConfig.isTimed && (
+        <>
           <label>
             <input
-              type="number"
+              checked={props.gamemodeSettings.timerConfig.isTimed}
+              type="checkbox"
               name="timerConfig"
-              value={props.gamemodeSettings.timerConfig.seconds}
-              min={10}
-              max={120}
-              step={5}
-              onChange={(e) => {
-                props.setRemainingSeconds(e.target.valueAsNumber);
-                props.setMostRecentTotalSeconds(e.target.valueAsNumber);
-                props.handleSimpleGamemodeSettingsChange(e);
-              }}
+              onChange={props.handleTimerToggle}
             ></input>
-            Seconds
+            Timer
           </label>
-        )}
+
+          {props.gamemodeSettings.timerConfig.isTimed && (
+            <label>
+              <input
+                type="number"
+                name="timerConfig"
+                value={props.gamemodeSettings.timerConfig.seconds}
+                min={10}
+                max={120}
+                step={5}
+                onChange={(e) => {
+                  props.setRemainingSeconds(e.target.valueAsNumber);
+                  props.setMostRecentTotalSeconds(e.target.valueAsNumber);
+                  props.handleSimpleGamemodeSettingsChange(e);
+                }}
+              ></input>
+              Seconds
+            </label>
+          )}
+        </>
+
+        <SaveGamemodePresetModal
+          currentGamemodeSettings={props.gamemodeSettings}
+          existingPresets={getGamemodeSettingsPresets<OnlyConnectProps["gamemodeSettings"]>(location)}
+          onHide={props.onHideOfAddPresetModal}
+          onShow={props.onShowOfAddPresetModal}
+        ></SaveGamemodePresetModal>
       </>
     </GamemodeSettingsMenu>
   );

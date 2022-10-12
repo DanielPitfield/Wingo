@@ -38,7 +38,7 @@ const MIN_PUZZLE_LEAVE_NUM_BLANKS = 1;
 const WingoGamemodeSettings = (props: Props) => {
   const location = useLocation().pathname as PagePath;
 
-  const getPresets = () => {
+  const getPresetsWithPreviews = () => {
     const presets = getGamemodeSettingsPresets<WingoConfigProps["gamemodeSettings"]>(location);
 
     return presets.map((preset) => ({
@@ -56,7 +56,7 @@ const WingoGamemodeSettings = (props: Props) => {
       <GamemodeSettingsMenu>
         <>
           <LoadGamemodePresetModal
-            getPresets={getPresets}
+            getPresets={getPresetsWithPreviews}
             onSelectPreset={(preset) => props.onLoadPresetGamemodeSettings(preset.gamemodeSettings)}
             removePreset={removePreset}
           ></LoadGamemodePresetModal>
@@ -125,7 +125,7 @@ const WingoGamemodeSettings = (props: Props) => {
     <GamemodeSettingsMenu>
       <>
         <LoadGamemodePresetModal
-          getPresets={getPresets}
+          getPresets={getPresetsWithPreviews}
           onSelectPreset={(preset) => props.onLoadPresetGamemodeSettings(preset.gamemodeSettings)}
           removePreset={removePreset}
         ></LoadGamemodePresetModal>
@@ -235,7 +235,7 @@ const WingoGamemodeSettings = (props: Props) => {
             </label>
           )}
         </>
-        
+
         <SaveGamemodePresetModal
           currentGamemodeSettings={props.gamemodeSettings}
           existingPresets={getGamemodeSettingsPresets<WingoConfigProps["gamemodeSettings"]>(location)}

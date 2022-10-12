@@ -1,6 +1,10 @@
+import { useLocation } from "react-router-dom";
 import { MAX_TARGET_WORD_LENGTH, MIN_TARGET_WORD_LENGTH } from "../../Data/GamemodeSettingsInputLimits";
+import { PagePath } from "../../Data/PageNames";
+import { getGamemodeSettingsPresets } from "../../Data/SaveData/Presets";
 import { WingoInterlinkedProps } from "../../Pages/WingoInterlinked";
 import GamemodeSettingsMenu from "../GamemodeSettingsMenu";
+import SaveGamemodePresetModal from "../SaveGamemodePresetModal";
 
 interface Props {
   gamemodeSettings: WingoInterlinkedProps["gamemodeSettings"];
@@ -20,6 +24,8 @@ interface Props {
 }
 
 const WingoInterlinkedGamemodeSettings = (props: Props) => {
+  const location = useLocation().pathname as PagePath;
+  
   // Started with more than 2 words (so not basic WingoInterlinked of two interlinked words but a fully fledged crossword)
   const IS_CROSSWORD = props.gamemodeSettings.numWords > 2;
 
@@ -172,6 +178,13 @@ const WingoInterlinkedGamemodeSettings = (props: Props) => {
             </label>
           )}
         </>
+
+        <SaveGamemodePresetModal
+          currentGamemodeSettings={props.gamemodeSettings}
+          existingPresets={getGamemodeSettingsPresets<WingoInterlinkedProps["gamemodeSettings"]>(location)}
+          onHide={props.onHideOfAddPresetModal}
+          onShow={props.onShowOfAddPresetModal}
+        ></SaveGamemodePresetModal>
       </>
     </GamemodeSettingsMenu>
   );

@@ -1,5 +1,9 @@
+import { useLocation } from "react-router-dom";
+import { PagePath } from "../../Data/PageNames";
+import { getGamemodeSettingsPresets } from "../../Data/SaveData/Presets";
 import { ArithmeticDragProps, arithmeticNumberSizes } from "../../Pages/ArithmeticDrag";
 import GamemodeSettingsMenu from "../GamemodeSettingsMenu";
+import SaveGamemodePresetModal from "../SaveGamemodePresetModal";
 
 interface Props {
   gamemodeSettings: ArithmeticDragProps["gamemodeSettings"];
@@ -23,6 +27,8 @@ const MIN_NUM_OPERANDS = 2;
 const MAX_NUM_OPERANDS = 3;
 
 const ArithmeticDragGamemodeSettings = (props: Props) => {
+  const location = useLocation().pathname as PagePath;
+
   return (
     <GamemodeSettingsMenu>
       <>
@@ -108,6 +114,13 @@ const ArithmeticDragGamemodeSettings = (props: Props) => {
             </label>
           )}
         </>
+
+        <SaveGamemodePresetModal
+          currentGamemodeSettings={props.gamemodeSettings}
+          existingPresets={getGamemodeSettingsPresets<ArithmeticDragProps["gamemodeSettings"]>(location)}
+          onHide={props.onHideOfAddPresetModal}
+          onShow={props.onShowOfAddPresetModal}
+        ></SaveGamemodePresetModal>
       </>
     </GamemodeSettingsMenu>
   );
