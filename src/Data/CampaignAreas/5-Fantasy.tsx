@@ -14,9 +14,9 @@ export const area: AreaConfig = {
         mode: "repeat",
         targetWord: "fantasy",
         enforceFullLengthGuesses: true,
-        defaultWordLength: 7,
         defaultNumGuesses: 6,
         gamemodeSettings: {
+          wordLength: 7,
           isFirstLetterProvided: true,
           puzzleLeaveNumBlanks: 0,
           puzzleRevealSeconds: 0,

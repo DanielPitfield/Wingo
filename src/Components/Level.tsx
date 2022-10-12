@@ -9,7 +9,7 @@ import ArithmeticDrag, { ArithmeticDragProps } from "../Pages/ArithmeticDrag";
 import ArithmeticReveal, { ArithmeticRevealProps } from "../Pages/ArithmeticReveal";
 import OnlyConnect, { OnlyConnectProps } from "../Pages/OnlyConnect";
 
-import { Theme, Themes } from "../Data/Themes";
+import { Theme } from "../Data/Themes";
 import Algebra, { AlgebraProps } from "../Pages/Algebra";
 import NumberSets, { NumberSetsProps } from "../Pages/NumberSets";
 import SameLetterWords, { SameLetterWordsProps } from "../Pages/SameLetterWords";

@@ -14,9 +14,9 @@ export const area: AreaConfig = {
         mode: "repeat",
         targetWord: "cars",
         enforceFullLengthGuesses: true,
-        defaultWordLength: 4,
         defaultNumGuesses: 6,
         gamemodeSettings: {
+          wordLength: 4,
           isFirstLetterProvided: true,
           puzzleLeaveNumBlanks: 0,
           puzzleRevealSeconds: 0,
