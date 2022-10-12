@@ -41,7 +41,6 @@ interface Props extends SameLetterWordsProps {
   onComplete: (wasCorrect: boolean) => void;
 }
 
-/** */
 const SameLetterWords = (props: Props) => {
   const location = useLocation().pathname as PagePath;
 
@@ -440,6 +439,9 @@ const SameLetterWords = (props: Props) => {
             setMostRecentTotalSeconds={setMostRecentTotalSeconds}
             setRemainingGuesses={setRemainingGuesses}
             setRemainingSeconds={setRemainingSeconds}
+            onLoadPresetGamemodeSettings={setGamemodeSettings}
+            onShowOfAddPresetModal={() => {}}
+            onHideOfAddPresetModal={() => {}}
           />
         </div>
       )}

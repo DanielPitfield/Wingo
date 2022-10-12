@@ -589,6 +589,9 @@ const ArithmeticDrag = (props: Props) => {
             handleSimpleGamemodeSettingsChange={handleSimpleGamemodeSettingsChange}
             setMostRecentTotalSeconds={setMostRecentTotalSeconds}
             setRemainingSeconds={setRemainingSeconds}
+            onLoadPresetGamemodeSettings={setGamemodeSettings}
+            onShowOfAddPresetModal={() => {}}
+            onHideOfAddPresetModal={() => {}}
           />
         </div>
       )}

@@ -64,11 +64,6 @@ interface Props {
   gameshowScore?: number;
 }
 
-/**
- *
- * @param props
- * @returns
- */
 const NumbersGame = (props: Props) => {
   const location = useLocation().pathname as PagePath;
 
@@ -416,6 +411,9 @@ const NumbersGame = (props: Props) => {
             handleTimerToggle={handleTimerToggle}
             setMostRecentTotalSeconds={setMostRecentTotalSeconds}
             updateRemainingSeconds={props.updateRemainingSeconds}
+            onLoadPresetGamemodeSettings={props.updateGamemodeSettings}
+            onShowOfAddPresetModal={() => {}}
+            onHideOfAddPresetModal={() => {}}
           />
         </div>
       )}

@@ -964,6 +964,9 @@ export const WingoInterlinked = (props: Props) => {
             setMostRecentFitRestriction={setMostRecentFitRestriction}
             setMostRecentTotalSeconds={setMostRecentTotalSeconds}
             setRemainingSeconds={setRemainingSeconds}
+            onLoadPresetGamemodeSettings={setGamemodeSettings}
+            onShowOfAddPresetModal={() => setKeyboardDisabled(true)}
+            onHideOfAddPresetModal={() => setKeyboardDisabled(false)}
           />
         </div>
       )}

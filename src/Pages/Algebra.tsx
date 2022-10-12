@@ -481,6 +481,9 @@ const Algebra = (props: Props) => {
             handleSimpleGamemodeSettingsChange={handleSimpleGamemodeSettingsChange}
             setMostRecentTotalSeconds={setMostRecentTotalSeconds}
             setRemainingSeconds={setRemainingSeconds}
+            onLoadPresetGamemodeSettings={setGamemodeSettings}
+            onShowOfAddPresetModal={() => setKeyboardDisabled(true)}
+            onHideOfAddPresetModal={() => setKeyboardDisabled(false)}
           />
         </div>
       )}

@@ -890,6 +890,9 @@ const WordCodes = (props: Props) => {
             setMostRecentTotalSeconds={setMostRecentTotalSeconds}
             setRemainingGuesses={setRemainingGuesses}
             setRemainingSeconds={setRemainingSeconds}
+            onLoadPresetGamemodeSettings={setGamemodeSettings}
+            onShowOfAddPresetModal={() => setKeyboardDisabled(true)}
+            onHideOfAddPresetModal={() => setKeyboardDisabled(false)}
           />
         </div>
       )}

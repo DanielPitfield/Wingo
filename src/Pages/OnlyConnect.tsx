@@ -420,6 +420,9 @@ const OnlyConnect = (props: Props) => {
             handleTimerToggle={handleTimerToggle}
             setMostRecentTotalSeconds={setMostRecentTotalSeconds}
             setRemainingSeconds={setRemainingSeconds}
+            onLoadPresetGamemodeSettings={setGamemodeSettings}
+            onShowOfAddPresetModal={() => {}}
+            onHideOfAddPresetModal={() => {}}
           />
         </div>
       )}

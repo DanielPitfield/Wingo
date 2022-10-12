@@ -341,6 +341,9 @@ const NumberSets = (props: Props) => {
             handleSimpleGamemodeSettingsChange={handleSimpleGamemodeSettingsChange}
             setMostRecentTotalSeconds={setMostRecentTotalSeconds}
             setRemainingSeconds={setRemainingSeconds}
+            onLoadPresetGamemodeSettings={setGamemodeSettings}
+            onShowOfAddPresetModal={() => setNumPadDisabled(true)}
+            onHideOfAddPresetModal={() => setNumPadDisabled(false)}
           />
         </div>
       )}
@@ -358,16 +361,16 @@ const NumberSets = (props: Props) => {
         ></LetterTile>
       </div>
 
-        <NumPad
-          onEnter={() => setInProgress(false)}
-          onBackspace={onBackspace}
-          onSubmitNumber={onSubmitNumber}
-          settings={props.settings}
-          disabled={numPadDisabled || !inProgress}
-          hasBackspace={true}
-          hasEnter={true}
-        />
-        
+      <NumPad
+        onEnter={() => setInProgress(false)}
+        onBackspace={onBackspace}
+        onSubmitNumber={onSubmitNumber}
+        settings={props.settings}
+        disabled={numPadDisabled || !inProgress}
+        hasBackspace={true}
+        hasEnter={true}
+      />
+
       <div>
         {gamemodeSettings.timerConfig.isTimed && (
           <ProgressBar

@@ -282,6 +282,9 @@ const LettersGame = (props: Props) => {
             handleTimerToggle={handleTimerToggle}
             setMostRecentTotalSeconds={setMostRecentTotalSeconds}
             updateRemainingSeconds={props.updateRemainingSeconds}
+            onLoadPresetGamemodeSettings={props.updateGamemodeSettings}
+            onShowOfAddPresetModal={() => setKeyboardDisabled(true)}
+            onHideOfAddPresetModal={() => setKeyboardDisabled(false)}
           />
         </div>
       )}

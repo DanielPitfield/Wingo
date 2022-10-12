@@ -547,6 +547,9 @@ const ArithmeticReveal = (props: Props) => {
             handleTimerToggle={handleTimerToggle}
             setMostRecentTotalSeconds={setMostRecentTotalSeconds}
             setRemainingSeconds={setRemainingSeconds}
+            onLoadPresetGamemodeSettings={setGamemodeSettings}
+            onShowOfAddPresetModal={() => setNumPadDisabled(true)}
+            onHideOfAddPresetModal={() => setNumPadDisabled(false)}
           />
         </div>
       )}
