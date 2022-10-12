@@ -260,7 +260,6 @@ export const Level = (props: LevelProps) => {
       case "LettersNumbersGameshow":
         return (
           <LettersNumbersGameshow
-            themes={[Themes.GenericLettersGame, Themes.GenericNumbersGame]}
             {...selectedLevel!.level.levelProps}
             {...commonProps}
           />
