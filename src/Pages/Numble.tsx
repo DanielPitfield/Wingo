@@ -785,7 +785,7 @@ const Numble = (props: Props) => {
             setMostRecentGuessTimerTotalSeconds={setMostRecentGuessTimerTotalSeconds}
             setMostRecentTotalSeconds={setMostRecentTotalSeconds}
             updateRemainingGuessTimerSeconds={props.updateRemainingGuessTimerSeconds}
-          ></NumbleGamemodeSettings>
+          />
         </div>
       )}
 

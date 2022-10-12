@@ -280,7 +280,7 @@ const LettersGame = (props: Props) => {
             handleTimerToggle={handleTimerToggle}
             setMostRecentTotalSeconds={setMostRecentTotalSeconds}
             updateRemainingSeconds={props.updateRemainingSeconds}
-          ></LettersGameGamemodeSettings>
+          />
         </div>
       )}
 

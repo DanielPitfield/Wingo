@@ -440,7 +440,7 @@ const SameLetterWords = (props: Props) => {
             setMostRecentTotalSeconds={setMostRecentTotalSeconds}
             setRemainingGuesses={setRemainingGuesses}
             setRemainingSeconds={setRemainingSeconds}
-          ></SameLetterWordsGamemodeSettings>
+          />
         </div>
       )}
       <div className="outcome">{displayOutcome()}</div>

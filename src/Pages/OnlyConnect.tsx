@@ -420,7 +420,7 @@ const OnlyConnect = (props: Props) => {
             handleTimerToggle={handleTimerToggle}
             setMostRecentTotalSeconds={setMostRecentTotalSeconds}
             setRemainingSeconds={setRemainingSeconds}
-          ></OnlyConnectGamemodeSettings>
+          />
         </div>
       )}
       {!inProgress && <div className="outcome">{displayOutcome()}</div>}

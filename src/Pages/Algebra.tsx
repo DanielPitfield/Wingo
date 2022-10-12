@@ -479,7 +479,7 @@ const Algebra = (props: Props) => {
             handleSimpleGamemodeSettingsChange={handleSimpleGamemodeSettingsChange}
             setMostRecentTotalSeconds={setMostRecentTotalSeconds}
             setRemainingSeconds={setRemainingSeconds}
-          ></AlgebraGamemodeSettings>
+          />
         </div>
       )}
 

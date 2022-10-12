@@ -545,7 +545,7 @@ const ArithmeticReveal = (props: Props) => {
             handleTimerToggle={handleTimerToggle}
             setMostRecentTotalSeconds={setMostRecentTotalSeconds}
             setRemainingSeconds={setRemainingSeconds}
-          ></ArithmeticRevealGamemodeSettings>
+          />
         </div>
       )}
       <div className="outcome">{displayOutcome()}</div>

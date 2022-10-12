@@ -888,7 +888,7 @@ const WordCodes = (props: Props) => {
             setMostRecentTotalSeconds={setMostRecentTotalSeconds}
             setRemainingGuesses={setRemainingGuesses}
             setRemainingSeconds={setRemainingSeconds}
-          ></WordCodesGamemodeSettings>
+          />
         </div>
       )}
 

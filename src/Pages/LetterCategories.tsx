@@ -193,7 +193,7 @@ const LetterCategories = (props: Props) => {
             handleTimerToggle={handleTimerToggle}
             setMostRecentTotalSeconds={setMostRecentTotalSeconds}
             updateRemainingSeconds={props.updateRemainingSeconds}
-          ></LetterCategoriesGamemodeSettings>
+          />
         </div>
       )}
 

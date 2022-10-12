@@ -340,7 +340,7 @@ const NumberSets = (props: Props) => {
             handleSimpleGamemodeSettingsChange={handleSimpleGamemodeSettingsChange}
             setMostRecentTotalSeconds={setMostRecentTotalSeconds}
             setRemainingSeconds={setRemainingSeconds}
-          ></NumberSetsGamemodeSettings>
+          />
         </div>
       )}
 

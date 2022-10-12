@@ -416,7 +416,7 @@ const NumbersGame = (props: Props) => {
             handleTimerToggle={handleTimerToggle}
             setMostRecentTotalSeconds={setMostRecentTotalSeconds}
             updateRemainingSeconds={props.updateRemainingSeconds}
-          ></NumbersGameGamemodeSettings>
+          />
         </div>
       )}
 

@@ -962,7 +962,7 @@ export const WingoInterlinked = (props: Props) => {
             setMostRecentFitRestriction={setMostRecentFitRestriction}
             setMostRecentTotalSeconds={setMostRecentTotalSeconds}
             setRemainingSeconds={setRemainingSeconds}
-          ></WingoInterlinkedGamemodeSettings>
+          />
         </div>
       )}
 

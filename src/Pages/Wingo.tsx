@@ -64,11 +64,13 @@ interface Props {
 const Wingo = (props: Props) => {
   const location = useLocation().pathname as PagePath;
 
+  const [keyboardDisabled, setKeyboardDisabled] = useState(false);
+
   const [secondsUntilNextDailyWingo, setSecondsUntilNextDailyWingo] = useState(getSecondsUntilMidnight());
+
   const [playCorrectChimeSoundEffect] = useCorrectChime(props.settings);
   const [playFailureChimeSoundEffect] = useFailureChime(props.settings);
   const [playLightPingSoundEffect] = useLightPingChime(props.settings);
-  const [keyboardDisabled, setKeyboardDisabled] = useState(false);
 
   /*
   Keep track of the most recent value for the timer
@@ -492,7 +494,7 @@ const Wingo = (props: Props) => {
                 onLoadPresetGamemodeSettings={props.updateGamemodeSettings}
                 onShowOfAddPresetModal={() => setKeyboardDisabled(true)}
                 onHideOfAddPresetModal={() => setKeyboardDisabled(false)}
-              ></WingoGamemodeSettings>
+              />
             </div>
           )
       }
