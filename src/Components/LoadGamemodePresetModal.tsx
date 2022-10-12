@@ -1,16 +1,20 @@
 import React, { useCallback, useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
+import { PagePath } from "../Data/PageNames";
+import { removeGamemodeSettingPreset } from "../Data/SaveData/Presets";
 import { Button } from "./Button";
 import { Modal } from "./Modal";
 
 interface Props<TGamemodeSettingsPreset> {
   getPresets: () => TGamemodeSettingsPreset[];
   onSelectPreset: (preset: TGamemodeSettingsPreset) => void;
-  removePreset: (presetName: string) => void;
 }
 
 function LoadGamemodePresetModal<
   TGamemodeSettingsPreset extends { name: string; timestamp: string; preview: React.ReactNode }
 >(props: Props<TGamemodeSettingsPreset>) {
+  const location = useLocation().pathname as PagePath;
+
   const [presets, setPresets] = useState<TGamemodeSettingsPreset[]>(props.getPresets());
   const [isModalShown, setIsModalShown] = useState(false);
 
@@ -58,7 +62,7 @@ function LoadGamemodePresetModal<
                         <Button
                           mode="destructive"
                           onClick={() => {
-                            props.removePreset(preset.name);
+                            removeGamemodeSettingPreset(location, preset.name);
 
                             // Update list
                             updatePresets();
