@@ -19,6 +19,7 @@ import { getNumNewLimitlessLives } from "../Helpers/getNumNewLimitlessLives";
 import WingoGamemodeSettings from "../Components/GamemodeSettingsOptions/WingoGamemodeSettings";
 import { useLocation } from "react-router-dom";
 import { SettingsData } from "../Data/SaveData/Settings";
+import { getTimeUntilPeriodicReset } from "../Helpers/getTimeUntilPeriodicReset";
 
 interface Props {
   isCampaignLevel: boolean;
@@ -66,7 +67,8 @@ const Wingo = (props: Props) => {
 
   const [keyboardDisabled, setKeyboardDisabled] = useState(false);
 
-  const [secondsUntilNextDailyWingo, setSecondsUntilNextDailyWingo] = useState(getSecondsUntilMidnight());
+  const [timeUntilDailyReset, setTimeUntilDailyReset] = useState(getTimeUntilPeriodicReset("Day"));
+  const [timeUntilWeeklyReset, setTimeUntilWeeklyReset] = useState(getTimeUntilPeriodicReset("Week"));
 
   const [playCorrectChimeSoundEffect] = useCorrectChime(props.settings);
   const [playFailureChimeSoundEffect] = useFailureChime(props.settings);
@@ -340,31 +342,10 @@ const Wingo = (props: Props) => {
     return false;
   }
 
-  function getSecondsUntilMidnight(): number {
-    const now = new Date();
-
-    const midnight = new Date();
-    midnight.setHours(23);
-    midnight.setMinutes(59);
-    midnight.setSeconds(59);
-
-    const secondsUntilMidnight = Math.round((Number(midnight) - Number(now)) / 1000);
-
-    return secondsUntilMidnight;
-  }
-
-  function secondsToTimeString(seconds: number): string {
-    const date = new Date();
-    date.setHours(0);
-    date.setMinutes(0);
-    date.setSeconds(seconds);
-
-    return date.toISOString().split("T")[1].split(".")[0];
-  }
-
-  // Render the timer to the next daily wingo
+  // Render the timer to the next periodic reset
   React.useEffect(() => {
-    if (props.mode !== "daily") {
+    // Not a daily or weekly mode
+    if (!props.mode.toLowerCase().includes("daily") && !props.mode.toLowerCase().includes("weekly")) {
       return;
     }
 
@@ -372,7 +353,13 @@ const Wingo = (props: Props) => {
       return;
     }
 
-    const intervalId = window.setInterval(() => setSecondsUntilNextDailyWingo(getSecondsUntilMidnight()), 1000);
+    const intervalId = window.setInterval(
+      () =>
+        props.mode.toLowerCase().includes("daily")
+          ? setTimeUntilDailyReset(getTimeUntilPeriodicReset("Day"))
+          : setTimeUntilWeeklyReset(getTimeUntilPeriodicReset("Week")),
+      1000
+    );
 
     return () => clearInterval(intervalId);
   }, [props.mode, props.inProgress]);
@@ -429,9 +416,7 @@ const Wingo = (props: Props) => {
       {props.inProgress && <div>{displayHint()}</div>}
       <div>{displayOutcome()}</div>
       {props.mode === "daily" && !props.inProgress && (
-        <MessageNotification type="default">
-          Next Daily Wingo in: {secondsToTimeString(secondsUntilNextDailyWingo)}
-        </MessageNotification>
+        <MessageNotification type="default">Next Daily Wingo in: {timeUntilDailyReset}</MessageNotification>
       )}
       <div>
         {!props.inProgress && props.mode !== "daily" && (
