@@ -64,7 +64,6 @@ export const App = () => {
     event.preventDefault();
   }
 
-  const saveData = window.localStorage;
   const [settings, setSettings] = useState<SettingsData>(getSettings());
 
   const [loadingState, setLoadingState] = useState<"loading" | "loaded">("loading");
@@ -111,7 +110,7 @@ export const App = () => {
     navigate("/Splashscreen");
     // After delay, navigate to entry page
     window.setTimeout(() => navigate(newEntryPage), LOADING_TIMEOUT_MS + FADE_OUT_DURATION_MS);
-  }, [saveData]);
+  }, []);
 
   React.useEffect(() => {
     // Navigate to a randomly selected playable page
