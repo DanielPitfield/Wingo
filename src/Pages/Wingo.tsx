@@ -431,19 +431,14 @@ const Wingo = (props: Props) => {
       }}
     >
       {props.gameshowScore !== undefined && <div className="gameshow-score">{displayGameshowScore()}</div>}
-
       {props.inProgress && <div>{displayHint()}</div>}
-
       <div>{displayOutcome()}</div>
-
       {isDailyMode() && !props.inProgress && (
         <MessageNotification type="default">Next Daily reset in: {timeUntilDailyReset}</MessageNotification>
       )}
-
       {isWeeklyMode() && !props.inProgress && (
         <MessageNotification type="default">Next Weekly reset in: {timeUntilWeeklyReset}</MessageNotification>
       )}
-
       <div>
         {!isTimePeriodicMode() && !props.inProgress && (
           <Button
@@ -462,7 +457,6 @@ const Wingo = (props: Props) => {
           </Button>
         )}
       </div>
-
       <div className="category_label">
         {props.mode === "category" && (
           <MessageNotification type="default">
@@ -488,11 +482,10 @@ const Wingo = (props: Props) => {
           </MessageNotification>
         )}
       </div>
-
       {
         /* Not daily mode, a campaign level or part of gameshow preset */ props.mode !== "daily" &&
           !props.isCampaignLevel &&
-          !props.gameshowScore && (
+          props.gameshowScore === undefined && (
             <div className="gamemodeSettings">
               <WingoGamemodeSettings
                 mode={props.mode}
@@ -509,9 +502,7 @@ const Wingo = (props: Props) => {
             </div>
           )
       }
-
       <div className="word_grid">{displayGrid()}</div>
-
       <Keyboard
         onEnter={props.onEnter}
         onSubmitLetter={(letter) => {
@@ -528,7 +519,6 @@ const Wingo = (props: Props) => {
         hasBackspace={true}
         hasEnter={true}
       />
-
       <div>
         {props.gamemodeSettings.timerConfig.isTimed && (
           <ProgressBar

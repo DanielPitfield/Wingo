@@ -274,7 +274,7 @@ const LettersGame = (props: Props) => {
       className="App"
       style={{ backgroundImage: `url(${props.theme.backgroundImageSrc})`, backgroundSize: "100% 100%" }}
     >
-      {!props.campaignConfig.isCampaignLevel && !props.gameshowScore && (
+      {!props.campaignConfig.isCampaignLevel && props.gameshowScore === undefined && (
         <div className="gamemodeSettings">
           <LettersGameGamemodeSettings
             gamemodeSettings={props.gamemodeSettings}
