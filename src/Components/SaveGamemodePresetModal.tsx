@@ -74,6 +74,11 @@ function SaveGamemodePresetModal<
                 name: presetName,
                 timestamp: new Date().toISOString(),
                 gamemodeSettings: props.currentGamemodeSettings as TGamemodeSettings,
+                /* TODO: When the preset is retrieved, a preview <span> element is created
+                This method adds the preset to localStorage which can only store string-based values
+                The generic type TGamemodeSettingsPreset has the property of preview, just use an empty string here?
+                */
+                preview: "",
               });
 
               setIsModalShown(false);
