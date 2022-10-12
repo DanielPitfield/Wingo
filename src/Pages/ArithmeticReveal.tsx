@@ -63,6 +63,8 @@ interface Props extends ArithmeticRevealProps {
 const ArithmeticReveal = (props: Props) => {
   const location = useLocation().pathname as PagePath;
 
+  const [numPadDisabled, setNumPadDisabled] = useState(false);
+
   const [targetNumbers, setTargetNumbers] = useState<number[]>([]);
   const [revealState, setRevealState] = useState<{ type: "in-progress"; revealedTiles: number } | { type: "finished" }>(
     { type: "in-progress", revealedTiles: 0 }
@@ -573,7 +575,7 @@ const ArithmeticReveal = (props: Props) => {
           onBackspace={onBackspace}
           onSubmitNumber={onSubmitNumber}
           settings={props.settings}
-          disabled={!inProgress}
+          disabled={numPadDisabled || !inProgress}
           hasBackspace={true}
           hasEnter={true}
         />

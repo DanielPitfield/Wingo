@@ -513,7 +513,7 @@ const Wingo = (props: Props) => {
         inDictionary={props.inDictionary}
         letterStatuses={props.letterStatuses}
         settings={props.settings}
-        disabled={!props.inProgress || keyboardDisabled}
+        disabled={keyboardDisabled || !props.inProgress}
         hasBackspace={true}
         hasEnter={true}
       />

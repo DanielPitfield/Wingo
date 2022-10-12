@@ -47,9 +47,10 @@ interface Props extends NumberSetsProps {
   onComplete: (wasCorrect: boolean) => void;
 }
 
-/** */
 const NumberSets = (props: Props) => {
   const location = useLocation().pathname as PagePath;
+
+  const [numPadDisabled, setNumPadDisabled] = useState(false);
 
   const [gamemodeSettings, setGamemodeSettings] = useState<NumberSetsProps["gamemodeSettings"]>(props.gamemodeSettings);
 
@@ -362,7 +363,7 @@ const NumberSets = (props: Props) => {
           onBackspace={onBackspace}
           onSubmitNumber={onSubmitNumber}
           settings={props.settings}
-          disabled={!inProgress}
+          disabled={numPadDisabled || !inProgress}
           hasBackspace={true}
           hasEnter={true}
         />

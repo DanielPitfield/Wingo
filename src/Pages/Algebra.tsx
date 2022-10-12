@@ -51,6 +51,8 @@ interface Props extends AlgebraProps {
 const Algebra = (props: Props) => {
   const location = useLocation().pathname as PagePath;
 
+  const [keyboardDisabled, setKeyboardDisabled] = useState(false);
+
   const [gamemodeSettings, setGamemodeSettings] = useState<AlgebraProps["gamemodeSettings"]>(props.gamemodeSettings);
 
   const [inProgress, setInProgress] = useState(true);
@@ -402,7 +404,7 @@ const Algebra = (props: Props) => {
         guesses={[]}
         letterStatuses={[]}
         inDictionary
-        disabled={!inProgress}
+        disabled={keyboardDisabled || !inProgress}
         hasBackspace={true}
         hasEnter={true}
       />
@@ -414,7 +416,7 @@ const Algebra = (props: Props) => {
         onBackspace={onBackspace}
         onSubmitNumber={onSubmitNumber}
         settings={props.settings}
-        disabled={!inProgress}
+        disabled={keyboardDisabled || !inProgress}
         hasBackspace={answerType === "number"}
         hasEnter={answerType === "number"}
       />

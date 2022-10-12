@@ -96,6 +96,8 @@ interface Props extends WingoInterlinkedProps {
 export const WingoInterlinked = (props: Props) => {
   const location = useLocation().pathname as PagePath;
 
+  const [keyboardDisabled, setKeyboardDisabled] = useState(false);
+
   // Specified amount of word guesses from initialConfig takes precedence
   const STARTING_NUM_WORD_GUESSES = props.initialConfig?.remainingWordGuesses ?? props.gamemodeSettings.numWordGuesses;
 
@@ -1021,7 +1023,7 @@ export const WingoInterlinked = (props: Props) => {
         inDictionary={true}
         letterStatuses={[]}
         settings={props.settings}
-        disabled={!inProgress}
+        disabled={keyboardDisabled || !inProgress}
         hasBackspace={true}
         hasEnter={true}
       />

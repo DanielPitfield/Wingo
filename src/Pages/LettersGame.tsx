@@ -61,6 +61,8 @@ interface Props {
 const LettersGame = (props: Props) => {
   const location = useLocation().pathname as PagePath;
 
+  const [keyboardDisabled, setKeyboardDisabled] = useState(false);
+
   // Currently selected guess, to be used as the final guess when time runs out
   const [bestGuess, setBestGuess] = useState("");
 
@@ -317,7 +319,7 @@ const LettersGame = (props: Props) => {
         inDictionary={props.inDictionary}
         letterStatuses={[]}
         settings={props.settings}
-        disabled={!props.inProgress}
+        disabled={keyboardDisabled || !props.inProgress}
         hasBackspace={true}
         hasEnter={true}
       />

@@ -45,6 +45,8 @@ interface Props {
 const LetterCategories = (props: Props) => {
   const location = useLocation().pathname as PagePath;
 
+  const [keyboardDisabled, setKeyboardDisabled] = useState(false);
+
   const [mostRecentTotalSeconds, setMostRecentTotalSeconds] = useState(
     props.gamemodeSettings?.timerConfig?.isTimed === true
       ? props.gamemodeSettings?.timerConfig?.seconds
@@ -209,7 +211,7 @@ const LetterCategories = (props: Props) => {
           inDictionary={true}
           letterStatuses={[]}
           settings={props.settings}
-          disabled={!props.inProgress}
+          disabled={keyboardDisabled || !props.inProgress}
           hasBackspace={true}
           hasEnter={true}
         />

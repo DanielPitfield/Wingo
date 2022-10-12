@@ -91,6 +91,8 @@ interface Props extends WordCodesProps {
 const WordCodes = (props: Props) => {
   const location = useLocation().pathname as PagePath;
 
+  const [keyboardDisabled, setKeyboardDisabled] = useState(false);
+
   // dnd-kit
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -790,7 +792,7 @@ const WordCodes = (props: Props) => {
           onBackspace={onBackspace}
           onSubmitNumber={onSubmitNumber}
           settings={props.settings}
-          disabled={!inProgress}
+          disabled={keyboardDisabled || !inProgress}
           hasBackspace={true}
           hasEnter={true}
         />
@@ -809,7 +811,7 @@ const WordCodes = (props: Props) => {
           guesses={[]}
           letterStatuses={[]}
           inDictionary
-          disabled={!inProgress}
+          disabled={keyboardDisabled || !inProgress}
           hasBackspace={true}
           hasEnter={true}
         />
