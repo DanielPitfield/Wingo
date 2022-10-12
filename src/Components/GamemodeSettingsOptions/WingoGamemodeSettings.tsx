@@ -124,6 +124,12 @@ const WingoGamemodeSettings = (props: Props) => {
   return (
     <GamemodeSettingsMenu>
       <>
+        <LoadGamemodePresetModal
+          getPresets={getPresets}
+          onSelectPreset={(preset) => props.onLoadPresetGamemodeSettings(preset.gamemodeSettings)}
+          removePreset={removePreset}
+        ></LoadGamemodePresetModal>
+
         <label>
           <input
             type="number"
@@ -229,6 +235,13 @@ const WingoGamemodeSettings = (props: Props) => {
             </label>
           )}
         </>
+        
+        <SaveGamemodePresetModal
+          currentGamemodeSettings={props.gamemodeSettings}
+          existingPresets={getGamemodeSettingsPresets<WingoConfigProps["gamemodeSettings"]>(location)}
+          onHide={props.onHideOfAddPresetModal}
+          onShow={props.onShowOfAddPresetModal}
+        ></SaveGamemodePresetModal>
       </>
     </GamemodeSettingsMenu>
   );
