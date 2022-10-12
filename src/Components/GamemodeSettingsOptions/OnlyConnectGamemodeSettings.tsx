@@ -3,6 +3,7 @@ import { PagePath } from "../../Data/PageNames";
 import { getGamemodeSettingsPresets } from "../../Data/SaveData/Presets";
 import { OnlyConnectProps } from "../../Pages/OnlyConnect";
 import GamemodeSettingsMenu from "../GamemodeSettingsMenu";
+import LoadGamemodePresetModal from "../LoadGamemodePresetModal";
 import SaveGamemodePresetModal from "../SaveGamemodePresetModal";
 
 interface Props {
@@ -31,6 +32,11 @@ const OnlyConnectGamemodeSettings = (props: Props) => {
   return (
     <GamemodeSettingsMenu>
       <>
+        <LoadGamemodePresetModal
+          getPresets={() => getGamemodeSettingsPresets<OnlyConnectProps["gamemodeSettings"]>(location)}
+          onSelectPreset={(preset) => props.onLoadPresetGamemodeSettings(preset.gamemodeSettings)}
+        />
+
         <label>
           <input
             type="number"
@@ -103,7 +109,7 @@ const OnlyConnectGamemodeSettings = (props: Props) => {
           existingPresets={getGamemodeSettingsPresets<OnlyConnectProps["gamemodeSettings"]>(location)}
           onHide={props.onHideOfAddPresetModal}
           onShow={props.onShowOfAddPresetModal}
-        ></SaveGamemodePresetModal>
+        />
       </>
     </GamemodeSettingsMenu>
   );

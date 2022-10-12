@@ -4,6 +4,7 @@ import { PagePath } from "../../Data/PageNames";
 import { getGamemodeSettingsPresets } from "../../Data/SaveData/Presets";
 import { WingoInterlinkedProps } from "../../Pages/WingoInterlinked";
 import GamemodeSettingsMenu from "../GamemodeSettingsMenu";
+import LoadGamemodePresetModal from "../LoadGamemodePresetModal";
 import SaveGamemodePresetModal from "../SaveGamemodePresetModal";
 
 interface Props {
@@ -32,6 +33,11 @@ const WingoInterlinkedGamemodeSettings = (props: Props) => {
   return (
     <GamemodeSettingsMenu>
       <>
+        <LoadGamemodePresetModal
+          getPresets={() => getGamemodeSettingsPresets<WingoInterlinkedProps["gamemodeSettings"]>(location)}
+          onSelectPreset={(preset) => props.onLoadPresetGamemodeSettings(preset.gamemodeSettings)}
+        />
+
         {IS_CROSSWORD && (
           <label>
             <input
@@ -184,7 +190,7 @@ const WingoInterlinkedGamemodeSettings = (props: Props) => {
           existingPresets={getGamemodeSettingsPresets<WingoInterlinkedProps["gamemodeSettings"]>(location)}
           onHide={props.onHideOfAddPresetModal}
           onShow={props.onShowOfAddPresetModal}
-        ></SaveGamemodePresetModal>
+        />
       </>
     </GamemodeSettingsMenu>
   );

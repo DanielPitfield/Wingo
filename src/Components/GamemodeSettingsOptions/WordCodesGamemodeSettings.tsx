@@ -3,6 +3,7 @@ import { PagePath } from "../../Data/PageNames";
 import { getGamemodeSettingsPresets } from "../../Data/SaveData/Presets";
 import { wordCodesMode, WordCodesProps } from "../../Pages/WordCodes";
 import GamemodeSettingsMenu from "../GamemodeSettingsMenu";
+import LoadGamemodePresetModal from "../LoadGamemodePresetModal";
 import SaveGamemodePresetModal from "../SaveGamemodePresetModal";
 
 interface Props {
@@ -33,6 +34,11 @@ const WordCodesGamemodeSettings = (props: Props) => {
   return (
     <GamemodeSettingsMenu>
       <>
+        <LoadGamemodePresetModal
+          getPresets={() => getGamemodeSettingsPresets<WordCodesProps["gamemodeSettings"]>(location)}
+          onSelectPreset={(preset) => props.onLoadPresetGamemodeSettings(preset.gamemodeSettings)}
+        />
+
         {props.mode !== "match" && (
           <>
             <label>
@@ -172,7 +178,7 @@ const WordCodesGamemodeSettings = (props: Props) => {
           existingPresets={getGamemodeSettingsPresets<WordCodesProps["gamemodeSettings"]>(location)}
           onHide={props.onHideOfAddPresetModal}
           onShow={props.onShowOfAddPresetModal}
-        ></SaveGamemodePresetModal>
+        />
       </>
     </GamemodeSettingsMenu>
   );

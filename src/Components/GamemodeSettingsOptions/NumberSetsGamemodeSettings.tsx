@@ -4,6 +4,7 @@ import { PagePath } from "../../Data/PageNames";
 import { getGamemodeSettingsPresets } from "../../Data/SaveData/Presets";
 import { NumberSetsProps } from "../../Pages/NumberSets";
 import GamemodeSettingsMenu from "../GamemodeSettingsMenu";
+import LoadGamemodePresetModal from "../LoadGamemodePresetModal";
 import SaveGamemodePresetModal from "../SaveGamemodePresetModal";
 
 interface Props {
@@ -27,6 +28,11 @@ const NumberSetsGamemodeSettings = (props: Props) => {
   return (
     <GamemodeSettingsMenu>
       <>
+        <LoadGamemodePresetModal
+          getPresets={() => getGamemodeSettingsPresets<NumberSetsProps["gamemodeSettings"]>(location)}
+          onSelectPreset={(preset) => props.onLoadPresetGamemodeSettings(preset.gamemodeSettings)}
+        />
+
         <label>
           <select
             onChange={props.handleDifficultyChange}
@@ -79,7 +85,7 @@ const NumberSetsGamemodeSettings = (props: Props) => {
           existingPresets={getGamemodeSettingsPresets<NumberSetsProps["gamemodeSettings"]>(location)}
           onHide={props.onHideOfAddPresetModal}
           onShow={props.onShowOfAddPresetModal}
-        ></SaveGamemodePresetModal>
+        />
       </>
     </GamemodeSettingsMenu>
   );

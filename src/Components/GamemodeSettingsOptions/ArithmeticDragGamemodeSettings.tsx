@@ -3,6 +3,7 @@ import { PagePath } from "../../Data/PageNames";
 import { getGamemodeSettingsPresets } from "../../Data/SaveData/Presets";
 import { ArithmeticDragProps, arithmeticNumberSizes } from "../../Pages/ArithmeticDrag";
 import GamemodeSettingsMenu from "../GamemodeSettingsMenu";
+import LoadGamemodePresetModal from "../LoadGamemodePresetModal";
 import SaveGamemodePresetModal from "../SaveGamemodePresetModal";
 
 interface Props {
@@ -32,6 +33,11 @@ const ArithmeticDragGamemodeSettings = (props: Props) => {
   return (
     <GamemodeSettingsMenu>
       <>
+        <LoadGamemodePresetModal
+          getPresets={() => getGamemodeSettingsPresets<ArithmeticDragProps["gamemodeSettings"]>(location)}
+          onSelectPreset={(preset) => props.onLoadPresetGamemodeSettings(preset.gamemodeSettings)}
+        />
+
         <label>
           <input
             type="number"
@@ -120,7 +126,7 @@ const ArithmeticDragGamemodeSettings = (props: Props) => {
           existingPresets={getGamemodeSettingsPresets<ArithmeticDragProps["gamemodeSettings"]>(location)}
           onHide={props.onHideOfAddPresetModal}
           onShow={props.onShowOfAddPresetModal}
-        ></SaveGamemodePresetModal>
+        />
       </>
     </GamemodeSettingsMenu>
   );
