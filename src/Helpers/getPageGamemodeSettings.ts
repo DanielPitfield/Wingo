@@ -1,6 +1,5 @@
 import {
   defaultWingoGamemodeSettings,
-  fallbackWingoSettings,
   defaultLetterCategoriesGamemodeSettings,
   defaultLettersGameGamemodeSettings,
   defaultNumbersGameGamemodeSettings,
@@ -14,6 +13,7 @@ import {
   defaultAlgebraGamemodeSettings,
   defaultWordCodesQuestionGamemodeSettings,
   defaultWordCodesMatchGamemodeSettings,
+  commonWingoSettings,
 } from "../Data/DefaultGamemodeSettings";
 import { PagePath } from "../Data/PageNames";
 import {
@@ -48,7 +48,7 @@ export function getPageGamemodeSettings(page: PagePath) {
     case "/Wingo/Daily":
       // Daily mode should always use the same settings (never from SaveData)
       return (defaultWingoGamemodeSettings.find((x) => x.page === page)?.settings ??
-        fallbackWingoSettings) as WingoConfigProps["gamemodeSettings"];
+        commonWingoSettings) as WingoConfigProps["gamemodeSettings"];
 
     case "/Wingo/Repeat":
     case "/Wingo/Category":
@@ -58,7 +58,7 @@ export function getPageGamemodeSettings(page: PagePath) {
     case "/Conundrum":
       return (getMostRecentWingoConfigGamemodeSettings(page) ??
         defaultWingoGamemodeSettings.find((x) => x.page === page)?.settings ??
-        fallbackWingoSettings) as WingoConfigProps["gamemodeSettings"];
+        commonWingoSettings) as WingoConfigProps["gamemodeSettings"];
 
     case "/Wingo/Interlinked":
     case "/Wingo/Crossword":
@@ -69,7 +69,7 @@ export function getPageGamemodeSettings(page: PagePath) {
         The gamemode settings are redefined in WingoConfig (when rendering a WingoInterlinked component)
         Just pass fallback settings through, because gamemodeSettings can't be left undefined
       */
-      return fallbackWingoSettings as WingoConfigProps["gamemodeSettings"];
+      return commonWingoSettings as WingoConfigProps["gamemodeSettings"];
 
     case "/LettersCategories":
       return (getMostRecentLetterCategoriesConfigGamemodeSettings() ??
@@ -124,6 +124,6 @@ export function getPageGamemodeSettings(page: PagePath) {
         defaultWordCodesMatchGamemodeSettings) as WordCodesProps["gamemodeSettings"];
 
     default:
-      return fallbackWingoSettings as WingoConfigProps["gamemodeSettings"];
+      return commonWingoSettings as WingoConfigProps["gamemodeSettings"];
   }
 }

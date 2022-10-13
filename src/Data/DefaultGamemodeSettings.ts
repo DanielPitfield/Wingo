@@ -31,7 +31,9 @@ export const DEFAULT_WINGO_INCREASING_MAX_NUM_LIVES = 5;
 
 export const DEFAULT_FIT_RESTRICTION = 0;
 
-const commonWingoSettings = {
+export const commonWingoSettings = {
+  // Use the default wordLength of the repeat mode and overwrite where needed
+  wordLength: getGamemodeDefaultWordLength("/Wingo/Repeat"),
   isFirstLetterProvided: false,
   isHintShown: false,
   puzzleRevealSeconds: DEFAULT_PUZZLE_REVEAL_SECONDS,
@@ -39,11 +41,6 @@ const commonWingoSettings = {
   maxLivesConfig: { isLimited: true, maxLives: DEFAULT_WINGO_INCREASING_MAX_NUM_LIVES },
   wordLengthMaxLimit: MAX_TARGET_WORD_LENGTH,
   timerConfig: { isTimed: false as false },
-};
-
-export const fallbackWingoSettings = {
-  wordLength: 5,
-  ...commonWingoSettings,
 };
 
 export const defaultWingoGamemodeSettings: { page: PagePath; settings: WingoConfigProps["gamemodeSettings"] }[] = [
@@ -72,7 +69,6 @@ export const defaultWingoGamemodeSettings: { page: PagePath; settings: WingoConf
     settings: {
       ...commonWingoSettings,
       wordLength: getGamemodeDefaultWordLength("/Wingo/Puzzle"),
-
       isHintShown: true,
     },
   },
