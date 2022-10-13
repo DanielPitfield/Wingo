@@ -11,7 +11,7 @@ import { useLocation } from "react-router-dom";
 import { PagePath } from "../Data/PageNames";
 import { isCampaignLevelPath } from "../Helpers/CampaignPathChecks";
 import { SettingsData } from "../Data/SaveData/Settings";
-import { setNumbersGameConfigGamemodeSettings } from "../Data/SaveData/MostRecentGamemodeSettings";
+import { setMostRecentNumbersGameConfigGamemodeSettings } from "../Data/SaveData/MostRecentGamemodeSettings";
 
 export interface NumbersGameConfigProps {
   campaignConfig:
@@ -165,7 +165,7 @@ const NumbersGameConfig = (props: Props) => {
     ResetGame();
 
     // Save the latest gamemode settings for this mode
-    setNumbersGameConfigGamemodeSettings(gamemodeSettings);
+    setMostRecentNumbersGameConfigGamemodeSettings(gamemodeSettings);
   }, [gamemodeSettings]);
 
   React.useEffect(() => {

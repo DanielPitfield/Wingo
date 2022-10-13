@@ -15,10 +15,10 @@ import { WordCodesProps } from "../../Pages/WordCodes";
 import { PagePath } from "../PageNames";
 
 /**
- * Saves the most recent gamemode settings for Wingo Config.
- * @param gamemodeSettings The latest gamemode settings for Wingo Config to save.
+ * Saves the most recent gamemodeSettings for Wingo Config.
+ * @param gamemodeSettings The latest gamemodeSettings for Wingo Config to save.
  */
-export function setWingoConfigGamemodeSettings(page: PagePath, gamemodeSettings: WingoConfigProps["gamemodeSettings"]) {
+export function setMostRecentWingoConfigGamemodeSettings(page: PagePath, gamemodeSettings: WingoConfigProps["gamemodeSettings"]) {
   const itemName = getLocalStorageItemName(page);
 
   if (itemName) {
@@ -27,16 +27,16 @@ export function setWingoConfigGamemodeSettings(page: PagePath, gamemodeSettings:
 }
 
 /**
- * Gets the saved gamemode settings for Wingo Config, or null if no saved gamemode settings were found.
- * @returns The saved gamemode settings for Wingo Config to save.
+ * Gets the saved gamemodeSettings for Wingo Config, or null if no saved gamemodeSettings were found.
+ * @returns The saved gamemodeSettings for Wingo Config to save.
  */
-export function getWingoConfigGamemodeSettings(page: PagePath): WingoConfigProps["gamemodeSettings"] | null {
+export function getMostRecentWingoConfigGamemodeSettings(page: PagePath): WingoConfigProps["gamemodeSettings"] | null {
   const itemName = getLocalStorageItemName(page);
 
   if (itemName) {
     const wingoConfigGamemodeSettings = localStorage.getItem(itemName);
 
-    // If saved gamemode settings were found
+    // If saved gamemodeSettings were found
     if (wingoConfigGamemodeSettings) {
       return JSON.parse(wingoConfigGamemodeSettings) as WingoConfigProps["gamemodeSettings"];
     }
@@ -46,7 +46,7 @@ export function getWingoConfigGamemodeSettings(page: PagePath): WingoConfigProps
   return null;
 }
 
-export function setWingoInterlinkedGamemodeSettings(
+export function setMostRecentWingoInterlinkedGamemodeSettings(
   page: PagePath,
   gamemodeSettings: WingoInterlinkedProps["gamemodeSettings"]
 ) {
@@ -57,7 +57,7 @@ export function setWingoInterlinkedGamemodeSettings(
   }
 }
 
-export function getWingoInterlinkedGamemodeSettings(page: PagePath): WingoInterlinkedProps["gamemodeSettings"] | null {
+export function getMostRecentWingoInterlinkedGamemodeSettings(page: PagePath): WingoInterlinkedProps["gamemodeSettings"] | null {
   const itemName = getLocalStorageItemName(page);
 
   if (itemName) {
@@ -71,11 +71,11 @@ export function getWingoInterlinkedGamemodeSettings(page: PagePath): WingoInterl
   return null;
 }
 
-export function setNumbleConfigGamemodeSettings(gamemodeSettings: NumbleConfigProps["gamemodeSettings"]) {
+export function setMostRecentNumbleConfigGamemodeSettings(gamemodeSettings: NumbleConfigProps["gamemodeSettings"]) {
   localStorage.setItem("numbleConfigGamemodeSettings", JSON.stringify(gamemodeSettings));
 }
 
-export function getNumbleConfigGamemodeSettings(): NumbleConfigProps["gamemodeSettings"] | null {
+export function getMostRecentNumbleConfigGamemodeSettings(): NumbleConfigProps["gamemodeSettings"] | null {
   const numbleConfigGamemodeSettings = localStorage.getItem("numbleConfigGamemodeSettings");
 
   if (numbleConfigGamemodeSettings) {
@@ -85,13 +85,13 @@ export function getNumbleConfigGamemodeSettings(): NumbleConfigProps["gamemodeSe
   return null;
 }
 
-export function setLetterCategoriesConfigGamemodeSettings(
+export function setMostRecentLetterCategoriesConfigGamemodeSettings(
   gamemodeSettings: LetterCategoriesConfigProps["gamemodeSettings"]
 ) {
   localStorage.setItem("letterCategoriesConfigGamemodeSettings", JSON.stringify(gamemodeSettings));
 }
 
-export function getLetterCategoriesConfigGamemodeSettings(): LetterCategoriesConfigProps["gamemodeSettings"] | null {
+export function getMostRecentLetterCategoriesConfigGamemodeSettings(): LetterCategoriesConfigProps["gamemodeSettings"] | null {
   const letterCategoriesConfigGamemodeSettings = localStorage.getItem("letterCategoriesConfigGamemodeSettings");
 
   if (letterCategoriesConfigGamemodeSettings) {
@@ -101,11 +101,11 @@ export function getLetterCategoriesConfigGamemodeSettings(): LetterCategoriesCon
   return null;
 }
 
-export function setLettersGameConfigGamemodeSettings(gamemodeSettings: LettersGameConfigProps["gamemodeSettings"]) {
+export function setMostRecentLettersGameConfigGamemodeSettings(gamemodeSettings: LettersGameConfigProps["gamemodeSettings"]) {
   localStorage.setItem("lettersGameConfigGamemodeSettings", JSON.stringify(gamemodeSettings));
 }
 
-export function getLettersGameConfigGamemodeSettings(): LettersGameConfigProps["gamemodeSettings"] | null {
+export function getMostRecentLettersGameConfigGamemodeSettings(): LettersGameConfigProps["gamemodeSettings"] | null {
   const lettersGameConfigGamemodeSettings = localStorage.getItem("lettersGameConfigGamemodeSettings");
 
   if (lettersGameConfigGamemodeSettings) {
@@ -115,11 +115,11 @@ export function getLettersGameConfigGamemodeSettings(): LettersGameConfigProps["
   return null;
 }
 
-export function setNumbersGameConfigGamemodeSettings(gamemodeSettings: NumbersGameConfigProps["gamemodeSettings"]) {
+export function setMostRecentNumbersGameConfigGamemodeSettings(gamemodeSettings: NumbersGameConfigProps["gamemodeSettings"]) {
   localStorage.setItem("numbersGameConfigGamemodeSettings", JSON.stringify(gamemodeSettings));
 }
 
-export function getNumbersGameConfigGamemodeSettings(): NumbersGameConfigProps["gamemodeSettings"] | null {
+export function getMostRecentNumbersGameConfigGamemodeSettings(): NumbersGameConfigProps["gamemodeSettings"] | null {
   const numbersGameConfigGamemodeSettings = localStorage.getItem("numbersGameConfigGamemodeSettings");
 
   if (numbersGameConfigGamemodeSettings) {
@@ -129,11 +129,11 @@ export function getNumbersGameConfigGamemodeSettings(): NumbersGameConfigProps["
   return null;
 }
 
-export function setArithmeticRevealGamemodeSettings(gamemodeSettings: ArithmeticRevealProps["gamemodeSettings"]) {
+export function setMostRecentArithmeticRevealGamemodeSettings(gamemodeSettings: ArithmeticRevealProps["gamemodeSettings"]) {
   localStorage.setItem("arithmeticRevealGamemodeSettings", JSON.stringify(gamemodeSettings));
 }
 
-export function getArithmeticRevealGamemodeSettings(): ArithmeticRevealProps["gamemodeSettings"] | null {
+export function getMostRecentArithmeticRevealGamemodeSettings(): ArithmeticRevealProps["gamemodeSettings"] | null {
   const arithmeticRevealGamemodeSettings = localStorage.getItem("arithmeticRevealGamemodeSettings");
 
   if (arithmeticRevealGamemodeSettings) {
@@ -143,7 +143,7 @@ export function getArithmeticRevealGamemodeSettings(): ArithmeticRevealProps["ga
   return null;
 }
 
-export function setArithmeticDragGamemodeSettings(
+export function setMostRecentArithmeticDragGamemodeSettings(
   page: PagePath,
   gamemodeSettings: ArithmeticDragProps["gamemodeSettings"]
 ) {
@@ -154,7 +154,7 @@ export function setArithmeticDragGamemodeSettings(
   }
 }
 
-export function getArithmeticDragGamemodeSettings(page: PagePath): ArithmeticDragProps["gamemodeSettings"] | null {
+export function getMostRecentArithmeticDragGamemodeSettings(page: PagePath): ArithmeticDragProps["gamemodeSettings"] | null {
   const itemName = getLocalStorageItemName(page);
 
   if (itemName) {
@@ -168,11 +168,11 @@ export function getArithmeticDragGamemodeSettings(page: PagePath): ArithmeticDra
   return null;
 }
 
-export function setOnlyConnectGamemodeSettings(gamemodeSettings: OnlyConnectProps["gamemodeSettings"]) {
+export function setMostRecentOnlyConnectGamemodeSettings(gamemodeSettings: OnlyConnectProps["gamemodeSettings"]) {
   localStorage.setItem("onlyConnectGamemodeSettings", JSON.stringify(gamemodeSettings));
 }
 
-export function getOnlyConnectGamemodeSettings(): OnlyConnectProps["gamemodeSettings"] | null {
+export function getMostRecentOnlyConnectGamemodeSettings(): OnlyConnectProps["gamemodeSettings"] | null {
   const onlyConnectGamemodeSettings = localStorage.getItem("onlyConnectGamemodeSettings");
 
   if (onlyConnectGamemodeSettings) {
@@ -182,11 +182,11 @@ export function getOnlyConnectGamemodeSettings(): OnlyConnectProps["gamemodeSett
   return null;
 }
 
-export function setSameLetterWordsGamemodeSettings(gamemodeSettings: SameLetterWordsProps["gamemodeSettings"]) {
+export function setMostRecentSameLetterWordsGamemodeSettings(gamemodeSettings: SameLetterWordsProps["gamemodeSettings"]) {
   localStorage.setItem("sameLetterWordsGamemodeSettings", JSON.stringify(gamemodeSettings));
 }
 
-export function getSameLetterWordsGamemodeSettings(): SameLetterWordsProps["gamemodeSettings"] | null {
+export function getMostRecentSameLetterWordsGamemodeSettings(): SameLetterWordsProps["gamemodeSettings"] | null {
   const sameLetterWordsGamemodeSettings = localStorage.getItem("sameLetterWordsGamemodeSettings");
 
   if (sameLetterWordsGamemodeSettings) {
@@ -196,11 +196,11 @@ export function getSameLetterWordsGamemodeSettings(): SameLetterWordsProps["game
   return null;
 }
 
-export function setNumberSetsGamemodeSettings(gamemodeSettings: NumberSetsProps["gamemodeSettings"]) {
+export function setMostRecentNumberSetsGamemodeSettings(gamemodeSettings: NumberSetsProps["gamemodeSettings"]) {
   localStorage.setItem("numberSetsGamemodeSettings", JSON.stringify(gamemodeSettings));
 }
 
-export function getNumberSetsGamemodeSettings(): NumberSetsProps["gamemodeSettings"] | null {
+export function getMostRecentNumberSetsGamemodeSettings(): NumberSetsProps["gamemodeSettings"] | null {
   const numberSetsGamemodeSettings = localStorage.getItem("numberSetsGamemodeSettings");
 
   if (numberSetsGamemodeSettings) {
@@ -210,11 +210,11 @@ export function getNumberSetsGamemodeSettings(): NumberSetsProps["gamemodeSettin
   return null;
 }
 
-export function setAlgebraGamemodeSettings(gamemodeSettings: AlgebraProps["gamemodeSettings"]) {
+export function setMostRecentAlgebraGamemodeSettings(gamemodeSettings: AlgebraProps["gamemodeSettings"]) {
   localStorage.setItem("algebraGamemodeSettings", JSON.stringify(gamemodeSettings));
 }
 
-export function getAlgebraGamemodeSettings(): AlgebraProps["gamemodeSettings"] | null {
+export function getMostRecentAlgebraGamemodeSettings(): AlgebraProps["gamemodeSettings"] | null {
   const algebraGamemodeSettings = localStorage.getItem("algebraGamemodeSettings");
 
   if (algebraGamemodeSettings) {
@@ -224,7 +224,7 @@ export function getAlgebraGamemodeSettings(): AlgebraProps["gamemodeSettings"] |
   return null;
 }
 
-export function setWordCodesGamemodeSettings(page: PagePath, gamemodeSettings: WordCodesProps["gamemodeSettings"]) {
+export function setMostRecentWordCodesGamemodeSettings(page: PagePath, gamemodeSettings: WordCodesProps["gamemodeSettings"]) {
   const itemName = getLocalStorageItemName(page);
 
   if (itemName) {
@@ -232,7 +232,7 @@ export function setWordCodesGamemodeSettings(page: PagePath, gamemodeSettings: W
   }
 }
 
-export function getWordCodesGamemodeSettings(page: PagePath): WordCodesProps["gamemodeSettings"] | null {
+export function getMostRecentWordCodesGamemodeSettings(page: PagePath): WordCodesProps["gamemodeSettings"] | null {
   const itemName = getLocalStorageItemName(page);
 
   if (itemName) {

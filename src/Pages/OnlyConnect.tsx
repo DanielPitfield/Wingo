@@ -14,7 +14,7 @@ import { useLocation } from "react-router-dom";
 import { PagePath } from "../Data/PageNames";
 import { getOnlyConnectGridWords } from "../Helpers/getOnlyConnectGridWords";
 import { SettingsData } from "../Data/SaveData/Settings";
-import { setOnlyConnectGamemodeSettings } from "../Data/SaveData/MostRecentGamemodeSettings";
+import { setMostRecentOnlyConnectGamemodeSettings } from "../Data/SaveData/MostRecentGamemodeSettings";
 
 export interface OnlyConnectProps {
   gamemodeSettings: {
@@ -86,7 +86,7 @@ const OnlyConnect = (props: Props) => {
     ResetGame();
 
     // Save the latest gamemode settings for this mode
-    setOnlyConnectGamemodeSettings(gamemodeSettings);
+    setMostRecentOnlyConnectGamemodeSettings(gamemodeSettings);
   }, [gamemodeSettings]);
 
   // (Guess) Timer Setup

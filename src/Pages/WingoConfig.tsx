@@ -36,8 +36,8 @@ import {
 } from "../Data/SaveData/DailyWeeklyGuesses";
 import { addGameToHistory, addCompletedRoundToGameHistory } from "../Data/SaveData/GameHistory";
 import {
-  setWingoConfigGamemodeSettings,
-  getWingoInterlinkedGamemodeSettings,
+  setMostRecentWingoConfigGamemodeSettings,
+  getMostRecentWingoInterlinkedGamemodeSettings,
 } from "../Data/SaveData/MostRecentGamemodeSettings";
 
 export const wingoModes = [
@@ -381,7 +381,7 @@ const WingoConfig = (props: Props) => {
     ResetGame();
 
     // Save the latest gamemode settings for this mode
-    setWingoConfigGamemodeSettings(location, gamemodeSettings);
+    setMostRecentWingoConfigGamemodeSettings(location, gamemodeSettings);
   }, [gamemodeSettings]);
 
   // Update targetWord every time the targetCategory changes
@@ -886,7 +886,7 @@ const WingoConfig = (props: Props) => {
         wordArrayConfig={{ type: "length" }}
         provideWords={false}
         gamemodeSettings={
-          getWingoInterlinkedGamemodeSettings("/Wingo/Interlinked") ?? defaultWingoInterlinkedGamemodeSettings
+          getMostRecentWingoInterlinkedGamemodeSettings("/Wingo/Interlinked") ?? defaultWingoInterlinkedGamemodeSettings
         }
       />
     );
@@ -899,7 +899,7 @@ const WingoConfig = (props: Props) => {
         wordArrayConfig={{ type: "category" }}
         provideWords={false}
         gamemodeSettings={
-          getWingoInterlinkedGamemodeSettings("/Wingo/Crossword") ?? defaultWingoCrosswordGamemodeSettings
+          getMostRecentWingoInterlinkedGamemodeSettings("/Wingo/Crossword") ?? defaultWingoCrosswordGamemodeSettings
         }
       />
     );
@@ -956,7 +956,8 @@ const WingoConfig = (props: Props) => {
         wordArrayConfig={{ type: "length" }}
         provideWords={true}
         gamemodeSettings={
-          getWingoInterlinkedGamemodeSettings("/Wingo/Crossword/Fit") ?? defaultWingoCrosswordFitGamemodeSettings
+          getMostRecentWingoInterlinkedGamemodeSettings("/Wingo/Crossword/Fit") ??
+          defaultWingoCrosswordFitGamemodeSettings
         }
       />
     );

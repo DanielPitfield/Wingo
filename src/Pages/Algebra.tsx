@@ -20,7 +20,7 @@ import AlgebraGamemodeSettings from "../Components/GamemodeSettingsOptions/Algeb
 import { useLocation } from "react-router-dom";
 import { PagePath } from "../Data/PageNames";
 import { SettingsData } from "../Data/SaveData/Settings";
-import { setAlgebraGamemodeSettings } from "../Data/SaveData/MostRecentGamemodeSettings";
+import { setMostRecentAlgebraGamemodeSettings } from "../Data/SaveData/MostRecentGamemodeSettings";
 
 export interface AlgebraProps {
   campaignConfig:
@@ -98,7 +98,7 @@ const Algebra = (props: Props) => {
     ResetGame();
 
     // Save the latest gamemode settings for this mode
-    setAlgebraGamemodeSettings(gamemodeSettings);
+    setMostRecentAlgebraGamemodeSettings(gamemodeSettings);
   }, [gamemodeSettings]);
 
   // (Guess) Timer Setup

@@ -12,7 +12,7 @@ import { getRandomElementFrom } from "../Helpers/getRandomElementFrom";
 import { useLocation } from "react-router-dom";
 import { isCampaignLevelPath } from "../Helpers/CampaignPathChecks";
 import { SettingsData } from "../Data/SaveData/Settings";
-import { setLetterCategoriesConfigGamemodeSettings } from "../Data/SaveData/MostRecentGamemodeSettings";
+import { setMostRecentLetterCategoriesConfigGamemodeSettings } from "../Data/SaveData/MostRecentGamemodeSettings";
 
 export interface LetterCategoriesConfigProps {
   campaignConfig:
@@ -120,7 +120,7 @@ const LetterCategoriesConfig = (props: Props) => {
     ResetGame();
 
     // Save the latest gamemode settings for this mode
-    setLetterCategoriesConfigGamemodeSettings(gamemodeSettings);
+    setMostRecentLetterCategoriesConfigGamemodeSettings(gamemodeSettings);
   }, [gamemodeSettings]);
 
   // Picks a required starting letter and then target words from categories starting with this letter

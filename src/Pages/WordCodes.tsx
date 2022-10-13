@@ -39,7 +39,7 @@ import {
 } from "@dnd-kit/sortable";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { SettingsData } from "../Data/SaveData/Settings";
-import { setWordCodesGamemodeSettings } from "../Data/SaveData/MostRecentGamemodeSettings";
+import { setMostRecentWordCodesGamemodeSettings } from "../Data/SaveData/MostRecentGamemodeSettings";
 
 const wordCodesModes = ["match", "question"] as const;
 export type wordCodesMode = typeof wordCodesModes[number];
@@ -155,7 +155,7 @@ const WordCodes = (props: Props) => {
     ResetGame();
 
     // Save the latest gamemode settings for this mode
-    setWordCodesGamemodeSettings(location, gamemodeSettings);
+    setMostRecentWordCodesGamemodeSettings(location, gamemodeSettings);
   }, [gamemodeSettings]);
 
   // Validate the value of props.gamemodeSettings.numDisplayWords

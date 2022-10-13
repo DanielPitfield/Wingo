@@ -9,7 +9,7 @@ import { MAX_NUM_NUMBLE_TEAMS } from "../Components/GamemodeSettingsOptions/Numb
 import { useLocation } from "react-router-dom";
 import { PagePath } from "../Data/PageNames";
 import { SettingsData } from "../Data/SaveData/Settings";
-import { setNumbleConfigGamemodeSettings } from "../Data/SaveData/MostRecentGamemodeSettings";
+import { setMostRecentNumbleConfigGamemodeSettings } from "../Data/SaveData/MostRecentGamemodeSettings";
 
 export const numbleGridShapes = ["square", "hexagon"] as const;
 export type numbleGridShape = typeof numbleGridShapes[number];
@@ -210,7 +210,7 @@ const NumbleConfig = (props: Props) => {
     }
 
     // Save the latest gamemode settings
-    setNumbleConfigGamemodeSettings(gamemodeSettings);
+    setMostRecentNumbleConfigGamemodeSettings(gamemodeSettings);
   }, [gamemodeSettings]);
 
   // Validate the value of props.gamemodeSettings.numTeams

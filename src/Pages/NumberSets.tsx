@@ -19,7 +19,7 @@ import NumberSetsGamemodeSettings from "../Components/GamemodeSettingsOptions/Nu
 import { useLocation } from "react-router-dom";
 import { PagePath } from "../Data/PageNames";
 import { SettingsData } from "../Data/SaveData/Settings";
-import { setNumberSetsGamemodeSettings } from "../Data/SaveData/MostRecentGamemodeSettings";
+import { setMostRecentNumberSetsGamemodeSettings } from "../Data/SaveData/MostRecentGamemodeSettings";
 
 export interface NumberSetsProps {
   campaignConfig:
@@ -88,7 +88,7 @@ const NumberSets = (props: Props) => {
     ResetGame();
 
     // Save the latest gamemode settings for this mode
-    setNumberSetsGamemodeSettings(gamemodeSettings);
+    setMostRecentNumberSetsGamemodeSettings(gamemodeSettings);
   }, [gamemodeSettings]);
 
   // (Guess) Timer Setup

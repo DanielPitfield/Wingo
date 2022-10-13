@@ -9,7 +9,7 @@ import { isLettersGameGuessValid } from "../Helpers/isLettersGameGuessValid";
 import { useLocation } from "react-router-dom";
 import { isCampaignLevelPath } from "../Helpers/CampaignPathChecks";
 import { SettingsData } from "../Data/SaveData/Settings";
-import { setLettersGameConfigGamemodeSettings } from "../Data/SaveData/MostRecentGamemodeSettings";
+import { setMostRecentLettersGameConfigGamemodeSettings } from "../Data/SaveData/MostRecentGamemodeSettings";
 
 export interface LettersGameConfigProps {
   campaignConfig:
@@ -116,7 +116,7 @@ const LettersGameConfig = (props: Props) => {
     ResetGame();
 
     // Save the latest gamemode settings for this mode
-    setLettersGameConfigGamemodeSettings(gamemodeSettings);
+    setMostRecentLettersGameConfigGamemodeSettings(gamemodeSettings);
   }, [gamemodeSettings]);
 
   function ResetGame() {

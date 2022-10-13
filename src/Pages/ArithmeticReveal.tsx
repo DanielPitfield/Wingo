@@ -17,7 +17,7 @@ import { getRandomIntFromRange } from "../Helpers/getRandomIntFromRange";
 import ArithmeticRevealGamemodeSettings from "../Components/GamemodeSettingsOptions/ArithmeticRevealGamemodeSettings";
 import { getNewGamemodeSettingValue } from "../Helpers/getGamemodeSettingsNewValue";
 import { useLocation } from "react-router-dom";
-import { setArithmeticRevealGamemodeSettings } from "../Data/SaveData/MostRecentGamemodeSettings";
+import { setMostRecentArithmeticRevealGamemodeSettings } from "../Data/SaveData/MostRecentGamemodeSettings";
 import { SettingsData } from "../Data/SaveData/Settings";
 
 export interface ArithmeticRevealProps {
@@ -292,7 +292,7 @@ const ArithmeticReveal = (props: Props) => {
     ResetGame();
 
     // Save the latest gamemode settings for this mode
-    setArithmeticRevealGamemodeSettings(gamemodeSettings);
+    setMostRecentArithmeticRevealGamemodeSettings(gamemodeSettings);
   }, [gamemodeSettings]);
 
   // Create the tiles to be revealed (only once on start)

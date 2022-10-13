@@ -32,7 +32,7 @@ import {
 } from "@dnd-kit/sortable";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { SettingsData } from "../Data/SaveData/Settings";
-import { setArithmeticDragGamemodeSettings } from "../Data/SaveData/MostRecentGamemodeSettings";
+import { setMostRecentArithmeticDragGamemodeSettings } from "../Data/SaveData/MostRecentGamemodeSettings";
 
 // Const Contexts: https://stackoverflow.com/questions/44497388/typescript-array-to-string-literal-type
 export const arithmeticNumberSizes = ["small", "medium", "large"] as const;
@@ -321,7 +321,7 @@ const ArithmeticDrag = (props: Props) => {
     ResetGame();
 
     // Save the latest gamemode settings for this mode
-    setArithmeticDragGamemodeSettings(location, gamemodeSettings);
+    setMostRecentArithmeticDragGamemodeSettings(location, gamemodeSettings);
   }, [gamemodeSettings]);
 
   // Create the tiles to be revealed (only once on start)

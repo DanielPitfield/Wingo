@@ -19,7 +19,7 @@ import WingoInterlinkedGamemodeSettings from "../Components/GamemodeSettingsOpti
 import { useLocation } from "react-router-dom";
 import { PagePath } from "../Data/PageNames";
 import { SettingsData } from "../Data/SaveData/Settings";
-import { setWingoInterlinkedGamemodeSettings } from "../Data/SaveData/MostRecentGamemodeSettings";
+import { setMostRecentWingoInterlinkedGamemodeSettings } from "../Data/SaveData/MostRecentGamemodeSettings";
 
 type Orientation = "vertical" | "horizontal";
 
@@ -259,7 +259,7 @@ export const WingoInterlinked = (props: Props) => {
     ResetGame();
 
     // Save the latest gamemode settings for this mode
-    setWingoInterlinkedGamemodeSettings(location, gamemodeSettings);
+    setMostRecentWingoInterlinkedGamemodeSettings(location, gamemodeSettings);
   }, [gamemodeSettings]);
 
   // Validate the value of props.gamemodeSettings.numGridGuesses
