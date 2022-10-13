@@ -131,8 +131,6 @@ interface LevelProps {
 export const Level = (props: LevelProps) => {
   const { areaName, levelNumber } = useParams();
 
-  // TODO: Params undefined, return <Navigate> component
-
   const location = useLocation().pathname as PagePath;
   const navigate = useNavigate();
 
@@ -143,12 +141,19 @@ export const Level = (props: LevelProps) => {
   const selectedLevel: LevelConfig | null = getLevelConfig(areaName, levelNumber);
 
   // Either, the area or level couldn't be found
-  if (selectedArea! === null || selectedLevel! === null) {
+  const hasMissingInfo =
+    areaName === undefined || levelNumber === undefined || selectedArea === null || selectedLevel === null;
+
+  if (hasMissingInfo) {
     // Go back to area (if that can be found), otherwise go back to campaign
     return <Navigate to={selectedArea ? getAreaBacktrackPath(location) : "/Campaign"} />;
   }
 
   function renderGame() {
+    if (hasMissingInfo) {
+      return;
+    }
+
     const commonProps = {
       isCampaignLevel: true,
       theme: props.theme,
@@ -158,62 +163,62 @@ export const Level = (props: LevelProps) => {
       onComplete: (wasCorrect: boolean) => {
         // Update progress to next level (if correct answer)
         if (wasCorrect && selectedLevel?.type === "unlock-level") {
-          addCompletedCampaignAreaUnlockLevel(areaName!);
+          addCompletedCampaignAreaUnlockLevel(areaName);
         }
         if (wasCorrect && selectedLevel?.type === "level") {
-          addCompletedCampaignAreaLevel(areaName!, levelNumber!);
+          addCompletedCampaignAreaLevel(areaName, levelNumber);
         }
-        
+
         // Then, go to level selection (to rety level or to choose next level)
         navigate(selectedArea ? getAreaBacktrackPath(location) : "/Campaign");
       },
     };
 
-    switch (selectedLevel!.level.gameCategory) {
+    switch (selectedLevel.level.gameCategory) {
       case "Wingo":
-        return <WingoConfig {...selectedLevel!.level.levelProps} {...commonProps} />;
+        return <WingoConfig {...selectedLevel.level.levelProps} {...commonProps} />;
 
       case "LetterCategories":
-        return <LetterCategoriesConfig {...selectedLevel!.level.levelProps} {...commonProps} />;
+        return <LetterCategoriesConfig {...selectedLevel.level.levelProps} {...commonProps} />;
 
       case "LettersGame":
-        return <LettersGameConfig {...selectedLevel!.level.levelProps} {...commonProps} />;
+        return <LettersGameConfig {...selectedLevel.level.levelProps} {...commonProps} />;
 
       case "NumbersGame":
-        return <NumbersGameConfig {...selectedLevel!.level.levelProps} {...commonProps} />;
+        return <NumbersGameConfig {...selectedLevel.level.levelProps} {...commonProps} />;
 
       case "ArithmeticReveal":
-        return <ArithmeticReveal {...selectedLevel!.level.levelProps} {...commonProps} />;
+        return <ArithmeticReveal {...selectedLevel.level.levelProps} {...commonProps} />;
 
       case "ArithmeticDrag/Match":
-        return <ArithmeticDrag {...selectedLevel!.level.levelProps} {...commonProps} />;
+        return <ArithmeticDrag {...selectedLevel.level.levelProps} {...commonProps} />;
 
       case "GroupWall":
-        return <OnlyConnect {...selectedLevel!.level.levelProps} {...commonProps} />;
+        return <OnlyConnect {...selectedLevel.level.levelProps} {...commonProps} />;
 
       case "SameLetterWords":
-        return <SameLetterWords {...selectedLevel!.level.levelProps} {...commonProps} />;
+        return <SameLetterWords {...selectedLevel.level.levelProps} {...commonProps} />;
 
       case "NumberSets":
-        return <NumberSets {...selectedLevel!.level.levelProps} {...commonProps} />;
+        return <NumberSets {...selectedLevel.level.levelProps} {...commonProps} />;
 
       case "Algebra":
-        return <Algebra {...selectedLevel!.level.levelProps} {...commonProps} />;
+        return <Algebra {...selectedLevel.level.levelProps} {...commonProps} />;
 
       case "WordCodes":
-        return <WordCodes {...selectedLevel!.level.levelProps} {...commonProps} />;
+        return <WordCodes {...selectedLevel.level.levelProps} {...commonProps} />;
 
       case "Numble":
-        return <NumbleConfig {...selectedLevel!.level.levelProps} {...commonProps} />;
+        return <NumbleConfig {...selectedLevel.level.levelProps} {...commonProps} />;
 
       case "LettersNumbersGameshow":
-        return <LettersNumbersGameshow {...selectedLevel!.level.levelProps} {...commonProps} />;
+        return <LettersNumbersGameshow {...selectedLevel.level.levelProps} {...commonProps} />;
 
       case "WingoGameshow":
-        return <WingoGameshow {...selectedLevel!.level.levelProps} {...commonProps} />;
+        return <WingoGameshow {...selectedLevel.level.levelProps} {...commonProps} />;
 
       case "SequencePuzzle":
-        return <SequencePuzzle {...selectedLevel!.level.levelProps} {...commonProps} />;
+        return <SequencePuzzle {...selectedLevel.level.levelProps} {...commonProps} />;
     }
   }
 
@@ -223,9 +228,9 @@ export const Level = (props: LevelProps) => {
       style={{ backgroundImage: `url(${props.theme.backgroundImageSrc})`, backgroundSize: "100% 100%" }}
     >
       <section className="area-header">
-        <h2 className="area-header-title">{selectedArea!.name}</h2>
+        <h2 className="area-header-title">{selectedArea.name}</h2>
       </section>
-      {selectedLevel!.hint && <MessageNotification type="default">{selectedLevel!.hint}</MessageNotification>}
+      {selectedLevel.hint && <MessageNotification type="default">{selectedLevel.hint}</MessageNotification>}
       {renderGame()}
     </div>
   );
