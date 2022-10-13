@@ -59,7 +59,7 @@ export const Campaign = (props: CampaignProps) => {
           ? // If the information about the previous area couldn't be found
             false
           : // Have all the levels in the previous area been completed?
-            AllCampaignAreas[index - 1].levels.length === previousAreaInfo?.completedLevelNumbers.size;
+            AllCampaignAreas[index - 1].levels.length === previousAreaInfo?.completedLevelNumbers.length;
 
         // If there is no save data for status, what will the unlock status be?
         const fallbackUnlockStatus = isFirstArea || isPreviousAreaCompleted ? "unlockable" : "locked";
@@ -67,7 +67,7 @@ export const Campaign = (props: CampaignProps) => {
         // Try and get the unlock status from the save data, or if not found, use above fallback
         const unlockStatus = areaInfo?.status ?? fallbackUnlockStatus;
 
-        const numCompletedLevels = areaInfo?.completedLevelNumbers.size;
+        const numCompletedLevels = areaInfo?.completedLevelNumbers.length;
         const isAreaCompleted = numCompletedLevels === area.levels.length;
 
         if (props.onlyShowCurrentArea && (unlockStatus === "locked" || isAreaCompleted)) {

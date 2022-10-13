@@ -42,16 +42,13 @@ export const LevelNode = (props: LevelNodeProps) => {
   // Find the previous level (unless this is the first level)
   const previousLevel = isFirstLevel ? undefined : props.area.levels[props.levelNumber - 1];
 
-  // The completed levels for the area (that this LevelNode belongs to)
-  const completedLevels: string[] = Array.from(areaInfo?.completedLevelNumbers ?? []);
-
   // Determine whether the level has already been completed
-  const isLevelCompleted = completedLevels.includes(props.levelNumber.toString());
+  const isLevelCompleted = areaInfo?.completedLevelNumbers.includes(props.levelNumber.toString());
 
   // Determine whether the level has been unlocked (i.e. the previous level has been completed)
   const isLevelUnlocked = !previousLevel
     ? areaInfo?.status === "unlocked"
-    : completedLevels.includes((props.levelNumber - 1).toString());
+    : areaInfo?.completedLevelNumbers.includes((props.levelNumber - 1).toString());
 
   // Get the level page info
   const levelInfo = pageDescriptions.find((x) => x.path === props.level.level.page);

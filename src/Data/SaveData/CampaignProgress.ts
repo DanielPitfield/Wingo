@@ -1,7 +1,8 @@
 export type AreaUnlockStatus = "locked" | "unlockable" | "unlocked";
 
+// TODO: completedLevelNumbers would ideally be a set, but it is problematic to implement!
 export type CampaignSaveData = {
-  areas: { name: string; status: AreaUnlockStatus; completedLevelNumbers: Set<string> }[];
+  areas: { name: string; status: AreaUnlockStatus; completedLevelNumbers: string[] }[];
 };
 
 /**
@@ -30,7 +31,7 @@ export function addCompletedCampaignAreaUnlockLevel(areaName: CampaignSaveData["
   const newAreaData: CampaignSaveData["areas"][0] = {
     name: areaName,
     status: "unlocked",
-    completedLevelNumbers: new Set<string>(),
+    completedLevelNumbers: [],
   };
 
   // Save the updated information about the unlocked area to campaign progress
@@ -58,10 +59,16 @@ export function addCompletedCampaignAreaLevel(areaName: CampaignSaveData["areas"
     return;
   }
 
+  // Add the completed level to the area's completed level numbers
+  const newCompletedLevelNumbers =  currentAreaData.completedLevelNumbers.slice();
+  
+  // TODO: This can't be adding the levelNumber if the level is being completed a second time (otherwise you could just complete one level several times to pass an area!)
+  newCompletedLevelNumbers.push(levelNumber);
+
   // After completing the level, the levelNumber is stored in  the area's completedLevelNumbers
   const newAreaData: CampaignSaveData["areas"][0] = {
     ...currentAreaData,
-    completedLevelNumbers: currentAreaData.completedLevelNumbers.add(levelNumber),
+    completedLevelNumbers: newCompletedLevelNumbers,
   };
 
   // Save the updated information about the progressed area to campaign progress
