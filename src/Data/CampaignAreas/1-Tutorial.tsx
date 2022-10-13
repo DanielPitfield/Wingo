@@ -23,9 +23,10 @@ export const area: AreaConfig = {
       levelProps: {
         mode: "repeat",
         targetWord: "start",
+        // TODO: Why is the LevelConfig type not being enforced, you can add any property you want here?
         enforceFullLengthGuesses: true,
         defaultNumGuesses: 6,
-
+        // TODO: Spread defaultGamemodeSettings for "/Wingo/Repeat" and overwrite properties where needed
         gamemodeSettings: {
           wordLength: 5,
           isFirstLetterProvided: true,
