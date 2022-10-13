@@ -47,7 +47,7 @@ export const LevelNode = (props: LevelNodeProps) => {
   console.log("Area Info - Completed Levels: " + areaInfo?.completedLevelNumbers);
 
   // Determine whether the level has already been completed
-  const isLevelCompleted = areaInfo?.completedLevelNumbers?.has(props.levelNumber.toString());
+  const isLevelCompleted = Array.from(areaInfo?.completedLevelNumbers || []).includes(props.levelNumber.toString());
 
   // Determine whether the level has been unlocked (i.e. the previous level has been completed)
   const isLevelUnlocked = !previousLevel
