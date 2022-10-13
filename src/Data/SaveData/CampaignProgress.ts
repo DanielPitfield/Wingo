@@ -59,11 +59,12 @@ export function addCompletedCampaignAreaLevel(areaName: CampaignSaveData["areas"
     return;
   }
 
-  // Add the completed level to the area's completed level numbers
-  const newCompletedLevelNumbers =  currentAreaData.completedLevelNumbers.slice();
-  
-  // TODO: This can't be adding the levelNumber if the level is being completed a second time (otherwise you could just complete one level several times to pass an area!)
-  newCompletedLevelNumbers.push(levelNumber);
+  const newCompletedLevelNumbers = currentAreaData.completedLevelNumbers.slice();
+
+  // Add the completed level to the area's completed level numbers (as long as it isn't already included)
+  if (!newCompletedLevelNumbers.includes(levelNumber)) {
+    newCompletedLevelNumbers.push(levelNumber);
+  }
 
   // After completing the level, the levelNumber is stored in  the area's completedLevelNumbers
   const newAreaData: CampaignSaveData["areas"][0] = {
