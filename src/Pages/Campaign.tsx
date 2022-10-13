@@ -1,6 +1,5 @@
 import { AreaConfig } from "./Area";
 import { Button } from "../Components/Button";
-import { getId } from "../Components/Level";
 import { Theme } from "../Data/Themes";
 import { AllCampaignAreas } from "../Data/CampaignAreas/AllCampaignAreas";
 import BackgroundImageSrc from "../Data/Images/background.png";
@@ -21,7 +20,6 @@ interface CampaignProps {
 export const Campaign = (props: CampaignProps) => {
   const navigate = useNavigate();
 
-  /** */
   function onAreaClick(area: AreaConfig, unlockLevelStatus: CampaignSaveData["areas"][0]["status"]) {
     // The button to start the level should be disabled, but just in case
     if (unlockLevelStatus === "locked") {
@@ -40,12 +38,13 @@ export const Campaign = (props: CampaignProps) => {
     navigate(`/Campaign/Areas/${area.name}`);
   }
 
+  const campaignProgress = getCampaignProgress();
+
   return (
     // AREA SELECTION
     <div className="campaign widgets">
       {AllCampaignAreas.filter((x) => x.levels.length > 0).map((area, index) => {
-        // Find out if area is locked, unlockable or unlocked
-        const campaignProgress = getCampaignProgress();
+        // Need to find out if area is locked, unlockable or unlocked, so start by getting the saved information about the area
         const areaInfo = campaignProgress.areas.find((x) => x.name === area.name);
 
         // Determine whether this is the first area
@@ -60,9 +59,7 @@ export const Campaign = (props: CampaignProps) => {
           ? // If the information about the previous area couldn't be found
             false
           : // Have all the levels in the previous area been completed?
-            AllCampaignAreas[index - 1].levels.every((level) =>
-              previousAreaInfo?.completedLevelIds.includes(getId(level.level))
-            );
+            AllCampaignAreas[index - 1].levels.length === previousAreaInfo?.completedLevelNumbers.size;
 
         // If there is no save data for status, what will the unlock status be?
         const fallbackUnlockStatus = isFirstArea || isPreviousAreaCompleted ? "unlockable" : "locked";
@@ -70,10 +67,10 @@ export const Campaign = (props: CampaignProps) => {
         // Try and get the unlock status from the save data, or if not found, use above fallback
         const unlockStatus = areaInfo?.status ?? fallbackUnlockStatus;
 
-        const currentLevelCount = areaInfo?.completedLevelIds.filter((x) => x !== "unlock").length || 0;
-        const isCompleted = area.levels.every((l) => areaInfo?.completedLevelIds.includes(getId(l.level)));
+        const numCompletedLevels = areaInfo?.completedLevelNumbers.size;
+        const isAreaCompleted = numCompletedLevels === area.levels.length;
 
-        if (props.onlyShowCurrentArea && (unlockStatus === "locked" || isCompleted)) {
+        if (props.onlyShowCurrentArea && (unlockStatus === "locked" || isAreaCompleted)) {
           return null;
         }
 
@@ -97,7 +94,7 @@ export const Campaign = (props: CampaignProps) => {
             <strong className="area-name widget-title">{unlockStatus === "unlocked" ? area.name : `???`}</strong>
             <span className="level-count widget-button-wrapper">
               <Button
-                mode={unlockStatus === "locked" || isCompleted ? "default" : "accept"}
+                mode={unlockStatus === "locked" || isAreaCompleted ? "default" : "accept"}
                 disabled={unlockStatus === "locked"}
                 settings={props.settings}
                 onClick={() => onAreaClick(area, unlockStatus)}
@@ -106,7 +103,7 @@ export const Campaign = (props: CampaignProps) => {
                   <>
                     <FiLock /> Unlock
                   </>
-                ) : isCompleted ? (
+                ) : isAreaCompleted ? (
                   <>
                     <FiCheck /> Completed!
                   </>
@@ -120,7 +117,9 @@ export const Campaign = (props: CampaignProps) => {
                   </>
                 )}
               </Button>
-              {unlockStatus === "unlocked" ? `${Math.max(0, currentLevelCount - 1)} / ${area.levels.length}` : "? / ?"}
+              {unlockStatus === "unlocked" && numCompletedLevels !== undefined
+                ? `${Math.max(0, numCompletedLevels - 1)} / ${area.levels.length}`
+                : "? / ?"}
             </span>
           </div>
         );

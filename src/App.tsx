@@ -7,7 +7,7 @@ import LettersGameConfig, { LettersGameConfigProps } from "./Pages/LettersGameCo
 import NumbersGameConfig, { NumbersGameConfigProps } from "./Pages/NumbersGameConfig";
 import { Campaign } from "./Pages/Campaign";
 import { Area, AreaConfig } from "./Pages/Area";
-import { getId, Level, LevelConfig } from "./Components/Level";
+import { Level } from "./Components/Level";
 import LetterCategoriesConfig, { LetterCategoriesConfigProps } from "./Pages/LetterCategoriesConfig";
 import ArithmeticReveal, { ArithmeticRevealProps } from "./Pages/ArithmeticReveal";
 import ArithmeticDrag, { ArithmeticDragProps } from "./Pages/ArithmeticDrag";
@@ -36,11 +36,7 @@ import { getPageGamemodeSettings } from "./Helpers/getPageGamemodeSettings";
 import { getRandomElementFrom } from "./Helpers/getRandomElementFrom";
 import { Routes, Route, useNavigate, useLocation, Navigate } from "react-router-dom";
 import { PageWrapper } from "./Components/PageWrapper";
-import {
-  addCompletedCampaignAreaUnlockLevel,
-  addCompletedCampaignAreaLevel,
-  getCampaignProgress,
-} from "./Data/SaveData/CampaignProgress";
+import { getCampaignProgress } from "./Data/SaveData/CampaignProgress";
 import { getSettings, saveSettings, SettingsData } from "./Data/SaveData/Settings";
 import { readGold } from "./Data/SaveData/Gold";
 
@@ -179,24 +175,6 @@ export const App = () => {
     }
   }
 
-  // Update campaign progress (when a campaign level is successfully completed)
-  function onCompleteCampaignLevel(areaConfig: AreaConfig, levelConfig: LevelConfig, isUnlockLevel: boolean) {
-    if (!areaConfig) {
-      return;
-    }
-
-    if (!levelConfig) {
-      return;
-    }
-
-    if (isUnlockLevel) {
-      addCompletedCampaignAreaUnlockLevel(areaConfig.name);
-    }
-
-    const levelId = getId(levelConfig.level);
-    addCompletedCampaignAreaLevel(areaConfig.name, levelId);
-  }
-
   function addGold(additionalGold: number) {
     setGold(gold + additionalGold);
   }
@@ -261,13 +239,7 @@ export const App = () => {
           path="/Campaign/Areas/:areaName/Levels/:levelNumber"
           element={
             <PageWrapper gold={gold} settings={settings}>
-              <Level
-                theme={theme}
-                setTheme={setThemeIfNoPreferredSet}
-                addGold={addGold}
-                onCompleteCampaignLevel={onCompleteCampaignLevel}
-                settings={settings}
-              />
+              <Level theme={theme} settings={settings} setTheme={setThemeIfNoPreferredSet} addGold={addGold} />
             </PageWrapper>
           }
         />

@@ -1,5 +1,7 @@
+export type AreaUnlockStatus = "locked" | "unlockable" | "unlocked";
+
 export type CampaignSaveData = {
-  areas: { name: string; status: "locked" | "unlockable" | "unlocked"; completedLevelIds: string[] }[];
+  areas: { name: string; status: AreaUnlockStatus; completedLevelNumbers: Set<string> }[];
 };
 
 /**
@@ -17,19 +19,21 @@ export function getCampaignProgress(): CampaignSaveData {
 }
 
 /**
- * Incements the completed level count for the specified area.
- * @param areaName Name of the campaign area.
+ * Updates the unlock status of an area when the unlock level has been completed.
+ * @param areaName Name of the campaign area being unlocked.
  */
 export function addCompletedCampaignAreaUnlockLevel(areaName: CampaignSaveData["areas"][0]["name"]) {
   // Get the current campaign progress (which is to be updated)
   const campaignProgress = getCampaignProgress();
 
+  // After completing the unlock level, the area unlock status becomes unlocked
   const newAreaData: CampaignSaveData["areas"][0] = {
     name: areaName,
     status: "unlocked",
-    completedLevelIds: ["unlock"],
+    completedLevelNumbers: new Set<string>(),
   };
 
+  // Save the updated information about the unlocked area to campaign progress
   const newCampaignProgress = {
     ...campaignProgress,
     areas: campaignProgress.areas.filter((x) => x.name !== areaName).concat([newAreaData]),
@@ -40,22 +44,27 @@ export function addCompletedCampaignAreaUnlockLevel(areaName: CampaignSaveData["
 
 /**
  * Incements the completed level count for the specified area.
- * @param areaName Name of the campaign area.
- * @param levelId ID of the area.
+ * @param areaName Name of the campaign area in which a level has been completed.
+ * @param levelNumber levelNumber of the completed level.
  */
-export function addCompletedCampaignAreaLevel(areaName: CampaignSaveData["areas"][0]["name"], levelId: string) {
+export function addCompletedCampaignAreaLevel(areaName: CampaignSaveData["areas"][0]["name"], levelNumber: string) {
   // Get the current campaign progress (which is to be updated)
   const campaignProgress = getCampaignProgress();
 
-  // Find the existing area info (if any)
-  const existingArea = campaignProgress.areas.find((x) => x.name === areaName);
+  // Find the currently saved progress information about the area
+  const currentAreaData = campaignProgress.areas.find((x) => x.name === areaName);
 
+  if (!currentAreaData) {
+    return;
+  }
+
+  // After completing the level, the levelNumber is stored in  the area's completedLevelNumbers
   const newAreaData: CampaignSaveData["areas"][0] = {
-    name: areaName,
-    status: "unlocked",
-    completedLevelIds: Array.from(new Set((existingArea?.completedLevelIds || ["unlock"]).concat(levelId))),
+    ...currentAreaData,
+    completedLevelNumbers: currentAreaData.completedLevelNumbers.add(levelNumber),
   };
 
+  // Save the updated information about the progressed area to campaign progress
   const newCampaignProgress = {
     ...campaignProgress,
     areas: campaignProgress.areas.filter((x) => x.name !== areaName).concat([newAreaData]),

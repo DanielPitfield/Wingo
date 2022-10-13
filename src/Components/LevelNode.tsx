@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { pageDescriptions } from "../Data/PageDescriptions";
-import { getId, LevelConfig } from "./Level";
+import { LevelConfig } from "./Level";
 import { Theme } from "../Data/Themes";
 import { usePopper } from "react-popper";
 import { useClickChime } from "../Data/Sounds";
@@ -33,7 +33,10 @@ export const LevelNode = (props: LevelNodeProps) => {
   const [playClickSoundEffect] = useClickChime(props.settings ?? DISABLED_SETTINGS);
 
   const campaignProgress = getCampaignProgress();
+
   const areaInfo = campaignProgress.areas.find((x) => x.name === props.area.name);
+
+  console.log("Area Info: " + areaInfo);
 
   // Determine whether this is the first level
   const isFirstLevel = props.levelNumber === 1;
@@ -41,13 +44,15 @@ export const LevelNode = (props: LevelNodeProps) => {
   // Find the previous level (unless this is the first level)
   const previousLevel = isFirstLevel ? undefined : props.area.levels[props.levelNumber - 1];
 
+  console.log("Area Info - Completed Levels: " + areaInfo?.completedLevelNumbers);
+
   // Determine whether the level has already been completed
-  const isLevelCompleted = areaInfo?.completedLevelIds.some((x) => x === getId(props.level.level)) || false;
+  const isLevelCompleted = areaInfo?.completedLevelNumbers?.has(props.levelNumber.toString());
 
   // Determine whether the level has been unlocked (i.e. the previous level has been completed)
   const isLevelUnlocked = !previousLevel
-    ? areaInfo?.completedLevelIds.includes("unlock")
-    : areaInfo?.completedLevelIds.some((x) => x === getId(previousLevel.level)) || false;
+    ? areaInfo?.status === "unlocked"
+    : areaInfo?.completedLevelNumbers.has((props.levelNumber - 1).toString());
 
   // Get the level page info
   const levelInfo = pageDescriptions.find((x) => x.path === props.level.level.page);
