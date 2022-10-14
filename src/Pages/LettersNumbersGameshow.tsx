@@ -6,7 +6,6 @@ import { Theme, Themes } from "../Data/Themes";
 import { Button } from "../Components/Button";
 import WingoConfig, { WingoConfigProps } from "./WingoConfig";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
-import { getGamemodeDefaultNumGuesses } from "../Helpers/getGamemodeDefaultNumGuesses";
 import { displayGameshowSummary } from "../Helpers/getGameshowSummary";
 import { getPageGamemodeSettings } from "../Helpers/getPageGamemodeSettings";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -183,8 +182,6 @@ export const LettersNumbersGameshow = (props: Props) => {
           isCampaignLevel={false}
           mode="conundrum"
           gamemodeSettings={getPageGamemodeSettings("/Conundrum") as WingoConfigProps["gamemodeSettings"]}
-          defaultNumGuesses={getGamemodeDefaultNumGuesses("/Conundrum")}
-          enforceFullLengthGuesses={true}
         />
       );
     }

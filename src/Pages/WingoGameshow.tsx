@@ -10,7 +10,6 @@ import { getPageGamemodeSettings } from "../Helpers/getPageGamemodeSettings";
 import { getWingoGameshowRoundOrder } from "../Helpers/getWingoGameshowRoundOrder";
 import { useNavigate, useLocation } from "react-router-dom";
 import { PagePath } from "../Data/PageNames";
-import { getGamemodeDefaultNumGuesses } from "../Helpers/getGamemodeDefaultNumGuesses";
 import { getAreaBacktrackPath } from "../Helpers/getAreaBacktrackPath";
 import { SettingsData } from "../Data/SaveData/Settings";
 
@@ -174,8 +173,6 @@ export const WingoGameshow = (props: Props) => {
             ...(getPageGamemodeSettings("/Wingo/Puzzle") as WingoConfigProps["gamemodeSettings"]),
             wordLength: wordLength,
           }}
-          defaultNumGuesses={getGamemodeDefaultNumGuesses("/Wingo/Puzzle")}
-          enforceFullLengthGuesses={true}
           roundScoringInfo={roundScoringInfo}
           gameshowScore={gameshowScore}
         />
@@ -189,8 +186,6 @@ export const WingoGameshow = (props: Props) => {
             ...(getPageGamemodeSettings("/Wingo/Repeat") as WingoConfigProps["gamemodeSettings"]),
             wordLength: wordLength,
           }}
-          defaultNumGuesses={getGamemodeDefaultNumGuesses("/Wingo/Repeat")}
-          enforceFullLengthGuesses={true}
           roundScoringInfo={roundScoringInfo}
           gameshowScore={gameshowScore}
         />
