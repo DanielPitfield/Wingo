@@ -142,6 +142,16 @@ const WingoGamemodeSettings = (props: Props) => {
           Number of guesses
         </label>
 
+        <label>
+          <input
+            checked={props.gamemodeSettings.enforceFullLengthGuesses}
+            type="checkbox"
+            name="enforceFullLengthGuesses"
+            onChange={props.handleSimpleGamemodeSettingsChange}
+          ></input>
+          Enforce full length guesses
+        </label>
+
         {isContinuationMode() && (
           <label>
             <input
