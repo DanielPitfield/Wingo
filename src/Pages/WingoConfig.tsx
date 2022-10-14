@@ -10,11 +10,10 @@ import {
   defaultWingoCrosswordGamemodeSettings,
   defaultWingoInterlinkedGamemodeSettings,
 } from "../Data/DefaultGamemodeSettings";
-import { MIN_TARGET_WORD_LENGTH } from "../Data/GamemodeSettingsInputLimits";
 import { categoryMappings, targetWordLengthMappings } from "../Data/WordArrayMappings";
 import { getDeterministicArrayItems } from "../Helpers/DeterministicSeeding";
 import { LetterStatus } from "../Components/LetterTile";
-import { getAllPuzzleWordsOfLength, getAllWordsOfLength, getTargetWordsOfLength } from "../Helpers/getWordsOfLength";
+import { getAllPuzzleWordsOfLength, getAllWordsUpToLength, getTargetWordsOfLength } from "../Helpers/getWordsOfLength";
 import { getGamemodeDefaultTimerValue } from "../Helpers/getGamemodeDefaultTimerValue";
 import { getGamemodeDefaultWordLength } from "../Helpers/getGamemodeDefaultWordLength";
 import { getConundrum } from "../Helpers/getConundrum";
@@ -61,7 +60,12 @@ export interface WingoConfigProps {
   mode: WingoMode;
 
   gamemodeSettings: {
+    // Main options
     wordLength: number;
+    startingNumGuesses: number;
+
+    // Toggles
+    enforceFullLengthGuesses: boolean;
     isFirstLetterProvided: boolean;
     isHintShown: boolean;
 
@@ -73,11 +77,9 @@ export interface WingoConfigProps {
     maxLivesConfig: { isLimited: true; maxLives: number } | { isLimited: false };
     wordLengthMaxLimit: number;
 
+    // Time limit
     timerConfig: { isTimed: true; seconds: number } | { isTimed: false };
   };
-
-  defaultNumGuesses: number;
-  enforceFullLengthGuesses: boolean;
 
   // Word to guess specified in some way?
   conundrum?: string;
@@ -112,7 +114,7 @@ const WingoConfig = (props: Props) => {
   const location = useLocation().pathname as PagePath;
 
   const [guesses, setGuesses] = useState<string[]>(props.guesses ?? []);
-  const [numGuesses, setNumGuesses] = useState(props.defaultNumGuesses);
+  const [numGuesses, setNumGuesses] = useState(props.gamemodeSettings.startingNumGuesses);
   const [gameId, setGameId] = useState<string | null>(null);
 
   const [gamemodeSettings, setGamemodeSettings] = useState<WingoConfigProps["gamemodeSettings"]>(
@@ -317,31 +319,34 @@ const WingoConfig = (props: Props) => {
     }
   }, [targetWord, currentWord, guesses, wordIndex, inProgress, inDictionary]);
 
-  const getValidWordArray = (targetWord: string) => {
+  // Get the word array (ignoring whether gamemodeSettings.enforceFullLengthGuesses is enabled or disabled at this stage)
+  const getUntrimmedWordArray = (targetWord: string) => {
     // Valid word array directly specified
     if (props.wordArray) {
       return props.wordArray;
     }
+
     // Category mode - Find the array which includes the target word
-    else if (props.mode === "category") {
+    if (props.mode === "category") {
       return categoryMappings
         .find((categoryMapping) => categoryMapping.array.some(({ word }) => word === targetWord))
         ?.array.map((x) => x.word)!;
     }
-    // All words that are the same length as the target word
-    else if (props.enforceFullLengthGuesses) {
-      return getAllWordsOfLength(targetWord.length);
-    }
+
     // All words of length up to and including the wordLength (partial and full length guesses)
-    else {
-      let newWordArray: string[] = [];
-      for (let i = MIN_TARGET_WORD_LENGTH; i <= targetWord.length; i++) {
-        // Find array containing words of i length
-        const currentLengthWordArray = getAllWordsOfLength(i);
-        newWordArray = newWordArray.concat(currentLengthWordArray);
-      }
-      return newWordArray;
+    return getAllWordsUpToLength(targetWord.length);
+  };
+
+  // Now trim the word array depending on whether gamemodeSettings.enforceFullLengthGuesses is enabled or disabled
+  const getValidWordArray = (targetWord: string) => {
+    const wordArray = getUntrimmedWordArray(targetWord);
+
+    // If full length guesses ar eenforced, filter the words that are the same length as the target word
+    if (gamemodeSettings.enforceFullLengthGuesses) {
+      return wordArray.filter((word) => word.length === targetWord.length);
     }
+
+    return wordArray;
   };
 
   React.useEffect(() => {
@@ -532,6 +537,8 @@ const WingoConfig = (props: Props) => {
         mode: props.mode,
         gamemodeSettings: {
           wordLength: gamemodeSettings.wordLength,
+          startingNumGuesses: gamemodeSettings.startingNumGuesses,
+          enforceFullLengthGuesses: gamemodeSettings.enforceFullLengthGuesses,
           isFirstLetterProvided: gamemodeSettings.isFirstLetterProvided,
           isHintShown: gamemodeSettings.isHintShown,
           puzzleRevealSeconds: gamemodeSettings.puzzleRevealSeconds,
@@ -543,8 +550,7 @@ const WingoConfig = (props: Props) => {
             : { isTimed: false },
         },
         targetWord,
-        defaultNumGuesses: props.defaultNumGuesses,
-        enforceFullLengthGuesses: props.enforceFullLengthGuesses,
+
         checkInDictionary: props.checkInDictionary,
         wordArray: props.wordArray,
       },
@@ -623,9 +629,9 @@ const WingoConfig = (props: Props) => {
     // TODO: numGuesses >= 1, stops resetting with two rows left, but means hard reset doesn't reset the numGuesses
     const limitlessAndLivesRemaining = props.mode === "limitless" && numGuesses >= 1;
 
-    // Don't reset to defaultNumGuesses when there are lives remaining in limitless mode
+    // Don't reset to startingNumGuesses when there are lives remaining in limitless mode
     if (!limitlessAndLivesRemaining) {
-      setNumGuesses(props.defaultNumGuesses);
+      setNumGuesses(gamemodeSettings.startingNumGuesses);
     }
   }
 
@@ -762,7 +768,7 @@ const WingoConfig = (props: Props) => {
     }
 
     // Don't allow incomplete words (if specified in props)
-    if (props.enforceFullLengthGuesses && currentWord.length !== gamemodeSettings.wordLength) {
+    if (gamemodeSettings.enforceFullLengthGuesses && currentWord.length !== gamemodeSettings.wordLength) {
       setIsIncompleteWord(true);
       return;
     }
@@ -827,8 +833,6 @@ const WingoConfig = (props: Props) => {
           mode: props.mode,
           gamemodeSettings: gamemodeSettings,
           targetWord,
-          defaultNumGuesses: props.defaultNumGuesses,
-          enforceFullLengthGuesses: props.enforceFullLengthGuesses,
           checkInDictionary: props.checkInDictionary,
           wordArray: props.wordArray,
           guesses,

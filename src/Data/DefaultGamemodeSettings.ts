@@ -32,13 +32,19 @@ export const DEFAULT_WINGO_INCREASING_MAX_NUM_LIVES = 5;
 export const DEFAULT_FIT_RESTRICTION = 0;
 
 export const commonWingoSettings = {
-  // Use the default wordLength of the repeat mode and overwrite where needed
+  // Use the defaults of the repeat mode and overwrite where needed
   wordLength: getGamemodeDefaultWordLength("/Wingo/Repeat"),
+  startingNumGuesses: getGamemodeDefaultNumGuesses("/Wingo/Repeat"),
+
+  enforceFullLengthGuesses: true,
   isFirstLetterProvided: false,
   isHintShown: false,
+
   puzzleRevealSeconds: DEFAULT_PUZZLE_REVEAL_SECONDS,
   puzzleLeaveNumBlanks: DEFAULT_PUZZLE_LEAVE_NUM_BLANKS,
+
   maxLivesConfig: { isLimited: true, maxLives: DEFAULT_WINGO_INCREASING_MAX_NUM_LIVES },
+
   wordLengthMaxLimit: MAX_TARGET_WORD_LENGTH,
   timerConfig: { isTimed: false as false },
 };
@@ -46,29 +52,51 @@ export const commonWingoSettings = {
 export const defaultWingoGamemodeSettings: { page: PagePath; settings: WingoConfigProps["gamemodeSettings"] }[] = [
   {
     page: "/Wingo/Daily",
-    settings: { ...commonWingoSettings, wordLength: getGamemodeDefaultWordLength("/Wingo/Daily") },
+    settings: {
+      ...commonWingoSettings,
+      wordLength: getGamemodeDefaultWordLength("/Wingo/Daily"),
+      startingNumGuesses: getGamemodeDefaultNumGuesses("/Wingo/Daily"),
+    },
   },
   {
     page: "/Wingo/Repeat",
-    settings: { ...commonWingoSettings, wordLength: getGamemodeDefaultWordLength("/Wingo/Repeat") },
+    settings: {
+      ...commonWingoSettings,
+      wordLength: getGamemodeDefaultWordLength("/Wingo/Repeat"),
+      startingNumGuesses: getGamemodeDefaultNumGuesses("/Wingo/Repeat"),
+    },
   },
   {
     page: "/Wingo/Category",
-    settings: { ...commonWingoSettings, wordLength: getGamemodeDefaultWordLength("/Wingo/Category") },
+    settings: {
+      ...commonWingoSettings,
+      wordLength: getGamemodeDefaultWordLength("/Wingo/Category"),
+      startingNumGuesses: getGamemodeDefaultNumGuesses("/Wingo/Category"),
+      enforceFullLengthGuesses: false,
+    },
   },
   {
     page: "/Wingo/Increasing",
-    settings: { ...commonWingoSettings, wordLength: getGamemodeDefaultWordLength("/Wingo/Increasing") },
+    settings: {
+      ...commonWingoSettings,
+      wordLength: getGamemodeDefaultWordLength("/Wingo/Increasing"),
+      startingNumGuesses: getGamemodeDefaultNumGuesses("/Wingo/Increasing"),
+    },
   },
   {
     page: "/Wingo/Limitless",
-    settings: { ...commonWingoSettings, wordLength: getGamemodeDefaultWordLength("/Wingo/Limitless") },
+    settings: {
+      ...commonWingoSettings,
+      wordLength: getGamemodeDefaultWordLength("/Wingo/Limitless"),
+      startingNumGuesses: getGamemodeDefaultNumGuesses("/Wingo/Limitless"),
+    },
   },
   {
     page: "/Wingo/Puzzle",
     settings: {
       ...commonWingoSettings,
       wordLength: getGamemodeDefaultWordLength("/Wingo/Puzzle"),
+      startingNumGuesses: getGamemodeDefaultNumGuesses("/Wingo/Puzzle"),
       isHintShown: true,
     },
   },
@@ -78,6 +106,7 @@ export const defaultWingoGamemodeSettings: { page: PagePath; settings: WingoConf
     settings: {
       ...commonWingoSettings,
       wordLength: getGamemodeDefaultWordLength("/Conundrum"),
+      startingNumGuesses: getGamemodeDefaultNumGuesses("/Conundrum"),
       timerConfig: { isTimed: true, seconds: getGamemodeDefaultTimerValue("/Wingo/Puzzle") },
     },
   },

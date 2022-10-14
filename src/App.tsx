@@ -31,7 +31,6 @@ import { pageDescriptions } from "./Data/PageDescriptions";
 import SequencePuzzle from "./Pages/SequencePuzzle";
 import { CustomGameshow } from "./Pages/CustomGameshow";
 import { PagePath } from "./Data/PageNames";
-import { getGamemodeDefaultNumGuesses } from "./Helpers/getGamemodeDefaultNumGuesses";
 import { getPageGamemodeSettings } from "./Helpers/getPageGamemodeSettings";
 import { getRandomElementFrom } from "./Helpers/getRandomElementFrom";
 import { Routes, Route, useNavigate, useLocation, Navigate } from "react-router-dom";
@@ -252,7 +251,6 @@ export const App = () => {
                 {...commonWingoProps}
                 mode="daily"
                 gamemodeSettings={getPageGamemodeSettings("/Wingo/Daily") as WingoConfigProps["gamemodeSettings"]}
-                defaultNumGuesses={getGamemodeDefaultNumGuesses("/Wingo/Daily")}
               />
             </PageWrapper>
           }
@@ -266,7 +264,6 @@ export const App = () => {
                 {...commonWingoProps}
                 mode="repeat"
                 gamemodeSettings={getPageGamemodeSettings("/Wingo/Repeat") as WingoConfigProps["gamemodeSettings"]}
-                defaultNumGuesses={getGamemodeDefaultNumGuesses("/Wingo/Repeat")}
               />
             </PageWrapper>
           }
@@ -279,9 +276,7 @@ export const App = () => {
                 {...commonProps}
                 {...commonWingoProps}
                 mode="category"
-                enforceFullLengthGuesses={false}
                 gamemodeSettings={getPageGamemodeSettings("/Wingo/Category") as WingoConfigProps["gamemodeSettings"]}
-                defaultNumGuesses={getGamemodeDefaultNumGuesses("/Wingo/Category")}
               />
             </PageWrapper>
           }
@@ -295,7 +290,6 @@ export const App = () => {
                 {...commonWingoProps}
                 mode="increasing"
                 gamemodeSettings={getPageGamemodeSettings("/Wingo/Increasing") as WingoConfigProps["gamemodeSettings"]}
-                defaultNumGuesses={getGamemodeDefaultNumGuesses("/Wingo/Increasing")}
               />
             </PageWrapper>
           }
@@ -309,7 +303,6 @@ export const App = () => {
                 {...commonWingoProps}
                 mode="limitless"
                 gamemodeSettings={getPageGamemodeSettings("/Wingo/Limitless") as WingoConfigProps["gamemodeSettings"]}
-                defaultNumGuesses={getGamemodeDefaultNumGuesses("/Wingo/Limitless")}
               />
             </PageWrapper>
           }
@@ -323,7 +316,6 @@ export const App = () => {
                 {...commonWingoProps}
                 mode="puzzle"
                 gamemodeSettings={getPageGamemodeSettings("/Wingo/Puzzle") as WingoConfigProps["gamemodeSettings"]}
-                defaultNumGuesses={getGamemodeDefaultNumGuesses("/Wingo/Puzzle")}
               />
             </PageWrapper>
           }
@@ -337,7 +329,6 @@ export const App = () => {
                 {...commonWingoProps}
                 mode="conundrum"
                 gamemodeSettings={getPageGamemodeSettings("/Conundrum") as WingoConfigProps["gamemodeSettings"]}
-                defaultNumGuesses={getGamemodeDefaultNumGuesses("/Conundrum")}
               />
             </PageWrapper>
           }
@@ -351,7 +342,6 @@ export const App = () => {
                 {...commonWingoProps}
                 mode="interlinked"
                 gamemodeSettings={getPageGamemodeSettings("/Wingo/Interlinked") as WingoConfigProps["gamemodeSettings"]}
-                defaultNumGuesses={getGamemodeDefaultNumGuesses("/Wingo/Interlinked")}
               />
             </PageWrapper>
           }
@@ -365,7 +355,6 @@ export const App = () => {
                 {...commonWingoProps}
                 mode="crossword"
                 gamemodeSettings={getPageGamemodeSettings("/Wingo/Crossword") as WingoConfigProps["gamemodeSettings"]}
-                defaultNumGuesses={getGamemodeDefaultNumGuesses("/Wingo/Crossword")}
               />
             </PageWrapper>
           }
@@ -381,7 +370,6 @@ export const App = () => {
                 gamemodeSettings={
                   getPageGamemodeSettings("/Wingo/Crossword/Fit") as WingoConfigProps["gamemodeSettings"]
                 }
-                defaultNumGuesses={getGamemodeDefaultNumGuesses("/Wingo/Crossword/Fit")}
               />
             </PageWrapper>
           }
@@ -397,7 +385,6 @@ export const App = () => {
                 gamemodeSettings={
                   getPageGamemodeSettings("/Wingo/Crossword/Daily") as WingoConfigProps["gamemodeSettings"]
                 }
-                defaultNumGuesses={getGamemodeDefaultNumGuesses("/Wingo/Crossword/Daily")}
               />
             </PageWrapper>
           }
@@ -413,7 +400,6 @@ export const App = () => {
                 gamemodeSettings={
                   getPageGamemodeSettings("/Wingo/Crossword/Weekly") as WingoConfigProps["gamemodeSettings"]
                 }
-                defaultNumGuesses={getGamemodeDefaultNumGuesses("/Wingo/Crossword/Weekly")}
               />
             </PageWrapper>
           }
