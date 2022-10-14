@@ -182,7 +182,7 @@ const Wingo = (props: Props) => {
       Grid.push(getDisplayRow());
     }
 
-    for (let i = 0; i < props.remainingGuesses; i++) {
+    for (let i = 0; i < props.gamemodeSettings.startingNumGuesses; i++) {
       let word;
 
       if (props.wordIndex < i) {
