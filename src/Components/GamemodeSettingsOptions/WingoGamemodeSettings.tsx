@@ -41,6 +41,18 @@ const MIN_PUZZLE_LEAVE_NUM_BLANKS = 1;
 const WingoGamemodeSettings = (props: Props) => {
   const location = useLocation().pathname as PagePath;
 
+  const isContinuationMode = () => {
+    // The modes which can be continued (they aren't always just reset)
+    const continuationModes: WingoMode[] = ["increasing", "limitless"];
+    return continuationModes.includes(props.mode);
+  };
+
+  const WORD_LENGTH_LABEL = isContinuationMode() ? "Starting Word Length" : "Word Length";
+
+  // The starting word length must be atleast one below the maximum target word length (for 'increasing' mode), otherwise it would just be a mode of guessing one long word
+  const MIN_WORD_LENGTH_MAX_BOUNDARY =
+    props.mode === "increasing" ? MAX_TARGET_WORD_LENGTH - 1 : MAX_TARGET_WORD_LENGTH;
+
   if (props.mode === "puzzle") {
     return (
       <GamemodeSettingsMenu>
@@ -98,18 +110,6 @@ const WingoGamemodeSettings = (props: Props) => {
     );
   }
 
-  const isContinuationMode = () => {
-    // The modes which can be continued (they aren't always just reset)
-    const continuationModes: WingoMode[] = ["increasing", "limitless"];
-    return continuationModes.includes(props.mode);
-  };
-
-  const MIN_WORD_LENGTH_LABEL = isContinuationMode() ? "Starting Word Length" : "Word Length";
-
-  // The starting word length must be atleast one below the maximum target word length (for 'increasing' mode), otherwise it would just be a mode of guessing one long word
-  const MIN_WORD_LENGTH_MAX_BOUNDARY =
-    props.mode === "increasing" ? MAX_TARGET_WORD_LENGTH - 1 : MAX_TARGET_WORD_LENGTH;
-
   return (
     <GamemodeSettingsMenu>
       <>
@@ -127,8 +127,22 @@ const WingoGamemodeSettings = (props: Props) => {
             max={MIN_WORD_LENGTH_MAX_BOUNDARY}
             onChange={props.handleSimpleGamemodeSettingsChange}
           ></input>
-          {MIN_WORD_LENGTH_LABEL}
+          {WORD_LENGTH_LABEL}
         </label>
+
+        {isContinuationMode() && (
+          <label>
+            <input
+              type="number"
+              name="wordLengthMaxLimit"
+              value={props.gamemodeSettings.wordLengthMaxLimit}
+              min={props.gamemodeSettings.wordLength + 1}
+              max={MAX_TARGET_WORD_LENGTH}
+              onChange={props.handleSimpleGamemodeSettingsChange}
+            ></input>
+            Ending Word Length
+          </label>
+        )}
 
         <label>
           <input
@@ -151,20 +165,6 @@ const WingoGamemodeSettings = (props: Props) => {
           ></input>
           Enforce full length guesses
         </label>
-
-        {isContinuationMode() && (
-          <label>
-            <input
-              type="number"
-              name="wordLengthMaxLimit"
-              value={props.gamemodeSettings.wordLengthMaxLimit}
-              min={props.gamemodeSettings.wordLength + 1}
-              max={MAX_TARGET_WORD_LENGTH}
-              onChange={props.handleSimpleGamemodeSettingsChange}
-            ></input>
-            Ending Word Length
-          </label>
-        )}
 
         {props.mode === "limitless" && (
           <>
