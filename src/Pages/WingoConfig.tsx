@@ -678,58 +678,6 @@ const WingoConfig = (props: Props) => {
     }
   }
 
-  function calculateGoldAwarded(
-    wordLength: number,
-    /*win_streak: number,*/
-    numGuesses: number
-  ) {
-    // Base amount by gamemode
-    const gamemodeGoldMappings = [
-      { mode: "daily", value: 1000 },
-      { mode: "repeat", value: 50 },
-      { mode: "increasing", value: 50 },
-      {
-        mode: "puzzle",
-        value: 20,
-      }, // TODO: Balancing, puzzle words are always 10 letters
-      { mode: "interlinked", value: 125 },
-    ];
-
-    const gamemodeValue = gamemodeGoldMappings.find((x) => x.mode === props.mode)?.value!;
-
-    // Incremental multiplier with wordLength
-    const wordLengthGoldMappings = [
-      { value: 4, multiplier: 1 },
-      { value: 5, multiplier: 1.05 },
-      { value: 6, multiplier: 1.25 },
-      { value: 7, multiplier: 1.5 },
-      { value: 8, multiplier: 2 },
-      { value: 9, multiplier: 3 },
-      { value: 10, multiplier: 5 },
-      { value: 11, multiplier: 7.5 },
-    ];
-
-    const wordLengthMultiplier = wordLengthGoldMappings.find((x) => x.value === wordLength)?.multiplier!;
-
-    // Small bonus for early guesses
-    const numGuessesGoldMappings = [
-      {
-        guesses: 1,
-        value: 250,
-      }, // TODO: Balancing, puzzle words are always 1 guess
-      { guesses: 2, value: 100 },
-      { guesses: 3, value: 50 },
-      { guesses: 4, value: 25 },
-      { guesses: 5, value: 10 },
-      { guesses: 6, value: 0 },
-    ];
-
-    const numGuessesBonus = numGuessesGoldMappings.find((x) => x.guesses === numGuesses)?.value!;
-
-    const goldTotal = Math.round(gamemodeValue * wordLengthMultiplier + numGuessesBonus);
-    return goldTotal;
-  }
-
   function isOutcomeContinue(): boolean {
     const correctAnswer = currentWord.length > 0 && currentWord.toUpperCase() === targetWord.toUpperCase();
 
@@ -801,8 +749,6 @@ const WingoConfig = (props: Props) => {
       if (currentWord.toUpperCase() === targetWord?.toUpperCase()) {
         // Exact match
         setInProgress(false);
-        const goldBanked = calculateGoldAwarded(targetWord.length, wordIndex + 1);
-        props.addGold(goldBanked);
         outcome = "success";
       } else if (wordIndex + 1 === remainingGuesses) {
         // Out of guesses
