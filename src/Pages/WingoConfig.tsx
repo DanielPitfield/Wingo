@@ -111,15 +111,17 @@ export const DEFAULT_ALPHABET_STRING = "abcdefghijklmnopqrstuvwxyz";
 export const DEFAULT_ALPHABET = DEFAULT_ALPHABET_STRING.split("");
 
 const WingoConfig = (props: Props) => {
-  const location = useLocation().pathname as PagePath;
+  const location = useLocation().pathname as PagePath;  
+  
+  const [gameId, setGameId] = useState<string | null>(null);
 
   const [guesses, setGuesses] = useState<string[]>(props.guesses ?? []);
-  const [numGuesses, setNumGuesses] = useState(props.gamemodeSettings.startingNumGuesses);
-  const [gameId, setGameId] = useState<string | null>(null);
 
   const [gamemodeSettings, setGamemodeSettings] = useState<WingoConfigProps["gamemodeSettings"]>(
     props.gamemodeSettings
-  );
+  );  
+  
+  const [remainingGuesses, setRemainingGuesses] = useState(props.gamemodeSettings.startingNumGuesses);
 
   const [remainingSeconds, setRemainingSeconds] = useState(
     props.gamemodeSettings?.timerConfig?.isTimed === true
@@ -575,7 +577,7 @@ const WingoConfig = (props: Props) => {
       const pointsLost =
         props.mode === "puzzle"
           ? (revealedLetterIndexes.length - 1) * pointsLostPerGuess
-          : numGuesses * pointsLostPerGuess;
+          : remainingGuesses * pointsLostPerGuess;
 
       const score = props.roundScoringInfo.basePoints - pointsLost ?? 0;
 
@@ -627,11 +629,11 @@ const WingoConfig = (props: Props) => {
     // TODO: MAJOR: Limitless mode shouldn't be resetting with lives left anyway (should be continuing), but there is a side effect or bug somewhere
 
     // TODO: numGuesses >= 1, stops resetting with two rows left, but means hard reset doesn't reset the numGuesses
-    const limitlessAndLivesRemaining = props.mode === "limitless" && numGuesses >= 1;
+    const limitlessAndLivesRemaining = props.mode === "limitless" && remainingGuesses >= 1;
 
     // Don't reset to startingNumGuesses when there are lives remaining in limitless mode
     if (!limitlessAndLivesRemaining) {
-      setNumGuesses(gamemodeSettings.startingNumGuesses);
+      setRemainingGuesses(gamemodeSettings.startingNumGuesses);
     }
   }
 
@@ -657,13 +659,13 @@ const WingoConfig = (props: Props) => {
 
     // Add new rows for success in limitless mode
     if (props.mode === "limitless" && isCurrentGuessCorrect()) {
-      const newLives = getNumNewLimitlessLives(numGuesses, wordIndex, gamemodeSettings.maxLivesConfig);
-      setNumGuesses(numGuesses + newLives);
+      const newLives = getNumNewLimitlessLives(remainingGuesses, wordIndex, gamemodeSettings.maxLivesConfig);
+      setRemainingGuesses(remainingGuesses + newLives);
     }
 
     // Remove a row for failiure in limitless mode
-    if (props.mode === "limitless" && !isCurrentGuessCorrect() && numGuesses >= 1) {
-      setNumGuesses(numGuesses - 1);
+    if (props.mode === "limitless" && !isCurrentGuessCorrect() && remainingGuesses >= 1) {
+      setRemainingGuesses(remainingGuesses - 1);
     }
 
     // Increment word length (only on success) for these modes
@@ -738,9 +740,9 @@ const WingoConfig = (props: Props) => {
 
     if (props.mode === "limitless") {
       // Correct answer with last row left
-      const lastRowCorrectAnswer = numGuesses === 1 && correctAnswer;
+      const lastRowCorrectAnswer = remainingGuesses === 1 && correctAnswer;
       // Lives left or correct answer with last remaining life
-      return lastRowCorrectAnswer || numGuesses > 1;
+      return lastRowCorrectAnswer || remainingGuesses > 1;
     }
 
     return false;
@@ -758,7 +760,7 @@ const WingoConfig = (props: Props) => {
     }
 
     // Used all guesses
-    if (wordIndex >= numGuesses) {
+    if (wordIndex >= remainingGuesses) {
       return;
     }
 
@@ -802,7 +804,7 @@ const WingoConfig = (props: Props) => {
         const goldBanked = calculateGoldAwarded(targetWord.length, wordIndex + 1);
         props.addGold(goldBanked);
         outcome = "success";
-      } else if (wordIndex + 1 === numGuesses) {
+      } else if (wordIndex + 1 === remainingGuesses) {
         // Out of guesses
         setInProgress(false);
         outcome = "failure";
@@ -973,7 +975,7 @@ const WingoConfig = (props: Props) => {
       mode={props.mode}
       gamemodeSettings={gamemodeSettings}
       remainingSeconds={remainingSeconds}
-      numGuesses={numGuesses}
+      numGuesses={remainingGuesses}
       guesses={guesses}
       currentWord={currentWord}
       wordIndex={wordIndex}
