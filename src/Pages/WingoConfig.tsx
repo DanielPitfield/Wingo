@@ -111,16 +111,16 @@ export const DEFAULT_ALPHABET_STRING = "abcdefghijklmnopqrstuvwxyz";
 export const DEFAULT_ALPHABET = DEFAULT_ALPHABET_STRING.split("");
 
 const WingoConfig = (props: Props) => {
-  const location = useLocation().pathname as PagePath;  
-  
+  const location = useLocation().pathname as PagePath;
+
   const [gameId, setGameId] = useState<string | null>(null);
 
   const [guesses, setGuesses] = useState<string[]>(props.guesses ?? []);
 
   const [gamemodeSettings, setGamemodeSettings] = useState<WingoConfigProps["gamemodeSettings"]>(
     props.gamemodeSettings
-  );  
-  
+  );
+
   const [remainingGuesses, setRemainingGuesses] = useState(props.gamemodeSettings.startingNumGuesses);
 
   const [remainingSeconds, setRemainingSeconds] = useState(
@@ -707,13 +707,18 @@ const WingoConfig = (props: Props) => {
       isOutcomeContinue() ? ContinueGame() : ResetGame();
     }
 
-    // Used all guesses
-    if (wordIndex >= remainingGuesses) {
+    // No target word yet
+    if (!targetWord) {
       return;
     }
 
-    // Category mode but no target word (to determine the valid category)
-    if (props.mode === "category" && !targetWord) {
+    // Don't end game prematurely (before wordArray is determined)
+    if (!wordArray || wordArray.length <= 0) {
+      return;
+    }
+
+    // Used all guesses
+    if (wordIndex >= remainingGuesses) {
       return;
     }
 
@@ -729,45 +734,43 @@ const WingoConfig = (props: Props) => {
     // The word is complete or enforce full length guesses is off
     setIsIncompleteWord(false);
 
-    // Don't end game prematurely (before wordArray is determined)
-    if (wordArray.length === 0 && currentWord.toLowerCase() !== targetWord.toLowerCase()) {
-      return;
-    }
-
     let outcome: "success" | "failure" | "in-progress" = "in-progress";
+
+    const isCorrect = currentWord.toLowerCase() === targetWord?.toLowerCase();
 
     // If checking against the dictionary is disabled, or is enabled and the word is in the dictionary,
     // or is the target word exactly (to protect against a bug where the target word may not be in the dictionary)
-    if (
-      props.checkInDictionary === false ||
-      wordArray.includes(currentWord.toLowerCase()) ||
-      currentWord.toLowerCase() === targetWord.toLowerCase()
-    ) {
-      // Accepted word
-      setGuesses(guesses.concat(currentWord)); // Add word to guesses
+    const isAccepetedWord =
+      props.checkInDictionary === false || wordArray.includes(currentWord.toLowerCase()) || isCorrect;
 
-      if (currentWord.toUpperCase() === targetWord?.toUpperCase()) {
-        // Exact match
-        setInProgress(false);
-        outcome = "success";
-      } else if (wordIndex + 1 === remainingGuesses) {
-        // Out of guesses
-        setInProgress(false);
-        outcome = "failure";
-      } else {
-        // Not yet guessed
-        if (gamemodeSettings.isFirstLetterProvided) {
-          setCurrentWord(targetWord?.charAt(0)!);
-        } else {
-          setCurrentWord(""); // Start new word as empty string
-        }
-        setWordIndex(wordIndex + 1); // Increment index to indicate new word has been started
-        //outcome = "in-progress";
-      }
-    } else {
+    if (!isAccepetedWord) {
       setInDictionary(false);
       setInProgress(false);
       outcome = "failure";
+    }
+
+    if (isAccepetedWord) {
+      // Add word to guesses
+      setGuesses(guesses.concat(currentWord));
+    }
+
+    // Exact match
+    if (isCorrect) {
+      setInProgress(false);
+      outcome = "success";
+    }
+
+    // Out of guesses
+    if (wordIndex + 1 === remainingGuesses) {
+      setInProgress(false);
+      outcome = "failure";
+    }
+
+    // Not an ending outcome
+    if (outcome === "in-progress") {
+      const newCurrentWord = gamemodeSettings.isFirstLetterProvided ? targetWord?.charAt(0)! : "";
+      setCurrentWord(newCurrentWord);
+      setWordIndex(wordIndex + 1); // Increment index to indicate new word has been started
     }
 
     // Save round to history
@@ -788,6 +791,7 @@ const WingoConfig = (props: Props) => {
       });
     }
 
+    // TODO: This will reset timer after every valid guess, is that right?
     if (gamemodeSettings.timerConfig.isTimed) {
       setRemainingSeconds(gamemodeSettings.timerConfig.seconds);
     }
