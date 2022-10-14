@@ -322,7 +322,7 @@ const WingoConfig = (props: Props) => {
   }, [targetWord, currentWord, guesses, wordIndex, inProgress, inDictionary]);
 
   // Get the word array (ignoring whether gamemodeSettings.enforceFullLengthGuesses is enabled or disabled at this stage)
-  const getUntrimmedWordArray = (targetWord: string) => {
+  const getUntrimmedWordArray = () => {
     // Valid word array directly specified
     if (props.wordArray) {
       return props.wordArray;
@@ -340,15 +340,15 @@ const WingoConfig = (props: Props) => {
   };
 
   // Now trim the word array depending on whether gamemodeSettings.enforceFullLengthGuesses is enabled or disabled
-  const getValidWordArray = (targetWord: string) => {
-    const wordArray = getUntrimmedWordArray(targetWord);
+  const getValidWordArray = () => {
+    const untrimmedWordArray = getUntrimmedWordArray();
 
-    // If full length guesses ar eenforced, filter the words that are the same length as the target word
+    // If full length guesses are enforced, filter the words that are the same length as the target word
     if (gamemodeSettings.enforceFullLengthGuesses) {
-      return wordArray.filter((word) => word.length === targetWord.length);
+      return untrimmedWordArray.filter((word) => word.length === targetWord.length);
     }
 
-    return wordArray;
+    return untrimmedWordArray;
   };
 
   React.useEffect(() => {
@@ -371,7 +371,7 @@ const WingoConfig = (props: Props) => {
     }
 
     // Update the currently valid guesses which can be made
-    setWordArray(getValidWordArray(targetWord));
+    setWordArray(getValidWordArray());
   }, [targetWord]);
 
   // Reset game after change of settings (stops cheating by changing settings partway through a game)
