@@ -29,6 +29,9 @@ interface Props {
   onHideOfAddPresetModal: () => void;
 }
 
+const MIN_STARTING_NUM_GUESSES = 1;
+const MAX_STARTING_NUM_GUESSES = 10;
+
 const MIN_PUZZLE_REVEAL_INTERVAL_SECONDS = 1;
 const MAX_PUZZLE_REVEAL_INTERVAL_SECONDS = 10;
 
@@ -125,6 +128,18 @@ const WingoGamemodeSettings = (props: Props) => {
             onChange={props.handleSimpleGamemodeSettingsChange}
           ></input>
           {MIN_WORD_LENGTH_LABEL}
+        </label>
+
+        <label>
+          <input
+            type="number"
+            name="startingNumGuesses"
+            value={props.gamemodeSettings.startingNumGuesses}
+            min={MIN_STARTING_NUM_GUESSES}
+            max={MAX_STARTING_NUM_GUESSES}
+            onChange={props.handleSimpleGamemodeSettingsChange}
+          ></input>
+          Number of guesses
         </label>
 
         {isContinuationMode() && (
