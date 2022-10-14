@@ -130,8 +130,8 @@ const WordCodesGamemodeSettings = (props: Props) => {
         <label>
           <input
             type="number"
-            name="numGuesses"
-            value={props.gamemodeSettings.numGuesses}
+            name="startingNumGuesses"
+            value={props.gamemodeSettings.startingNumGuesses}
             min={1}
             max={10}
             onChange={(e) => {

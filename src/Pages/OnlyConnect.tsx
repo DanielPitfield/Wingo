@@ -21,7 +21,7 @@ export interface OnlyConnectProps {
     numGroups: number;
     groupSize: number;
     // How many times can you check your attempts, once there are only two groups remaining?
-    numGuesses: number;
+    startingNumGuesses: number;
     timerConfig: { isTimed: true; seconds: number } | { isTimed: false };
   };
 }
@@ -57,7 +57,7 @@ const OnlyConnect = (props: Props) => {
   const [selectedWords, setSelectedWords] = useState<{ word: string; categoryName: string }[]>([]);
   const [numCompletedGroups, setNumCompletedGroups] = useState(0);
 
-  const [remainingGuesses, setRemainingGuesses] = useState(gamemodeSettings.numGuesses);
+  const [remainingGuesses, setRemainingGuesses] = useState(gamemodeSettings.startingNumGuesses);
 
   const [remainingSeconds, setRemainingSeconds] = useState(
     props.gamemodeSettings?.timerConfig?.isTimed === true
@@ -381,7 +381,7 @@ const OnlyConnect = (props: Props) => {
     setInProgress(true);
     setGridWords(getOnlyConnectGridWords(gamemodeSettings.numGroups, gamemodeSettings.groupSize));
     setNumCompletedGroups(0);
-    setRemainingGuesses(gamemodeSettings.numGuesses);
+    setRemainingGuesses(gamemodeSettings.startingNumGuesses);
 
     if (gamemodeSettings.timerConfig.isTimed) {
       // Reset the timer if it is enabled in the game options

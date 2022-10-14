@@ -1,10 +1,10 @@
 export function getNumNewLimitlessLives(
-  numGuesses: number,
+  remainingGuesses: number,
   wordIndex: number,
   maxLivesConfig: { isLimited: true; maxLives: number } | { isLimited: false }
 ): number {
   // Calculate the number of rows not used
-  const extraRows = numGuesses - (wordIndex + 1);
+  const extraRows = remainingGuesses - (wordIndex + 1);
 
   // Not limited, the number of new lives is not capped
   if (!maxLivesConfig.isLimited) {

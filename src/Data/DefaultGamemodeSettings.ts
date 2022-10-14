@@ -199,7 +199,7 @@ export const defaultArithmeticRevealGamemodeSettings: ArithmeticRevealProps["gam
 
 export const defaultArithmeticDragOrderGamemodeSettings: ArithmeticDragProps["gamemodeSettings"] = {
   numTiles: 6,
-  numGuesses: getGamemodeDefaultNumGuesses("/ArithmeticDrag/Order"),
+  startingNumGuesses: getGamemodeDefaultNumGuesses("/ArithmeticDrag/Order"),
   numOperands: 2,
   numberSize: "medium",
   timerConfig: { isTimed: true, seconds: getGamemodeDefaultTimerValue("/ArithmeticDrag/Order") },
@@ -207,7 +207,7 @@ export const defaultArithmeticDragOrderGamemodeSettings: ArithmeticDragProps["ga
 
 export const defaultArithmeticDragMatchGamemodeSettings: ArithmeticDragProps["gamemodeSettings"] = {
   numTiles: 6,
-  numGuesses: getGamemodeDefaultNumGuesses("/ArithmeticDrag/Match"),
+  startingNumGuesses: getGamemodeDefaultNumGuesses("/ArithmeticDrag/Match"),
   numOperands: 2,
   numberSize: "medium",
   timerConfig: { isTimed: true, seconds: getGamemodeDefaultTimerValue("/ArithmeticDrag/Match") },
@@ -216,7 +216,7 @@ export const defaultArithmeticDragMatchGamemodeSettings: ArithmeticDragProps["ga
 export const defaultOnlyConnectGamemodeSettings: OnlyConnectProps["gamemodeSettings"] = {
   numGroups: 4,
   groupSize: 4,
-  numGuesses: getGamemodeDefaultNumGuesses("/OnlyConnect"),
+  startingNumGuesses: getGamemodeDefaultNumGuesses("/OnlyConnect"),
   timerConfig: { isTimed: false },
 };
 
@@ -224,7 +224,7 @@ export const defaultSameLetterWordsGamemodeSettings: SameLetterWordsProps["gamem
   wordLength: getGamemodeDefaultWordLength("/SameLetters"),
   numMatchingWords: 4,
   numTotalWords: 16,
-  numGuesses: getGamemodeDefaultNumGuesses("/SameLetters"),
+  startingNumGuesses: getGamemodeDefaultNumGuesses("/SameLetters"),
   timerConfig: { isTimed: false },
 };
 
@@ -248,7 +248,7 @@ export const defaultWordCodesQuestionGamemodeSettings: WordCodesProps["gamemodeS
   codeLength: 4,
   numCodesToMatch: 4,
   numAdditionalLetters: 2,
-  numGuesses: getGamemodeDefaultNumGuesses("/WordCodes/Question"),
+  startingNumGuesses: getGamemodeDefaultNumGuesses("/WordCodes/Question"),
   timerConfig: { isTimed: false },
 };
 
@@ -260,7 +260,7 @@ export const defaultWordCodesMatchGamemodeSettings: WordCodesProps["gamemodeSett
   codeLength: 4,
   numCodesToMatch: 4,
   numAdditionalLetters: 2,
-  numGuesses: getGamemodeDefaultNumGuesses("/WordCodes/Match"),
+  startingNumGuesses: getGamemodeDefaultNumGuesses("/WordCodes/Match"),
   timerConfig: { isTimed: false },
 };
 

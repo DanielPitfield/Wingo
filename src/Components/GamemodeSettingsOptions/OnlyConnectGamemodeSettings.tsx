@@ -28,7 +28,7 @@ const MAX_GROUP_SIZE = 10;
 
 const OnlyConnectGamemodeSettings = (props: Props) => {
   const location = useLocation().pathname as PagePath;
-  
+
   return (
     <GamemodeSettingsMenu>
       <>
@@ -64,8 +64,8 @@ const OnlyConnectGamemodeSettings = (props: Props) => {
         <label>
           <input
             type="number"
-            name="numGuesses"
-            value={props.gamemodeSettings.numGuesses}
+            name="startingNumGuesses"
+            value={props.gamemodeSettings.startingNumGuesses}
             min={1}
             max={10}
             onChange={props.handleSimpleGamemodeSettingsChange}

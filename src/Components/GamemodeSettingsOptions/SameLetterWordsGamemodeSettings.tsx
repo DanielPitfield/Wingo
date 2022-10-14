@@ -32,7 +32,7 @@ const MAX_NUM_GUESSES = 100;
 
 const SameLetterWordsGamemodeSettings = (props: Props) => {
   const location = useLocation().pathname as PagePath;
-  
+
   return (
     <GamemodeSettingsMenu>
       <>
@@ -68,8 +68,8 @@ const SameLetterWordsGamemodeSettings = (props: Props) => {
         <label>
           <input
             type="number"
-            name="numGuesses"
-            value={props.gamemodeSettings.numGuesses}
+            name="startingNumGuesses"
+            value={props.gamemodeSettings.startingNumGuesses}
             min={MIN_NUM_GUESSES}
             max={MAX_NUM_GUESSES}
             onChange={(e) => {

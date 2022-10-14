@@ -28,7 +28,7 @@ interface Props {
   gamemodeSettings: WingoConfigProps["gamemodeSettings"];
 
   remainingSeconds: number;
-  numGuesses: number;
+  remainingGuesses: number;
   guesses: string[];
   currentWord: string;
   wordIndex: number;
@@ -182,7 +182,7 @@ const Wingo = (props: Props) => {
       Grid.push(getDisplayRow());
     }
 
-    for (let i = 0; i < props.numGuesses; i++) {
+    for (let i = 0; i < props.remainingGuesses; i++) {
       let word;
 
       if (props.wordIndex < i) {
@@ -270,7 +270,7 @@ const Wingo = (props: Props) => {
     if (props.mode === "limitless") {
       // The number of rows not used in guessing word
       const newLives = getNumNewLimitlessLives(
-        props.numGuesses,
+        props.remainingGuesses,
         props.wordIndex,
         props.gamemodeSettings.maxLivesConfig
       );
@@ -288,8 +288,8 @@ const Wingo = (props: Props) => {
       }
 
       return (
-        <MessageNotification type={props.numGuesses > 1 ? "default" : "error"}>
-          {props.numGuesses <= 1 && (
+        <MessageNotification type={props.remainingGuesses > 1 ? "default" : "error"}>
+          {props.remainingGuesses <= 1 && (
             <>
               <strong>Game Over</strong>
               <br />
@@ -352,9 +352,9 @@ const Wingo = (props: Props) => {
 
     if (props.mode === "limitless") {
       // Correct answer with last row left
-      const lastRowCorrectAnswer = props.numGuesses === 1 && correctAnswer;
+      const lastRowCorrectAnswer = props.remainingGuesses === 1 && correctAnswer;
       // Lives left or correct answer with last remaining life
-      return lastRowCorrectAnswer || props.numGuesses > 1;
+      return lastRowCorrectAnswer || props.remainingGuesses > 1;
     }
 
     return false;

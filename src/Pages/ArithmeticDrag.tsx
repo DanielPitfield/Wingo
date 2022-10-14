@@ -79,7 +79,7 @@ export interface ArithmeticDragProps {
     // How many operands/numbers in these expressions?
     numOperands: number;
     // How many times can you check your attempts?
-    numGuesses: number;
+    startingNumGuesses: number;
     timerConfig: { isTimed: true; seconds: number } | { isTimed: false };
   };
 }
@@ -115,7 +115,7 @@ const ArithmeticDrag = (props: Props) => {
     props.gamemodeSettings
   );
 
-  const [remainingGuesses, setRemainingGuesses] = useState(gamemodeSettings.numGuesses);
+  const [remainingGuesses, setRemainingGuesses] = useState(gamemodeSettings.startingNumGuesses);
 
   const [remainingSeconds, setRemainingSeconds] = useState(
     props.gamemodeSettings?.timerConfig?.isTimed === true
@@ -540,7 +540,8 @@ const ArithmeticDrag = (props: Props) => {
     }
 
     setInProgress(true);
-    setRemainingGuesses(gamemodeSettings.numGuesses);
+    setRemainingGuesses(gamemodeSettings.startingNumGuesses);
+    
     if (gamemodeSettings.timerConfig.isTimed) {
       // Reset the timer if it is enabled in the game options
       setRemainingSeconds(gamemodeSettings.timerConfig.seconds);

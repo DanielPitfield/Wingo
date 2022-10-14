@@ -628,7 +628,7 @@ const WingoConfig = (props: Props) => {
 
     // TODO: MAJOR: Limitless mode shouldn't be resetting with lives left anyway (should be continuing), but there is a side effect or bug somewhere
 
-    // TODO: numGuesses >= 1, stops resetting with two rows left, but means hard reset doesn't reset the numGuesses
+    // TODO: remainingGuesses >= 1, stops resetting with two rows left, but means hard reset doesn't reset the remainingGuesses
     const limitlessAndLivesRemaining = props.mode === "limitless" && remainingGuesses >= 1;
 
     // Don't reset to startingNumGuesses when there are lives remaining in limitless mode
@@ -975,7 +975,7 @@ const WingoConfig = (props: Props) => {
       mode={props.mode}
       gamemodeSettings={gamemodeSettings}
       remainingSeconds={remainingSeconds}
-      numGuesses={remainingGuesses}
+      remainingGuesses={remainingGuesses}
       guesses={guesses}
       currentWord={currentWord}
       wordIndex={wordIndex}

@@ -62,7 +62,13 @@ export interface WordCodesProps {
   */
   mode: wordCodesMode;
 
-  gamemodeSettings: {
+  gamemodeSettings: {    
+    // Both modes
+    codeLength: number;
+    numAdditionalLetters: number;
+    startingNumGuesses: number;
+    timerConfig: { isTimed: true; seconds: number } | { isTimed: false };
+
     // Question mode only settings
     numDisplayWords: number;
     numDisplayCodes: number;
@@ -71,12 +77,6 @@ export interface WordCodesProps {
 
     // Match mode only setting
     numCodesToMatch: number;
-
-    // Both modes
-    codeLength: number;
-    numAdditionalLetters: number;
-    numGuesses: number;
-    timerConfig: { isTimed: true; seconds: number } | { isTimed: false };
   };
 }
 
@@ -126,7 +126,7 @@ const WordCodes = (props: Props) => {
 
   const [gamemodeSettings, setGamemodeSettings] = useState<WordCodesProps["gamemodeSettings"]>(props.gamemodeSettings);
 
-  const [remainingGuesses, setRemainingGuesses] = useState(gamemodeSettings.numGuesses);
+  const [remainingGuesses, setRemainingGuesses] = useState(gamemodeSettings.startingNumGuesses);
 
   const [remainingSeconds, setRemainingSeconds] = useState(
     props.gamemodeSettings?.timerConfig?.isTimed === true
@@ -758,7 +758,7 @@ const WordCodes = (props: Props) => {
     setDisplayWords([]);
 
     setNumCorrectAnswers(0);
-    setRemainingGuesses(gamemodeSettings.numGuesses);
+    setRemainingGuesses(gamemodeSettings.startingNumGuesses);
     setQuestionIndex(0);
 
     if (gamemodeSettings.timerConfig.isTimed) {

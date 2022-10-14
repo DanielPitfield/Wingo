@@ -27,7 +27,7 @@ export interface SameLetterWordsProps {
     numMatchingWords: number;
     numTotalWords: number;
     // How many times can you check your attempts?
-    numGuesses: number;
+    startingNumGuesses: number;
     timerConfig: { isTimed: true; seconds: number } | { isTimed: false };
   };
 }
@@ -51,14 +51,16 @@ const SameLetterWords = (props: Props) => {
 
   const [gamemodeSettings, setGamemodeSettings] = useState<SameLetterWordsProps["gamemodeSettings"]>(
     props.gamemodeSettings
-  );
+  );  
+  
+  const [remainingGuesses, setRemainingGuesses] = useState(gamemodeSettings.startingNumGuesses);
 
   const [remainingSeconds, setRemainingSeconds] = useState(
     props.gamemodeSettings?.timerConfig?.isTimed === true
       ? props.gamemodeSettings?.timerConfig?.seconds
       : getGamemodeDefaultTimerValue(location)
   );
-  const [remainingGuesses, setRemainingGuesses] = useState(gamemodeSettings.numGuesses);
+
   const [mostRecentTotalSeconds, setMostRecentTotalSeconds] = useState(
     props.gamemodeSettings?.timerConfig?.isTimed === true
       ? props.gamemodeSettings?.timerConfig?.seconds
@@ -399,7 +401,7 @@ const SameLetterWords = (props: Props) => {
     setSelectedWords([]);
     setValidWords([]);
     setGridWords(getGridWords());
-    setRemainingGuesses(gamemodeSettings.numGuesses);
+    setRemainingGuesses(gamemodeSettings.startingNumGuesses);
 
     if (gamemodeSettings.timerConfig.isTimed) {
       // Reset the timer if it is enabled in the game options
