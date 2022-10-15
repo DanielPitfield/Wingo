@@ -76,14 +76,6 @@ $data-statuses: (
   }
 }
 
-// TODO: This can be nested below?
-// For the target tile on Number Arithmetic
-.target {
-  .letter_tile[data-new-letter-added="true"][data-apply-animation="true"][data-animation-setting="true"] {
-    animation: flipRevealLetter 1.5s;
-  }
-}
-
 // The reveal tiles and guess tiles (Number Arithmetic)
 .numbers_arithmetic {
   .target {
@@ -91,6 +83,9 @@ $data-statuses: (
       margin-top: 0.5em;
       margin-bottom: 0.3em;
       width: 2em;
+      &[data-new-letter-added="true"][data-apply-animation="true"][data-animation-setting="true"] {
+        animation: flipRevealLetter 1.5s;
+      }
     }
   }
   .guess {
