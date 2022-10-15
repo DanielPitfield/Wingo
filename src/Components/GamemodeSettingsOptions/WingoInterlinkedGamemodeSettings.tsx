@@ -26,7 +26,7 @@ interface Props {
 
 const WingoInterlinkedGamemodeSettings = (props: Props) => {
   const location = useLocation().pathname as PagePath;
-  
+
   // Started with more than 2 words (so not basic WingoInterlinked of two interlinked words but a fully fledged crossword)
   const IS_CROSSWORD = props.gamemodeSettings.numWords > 2;
 
@@ -134,7 +134,7 @@ const WingoInterlinkedGamemodeSettings = (props: Props) => {
           <input
             type="number"
             name="numWordGuesses"
-            value={props.gamemodeSettings.numWordGuesses}
+            value={props.gamemodeSettings.startingNumWordGuesses}
             min={0}
             max={100}
             onChange={props.handleSimpleGamemodeSettingsChange}
@@ -145,8 +145,8 @@ const WingoInterlinkedGamemodeSettings = (props: Props) => {
         <label>
           <input
             type="number"
-            name="numGridGuesses"
-            value={props.gamemodeSettings.numGridGuesses}
+            name="startingNumGridGuesses"
+            value={props.gamemodeSettings.startingNumGridGuesses}
             min={0}
             max={20}
             onChange={props.handleSimpleGamemodeSettingsChange}

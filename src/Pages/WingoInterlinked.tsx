@@ -57,8 +57,8 @@ export interface WingoInterlinkedProps {
     */
     fitRestrictionConfig: { isRestricted: true; fitRestriction: number } | { isRestricted: false };
 
-    numWordGuesses: number;
-    numGridGuesses: number;
+    startingNumWordGuesses: number;
+    startingNumGridGuesses: number;
     isFirstLetterProvided: boolean;
     isHintShown: boolean;
     timerConfig: { isTimed: true; seconds: number } | { isTimed: false };
@@ -99,7 +99,8 @@ export const WingoInterlinked = (props: Props) => {
   const [keyboardDisabled, setKeyboardDisabled] = useState(false);
 
   // Specified amount of word guesses from initialConfig takes precedence
-  const STARTING_NUM_WORD_GUESSES = props.initialConfig?.remainingWordGuesses ?? props.gamemodeSettings.numWordGuesses;
+  const STARTING_NUM_WORD_GUESSES =
+    props.initialConfig?.remainingWordGuesses ?? props.gamemodeSettings.startingNumWordGuesses;
 
   const [inProgress, setInProgress] = useState(props.initialConfig?.inProgress ?? true);
   const [allowSpaces, setAllowSpaces] = useState(false);
@@ -131,8 +132,12 @@ export const WingoInterlinked = (props: Props) => {
       : DEFAULT_FIT_RESTRICTION
   );
 
-  const [remainingGridGuesses, setRemainingGridGuesses] = useState(props.initialConfig?.remainingGridGuesses ?? 0);
-  const [remainingWordGuesses, setRemainingWordGuesses] = useState(props.initialConfig?.remainingWordGuesses ?? 0);
+  const [remainingWordGuesses, setRemainingWordGuesses] = useState(
+    props.initialConfig?.remainingWordGuesses ?? props.gamemodeSettings.startingNumWordGuesses
+  );
+  const [remainingGridGuesses, setRemainingGridGuesses] = useState(
+    props.initialConfig?.remainingGridGuesses ?? props.gamemodeSettings.startingNumGridGuesses
+  );
 
   // The entered words of the crossword
   const [currentWords, setCurrentWords] = useState<string[]>(
@@ -265,11 +270,12 @@ export const WingoInterlinked = (props: Props) => {
   // Validate the value of props.gamemodeSettings.numGridGuesses
   React.useEffect(() => {
     // Specified amount of grid guesses from initialConfig takes precedence
-    const newNumGridGuesses = props.initialConfig?.remainingGridGuesses ?? props.gamemodeSettings.numGridGuesses;
+    const newNumGridGuesses =
+      props.initialConfig?.remainingGridGuesses ?? props.gamemodeSettings.startingNumGridGuesses;
 
     const newGamemodeSettings = {
       ...gamemodeSettings,
-      numGridGuesses: newNumGridGuesses,
+      startingNumGridGuesses: newNumGridGuesses,
     };
 
     if (props.initialConfig?.remainingGridGuesses !== undefined) {
@@ -280,12 +286,13 @@ export const WingoInterlinked = (props: Props) => {
 
     setGamemodeSettings(newGamemodeSettings);
     setRemainingGridGuesses(newNumGridGuesses);
-  }, [props.gamemodeSettings.numGridGuesses]);
+  }, [props.gamemodeSettings.startingNumGridGuesses]);
 
   // Validate the value of props.gamemodeSettings.numWordGuesses
   React.useEffect(() => {
     // Specified amount of word guesses from initialConfig takes precedence
-    const newNumWordGuesses = props.initialConfig?.remainingWordGuesses ?? props.gamemodeSettings.numWordGuesses;
+    const newNumWordGuesses =
+      props.initialConfig?.remainingWordGuesses ?? props.gamemodeSettings.startingNumWordGuesses;
 
     const newGamemodeSettings = {
       ...gamemodeSettings,
@@ -300,7 +307,7 @@ export const WingoInterlinked = (props: Props) => {
 
     setGamemodeSettings(newGamemodeSettings);
     setRemainingWordGuesses(newNumWordGuesses);
-  }, [props.gamemodeSettings.numWordGuesses]);
+  }, [props.gamemodeSettings.startingNumWordGuesses]);
 
   React.useEffect(() => {
     // Update information about which letters should be at which grid positions
@@ -910,8 +917,8 @@ export const WingoInterlinked = (props: Props) => {
 
     setGridConfig(generateGridConfig(getTargetWordArray()));
 
-    setRemainingWordGuesses(gamemodeSettings.numWordGuesses);
-    setRemainingGridGuesses(gamemodeSettings.numGridGuesses);
+    setRemainingWordGuesses(props.initialConfig?.remainingWordGuesses ?? gamemodeSettings.startingNumWordGuesses);
+    setRemainingGridGuesses(props.initialConfig?.remainingGridGuesses ?? gamemodeSettings.startingNumGridGuesses);
     setCurrentWordIndex(0);
 
     setInProgress(true);
@@ -982,7 +989,7 @@ export const WingoInterlinked = (props: Props) => {
       {inProgress && (
         <MessageNotification type="default">
           Grid guesses left: <strong>{remainingGridGuesses}</strong>
-          {(props.initialConfig?.remainingGridGuesses ?? props.gamemodeSettings.numGridGuesses) > 0 && (
+          {(props.initialConfig?.remainingGridGuesses ?? props.gamemodeSettings.startingNumGridGuesses) > 0 && (
             <>
               <br />
               Current word guesses left: <strong>{remainingWordGuesses}</strong>
