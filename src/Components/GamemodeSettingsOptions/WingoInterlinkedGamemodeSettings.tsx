@@ -133,7 +133,7 @@ const WingoInterlinkedGamemodeSettings = (props: Props) => {
         <label>
           <input
             type="number"
-            name="numWordGuesses"
+            name="startingNumWordGuesses"
             value={props.gamemodeSettings.startingNumWordGuesses}
             min={0}
             max={100}
