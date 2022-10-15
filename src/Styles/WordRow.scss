@@ -56,6 +56,11 @@
   animation: shakeIncorrectInput 0.4s;
 }
 
+// Jump every LetterTile in WordRow when a correct word is submitted
+.word_row[data-correct-word-submitted="true"][data-apply-animation="true"] .letter_tile[data-animation-setting="true"] {
+  animation: jumpCorrectInput 1.2s;
+}
+
 // For when an incomplete guess is entered during Wingo
 @keyframes shakeIncorrectInput {
   0% {
