@@ -136,7 +136,6 @@ const Wingo = (props: Props) => {
           isReadOnly={true}
           inProgress={props.inProgress}
           word={displayWord}
-          isVertical={false}
           length={props.gamemodeSettings.wordLength}
           targetWord={props.targetWord}
           revealedLetterIndexes={props.revealedLetterIndexes}
@@ -157,7 +156,6 @@ const Wingo = (props: Props) => {
             isReadOnly={true}
             inProgress={props.inProgress}
             word={props.conundrum}
-            isVertical={false}
             length={props.gamemodeSettings.wordLength}
             targetWord={props.targetWord}
             revealedLetterIndexes={props.revealedLetterIndexes}
@@ -213,7 +211,6 @@ const Wingo = (props: Props) => {
           key={`wingo/row/${i}`}
           isReadOnly={false}
           inProgress={props.inProgress}
-          isVertical={false}
           word={word}
           length={props.gamemodeSettings.wordLength}
           targetWord={props.targetWord}

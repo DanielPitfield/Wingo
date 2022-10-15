@@ -168,7 +168,6 @@ const LettersGame = (props: Props) => {
         key={"letters-game/input"}
         isReadOnly={false}
         inProgress={props.inProgress}
-        isVertical={false}
         word={props.currentWord}
         length={props.gamemodeSettings.numLetters}
         targetWord={props.targetWord}

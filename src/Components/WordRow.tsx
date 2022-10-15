@@ -9,7 +9,6 @@ interface Props {
   inProgress?: boolean;
   length: number;
   word: string;
-  isVertical: boolean;
   targetWord: string;
   settings: SettingsData;
   targetArray?: string[];
@@ -119,7 +118,7 @@ export const WordRow = (props: Props) => {
     // [data-invalid-word-submitted="true"] - Shake animation is applied to WordRow
     // [data-correct-word-submitted="true"] - Jump animation is applied to WordRow
     <div
-      className={props.isVertical ? "word_row_vertical" : "word_row"}
+      className="word_row"
       data-animation-setting={props.settings.graphics.animation}
       // Only false if directly specified as false with props.applyAnimation (defaults to true)
       data-apply-animation={props.applyAnimation === undefined || props.applyAnimation}

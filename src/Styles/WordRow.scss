@@ -1,16 +1,7 @@
 .word_row,
-.letter_row {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  vertical-align: middle;
-}
-
+.letter_row,
 .tile_row {
   display: flex;
-}
-
-.word_row_vertical {
   align-items: center;
   justify-content: center;
   vertical-align: middle;

@@ -88,7 +88,6 @@ const LetterCategories = (props: Props) => {
           key={`letters_categories/row/${index}`}
           isReadOnly={false}
           inProgress={props.inProgress}
-          isVertical={false}
           word={word}
           length={props.wordLength}
           targetWord={""}
