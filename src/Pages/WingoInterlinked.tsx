@@ -269,23 +269,17 @@ export const WingoInterlinked = (props: Props) => {
 
   // Validate the value of props.gamemodeSettings.numGridGuesses
   React.useEffect(() => {
-    // Specified amount of grid guesses from initialConfig takes precedence
-    const newNumGridGuesses =
-      props.initialConfig?.remainingGridGuesses ?? props.gamemodeSettings.startingNumGridGuesses;
-
-    const newGamemodeSettings = {
-      ...gamemodeSettings,
-      startingNumGridGuesses: newNumGridGuesses,
-    };
-
+    // The game has been loaded using an initialConfig, don't change any settings
     if (props.initialConfig?.remainingGridGuesses !== undefined) {
-      // If an initialConfig.remainingGridGuesses was specified, do not (re)set the words,
-      // instead the words have been loaded from config (#304, #305)
       return;
     }
 
+    const newGamemodeSettings = {
+      ...gamemodeSettings,
+      startingNumGridGuesses: props.gamemodeSettings.startingNumGridGuesses,
+    };
+
     setGamemodeSettings(newGamemodeSettings);
-    setRemainingGridGuesses(newNumGridGuesses);
   }, [props.gamemodeSettings.startingNumGridGuesses]);
 
   // Validate the value of props.gamemodeSettings.numWordGuesses
