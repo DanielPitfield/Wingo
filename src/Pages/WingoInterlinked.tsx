@@ -989,12 +989,8 @@ export const WingoInterlinked = (props: Props) => {
       {inProgress && (
         <MessageNotification type="default">
           Grid guesses left: <strong>{remainingGridGuesses}</strong>
-          {(props.initialConfig?.remainingGridGuesses ?? props.gamemodeSettings.startingNumGridGuesses) > 0 && (
-            <>
-              <br />
-              Current word guesses left: <strong>{remainingWordGuesses}</strong>
-            </>
-          )}
+          <br />
+          Word guesses left: <strong>{remainingWordGuesses}</strong>
         </MessageNotification>
       )}
       {Boolean(inProgress && gamemodeSettings.isHintShown && hint) && (
