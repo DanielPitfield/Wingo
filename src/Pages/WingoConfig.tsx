@@ -593,6 +593,10 @@ const WingoConfig = (props: Props) => {
     return currentWord.toLowerCase() === targetWord.toLowerCase() && currentWord.length > 0;
   };
 
+  const isCurrentGuessInDictionary = () => {
+    return wordArray.includes(currentWord.toLowerCase()) && currentWord.length > 0;
+  };
+
   function ResetGame() {
     if (!inProgress) {
       // Guessed the target word correctly
@@ -736,18 +740,21 @@ const WingoConfig = (props: Props) => {
 
     let outcome: "success" | "failure" | "in-progress" = "in-progress";
 
-    const isCorrect = currentWord.toLowerCase() === targetWord?.toLowerCase();
-
-    // If checking against the dictionary is disabled, or is enabled and the word is in the dictionary,
-    // or is the target word exactly (to protect against a bug where the target word may not be in the dictionary)
-    const isAccepetedWord =
-      props.checkInDictionary === false || wordArray.includes(currentWord.toLowerCase()) || isCorrect;
-
-    if (!isAccepetedWord) {
+    // Checking against the dictionary is enabled and the word submitted was not in the dictionary
+    if (props.checkInDictionary && !isCurrentGuessInDictionary()) {
       setInDictionary(false);
       setInProgress(false);
       outcome = "failure";
     }
+
+    // The word is in the dictionary or is the target word exactly (to protect against a bug where the target word may not be in the dictionary)
+    const isAccepetedWord = isCurrentGuessCorrect() || isCurrentGuessInDictionary();
+
+    /* 
+    TODO: Dictionary check disabled, invalid word
+    Currently, the guess will just disappear
+    Probably best the word stays shown but the user is alerted that the word is not in the dictionary
+    */
 
     if (isAccepetedWord) {
       // Add word to guesses
@@ -755,7 +762,7 @@ const WingoConfig = (props: Props) => {
     }
 
     // Exact match
-    if (isCorrect) {
+    if (isCurrentGuessCorrect()) {
       setInProgress(false);
       outcome = "success";
     }
