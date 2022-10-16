@@ -21,7 +21,6 @@ export const area: AreaConfig = {
           puzzleRevealSeconds: 0,
           timerConfig: { isTimed: false },
         },
-        checkInDictionary: false,
       },
     },
   },
