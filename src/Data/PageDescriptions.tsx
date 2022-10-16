@@ -1,3 +1,4 @@
+import { MAX_TARGET_WORD_LENGTH } from "./GamemodeSettingsInputLimits";
 import { PagePath } from "./PageNames";
 
 export const gamemodeCategories = [
@@ -26,10 +27,13 @@ export type pageDescription = {
   helpInfo?: JSX.Element;
 };
 
-/* TODO: Gamemode display order
+/* 
+TODO: Gamemode display order
 Is there some way of specifying which order the tiles which are derived from these pageDescriptions appear?
 Other than ensuring they are in the correct order here (within pageDescriptions)
 */
+
+// TODO: helpInfo for every gamemode
 
 export const pageDescriptions: pageDescription[] = [
   { path: "/Splashscreen", title: "Wingo", categoryType: null, isDisplayed: false, isRandomlyPlayable: false },
@@ -46,8 +50,8 @@ export const pageDescriptions: pageDescription[] = [
     helpInfo: (
       <>
         <p>Only one attempt (a set of up to 6 guesses) allowed</p>
-        <p>The target word changes every day (the timer shows when a new word is available)</p>
-        <p>Your attempt will be saved and can be viewed at any time</p>
+        <p>The target word changes every day (after completion, the timer shows when a new word is available)</p>
+        <p>Your attempt will be saved (and can be viewed at any time during the day)</p>
       </>
     ),
   },
@@ -98,7 +102,18 @@ export const pageDescriptions: pageDescription[] = [
     isRandomlyPlayable: true,
     description: "Guess a word",
     helpInfo: (
+      // TODO: Include images to show examples of the different letter statuses
+      // TODO: Change the colour of the text within the <p> element
+      // https://www.nytimes.com/games/wordle/index.html
       <>
+        <p>Each guess must be a valid word</p>
+        <p>
+          When a guess is submited, the colour of the tiles will change to show how close your guess is to the correct
+          word
+        </p>
+        <p>A green tile means the letter is in the word and in the correct spot</p>
+        <p>A yellow tile means the letter is in the word but in the wrong spot</p>
+        <p>A grey tile means the letter is not in the word</p>
         <p>Press the 'Restart' button after an attempt for a new target word</p>
       </>
     ),
@@ -114,8 +129,11 @@ export const pageDescriptions: pageDescription[] = [
     helpInfo: (
       <>
         <p>Guess the target word from the hint provided</p>
-        <p>A random letter of the target word will become revealed every few seconds</p>
-        <p>Press 'Enter' once you know the answer and make your guess (this will stop the letters revealing!)</p>
+        <p>A random letter of the target word will be periodically revealed</p>
+        <p>
+          Press 'Enter' once you know the answer and make your guess (this will however stop any more letters
+          revealing!)
+        </p>
       </>
     ),
   },
@@ -128,8 +146,11 @@ export const pageDescriptions: pageDescription[] = [
     isRandomlyPlayable: true,
     description: "Increase the word length to guess with every correct answer",
     helpInfo: (
+      // TODO: Somehow link to help information for the base repeat mode?
       <>
+        <p>Normal Wingo rules apply</p>
         <p>The target word will increase in length (one letter longer) after each successful guess</p>
+        <p>{`The game will end when a ${MAX_TARGET_WORD_LENGTH} letter word is correctly guessed`}</p>
       </>
     ),
   },
@@ -143,9 +164,10 @@ export const pageDescriptions: pageDescription[] = [
     description: "Gain lives with correct, early answers; how long can you survive?",
     helpInfo: (
       <>
-        <p>Gain extra guesses (up to a maximum of 5) by guessing a word with guesses to spare</p>
+        <p>Gain extra guesses (by default, up to a maximum of 5) by guessing a word with guesses to spare</p>
         <p>A guess will be lost each time the target word is not guessed</p>
-        <p>The target word will increase in length (one letter longer) after each successful guess</p>
+        <p>The target word will increase in length after each successful guess</p>
+        <p>The game ends after an incorrect guess with only one guess (row) remaining</p>
       </>
     ),
   },
@@ -160,11 +182,11 @@ export const pageDescriptions: pageDescription[] = [
     helpInfo: (
       <>
         <p>The target word is a word from the currently selected category</p>
+        <p>The category can be changed from the dropdown list</p>
         <p>
           The guesses you make must also be words from this category (but they do not have to be the length of the
           target word)
         </p>
-        <p>The category can be changed from the dropdown list (this will delete any guesses made)</p>
       </>
     ),
   },
@@ -211,6 +233,16 @@ export const pageDescriptions: pageDescription[] = [
     isDisplayed: true,
     isRandomlyPlayable: true,
     description: "Find groups of words from a scrambled word grid",
+    helpInfo: (
+      // https://en.wikipedia.org/wiki/Only_Connect#Round_3:_Connecting_Wall
+      <>
+        <p>Select a group of words that share a common connection (category)</p>
+        <p>The size of the selection must be equal to the width of the provided grid</p>
+        <p>A correct selection will automatically be moved to its own row (the grid will be sorted)</p>
+        <p>Before finding two complete groups, the number of guesses is unlimited</p>
+        <p>After finding two complete groups, only three guesses are allowed</p>
+      </>
+    ),
   },
   {
     path: "/LettersGame",
@@ -261,9 +293,7 @@ export const pageDescriptions: pageDescription[] = [
     description: "Guess the word for each category",
     helpInfo: (
       <>
-        <p>Select a category</p>
-        <p>Guess the word from the hint for the category within the number of guesses</p>
-        <p>Press the 'Restart' button after an attempt or change the Category for a new target word</p>
+        <p>Enter a word (of any length) for each category that starts with the provided letter</p>
       </>
     ),
   },
@@ -275,6 +305,11 @@ export const pageDescriptions: pageDescription[] = [
     isDisplayed: true,
     isRandomlyPlayable: true,
     description: "Find the words which are made from the same letters",
+    helpInfo: (
+      <>
+        <p>Select the words which contain the same letters (the words that are anagrams)</p>
+      </>
+    ),
   },
   {
     path: "/WordCodes/Question",
@@ -319,6 +354,15 @@ export const pageDescriptions: pageDescription[] = [
     isDisplayed: true,
     isRandomlyPlayable: true,
     description: "Test your arithmetic with quickfire calculations",
+    helpInfo: (
+      <>
+        <p>A starting number will be shown</p>
+        <p>Tiles with mathematical operations will periodically appear</p>
+        <p>Calculate and keep track of the running total</p>
+        <p>After a certain number of tiles, a checkpoint may be reached where the running total needs to be entered</p>
+        <p>There may be several checkpoints but the number of tiles between checkponts will not change</p>
+      </>
+    ),
   },
   {
     path: "/Numble",
