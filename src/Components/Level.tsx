@@ -61,7 +61,7 @@ export type LevelConfig = {
         levelProps: ArithmeticDragProps;
       }
     | {
-        gameCategory: "GroupWall";
+        gameCategory: "OnlyConnect";
         page: PagePath;
         levelProps: OnlyConnectProps;
       }
@@ -193,7 +193,7 @@ export const Level = (props: LevelProps) => {
       case "ArithmeticDrag/Match":
         return <ArithmeticDrag {...selectedLevel.level.levelProps} {...commonProps} />;
 
-      case "GroupWall":
+      case "OnlyConnect":
         return <OnlyConnect {...selectedLevel.level.levelProps} {...commonProps} />;
 
       case "SameLetterWords":
