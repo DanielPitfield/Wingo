@@ -13,8 +13,9 @@ interface Props {
   handleSimpleGamemodeSettingsChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 
   setRemainingGuesses: (newGuesses: number) => void;
-  setRemainingSeconds: (newSeconds: number) => void;
-  setMostRecentTotalSeconds: (numSeconds: number) => void;
+
+  resetCountdown: () => void;
+  setTotalSeconds: (numSeconds: number) => void;
 
   onLoadPresetGamemodeSettings: (gamemodeSettings: SameLetterWordsProps["gamemodeSettings"]) => void;
   onShowOfAddPresetModal: () => void;
@@ -101,8 +102,8 @@ const SameLetterWordsGamemodeSettings = (props: Props) => {
                 max={120}
                 step={5}
                 onChange={(e) => {
-                  props.setRemainingSeconds(e.target.valueAsNumber);
-                  props.setMostRecentTotalSeconds(e.target.valueAsNumber);
+                  props.resetCountdown();
+                  props.setTotalSeconds(e.target.valueAsNumber);
                   props.handleSimpleGamemodeSettingsChange(e);
                 }}
               ></input>
