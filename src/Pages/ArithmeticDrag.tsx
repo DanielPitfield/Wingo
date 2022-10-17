@@ -345,12 +345,16 @@ const ArithmeticDrag = (props: Props) => {
 
   // Start timer (any time the toggle is enabled or the totalSeconds is changed)
   React.useEffect(() => {
+    if (!inProgress) {
+      return;
+    }
+
     if (!gamemodeSettings.timerConfig.isTimed) {
       return;
     }
 
     startCountdown();
-  }, [gamemodeSettings.timerConfig.isTimed, totalSeconds]);
+  }, [inProgress, gamemodeSettings.timerConfig.isTimed, totalSeconds]);
 
   // Check remaining seconds on timer
   React.useEffect(() => {
@@ -367,7 +371,7 @@ const ArithmeticDrag = (props: Props) => {
       playFailureChimeSoundEffect();
       setInProgress(false);
     }
-  }, [remainingSeconds, gamemodeSettings.timerConfig.isTimed]);
+  }, [inProgress, gamemodeSettings.timerConfig.isTimed, remainingSeconds]);
 
   function handleDragEnd<
     T extends { id: number },

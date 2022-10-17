@@ -106,12 +106,16 @@ const Algebra = (props: Props) => {
 
   // Start timer (any time the toggle is enabled or the totalSeconds is changed)
   React.useEffect(() => {
+    if (!inProgress) {
+      return;
+    }
+
     if (!gamemodeSettings.timerConfig.isTimed) {
       return;
     }
 
     startCountdown();
-  }, [gamemodeSettings.timerConfig.isTimed, totalSeconds]);
+  }, [inProgress, gamemodeSettings.timerConfig.isTimed, totalSeconds]);
 
   // Check remaining seconds on timer
   React.useEffect(() => {
@@ -128,7 +132,7 @@ const Algebra = (props: Props) => {
       playFailureChimeSoundEffect();
       setInProgress(false);
     }
-  }, [remainingSeconds, gamemodeSettings.timerConfig.isTimed]);
+  }, [inProgress, remainingSeconds, gamemodeSettings.timerConfig.isTimed]);
 
   const getCurrentAlgebraTemplate = (): AlgebraTemplate => {
     return algebraTemplates[templateIndex];
