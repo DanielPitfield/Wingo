@@ -132,7 +132,7 @@ const Algebra = (props: Props) => {
       playFailureChimeSoundEffect();
       setInProgress(false);
     }
-  }, [inProgress, remainingSeconds, gamemodeSettings.timerConfig.isTimed]);
+  }, [inProgress, gamemodeSettings.timerConfig.isTimed, remainingSeconds]);
 
   const getCurrentAlgebraTemplate = (): AlgebraTemplate => {
     return algebraTemplates[templateIndex];
