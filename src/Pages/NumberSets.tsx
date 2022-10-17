@@ -20,6 +20,7 @@ import { useLocation } from "react-router-dom";
 import { PagePath } from "../Data/PageNames";
 import { SettingsData } from "../Data/SaveData/Settings";
 import { setMostRecentNumberSetsGamemodeSettings } from "../Data/SaveData/MostRecentGamemodeSettings";
+import { useCountdown } from "usehooks-ts";
 
 export interface NumberSetsProps {
   campaignConfig:
@@ -63,21 +64,24 @@ const NumberSets = (props: Props) => {
   const [currentNumberSetIndex, setCurrentNumberSetIndex] = useState(0);
   const [numCorrectAnswers, setNumCorrectAnswers] = useState(0);
 
-  const [remainingSeconds, setRemainingSeconds] = useState(
+  // The starting/total time of the timer
+  const [totalSeconds, setTotalSeconds] = useState(
     props.gamemodeSettings?.timerConfig?.isTimed === true
       ? props.gamemodeSettings?.timerConfig?.seconds
       : getGamemodeDefaultTimerValue(location)
   );
 
-  const [mostRecentTotalSeconds, setMostRecentTotalSeconds] = useState(
-    props.gamemodeSettings?.timerConfig?.isTimed === true
-      ? props.gamemodeSettings?.timerConfig?.seconds
-      : getGamemodeDefaultTimerValue(location)
-  );
+  // How many seconds left on the timer?
+  const [remainingSeconds, { startCountdown, stopCountdown, resetCountdown }] = useCountdown({
+    countStart: totalSeconds,
+    intervalMs: 1000,
+  });
 
   // Sounds
   const [playCorrectChimeSoundEffect] = useCorrectChime(props.settings);
   const [playFailureChimeSoundEffect] = useFailureChime(props.settings);
+  const [playLightPingSoundEffect] = useLightPingChime(props.settings);
+  const [playClickSoundEffect] = useClickChime(props.settings);
 
   // Reset game after change of settings (stops cheating by changing settings partway through a game)
   React.useEffect(() => {
@@ -91,25 +95,35 @@ const NumberSets = (props: Props) => {
     setMostRecentNumberSetsGamemodeSettings(gamemodeSettings);
   }, [gamemodeSettings]);
 
-  // (Guess) Timer Setup
+  // Start timer (any time the toggle is enabled or the totalSeconds is changed)
   React.useEffect(() => {
-    if (!gamemodeSettings.timerConfig.isTimed || !inProgress) {
+    if (!inProgress) {
       return;
     }
 
-    const timerGuess = setInterval(() => {
-      if (remainingSeconds > 0) {
-        setRemainingSeconds(remainingSeconds - 1);
-      } else {
-        playFailureChimeSoundEffect();
-        setInProgress(false);
-        clearInterval(timerGuess);
-      }
-    }, 1000);
-    return () => {
-      clearInterval(timerGuess);
-    };
-  }, [setRemainingSeconds, remainingSeconds, gamemodeSettings.timerConfig.isTimed]);
+    if (!gamemodeSettings.timerConfig.isTimed) {
+      return;
+    }
+
+    startCountdown();
+  }, [inProgress, gamemodeSettings.timerConfig.isTimed, totalSeconds]);
+
+  // Check remaining seconds on timer
+  React.useEffect(() => {
+    if (!inProgress) {
+      return;
+    }
+
+    if (!gamemodeSettings.timerConfig.isTimed) {
+      return;
+    }
+
+    if (remainingSeconds <= 0) {
+      stopCountdown();
+      playFailureChimeSoundEffect();
+      setInProgress(false);
+    }
+  }, [inProgress, gamemodeSettings.timerConfig.isTimed, remainingSeconds]);
 
   const getCurrentNumberSetTemplate = (): NumberSetTemplate => {
     return numberSets[currentNumberSetIndex];
@@ -265,7 +279,7 @@ const NumberSets = (props: Props) => {
 
     if (gamemodeSettings.timerConfig.isTimed) {
       // Reset the timer if it is enabled in the game options
-      setRemainingSeconds(gamemodeSettings.timerConfig.seconds);
+      resetCountdown();
     }
   }
 
@@ -312,7 +326,7 @@ const NumberSets = (props: Props) => {
   const handleTimerToggle = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newGamemodeSettings: NumberSetsProps["gamemodeSettings"] = {
       ...gamemodeSettings,
-      timerConfig: e.target.checked ? { isTimed: true, seconds: mostRecentTotalSeconds } : { isTimed: false },
+      timerConfig: e.target.checked ? { isTimed: true, seconds: totalSeconds } : { isTimed: false },
     };
 
     setGamemodeSettings(newGamemodeSettings);
@@ -339,8 +353,8 @@ const NumberSets = (props: Props) => {
             handleDifficultyChange={handleDifficultyChange}
             handleTimerToggle={handleTimerToggle}
             handleSimpleGamemodeSettingsChange={handleSimpleGamemodeSettingsChange}
-            setMostRecentTotalSeconds={setMostRecentTotalSeconds}
-            setRemainingSeconds={setRemainingSeconds}
+            resetCountdown={resetCountdown}
+            setTotalSeconds={setTotalSeconds}
             onLoadPresetGamemodeSettings={setGamemodeSettings}
             onShowOfAddPresetModal={() => setNumPadDisabled(true)}
             onHideOfAddPresetModal={() => setNumPadDisabled(false)}
