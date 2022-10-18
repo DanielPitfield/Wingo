@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { Keyboard } from "../Components/Keyboard";
-import { PagePath } from "../Data/PageNames";
 import { WordRow } from "../Components/WordRow";
 import { Button } from "../Components/Button";
 import { MessageNotification } from "../Components/MessageNotification";
@@ -13,7 +12,7 @@ import { LEVEL_FINISHING_TEXT } from "../Components/Level";
 import { categoryMappings } from "../Data/WordArrayMappings";
 import { getNewGamemodeSettingValue } from "../Helpers/getGamemodeSettingsNewValue";
 import { DEFAULT_WINGO_INCREASING_MAX_NUM_LIVES } from "../Data/DefaultGamemodeSettings";
-import { LetterStatus } from "../Components/LetterTile";
+import { LetterTileStatus } from "../Components/LetterTile";
 import { getNumNewLimitlessLives } from "../Helpers/getNumNewLimitlessLives";
 import WingoGamemodeSettings from "../Components/GamemodeSettingsOptions/WingoGamemodeSettings";
 import { SettingsData } from "../Data/SaveData/Settings";
@@ -39,10 +38,7 @@ interface Props {
   targetWord: string;
   targetHint?: string;
   targetCategory?: string;
-  letterStatuses: {
-    letter: string;
-    status: LetterStatus;
-  }[];
+  letterStatuses: LetterTileStatus[];
   revealedLetterIndexes: number[];
 
   theme?: Theme;

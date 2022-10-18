@@ -12,7 +12,7 @@ import {
 } from "../Data/DefaultGamemodeSettings";
 import { categoryMappings, targetWordLengthMappings } from "../Data/WordArrayMappings";
 import { getDeterministicArrayItems } from "../Helpers/DeterministicSeeding";
-import { LetterStatus } from "../Components/LetterTile";
+import { LetterTileStatus, TileStatus } from "../Components/LetterTile";
 import { getAllPuzzleWordsOfLength, getAllWordsUpToLength, getTargetWordsOfLength } from "../Helpers/getWordsOfLength";
 import { getGamemodeDefaultTimerValue } from "../Helpers/getGamemodeDefaultTimerValue";
 import { getGamemodeDefaultWordLength } from "../Helpers/getGamemodeDefaultWordLength";
@@ -145,7 +145,7 @@ const WingoConfig = (props: Props) => {
   // TODO: Move to top of file (next to DEFAULT_ALPHABET)?
   const defaultLetterStatuses: {
     letter: string;
-    status: LetterStatus;
+    status: TileStatus;
   }[] = DEFAULT_ALPHABET.map((x) => ({
     letter: x,
     status: "not set",
@@ -155,13 +155,7 @@ const WingoConfig = (props: Props) => {
   defaultLetterStatuses.push({ letter: "-", status: "not set" });
   defaultLetterStatuses.push({ letter: "'", status: "not set" });
 
-  // TODO: Should the type LetterStatus include the letter?
-  const [letterStatuses, setLetterStatuses] = useState<
-    {
-      letter: string;
-      status: LetterStatus;
-    }[]
-  >(defaultLetterStatuses);
+  const [letterStatuses, setLetterStatuses] = useState<LetterTileStatus[]>(defaultLetterStatuses);
 
   // The starting/total time of the timer
   const [totalSeconds, setTotalSeconds] = useState(

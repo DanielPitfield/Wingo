@@ -1,4 +1,4 @@
-import LetterTile, { LetterStatus } from "../Components/LetterTile";
+import LetterTile, { TileStatus } from "../Components/LetterTile";
 
 import { useState } from "react";
 import { Theme } from "../Data/Themes";
@@ -31,10 +31,10 @@ type GridConfig = {
   words: { word: string; orientation: Orientation; startingXPos: number; startingYPos: number }[];
 };
 
-export type TileStatus = {
+export type CrosswordTileStatus = {
   x: number;
   y: number;
-  status: LetterStatus;
+  status: TileStatus;
 };
 
 export interface WingoInterlinkedProps {
@@ -69,7 +69,7 @@ export interface WingoInterlinkedProps {
   initialConfig?: {
     words: string[];
     inProgress: boolean;
-    tileStatuses: TileStatus[];
+    tileStatuses: CrosswordTileStatus[];
     currentWords: string[];
     currentWordIndex: number;
     remainingGridGuesses: number;
@@ -86,7 +86,7 @@ interface Props extends WingoInterlinkedProps {
   onSave?: (
     words: string[],
     inProgress: boolean,
-    tileStatuses: TileStatus[],
+    tileStatuses: CrosswordTileStatus[],
     currentWords: string[],
     currentWordIndex: number,
     remainingGridGuesses: number,
@@ -118,7 +118,7 @@ export const WingoInterlinked = (props: Props) => {
     props.initialConfig?.currentWords ?? Array.from({ length: gamemodeSettings.numWords }).map((x) => "")
   );
 
-  const [tileStatuses, setTileStatuses] = useState<TileStatus[]>(
+  const [tileStatuses, setTileStatuses] = useState<CrosswordTileStatus[]>(
     props.initialConfig?.tileStatuses ??
       getCorrectLetterGrid().map((position) => {
         return { x: position.x, y: position.y, status: "not set" };

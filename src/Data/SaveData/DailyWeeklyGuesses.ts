@@ -1,4 +1,4 @@
-import { TileStatus } from "../../Pages/WingoInterlinked";
+import { CrosswordTileStatus } from "../../Pages/WingoInterlinked";
 
 export type DailyWingoSaveData = {
   dailyWord: string;
@@ -12,7 +12,7 @@ export type DailyWingoSaveData = {
 export type CrossWordSaveData = {
   words: string[];
   inProgress: boolean;
-  tileStatuses: TileStatus[];
+  tileStatuses: CrosswordTileStatus[];
   currentWords: string[];
   currentWordIndex: number;
   remainingGridGuesses: number;
@@ -88,7 +88,7 @@ export function getDailyCrossWordGuesses(): CrossWordSaveData | null {
 export function setDailyCrossWordGuesses(
   words: string[],
   inProgress: boolean,
-  tileStatuses: TileStatus[],
+  tileStatuses: CrosswordTileStatus[],
   currentWords: string[],
   currentWordIndex: number,
   remainingGridGuesses: number,
@@ -134,7 +134,7 @@ export function getWeeklyCrossWordGuesses(): CrossWordSaveData | null {
 export function setWeeklyCrossWordGuesses(
   words: string[],
   inProgress: boolean,
-  tileStatuses: TileStatus[],
+  tileStatuses: CrosswordTileStatus[],
   currentWords: string[],
   currentWordIndex: number,
   remainingGridGuesses: number,

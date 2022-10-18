@@ -1,4 +1,4 @@
-import LetterTile, { LetterStatus } from "./LetterTile";
+import LetterTile, { TileStatus } from "./LetterTile";
 import { getWordRowStatusSummary, WordRowStatusChecks, WordRowStatusSummary } from "../Helpers/getWordRowStatusSummary";
 import { useLocation } from "react-router-dom";
 import { PagePath } from "../Data/PageNames";
@@ -65,7 +65,7 @@ export const WordRow = (props: Props) => {
     return getGuessSummary().every((letter) => letter.status === "correct");
   };
 
-  const getFinalTileStatus = (index: number): LetterStatus => {
+  const getFinalTileStatus = (index: number): TileStatus => {
     const guessSummary = getGuessSummary();
 
     if (!guessSummary) {

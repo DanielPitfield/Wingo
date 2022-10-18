@@ -1,11 +1,6 @@
-import { LetterStatus } from "../Components/LetterTile";
+import { TileStatus } from "../Components/LetterTile";
 
-export function getLetterStatus(
-  letter: string,
-  index: number,
-  targetWord: string,
-  inDictionary: boolean
-): LetterStatus {
+export function getLetterStatus(letter: string, index: number, targetWord: string, inDictionary: boolean): TileStatus {
   if (!inDictionary) {
     // Red
     return "incorrect";
