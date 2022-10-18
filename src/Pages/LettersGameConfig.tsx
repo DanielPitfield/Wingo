@@ -55,7 +55,7 @@ const LettersGameConfig = (props: Props) => {
   const [inProgress, setInProgress] = useState(true);
   const [inDictionary, setInDictionary] = useState(true);
   const [targetWord, setTargetWord] = useState<string>();
-  const [hasSubmitLetter, sethasSubmitLetter] = useState(false);
+  const [hasLetterSelectionFinished, setHasLetterSelectionFinished] = useState(false);
 
   const [gamemodeSettings, setGamemodeSettings] = useState<LettersGameConfigProps["gamemodeSettings"]>(
     props.gamemodeSettings
@@ -76,15 +76,18 @@ const LettersGameConfig = (props: Props) => {
 
   const [letterTileStatuses, setLetterTileStatuses] = useState<LettersGameTileStatus[]>(DEFAULT_LETTER_TILE_STATUSES);
 
+  // How many letters have been selected so far?
+  const getNumSelectedLetters = (): number => {
+    return letterTileStatuses.filter((letterStatus) => letterStatus.letter !== null).length;
+  };
+
   // Timer Setup
   React.useEffect(() => {
     if (!gamemodeSettings.timerConfig.isTimed) {
       return;
     }
 
-    if (
-      letterTileStatuses.filter((letterStatus) => letterStatus.letter !== null).length !== gamemodeSettings.numLetters
-    ) {
+    if (!hasLetterSelectionFinished) {
       return;
     }
 
@@ -98,17 +101,15 @@ const LettersGameConfig = (props: Props) => {
     return () => {
       clearInterval(timer);
     };
-  }, [
-    setRemainingSeconds,
-    remainingSeconds,
-    gamemodeSettings.timerConfig.isTimed,
-    // When the selection of letters has been completed
-    letterTileStatuses.filter((letterStatus) => letterStatus.letter !== null).length === gamemodeSettings.numLetters,
-  ]);
+  }, [setRemainingSeconds, remainingSeconds, gamemodeSettings.timerConfig.isTimed, hasLetterSelectionFinished]);
 
   // Reset game after change of settings (stops cheating by changing settings partway through a game)
   React.useEffect(() => {
-    if (isCampaignLevelPath(location) || props.gameshowScore !== undefined) {
+    if (isCampaignLevelPath(location)) {
+      return;
+    }
+
+    if (props.gameshowScore !== undefined) {
       return;
     }
 
@@ -117,6 +118,20 @@ const LettersGameConfig = (props: Props) => {
     // Save the latest gamemode settings for this mode
     setMostRecentLettersGameConfigGamemodeSettings(gamemodeSettings);
   }, [gamemodeSettings]);
+
+  React.useEffect(() => {
+    // Selection already finished, don't need to check whether to flag it as true
+    if (hasLetterSelectionFinished) {
+      return;
+    }
+    
+    // TODO: Better way to set when letter selection has finished?
+
+    // Full, complete letter selection
+    if (getNumSelectedLetters() === gamemodeSettings.numLetters) {
+      setHasLetterSelectionFinished(true);
+    }
+  }, [letterTileStatuses]);
 
   function ResetGame() {
     if (!inProgress) {
@@ -148,7 +163,7 @@ const LettersGameConfig = (props: Props) => {
     setTargetWord("");
     setInProgress(true);
     setInDictionary(true);
-    sethasSubmitLetter(false);
+    setHasLetterSelectionFinished(false);
 
     if (gamemodeSettings.timerConfig.isTimed) {
       // Reset the timer if it is enabled in the game options
@@ -169,7 +184,6 @@ const LettersGameConfig = (props: Props) => {
     setCurrentWord("");
     setInProgress(true);
     setInDictionary(true);
-    sethasSubmitLetter(false);
   }
 
   function onEnter() {
@@ -177,15 +191,12 @@ const LettersGameConfig = (props: Props) => {
       return;
     }
 
-    // The vowels and consonants available have not all been picked
-    if (
-      letterTileStatuses.filter((letterStatus) => letterStatus.letter !== null).length !== gamemodeSettings.numLetters
-    ) {
+    if (!hasLetterSelectionFinished) {
       return;
     }
 
     // Nothing entered yet
-    if (!hasSubmitLetter) {
+    if (currentWord.length <= 0) {
       return;
     }
 
@@ -220,10 +231,7 @@ const LettersGameConfig = (props: Props) => {
   }
 
   function onSubmitSelectionLetter(letter: string) {
-    if (
-      letterTileStatuses.filter((letterStatus) => letterStatus.letter !== null).length < gamemodeSettings.numLetters &&
-      inProgress
-    ) {
+    if (!hasLetterSelectionFinished && inProgress) {
       // Find the index of the first status without a letter
       const freeSlotIndex = letterTileStatuses.findIndex((letterStatus) => letterStatus.letter === null);
       if (freeSlotIndex === -1) {
@@ -250,7 +258,7 @@ const LettersGameConfig = (props: Props) => {
     }
 
     // A vowel or consonant has already been picked
-    if (letterTileStatuses.filter((letterStatus) => letterStatus.letter !== null).length !== 0) {
+    if (getNumSelectedLetters() !== 0) {
       return;
     }
 
@@ -277,9 +285,7 @@ const LettersGameConfig = (props: Props) => {
     }
 
     // Still more letters need to be chosen for selection
-    if (
-      letterTileStatuses.filter((letterStatus) => letterStatus.letter !== null).length !== gamemodeSettings.numLetters
-    ) {
+    if (!hasLetterSelectionFinished) {
       return;
     }
 
@@ -299,7 +305,6 @@ const LettersGameConfig = (props: Props) => {
 
     // Append chosen letter to currentWord
     setCurrentWord(currentWord + letter);
-    sethasSubmitLetter(true);
   }
 
   // Used the keyboard to add a new letter
@@ -325,7 +330,6 @@ const LettersGameConfig = (props: Props) => {
 
     // Append chosen letter to currentWord
     setCurrentWord(currentWord + letter);
-    sethasSubmitLetter(true);
   }
 
   function onBackspace() {
@@ -373,7 +377,7 @@ const LettersGameConfig = (props: Props) => {
       letterTileStatuses={letterTileStatuses}
       inProgress={inProgress}
       inDictionary={inDictionary}
-      hasSubmitLetter={hasSubmitLetter}
+      hasLetterSelectionFinished={hasLetterSelectionFinished}
       targetWord={targetWord || ""}
       theme={props.theme}
       settings={props.settings}

@@ -29,7 +29,7 @@ interface Props {
   currentWord: string;
   inProgress: boolean;
   inDictionary: boolean;
-  hasSubmitLetter: boolean;
+  hasLetterSelectionFinished: boolean;
   targetWord: string;
   remainingSeconds: number;
 
@@ -69,18 +69,9 @@ const LettersGame = (props: Props) => {
       : getGamemodeDefaultTimerValue(location)
   );
 
-  const getNumSelectedLetters = (): number => {
-    // How many letters have been selected so far?
-    return props.letterTileStatuses.filter((letterStatus) => letterStatus.letter !== null).length;
-  };
-
-  const isLetterSelectionFinished = (): boolean => {
-    return getNumSelectedLetters() === props.gamemodeSettings.numLetters;
-  };
-
   const getVowel = (): string => {
     // Already have enough letters, don't add any more
-    if (isLetterSelectionFinished()) {
+    if (props.hasLetterSelectionFinished) {
       return "";
     }
 
@@ -89,7 +80,7 @@ const LettersGame = (props: Props) => {
 
   const getConsonant = (): string => {
     // Already have enough letters, don't add any more
-    if (isLetterSelectionFinished()) {
+    if (props.hasLetterSelectionFinished) {
       return "";
     }
 
@@ -134,7 +125,7 @@ const LettersGame = (props: Props) => {
       <div className="add-letter-buttons-wrapper">
         <Button
           mode={"default"}
-          disabled={isLetterSelectionFinished()}
+          disabled={props.hasLetterSelectionFinished}
           settings={props.settings}
           onClick={() => props.onSubmitSelectionLetter(getVowel())}
         >
@@ -142,7 +133,7 @@ const LettersGame = (props: Props) => {
         </Button>
         <Button
           mode={"default"}
-          disabled={isLetterSelectionFinished()}
+          disabled={props.hasLetterSelectionFinished}
           settings={props.settings}
           onClick={() => props.onSubmitSelectionLetter(getConsonant())}
         >
@@ -150,7 +141,12 @@ const LettersGame = (props: Props) => {
         </Button>
         <Button
           mode={"default"}
-          disabled={getNumSelectedLetters() !== 0 || isLetterSelectionFinished()}
+          disabled={
+            // There is atleast one already selected letter
+            props.letterTileStatuses.some((letterStatus) => letterStatus.letter !== null) ||
+            // The entire selection is finished
+            props.hasLetterSelectionFinished
+          }
           settings={props.settings}
           onClick={quickLetterSelection}
         >
