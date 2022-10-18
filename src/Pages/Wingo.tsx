@@ -14,10 +14,8 @@ import { categoryMappings } from "../Data/WordArrayMappings";
 import { getNewGamemodeSettingValue } from "../Helpers/getGamemodeSettingsNewValue";
 import { DEFAULT_WINGO_INCREASING_MAX_NUM_LIVES } from "../Data/DefaultGamemodeSettings";
 import { LetterStatus } from "../Components/LetterTile";
-import { getGamemodeDefaultTimerValue } from "../Helpers/getGamemodeDefaultTimerValue";
 import { getNumNewLimitlessLives } from "../Helpers/getNumNewLimitlessLives";
 import WingoGamemodeSettings from "../Components/GamemodeSettingsOptions/WingoGamemodeSettings";
-import { useLocation } from "react-router-dom";
 import { SettingsData } from "../Data/SaveData/Settings";
 import { getTimeUntilPeriodicReset } from "../Helpers/getTimeUntilPeriodicReset";
 
@@ -28,6 +26,7 @@ interface Props {
   gamemodeSettings: WingoConfigProps["gamemodeSettings"];
 
   remainingSeconds: number;
+  totalSeconds: number;
   remainingGuesses: number;
   guesses: string[];
   currentWord: string;
@@ -54,6 +53,8 @@ interface Props {
   onBackspace: () => void;
 
   updateGamemodeSettings: (newGamemodeSettings: WingoConfigProps["gamemodeSettings"]) => void;
+  resetCountdown: () => void;
+  setTotalSeconds: (numSeconds: number) => void;
 
   ResetGame: () => void;
   ContinueGame: () => void;
@@ -63,8 +64,6 @@ interface Props {
 }
 
 const Wingo = (props: Props) => {
-  const location = useLocation().pathname as PagePath;
-
   const [keyboardDisabled, setKeyboardDisabled] = useState(false);
 
   const [timeUntilDailyReset, setTimeUntilDailyReset] = useState(getTimeUntilPeriodicReset("Day"));
@@ -73,17 +72,6 @@ const Wingo = (props: Props) => {
   const [playCorrectChimeSoundEffect] = useCorrectChime(props.settings);
   const [playFailureChimeSoundEffect] = useFailureChime(props.settings);
   const [playLightPingSoundEffect] = useLightPingChime(props.settings);
-
-  /*
-  Keep track of the most recent value for the timer
-  So that the value can be used as the default value for the total seconds input element
-  (even after the timer is enabled/disabled)
-  */
-  const [mostRecentTotalSeconds, setMostRecentTotalSeconds] = useState(
-    props.gamemodeSettings?.timerConfig?.isTimed === true
-      ? props.gamemodeSettings?.timerConfig?.seconds
-      : getGamemodeDefaultTimerValue(location)
-  );
 
   const [mostRecentMaxLives, setMostRecentMaxLives] = useState(
     props.gamemodeSettings?.maxLivesConfig?.isLimited === true
@@ -404,7 +392,7 @@ const Wingo = (props: Props) => {
   const handleTimerToggle = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newGamemodeSettings: WingoConfigProps["gamemodeSettings"] = {
       ...props.gamemodeSettings,
-      timerConfig: e.target.checked ? { isTimed: true, seconds: mostRecentTotalSeconds } : { isTimed: false },
+      timerConfig: e.target.checked ? { isTimed: true, seconds: props.totalSeconds } : { isTimed: false },
     };
 
     props.updateGamemodeSettings(newGamemodeSettings);
@@ -497,7 +485,8 @@ const Wingo = (props: Props) => {
                 handleTimerToggle={handleTimerToggle}
                 handleSimpleGamemodeSettingsChange={handleSimpleGamemodeSettingsChange}
                 setMostRecentMaxLives={setMostRecentMaxLives}
-                setMostRecentTotalSeconds={setMostRecentTotalSeconds}
+                resetCountdown={props.resetCountdown}
+                setTotalSeconds={props.setTotalSeconds}
                 onLoadPresetGamemodeSettings={props.updateGamemodeSettings}
                 onShowOfAddPresetModal={() => setKeyboardDisabled(true)}
                 onHideOfAddPresetModal={() => setKeyboardDisabled(false)}

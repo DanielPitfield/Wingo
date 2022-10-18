@@ -38,6 +38,8 @@ import {
   setMostRecentWingoConfigGamemodeSettings,
   getMostRecentWingoInterlinkedGamemodeSettings,
 } from "../Data/SaveData/MostRecentGamemodeSettings";
+import { useCountdown } from "usehooks-ts";
+import { useCorrectChime, useFailureChime, useLightPingChime, useClickChime } from "../Data/Sounds";
 
 export const wingoModes = [
   "daily",
@@ -115,34 +117,16 @@ const WingoConfig = (props: Props) => {
 
   const [gameId, setGameId] = useState<string | null>(null);
 
-  const [guesses, setGuesses] = useState<string[]>(props.guesses ?? []);
-
   const [gamemodeSettings, setGamemodeSettings] = useState<WingoConfigProps["gamemodeSettings"]>(
     props.gamemodeSettings
   );
 
-  const [remainingGuesses, setRemainingGuesses] = useState(props.gamemodeSettings.startingNumGuesses);
-
-  const [remainingSeconds, setRemainingSeconds] = useState(
-    props.gamemodeSettings?.timerConfig?.isTimed === true
-      ? props.gamemodeSettings?.timerConfig?.seconds
-      : getGamemodeDefaultTimerValue(location)
-  );
-
-  /*
-  Keep track of the most recent value for the timer
-  So that the value can be used as the default value for the total seconds input element
-  (even after the timer is enabled/disabled)
-  */
-  const [mostRecentTotalSeconds, setMostRecentTotalSeconds] = useState(
-    props.gamemodeSettings?.timerConfig?.isTimed === true
-      ? props.gamemodeSettings?.timerConfig?.seconds
-      : getGamemodeDefaultTimerValue(location)
-  );
+  const [inProgress, setInProgress] = useState(true);
 
   const [currentWord, setCurrentWord] = useState("");
+  const [guesses, setGuesses] = useState<string[]>(props.guesses ?? []);
   const [wordIndex, setWordIndex] = useState(0);
-  const [inProgress, setInProgress] = useState(true);
+
   const [inDictionary, setInDictionary] = useState(true);
   const [isIncompleteWord, setIsIncompleteWord] = useState(false);
 
@@ -156,6 +140,9 @@ const WingoConfig = (props: Props) => {
   const [hasSubmitLetter, sethasSubmitLetter] = useState(false);
   const [revealedLetterIndexes, setRevealedLetterIndexes] = useState<number[]>([]);
 
+  const [remainingGuesses, setRemainingGuesses] = useState(props.gamemodeSettings.startingNumGuesses);
+
+  // TODO: Move to top of file (next to DEFAULT_ALPHABET)?
   const defaultLetterStatuses: {
     letter: string;
     status: LetterStatus;
@@ -164,15 +151,36 @@ const WingoConfig = (props: Props) => {
     status: "not set",
   }));
 
+  // TODO: Add the symbols to DEFAULT_ALPHABET, then map
   defaultLetterStatuses.push({ letter: "-", status: "not set" });
   defaultLetterStatuses.push({ letter: "'", status: "not set" });
 
+  // TODO: Should the type LetterStatus include the letter?
   const [letterStatuses, setLetterStatuses] = useState<
     {
       letter: string;
       status: LetterStatus;
     }[]
   >(defaultLetterStatuses);
+
+  // The starting/total time of the timer
+  const [totalSeconds, setTotalSeconds] = useState(
+    props.gamemodeSettings?.timerConfig?.isTimed === true
+      ? props.gamemodeSettings?.timerConfig?.seconds
+      : getGamemodeDefaultTimerValue(location)
+  );
+
+  // How many seconds left on the timer?
+  const [remainingSeconds, { startCountdown, stopCountdown, resetCountdown }] = useCountdown({
+    countStart: totalSeconds,
+    intervalMs: 1000,
+  });
+
+  // Sounds
+  const [playCorrectChimeSoundEffect] = useCorrectChime(props.settings);
+  const [playFailureChimeSoundEffect] = useFailureChime(props.settings);
+  const [playLightPingSoundEffect] = useLightPingChime(props.settings);
+  const [playClickSoundEffect] = useClickChime(props.settings);
 
   // Returns the newly determined target word
   function getTargetWord() {
@@ -295,24 +303,36 @@ const WingoConfig = (props: Props) => {
     }
   }
 
-  // Timer Setup
+  // Start timer (any time the toggle is enabled or the totalSeconds is changed)
   React.useEffect(() => {
+    if (!inProgress) {
+      return;
+    }
+
     if (!gamemodeSettings.timerConfig.isTimed) {
       return;
     }
 
-    const timer = setInterval(() => {
-      if (remainingSeconds > 0) {
-        setRemainingSeconds(remainingSeconds - 1);
-      } else {
-        setInDictionary(false);
-        setInProgress(false);
-      }
-    }, 1000);
-    return () => {
-      clearInterval(timer);
-    };
-  }, [setRemainingSeconds, remainingSeconds, gamemodeSettings.timerConfig.isTimed]);
+    startCountdown();
+  }, [inProgress, gamemodeSettings.timerConfig.isTimed, totalSeconds]);
+
+  // Check remaining seconds on timer
+  React.useEffect(() => {
+    if (!inProgress) {
+      return;
+    }
+
+    if (!gamemodeSettings.timerConfig.isTimed) {
+      return;
+    }
+
+    if (remainingSeconds <= 0) {
+      stopCountdown();
+      playFailureChimeSoundEffect();
+      setInDictionary(false);
+      setInProgress(false);
+    }
+  }, [inProgress, gamemodeSettings.timerConfig.isTimed, remainingSeconds]);
 
   // Save gameplay progress of daily wingo
   React.useEffect(() => {
@@ -624,11 +644,10 @@ const WingoConfig = (props: Props) => {
     setRevealedLetterIndexes([]);
     setLetterStatuses(defaultLetterStatuses);
 
-    const newRemainingSeconds = gamemodeSettings.timerConfig.isTimed
-      ? gamemodeSettings.timerConfig.seconds
-      : mostRecentTotalSeconds;
-    setMostRecentTotalSeconds(newRemainingSeconds);
-    setRemainingSeconds(newRemainingSeconds);
+    if (gamemodeSettings.timerConfig.isTimed) {
+      // Reset the timer if it is enabled in the game options
+      resetCountdown();
+    }
 
     // TODO: MAJOR: Limitless mode shouldn't be resetting with lives left anyway (should be continuing), but there is a side effect or bug somewhere
 
@@ -655,11 +674,10 @@ const WingoConfig = (props: Props) => {
     setRevealedLetterIndexes([]);
     setLetterStatuses(defaultLetterStatuses);
 
-    const newRemainingSeconds = gamemodeSettings.timerConfig.isTimed
-      ? gamemodeSettings.timerConfig.seconds
-      : mostRecentTotalSeconds;
-    setMostRecentTotalSeconds(newRemainingSeconds);
-    setRemainingSeconds(newRemainingSeconds);
+    if (gamemodeSettings.timerConfig.isTimed) {
+      // Reset the timer if it is enabled in the game options
+      resetCountdown();
+    }
 
     // Add new rows for success in limitless mode
     if (props.mode === "limitless" && isCurrentGuessCorrect()) {
@@ -800,7 +818,7 @@ const WingoConfig = (props: Props) => {
 
     // TODO: This will reset timer after every valid guess, is that right?
     if (gamemodeSettings.timerConfig.isTimed) {
-      setRemainingSeconds(gamemodeSettings.timerConfig.seconds);
+      resetCountdown();
     }
   }
 
@@ -932,6 +950,7 @@ const WingoConfig = (props: Props) => {
       mode={props.mode}
       gamemodeSettings={gamemodeSettings}
       remainingSeconds={remainingSeconds}
+      totalSeconds={totalSeconds}
       remainingGuesses={remainingGuesses}
       guesses={guesses}
       currentWord={currentWord}
@@ -940,10 +959,10 @@ const WingoConfig = (props: Props) => {
       inDictionary={inDictionary}
       isIncompleteWord={isIncompleteWord}
       hasSubmitLetter={hasSubmitLetter}
-      conundrum={conundrum || ""}
-      targetWord={targetWord || ""}
+      conundrum={conundrum ?? ""}
+      targetWord={targetWord ?? ""}
       targetHint={gamemodeSettings.isHintShown ? targetHint : ""}
-      targetCategory={targetCategory || ""}
+      targetCategory={targetCategory ?? ""}
       revealedLetterIndexes={revealedLetterIndexes}
       letterStatuses={letterStatuses}
       theme={props.theme}
@@ -953,6 +972,8 @@ const WingoConfig = (props: Props) => {
       onSubmitTargetCategory={onSubmitTargetCategory}
       onBackspace={onBackspace}
       updateGamemodeSettings={updateGamemodeSettings}
+      resetCountdown={resetCountdown}
+      setTotalSeconds={setTotalSeconds}
       ResetGame={ResetGame}
       ContinueGame={ContinueGame}
       setTheme={props.setTheme}
