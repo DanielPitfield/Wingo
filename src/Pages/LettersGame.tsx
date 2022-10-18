@@ -32,6 +32,7 @@ interface Props {
   hasLetterSelectionFinished: boolean;
   targetWord: string;
   remainingSeconds: number;
+  totalSeconds: number;
 
   theme: Theme;
   settings: SettingsData;
@@ -47,8 +48,8 @@ interface Props {
   onBackspace: () => void;
 
   updateGamemodeSettings: (newGamemodeSettings: LettersGameConfigProps["gamemodeSettings"]) => void;
-
-  updateRemainingSeconds: (newSeconds: number) => void;
+  resetCountdown: () => void;
+  setTotalSeconds: (numSeconds: number) => void;
 
   ResetGame: () => void;
   ContinueGame: () => void;
@@ -272,8 +273,8 @@ const LettersGame = (props: Props) => {
             gamemodeSettings={props.gamemodeSettings}
             handleSimpleGamemodeSettingsChange={handleSimpleGamemodeSettingsChange}
             handleTimerToggle={handleTimerToggle}
-            setMostRecentTotalSeconds={setMostRecentTotalSeconds}
-            updateRemainingSeconds={props.updateRemainingSeconds}
+            resetCountdown={props.resetCountdown}
+            setTotalSeconds={props.setTotalSeconds}
             onLoadPresetGamemodeSettings={props.updateGamemodeSettings}
             onShowOfAddPresetModal={() => setKeyboardDisabled(true)}
             onHideOfAddPresetModal={() => setKeyboardDisabled(false)}

@@ -13,8 +13,8 @@ interface Props {
   handleTimerToggle: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleSimpleGamemodeSettingsChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 
-  updateRemainingSeconds: (newSeconds: number) => void;
-  setMostRecentTotalSeconds: (numSeconds: number) => void;
+  resetCountdown: () => void;
+  setTotalSeconds: (numSeconds: number) => void;
 
   onLoadPresetGamemodeSettings: (gamemodeSettings: LettersGameConfigProps["gamemodeSettings"]) => void;
   onShowOfAddPresetModal: () => void;
@@ -65,8 +65,8 @@ const LettersGameGamemodeSettings = (props: Props) => {
                 max={120}
                 step={5}
                 onChange={(e) => {
-                  props.updateRemainingSeconds(e.target.valueAsNumber);
-                  props.setMostRecentTotalSeconds(e.target.valueAsNumber);
+                  props.resetCountdown();
+                  props.setTotalSeconds(e.target.valueAsNumber);
                   props.handleSimpleGamemodeSettingsChange(e);
                 }}
               ></input>
