@@ -199,11 +199,15 @@ const NumbersGameConfig = (props: Props) => {
       return;
     }
 
-    const intermediaryStatuses = numberTileStatuses.filter((status) => status.type === "intermediary");
-    const correctAnswer = intermediaryStatuses.find((status) => status.number === targetNumber);
+    if (wordIndex <= 0) {
+      return;
+    }
 
-    if (wordIndex >= 1 && correctAnswer) {
-      // If game is in progress and there is an intermediary number of the target number, end the game prematurely
+    // Is there an intermediary number of the target number?
+    const isExactAnswer = getIntermediaryTileStatuses().find((status) => status.number === targetNumber);
+
+    if (isExactAnswer) {
+      // End the game prematurely
       setClosestGuessSoFar(targetNumber);
       stopCountdown();
       setInProgress(false);
