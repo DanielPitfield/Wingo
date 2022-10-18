@@ -332,13 +332,13 @@ const ArithmeticReveal = (props: Props) => {
     }
 
     // (Reveal Tile) Timer Setup
-    const timer = setInterval(() => {
+    const intervalId = setInterval(() => {
       const numRevealedTiles = revealState.type === "in-progress" ? revealState.revealedTiles + 1 : 1;
 
       // If all tiles have been revealed
       if (numRevealedTiles > gamemodeSettings.numTiles) {
         setRevealState({ type: "finished" });
-        clearInterval(timer);
+        clearInterval(intervalId);
       } else {
         setRevealState({
           type: "in-progress",
@@ -348,7 +348,7 @@ const ArithmeticReveal = (props: Props) => {
       }
     }, gamemodeSettings.revealIntervalSeconds * 1000);
 
-    return () => clearInterval(timer);
+    return () => clearInterval(intervalId);
   }, [revealState]);
 
   // Start guess timer (any time the toggle is enabled or the totalSeconds is changed)
