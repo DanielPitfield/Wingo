@@ -351,7 +351,7 @@ const Wingo = (props: Props) => {
       return;
     }
 
-    const intervalId = window.setInterval(
+    const intervalId = setInterval(
       () =>
         isDailyMode()
           ? setTimeUntilDailyReset(getTimeUntilPeriodicReset("Day"))
@@ -359,7 +359,9 @@ const Wingo = (props: Props) => {
       1000
     );
 
-    return () => clearInterval(intervalId);
+    return () => {
+      clearInterval(intervalId);
+    };
   }, [props.mode, props.inProgress]);
 
   function displayGameshowScore(): React.ReactNode {
