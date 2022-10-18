@@ -44,18 +44,20 @@ interface Props extends NumbersGameConfigProps {
   onCompleteGameshowRound?: (wasCorrect: boolean, guess: string, correctAnswer: string, score: number | null) => void;
 }
 
-export type OriginalTileStatus = {
+type OriginalTileStatus = {
   type: "original";
   number: number | null;
   picked: boolean;
 };
 
-export type IntermediaryTileStatus = {
+type IntermediaryTileStatus = {
   type: "intermediary";
   wordIndex: number;
   number: number | null;
   picked: boolean;
 };
+
+export type NumberTileStatus = OriginalTileStatus | IntermediaryTileStatus;
 
 export type Guess = { operand1: number | null; operand2: number | null; operator: typeof operators[0]["name"] };
 
@@ -86,12 +88,11 @@ const NumbersGameConfig = (props: Props) => {
   };
 
   // Fill an array of length numOperands with initialTileStatus
-  const defaultNumberTileStatuses: (OriginalTileStatus | IntermediaryTileStatus)[] = Array(
-    props.gamemodeSettings.numOperands
-  ).fill(initialTileStatus);
+  const defaultNumberTileStatuses: NumberTileStatus[] = Array(props.gamemodeSettings.numOperands).fill(
+    initialTileStatus
+  );
 
-  const [numberTileStatuses, setNumberTileStatuses] =
-    useState<(OriginalTileStatus | IntermediaryTileStatus)[]>(defaultNumberTileStatuses);
+  const [numberTileStatuses, setNumberTileStatuses] = useState<NumberTileStatus[]>(defaultNumberTileStatuses);
 
   // The starting/total time of the timer
   const [totalSeconds, setTotalSeconds] = useState(

@@ -4,7 +4,7 @@ import { MessageNotification } from "../Components/MessageNotification";
 import ProgressBar, { GreenToRedColorTransition } from "../Components/ProgressBar";
 import { NumberRow } from "../Components/NumberRow";
 import NumberTile from "../Components/NumberTile";
-import { Guess, NumbersGameConfigProps } from "./NumbersGameConfig";
+import { Guess, NumbersGameConfigProps, NumberTileStatus } from "./NumbersGameConfig";
 import { NumberSelectionRow } from "../Components/NumberSelectionRow";
 import { Theme } from "../Data/Themes";
 
@@ -36,22 +36,21 @@ interface Props {
   closestGuessSoFar: number | null;
   currentGuess: Guess;
 
-  numberTileStatuses: {
-    type: "original" | "intermediary";
-    number: number | null;
-    picked: boolean;
-  }[];
+  numberTileStatuses: NumberTileStatus[];
 
   theme: Theme;
   settings: SettingsData;
-  
+
   onClick: (
     value: number | null,
     id: { type: "original"; index: number } | { type: "intermediary"; rowIndex: number }
   ) => void;
+
   clearGrid: () => void;
   submitBestGuess: () => void;
+
   setTheme: (theme: Theme) => void;
+
   onSubmitNumbersGameNumber: (number: number) => void;
   onSubmitNumbersGameSelection: (numberExpression: number[]) => void;
   onSubmitNumber: (number: number) => void;
@@ -62,6 +61,7 @@ interface Props {
   setTotalSeconds: (numSeconds: number) => void;
 
   ResetGame: () => void;
+  
   setOperator: (operator: Guess["operator"]) => void;
   addGold: (gold: number) => void;
   gameshowScore?: number;
