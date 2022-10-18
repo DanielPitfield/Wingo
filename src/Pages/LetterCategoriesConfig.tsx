@@ -55,7 +55,6 @@ const LetterCategoriesConfig = (props: Props) => {
   const [guesses, setGuesses] = useState<string[]>([]);
   const [currentWord, setCurrentWord] = useState("");
   const [wordIndex, setWordIndex] = useState(0);
-  const [hasSubmitLetter, sethasSubmitLetter] = useState(false);
 
   const [correctGuessesCount, setCorrectGuessesCount] = useState(0);
 
@@ -201,7 +200,6 @@ const LetterCategoriesConfig = (props: Props) => {
 
     setGuesses([]);
     setWordIndex(0);
-    sethasSubmitLetter(false);
 
     if (gamemodeSettings.timerConfig.isTimed) {
       // Reset the timer if it is enabled in the game options
@@ -250,7 +248,6 @@ const LetterCategoriesConfig = (props: Props) => {
   function onSubmitLetter(letter: string) {
     if (currentWord.length < wordLength && inProgress) {
       setCurrentWord(currentWord + letter);
-      sethasSubmitLetter(true);
     }
   }
 
@@ -280,7 +277,6 @@ const LetterCategoriesConfig = (props: Props) => {
       currentWord={currentWord}
       wordIndex={wordIndex}
       inProgress={inProgress}
-      hasSubmitLetter={hasSubmitLetter}
       correctGuessesCount={correctGuessesCount}
       categoryRequiredStartingLetter={requiredStartingLetter}
       chosenCategoryMappings={chosenCategoryMappings}

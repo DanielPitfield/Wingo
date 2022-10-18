@@ -23,7 +23,6 @@ interface Props {
   currentWord: string;
   wordIndex: number;
   inProgress: boolean;
-  hasSubmitLetter: boolean;
   correctGuessesCount: number;
   categoryRequiredStartingLetter: string;
   chosenCategoryMappings: { name: string; targetWordArray: string[] }[];
