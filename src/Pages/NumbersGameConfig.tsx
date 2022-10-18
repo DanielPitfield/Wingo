@@ -81,14 +81,14 @@ const NumbersGameConfig = (props: Props) => {
   const [hasSubmitNumber, sethasSubmitNumber] = useState(false);
 
   // Original type and not yet picked
-  const initialTileStatus = {
+  const initialTileStatus: OriginalTileStatus = {
     type: "original",
     number: null,
     picked: false,
   };
 
   // Fill an array of length numOperands with initialTileStatus
-  const defaultNumberTileStatuses: NumberTileStatus[] = Array(props.gamemodeSettings.numOperands).fill(
+  const defaultNumberTileStatuses: OriginalTileStatus[] = Array(props.gamemodeSettings.numOperands).fill(
     initialTileStatus
   );
 
@@ -112,6 +112,14 @@ const NumbersGameConfig = (props: Props) => {
   const [playFailureChimeSoundEffect] = useFailureChime(props.settings);
   const [playLightPingSoundEffect] = useLightPingChime(props.settings);
   const [playClickSoundEffect] = useClickChime(props.settings);
+
+  const getOriginalTileStatuses = () => {
+    return numberTileStatuses.filter((x) => x.type === "original");
+  };
+
+  const getIntermediaryTileStatuses = () => {
+    return numberTileStatuses.filter((x) => x.type === "intermediary");
+  };
 
   // Start timer (any time the toggle is enabled or the totalSeconds is changed)
   React.useEffect(() => {
@@ -157,7 +165,7 @@ const NumbersGameConfig = (props: Props) => {
   // When the guesses (or expressions made along a row) of the playable grid are changed
   React.useEffect(() => {
     // For each guess in currentGuesses...
-    const intermediaryNumbers: typeof numberTileStatuses = guesses.map((guess, index) => {
+    const intermediaryNumbers: IntermediaryTileStatus[] = guesses.map((guess, index) => {
       const existingNumbersGameStatus = numberTileStatuses.find(
         (x) => x.type === "intermediary" && x.wordIndex === index
       );
@@ -172,7 +180,9 @@ const NumbersGameConfig = (props: Props) => {
     });
 
     // Add (keep track of) these new tiles
-    setNumberTileStatuses(numberTileStatuses.filter((x) => x.type !== "intermediary").concat(intermediaryNumbers));
+    const newNumberTileStatuses: NumberTileStatus[] = getOriginalTileStatuses().concat(intermediaryNumbers);
+
+    setNumberTileStatuses(newNumberTileStatuses);
   }, [guesses]);
 
   React.useEffect(() => {
@@ -185,7 +195,11 @@ const NumbersGameConfig = (props: Props) => {
 
   // Reset game after change of settings (stops cheating by changing settings partway through a game)
   React.useEffect(() => {
-    if (isCampaignLevelPath(location) || props.gameshowScore !== undefined) {
+    if (isCampaignLevelPath(location)) {
+      return;
+    }
+
+    if (props.gameshowScore !== undefined) {
       return;
     }
 
@@ -307,9 +321,9 @@ const NumbersGameConfig = (props: Props) => {
     // If required number of original numbers, expression is of the correct length and there are no picked or intermediary values
     if (
       expression.length === numberTileStatuses.length &&
-      numberTileStatuses.filter((x) => x.type === "original").length === gamemodeSettings.numOperands &&
+      getOriginalTileStatuses().length === gamemodeSettings.numOperands &&
       numberTileStatuses.filter((x) => x.picked === true).length === 0 &&
-      numberTileStatuses.filter((x) => x.type === "intermediary").length === 0 &&
+      getIntermediaryTileStatuses().length === 0 &&
       inProgress
     ) {
       // Make a copy of the current numberTileStatuses
@@ -425,8 +439,7 @@ const NumbersGameConfig = (props: Props) => {
     if (id.type === "original") {
       newNumbersGameStatuses[id.index].picked = true;
     } else if (id.type === "intermediary") {
-      newNumbersGameStatuses[numberTileStatuses.filter((x) => x.type === "original").length + id.rowIndex].picked =
-        true;
+      newNumbersGameStatuses[getOriginalTileStatuses().length + id.rowIndex].picked = true;
     }
     setNumberTileStatuses(newNumbersGameStatuses);
   }
@@ -562,7 +575,7 @@ const NumbersGameConfig = (props: Props) => {
       return;
     }
 
-    const intermediaryGuesses = numberTileStatuses.filter((x) => x.type === "intermediary");
+    const intermediaryGuesses = getIntermediaryTileStatuses();
 
     // Another check there is an intermediary guess
     if (!intermediaryGuesses) {
@@ -570,8 +583,7 @@ const NumbersGameConfig = (props: Props) => {
     }
 
     // Get the closest intermediary guess
-    const newClosest = numberTileStatuses
-      .filter((x) => x.type === "intermediary")
+    const newClosest = intermediaryGuesses
       .map((x) => x.number)
       .concat(closestGuessSoFar === null ? [] : [closestGuessSoFar])
       .reduce(function (prev, curr) {
