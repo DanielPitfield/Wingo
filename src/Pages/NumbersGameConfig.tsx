@@ -148,8 +148,6 @@ const NumbersGameConfig = (props: Props) => {
 
     if (remainingSeconds <= 0) {
       stopCountdown();
-      // TODO: Should the grid be cleared?
-      //clearGrid();
       submitBestGuess();
       setInProgress(false);
     }
