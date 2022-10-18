@@ -112,6 +112,11 @@ interface Props extends WingoConfigProps {
 export const DEFAULT_ALPHABET_STRING = "abcdefghijklmnopqrstuvwxyz";
 export const DEFAULT_ALPHABET = DEFAULT_ALPHABET_STRING.split("");
 
+const DEFAULT_LETTER_STATUSES: LetterTileStatus[] = [...DEFAULT_ALPHABET, "-", "'"].map((x) => ({
+  letter: x,
+  status: "not set",
+}));
+
 const WingoConfig = (props: Props) => {
   const location = useLocation().pathname as PagePath;
 
@@ -142,20 +147,7 @@ const WingoConfig = (props: Props) => {
 
   const [remainingGuesses, setRemainingGuesses] = useState(props.gamemodeSettings.startingNumGuesses);
 
-  // TODO: Move to top of file (next to DEFAULT_ALPHABET)?
-  const defaultLetterStatuses: {
-    letter: string;
-    status: TileStatus;
-  }[] = DEFAULT_ALPHABET.map((x) => ({
-    letter: x,
-    status: "not set",
-  }));
-
-  // TODO: Add the symbols to DEFAULT_ALPHABET, then map
-  defaultLetterStatuses.push({ letter: "-", status: "not set" });
-  defaultLetterStatuses.push({ letter: "'", status: "not set" });
-
-  const [letterStatuses, setLetterStatuses] = useState<LetterTileStatus[]>(defaultLetterStatuses);
+  const [letterStatuses, setLetterStatuses] = useState<LetterTileStatus[]>(DEFAULT_LETTER_STATUSES);
 
   // The starting/total time of the timer
   const [totalSeconds, setTotalSeconds] = useState(
@@ -636,7 +628,7 @@ const WingoConfig = (props: Props) => {
     sethasSubmitLetter(false);
     setConundrum("");
     setRevealedLetterIndexes([]);
-    setLetterStatuses(defaultLetterStatuses);
+    setLetterStatuses(DEFAULT_LETTER_STATUSES);
 
     if (gamemodeSettings.timerConfig.isTimed) {
       // Reset the timer if it is enabled in the game options
@@ -666,7 +658,7 @@ const WingoConfig = (props: Props) => {
 
     sethasSubmitLetter(false);
     setRevealedLetterIndexes([]);
-    setLetterStatuses(defaultLetterStatuses);
+    setLetterStatuses(DEFAULT_LETTER_STATUSES);
 
     if (gamemodeSettings.timerConfig.isTimed) {
       // Reset the timer if it is enabled in the game options
