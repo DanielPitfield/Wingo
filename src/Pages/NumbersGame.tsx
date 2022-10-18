@@ -24,7 +24,6 @@ interface Props {
   gamemodeSettings: NumbersGameConfigProps["gamemodeSettings"];
 
   inProgress: boolean;
-  hasSubmitNumber: boolean;
 
   remainingSeconds: number;
   totalSeconds: number;

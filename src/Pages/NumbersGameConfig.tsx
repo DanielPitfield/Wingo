@@ -77,8 +77,6 @@ const NumbersGameConfig = (props: Props) => {
   const [targetNumber, setTargetNumber] = useState<number | null>(null);
   const [wordIndex, setWordIndex] = useState(0);
 
-  const [hasSubmitNumber, sethasSubmitNumber] = useState(false);
-
   // Fill an array of length numOperands with the initial tile status (original type and unpicked)
   const defaultNumberTileStatuses: OriginalTileStatus[] = Array(gamemodeSettings.numOperands)
     .fill("")
@@ -271,7 +269,6 @@ const NumbersGameConfig = (props: Props) => {
     setCurrentGuess({ operand1: null, operand2: null, operator: "+" });
     setTargetNumber(null);
     setWordIndex(0);
-    sethasSubmitNumber(false);
 
     if (gamemodeSettings.timerConfig.isTimed) {
       // Reset the timer if it is enabled in the game options
@@ -343,8 +340,6 @@ const NumbersGameConfig = (props: Props) => {
         // Else; if operand2 has not been populated, then set operand1
         setCurrentGuess({ ...currentGuess, operand1: number });
       }
-
-      sethasSubmitNumber(true);
     }
   }
 
@@ -590,7 +585,6 @@ const NumbersGameConfig = (props: Props) => {
       currentGuess={currentGuess}
       numberTileStatuses={numberTileStatuses}
       inProgress={inProgress}
-      hasSubmitNumber={hasSubmitNumber}
       targetNumber={targetNumber}
       theme={props.theme}
       settings={props.settings}
