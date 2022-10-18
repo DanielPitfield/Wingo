@@ -4,7 +4,7 @@ import { MessageNotification } from "../Components/MessageNotification";
 import ProgressBar, { GreenToRedColorTransition } from "../Components/ProgressBar";
 import { NumberRow } from "../Components/NumberRow";
 import NumberTile from "../Components/NumberTile";
-import { Guess, NumbersGameConfigProps, NumberTileStatus } from "./NumbersGameConfig";
+import { Guess, IntermediaryTileStatus, NumbersGameConfigProps, NumberTileStatus } from "./NumbersGameConfig";
 import { NumberSelectionRow } from "../Components/NumberSelectionRow";
 import { Theme } from "../Data/Themes";
 
@@ -24,7 +24,6 @@ interface Props {
   gamemodeSettings: NumbersGameConfigProps["gamemodeSettings"];
 
   inProgress: boolean;
-  hasTimerEnded: boolean;
   hasSubmitNumber: boolean;
 
   remainingSeconds: number;
@@ -61,7 +60,7 @@ interface Props {
   setTotalSeconds: (numSeconds: number) => void;
 
   ResetGame: () => void;
-  
+
   setOperator: (operator: Guess["operator"]) => void;
   addGold: (gold: number) => void;
   gameshowScore?: number;
@@ -152,7 +151,8 @@ const NumbersGame = (props: Props) => {
         </div>
         <NumberSelectionRow
           key={"number_selection"}
-          disabled={!isSelectionFinished}
+          // The original tiles are disabled when selection has not yet finished
+          disabled={!props.inProgress || !isSelectionFinished}
           onClick={props.onClick}
           numberTileStatuses={props.numberTileStatuses}
         />
@@ -217,15 +217,16 @@ const NumbersGame = (props: Props) => {
       Grid.push(
         <NumberRow
           key={`numbers-game-input ${i}`}
-          hasTimerEnded={props.hasTimerEnded}
           onClick={props.onClick}
           expression={guess}
           targetNumber={props.targetNumber}
           hasSubmit={!props.inProgress}
           setOperator={props.setOperator}
-          disabled={!isSelectionFinished || i > props.wordIndex}
+          disabled={!props.inProgress || !isSelectionFinished || i > props.wordIndex}
           rowIndex={i}
-          intermediaryGuessStatuses={props.numberTileStatuses.filter((x) => x.type === "intermediary") as any}
+          intermediaryTileStatuses={
+            props.numberTileStatuses.filter((x) => x.type === "intermediary") as IntermediaryTileStatus[]
+          }
         />
       );
     }
@@ -261,10 +262,6 @@ const NumbersGame = (props: Props) => {
 
   function displayOutcome(): React.ReactNode {
     if (props.inProgress) {
-      return;
-    }
-
-    if (!props.hasTimerEnded) {
       return;
     }
 

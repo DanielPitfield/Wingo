@@ -1,3 +1,4 @@
+import { NumberTileStatus } from "../Pages/NumbersGameConfig";
 import NumberTile from "./NumberTile";
 
 interface Props {
@@ -6,11 +7,7 @@ interface Props {
     id: { type: "original"; index: number } | { type: "intermediary"; rowIndex: number }
   ) => void;
   disabled: boolean;
-  numberTileStatuses: {
-    type: "original" | "intermediary";
-    number: number | null;
-    picked: boolean;
-  }[];
+  numberTileStatuses: NumberTileStatus[];
 }
 
 export const NumberSelectionRow = (props: Props) => {
