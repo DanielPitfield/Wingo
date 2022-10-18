@@ -81,14 +81,17 @@ const NumbersGameConfig = (props: Props) => {
   const [hasTimerEnded, sethasTimerEnded] = useState(false);
   const [hasSubmitNumber, sethasSubmitNumber] = useState(false);
 
-  // Just numOperands number of original type numbers (all not yet picked)
-  const defaultNumberTileStatuses: (OriginalTileStatus | IntermediaryTileStatus)[] = Array.from({
-    length: gamemodeSettings.numOperands,
-  }).map((_) => ({
+  // Original type and not yet picked
+  const initialTileStatus = {
     type: "original",
     number: null,
     picked: false,
-  }));
+  };
+
+  // Fill an array of length numOperands with initialTileStatus
+  const defaultNumberTileStatuses: (OriginalTileStatus | IntermediaryTileStatus)[] = Array(
+    props.gamemodeSettings.numOperands
+  ).fill(initialTileStatus);
 
   const [numberTileStatuses, setNumberTileStatuses] =
     useState<(OriginalTileStatus | IntermediaryTileStatus)[]>(defaultNumberTileStatuses);
