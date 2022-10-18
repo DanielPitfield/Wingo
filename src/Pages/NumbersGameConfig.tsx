@@ -42,6 +42,19 @@ interface Props extends NumbersGameConfigProps {
   onCompleteGameshowRound?: (wasCorrect: boolean, guess: string, correctAnswer: string, score: number | null) => void;
 }
 
+export type OriginalTileStatus = {
+  type: "original";
+  number: number | null;
+  picked: boolean;
+};
+
+export type IntermediaryTileStatus = {
+  type: "intermediary";
+  wordIndex: number;
+  number: number | null;
+  picked: boolean;
+};
+
 export type Guess = { operand1: number | null; operand2: number | null; operator: typeof operators[0]["name"] };
 
 const NumbersGameConfig = (props: Props) => {
@@ -69,39 +82,16 @@ const NumbersGameConfig = (props: Props) => {
   const [hasSubmitNumber, sethasSubmitNumber] = useState(false);
 
   // Just numOperands number of original type numbers (all not yet picked)
-  const defaultNumberTileStatuses: (
-    | {
-        type: "original";
-        number: number | null;
-        picked: boolean;
-      }
-    | {
-        type: "intermediary";
-        wordIndex: number;
-        number: number | null;
-        picked: boolean;
-      }
-  )[] = Array.from({ length: gamemodeSettings.numOperands }).map((_) => ({
+  const defaultNumberTileStatuses: (OriginalTileStatus | IntermediaryTileStatus)[] = Array.from({
+    length: gamemodeSettings.numOperands,
+  }).map((_) => ({
     type: "original",
     number: null,
     picked: false,
   }));
 
-  const [numberTileStatuses, setNumberTileStatuses] = useState<
-    (
-      | {
-          type: "original";
-          number: number | null;
-          picked: boolean;
-        }
-      | {
-          type: "intermediary";
-          wordIndex: number;
-          number: number | null;
-          picked: boolean;
-        }
-    )[]
-  >(defaultNumberTileStatuses);
+  const [numberTileStatuses, setNumberTileStatuses] =
+    useState<(OriginalTileStatus | IntermediaryTileStatus)[]>(defaultNumberTileStatuses);
 
   // Timer Setup
   React.useEffect(() => {
