@@ -12,6 +12,8 @@ import { PagePath } from "../Data/PageNames";
 import { isCampaignLevelPath } from "../Helpers/CampaignPathChecks";
 import { SettingsData } from "../Data/SaveData/Settings";
 import { setMostRecentNumbersGameConfigGamemodeSettings } from "../Data/SaveData/MostRecentGamemodeSettings";
+import { useCountdown } from "usehooks-ts";
+import { useCorrectChime, useFailureChime, useLightPingChime, useClickChime } from "../Data/Sounds";
 
 export interface NumbersGameConfigProps {
   campaignConfig:
@@ -64,12 +66,6 @@ const NumbersGameConfig = (props: Props) => {
     props.gamemodeSettings
   );
 
-  const [remainingSeconds, setRemainingSeconds] = useState(
-    props.gamemodeSettings?.timerConfig?.isTimed === true
-      ? props.gamemodeSettings?.timerConfig?.seconds
-      : getGamemodeDefaultTimerValue(location)
-  );
-
   const [inProgress, setInProgress] = useState(true);
 
   const [guesses, setGuesses] = useState<Guess[]>([]);
@@ -78,6 +74,7 @@ const NumbersGameConfig = (props: Props) => {
 
   const [targetNumber, settargetNumber] = useState<number | null>(null);
   const [wordIndex, setWordIndex] = useState(0);
+
   const [hasTimerEnded, sethasTimerEnded] = useState(false);
   const [hasSubmitNumber, sethasSubmitNumber] = useState(false);
 
@@ -96,8 +93,31 @@ const NumbersGameConfig = (props: Props) => {
   const [numberTileStatuses, setNumberTileStatuses] =
     useState<(OriginalTileStatus | IntermediaryTileStatus)[]>(defaultNumberTileStatuses);
 
-  // Timer Setup
+  // The starting/total time of the timer
+  const [totalSeconds, setTotalSeconds] = useState(
+    props.gamemodeSettings?.timerConfig?.isTimed === true
+      ? props.gamemodeSettings?.timerConfig?.seconds
+      : getGamemodeDefaultTimerValue(location)
+  );
+
+  // How many seconds left on the timer?
+  const [remainingSeconds, { startCountdown, stopCountdown, resetCountdown }] = useCountdown({
+    countStart: totalSeconds,
+    intervalMs: 1000,
+  });
+
+  // Sounds
+  const [playCorrectChimeSoundEffect] = useCorrectChime(props.settings);
+  const [playFailureChimeSoundEffect] = useFailureChime(props.settings);
+  const [playLightPingSoundEffect] = useLightPingChime(props.settings);
+  const [playClickSoundEffect] = useClickChime(props.settings);
+
+  // Start timer (any time the toggle is enabled or the totalSeconds is changed)
   React.useEffect(() => {
+    if (!inProgress) {
+      return;
+    }
+
     if (!gamemodeSettings.timerConfig.isTimed) {
       return;
     }
@@ -106,19 +126,32 @@ const NumbersGameConfig = (props: Props) => {
       return;
     }
 
-    const timer = setInterval(() => {
-      if (remainingSeconds > 0) {
-        setRemainingSeconds(remainingSeconds - 1);
-      } else {
-        submitBestGuess();
-        sethasTimerEnded(true);
-        setInProgress(false);
-      }
-    }, 1000);
-    return () => {
-      clearInterval(timer);
-    };
-  }, [setRemainingSeconds, remainingSeconds, gamemodeSettings.timerConfig.isTimed, numberTileStatuses]);
+    startCountdown();
+  }, [inProgress, gamemodeSettings.timerConfig.isTimed, totalSeconds, numberTileStatuses]);
+
+  // TODO: numberTileStatuses dependency?
+
+  // Check remaining seconds on timer
+  React.useEffect(() => {
+    if (!inProgress) {
+      return;
+    }
+
+    if (!gamemodeSettings.timerConfig.isTimed) {
+      return;
+    }
+
+    if (!hasNumberSelectionFinished(numberTileStatuses, gamemodeSettings.numOperands)) {
+      return;
+    }
+
+    if (remainingSeconds <= 0) {
+      stopCountdown();
+      sethasTimerEnded(true);
+      submitBestGuess();
+      setInProgress(false);
+    }
+  }, [inProgress, gamemodeSettings.timerConfig.isTimed, remainingSeconds, numberTileStatuses]);
 
   // When the guesses (or expressions made along a row) of the playable grid are changed
   React.useEffect(() => {
@@ -170,9 +203,9 @@ const NumbersGameConfig = (props: Props) => {
     const correctAnswer = intermediaryStatuses.find((status) => status.number === targetNumber);
 
     if (wordIndex >= 1 && correctAnswer) {
-      // If game is in progress and there is an intermediary number, end the game prematurely
+      // If game is in progress and there is an intermediary number of the target number, end the game prematurely
       setClosestGuessSoFar(targetNumber);
-      setRemainingSeconds(0);
+      stopCountdown();
       sethasTimerEnded(true);
       setInProgress(false);
     }
@@ -241,7 +274,7 @@ const NumbersGameConfig = (props: Props) => {
 
     if (gamemodeSettings.timerConfig.isTimed) {
       // Reset the timer if it is enabled in the game options
-      setRemainingSeconds(gamemodeSettings.timerConfig.seconds);
+      resetCountdown();
     }
   }
 
@@ -316,10 +349,6 @@ const NumbersGameConfig = (props: Props) => {
 
   function updateGamemodeSettings(newGamemodeSettings: NumbersGameConfigProps["gamemodeSettings"]) {
     setGamemodeSettings(newGamemodeSettings);
-  }
-
-  function updateRemainingSeconds(newSeconds: number) {
-    setRemainingSeconds(newSeconds);
   }
 
   function addOperandToGuess(
@@ -527,6 +556,18 @@ const NumbersGameConfig = (props: Props) => {
       return;
     }
 
+    // Still on first row (and therefore no intermediary number to use as best guess)
+    if (wordIndex <= 0) {
+      return;
+    }
+
+    const intermediaryGuesses = numberTileStatuses.filter((x) => x.type === "intermediary");
+
+    // Another check there is an intermediary guess
+    if (!intermediaryGuesses) {
+      return;
+    }
+
     // Get the closest intermediary guess
     const newClosest = numberTileStatuses
       .filter((x) => x.type === "intermediary")
@@ -541,13 +582,10 @@ const NumbersGameConfig = (props: Props) => {
 
     setClosestGuessSoFar(newClosest);
 
-    // If game is in progress and there is an intermediary number
-    if (inProgress && wordIndex >= 1) {
-      // End the game prematurely
-      setRemainingSeconds(0);
-      sethasTimerEnded(true);
-      setInProgress(false);
-    }
+    // End the game prematurely
+    stopCountdown();
+    sethasTimerEnded(true);
+    setInProgress(false);
   }
 
   return (
@@ -555,6 +593,7 @@ const NumbersGameConfig = (props: Props) => {
       campaignConfig={props.campaignConfig}
       gamemodeSettings={gamemodeSettings}
       remainingSeconds={remainingSeconds}
+      totalSeconds={totalSeconds}
       wordIndex={wordIndex}
       guesses={guesses}
       closestGuessSoFar={closestGuessSoFar}
@@ -573,7 +612,8 @@ const NumbersGameConfig = (props: Props) => {
       onSubmitNumber={onSubmitNumber}
       onBackspace={onBackspace}
       updateGamemodeSettings={updateGamemodeSettings}
-      updateRemainingSeconds={updateRemainingSeconds}
+      resetCountdown={resetCountdown}
+      setTotalSeconds={setTotalSeconds}
       ResetGame={ResetGame}
       clearGrid={clearGrid}
       submitBestGuess={submitBestGuess}
