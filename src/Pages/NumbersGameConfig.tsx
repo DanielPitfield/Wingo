@@ -80,17 +80,14 @@ const NumbersGameConfig = (props: Props) => {
   const [hasTimerEnded, sethasTimerEnded] = useState(false);
   const [hasSubmitNumber, sethasSubmitNumber] = useState(false);
 
-  // Original type and not yet picked
-  const initialTileStatus: OriginalTileStatus = {
-    type: "original",
-    number: null,
-    picked: false,
-  };
-
-  // Fill an array of length numOperands with initialTileStatus
-  const defaultNumberTileStatuses: OriginalTileStatus[] = Array(props.gamemodeSettings.numOperands).fill(
-    initialTileStatus
-  );
+  // Fill an array of length numOperands with the initial tile status (original type and unpicked)
+  const defaultNumberTileStatuses: OriginalTileStatus[] = Array(gamemodeSettings.numOperands)
+    .fill("")
+    .map((_) => ({
+      type: "original",
+      number: null,
+      picked: false,
+    }));
 
   const [numberTileStatuses, setNumberTileStatuses] = useState<NumberTileStatus[]>(defaultNumberTileStatuses);
 
@@ -449,14 +446,14 @@ const NumbersGameConfig = (props: Props) => {
     if (rowBeingEdited.operand1 !== null && rowBeingEdited.operand2 !== null) {
       return 3;
     }
+
     // Just the first operand
-    else if (rowBeingEdited.operand1 !== null && rowBeingEdited.operand2 === null) {
+    if (rowBeingEdited.operand1 !== null && rowBeingEdited.operand2 === null) {
       return 1;
     }
+
     // Unexpected guess state
-    else {
-      return 0;
-    }
+    return 0;
   };
 
   function onBackspace() {
