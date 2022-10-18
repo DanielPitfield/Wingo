@@ -33,7 +33,6 @@ interface Props {
   inProgress: boolean;
   inDictionary: boolean;
   isIncompleteWord: boolean;
-  hasSubmitLetter: boolean;
   conundrum?: string;
   targetWord: string;
   targetHint?: string;

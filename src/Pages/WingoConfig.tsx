@@ -944,7 +944,6 @@ const WingoConfig = (props: Props) => {
       inProgress={inProgress}
       inDictionary={inDictionary}
       isIncompleteWord={isIncompleteWord}
-      hasSubmitLetter={hasSubmitLetter}
       conundrum={conundrum ?? ""}
       targetWord={targetWord ?? ""}
       targetHint={gamemodeSettings.isHintShown ? targetHint : ""}
