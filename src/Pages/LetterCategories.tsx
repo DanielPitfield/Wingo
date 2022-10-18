@@ -10,8 +10,6 @@ import { LEVEL_FINISHING_TEXT } from "../Components/Level";
 import { LetterCategoriesConfigProps } from "./LetterCategoriesConfig";
 import LetterCategoriesGamemodeSettings from "../Components/GamemodeSettingsOptions/LetterCategoriesGamemodeSettings";
 import { getNewGamemodeSettingValue } from "../Helpers/getGamemodeSettingsNewValue";
-import { useLocation } from "react-router-dom";
-import { PagePath } from "../Data/PageNames";
 import { SettingsData } from "../Data/SaveData/Settings";
 
 interface Props {
