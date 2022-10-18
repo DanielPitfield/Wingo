@@ -209,47 +209,6 @@ const LetterCategoriesConfig = (props: Props) => {
     }
   }
 
-  function calculateGoldAwarded(numCorrectAnswers: number) {
-    const baseValue = 50;
-
-    // Incremental multiplier with wordLength
-    const numCorrectAnswerMultipliers = [
-      { value: 1, multiplier: 1 },
-      { value: 2, multiplier: 1.05 },
-      { value: 3, multiplier: 1.25 },
-      { value: 4, multiplier: 1.5 },
-      { value: 5, multiplier: 2 },
-      { value: 6, multiplier: 3 },
-      { value: 7, multiplier: 4 },
-      { value: 8, multiplier: 5 },
-      { value: 9, multiplier: 7.5 },
-      { value: 10, multiplier: 10 },
-    ];
-
-    // Bonus multiplier for several correct answers
-    let currentNumCorrectAnswerMultiplier;
-
-    // More correct answers (then the highest specified above)
-    if (numCorrectAnswers > numCorrectAnswerMultipliers.length) {
-      // Use the biggest specified multiplier
-      currentNumCorrectAnswerMultiplier = numCorrectAnswerMultipliers.find(
-        (x) => x.value === numCorrectAnswerMultipliers.length
-      )?.multiplier;
-    } else {
-      // Use the multiplier for the number of correct answers
-      currentNumCorrectAnswerMultiplier = numCorrectAnswerMultipliers.find(
-        (x) => x.value === numCorrectAnswers
-      )?.multiplier;
-    }
-
-    if (currentNumCorrectAnswerMultiplier) {
-      const goldTotal = Math.round(baseValue * numCorrectAnswers * currentNumCorrectAnswerMultiplier);
-      return goldTotal;
-    } else {
-      return 0;
-    }
-  }
-
   function onEnter() {
     // Pressing Enter to Restart
     if (!inProgress) {
@@ -280,9 +239,8 @@ const LetterCategoriesConfig = (props: Props) => {
       // Out of guesses
       setInProgress(false);
 
-      // Calculate and add gold (only after all guesses have been made)
-      const goldBanked = calculateGoldAwarded(correctGuessesCount);
-      props.addGold(goldBanked);
+      // TODO: Calculate and add gold (only after all guesses have been made)
+      //props.addGold(goldBanked);
     } else {
       setCurrentWord(requiredStartingLetter);
       setWordIndex(wordIndex + 1); // Increment index to indicate new word has been started
