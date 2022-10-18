@@ -78,7 +78,7 @@ const NumbersGameConfig = (props: Props) => {
   const [wordIndex, setWordIndex] = useState(0);
 
   // Fill an array of length numOperands with the initial tile status (original type and unpicked)
-  const defaultNumberTileStatuses: OriginalTileStatus[] = Array(gamemodeSettings.numOperands)
+  const DEFAULT_NUMBER_TILE_STATUSES: OriginalTileStatus[] = Array(gamemodeSettings.numOperands)
     .fill("")
     .map((_) => ({
       type: "original",
@@ -86,7 +86,7 @@ const NumbersGameConfig = (props: Props) => {
       picked: false,
     }));
 
-  const [numberTileStatuses, setNumberTileStatuses] = useState<NumberTileStatus[]>(defaultNumberTileStatuses);
+  const [numberTileStatuses, setNumberTileStatuses] = useState<NumberTileStatus[]>(DEFAULT_NUMBER_TILE_STATUSES);
 
   // The starting/total time of the timer
   const [totalSeconds, setTotalSeconds] = useState(
@@ -267,7 +267,7 @@ const NumbersGameConfig = (props: Props) => {
 
     setGuesses([]);
     setClosestGuessSoFar(null);
-    setNumberTileStatuses(defaultNumberTileStatuses);
+    setNumberTileStatuses(DEFAULT_NUMBER_TILE_STATUSES);
     setCurrentGuess({ operand1: null, operand2: null, operator: "+" });
     setTargetNumber(null);
     setWordIndex(0);

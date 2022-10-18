@@ -12,7 +12,7 @@ import { PagePath } from "../Data/PageNames";
 import { Theme } from "../Data/Themes";
 import { getGamemodeDefaultTimerValue } from "../Helpers/getGamemodeDefaultTimerValue";
 import { getNewGamemodeSettingValue } from "../Helpers/getGamemodeSettingsNewValue";
-import { LettersGameConfigProps } from "./LettersGameConfig";
+import { LettersGameConfigProps, LettersGameTileStatus } from "./LettersGameConfig";
 import { useLocation } from "react-router-dom";
 import { getWeightedLetter } from "../Helpers/getWeightedLetter";
 import { consonantWeightings, vowelWeightings } from "../Data/LettersGameWeightings";
@@ -23,10 +23,7 @@ interface Props {
   campaignConfig: LettersGameConfigProps["campaignConfig"];
   gamemodeSettings: LettersGameConfigProps["gamemodeSettings"];
 
-  letterTileStatuses: {
-    letter: string | null;
-    picked: boolean;
-  }[];
+  letterTileStatuses: LettersGameTileStatus[];
 
   guesses: string[];
   currentWord: string;
@@ -102,7 +99,7 @@ const LettersGame = (props: Props) => {
   const quickLetterSelection = () => {
     const selectionWordLetters = Array(props.gamemodeSettings.numLetters)
       .fill("")
-      .map((letter) => {
+      .map((_) => {
         // Equal chance to be true or false
         const x = Math.floor(Math.random() * 2) === 0;
         // Equal chance (to add a vowel or consonant)

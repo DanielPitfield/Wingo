@@ -42,6 +42,11 @@ interface Props extends LettersGameConfigProps {
   onCompleteGameshowRound?: (wasCorrect: boolean, guess: string, correctAnswer: string, score: number | null) => void;
 }
 
+export type LettersGameTileStatus = {
+  letter: string | null;
+  picked: boolean;
+};
+
 const LettersGameConfig = (props: Props) => {
   const location = useLocation().pathname as PagePath;
 
@@ -62,20 +67,14 @@ const LettersGameConfig = (props: Props) => {
       : getGamemodeDefaultTimerValue(location)
   );
 
-  const defaultLetterTileStatuses: {
-    letter: string | null;
-    picked: boolean;
-  }[] = Array.from({ length: gamemodeSettings.numLetters }).map((_) => ({
-    letter: null,
-    picked: false,
-  }));
+  const DEFAULT_LETTER_TILE_STATUSES: LettersGameTileStatus[] = Array(gamemodeSettings.numLetters)
+    .fill("")
+    .map((_) => ({
+      letter: null,
+      picked: false,
+    }));
 
-  const [letterTileStatuses, setLetterTileStatuses] = useState<
-    {
-      letter: string | null;
-      picked: boolean;
-    }[]
-  >(defaultLetterTileStatuses);
+  const [letterTileStatuses, setLetterTileStatuses] = useState<LettersGameTileStatus[]>(DEFAULT_LETTER_TILE_STATUSES);
 
   // Timer Setup
   React.useEffect(() => {
@@ -144,7 +143,7 @@ const LettersGameConfig = (props: Props) => {
     }
 
     setGuesses([]);
-    setLetterTileStatuses(defaultLetterTileStatuses);
+    setLetterTileStatuses(DEFAULT_LETTER_TILE_STATUSES);
     setCurrentWord("");
     setTargetWord("");
     setInProgress(true);

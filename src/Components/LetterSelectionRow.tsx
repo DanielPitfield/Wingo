@@ -1,14 +1,12 @@
 import { SettingsData } from "../Data/SaveData/Settings";
+import { LettersGameTileStatus } from "../Pages/LettersGameConfig";
 import LetterTile from "./LetterTile";
 
 interface Props {
   onClick: (value: string | null, index: number) => void;
   disabled: boolean;
 
-  letterTileStatuses: {
-    letter: string | null;
-    picked: boolean;
-  }[];
+  letterTileStatuses: LettersGameTileStatus[];
 
   settings: SettingsData;
 }
