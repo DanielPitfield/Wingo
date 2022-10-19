@@ -515,19 +515,27 @@ const WingoConfig = (props: Props) => {
   // targetWord generation
   React.useEffect(() => {
     // Don't need to determine a target word, if it is explicitly specified
-    if (!inProgress || props.targetWord) {
+    if (!inProgress) {
       return;
     }
 
-    if (!gamemodeSettings.wordLength) {
+    // A target word of the correct length was explicitly specified
+    if (props.targetWord !== undefined && props.targetWord.length === gamemodeSettings.wordLength) {
+      return;
+    }
+
+    // Already a word of the correct length
+    if (targetWord.length === gamemodeSettings.wordLength) {
       return;
     }
 
     // TODO: This function call is put inside either the ResetGame() function or the useEffect with gamemodeSettings as a dependency
     updateTargetWord();
   }, [
-    // Always when category mode (short circuit) or when word length is changed
-    props.mode === "category" || gamemodeSettings.wordLength,
+    // When word length is changed
+    gamemodeSettings.wordLength,
+    targetWord,
+    props.targetWord,
     // Puzzle settings are changed
     gamemodeSettings.puzzleLeaveNumBlanks,
     gamemodeSettings.puzzleRevealSeconds,
