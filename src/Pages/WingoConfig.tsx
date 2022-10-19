@@ -386,7 +386,12 @@ const WingoConfig = (props: Props) => {
       return;
     }
 
-    if (props.mode === "daily" || props.mode === "crossword/weekly" || props.mode === "crossword/daily") {
+    if (
+      props.mode === "daily" ||
+      props.mode === "crossword/weekly" ||
+      props.mode === "crossword/daily" ||
+      props.mode === "limitless"
+    ) {
       // Do not reset the game if the gamemode is daily/weekly, as the gamemodeSettings are instead loaded from localStorage (#304, #305)
       return;
     }
@@ -543,24 +548,10 @@ const WingoConfig = (props: Props) => {
       page: location,
       levelProps: {
         mode: props.mode,
-        gamemodeSettings: {
-          wordLength: gamemodeSettings.wordLength,
-          startingNumGuesses: gamemodeSettings.startingNumGuesses,
-          enforceFullLengthGuesses: gamemodeSettings.enforceFullLengthGuesses,
-          isFirstLetterProvided: gamemodeSettings.isFirstLetterProvided,
-          isHintShown: gamemodeSettings.isHintShown,
-          puzzleRevealSeconds: gamemodeSettings.puzzleRevealSeconds,
-          puzzleLeaveNumBlanks: gamemodeSettings.puzzleLeaveNumBlanks,
-          maxLivesConfig: gamemodeSettings.maxLivesConfig,
-          wordLengthMaxLimit: gamemodeSettings.wordLengthMaxLimit,
-          timerConfig: gamemodeSettings.timerConfig.isTimed
-            ? { isTimed: true, seconds: remainingSeconds }
-            : { isTimed: false },
-        },
-        targetWord,
-
-        checkInDictionary: props.checkInDictionary,
+        gamemodeSettings: gamemodeSettings,
         wordArray: props.wordArray,
+        targetWord,
+        checkInDictionary: props.checkInDictionary,
       },
     });
 
@@ -622,6 +613,7 @@ const WingoConfig = (props: Props) => {
     setCurrentWord(newCurrentWord);
 
     setGuesses([]);
+    setRemainingGuesses(gamemodeSettings.startingNumGuesses);
     setWordIndex(0);
     setInProgress(true);
     setInDictionary(true);
@@ -633,16 +625,6 @@ const WingoConfig = (props: Props) => {
     if (gamemodeSettings.timerConfig.isTimed) {
       // Reset the timer if it is enabled in the game options
       resetCountdown();
-    }
-
-    // TODO: MAJOR: Limitless mode shouldn't be resetting with lives left anyway (should be continuing), but there is a side effect or bug somewhere
-
-    // TODO: remainingGuesses >= 1, stops resetting with two rows left, but means hard reset doesn't reset the remainingGuesses
-    const limitlessAndLivesRemaining = props.mode === "limitless" && remainingGuesses >= 1;
-
-    // Don't reset to startingNumGuesses when there are lives remaining in limitless mode
-    if (!limitlessAndLivesRemaining) {
-      setRemainingGuesses(gamemodeSettings.startingNumGuesses);
     }
   }
 
