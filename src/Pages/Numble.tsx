@@ -37,10 +37,8 @@ interface Props {
 
   nextTeamTurn: () => void;
 
-  remainingSeconds: number;
-  totalSeconds: number;
-  resetCountdown: () => void;
-  setTotalSeconds: (numSeconds: number) => void;
+  remainingGuessTimerSeconds: number;
+  updateRemainingGuessTimerSeconds: (newGuessTimerSeconds: number) => void;
 
   teamTimers: {
     teamNumber: number;
@@ -104,6 +102,18 @@ const Numble = (props: Props) => {
 
   const [totalScores, setTotalScores] = useState(initialScores);
 
+  const [mostRecentGuessTimerTotalSeconds, setMostRecentGuessTimerTotalSeconds] = useState(
+    props.gamemodeSettings?.guessTimerConfig?.isTimed === true
+      ? props.gamemodeSettings?.guessTimerConfig.seconds
+      : DEFAULT_NUMBLE_GUESS_TIMER_VALUE
+  );
+
+  const [mostRecentTotalSeconds, setMostRecentTotalSeconds] = useState(
+    props.gamemodeSettings?.timerConfig?.isTimed === true
+      ? props.gamemodeSettings?.timerConfig?.seconds
+      : getGamemodeDefaultTimerValue(location)
+  );
+
   const teamNumberColourMappings = [
     { teamNumber: 0, teamName: "Blue" },
     { teamNumber: 1, teamName: "Red" },
@@ -123,7 +133,7 @@ const Numble = (props: Props) => {
     }
 
     // Still time left
-    if (props.remainingSeconds > 0) {
+    if (props.remainingGuessTimerSeconds > 0) {
       return;
     }
 
@@ -147,12 +157,12 @@ const Numble = (props: Props) => {
       return teamScoreInfo;
     });
     setTotalScores(newTotalScores);
-  }, [props.gamemodeSettings.guessTimerConfig.isTimed, props.remainingSeconds]);
+  }, [props.gamemodeSettings.guessTimerConfig.isTimed, props.remainingGuessTimerSeconds]);
 
   React.useEffect(() => {
     // Reset guess timer
     if (props.gamemodeSettings.guessTimerConfig.isTimed) {
-      props.resetCountdown();
+      props.updateRemainingGuessTimerSeconds(props.gamemodeSettings.guessTimerConfig.seconds);
     }
 
     // No more pins to select
@@ -184,7 +194,7 @@ const Numble = (props: Props) => {
 
     // Reset guess timer back to full
     if (props.gamemodeSettings.guessTimerConfig.isTimed) {
-      props.resetCountdown();
+      props.updateRemainingGuessTimerSeconds(mostRecentGuessTimerTotalSeconds);
     }
 
     // Determine random dice values for all the dice
@@ -602,7 +612,7 @@ const Numble = (props: Props) => {
     }
 
     if (props.gamemodeSettings.timerConfig.isTimed) {
-      const newRemainingSeconds = props.gamemodeSettings.timerConfig.seconds ?? props.totalSeconds;
+      const newRemainingSeconds = props.gamemodeSettings.timerConfig.seconds ?? mostRecentTotalSeconds;
 
       // Reset all teams' times back to full
       const newTeamTimers = Array.from({ length: props.gamemodeSettings.numTeams }).map((_, i) => ({
@@ -658,7 +668,7 @@ const Numble = (props: Props) => {
   const handleTimerToggle = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newGamemodeSettings: NumbleConfigProps["gamemodeSettings"] = {
       ...props.gamemodeSettings,
-      timerConfig: e.target.checked ? { isTimed: true, seconds: props.totalSeconds } : { isTimed: false },
+      timerConfig: e.target.checked ? { isTimed: true, seconds: mostRecentTotalSeconds } : { isTimed: false },
     };
 
     props.updateGamemodeSettings(newGamemodeSettings);
@@ -670,7 +680,7 @@ const Numble = (props: Props) => {
       guessTimerConfig: e.target.checked
         ? {
             isTimed: true,
-            seconds: props.totalSeconds,
+            seconds: mostRecentGuessTimerTotalSeconds,
             timerBehaviour: { isGameOverWhenNoTimeLeft: false, pointsLost: 0 },
           }
         : { isTimed: false },
@@ -773,8 +783,9 @@ const Numble = (props: Props) => {
             handleSimpleGamemodeSettingsChange={handleSimpleGamemodeSettingsChange}
             handleTeamTimersChange={handleTeamTimersChange}
             handleTimerToggle={handleTimerToggle}
-            resetCountdown={props.resetCountdown}
-            setTotalSeconds={props.setTotalSeconds}
+            setMostRecentGuessTimerTotalSeconds={setMostRecentGuessTimerTotalSeconds}
+            setMostRecentTotalSeconds={setMostRecentTotalSeconds}
+            updateRemainingGuessTimerSeconds={props.updateRemainingGuessTimerSeconds}
             onLoadPresetGamemodeSettings={props.updateGamemodeSettings}
             onShowOfAddPresetModal={() => {}}
             onHideOfAddPresetModal={() => {}}
@@ -800,7 +811,7 @@ const Numble = (props: Props) => {
       <div>
         {props.gamemodeSettings.guessTimerConfig.isTimed && (
           <ProgressBar
-            progress={props.remainingSeconds}
+            progress={props.remainingGuessTimerSeconds}
             total={props.gamemodeSettings.guessTimerConfig.seconds}
             display={{ type: "transition", colorTransition: GreenToRedColorTransition }}
           ></ProgressBar>

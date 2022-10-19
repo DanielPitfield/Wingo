@@ -21,8 +21,10 @@ interface Props {
 
   handleSimpleGamemodeSettingsChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 
-  resetCountdown: () => void;
-  setTotalSeconds: (numSeconds: number) => void;
+  setMostRecentTotalSeconds: (numSeconds: number) => void;
+
+  updateRemainingGuessTimerSeconds: (newSeconds: number) => void;
+  setMostRecentGuessTimerTotalSeconds: (newSeconds: number) => void;
 
   onLoadPresetGamemodeSettings: (gamemodeSettings: NumbleConfigProps["gamemodeSettings"]) => void;
   onShowOfAddPresetModal: () => void;
@@ -154,8 +156,8 @@ const NumbleGamemodeSettings = (props: Props) => {
                   max={120}
                   step={5}
                   onChange={(e) => {
-                    props.resetCountdown();
-                    props.setTotalSeconds(e.target.valueAsNumber);
+                    props.updateRemainingGuessTimerSeconds(e.target.valueAsNumber);
+                    props.setMostRecentGuessTimerTotalSeconds(e.target.valueAsNumber);
                     props.handleGuessTimerChange(e);
                   }}
                 ></input>
@@ -212,7 +214,7 @@ const NumbleGamemodeSettings = (props: Props) => {
                 step={10}
                 onChange={(e) => {
                   props.handleTeamTimersChange(e);
-                  props.setTotalSeconds(e.target.valueAsNumber);
+                  props.setMostRecentTotalSeconds(e.target.valueAsNumber);
                   props.handleSimpleGamemodeSettingsChange(e);
                 }}
               ></input>
