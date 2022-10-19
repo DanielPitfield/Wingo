@@ -465,50 +465,50 @@ const WingoConfig = (props: Props) => {
     }
 
     const intervalId = setInterval(() => {
-      // This return is needed to prevent a letter being revealed after trying to enter a word (because an interval was queued)
-      if (hasSubmitLetter) {
-        return;
-      }
-
-      if (!targetWord) {
-        return;
-      }
-
-      if (
-        // Stop revealing letters when there is only puzzleLeaveNumBlanks left to reveal
-        revealedLetterIndexes.length >=
-        targetWord.length - gamemodeSettings.puzzleLeaveNumBlanks
-      ) {
-        return;
-      }
-
-      const newRevealedLetterIndexes = revealedLetterIndexes.slice();
-
-      if (revealedLetterIndexes.length === 0) {
-        // Start by revealing the first letter
-        newRevealedLetterIndexes.push(0);
-      } else if (revealedLetterIndexes.length === 1) {
-        // Next reveal the last letter
-        newRevealedLetterIndexes.push(targetWord.length - 1);
-      } else {
-        let newIndex: number;
-
-        // Keep looping to find a random index that hasn't been used yet
-        do {
-          newIndex = Math.floor(Math.random() * targetWord.length);
-        } while (revealedLetterIndexes.includes(newIndex));
-
-        // Reveal a random letter
-        if (newIndex >= 0 && newIndex <= targetWord.length - 1) {
-          // Check index is in the range (0, wordLength-1)
-          newRevealedLetterIndexes.push(newIndex);
+        // This return is needed to prevent a letter being revealed after trying to enter a word (because an interval was queued)
+        if (hasSubmitLetter) {
+          return;
         }
-      }
-      setRevealedLetterIndexes(newRevealedLetterIndexes);
-    }, gamemodeSettings.puzzleRevealSeconds * 1000);
 
-    return () => {
-      clearInterval(intervalId);
+        if (!targetWord) {
+          return;
+        }
+
+        if (
+          // Stop revealing letters when there is only puzzleLeaveNumBlanks left to reveal
+          revealedLetterIndexes.length >=
+          targetWord.length - gamemodeSettings.puzzleLeaveNumBlanks
+        ) {
+          return;
+        }
+
+        const newRevealedLetterIndexes = revealedLetterIndexes.slice();
+
+        if (revealedLetterIndexes.length === 0) {
+          // Start by revealing the first letter
+          newRevealedLetterIndexes.push(0);
+        } else if (revealedLetterIndexes.length === 1) {
+          // Next reveal the last letter
+          newRevealedLetterIndexes.push(targetWord.length - 1);
+        } else {
+          let newIndex: number;
+
+          // Keep looping to find a random index that hasn't been used yet
+          do {
+            newIndex = Math.floor(Math.random() * targetWord.length);
+          } while (revealedLetterIndexes.includes(newIndex));
+
+          // Reveal a random letter
+          if (newIndex >= 0 && newIndex <= targetWord.length - 1) {
+            // Check index is in the range (0, wordLength-1)
+            newRevealedLetterIndexes.push(newIndex);
+          }
+        }
+        setRevealedLetterIndexes(newRevealedLetterIndexes);
+      }, gamemodeSettings.puzzleRevealSeconds * 1000);
+  
+      return () => {
+        clearInterval(intervalId);
     };
   }, [props.mode, targetWord, revealedLetterIndexes, hasSubmitLetter]);
 
@@ -727,10 +727,13 @@ const WingoConfig = (props: Props) => {
     let outcome: "success" | "failure" | "in-progress" = "in-progress";
 
     // Checking against the dictionary is enabled and the word submitted was not in the dictionary
-    if (props.checkInDictionary && !isCurrentGuessInDictionary()) {
+    if (!isCurrentGuessInDictionary()) {
       setInDictionary(false);
-      setInProgress(false);
-      outcome = "failure";
+      
+      if (props.checkInDictionary) {
+        setInProgress(false);
+        outcome = "failure";
+      }
     }
 
     // The word is in the dictionary or is the target word exactly (to protect against a bug where the target word may not be in the dictionary)
@@ -760,7 +763,7 @@ const WingoConfig = (props: Props) => {
     }
 
     // Not an ending outcome
-    if (outcome === "in-progress") {
+    if (outcome === "in-progress" && isCurrentGuessInDictionary()) {
       const newCurrentWord = gamemodeSettings.isFirstLetterProvided ? targetWord?.charAt(0)! : "";
       setCurrentWord(newCurrentWord);
       setWordIndex(wordIndex + 1); // Increment index to indicate new word has been started
