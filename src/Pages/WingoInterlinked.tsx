@@ -1,4 +1,4 @@
-import LetterTile, { LetterStatus } from "../Components/LetterTile";
+import LetterTile, { TileStatus } from "../Components/LetterTile";
 
 import { useState } from "react";
 import { Theme } from "../Data/Themes";
@@ -20,6 +20,8 @@ import { useLocation } from "react-router-dom";
 import { PagePath } from "../Data/PageNames";
 import { SettingsData } from "../Data/SaveData/Settings";
 import { setMostRecentWingoInterlinkedGamemodeSettings } from "../Data/SaveData/MostRecentGamemodeSettings";
+import { useCountdown } from "usehooks-ts";
+import { useCorrectChime, useFailureChime, useLightPingChime, useClickChime } from "../Data/Sounds";
 
 type Orientation = "vertical" | "horizontal";
 
@@ -29,10 +31,10 @@ type GridConfig = {
   words: { word: string; orientation: Orientation; startingXPos: number; startingYPos: number }[];
 };
 
-export type TileStatus = {
+export type CrosswordTileStatus = {
   x: number;
   y: number;
-  status: LetterStatus;
+  status: TileStatus;
 };
 
 export interface WingoInterlinkedProps {
@@ -67,7 +69,7 @@ export interface WingoInterlinkedProps {
   initialConfig?: {
     words: string[];
     inProgress: boolean;
-    tileStatuses: TileStatus[];
+    tileStatuses: CrosswordTileStatus[];
     currentWords: string[];
     currentWordIndex: number;
     remainingGridGuesses: number;
@@ -84,7 +86,7 @@ interface Props extends WingoInterlinkedProps {
   onSave?: (
     words: string[],
     inProgress: boolean,
-    tileStatuses: TileStatus[],
+    tileStatuses: CrosswordTileStatus[],
     currentWords: string[],
     currentWordIndex: number,
     remainingGridGuesses: number,
@@ -105,22 +107,25 @@ export const WingoInterlinked = (props: Props) => {
     props.gamemodeSettings
   );
 
-  const [remainingSeconds, setRemainingSeconds] = useState(
-    props.gamemodeSettings?.timerConfig?.isTimed === true
-      ? props.gamemodeSettings?.timerConfig?.seconds
-      : getGamemodeDefaultTimerValue(location)
+  // Crossword configuration generated when provided with an array of words
+  const [gridConfig, setGridConfig] = useState<GridConfig>(generateGridConfig(getTargetWordArray()));
+  const [correctGrid, setCorrectGrid] = useState<{ x: number; y: number; letter: string; wordIndex?: number }[]>(
+    getCorrectLetterGrid()
   );
 
-  /*
-  Keep track of the most recent value for the timer
-  So that the value can be used as the default value for the total seconds input element
-  (even after the timer is enabled/disabled)
-  */
-  const [mostRecentTotalSeconds, setMostRecentTotalSeconds] = useState(
-    props.gamemodeSettings?.timerConfig?.isTimed === true
-      ? props.gamemodeSettings?.timerConfig?.seconds
-      : getGamemodeDefaultTimerValue(location)
+  // The entered words of the crossword
+  const [currentWords, setCurrentWords] = useState<string[]>(
+    props.initialConfig?.currentWords ?? Array.from({ length: gamemodeSettings.numWords }).map((x) => "")
   );
+
+  const [tileStatuses, setTileStatuses] = useState<CrosswordTileStatus[]>(
+    props.initialConfig?.tileStatuses ??
+      getCorrectLetterGrid().map((position) => {
+        return { x: position.x, y: position.y, status: "not set" };
+      })
+  );
+
+  const [currentWordIndex, setCurrentWordIndex] = useState<number>(props.initialConfig?.currentWordIndex ?? 0);
 
   const [mostRecentFitRestriction, setMostRecentFitRestriction] = useState(
     props.gamemodeSettings?.fitRestrictionConfig?.isRestricted === true
@@ -135,25 +140,24 @@ export const WingoInterlinked = (props: Props) => {
     props.initialConfig?.remainingGridGuesses ?? props.gamemodeSettings.startingNumGridGuesses
   );
 
-  // The entered words of the crossword
-  const [currentWords, setCurrentWords] = useState<string[]>(
-    props.initialConfig?.currentWords ?? Array.from({ length: gamemodeSettings.numWords }).map((x) => "")
+  // The starting/total time of the timer
+  const [totalSeconds, setTotalSeconds] = useState(
+    props.gamemodeSettings?.timerConfig?.isTimed === true
+      ? props.gamemodeSettings?.timerConfig?.seconds
+      : getGamemodeDefaultTimerValue(location)
   );
 
-  // Crossword configuration generated when provided with an array of words
-  const [gridConfig, setGridConfig] = useState<GridConfig>(generateGridConfig(getTargetWordArray()));
-  const [correctGrid, setCorrectGrid] = useState<{ x: number; y: number; letter: string; wordIndex?: number }[]>(
-    getCorrectLetterGrid()
-  );
+  // How many seconds left on the timer?
+  const [remainingSeconds, { startCountdown, stopCountdown, resetCountdown }] = useCountdown({
+    countStart: totalSeconds,
+    intervalMs: 1000,
+  });
 
-  const [tileStatuses, setTileStatuses] = useState<TileStatus[]>(
-    props.initialConfig?.tileStatuses ??
-      getCorrectLetterGrid().map((position) => {
-        return { x: position.x, y: position.y, status: "not set" };
-      })
-  );
-
-  const [currentWordIndex, setCurrentWordIndex] = useState<number>(props.initialConfig?.currentWordIndex ?? 0);
+  // Sounds
+  const [playCorrectChimeSoundEffect] = useCorrectChime(props.settings);
+  const [playFailureChimeSoundEffect] = useFailureChime(props.settings);
+  const [playLightPingSoundEffect] = useLightPingChime(props.settings);
+  const [playClickSoundEffect] = useClickChime(props.settings);
 
   // Save gameplay progress
   React.useEffect(() => {
@@ -390,23 +394,35 @@ export const WingoInterlinked = (props: Props) => {
     }
   }, [tileStatuses]);
 
-  // Timer Setup
+  // Start timer (any time the toggle is enabled or the totalSeconds is changed)
   React.useEffect(() => {
+    if (!inProgress) {
+      return;
+    }
+
     if (!gamemodeSettings.timerConfig.isTimed) {
       return;
     }
 
-    const timer = setInterval(() => {
-      if (remainingSeconds > 0) {
-        setRemainingSeconds(remainingSeconds - 1);
-      } else {
-        setInProgress(false);
-      }
-    }, 1000);
-    return () => {
-      clearInterval(timer);
-    };
-  }, [setRemainingSeconds, remainingSeconds, gamemodeSettings.timerConfig.isTimed]);
+    startCountdown();
+  }, [inProgress, gamemodeSettings.timerConfig.isTimed, totalSeconds]);
+
+  // Check remaining seconds on timer
+  React.useEffect(() => {
+    if (!inProgress) {
+      return;
+    }
+
+    if (!gamemodeSettings.timerConfig.isTimed) {
+      return;
+    }
+
+    if (remainingSeconds <= 0) {
+      stopCountdown();
+      playFailureChimeSoundEffect();
+      setInProgress(false);
+    }
+  }, [inProgress, gamemodeSettings.timerConfig.isTimed, remainingSeconds]);
 
   /**
    * Generates the crossword grid from the target word array.
@@ -895,9 +911,7 @@ export const WingoInterlinked = (props: Props) => {
       */
     }
 
-    setRemainingSeconds(
-      gamemodeSettings.timerConfig.isTimed ? gamemodeSettings.timerConfig.seconds : mostRecentTotalSeconds
-    );
+    setInProgress(true);
 
     setGridConfig(generateGridConfig(getTargetWordArray()));
 
@@ -905,7 +919,10 @@ export const WingoInterlinked = (props: Props) => {
     setRemainingGridGuesses(props.initialConfig?.remainingGridGuesses ?? gamemodeSettings.startingNumGridGuesses);
     setCurrentWordIndex(0);
 
-    setInProgress(true);
+    if (gamemodeSettings.timerConfig.isTimed) {
+      // Reset the timer if it is enabled in the game options
+      resetCountdown();
+    }
   }
 
   const hint = wordHints?.find((x) => x.word === gridConfig.words[currentWordIndex].word)?.hint;
@@ -924,7 +941,7 @@ export const WingoInterlinked = (props: Props) => {
   const handleTimerToggle = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newGamemodeSettings: WingoInterlinkedProps["gamemodeSettings"] = {
       ...gamemodeSettings,
-      timerConfig: e.target.checked ? { isTimed: true, seconds: mostRecentTotalSeconds } : { isTimed: false },
+      timerConfig: e.target.checked ? { isTimed: true, seconds: totalSeconds } : { isTimed: false },
     };
 
     setGamemodeSettings(newGamemodeSettings);
@@ -953,8 +970,8 @@ export const WingoInterlinked = (props: Props) => {
             handleSimpleGamemodeSettingsChange={handleSimpleGamemodeSettingsChange}
             handleTimerToggle={handleTimerToggle}
             setMostRecentFitRestriction={setMostRecentFitRestriction}
-            setMostRecentTotalSeconds={setMostRecentTotalSeconds}
-            setRemainingSeconds={setRemainingSeconds}
+            resetCountdown={resetCountdown}
+            setTotalSeconds={setTotalSeconds}
             onLoadPresetGamemodeSettings={setGamemodeSettings}
             onShowOfAddPresetModal={() => setKeyboardDisabled(true)}
             onHideOfAddPresetModal={() => setKeyboardDisabled(false)}

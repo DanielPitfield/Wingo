@@ -1,6 +1,6 @@
 import NumberTile from "./NumberTile";
 import OperatorTile from "./OperatorTile";
-import { Guess } from "../Pages/NumbersGameConfig";
+import { Guess, IntermediaryTileStatus } from "../Pages/NumbersGameConfig";
 import { operators } from "../Data/Operators";
 import { getNumbersGameGuessTotal } from "../Helpers/getNumbersGameGuessTotal";
 
@@ -9,18 +9,12 @@ interface Props {
     value: number | null,
     id: { type: "original"; index: number } | { type: "intermediary"; rowIndex: number }
   ) => void;
-  hasTimerEnded: boolean;
   expression: Guess;
   rowIndex: number;
   targetNumber: number | null;
   hasSubmit: boolean;
   disabled: boolean;
-  intermediaryGuessStatuses: {
-    type: "intermediary";
-    wordIndex: number;
-    number: number | null;
-    picked: boolean;
-  }[];
+  intermediaryTileStatuses: IntermediaryTileStatus[];
   setOperator: (operator: typeof operators[0]["name"]) => void;
 }
 
@@ -37,7 +31,6 @@ export const NumberRow = (props: Props) => {
 
       <OperatorTile
         key="first-operator"
-        hasTimerEnded={props.hasTimerEnded}
         targetNumber={props.targetNumber}
         setOperator={props.setOperator}
         disabled={props.disabled || getNumbersGameGuessTotal(props.expression) !== null}
@@ -61,7 +54,7 @@ export const NumberRow = (props: Props) => {
         number={getNumbersGameGuessTotal(props.expression)}
         disabled={
           props.disabled ||
-          props.intermediaryGuessStatuses.find((x) => x.wordIndex === props.rowIndex)?.picked === true ||
+          props.intermediaryTileStatuses.find((x) => x.wordIndex === props.rowIndex)?.picked === true ||
           getNumbersGameGuessTotal(props.expression) === null
         }
         onClick={() =>

@@ -15,6 +15,7 @@ import { PagePath } from "../Data/PageNames";
 import { getOnlyConnectGridWords } from "../Helpers/getOnlyConnectGridWords";
 import { SettingsData } from "../Data/SaveData/Settings";
 import { setMostRecentOnlyConnectGamemodeSettings } from "../Data/SaveData/MostRecentGamemodeSettings";
+import { useCountdown } from "usehooks-ts";
 
 export interface OnlyConnectProps {
   gamemodeSettings: {
@@ -59,17 +60,18 @@ const OnlyConnect = (props: Props) => {
 
   const [remainingGuesses, setRemainingGuesses] = useState(gamemodeSettings.startingNumGuesses);
 
-  const [remainingSeconds, setRemainingSeconds] = useState(
+  // The starting/total time of the timer
+  const [totalSeconds, setTotalSeconds] = useState(
     props.gamemodeSettings?.timerConfig?.isTimed === true
       ? props.gamemodeSettings?.timerConfig?.seconds
       : getGamemodeDefaultTimerValue(location)
   );
 
-  const [mostRecentTotalSeconds, setMostRecentTotalSeconds] = useState(
-    props.gamemodeSettings?.timerConfig?.isTimed === true
-      ? props.gamemodeSettings?.timerConfig?.seconds
-      : getGamemodeDefaultTimerValue(location)
-  );
+  // How many seconds left on the timer?
+  const [remainingSeconds, { startCountdown, stopCountdown, resetCountdown }] = useCountdown({
+    countStart: totalSeconds,
+    intervalMs: 1000,
+  });
 
   // Sounds
   const [playCorrectChimeSoundEffect] = useCorrectChime(props.settings);
@@ -89,41 +91,47 @@ const OnlyConnect = (props: Props) => {
     setMostRecentOnlyConnectGamemodeSettings(gamemodeSettings);
   }, [gamemodeSettings]);
 
-  // (Guess) Timer Setup
+  // Start timer (any time the toggle is enabled or the totalSeconds is changed)
   React.useEffect(() => {
-    if (!gamemodeSettings.timerConfig.isTimed) {
-      return;
-    }
-
     if (!inProgress) {
       return;
     }
 
-    const timerGuess = setInterval(() => {
-      if (remainingSeconds > 0) {
-        setRemainingSeconds(remainingSeconds - 1);
-      } else {
-        playFailureChimeSoundEffect();
+    if (!gamemodeSettings.timerConfig.isTimed) {
+      return;
+    }
 
-        // Clear selection
-        setGridWords(
-          gridWords.map((gridWord) => {
-            if (selectedWords.some((x) => x.word === gridWord.word)) {
-              gridWord.rowNumber = null;
-            }
+    startCountdown();
+  }, [inProgress, gamemodeSettings.timerConfig.isTimed, totalSeconds]);
 
-            return gridWord;
-          })
-        );
+  // Check remaining seconds on timer
+  React.useEffect(() => {
+    if (!inProgress) {
+      return;
+    }
 
-        setInProgress(false);
-        clearInterval(timerGuess);
-      }
-    }, 1000);
-    return () => {
-      clearInterval(timerGuess);
-    };
-  }, [setRemainingSeconds, remainingSeconds, gamemodeSettings.timerConfig.isTimed]);
+    if (!gamemodeSettings.timerConfig.isTimed) {
+      return;
+    }
+
+    if (remainingSeconds <= 0) {
+      stopCountdown();
+      playFailureChimeSoundEffect();
+
+      // Clear selection
+      setGridWords(
+        gridWords.map((gridWord) => {
+          if (selectedWords.some((x) => x.word === gridWord.word)) {
+            gridWord.rowNumber = null;
+          }
+
+          return gridWord;
+        })
+      );
+      
+      setInProgress(false);
+    }
+  }, [inProgress, gamemodeSettings.timerConfig.isTimed, remainingSeconds]);
 
   // Check selection
   React.useEffect(() => {
@@ -385,14 +393,14 @@ const OnlyConnect = (props: Props) => {
 
     if (gamemodeSettings.timerConfig.isTimed) {
       // Reset the timer if it is enabled in the game options
-      setRemainingSeconds(gamemodeSettings.timerConfig.seconds);
+      resetCountdown();
     }
   }
 
   const handleTimerToggle = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newGamemodeSettings: OnlyConnectProps["gamemodeSettings"] = {
       ...gamemodeSettings,
-      timerConfig: e.target.checked ? { isTimed: true, seconds: mostRecentTotalSeconds } : { isTimed: false },
+      timerConfig: e.target.checked ? { isTimed: true, seconds: totalSeconds } : { isTimed: false },
     };
 
     setGamemodeSettings(newGamemodeSettings);
@@ -418,8 +426,8 @@ const OnlyConnect = (props: Props) => {
             gamemodeSettings={gamemodeSettings}
             handleSimpleGamemodeSettingsChange={handleSimpleGamemodeSettingsChange}
             handleTimerToggle={handleTimerToggle}
-            setMostRecentTotalSeconds={setMostRecentTotalSeconds}
-            setRemainingSeconds={setRemainingSeconds}
+            resetCountdown={resetCountdown}
+            setTotalSeconds={setTotalSeconds}
             onLoadPresetGamemodeSettings={setGamemodeSettings}
             onShowOfAddPresetModal={() => {}}
             onHideOfAddPresetModal={() => {}}

@@ -10,6 +10,8 @@ import { useLocation } from "react-router-dom";
 import { isCampaignLevelPath } from "../Helpers/CampaignPathChecks";
 import { SettingsData } from "../Data/SaveData/Settings";
 import { setMostRecentLettersGameConfigGamemodeSettings } from "../Data/SaveData/MostRecentGamemodeSettings";
+import { useCountdown } from "usehooks-ts";
+import { useCorrectChime, useFailureChime, useLightPingChime, useClickChime } from "../Data/Sounds";
 
 export interface LettersGameConfigProps {
   campaignConfig:
@@ -42,74 +44,105 @@ interface Props extends LettersGameConfigProps {
   onCompleteGameshowRound?: (wasCorrect: boolean, guess: string, correctAnswer: string, score: number | null) => void;
 }
 
+export type LettersGameTileStatus = {
+  letter: string | null;
+  picked: boolean;
+};
+
 const LettersGameConfig = (props: Props) => {
   const location = useLocation().pathname as PagePath;
-
-  const [guesses, setGuesses] = useState<string[]>([]);
-  const [currentWord, setCurrentWord] = useState("");
-  const [inProgress, setInProgress] = useState(true);
-  const [inDictionary, setInDictionary] = useState(true);
-  const [targetWord, setTargetWord] = useState<string>();
-  const [hasSubmitLetter, sethasSubmitLetter] = useState(false);
 
   const [gamemodeSettings, setGamemodeSettings] = useState<LettersGameConfigProps["gamemodeSettings"]>(
     props.gamemodeSettings
   );
 
-  const [remainingSeconds, setRemainingSeconds] = useState(
+  const [inProgress, setInProgress] = useState(true);
+
+  const [guesses, setGuesses] = useState<string[]>([]);
+  const [currentWord, setCurrentWord] = useState("");
+  const [targetWord, setTargetWord] = useState<string>();
+
+  const [inDictionary, setInDictionary] = useState(true);
+  const [hasLetterSelectionFinished, setHasLetterSelectionFinished] = useState(false);
+
+  const DEFAULT_LETTER_TILE_STATUSES: LettersGameTileStatus[] = Array(gamemodeSettings.numLetters)
+    .fill("")
+    .map((_) => ({
+      letter: null,
+      picked: false,
+    }));
+
+  const [letterTileStatuses, setLetterTileStatuses] = useState<LettersGameTileStatus[]>(DEFAULT_LETTER_TILE_STATUSES);
+
+  // The starting/total time of the timer
+  const [totalSeconds, setTotalSeconds] = useState(
     props.gamemodeSettings?.timerConfig?.isTimed === true
       ? props.gamemodeSettings?.timerConfig?.seconds
       : getGamemodeDefaultTimerValue(location)
   );
 
-  const defaultLetterTileStatuses: {
-    letter: string | null;
-    picked: boolean;
-  }[] = Array.from({ length: gamemodeSettings.numLetters }).map((_) => ({
-    letter: null,
-    picked: false,
-  }));
+  // How many seconds left on the timer?
+  const [remainingSeconds, { startCountdown, stopCountdown, resetCountdown }] = useCountdown({
+    countStart: totalSeconds,
+    intervalMs: 1000,
+  });
 
-  const [letterTileStatuses, setLetterTileStatuses] = useState<
-    {
-      letter: string | null;
-      picked: boolean;
-    }[]
-  >(defaultLetterTileStatuses);
+  // Sounds
+  const [playCorrectChimeSoundEffect] = useCorrectChime(props.settings);
+  const [playFailureChimeSoundEffect] = useFailureChime(props.settings);
+  const [playLightPingSoundEffect] = useLightPingChime(props.settings);
+  const [playClickSoundEffect] = useClickChime(props.settings);
 
-  // Timer Setup
+  // How many letters have been selected so far?
+  const getNumSelectedLetters = (): number => {
+    return letterTileStatuses.filter((letterStatus) => letterStatus.letter !== null).length;
+  };
+
+  // Start timer (any time the toggle is enabled or the totalSeconds is changed)
   React.useEffect(() => {
+    if (!inProgress) {
+      return;
+    }
+
     if (!gamemodeSettings.timerConfig.isTimed) {
       return;
     }
 
-    if (
-      letterTileStatuses.filter((letterStatus) => letterStatus.letter !== null).length !== gamemodeSettings.numLetters
-    ) {
+    if (!hasLetterSelectionFinished) {
       return;
     }
 
-    const timer = setInterval(() => {
-      if (remainingSeconds > 0) {
-        setRemainingSeconds(remainingSeconds - 1);
-      } else {
-        setInProgress(false);
-      }
-    }, 1000);
-    return () => {
-      clearInterval(timer);
-    };
-  }, [
-    setRemainingSeconds,
-    remainingSeconds,
-    gamemodeSettings.timerConfig.isTimed,
-    // When the selection of letters has been completed
-    letterTileStatuses.filter((letterStatus) => letterStatus.letter !== null).length === gamemodeSettings.numLetters,
-  ]);
+    startCountdown();
+  }, [inProgress, gamemodeSettings.timerConfig.isTimed, hasLetterSelectionFinished, totalSeconds]);
+
+  // Check remaining seconds on timer
+  React.useEffect(() => {
+    if (!inProgress) {
+      return;
+    }
+
+    if (!gamemodeSettings.timerConfig.isTimed) {
+      return;
+    }
+
+    if (!hasLetterSelectionFinished) {
+      return;
+    }
+
+    if (remainingSeconds <= 0) {
+      stopCountdown();
+      playFailureChimeSoundEffect();
+      setInProgress(false);
+    }
+  }, [inProgress, gamemodeSettings.timerConfig.isTimed, hasLetterSelectionFinished, remainingSeconds]);
 
   // Reset game after change of settings (stops cheating by changing settings partway through a game)
   React.useEffect(() => {
-    if (isCampaignLevelPath(location) || props.gameshowScore !== undefined) {
+    if (isCampaignLevelPath(location)) {
+      return;
+    }
+
+    if (props.gameshowScore !== undefined) {
       return;
     }
 
@@ -118,6 +151,20 @@ const LettersGameConfig = (props: Props) => {
     // Save the latest gamemode settings for this mode
     setMostRecentLettersGameConfigGamemodeSettings(gamemodeSettings);
   }, [gamemodeSettings]);
+
+  React.useEffect(() => {
+    // Selection already finished, don't need to check whether to flag it as true
+    if (hasLetterSelectionFinished) {
+      return;
+    }
+
+    // TODO: Better way to set when letter selection has finished?
+
+    // Full, complete letter selection
+    if (getNumSelectedLetters() === gamemodeSettings.numLetters) {
+      setHasLetterSelectionFinished(true);
+    }
+  }, [letterTileStatuses]);
 
   function ResetGame() {
     if (!inProgress) {
@@ -141,19 +188,20 @@ const LettersGameConfig = (props: Props) => {
       else {
         props.onCompleteGameshowRound?.(wasCorrect, longestWord, "", score);
       }
-    }
+    }    
+    
+    setInProgress(true);
 
     setGuesses([]);
-    setLetterTileStatuses(defaultLetterTileStatuses);
+    setLetterTileStatuses(DEFAULT_LETTER_TILE_STATUSES);
     setCurrentWord("");
     setTargetWord("");
-    setInProgress(true);
     setInDictionary(true);
-    sethasSubmitLetter(false);
+    setHasLetterSelectionFinished(false);
 
     if (gamemodeSettings.timerConfig.isTimed) {
       // Reset the timer if it is enabled in the game options
-      setRemainingSeconds(gamemodeSettings.timerConfig.seconds);
+      resetCountdown();
     }
   }
 
@@ -165,12 +213,13 @@ const LettersGameConfig = (props: Props) => {
         return letterTileStatus;
       })
     );
+
     setInProgress(true);
+
     setInDictionary(false);
     setCurrentWord("");
     setInProgress(true);
     setInDictionary(true);
-    sethasSubmitLetter(false);
   }
 
   function onEnter() {
@@ -178,15 +227,12 @@ const LettersGameConfig = (props: Props) => {
       return;
     }
 
-    // The vowels and consonants available have not all been picked
-    if (
-      letterTileStatuses.filter((letterStatus) => letterStatus.letter !== null).length !== gamemodeSettings.numLetters
-    ) {
+    if (!hasLetterSelectionFinished) {
       return;
     }
 
     // Nothing entered yet
-    if (!hasSubmitLetter) {
+    if (currentWord.length <= 0) {
       return;
     }
 
@@ -221,10 +267,7 @@ const LettersGameConfig = (props: Props) => {
   }
 
   function onSubmitSelectionLetter(letter: string) {
-    if (
-      letterTileStatuses.filter((letterStatus) => letterStatus.letter !== null).length < gamemodeSettings.numLetters &&
-      inProgress
-    ) {
+    if (!hasLetterSelectionFinished && inProgress) {
       // Find the index of the first status without a letter
       const freeSlotIndex = letterTileStatuses.findIndex((letterStatus) => letterStatus.letter === null);
       if (freeSlotIndex === -1) {
@@ -251,7 +294,7 @@ const LettersGameConfig = (props: Props) => {
     }
 
     // A vowel or consonant has already been picked
-    if (letterTileStatuses.filter((letterStatus) => letterStatus.letter !== null).length !== 0) {
+    if (getNumSelectedLetters() !== 0) {
       return;
     }
 
@@ -278,9 +321,7 @@ const LettersGameConfig = (props: Props) => {
     }
 
     // Still more letters need to be chosen for selection
-    if (
-      letterTileStatuses.filter((letterStatus) => letterStatus.letter !== null).length !== gamemodeSettings.numLetters
-    ) {
+    if (!hasLetterSelectionFinished) {
       return;
     }
 
@@ -300,7 +341,6 @@ const LettersGameConfig = (props: Props) => {
 
     // Append chosen letter to currentWord
     setCurrentWord(currentWord + letter);
-    sethasSubmitLetter(true);
   }
 
   // Used the keyboard to add a new letter
@@ -326,7 +366,6 @@ const LettersGameConfig = (props: Props) => {
 
     // Append chosen letter to currentWord
     setCurrentWord(currentWord + letter);
-    sethasSubmitLetter(true);
   }
 
   function onBackspace() {
@@ -360,21 +399,18 @@ const LettersGameConfig = (props: Props) => {
     setGamemodeSettings(newGamemodeSettings);
   }
 
-  function updateRemainingSeconds(newSeconds: number) {
-    setRemainingSeconds(newSeconds);
-  }
-
   return (
     <LettersGame
       campaignConfig={props.campaignConfig}
       gamemodeSettings={gamemodeSettings}
       remainingSeconds={remainingSeconds}
+      totalSeconds={totalSeconds}
       guesses={guesses}
       currentWord={currentWord}
       letterTileStatuses={letterTileStatuses}
       inProgress={inProgress}
       inDictionary={inDictionary}
-      hasSubmitLetter={hasSubmitLetter}
+      hasLetterSelectionFinished={hasLetterSelectionFinished}
       targetWord={targetWord || ""}
       theme={props.theme}
       settings={props.settings}
@@ -386,7 +422,8 @@ const LettersGameConfig = (props: Props) => {
       onSubmitKeyboardLetter={onSubmitKeyboardLetter}
       onBackspace={onBackspace}
       updateGamemodeSettings={updateGamemodeSettings}
-      updateRemainingSeconds={updateRemainingSeconds}
+      resetCountdown={resetCountdown}
+      setTotalSeconds={setTotalSeconds}
       ResetGame={ResetGame}
       ContinueGame={ContinueGame}
       addGold={props.addGold}

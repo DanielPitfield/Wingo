@@ -8,11 +8,8 @@ import { Theme } from "../Data/Themes";
 
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
 import { LetterCategoriesConfigProps } from "./LetterCategoriesConfig";
-import { getGamemodeDefaultTimerValue } from "../Helpers/getGamemodeDefaultTimerValue";
 import LetterCategoriesGamemodeSettings from "../Components/GamemodeSettingsOptions/LetterCategoriesGamemodeSettings";
 import { getNewGamemodeSettingValue } from "../Helpers/getGamemodeSettingsNewValue";
-import { useLocation } from "react-router-dom";
-import { PagePath } from "../Data/PageNames";
 import { SettingsData } from "../Data/SaveData/Settings";
 
 interface Props {
@@ -20,12 +17,12 @@ interface Props {
   gamemodeSettings: LetterCategoriesConfigProps["gamemodeSettings"];
 
   remainingSeconds: number;
+  totalSeconds: number;
   wordLength: number;
   guesses: string[];
   currentWord: string;
   wordIndex: number;
   inProgress: boolean;
-  hasSubmitLetter: boolean;
   correctGuessesCount: number;
   categoryRequiredStartingLetter: string;
   chosenCategoryMappings: { name: string; targetWordArray: string[] }[];
@@ -37,21 +34,14 @@ interface Props {
   onBackspace: () => void;
 
   updateGamemodeSettings: (newGamemodeSettings: LetterCategoriesConfigProps["gamemodeSettings"]) => void;
-  updateRemainingSeconds: (newSeconds: number) => void;
+  resetCountdown: () => void;
+  setTotalSeconds: (numSeconds: number) => void;
 
   ResetGame: () => void;
 }
 
 const LetterCategories = (props: Props) => {
-  const location = useLocation().pathname as PagePath;
-
   const [keyboardDisabled, setKeyboardDisabled] = useState(false);
-
-  const [mostRecentTotalSeconds, setMostRecentTotalSeconds] = useState(
-    props.gamemodeSettings?.timerConfig?.isTimed === true
-      ? props.gamemodeSettings?.timerConfig?.seconds
-      : getGamemodeDefaultTimerValue(location)
-  );
 
   // Create grid of rows (for guessing words)
   function displayGrid(): React.ReactNode {
@@ -152,7 +142,7 @@ const LetterCategories = (props: Props) => {
   const handleTimerToggle = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newGamemodeSettings: LetterCategoriesConfigProps["gamemodeSettings"] = {
       ...props.gamemodeSettings,
-      timerConfig: e.target.checked ? { isTimed: true, seconds: mostRecentTotalSeconds } : { isTimed: false },
+      timerConfig: e.target.checked ? { isTimed: true, seconds: props.totalSeconds } : { isTimed: false },
     };
 
     props.updateGamemodeSettings(newGamemodeSettings);
@@ -192,8 +182,8 @@ const LetterCategories = (props: Props) => {
             gamemodeSettings={props.gamemodeSettings}
             handleSimpleGamemodeSettingsChange={handleSimpleGamemodeSettingsChange}
             handleTimerToggle={handleTimerToggle}
-            setMostRecentTotalSeconds={setMostRecentTotalSeconds}
-            updateRemainingSeconds={props.updateRemainingSeconds}
+            resetCountdown={props.resetCountdown}
+            setTotalSeconds={props.setTotalSeconds}
             onLoadPresetGamemodeSettings={props.updateGamemodeSettings}
             onShowOfAddPresetModal={() => setKeyboardDisabled(true)}
             onHideOfAddPresetModal={() => setKeyboardDisabled(false)}

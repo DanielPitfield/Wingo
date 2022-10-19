@@ -5,7 +5,7 @@ import { useClickChime } from "../Data/Sounds";
 import { PagePath } from "../Data/PageNames";
 import { FiChevronLeft, FiCornerDownLeft } from "react-icons/fi";
 import { getWordRowStatusSummary, WordRowStatusChecks } from "../Helpers/getWordRowStatusSummary";
-import { LetterStatus } from "./LetterTile";
+import { LetterTileStatus } from "./LetterTile";
 import { DEFAULT_ALPHABET } from "../Pages/WingoConfig";
 import { useLocation } from "react-router-dom";
 import { SettingsData } from "../Data/SaveData/Settings";
@@ -18,10 +18,7 @@ interface Props {
   guesses: string[];
   targetWord: string;
   inDictionary: boolean;
-  letterStatuses: {
-    letter: string;
-    status: LetterStatus;
-  }[];
+  letterStatuses: LetterTileStatus[];
   customAlphabet?: string[];
   disabled: boolean;
   hasBackspace: boolean;

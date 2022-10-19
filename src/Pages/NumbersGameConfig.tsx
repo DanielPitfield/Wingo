@@ -12,6 +12,8 @@ import { PagePath } from "../Data/PageNames";
 import { isCampaignLevelPath } from "../Helpers/CampaignPathChecks";
 import { SettingsData } from "../Data/SaveData/Settings";
 import { setMostRecentNumbersGameConfigGamemodeSettings } from "../Data/SaveData/MostRecentGamemodeSettings";
+import { useCountdown } from "usehooks-ts";
+import { useCorrectChime, useFailureChime, useLightPingChime, useClickChime } from "../Data/Sounds";
 
 export interface NumbersGameConfigProps {
   campaignConfig:
@@ -42,6 +44,21 @@ interface Props extends NumbersGameConfigProps {
   onCompleteGameshowRound?: (wasCorrect: boolean, guess: string, correctAnswer: string, score: number | null) => void;
 }
 
+export type OriginalTileStatus = {
+  type: "original";
+  number: number | null;
+  picked: boolean;
+};
+
+export type IntermediaryTileStatus = {
+  type: "intermediary";
+  wordIndex: number;
+  number: number | null;
+  picked: boolean;
+};
+
+export type NumberTileStatus = OriginalTileStatus | IntermediaryTileStatus;
+
 export type Guess = { operand1: number | null; operand2: number | null; operator: typeof operators[0]["name"] };
 
 const NumbersGameConfig = (props: Props) => {
@@ -51,60 +68,59 @@ const NumbersGameConfig = (props: Props) => {
     props.gamemodeSettings
   );
 
-  const [remainingSeconds, setRemainingSeconds] = useState(
-    props.gamemodeSettings?.timerConfig?.isTimed === true
-      ? props.gamemodeSettings?.timerConfig?.seconds
-      : getGamemodeDefaultTimerValue(location)
-  );
-
   const [inProgress, setInProgress] = useState(true);
 
   const [guesses, setGuesses] = useState<Guess[]>([]);
   const [currentGuess, setCurrentGuess] = useState<Guess>({ operand1: null, operand2: null, operator: "+" });
   const [closestGuessSoFar, setClosestGuessSoFar] = useState<number | null>(null);
 
-  const [targetNumber, settargetNumber] = useState<number | null>(null);
+  const [targetNumber, setTargetNumber] = useState<number | null>(null);
   const [wordIndex, setWordIndex] = useState(0);
-  const [hasTimerEnded, sethasTimerEnded] = useState(false);
-  const [hasSubmitNumber, sethasSubmitNumber] = useState(false);
 
-  // Just numOperands number of original type numbers (all not yet picked)
-  const defaultNumberTileStatuses: (
-    | {
-        type: "original";
-        number: number | null;
-        picked: boolean;
-      }
-    | {
-        type: "intermediary";
-        wordIndex: number;
-        number: number | null;
-        picked: boolean;
-      }
-  )[] = Array.from({ length: gamemodeSettings.numOperands }).map((_) => ({
-    type: "original",
-    number: null,
-    picked: false,
-  }));
+  // Fill an array of length numOperands with the initial tile status (original type and unpicked)
+  const DEFAULT_NUMBER_TILE_STATUSES: OriginalTileStatus[] = Array(gamemodeSettings.numOperands)
+    .fill("")
+    .map((_) => ({
+      type: "original",
+      number: null,
+      picked: false,
+    }));
 
-  const [numberTileStatuses, setNumberTileStatuses] = useState<
-    (
-      | {
-          type: "original";
-          number: number | null;
-          picked: boolean;
-        }
-      | {
-          type: "intermediary";
-          wordIndex: number;
-          number: number | null;
-          picked: boolean;
-        }
-    )[]
-  >(defaultNumberTileStatuses);
+  const [numberTileStatuses, setNumberTileStatuses] = useState<NumberTileStatus[]>(DEFAULT_NUMBER_TILE_STATUSES);
 
-  // Timer Setup
+  // The starting/total time of the timer
+  const [totalSeconds, setTotalSeconds] = useState(
+    props.gamemodeSettings?.timerConfig?.isTimed === true
+      ? props.gamemodeSettings?.timerConfig?.seconds
+      : getGamemodeDefaultTimerValue(location)
+  );
+
+  // How many seconds left on the timer?
+  const [remainingSeconds, { startCountdown, stopCountdown, resetCountdown }] = useCountdown({
+    countStart: totalSeconds,
+    intervalMs: 1000,
+  });
+
+  // Sounds
+  const [playCorrectChimeSoundEffect] = useCorrectChime(props.settings);
+  const [playFailureChimeSoundEffect] = useFailureChime(props.settings);
+  const [playLightPingSoundEffect] = useLightPingChime(props.settings);
+  const [playClickSoundEffect] = useClickChime(props.settings);
+
+  const getOriginalTileStatuses = () => {
+    return numberTileStatuses.filter((x) => x.type === "original");
+  };
+
+  const getIntermediaryTileStatuses = () => {
+    return numberTileStatuses.filter((x) => x.type === "intermediary");
+  };
+
+  // Start timer (any time the toggle is enabled or the totalSeconds is changed)
   React.useEffect(() => {
+    if (!inProgress) {
+      return;
+    }
+
     if (!gamemodeSettings.timerConfig.isTimed) {
       return;
     }
@@ -113,24 +129,34 @@ const NumbersGameConfig = (props: Props) => {
       return;
     }
 
-    const timer = setInterval(() => {
-      if (remainingSeconds > 0) {
-        setRemainingSeconds(remainingSeconds - 1);
-      } else {
-        submitBestGuess();
-        sethasTimerEnded(true);
-        setInProgress(false);
-      }
-    }, 1000);
-    return () => {
-      clearInterval(timer);
-    };
-  }, [setRemainingSeconds, remainingSeconds, gamemodeSettings.timerConfig.isTimed, numberTileStatuses]);
+    startCountdown();
+  }, [inProgress, gamemodeSettings.timerConfig.isTimed, totalSeconds, numberTileStatuses]);
+
+  // Check remaining seconds on timer
+  React.useEffect(() => {
+    if (!inProgress) {
+      return;
+    }
+
+    if (!gamemodeSettings.timerConfig.isTimed) {
+      return;
+    }
+
+    if (!hasNumberSelectionFinished(numberTileStatuses, gamemodeSettings.numOperands)) {
+      return;
+    }
+
+    if (remainingSeconds <= 0) {
+      stopCountdown();
+      submitBestGuess();
+      setInProgress(false);
+    }
+  }, [inProgress, gamemodeSettings.timerConfig.isTimed, remainingSeconds, numberTileStatuses]);
 
   // When the guesses (or expressions made along a row) of the playable grid are changed
   React.useEffect(() => {
     // For each guess in currentGuesses...
-    const intermediaryNumbers: typeof numberTileStatuses = guesses.map((guess, index) => {
+    const intermediaryNumbers: IntermediaryTileStatus[] = guesses.map((guess, index) => {
       const existingNumbersGameStatus = numberTileStatuses.find(
         (x) => x.type === "intermediary" && x.wordIndex === index
       );
@@ -145,20 +171,18 @@ const NumbersGameConfig = (props: Props) => {
     });
 
     // Add (keep track of) these new tiles
-    setNumberTileStatuses(numberTileStatuses.filter((x) => x.type !== "intermediary").concat(intermediaryNumbers));
+    const newNumberTileStatuses: NumberTileStatus[] = getOriginalTileStatuses().concat(intermediaryNumbers);
+
+    setNumberTileStatuses(newNumberTileStatuses);
   }, [guesses]);
-
-  React.useEffect(() => {
-    if (!hasTimerEnded) {
-      return;
-    }
-
-    clearGrid();
-  }, [hasTimerEnded]);
 
   // Reset game after change of settings (stops cheating by changing settings partway through a game)
   React.useEffect(() => {
-    if (isCampaignLevelPath(location) || props.gameshowScore !== undefined) {
+    if (isCampaignLevelPath(location)) {
+      return;
+    }
+
+    if (props.gameshowScore !== undefined) {
       return;
     }
 
@@ -173,14 +197,17 @@ const NumbersGameConfig = (props: Props) => {
       return;
     }
 
-    const intermediaryStatuses = numberTileStatuses.filter((status) => status.type === "intermediary");
-    const correctAnswer = intermediaryStatuses.find((status) => status.number === targetNumber);
+    if (wordIndex <= 0) {
+      return;
+    }
 
-    if (wordIndex >= 1 && correctAnswer) {
-      // If game is in progress and there is an intermediary number, end the game prematurely
+    // Is there an intermediary number of the target number?
+    const isExactAnswer = getIntermediaryTileStatuses().find((status) => status.number === targetNumber);
+
+    if (isExactAnswer) {
+      // End the game prematurely
       setClosestGuessSoFar(targetNumber);
-      setRemainingSeconds(0);
-      sethasTimerEnded(true);
+      stopCountdown();
       setInProgress(false);
     }
   }, [numberTileStatuses]);
@@ -236,24 +263,23 @@ const NumbersGameConfig = (props: Props) => {
       }
     }
 
+    setInProgress(true);
+
     setGuesses([]);
     setClosestGuessSoFar(null);
-    setNumberTileStatuses(defaultNumberTileStatuses);
+    setNumberTileStatuses(DEFAULT_NUMBER_TILE_STATUSES);
     setCurrentGuess({ operand1: null, operand2: null, operator: "+" });
-    settargetNumber(null);
+    setTargetNumber(null);
     setWordIndex(0);
-    setInProgress(true);
-    sethasTimerEnded(false);
-    sethasSubmitNumber(false);
 
     if (gamemodeSettings.timerConfig.isTimed) {
       // Reset the timer if it is enabled in the game options
-      setRemainingSeconds(gamemodeSettings.timerConfig.seconds);
+      resetCountdown();
     }
   }
 
   function onSubmitNumbersGameNumber(number: number) {
-    if (!number) {
+    if (number === undefined) {
       return;
     }
 
@@ -271,7 +297,7 @@ const NumbersGameConfig = (props: Props) => {
       // Determine target number if last number is being picked
       if (index === newNumbersGameStatuses.filter((x) => x.type === "original").length - 1) {
         const newTargetNumber = getTargetNumber(100, 999);
-        settargetNumber(newTargetNumber);
+        setTargetNumber(newTargetNumber);
       }
     }
   }
@@ -280,9 +306,9 @@ const NumbersGameConfig = (props: Props) => {
     // If required number of original numbers, expression is of the correct length and there are no picked or intermediary values
     if (
       expression.length === numberTileStatuses.length &&
-      numberTileStatuses.filter((x) => x.type === "original").length === gamemodeSettings.numOperands &&
+      getOriginalTileStatuses().length === gamemodeSettings.numOperands &&
       numberTileStatuses.filter((x) => x.picked === true).length === 0 &&
-      numberTileStatuses.filter((x) => x.type === "intermediary").length === 0 &&
+      getIntermediaryTileStatuses().length === 0 &&
       inProgress
     ) {
       // Make a copy of the current numberTileStatuses
@@ -297,7 +323,7 @@ const NumbersGameConfig = (props: Props) => {
 
       // Determine target number
       const newTargetNumber = getTargetNumber(100, 999);
-      settargetNumber(newTargetNumber);
+      setTargetNumber(newTargetNumber);
     }
   }
 
@@ -316,17 +342,11 @@ const NumbersGameConfig = (props: Props) => {
         // Else; if operand2 has not been populated, then set operand1
         setCurrentGuess({ ...currentGuess, operand1: number });
       }
-
-      sethasSubmitNumber(true);
     }
   }
 
   function updateGamemodeSettings(newGamemodeSettings: NumbersGameConfigProps["gamemodeSettings"]) {
     setGamemodeSettings(newGamemodeSettings);
-  }
-
-  function updateRemainingSeconds(newSeconds: number) {
-    setRemainingSeconds(newSeconds);
   }
 
   function addOperandToGuess(
@@ -342,10 +362,6 @@ const NumbersGameConfig = (props: Props) => {
     }
 
     if (!hasNumberSelectionFinished(numberTileStatuses, gamemodeSettings.numOperands)) {
-      return;
-    }
-
-    if (hasTimerEnded) {
       return;
     }
 
@@ -402,8 +418,7 @@ const NumbersGameConfig = (props: Props) => {
     if (id.type === "original") {
       newNumbersGameStatuses[id.index].picked = true;
     } else if (id.type === "intermediary") {
-      newNumbersGameStatuses[numberTileStatuses.filter((x) => x.type === "original").length + id.rowIndex].picked =
-        true;
+      newNumbersGameStatuses[getOriginalTileStatuses().length + id.rowIndex].picked = true;
     }
     setNumberTileStatuses(newNumbersGameStatuses);
   }
@@ -413,14 +428,14 @@ const NumbersGameConfig = (props: Props) => {
     if (rowBeingEdited.operand1 !== null && rowBeingEdited.operand2 !== null) {
       return 3;
     }
+
     // Just the first operand
-    else if (rowBeingEdited.operand1 !== null && rowBeingEdited.operand2 === null) {
+    if (rowBeingEdited.operand1 !== null && rowBeingEdited.operand2 === null) {
       return 1;
     }
+
     // Unexpected guess state
-    else {
-      return 0;
-    }
+    return 0;
   };
 
   function onBackspace() {
@@ -429,10 +444,6 @@ const NumbersGameConfig = (props: Props) => {
     }
 
     if (!hasNumberSelectionFinished(numberTileStatuses, gamemodeSettings.numOperands)) {
-      return;
-    }
-
-    if (hasTimerEnded) {
       return;
     }
 
@@ -534,9 +545,20 @@ const NumbersGameConfig = (props: Props) => {
       return;
     }
 
+    // Still on first row (and therefore no intermediary number to use as best guess)
+    if (wordIndex <= 0) {
+      return;
+    }
+
+    const intermediaryGuesses = getIntermediaryTileStatuses();
+
+    // Another check there is an intermediary guess
+    if (!intermediaryGuesses) {
+      return;
+    }
+
     // Get the closest intermediary guess
-    const newClosest = numberTileStatuses
-      .filter((x) => x.type === "intermediary")
+    const newClosest = intermediaryGuesses
       .map((x) => x.number)
       .concat(closestGuessSoFar === null ? [] : [closestGuessSoFar])
       .reduce(function (prev, curr) {
@@ -548,13 +570,9 @@ const NumbersGameConfig = (props: Props) => {
 
     setClosestGuessSoFar(newClosest);
 
-    // If game is in progress and there is an intermediary number
-    if (inProgress && wordIndex >= 1) {
-      // End the game prematurely
-      setRemainingSeconds(0);
-      sethasTimerEnded(true);
-      setInProgress(false);
-    }
+    // End the game prematurely
+    stopCountdown();
+    setInProgress(false);
   }
 
   return (
@@ -562,14 +580,13 @@ const NumbersGameConfig = (props: Props) => {
       campaignConfig={props.campaignConfig}
       gamemodeSettings={gamemodeSettings}
       remainingSeconds={remainingSeconds}
+      totalSeconds={totalSeconds}
       wordIndex={wordIndex}
       guesses={guesses}
       closestGuessSoFar={closestGuessSoFar}
       currentGuess={currentGuess}
       numberTileStatuses={numberTileStatuses}
       inProgress={inProgress}
-      hasTimerEnded={hasTimerEnded}
-      hasSubmitNumber={hasSubmitNumber}
       targetNumber={targetNumber}
       theme={props.theme}
       settings={props.settings}
@@ -580,7 +597,8 @@ const NumbersGameConfig = (props: Props) => {
       onSubmitNumber={onSubmitNumber}
       onBackspace={onBackspace}
       updateGamemodeSettings={updateGamemodeSettings}
-      updateRemainingSeconds={updateRemainingSeconds}
+      resetCountdown={resetCountdown}
+      setTotalSeconds={setTotalSeconds}
       ResetGame={ResetGame}
       clearGrid={clearGrid}
       submitBestGuess={submitBestGuess}

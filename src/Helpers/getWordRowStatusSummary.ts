@@ -1,5 +1,5 @@
 import { PagePath } from "../Data/PageNames";
-import { LetterStatus } from "../Components/LetterTile";
+import { TileStatus } from "../Components/LetterTile";
 import { getLetterStatus } from "./getLetterStatus";
 
 const isSimpleStatusMode = (page: PagePath) => {
@@ -9,9 +9,10 @@ const isSimpleStatusMode = (page: PagePath) => {
 };
 
 // The status of every letter in the word of a WordRow
+// TODO: Can this just be LetterTileStatus[]?
 export type WordRowStatusSummary = {
   character: string;
-  status: LetterStatus;
+  status: TileStatus;
 }[];
 
 // The information which determine/influence the LetterStatuses within WordRowStatusSummary

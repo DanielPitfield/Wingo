@@ -40,6 +40,7 @@ import {
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { SettingsData } from "../Data/SaveData/Settings";
 import { setMostRecentWordCodesGamemodeSettings } from "../Data/SaveData/MostRecentGamemodeSettings";
+import { useCountdown } from "usehooks-ts";
 
 const wordCodesModes = ["match", "question"] as const;
 export type wordCodesMode = typeof wordCodesModes[number];
@@ -62,7 +63,7 @@ export interface WordCodesProps {
   */
   mode: wordCodesMode;
 
-  gamemodeSettings: {    
+  gamemodeSettings: {
     // Both modes
     codeLength: number;
     numAdditionalLetters: number;
@@ -128,17 +129,18 @@ const WordCodes = (props: Props) => {
 
   const [remainingGuesses, setRemainingGuesses] = useState(gamemodeSettings.startingNumGuesses);
 
-  const [remainingSeconds, setRemainingSeconds] = useState(
+  // The starting/total time of the timer
+  const [totalSeconds, setTotalSeconds] = useState(
     props.gamemodeSettings?.timerConfig?.isTimed === true
       ? props.gamemodeSettings?.timerConfig?.seconds
       : getGamemodeDefaultTimerValue(location)
   );
 
-  const [mostRecentTotalSeconds, setMostRecentTotalSeconds] = useState(
-    props.gamemodeSettings?.timerConfig?.isTimed === true
-      ? props.gamemodeSettings?.timerConfig?.seconds
-      : getGamemodeDefaultTimerValue(location)
-  );
+  // How many seconds left on the timer?
+  const [remainingSeconds, { startCountdown, stopCountdown, resetCountdown }] = useCountdown({
+    countStart: totalSeconds,
+    intervalMs: 1000,
+  });
 
   // Sounds
   const [playCorrectChimeSoundEffect] = useCorrectChime(props.settings);
@@ -183,25 +185,35 @@ const WordCodes = (props: Props) => {
     setGamemodeSettings(newGamemodeSettings);
   }, [props.gamemodeSettings.codeLength]);
 
-  // (Guess) Timer Setup
+  // Start timer (any time the toggle is enabled or the totalSeconds is changed)
   React.useEffect(() => {
-    if (!gamemodeSettings.timerConfig.isTimed || !inProgress) {
+    if (!inProgress) {
       return;
     }
 
-    const timerGuess = setInterval(() => {
-      if (remainingSeconds > 0) {
-        setRemainingSeconds(remainingSeconds - 1);
-      } else {
-        playFailureChimeSoundEffect();
-        setInProgress(false);
-        clearInterval(timerGuess);
-      }
-    }, 1000);
-    return () => {
-      clearInterval(timerGuess);
-    };
-  }, [setRemainingSeconds, remainingSeconds, gamemodeSettings.timerConfig.isTimed]);
+    if (!gamemodeSettings.timerConfig.isTimed) {
+      return;
+    }
+
+    startCountdown();
+  }, [inProgress, gamemodeSettings.timerConfig.isTimed, totalSeconds]);
+
+  // Check remaining seconds on timer
+  React.useEffect(() => {
+    if (!inProgress) {
+      return;
+    }
+
+    if (!gamemodeSettings.timerConfig.isTimed) {
+      return;
+    }
+
+    if (remainingSeconds <= 0) {
+      stopCountdown();
+      playFailureChimeSoundEffect();
+      setInProgress(false);
+    }
+  }, [inProgress, gamemodeSettings.timerConfig.isTimed, remainingSeconds]);
 
   // Each time a guess is submitted
   React.useEffect(() => {
@@ -763,7 +775,7 @@ const WordCodes = (props: Props) => {
 
     if (gamemodeSettings.timerConfig.isTimed) {
       // Reset the timer if it is enabled in the game options
-      setRemainingSeconds(gamemodeSettings.timerConfig.seconds);
+      resetCountdown();
     }
   }
 
@@ -860,7 +872,7 @@ const WordCodes = (props: Props) => {
   const handleTimerToggle = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newGamemodeSettings: WordCodesProps["gamemodeSettings"] = {
       ...gamemodeSettings,
-      timerConfig: e.target.checked ? { isTimed: true, seconds: mostRecentTotalSeconds } : { isTimed: false },
+      timerConfig: e.target.checked ? { isTimed: true, seconds: totalSeconds } : { isTimed: false },
     };
 
     setGamemodeSettings(newGamemodeSettings);
@@ -887,9 +899,9 @@ const WordCodes = (props: Props) => {
             gamemodeSettings={gamemodeSettings}
             handleSimpleGamemodeSettingsChange={handleSimpleGamemodeSettingsChange}
             handleTimerToggle={handleTimerToggle}
-            setMostRecentTotalSeconds={setMostRecentTotalSeconds}
             setRemainingGuesses={setRemainingGuesses}
-            setRemainingSeconds={setRemainingSeconds}
+            resetCountdown={resetCountdown}
+            setTotalSeconds={setTotalSeconds}
             onLoadPresetGamemodeSettings={setGamemodeSettings}
             onShowOfAddPresetModal={() => setKeyboardDisabled(true)}
             onHideOfAddPresetModal={() => setKeyboardDisabled(false)}

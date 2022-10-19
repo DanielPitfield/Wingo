@@ -12,7 +12,7 @@ import { PagePath } from "../Data/PageNames";
 import { Theme } from "../Data/Themes";
 import { getGamemodeDefaultTimerValue } from "../Helpers/getGamemodeDefaultTimerValue";
 import { getNewGamemodeSettingValue } from "../Helpers/getGamemodeSettingsNewValue";
-import { LettersGameConfigProps } from "./LettersGameConfig";
+import { LettersGameConfigProps, LettersGameTileStatus } from "./LettersGameConfig";
 import { useLocation } from "react-router-dom";
 import { getWeightedLetter } from "../Helpers/getWeightedLetter";
 import { consonantWeightings, vowelWeightings } from "../Data/LettersGameWeightings";
@@ -23,18 +23,16 @@ interface Props {
   campaignConfig: LettersGameConfigProps["campaignConfig"];
   gamemodeSettings: LettersGameConfigProps["gamemodeSettings"];
 
-  letterTileStatuses: {
-    letter: string | null;
-    picked: boolean;
-  }[];
+  letterTileStatuses: LettersGameTileStatus[];
 
   guesses: string[];
   currentWord: string;
   inProgress: boolean;
   inDictionary: boolean;
-  hasSubmitLetter: boolean;
+  hasLetterSelectionFinished: boolean;
   targetWord: string;
   remainingSeconds: number;
+  totalSeconds: number;
 
   theme: Theme;
   settings: SettingsData;
@@ -50,8 +48,8 @@ interface Props {
   onBackspace: () => void;
 
   updateGamemodeSettings: (newGamemodeSettings: LettersGameConfigProps["gamemodeSettings"]) => void;
-
-  updateRemainingSeconds: (newSeconds: number) => void;
+  resetCountdown: () => void;
+  setTotalSeconds: (numSeconds: number) => void;
 
   ResetGame: () => void;
   ContinueGame: () => void;
@@ -72,18 +70,9 @@ const LettersGame = (props: Props) => {
       : getGamemodeDefaultTimerValue(location)
   );
 
-  const getNumSelectedLetters = (): number => {
-    // How many letters have been selected so far?
-    return props.letterTileStatuses.filter((letterStatus) => letterStatus.letter !== null).length;
-  };
-
-  const isLetterSelectionFinished = (): boolean => {
-    return getNumSelectedLetters() === props.gamemodeSettings.numLetters;
-  };
-
   const getVowel = (): string => {
     // Already have enough letters, don't add any more
-    if (isLetterSelectionFinished()) {
+    if (props.hasLetterSelectionFinished) {
       return "";
     }
 
@@ -92,7 +81,7 @@ const LettersGame = (props: Props) => {
 
   const getConsonant = (): string => {
     // Already have enough letters, don't add any more
-    if (isLetterSelectionFinished()) {
+    if (props.hasLetterSelectionFinished) {
       return "";
     }
 
@@ -102,7 +91,7 @@ const LettersGame = (props: Props) => {
   const quickLetterSelection = () => {
     const selectionWordLetters = Array(props.gamemodeSettings.numLetters)
       .fill("")
-      .map((letter) => {
+      .map((_) => {
         // Equal chance to be true or false
         const x = Math.floor(Math.random() * 2) === 0;
         // Equal chance (to add a vowel or consonant)
@@ -137,7 +126,7 @@ const LettersGame = (props: Props) => {
       <div className="add-letter-buttons-wrapper">
         <Button
           mode={"default"}
-          disabled={isLetterSelectionFinished()}
+          disabled={props.hasLetterSelectionFinished}
           settings={props.settings}
           onClick={() => props.onSubmitSelectionLetter(getVowel())}
         >
@@ -145,7 +134,7 @@ const LettersGame = (props: Props) => {
         </Button>
         <Button
           mode={"default"}
-          disabled={isLetterSelectionFinished()}
+          disabled={props.hasLetterSelectionFinished}
           settings={props.settings}
           onClick={() => props.onSubmitSelectionLetter(getConsonant())}
         >
@@ -153,7 +142,12 @@ const LettersGame = (props: Props) => {
         </Button>
         <Button
           mode={"default"}
-          disabled={getNumSelectedLetters() !== 0 || isLetterSelectionFinished()}
+          disabled={
+            // There is atleast one already selected letter
+            props.letterTileStatuses.some((letterStatus) => letterStatus.letter !== null) ||
+            // The entire selection is finished
+            props.hasLetterSelectionFinished
+          }
           settings={props.settings}
           onClick={quickLetterSelection}
         >
@@ -279,8 +273,8 @@ const LettersGame = (props: Props) => {
             gamemodeSettings={props.gamemodeSettings}
             handleSimpleGamemodeSettingsChange={handleSimpleGamemodeSettingsChange}
             handleTimerToggle={handleTimerToggle}
-            setMostRecentTotalSeconds={setMostRecentTotalSeconds}
-            updateRemainingSeconds={props.updateRemainingSeconds}
+            resetCountdown={props.resetCountdown}
+            setTotalSeconds={props.setTotalSeconds}
             onLoadPresetGamemodeSettings={props.updateGamemodeSettings}
             onShowOfAddPresetModal={() => setKeyboardDisabled(true)}
             onHideOfAddPresetModal={() => setKeyboardDisabled(false)}

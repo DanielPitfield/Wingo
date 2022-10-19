@@ -1,11 +1,16 @@
 import React, { useState } from "react";
 import { SettingsData } from "../Data/SaveData/Settings";
 
-export type LetterStatus = "incorrect" | "contains" | "correct" | "not set" | "not in word";
+export type LetterTileStatus = {
+  letter: string;
+  status: TileStatus;
+};
+
+export type TileStatus = "incorrect" | "contains" | "correct" | "not set" | "not in word";
 
 interface Props {
   letter: string;
-  status: LetterStatus;
+  status: TileStatus;
   settings: SettingsData;
   onClick?: () => void;
   disabled?: boolean;

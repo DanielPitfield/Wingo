@@ -12,7 +12,7 @@ import {
 } from "../Data/DefaultGamemodeSettings";
 import { categoryMappings, targetWordLengthMappings } from "../Data/WordArrayMappings";
 import { getDeterministicArrayItems } from "../Helpers/DeterministicSeeding";
-import { LetterStatus } from "../Components/LetterTile";
+import { LetterTileStatus } from "../Components/LetterTile";
 import { getAllPuzzleWordsOfLength, getAllWordsUpToLength, getTargetWordsOfLength } from "../Helpers/getWordsOfLength";
 import { getGamemodeDefaultTimerValue } from "../Helpers/getGamemodeDefaultTimerValue";
 import { getGamemodeDefaultWordLength } from "../Helpers/getGamemodeDefaultWordLength";
@@ -38,6 +38,8 @@ import {
   setMostRecentWingoConfigGamemodeSettings,
   getMostRecentWingoInterlinkedGamemodeSettings,
 } from "../Data/SaveData/MostRecentGamemodeSettings";
+import { useCountdown } from "usehooks-ts";
+import { useCorrectChime, useFailureChime, useLightPingChime, useClickChime } from "../Data/Sounds";
 
 export const wingoModes = [
   "daily",
@@ -110,39 +112,26 @@ interface Props extends WingoConfigProps {
 export const DEFAULT_ALPHABET_STRING = "abcdefghijklmnopqrstuvwxyz";
 export const DEFAULT_ALPHABET = DEFAULT_ALPHABET_STRING.split("");
 
+const DEFAULT_LETTER_STATUSES: LetterTileStatus[] = [...DEFAULT_ALPHABET, "-", "'"].map((x) => ({
+  letter: x,
+  status: "not set",
+}));
+
 const WingoConfig = (props: Props) => {
   const location = useLocation().pathname as PagePath;
 
   const [gameId, setGameId] = useState<string | null>(null);
 
-  const [guesses, setGuesses] = useState<string[]>(props.guesses ?? []);
-
   const [gamemodeSettings, setGamemodeSettings] = useState<WingoConfigProps["gamemodeSettings"]>(
     props.gamemodeSettings
   );
 
-  const [remainingGuesses, setRemainingGuesses] = useState(props.gamemodeSettings.startingNumGuesses);
-
-  const [remainingSeconds, setRemainingSeconds] = useState(
-    props.gamemodeSettings?.timerConfig?.isTimed === true
-      ? props.gamemodeSettings?.timerConfig?.seconds
-      : getGamemodeDefaultTimerValue(location)
-  );
-
-  /*
-  Keep track of the most recent value for the timer
-  So that the value can be used as the default value for the total seconds input element
-  (even after the timer is enabled/disabled)
-  */
-  const [mostRecentTotalSeconds, setMostRecentTotalSeconds] = useState(
-    props.gamemodeSettings?.timerConfig?.isTimed === true
-      ? props.gamemodeSettings?.timerConfig?.seconds
-      : getGamemodeDefaultTimerValue(location)
-  );
+  const [inProgress, setInProgress] = useState(true);
 
   const [currentWord, setCurrentWord] = useState("");
+  const [guesses, setGuesses] = useState<string[]>(props.guesses ?? []);
   const [wordIndex, setWordIndex] = useState(0);
-  const [inProgress, setInProgress] = useState(true);
+
   const [inDictionary, setInDictionary] = useState(true);
   const [isIncompleteWord, setIsIncompleteWord] = useState(false);
 
@@ -156,23 +145,28 @@ const WingoConfig = (props: Props) => {
   const [hasSubmitLetter, sethasSubmitLetter] = useState(false);
   const [revealedLetterIndexes, setRevealedLetterIndexes] = useState<number[]>([]);
 
-  const defaultLetterStatuses: {
-    letter: string;
-    status: LetterStatus;
-  }[] = DEFAULT_ALPHABET.map((x) => ({
-    letter: x,
-    status: "not set",
-  }));
+  const [remainingGuesses, setRemainingGuesses] = useState(props.gamemodeSettings.startingNumGuesses);
 
-  defaultLetterStatuses.push({ letter: "-", status: "not set" });
-  defaultLetterStatuses.push({ letter: "'", status: "not set" });
+  const [letterStatuses, setLetterStatuses] = useState<LetterTileStatus[]>(DEFAULT_LETTER_STATUSES);
 
-  const [letterStatuses, setLetterStatuses] = useState<
-    {
-      letter: string;
-      status: LetterStatus;
-    }[]
-  >(defaultLetterStatuses);
+  // The starting/total time of the timer
+  const [totalSeconds, setTotalSeconds] = useState(
+    props.gamemodeSettings?.timerConfig?.isTimed === true
+      ? props.gamemodeSettings?.timerConfig?.seconds
+      : getGamemodeDefaultTimerValue(location)
+  );
+
+  // How many seconds left on the timer?
+  const [remainingSeconds, { startCountdown, stopCountdown, resetCountdown }] = useCountdown({
+    countStart: totalSeconds,
+    intervalMs: 1000,
+  });
+
+  // Sounds
+  const [playCorrectChimeSoundEffect] = useCorrectChime(props.settings);
+  const [playFailureChimeSoundEffect] = useFailureChime(props.settings);
+  const [playLightPingSoundEffect] = useLightPingChime(props.settings);
+  const [playClickSoundEffect] = useClickChime(props.settings);
 
   // Returns the newly determined target word
   function getTargetWord() {
@@ -295,24 +289,36 @@ const WingoConfig = (props: Props) => {
     }
   }
 
-  // Timer Setup
+  // Start timer (any time the toggle is enabled or the totalSeconds is changed)
   React.useEffect(() => {
+    if (!inProgress) {
+      return;
+    }
+
     if (!gamemodeSettings.timerConfig.isTimed) {
       return;
     }
 
-    const timer = setInterval(() => {
-      if (remainingSeconds > 0) {
-        setRemainingSeconds(remainingSeconds - 1);
-      } else {
-        setInDictionary(false);
-        setInProgress(false);
-      }
-    }, 1000);
-    return () => {
-      clearInterval(timer);
-    };
-  }, [setRemainingSeconds, remainingSeconds, gamemodeSettings.timerConfig.isTimed]);
+    startCountdown();
+  }, [inProgress, gamemodeSettings.timerConfig.isTimed, totalSeconds]);
+
+  // Check remaining seconds on timer
+  React.useEffect(() => {
+    if (!inProgress) {
+      return;
+    }
+
+    if (!gamemodeSettings.timerConfig.isTimed) {
+      return;
+    }
+
+    if (remainingSeconds <= 0) {
+      stopCountdown();
+      playFailureChimeSoundEffect();
+      setInDictionary(false);
+      setInProgress(false);
+    }
+  }, [inProgress, gamemodeSettings.timerConfig.isTimed, remainingSeconds]);
 
   // Save gameplay progress of daily wingo
   React.useEffect(() => {
@@ -444,60 +450,60 @@ const WingoConfig = (props: Props) => {
 
   // Reveals letters of read only puzzle row periodically
   React.useEffect(() => {
-    let intervalId: number;
-
     if (props.mode !== "puzzle") {
       return;
     }
 
-    // Not tried entering a letter/word yet
-    if (!hasSubmitLetter) {
-      intervalId = window.setInterval(() => {
-        // This return is needed to prevent a letter being revealed after trying to enter a word (because an interval was queued)
-        if (hasSubmitLetter) {
-          return;
-        }
-
-        if (!targetWord) {
-          return;
-        }
-
-        if (
-          // Stop revealing letters when there is only puzzleLeaveNumBlanks left to reveal
-          revealedLetterIndexes.length >=
-          targetWord.length - gamemodeSettings.puzzleLeaveNumBlanks
-        ) {
-          return;
-        }
-
-        const newRevealedLetterIndexes = revealedLetterIndexes.slice();
-
-        if (revealedLetterIndexes.length === 0) {
-          // Start by revealing the first letter
-          newRevealedLetterIndexes.push(0);
-        } else if (revealedLetterIndexes.length === 1) {
-          // Next reveal the last letter
-          newRevealedLetterIndexes.push(targetWord.length - 1);
-        } else {
-          let newIndex: number;
-
-          // Keep looping to find a random index that hasn't been used yet
-          do {
-            newIndex = Math.floor(Math.random() * targetWord.length);
-          } while (revealedLetterIndexes.includes(newIndex));
-
-          // Reveal a random letter
-          if (newIndex >= 0 && newIndex <= targetWord.length - 1) {
-            // Check index is in the range (0, wordLength-1)
-            newRevealedLetterIndexes.push(newIndex);
-          }
-        }
-        setRevealedLetterIndexes(newRevealedLetterIndexes);
-      }, gamemodeSettings.puzzleRevealSeconds * 1000);
+    // Tried entering a guess, so revealing of tiles has been interrupted/stopped
+    if (hasSubmitLetter) {
+      return;
     }
 
+    const intervalId = setInterval(() => {
+      // This return is needed to prevent a letter being revealed after trying to enter a word (because an interval was queued)
+      if (hasSubmitLetter) {
+        return;
+      }
+
+      if (!targetWord) {
+        return;
+      }
+
+      if (
+        // Stop revealing letters when there is only puzzleLeaveNumBlanks left to reveal
+        revealedLetterIndexes.length >=
+        targetWord.length - gamemodeSettings.puzzleLeaveNumBlanks
+      ) {
+        return;
+      }
+
+      const newRevealedLetterIndexes = revealedLetterIndexes.slice();
+
+      if (revealedLetterIndexes.length === 0) {
+        // Start by revealing the first letter
+        newRevealedLetterIndexes.push(0);
+      } else if (revealedLetterIndexes.length === 1) {
+        // Next reveal the last letter
+        newRevealedLetterIndexes.push(targetWord.length - 1);
+      } else {
+        let newIndex: number;
+
+        // Keep looping to find a random index that hasn't been used yet
+        do {
+          newIndex = Math.floor(Math.random() * targetWord.length);
+        } while (revealedLetterIndexes.includes(newIndex));
+
+        // Reveal a random letter
+        if (newIndex >= 0 && newIndex <= targetWord.length - 1) {
+          // Check index is in the range (0, wordLength-1)
+          newRevealedLetterIndexes.push(newIndex);
+        }
+      }
+      setRevealedLetterIndexes(newRevealedLetterIndexes);
+    }, gamemodeSettings.puzzleRevealSeconds * 1000);
+
     return () => {
-      window.clearInterval(intervalId);
+      clearInterval(intervalId);
     };
   }, [props.mode, targetWord, revealedLetterIndexes, hasSubmitLetter]);
 
@@ -622,13 +628,12 @@ const WingoConfig = (props: Props) => {
     sethasSubmitLetter(false);
     setConundrum("");
     setRevealedLetterIndexes([]);
-    setLetterStatuses(defaultLetterStatuses);
+    setLetterStatuses(DEFAULT_LETTER_STATUSES);
 
-    const newRemainingSeconds = gamemodeSettings.timerConfig.isTimed
-      ? gamemodeSettings.timerConfig.seconds
-      : mostRecentTotalSeconds;
-    setMostRecentTotalSeconds(newRemainingSeconds);
-    setRemainingSeconds(newRemainingSeconds);
+    if (gamemodeSettings.timerConfig.isTimed) {
+      // Reset the timer if it is enabled in the game options
+      resetCountdown();
+    }
 
     // TODO: MAJOR: Limitless mode shouldn't be resetting with lives left anyway (should be continuing), but there is a side effect or bug somewhere
 
@@ -653,13 +658,12 @@ const WingoConfig = (props: Props) => {
 
     sethasSubmitLetter(false);
     setRevealedLetterIndexes([]);
-    setLetterStatuses(defaultLetterStatuses);
+    setLetterStatuses(DEFAULT_LETTER_STATUSES);
 
-    const newRemainingSeconds = gamemodeSettings.timerConfig.isTimed
-      ? gamemodeSettings.timerConfig.seconds
-      : mostRecentTotalSeconds;
-    setMostRecentTotalSeconds(newRemainingSeconds);
-    setRemainingSeconds(newRemainingSeconds);
+    if (gamemodeSettings.timerConfig.isTimed) {
+      // Reset the timer if it is enabled in the game options
+      resetCountdown();
+    }
 
     // Add new rows for success in limitless mode
     if (props.mode === "limitless" && isCurrentGuessCorrect()) {
@@ -800,7 +804,7 @@ const WingoConfig = (props: Props) => {
 
     // TODO: This will reset timer after every valid guess, is that right?
     if (gamemodeSettings.timerConfig.isTimed) {
-      setRemainingSeconds(gamemodeSettings.timerConfig.seconds);
+      resetCountdown();
     }
   }
 
@@ -932,6 +936,7 @@ const WingoConfig = (props: Props) => {
       mode={props.mode}
       gamemodeSettings={gamemodeSettings}
       remainingSeconds={remainingSeconds}
+      totalSeconds={totalSeconds}
       remainingGuesses={remainingGuesses}
       guesses={guesses}
       currentWord={currentWord}
@@ -939,11 +944,10 @@ const WingoConfig = (props: Props) => {
       inProgress={inProgress}
       inDictionary={inDictionary}
       isIncompleteWord={isIncompleteWord}
-      hasSubmitLetter={hasSubmitLetter}
-      conundrum={conundrum || ""}
-      targetWord={targetWord || ""}
+      conundrum={conundrum ?? ""}
+      targetWord={targetWord ?? ""}
       targetHint={gamemodeSettings.isHintShown ? targetHint : ""}
-      targetCategory={targetCategory || ""}
+      targetCategory={targetCategory ?? ""}
       revealedLetterIndexes={revealedLetterIndexes}
       letterStatuses={letterStatuses}
       theme={props.theme}
@@ -953,6 +957,8 @@ const WingoConfig = (props: Props) => {
       onSubmitTargetCategory={onSubmitTargetCategory}
       onBackspace={onBackspace}
       updateGamemodeSettings={updateGamemodeSettings}
+      resetCountdown={resetCountdown}
+      setTotalSeconds={setTotalSeconds}
       ResetGame={ResetGame}
       ContinueGame={ContinueGame}
       setTheme={props.setTheme}

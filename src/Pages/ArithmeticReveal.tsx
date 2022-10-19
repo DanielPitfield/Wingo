@@ -19,6 +19,8 @@ import { getNewGamemodeSettingValue } from "../Helpers/getGamemodeSettingsNewVal
 import { useLocation } from "react-router-dom";
 import { setMostRecentArithmeticRevealGamemodeSettings } from "../Data/SaveData/MostRecentGamemodeSettings";
 import { SettingsData } from "../Data/SaveData/Settings";
+import { useCountdown } from "usehooks-ts";
+import { useCorrectChime, useFailureChime, useLightPingChime, useClickChime } from "../Data/Sounds";
 
 export interface ArithmeticRevealProps {
   campaignConfig:
@@ -83,17 +85,24 @@ const ArithmeticReveal = (props: Props) => {
     props.gamemodeSettings
   );
 
-  const [remainingSeconds, setRemainingSeconds] = useState(
+  // The starting/total time of the guess timer
+  const [totalSeconds, setTotalSeconds] = useState(
     props.gamemodeSettings?.timerConfig?.isTimed === true
       ? props.gamemodeSettings?.timerConfig?.seconds
       : getGamemodeDefaultTimerValue(location)
   );
 
-  const [mostRecentTotalSeconds, setMostRecentTotalSeconds] = useState(
-    props.gamemodeSettings?.timerConfig?.isTimed === true
-      ? props.gamemodeSettings?.timerConfig?.seconds
-      : getGamemodeDefaultTimerValue(location)
-  );
+  // How many seconds left on the guess timer?
+  const [remainingSeconds, { startCountdown, stopCountdown, resetCountdown }] = useCountdown({
+    countStart: totalSeconds,
+    intervalMs: 1000,
+  });
+
+  // Sounds
+  const [playCorrectChimeSoundEffect] = useCorrectChime(props.settings);
+  const [playFailureChimeSoundEffect] = useFailureChime(props.settings);
+  const [playLightPingSoundEffect] = useLightPingChime(props.settings);
+  const [playClickSoundEffect] = useClickChime(props.settings);
 
   // What is the maximum starting number which should be used (based on difficulty)?
   function getStartingNumberLimit(): number {
@@ -310,8 +319,9 @@ const ArithmeticReveal = (props: Props) => {
     setInProgress(true);
     setRevealState({ type: "in-progress", revealedTiles: 0 });
     setGuess("");
+
     if (gamemodeSettings.timerConfig.isTimed) {
-      setRemainingSeconds(gamemodeSettings.timerConfig.seconds);
+      resetCountdown();
     }
   }, [currentCheckpointIndex]);
 
@@ -322,13 +332,13 @@ const ArithmeticReveal = (props: Props) => {
     }
 
     // (Reveal Tile) Timer Setup
-    const timer = setInterval(() => {
+    const intervalId = setInterval(() => {
       const numRevealedTiles = revealState.type === "in-progress" ? revealState.revealedTiles + 1 : 1;
 
       // If all tiles have been revealed
       if (numRevealedTiles > gamemodeSettings.numTiles) {
         setRevealState({ type: "finished" });
-        clearInterval(timer);
+        clearInterval(intervalId);
       } else {
         setRevealState({
           type: "in-progress",
@@ -338,12 +348,12 @@ const ArithmeticReveal = (props: Props) => {
       }
     }, gamemodeSettings.revealIntervalSeconds * 1000);
 
-    return () => clearInterval(timer);
+    return () => clearInterval(intervalId);
   }, [revealState]);
 
-  // (Guess) Timer Setup
+  // Start guess timer (any time the toggle is enabled or the totalSeconds is changed)
   React.useEffect(() => {
-    if (!gamemodeSettings.timerConfig.isTimed || !inProgress) {
+    if (!inProgress) {
       return;
     }
 
@@ -352,17 +362,34 @@ const ArithmeticReveal = (props: Props) => {
       return;
     }
 
-    const timerGuess = setInterval(() => {
-      if (remainingSeconds > 0) {
-        setRemainingSeconds(remainingSeconds - 1);
-      } else {
-        setInProgress(false);
-        clearInterval(timerGuess);
-      }
-    }, 1000);
+    if (!gamemodeSettings.timerConfig.isTimed) {
+      return;
+    }
 
-    return () => clearInterval(timerGuess);
-  }, [setRemainingSeconds, remainingSeconds, gamemodeSettings.timerConfig.isTimed, revealState, inProgress]);
+    startCountdown();
+  }, [inProgress, revealState, gamemodeSettings.timerConfig.isTimed, totalSeconds]);
+
+  // Check remaining seconds on guess timer
+  React.useEffect(() => {
+    if (!inProgress) {
+      return;
+    }
+
+    // Only start this timer once all the tiles have been revealed
+    if (revealState.type !== "finished") {
+      return;
+    }
+
+    if (!gamemodeSettings.timerConfig.isTimed) {
+      return;
+    }
+
+    if (remainingSeconds <= 0) {
+      stopCountdown();
+      playFailureChimeSoundEffect();
+      setInProgress(false);
+    }
+  }, [inProgress, revealState, gamemodeSettings.timerConfig.isTimed, remainingSeconds]);
 
   // TODO: Still some refactoring with these functions and how they are used within displayOutcome()
   const isGuessCorrect = (): Boolean => {
@@ -480,7 +507,7 @@ const ArithmeticReveal = (props: Props) => {
     setRevealState({ type: "in-progress", revealedTiles: 0 });
     if (gamemodeSettings.timerConfig.isTimed) {
       // Reset the timer if it is enabled in the game options
-      setRemainingSeconds(gamemodeSettings.timerConfig.seconds);
+      resetCountdown();
     }
     // This will set new tiles and new target numbers
     generateAllTiles();
@@ -518,7 +545,7 @@ const ArithmeticReveal = (props: Props) => {
   const handleTimerToggle = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newGamemodeSettings: ArithmeticRevealProps["gamemodeSettings"] = {
       ...gamemodeSettings,
-      timerConfig: e.target.checked ? { isTimed: true, seconds: mostRecentTotalSeconds } : { isTimed: false },
+      timerConfig: e.target.checked ? { isTimed: true, seconds: totalSeconds } : { isTimed: false },
     };
 
     setGamemodeSettings(newGamemodeSettings);
@@ -545,8 +572,8 @@ const ArithmeticReveal = (props: Props) => {
             handleNumberSizeChange={handleNumberSizeChange}
             handleSimpleGamemodeSettingsChange={handleSimpleGamemodeSettingsChange}
             handleTimerToggle={handleTimerToggle}
-            setMostRecentTotalSeconds={setMostRecentTotalSeconds}
-            setRemainingSeconds={setRemainingSeconds}
+            resetCountdown={resetCountdown}
+            setTotalSeconds={setTotalSeconds}
             onLoadPresetGamemodeSettings={setGamemodeSettings}
             onShowOfAddPresetModal={() => setNumPadDisabled(true)}
             onHideOfAddPresetModal={() => setNumPadDisabled(false)}

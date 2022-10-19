@@ -1,17 +1,15 @@
 import React, { useState } from "react";
-import { PagePath } from "../Data/PageNames";
 import { Button } from "../Components/Button";
 import { MessageNotification } from "../Components/MessageNotification";
 import ProgressBar, { GreenToRedColorTransition } from "../Components/ProgressBar";
 import { NumberRow } from "../Components/NumberRow";
 import NumberTile from "../Components/NumberTile";
-import { Guess, NumbersGameConfigProps } from "./NumbersGameConfig";
+import { Guess, IntermediaryTileStatus, NumbersGameConfigProps, NumberTileStatus } from "./NumbersGameConfig";
 import { NumberSelectionRow } from "../Components/NumberSelectionRow";
 import { Theme } from "../Data/Themes";
 
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
 import { DEFAULT_NUMBERS_GAME_NUM_ROWS } from "../Data/DefaultGamemodeSettings";
-import { getGamemodeDefaultTimerValue } from "../Helpers/getGamemodeDefaultTimerValue";
 import { getRandomElementFrom } from "../Helpers/getRandomElementFrom";
 import { hasNumberSelectionFinished } from "../Helpers/hasNumberSelectionFinished";
 import { hasNumberSelectionStarted } from "../Helpers/hasNumberSelectionStarted";
@@ -19,66 +17,61 @@ import { NumberPuzzleValue, NumberPuzzle } from "../Helpers/NumbersGameSolver";
 import { getNumbersGameScore } from "../Helpers/getNumbersGameScore";
 import { getNewGamemodeSettingValue } from "../Helpers/getGamemodeSettingsNewValue";
 import NumbersGameGamemodeSettings from "../Components/GamemodeSettingsOptions/NumbersGameGamemodeSettings";
-import { useLocation } from "react-router-dom";
 import { SettingsData } from "../Data/SaveData/Settings";
 
 interface Props {
   campaignConfig: NumbersGameConfigProps["campaignConfig"];
   gamemodeSettings: NumbersGameConfigProps["gamemodeSettings"];
 
+  inProgress: boolean;
+
   remainingSeconds: number;
+  totalSeconds: number;
+
   wordIndex: number;
+  targetNumber: number | null;
   guesses: Guess[];
   closestGuessSoFar: number | null;
   currentGuess: Guess;
-  numberTileStatuses: {
-    type: "original" | "intermediary";
-    number: number | null;
-    picked: boolean;
-  }[];
-  inProgress: boolean;
-  hasTimerEnded: boolean;
-  hasSubmitNumber: boolean;
-  targetNumber: number | null;
+
+  numberTileStatuses: NumberTileStatus[];
 
   theme: Theme;
   settings: SettingsData;
+
   onClick: (
     value: number | null,
     id: { type: "original"; index: number } | { type: "intermediary"; rowIndex: number }
   ) => void;
+
   clearGrid: () => void;
   submitBestGuess: () => void;
+
   setTheme: (theme: Theme) => void;
+
   onSubmitNumbersGameNumber: (number: number) => void;
   onSubmitNumbersGameSelection: (numberExpression: number[]) => void;
   onSubmitNumber: (number: number) => void;
   onBackspace: () => void;
 
   updateGamemodeSettings: (newGamemodeSettings: NumbersGameConfigProps["gamemodeSettings"]) => void;
-  updateRemainingSeconds: (newSeconds: number) => void;
+  resetCountdown: () => void;
+  setTotalSeconds: (numSeconds: number) => void;
 
   ResetGame: () => void;
+
   setOperator: (operator: Guess["operator"]) => void;
   addGold: (gold: number) => void;
   gameshowScore?: number;
 }
 
 const NumbersGame = (props: Props) => {
-  const location = useLocation().pathname as PagePath;
-
   // The number of operands the numberPuzzle can compute a solution for (with no noticeable delay)
   const NUMBERPUZZLE_MAX_NUM_OPERANDS_WITHHOUT_DELAY = 6;
   // The maximum possible number of operands the numberPuzzle can a compute solution for (without the browser crashing)
   const NUMBERPUZZLE_MAX_NUM_OPERANDS = 7;
 
   const [solutions, setSolutions] = useState<{ best: NumberPuzzleValue; all: NumberPuzzleValue[] } | null>(null);
-
-  const [mostRecentTotalSeconds, setMostRecentTotalSeconds] = useState(
-    props.gamemodeSettings?.timerConfig?.isTimed === true
-      ? props.gamemodeSettings?.timerConfig?.seconds
-      : getGamemodeDefaultTimerValue(location)
-  );
 
   const [isComputeSolutionButtonClicked, setIsComputeSolutionButtonClicked] = useState(false);
 
@@ -157,7 +150,8 @@ const NumbersGame = (props: Props) => {
         </div>
         <NumberSelectionRow
           key={"number_selection"}
-          disabled={!isSelectionFinished}
+          // The original tiles are disabled when selection has not yet finished
+          disabled={!props.inProgress || !isSelectionFinished}
           onClick={props.onClick}
           numberTileStatuses={props.numberTileStatuses}
         />
@@ -222,15 +216,16 @@ const NumbersGame = (props: Props) => {
       Grid.push(
         <NumberRow
           key={`numbers-game-input ${i}`}
-          hasTimerEnded={props.hasTimerEnded}
           onClick={props.onClick}
           expression={guess}
           targetNumber={props.targetNumber}
           hasSubmit={!props.inProgress}
           setOperator={props.setOperator}
-          disabled={!isSelectionFinished || i > props.wordIndex}
+          disabled={!props.inProgress || !isSelectionFinished || i > props.wordIndex}
           rowIndex={i}
-          intermediaryGuessStatuses={props.numberTileStatuses.filter((x) => x.type === "intermediary") as any}
+          intermediaryTileStatuses={
+            props.numberTileStatuses.filter((x) => x.type === "intermediary") as IntermediaryTileStatus[]
+          }
         />
       );
     }
@@ -265,7 +260,11 @@ const NumbersGame = (props: Props) => {
   }
 
   function displayOutcome(): React.ReactNode {
-    if (props.inProgress || !props.hasTimerEnded || !props.targetNumber) {
+    if (props.inProgress) {
+      return;
+    }
+
+    if (props.targetNumber === undefined) {
       return;
     }
 
@@ -285,7 +284,9 @@ const NumbersGame = (props: Props) => {
           </MessageNotification>
         </>
       );
-    } else if (score === 10) {
+    }
+
+    if (score === 10) {
       return (
         <MessageNotification type="success">
           You got the target number!
@@ -293,7 +294,9 @@ const NumbersGame = (props: Props) => {
           <strong>{score}</strong> points
         </MessageNotification>
       );
-    } else if (score >= 1 && score <= 9) {
+    }
+
+    if (score >= 1 && score <= 9) {
       return (
         <MessageNotification type="success">
           You were <strong>{difference}</strong> away from the target number
@@ -301,15 +304,15 @@ const NumbersGame = (props: Props) => {
           <strong>{score}</strong> points
         </MessageNotification>
       );
-    } else {
-      return (
-        <MessageNotification type="error">
-          You were {difference} away from the target number
-          <br />
-          <strong>0</strong> points
-        </MessageNotification>
-      );
     }
+
+    return (
+      <MessageNotification type="error">
+        You were {difference} away from the target number
+        <br />
+        <strong>0</strong> points
+      </MessageNotification>
+    );
   }
 
   function displayBestSolution(): React.ReactNode {
@@ -383,7 +386,7 @@ const NumbersGame = (props: Props) => {
   const handleTimerToggle = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newGamemodeSettings: NumbersGameConfigProps["gamemodeSettings"] = {
       ...props.gamemodeSettings,
-      timerConfig: e.target.checked ? { isTimed: true, seconds: mostRecentTotalSeconds } : { isTimed: false },
+      timerConfig: e.target.checked ? { isTimed: true, seconds: props.totalSeconds } : { isTimed: false },
     };
 
     props.updateGamemodeSettings(newGamemodeSettings);
@@ -409,8 +412,8 @@ const NumbersGame = (props: Props) => {
             gamemodeSettings={props.gamemodeSettings}
             handleSimpleGamemodeSettingsChange={handleSimpleGamemodeSettingsChange}
             handleTimerToggle={handleTimerToggle}
-            setMostRecentTotalSeconds={setMostRecentTotalSeconds}
-            updateRemainingSeconds={props.updateRemainingSeconds}
+            resetCountdown={props.resetCountdown}
+            setTotalSeconds={props.setTotalSeconds}
             onLoadPresetGamemodeSettings={props.updateGamemodeSettings}
             onShowOfAddPresetModal={() => {}}
             onHideOfAddPresetModal={() => {}}
