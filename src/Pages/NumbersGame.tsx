@@ -144,7 +144,7 @@ const NumbersGame = (props: Props) => {
     NumberRows for intemediary calculations
     */
     Grid.push(
-      <div className="numbers-game-wrapper">
+      <div className="numbers-game-wrapper" key={"numbers-game-input"}>
         <div className="target-number">
           <NumberTile number={isSelectionFinished ? props.targetNumber : null} disabled={true} isReadOnly={true} />
         </div>
