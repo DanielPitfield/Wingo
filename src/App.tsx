@@ -303,6 +303,7 @@ export const App = () => {
                 {...commonWingoProps}
                 mode="limitless"
                 gamemodeSettings={getPageGamemodeSettings("/Wingo/Limitless") as WingoConfigProps["gamemodeSettings"]}
+                checkInDictionary={true}
               />
             </PageWrapper>
           }
