@@ -411,6 +411,7 @@ const Numble = (props: Props) => {
               ? `translate(${offset * 10 * X_SLANT}px, ${offset * 10 * Y_SLANT}px)`
               : undefined,
         }}
+        key={rowNumber}
       >
         {currentRowValues.map((value) => {
           const buttonBody =
