@@ -10,6 +10,8 @@ import { useLocation } from "react-router-dom";
 import { PagePath } from "../Data/PageNames";
 import { SettingsData } from "../Data/SaveData/Settings";
 import { setMostRecentNumbleConfigGamemodeSettings } from "../Data/SaveData/MostRecentGamemodeSettings";
+import { useCountdown } from "usehooks-ts";
+import { useCorrectChime, useFailureChime, useLightPingChime, useClickChime } from "../Data/Sounds";
 
 export const numbleGridShapes = ["square", "hexagon"] as const;
 export type numbleGridShape = typeof numbleGridShapes[number];
@@ -86,7 +88,14 @@ const NumbleConfig = (props: Props) => {
       ? props.gamemodeSettings?.guessTimerConfig.seconds
       : DEFAULT_NUMBLE_GUESS_TIMER_VALUE;
 
-  const [remainingGuessTimerSeconds, setRemainingGuessTimerSeconds] = useState(INITIAL_GUESS_TIMER_VALUE);
+  // The starting/total time of the guess timer
+  const [totalSeconds, setTotalSeconds] = useState(INITIAL_GUESS_TIMER_VALUE);
+
+  // How many seconds left on the guess timer?
+  const [remainingSeconds, { startCountdown, stopCountdown, resetCountdown }] = useCountdown({
+    countStart: totalSeconds,
+    intervalMs: 1000,
+  });
 
   const INITIAL_TEAM_TIMER_VALUE =
     props.gamemodeSettings?.timerConfig?.isTimed === true
@@ -102,6 +111,12 @@ const NumbleConfig = (props: Props) => {
 
   const [teamTimers, setTeamTimers] = useState(initialTeamTimers);
 
+  // Sounds
+  const [playCorrectChimeSoundEffect] = useCorrectChime(props.settings);
+  const [playFailureChimeSoundEffect] = useFailureChime(props.settings);
+  const [playLightPingSoundEffect] = useLightPingChime(props.settings);
+  const [playClickSoundEffect] = useClickChime(props.settings);
+
   // Determine and set the next team to play
   const nextTeamTurn = () => {
     const newCurrentTeamNumber = getNextTeamNumberWithRemainingTime(currentTeamNumber, teamTimers);
@@ -115,16 +130,17 @@ const NumbleConfig = (props: Props) => {
     setCurrentTeamNumber(newCurrentTeamNumber);
 
     if (gamemodeSettings.guessTimerConfig.isTimed) {
-      setRemainingGuessTimerSeconds(gamemodeSettings.guessTimerConfig.seconds);
+      resetCountdown();
     }
 
     // Next team rolls their own dice values
     setStatus("picked-awaiting-dice-roll");
   };
 
-  // Guess Timer
+  // Start global timer
   React.useEffect(() => {
-    if (!gamemodeSettings.guessTimerConfig.isTimed) {
+    // No need for a global timer if guess timer and team timers are both disabled
+    if (!gamemodeSettings.guessTimerConfig.isTimed && !gamemodeSettings.timerConfig.isTimed) {
       return;
     }
 
@@ -133,19 +149,38 @@ const NumbleConfig = (props: Props) => {
       return;
     }
 
+    startCountdown();
+  }, [gamemodeSettings.guessTimerConfig.isTimed, gamemodeSettings.timerConfig.isTimed, status, totalSeconds]);
+
+  // Handle guess timer
+  React.useEffect(() => {
+    // Check remaining seconds on timer
+    if (remainingSeconds <= 0) {
+      stopCountdown();
+      playFailureChimeSoundEffect();
+    }
+
+    // Only decrease time when dice have been rolled and a pick must be made
+    if (status !== "dice-rolled-awaiting-pick") {
+      return;
+    }
+
+    if (!gamemodeSettings.guessTimerConfig.isTimed) {
+      return;
+    }
+
     // Ran out of time making guess and game ends when you run out of time is OFF
-    if (remainingGuessTimerSeconds <= 0 && !gamemodeSettings.guessTimerConfig.timerBehaviour.isGameOverWhenNoTimeLeft) {
+    if (remainingSeconds <= 0 && !gamemodeSettings.guessTimerConfig.timerBehaviour.isGameOverWhenNoTimeLeft) {
       // Penalty will now get applied (invoked by Numble timer useEffect()s)
 
       // Dice must be rolled again (ran out of time to use current roll)
       setStatus("picked-awaiting-dice-roll");
-
       nextTeamTurn();
-
       return;
     }
 
-    if (remainingGuessTimerSeconds <= 0 && gamemodeSettings.guessTimerConfig.timerBehaviour.isGameOverWhenNoTimeLeft) {
+    // Ran out of time making guess and game ends when you run out of time is ON
+    if (remainingSeconds <= 0 && gamemodeSettings.guessTimerConfig.timerBehaviour.isGameOverWhenNoTimeLeft) {
       // Set current team's remaining time to zero
       const newTeamTimers = teamTimers.map((teamTimerInfo) => {
         if (teamTimerInfo.teamNumber === currentTeamNumber) {
@@ -153,30 +188,29 @@ const NumbleConfig = (props: Props) => {
         }
         return teamTimerInfo;
       });
-      updateTeamTimers(newTeamTimers);
 
+      setTeamTimers(newTeamTimers);
       nextTeamTurn();
-    }
-
-    const guessTimer = setInterval(() => {
-      if (remainingGuessTimerSeconds > 0) {
-        setRemainingGuessTimerSeconds(remainingGuessTimerSeconds - 1);
-      }
-    }, 1000);
-
-    return () => {
-      clearInterval(guessTimer);
-    };
-  }, [setRemainingGuessTimerSeconds, remainingGuessTimerSeconds, gamemodeSettings.guessTimerConfig.isTimed, status]);
-
-  // Game Timer
-  React.useEffect(() => {
-    if (!gamemodeSettings.timerConfig.isTimed) {
       return;
+    }
+  }, [gamemodeSettings.guessTimerConfig.isTimed, status, teamTimers, remainingSeconds]);
+
+  // TODO: Infinite loops, should be able to implement one global timer which can handle/direct both guess timer and team timers
+
+  // Handle team timers
+  React.useEffect(() => {
+    if (remainingSeconds <= 0) {
+      stopCountdown();
+      playFailureChimeSoundEffect();
     }
 
     // Only decrease time when dice have been rolled and a pick must be made
     if (status !== "dice-rolled-awaiting-pick") {
+      return;
+    }
+
+    // If team timer(s) is/are disabled, early return here
+    if (!gamemodeSettings.timerConfig.isTimed) {
       return;
     }
 
@@ -202,7 +236,7 @@ const NumbleConfig = (props: Props) => {
     return () => {
       clearInterval(timer);
     };
-  }, [setTeamTimers, teamTimers, gamemodeSettings.timerConfig.isTimed, status]);
+  }, [gamemodeSettings.timerConfig.isTimed, status, teamTimers, remainingSeconds]);
 
   React.useEffect(() => {
     if (props.campaignConfig.isCampaignLevel) {
@@ -236,10 +270,6 @@ const NumbleConfig = (props: Props) => {
     setTeamTimers(newTeamTimers);
   }
 
-  function updateRemainingGuessTimerSeconds(newGuessTimerSeconds: number) {
-    setRemainingGuessTimerSeconds(newGuessTimerSeconds);
-  }
-
   function updateGamemodeSettings(newGamemodeSettings: NumbleConfigProps["gamemodeSettings"]) {
     setGamemodeSettings(newGamemodeSettings);
   }
@@ -253,8 +283,10 @@ const NumbleConfig = (props: Props) => {
       currentTeamNumber={currentTeamNumber}
       setCurrentTeamNumber={setCurrentTeamNumber}
       updateGamemodeSettings={updateGamemodeSettings}
-      remainingGuessTimerSeconds={remainingGuessTimerSeconds}
-      updateRemainingGuessTimerSeconds={updateRemainingGuessTimerSeconds}
+      remainingSeconds={remainingSeconds}
+      totalSeconds={totalSeconds}
+      resetCountdown={resetCountdown}
+      setTotalSeconds={setTotalSeconds}
       teamTimers={teamTimers}
       updateTeamTimers={updateTeamTimers}
       nextTeamTurn={nextTeamTurn}
