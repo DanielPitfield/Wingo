@@ -57,7 +57,7 @@ export const WordRow = (props: Props) => {
       wordArray: props.targetArray ?? [],
     };
 
-    // Array of (character, status) for every letter
+    // Array of (letter, status) for every letter
     return getWordRowStatusSummary(statusChecks);
   };
 
@@ -78,7 +78,7 @@ export const WordRow = (props: Props) => {
     }
 
     // Unrevealed letters of the display row in Puzzle mode
-    if (location === "/Wingo/Puzzle" && props.isReadOnly && guessSummary[index]?.character === " ") {
+    if (location === "/Wingo/Puzzle" && props.isReadOnly && guessSummary[index]?.letter === " ") {
       return "not set";
     }
 

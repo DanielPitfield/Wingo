@@ -111,20 +111,22 @@ export const Keyboard = (props: Props) => {
 
   function getKeyboardStatuses() {
     // Letter and status array
-    let keyboardStatuses = alphabet.map((x) => ({
+    let defaultKeyboardStatuses = alphabet.map((x) => ({
       letter: x,
       status: "not set",
     }));
+    
+    // Add apostrophe (if there is one within the target word)
+    if (hasApostrophe) {
+      defaultKeyboardStatuses.push({ letter: "'", status: "not set" });
+    }
 
     if (isModeWithoutKeyboardStatuses(location)) {
       // Just use standard statuses (where all are "not set")
-      return keyboardStatuses;
+      return defaultKeyboardStatuses;
     }
 
-    // Add apostrophe (if there is one within the target word)
-    if (hasApostrophe) {
-      keyboardStatuses.push({ letter: "'", status: "not set" });
-    }
+    
 
     // For each guess
     for (const guess of props.guesses) {
@@ -142,7 +144,7 @@ export const Keyboard = (props: Props) => {
 
       for (const letterSummary of guessSummary) {
         // Find element in keyboardStatuses for the letter in question
-        const letter = keyboardStatuses.find((x) => x.letter === letterSummary.character);
+        const letter = defaultKeyboardStatuses.find((x) => x.letter === letterSummary.letter);
 
         if (!letter) {
           continue;
@@ -161,7 +163,7 @@ export const Keyboard = (props: Props) => {
         }
       }
     }
-    return keyboardStatuses;
+    return defaultKeyboardStatuses;
   }
 
   function populateKeyboard(RowString: string) {
