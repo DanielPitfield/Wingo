@@ -19,6 +19,8 @@
     flex-grow: 1;
     max-width: 35em;
     box-shadow: 0 0 3px 3px #333;
+    overflow-y: scroll !important;
+    max-height: 75vh;
     .modal-header {
       display: flex;
       align-items: center;
