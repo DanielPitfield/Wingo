@@ -25,6 +25,10 @@ export const NumPad = (props: Props) => {
       return;
     }
 
+    if (!props.settings.gameplay.showKeyboardUi) {
+      return;
+    }
+
     const handleKeyDown = (event: KeyboardEvent) => {
       event.preventDefault();
       event.stopPropagation();
@@ -78,7 +82,7 @@ export const NumPad = (props: Props) => {
   }
 
   if (!props.settings.gameplay.showKeyboardUi) {
-    return <></>;
+    return null;
   }
 
   return (

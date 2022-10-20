@@ -197,7 +197,7 @@ export const Keyboard = (props: Props) => {
   }
 
   if (!props.settings.gameplay.showKeyboardUi) {
-    return;
+    return null;
   }
 
   return (
