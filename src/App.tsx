@@ -104,6 +104,14 @@ export const App = () => {
     navigate("/Splashscreen");
     // After delay, navigate to entry page
     window.setTimeout(() => navigate(newEntryPage), LOADING_TIMEOUT_MS + FADE_OUT_DURATION_MS);
+
+    // When clicking 'Back' in the browser
+    window.onpopstate = () => {
+      // Navigate back using the history
+      navigate(-1);
+      // Always stop/cancel random session
+      setIsRandomSession(false);
+    };
   }, []);
 
   React.useEffect(() => {
@@ -133,16 +141,6 @@ export const App = () => {
       return;
     }
   }, [location]);
-
-  React.useEffect(() => {
-    // Clicking 'Back' in the browser
-    window.onpopstate = () => {
-      // Navigate back using the history
-      navigate(-1);
-      // Always stop/cancel random session
-      setIsRandomSession(false);
-    };
-  }, []);
 
   React.useEffect(() => {
     if (loadingState === "loaded") {
