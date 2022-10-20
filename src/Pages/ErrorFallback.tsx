@@ -5,6 +5,7 @@ import { AiOutlineMail } from "react-icons/ai";
 import { FiRefreshCw } from "react-icons/fi";
 import { SettingsData } from "../Data/SaveData/Settings";
 import { VERSION } from "../Data/Version";
+import { useCopyToClipboard } from "usehooks-ts";
 
 interface Props {
   error: Error;
@@ -14,6 +15,8 @@ interface Props {
 
 export const ErrorFallback = (props: Props) => {
   // TODO: Save data/local storage, window.naviagtor?
+
+  const [copiedValue, copy] = useCopyToClipboard();
 
   // The error information, settings and version number (formatted)
   const message = `${props.error.message}\n\n
@@ -40,7 +43,7 @@ export const ErrorFallback = (props: Props) => {
           className="error-fallback-copy"
           mode="default"
           onClick={() => {
-            navigator.clipboard.writeText(message);
+            copy(message);
           }}
         >
           <FaRegCopy />
