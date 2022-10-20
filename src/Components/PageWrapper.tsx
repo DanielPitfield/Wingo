@@ -25,6 +25,8 @@ export const PageWrapper = (props: Props) => {
 
   const navigate = useNavigate();
 
+  const wrappedPage = pageDescriptions.find((page) => page.path === location);
+
   // Modal explaining current gamemode, should it be currently shown?
   const [isHelpInfoShown, setIsHelpInfoShown] = useState(false);
 
@@ -55,8 +57,10 @@ export const PageWrapper = (props: Props) => {
                 </Button>
               </nav>
             )}
-            <h1 className="title">{pageDescriptions.find((x) => x.path === location)?.title}</h1>
-            {Boolean(pageDescriptions.find((x) => x.path === location)?.helpInfo) && (
+
+            <h1 className="title">{wrappedPage?.title}</h1>
+
+            {wrappedPage?.helpInfo !== undefined && (
               <Button
                 mode="default"
                 className="help-info-button"
@@ -67,6 +71,7 @@ export const PageWrapper = (props: Props) => {
                 <FiHelpCircle /> Help
               </Button>
             )}
+
             <Button
               mode="default"
               className="props.settings-button"
@@ -78,6 +83,7 @@ export const PageWrapper = (props: Props) => {
             >
               <FiSettings /> Settings
             </Button>
+
             <div className="gold_counter" onClick={() => navigate("/Challenges")}>
               <img className="gold_coin_image" src={GoldCoin} alt="Gold" />
               {props.gold.toLocaleString("en-GB")}
@@ -85,7 +91,7 @@ export const PageWrapper = (props: Props) => {
           </div>
         </>
       )}
-      
+
       {props.children}
 
       <ErrorBoundary
@@ -99,7 +105,7 @@ export const PageWrapper = (props: Props) => {
         onReset={() => window.location.reload()}
       ></ErrorBoundary>
 
-      {Boolean(isHelpInfoShown && location !== "/Home" && location !== "/TitlePage" && location !== "/Settings") && (
+      {isHelpInfoShown && wrappedPage?.helpInfo !== undefined && (
         <HelpInformation onClose={() => setIsHelpInfoShown(false)}></HelpInformation>
       )}
 
