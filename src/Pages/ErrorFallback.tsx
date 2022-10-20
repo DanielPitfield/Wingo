@@ -14,14 +14,15 @@ interface Props {
 }
 
 export const ErrorFallback = (props: Props) => {
-  // TODO: Save data/local storage, window.naviagtor?
+  // TODO: window.naviagtor?
 
   const [copiedValue, copy] = useCopyToClipboard();
 
   // The error information, settings and version number (formatted)
   const message = `${props.error.message}\n\n
   ${props.error.stack ?? ""}\n\n
-  ${JSON.stringify(props.settingsData)}\n\n
+  ${JSON.stringify(props.settingsData, undefined, 4)}\n\n
+  ${JSON.stringify(localStorage, undefined, 4)}\n\n
   ${VERSION}`;
 
   function prepareEmail() {
