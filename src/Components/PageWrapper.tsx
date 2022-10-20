@@ -39,7 +39,7 @@ export const PageWrapper = (props: Props) => {
           settingsData={getSettings()}
         ></ErrorFallback>
       )}
-      onReset={() => window.location.reload()}
+      onReset={() => navigate(0)}
     >
       <div className="app" data-automation-id="app" data-automation-page-name={location}>
         {location !== "/Splashscreen" && location !== "/TitlePage" && (

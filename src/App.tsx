@@ -37,6 +37,7 @@ import { PageWrapper } from "./Components/PageWrapper";
 import { getCampaignProgress } from "./Data/SaveData/CampaignProgress";
 import { getSettings, saveSettings, SettingsData } from "./Data/SaveData/Settings";
 import { readGold } from "./Data/SaveData/Gold";
+import { ErrorBoundary } from "react-error-boundary";
 
 export const App = () => {
   // What is the current path?
@@ -627,11 +628,16 @@ export const App = () => {
         <Route
           path="*"
           element={
-            <ErrorFallback
-              error={new Error("Page not found")}
-              resetErrorBoundary={() => navigate("/Home")}
-              settingsData={getSettings()}
-            />
+            <ErrorBoundary
+              fallbackRender={() => (
+                <ErrorFallback
+                  error={new Error("Page not found")}
+                  resetErrorBoundary={() => navigate("/Home")}
+                  settingsData={getSettings()}
+                ></ErrorFallback>
+              )}
+              onReset={() => navigate(0)}
+            ></ErrorBoundary>
           }
         />
       </Routes>
