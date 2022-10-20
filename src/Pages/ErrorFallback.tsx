@@ -4,21 +4,22 @@ import { FaRegCopy } from "react-icons/fa";
 import { AiOutlineMail } from "react-icons/ai";
 import { FiRefreshCw } from "react-icons/fi";
 import { SettingsData } from "../Data/SaveData/Settings";
+import { VERSION } from "../Data/Version";
 
 interface Props {
   error: Error;
   resetErrorBoundary: () => void;
   settingsData: SettingsData;
-  version: string;
 }
 
 export const ErrorFallback = (props: Props) => {
-  // TODO: Save data/local storage, window.naviagtor, prompt/ask for dxDiag file or system specs?
+  // TODO: Save data/local storage, window.naviagtor?
 
   // The error information, settings and version number (formatted)
-  const message = `${props.error.message}\n\n${props.error.stack || ""}\n\n${JSON.stringify(props.settingsData)}\n\n${
-    props.version
-  }`;
+  const message = `${props.error.message}\n\n
+  ${props.error.stack ?? ""}\n\n
+  ${JSON.stringify(props.settingsData)}\n\n
+  ${VERSION}`;
 
   function prepareEmail() {
     // The email address that the bug reports will be sent to

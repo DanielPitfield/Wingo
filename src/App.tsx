@@ -16,7 +16,6 @@ import { AllCampaignAreas } from "./Data/CampaignAreas/AllCampaignAreas";
 import { Settings } from "./Pages/Settings";
 import OnlyConnect, { OnlyConnectProps } from "./Pages/OnlyConnect";
 import { useBackgroundMusic } from "./Data/Sounds";
-import { VERSION } from "./Data/Version";
 import { ErrorFallback } from "./Pages/ErrorFallback";
 import SameLetterWords, { SameLetterWordsProps } from "./Pages/SameLetterWords";
 import NumberSets, { NumberSetsProps } from "./Pages/NumberSets";
@@ -634,7 +633,6 @@ export const App = () => {
               error={new Error("Page not found")}
               resetErrorBoundary={() => navigate("/Home")}
               settingsData={getSettings()}
-              version={VERSION}
             />
           }
         />

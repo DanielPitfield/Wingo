@@ -85,23 +85,24 @@ export const PageWrapper = (props: Props) => {
           </div>
         </>
       )}
+      
       {props.children}
+
       <ErrorBoundary
         fallbackRender={({ error, resetErrorBoundary }) => (
           <ErrorFallback
             error={error}
             resetErrorBoundary={resetErrorBoundary}
             settingsData={getSettings()}
-            version={VERSION}
           ></ErrorFallback>
         )}
         onReset={() => window.location.reload()}
-      >
-        {/*pageComponent*/}
-      </ErrorBoundary>
+      ></ErrorBoundary>
+
       {Boolean(isHelpInfoShown && location !== "/Home" && location !== "/TitlePage" && location !== "/Settings") && (
         <HelpInformation onClose={() => setIsHelpInfoShown(false)}></HelpInformation>
       )}
+
       <div className="version">{VERSION}</div>
     </div>
   );
