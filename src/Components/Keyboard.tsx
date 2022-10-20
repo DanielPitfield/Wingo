@@ -4,7 +4,7 @@ import { Button } from "./Button";
 import { useClickChime } from "../Data/Sounds";
 import { PagePath } from "../Data/PageNames";
 import { FiChevronLeft, FiCornerDownLeft } from "react-icons/fi";
-import { getWordRowStatusSummary, WordRowStatusChecks } from "../Helpers/getWordRowStatusSummary";
+import { getWordRowStatusSummary, WordRowStatusChecks, WordRowStatusSummary } from "../Helpers/getWordRowStatusSummary";
 import { LetterTileStatus } from "./LetterTile";
 import { DEFAULT_ALPHABET } from "../Pages/WingoConfig";
 import { useLocation } from "react-router-dom";
@@ -48,6 +48,10 @@ export const Keyboard = (props: Props) => {
 
   React.useEffect(() => {
     if (props.disabled) {
+      return;
+    }
+
+    if (!props.settings.gameplay.showKeyboardUi) {
       return;
     }
 
@@ -111,11 +115,11 @@ export const Keyboard = (props: Props) => {
 
   function getKeyboardStatuses() {
     // Letter and status array
-    let defaultKeyboardStatuses = alphabet.map((x) => ({
+    const defaultKeyboardStatuses: WordRowStatusSummary = alphabet.map((x) => ({
       letter: x,
       status: "not set",
     }));
-    
+
     // Add apostrophe (if there is one within the target word)
     if (hasApostrophe) {
       defaultKeyboardStatuses.push({ letter: "'", status: "not set" });
@@ -126,7 +130,7 @@ export const Keyboard = (props: Props) => {
       return defaultKeyboardStatuses;
     }
 
-    
+    const keyboardStatuses = defaultKeyboardStatuses.slice();
 
     // For each guess
     for (const guess of props.guesses) {
@@ -144,7 +148,7 @@ export const Keyboard = (props: Props) => {
 
       for (const letterSummary of guessSummary) {
         // Find element in keyboardStatuses for the letter in question
-        const letter = defaultKeyboardStatuses.find((x) => x.letter === letterSummary.letter);
+        const letter = keyboardStatuses.find((x) => x.letter === letterSummary.letter);
 
         if (!letter) {
           continue;
@@ -163,18 +167,14 @@ export const Keyboard = (props: Props) => {
         }
       }
     }
-    return defaultKeyboardStatuses;
+
+    return keyboardStatuses;
   }
 
-  function populateKeyboard(RowString: string) {
-    const keyboardStatuses = getKeyboardStatuses();
+  function populateKeyboard(rowString: string) {
+    return rowString.split("").map((letter) => {
+      const letterStatus = getKeyboardStatuses().find((x) => x.letter.toUpperCase() === letter.toUpperCase())?.status;
 
-    if (!keyboardStatuses || keyboardStatuses.length <= 0) {
-      return;
-    }
-
-    return RowString.split("").map((letter) => {
-      const letterStatus = keyboardStatuses.find((x) => x.letter.toUpperCase() === letter.toUpperCase())?.status;
       // The space key uses a different className (as it needs to be styled to be wider)
       const isSpaceKey = letter === "-";
 
@@ -197,7 +197,7 @@ export const Keyboard = (props: Props) => {
   }
 
   if (!props.settings.gameplay.showKeyboardUi) {
-    return <></>;
+    return;
   }
 
   return (
