@@ -14,8 +14,6 @@ interface Props {
 }
 
 export const ErrorFallback = (props: Props) => {
-  // TODO: window.naviagtor?
-
   const [copiedValue, copy] = useCopyToClipboard();
 
   // The error information, settings and version number (formatted)
