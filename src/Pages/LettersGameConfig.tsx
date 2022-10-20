@@ -158,8 +158,6 @@ const LettersGameConfig = (props: Props) => {
       return;
     }
 
-    // TODO: Better way to set when letter selection has finished?
-
     // Full, complete letter selection
     if (getNumSelectedLetters() === gamemodeSettings.numLetters) {
       setHasLetterSelectionFinished(true);

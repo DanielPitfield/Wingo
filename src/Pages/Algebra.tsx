@@ -79,7 +79,6 @@ const Algebra = (props: Props) => {
       : getGamemodeDefaultTimerValue(location)
   );
 
-  // TODO: Is it ok to use derived state like this? 
   // How many seconds left on the timer?
   const [remainingSeconds, { startCountdown, stopCountdown, resetCountdown }] = useCountdown({
     countStart: totalSeconds,
