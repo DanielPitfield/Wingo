@@ -1,5 +1,6 @@
 import { AiFillCloseSquare } from "react-icons/ai";
 import { pageDescription } from "../Data/PageDescriptions";
+import { getGamemodeSettingsPresets } from "../Data/SaveData/Presets";
 import { DraggableItem } from "./DraggableItem";
 
 interface Props {
@@ -9,12 +10,31 @@ interface Props {
 }
 
 export const GameshowOrderItem = (props: Props) => {
-  // TODO: Add more sub-elements that allow configuration of the properties of the gamemode (e.g wordLength)
-  // TODO: CSS rule .gameshow-queued-gamemode
+  const presets = getGamemodeSettingsPresets(props.gameshowMode.path);
+
+  // TODO: onChange and value of preset select
   // TODO: Remove/close button can't be clicked
+
   return (
     <DraggableItem id={props.id}>
-      <div className="gameshow-queued-gamemode">{props.gameshowMode.title}</div>
+      <div className="gameshow-queued-gamemode-tile">{props.gameshowMode.title}</div>
+
+      <label>
+        <select
+          onChange={() => {}}
+          className="gameshow-queued-gamemode-preset-select"
+          name="preset"
+          value={""}
+        >
+          {presets.map((preset) => (
+            <option key={preset.name} value={preset.name}>
+              {preset.name}
+            </option>
+          ))}
+        </select>
+        Preset
+      </label>
+
       <AiFillCloseSquare onClick={() => props.onClick(props.id)} />
     </DraggableItem>
   );

@@ -25,8 +25,8 @@ export function addGamemodeSettingsPreset<TGamemodeSettings>(
 }
 
 /**
- * Gets the saved gamemode settings presets for Wingo Config, or null if no saved gamemode settings were found.
- * @returns The saved gamemode settings presets for Wingo Config to save.
+ * Gets the saved gamemode settings presets for a gamemode
+ * @returns The saved gamemode settings of the gamemode played at the provided page.
  */
 export function getGamemodeSettingsPresets<TGamemodeSettings>(
   page: PagePath

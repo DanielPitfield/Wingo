@@ -177,7 +177,7 @@ export const CustomGameshow = (props: Props) => {
           onChange={(e) => {
             setCurrentGameshowCategoryFilter(e.target.value === "Any" ? null : (e.target.value as gamemodeCategory));
           }}
-          className="gameshowCategoryFilter-input"
+          className="gameshow-category-filter"
           name="gameshowCategoryFilter"
           value={currentGameshowCategoryFilter ?? "Any"}
         >
