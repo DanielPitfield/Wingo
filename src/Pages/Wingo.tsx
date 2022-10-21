@@ -6,7 +6,6 @@ import { MessageNotification } from "../Components/MessageNotification";
 import ProgressBar, { GreenToRedColorTransition } from "../Components/ProgressBar";
 import { WingoConfigProps, WingoMode } from "./WingoConfig";
 import { Theme } from "../Data/Themes";
-
 import { useCorrectChime, useFailureChime, useLightPingChime } from "../Data/Sounds";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
 import { categoryMappings } from "../Data/WordArrayMappings";
@@ -17,6 +16,9 @@ import { getNumNewLimitlessLives } from "../Helpers/getNumNewLimitlessLives";
 import WingoGamemodeSettings from "../Components/GamemodeSettingsOptions/WingoGamemodeSettings";
 import { SettingsData } from "../Data/SaveData/Settings";
 import { getTimeUntilPeriodicReset } from "../Helpers/getTimeUntilPeriodicReset";
+import { useLocation } from "react-router-dom";
+import { PagePath } from "../Data/PageNames";
+import { isDailyMode, isTimePeriodicMode, isWeeklyMode } from "../Helpers/isTimePeriodicMode";
 
 interface Props {
   isCampaignLevel: boolean;
@@ -59,6 +61,8 @@ interface Props {
 }
 
 const Wingo = (props: Props) => {
+  const location = useLocation().pathname as PagePath;
+  
   const [keyboardDisabled, setKeyboardDisabled] = useState(false);
 
   const [timeUntilDailyReset, setTimeUntilDailyReset] = useState(getTimeUntilPeriodicReset("Day"));
@@ -73,24 +77,6 @@ const Wingo = (props: Props) => {
       ? props.gamemodeSettings?.maxLivesConfig?.maxLives
       : DEFAULT_WINGO_INCREASING_MAX_NUM_LIVES
   );
-
-  // Is the mode a mode which resets daily/weekly?
-  const isTimePeriodicMode = (): boolean => {
-    const timePeriodSearchStrings = ["daily", "weekly"];
-
-    // The mode contains any of the above timePeriodSearchStrings
-    return timePeriodSearchStrings.some((timePeriodString) => {
-      return props.mode.toLowerCase().includes(timePeriodString.toLowerCase());
-    });
-  };
-
-  const isDailyMode = (): boolean => {
-    return props.mode.toLowerCase().includes("daily");
-  };
-
-  const isWeeklyMode = (): boolean => {
-    return props.mode.toLowerCase().includes("weekly");
-  };
 
   const isModeWithDisplayRow = (): boolean => {
     const modesWithDisplayRow: typeof props.mode[] = ["puzzle", "conundrum"];
@@ -343,7 +329,7 @@ const Wingo = (props: Props) => {
   // Render the timer to the next periodic reset
   React.useEffect(() => {
     // Not a daily/weekly mode
-    if (!isTimePeriodicMode()) {
+    if (!isTimePeriodicMode(location)) {
       return;
     }
 
@@ -353,7 +339,7 @@ const Wingo = (props: Props) => {
 
     const intervalId = setInterval(
       () =>
-        isDailyMode()
+        isDailyMode(location)
           ? setTimeUntilDailyReset(getTimeUntilPeriodicReset("Day"))
           : setTimeUntilWeeklyReset(getTimeUntilPeriodicReset("Week")),
       1000
@@ -421,14 +407,14 @@ const Wingo = (props: Props) => {
       {props.gameshowScore !== undefined && <div className="gameshow-score">{displayGameshowScore()}</div>}
       {props.inProgress && <div>{displayHint()}</div>}
       <div>{displayOutcome()}</div>
-      {isDailyMode() && !props.inProgress && (
+      {isDailyMode(location) && !props.inProgress && (
         <MessageNotification type="default">Next Daily reset in: {timeUntilDailyReset}</MessageNotification>
       )}
-      {isWeeklyMode() && !props.inProgress && (
+      {isWeeklyMode(location) && !props.inProgress && (
         <MessageNotification type="default">Next Weekly reset in: {timeUntilWeeklyReset}</MessageNotification>
       )}
       <div>
-        {!isTimePeriodicMode() && !props.inProgress && (
+        {!isTimePeriodicMode(location) && !props.inProgress && (
           <Button
             mode={"accept"}
             settings={props.settings}

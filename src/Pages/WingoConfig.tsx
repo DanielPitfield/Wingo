@@ -40,6 +40,7 @@ import {
 } from "../Data/SaveData/MostRecentGamemodeSettings";
 import { useCountdown } from "usehooks-ts";
 import { useCorrectChime, useFailureChime, useLightPingChime, useClickChime } from "../Data/Sounds";
+import { isTimePeriodicMode } from "../Helpers/isTimePeriodicMode";
 
 export const wingoModes = [
   "daily",
@@ -386,12 +387,7 @@ const WingoConfig = (props: Props) => {
       return;
     }
 
-    if (
-      props.mode === "daily" ||
-      props.mode === "crossword/weekly" ||
-      props.mode === "crossword/daily" ||
-      props.mode === "limitless"
-    ) {
+    if (isTimePeriodicMode(location) || props.mode === "limitless") {
       // Do not reset the game if the gamemode is daily/weekly, as the gamemodeSettings are instead loaded from localStorage (#304, #305)
       return;
     }
@@ -465,50 +461,50 @@ const WingoConfig = (props: Props) => {
     }
 
     const intervalId = setInterval(() => {
-        // This return is needed to prevent a letter being revealed after trying to enter a word (because an interval was queued)
-        if (hasSubmitLetter) {
-          return;
+      // This return is needed to prevent a letter being revealed after trying to enter a word (because an interval was queued)
+      if (hasSubmitLetter) {
+        return;
+      }
+
+      if (!targetWord) {
+        return;
+      }
+
+      if (
+        // Stop revealing letters when there is only puzzleLeaveNumBlanks left to reveal
+        revealedLetterIndexes.length >=
+        targetWord.length - gamemodeSettings.puzzleLeaveNumBlanks
+      ) {
+        return;
+      }
+
+      const newRevealedLetterIndexes = revealedLetterIndexes.slice();
+
+      if (revealedLetterIndexes.length === 0) {
+        // Start by revealing the first letter
+        newRevealedLetterIndexes.push(0);
+      } else if (revealedLetterIndexes.length === 1) {
+        // Next reveal the last letter
+        newRevealedLetterIndexes.push(targetWord.length - 1);
+      } else {
+        let newIndex: number;
+
+        // Keep looping to find a random index that hasn't been used yet
+        do {
+          newIndex = Math.floor(Math.random() * targetWord.length);
+        } while (revealedLetterIndexes.includes(newIndex));
+
+        // Reveal a random letter
+        if (newIndex >= 0 && newIndex <= targetWord.length - 1) {
+          // Check index is in the range (0, wordLength-1)
+          newRevealedLetterIndexes.push(newIndex);
         }
+      }
+      setRevealedLetterIndexes(newRevealedLetterIndexes);
+    }, gamemodeSettings.puzzleRevealSeconds * 1000);
 
-        if (!targetWord) {
-          return;
-        }
-
-        if (
-          // Stop revealing letters when there is only puzzleLeaveNumBlanks left to reveal
-          revealedLetterIndexes.length >=
-          targetWord.length - gamemodeSettings.puzzleLeaveNumBlanks
-        ) {
-          return;
-        }
-
-        const newRevealedLetterIndexes = revealedLetterIndexes.slice();
-
-        if (revealedLetterIndexes.length === 0) {
-          // Start by revealing the first letter
-          newRevealedLetterIndexes.push(0);
-        } else if (revealedLetterIndexes.length === 1) {
-          // Next reveal the last letter
-          newRevealedLetterIndexes.push(targetWord.length - 1);
-        } else {
-          let newIndex: number;
-
-          // Keep looping to find a random index that hasn't been used yet
-          do {
-            newIndex = Math.floor(Math.random() * targetWord.length);
-          } while (revealedLetterIndexes.includes(newIndex));
-
-          // Reveal a random letter
-          if (newIndex >= 0 && newIndex <= targetWord.length - 1) {
-            // Check index is in the range (0, wordLength-1)
-            newRevealedLetterIndexes.push(newIndex);
-          }
-        }
-        setRevealedLetterIndexes(newRevealedLetterIndexes);
-      }, gamemodeSettings.puzzleRevealSeconds * 1000);
-  
-      return () => {
-        clearInterval(intervalId);
+    return () => {
+      clearInterval(intervalId);
     };
   }, [props.mode, targetWord, revealedLetterIndexes, hasSubmitLetter]);
 
@@ -737,7 +733,7 @@ const WingoConfig = (props: Props) => {
     // Checking against the dictionary is enabled and the word submitted was not in the dictionary
     if (!isCurrentGuessInDictionary()) {
       setInDictionary(false);
-      
+
       if (props.checkInDictionary) {
         setInProgress(false);
         outcome = "failure";
