@@ -24,7 +24,7 @@ export const Button = (props: ButtonProps) => {
       onClick={(e) => {
         props.onClick?.(e);
 
-        if (props.useSoundEffect !== false) {
+        if (props.useSoundEffect) {
           playClickSoundEffect();
         }
       }}

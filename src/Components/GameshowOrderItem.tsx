@@ -1,6 +1,7 @@
 import { AiFillCloseSquare } from "react-icons/ai";
 import { pageDescription } from "../Data/PageDescriptions";
 import { getGamemodeSettingsPresets } from "../Data/SaveData/Presets";
+import { Button } from "./Button";
 import { DraggableItem } from "./DraggableItem";
 
 interface Props {
@@ -20,12 +21,7 @@ export const GameshowOrderItem = (props: Props) => {
       <div className="gameshow-queued-gamemode-tile">{props.gameshowMode.title}</div>
 
       <label>
-        <select
-          onChange={() => {}}
-          className="gameshow-queued-gamemode-preset-select"
-          name="preset"
-          value={""}
-        >
+        <select onChange={() => {}} className="gameshow-queued-gamemode-preset-select" name="preset" value={""}>
           {presets.map((preset) => (
             <option key={preset.name} value={preset.name}>
               {preset.name}
@@ -35,7 +31,15 @@ export const GameshowOrderItem = (props: Props) => {
         Preset
       </label>
 
-      <AiFillCloseSquare onClick={() => props.onClick(props.id)} />
+      <Button
+        className="gameshow-queued-gamemode-close"
+        mode={"default"}
+        onClick={() => {
+          props.onClick(props.id);
+        }}
+      >
+        <AiFillCloseSquare />
+      </Button>
     </DraggableItem>
   );
 };
