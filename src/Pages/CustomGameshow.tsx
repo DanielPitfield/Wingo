@@ -134,8 +134,9 @@ export const CustomGameshow = (props: Props) => {
   function displayQueuedModes(): React.ReactNode {
     const draggableGameshowModeTiles = (
       <div className="gameshow-queued-modes-wrapper" ref={parent}>
-        {queuedModes?.map((gameshowMode) => (
+        {queuedModes?.map((gameshowMode, index) => (
           <GameshowOrderItem
+            key={`${gameshowMode.id}-index-${index}`}
             id={gameshowMode.id}
             gameshowMode={gameshowMode.pageDescription}
             onClick={removeModeFromQueue}
