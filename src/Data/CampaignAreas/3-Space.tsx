@@ -1,5 +1,6 @@
 import { Themes } from "../Themes";
 import { AreaConfig } from "../../Pages/Area";
+import { commonWingoSettings } from "../DefaultGamemodeSettings";
 
 export const area: AreaConfig = {
   name: "Space",
@@ -13,15 +14,8 @@ export const area: AreaConfig = {
       levelProps: {
         mode: "repeat",
         targetWord: "space",
-        enforceFullLengthGuesses: true,
-        defaultNumGuesses: 6,
-
         gamemodeSettings: {
-          wordLength: 5,
-          isFirstLetterProvided: false,
-          puzzleLeaveNumBlanks: 0,
-          puzzleRevealSeconds: 0,
-          timerConfig: { isTimed: false },
+          ...commonWingoSettings,
         },
       },
     },
@@ -41,14 +35,8 @@ export const area: AreaConfig = {
         levelProps: {
           mode: "repeat",
           targetWord: "earth",
-          enforceFullLengthGuesses: true,
-          defaultNumGuesses: 6,
           gamemodeSettings: {
-            wordLength: 5,
-            isFirstLetterProvided: true,
-            puzzleLeaveNumBlanks: 0,
-            puzzleRevealSeconds: 0,
-            timerConfig: { isTimed: false },
+            ...commonWingoSettings,
           },
         },
       },
@@ -66,14 +54,9 @@ export const area: AreaConfig = {
         levelProps: {
           mode: "repeat",
           targetWord: "mars",
-          enforceFullLengthGuesses: true,
-          defaultNumGuesses: 6,
           gamemodeSettings: {
+            ...commonWingoSettings,
             wordLength: 4,
-            isFirstLetterProvided: false,
-            puzzleLeaveNumBlanks: 0,
-            puzzleRevealSeconds: 0,
-            timerConfig: { isTimed: false },
           },
         },
       },
@@ -91,14 +74,8 @@ export const area: AreaConfig = {
         levelProps: {
           mode: "repeat",
           targetWord: "orbit",
-          enforceFullLengthGuesses: true,
-          defaultNumGuesses: 6,
           gamemodeSettings: {
-            wordLength: 5,
-            isFirstLetterProvided: true,
-            puzzleLeaveNumBlanks: 0,
-            puzzleRevealSeconds: 0,
-            timerConfig: { isTimed: false },
+            ...commonWingoSettings,
           },
         },
       },
@@ -116,14 +93,8 @@ export const area: AreaConfig = {
         levelProps: {
           mode: "repeat",
           targetWord: "venus",
-          enforceFullLengthGuesses: true,
-          defaultNumGuesses: 6,
           gamemodeSettings: {
-            wordLength: 5,
-            isFirstLetterProvided: false,
-            puzzleLeaveNumBlanks: 0,
-            puzzleRevealSeconds: 0,
-            timerConfig: { isTimed: false },
+            ...commonWingoSettings,
           },
         },
       },
@@ -141,14 +112,9 @@ export const area: AreaConfig = {
         levelProps: {
           mode: "repeat",
           targetWord: "mercury",
-          enforceFullLengthGuesses: true,
-          defaultNumGuesses: 6,
           gamemodeSettings: {
+            ...commonWingoSettings,
             wordLength: 7,
-            isFirstLetterProvided: false,
-            puzzleLeaveNumBlanks: 0,
-            puzzleRevealSeconds: 0,
-            timerConfig: { isTimed: false },
           },
         },
       },
@@ -162,18 +128,16 @@ export const area: AreaConfig = {
       },
       level: {
         gameCategory: "Wingo",
-        page: "/Wingo/Repeat",
+        page: "/Wingo/Puzzle",
         levelProps: {
-          mode: "repeat",
+          mode: "puzzle",
           targetWord: "gravity",
-          enforceFullLengthGuesses: true,
-          defaultNumGuesses: 6,
           gamemodeSettings: {
+            ...commonWingoSettings,
             wordLength: 7,
-            isFirstLetterProvided: true,
+            startingNumGuesses: 1,
             puzzleLeaveNumBlanks: 4,
             puzzleRevealSeconds: 1.5,
-            timerConfig: { isTimed: false },
           },
         },
       },
@@ -191,14 +155,9 @@ export const area: AreaConfig = {
         levelProps: {
           mode: "repeat",
           targetWord: "jupiter",
-          enforceFullLengthGuesses: true,
-          defaultNumGuesses: 6,
           gamemodeSettings: {
+            ...commonWingoSettings,
             wordLength: 7,
-            isFirstLetterProvided: true,
-            puzzleLeaveNumBlanks: 0,
-            puzzleRevealSeconds: 0,
-            timerConfig: { isTimed: false },
           },
         },
       },
@@ -216,14 +175,9 @@ export const area: AreaConfig = {
         levelProps: {
           mode: "repeat",
           targetWord: "galaxy",
-          enforceFullLengthGuesses: true,
-          defaultNumGuesses: 6,
           gamemodeSettings: {
+            ...commonWingoSettings,
             wordLength: 6,
-            isFirstLetterProvided: true,
-            puzzleLeaveNumBlanks: 0,
-            puzzleRevealSeconds: 0,
-            timerConfig: { isTimed: false },
           },
         },
       },
@@ -241,14 +195,9 @@ export const area: AreaConfig = {
         levelProps: {
           mode: "repeat",
           targetWord: "neptune",
-          enforceFullLengthGuesses: true,
-          defaultNumGuesses: 6,
           gamemodeSettings: {
+            ...commonWingoSettings,
             wordLength: 7,
-            isFirstLetterProvided: false,
-            puzzleLeaveNumBlanks: 0,
-            puzzleRevealSeconds: 0,
-            timerConfig: { isTimed: false },
           },
         },
       },
@@ -262,18 +211,15 @@ export const area: AreaConfig = {
       },
       level: {
         gameCategory: "Wingo",
-        page: "/Wingo/Repeat",
+        page: "/Wingo/Puzzle",
         levelProps: {
-          mode: "repeat",
+          mode: "puzzle",
           targetWord: "flare",
-          enforceFullLengthGuesses: true,
-          defaultNumGuesses: 6,
           gamemodeSettings: {
-            wordLength: 5,
-            isFirstLetterProvided: false,
+            ...commonWingoSettings,
+            startingNumGuesses: 1,
             puzzleLeaveNumBlanks: 3,
             puzzleRevealSeconds: 1.5,
-            timerConfig: { isTimed: false },
           },
         },
       },
@@ -307,14 +253,9 @@ export const area: AreaConfig = {
         levelProps: {
           mode: "repeat",
           targetWord: "saturn",
-          enforceFullLengthGuesses: true,
-          defaultNumGuesses: 6,
           gamemodeSettings: {
+            ...commonWingoSettings,
             wordLength: 6,
-            isFirstLetterProvided: false,
-            puzzleLeaveNumBlanks: 0,
-            puzzleRevealSeconds: 0,
-            timerConfig: { isTimed: false },
           },
         },
       },
@@ -328,18 +269,16 @@ export const area: AreaConfig = {
       },
       level: {
         gameCategory: "Wingo",
-        page: "/Wingo/Repeat",
+        page: "/Wingo/Puzzle",
         levelProps: {
-          mode: "repeat",
+          mode: "puzzle",
           targetWord: "aurora",
-          enforceFullLengthGuesses: true,
-          defaultNumGuesses: 6,
           gamemodeSettings: {
+            ...commonWingoSettings,
             wordLength: 6,
-            isFirstLetterProvided: false,
+            startingNumGuesses: 1,
             puzzleLeaveNumBlanks: 3,
             puzzleRevealSeconds: 1.5,
-            timerConfig: { isTimed: false },
           },
         },
       },
@@ -357,14 +296,9 @@ export const area: AreaConfig = {
         levelProps: {
           mode: "repeat",
           targetWord: "uranus",
-          enforceFullLengthGuesses: true,
-          defaultNumGuesses: 6,
           gamemodeSettings: {
+            ...commonWingoSettings,
             wordLength: 6,
-            isFirstLetterProvided: false,
-            puzzleLeaveNumBlanks: 0,
-            puzzleRevealSeconds: 0,
-            timerConfig: { isTimed: false },
           },
         },
       },
@@ -378,18 +312,16 @@ export const area: AreaConfig = {
       },
       level: {
         gameCategory: "Wingo",
-        page: "/Wingo/Repeat",
+        page: "/Wingo/Puzzle",
         levelProps: {
-          mode: "repeat",
+          mode: "puzzle",
           targetWord: "plasma",
-          enforceFullLengthGuesses: true,
-          defaultNumGuesses: 7,
           gamemodeSettings: {
+            ...commonWingoSettings,
             wordLength: 6,
-            isFirstLetterProvided: true,
+            startingNumGuesses: 1,
             puzzleLeaveNumBlanks: 3,
             puzzleRevealSeconds: 1.5,
-            timerConfig: { isTimed: false },
           },
         },
       },

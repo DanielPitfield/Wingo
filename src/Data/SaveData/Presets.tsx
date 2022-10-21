@@ -34,7 +34,6 @@ export function getGamemodeSettingsPresets<TGamemodeSettings>(
   const gamemodeSettingPresets = Object.entries(localStorage)
     // Only the presets for this page
     .filter(([key, _]) => key.startsWith(`${getLocalStorageItemName(page)}-preset-`))
-    // TODO: Please explain (key, value) as opposed to (value, index)
     .map(([_, value]) => JSON.parse(value))
     // Create a preview for the preset
     .map((preset) => ({

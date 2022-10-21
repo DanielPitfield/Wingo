@@ -1,5 +1,6 @@
 import { Themes } from "../Themes";
 import { AreaConfig } from "../../Pages/Area";
+import { commonWingoSettings } from "../DefaultGamemodeSettings";
 
 export const area: AreaConfig = {
   name: "Cars",
@@ -13,14 +14,9 @@ export const area: AreaConfig = {
       levelProps: {
         mode: "repeat",
         targetWord: "cars",
-        enforceFullLengthGuesses: true,
-        defaultNumGuesses: 6,
         gamemodeSettings: {
+          ...commonWingoSettings,
           wordLength: 4,
-          isFirstLetterProvided: true,
-          puzzleLeaveNumBlanks: 0,
-          puzzleRevealSeconds: 0,
-          timerConfig: { isTimed: false },
         },
       },
     },

@@ -1,5 +1,6 @@
 import { Themes } from "../Themes";
 import { AreaConfig } from "../../Pages/Area";
+import { commonWingoSettings } from "../DefaultGamemodeSettings";
 
 // TODO: Is there a way for the list of levels to be the components to return themselves (e.g a WingoConfig with these specified settings)
 
@@ -24,15 +25,8 @@ export const area: AreaConfig = {
         mode: "repeat",
         targetWord: "start",
         // TODO: Why is the LevelConfig type not being enforced, you can add any property you want here?
-        enforceFullLengthGuesses: true,
-        defaultNumGuesses: 6,
-        // TODO: Spread defaultGamemodeSettings for "/Wingo/Repeat" and overwrite properties where needed
         gamemodeSettings: {
-          wordLength: 5,
-          isFirstLetterProvided: true,
-          puzzleLeaveNumBlanks: 0,
-          puzzleRevealSeconds: 0,
-          timerConfig: { isTimed: false },
+          ...commonWingoSettings,
         },
       },
     },
@@ -51,19 +45,8 @@ export const area: AreaConfig = {
         levelProps: {
           mode: "repeat",
           targetWord: "learn",
-          enforceFullLengthGuesses: true,
-          defaultNumGuesses: 6,
-          /*
-          These settings with their default values will be used for the campaign level
-          Normally, declaring settings like this would mean they are configurable
-          But in this case, they won't be able to be configured as the collapsible (to change them) is conditionally rendered
-          */
           gamemodeSettings: {
-            wordLength: 5,
-            isFirstLetterProvided: true,
-            puzzleLeaveNumBlanks: 0,
-            puzzleRevealSeconds: 0,
-            timerConfig: { isTimed: false },
+            ...commonWingoSettings,
           },
         },
       },
