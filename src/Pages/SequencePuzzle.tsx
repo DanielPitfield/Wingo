@@ -186,11 +186,7 @@ export const SequencePuzzle = (props: Props) => {
     );
   }
 
-  /**
-   * Renders the entire puzzle.
-   * @returns Puzzle.
-   */
-  function renderPuzzle(): React.ReactNode {
+  const Puzzle = () => {
     if (!puzzle) {
       return null;
     }
@@ -216,13 +212,13 @@ export const SequencePuzzle = (props: Props) => {
         );
       }
     }
-  }
+  };
 
   /**
    * Renders the message to display (e.g. correct/incorrect).
    * @returns Message to display
    */
-  function renderNotification(): React.ReactNode {
+  const Notification = () => {
     if (!puzzle) {
       return null;
     }
@@ -246,17 +242,17 @@ export const SequencePuzzle = (props: Props) => {
       case "incorrect":
         return <MessageNotification type="error">Incorrect</MessageNotification>;
     }
-  }
+  };
 
   return (
     <div className="App puzzle-config" style={{ backgroundImage: puzzle && `url(${props.theme.backgroundImageSrc})` }}>
-      {renderNotification()}
+      <Notification />
       {result !== "in-progress" && (
         <Button mode="accept" settings={props.settings} onClick={() => ResetGame()}>
           {props.isCampaignLevel ? LEVEL_FINISHING_TEXT : "Restart"}
         </Button>
       )}
-      {renderPuzzle()}
+      <Puzzle />
     </div>
   );
 };
