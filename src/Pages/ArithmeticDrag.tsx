@@ -637,7 +637,7 @@ const ArithmeticDrag = (props: Props) => {
             progress={remainingSeconds}
             total={gamemodeSettings.timerConfig.seconds}
             display={{ type: "transition", colorTransition: GreenToRedColorTransition }}
-          ></ProgressBar>
+          />
         )}
       </div>
     </div>

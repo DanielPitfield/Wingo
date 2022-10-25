@@ -197,7 +197,7 @@ const LetterCategories = (props: Props) => {
             progress={props.remainingSeconds}
             total={props.gamemodeSettings.timerConfig.seconds}
             display={{ type: "transition", colorTransition: GreenToRedColorTransition }}
-          ></ProgressBar>
+          />
         )}
       </div>
     </div>

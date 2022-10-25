@@ -811,7 +811,7 @@ const Numble = (props: Props) => {
             progress={props.remainingGuessTimerSeconds}
             total={props.gamemodeSettings.guessTimerConfig.seconds}
             display={{ type: "transition", colorTransition: GreenToRedColorTransition }}
-          ></ProgressBar>
+          />
         )}
       </div>
 
