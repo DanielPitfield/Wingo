@@ -128,8 +128,8 @@ const NumbersGame = (props: Props) => {
     // Set the entire expression at once
     props.onSubmitNumbersGameSelection(newNumbersGameSelection);
   }
-  // Create grid of rows (for guessing numbers)
-  function displayGrid(): React.ReactNode {
+
+  const Grid = () => {
     const Grid = [];
 
     const isSelectionFinished = hasNumberSelectionFinished(
@@ -137,17 +137,12 @@ const NumbersGame = (props: Props) => {
       props.gamemodeSettings.numOperands
     );
 
-    /*
-    Target Number
-    Read-only NumberRow for number selection
-    Add 'Small' and 'Big' number buttons
-    NumberRows for intemediary calculations
-    */
     Grid.push(
-      <div className="numbers-game-wrapper" key={"numbers-game-input"}>
+      <div className="numbers-game-wrapper">
         <div className="target-number">
           <NumberTile number={isSelectionFinished ? props.targetNumber : null} disabled={true} isReadOnly={true} />
         </div>
+
         <NumberSelectionRow
           key={"number_selection"}
           // The original tiles are disabled when selection has not yet finished
@@ -155,6 +150,7 @@ const NumbersGame = (props: Props) => {
           onClick={props.onClick}
           numberTileStatuses={props.numberTileStatuses}
         />
+
         <div className="add-number-buttons-wrapper">
           <Button
             className="add-number-buttons"
@@ -165,6 +161,7 @@ const NumbersGame = (props: Props) => {
           >
             Small
           </Button>
+
           <Button
             className="add-number-buttons"
             mode={"default"}
@@ -174,6 +171,7 @@ const NumbersGame = (props: Props) => {
           >
             Big
           </Button>
+
           <Button
             className="add-number-buttons"
             mode={"default"}
@@ -191,25 +189,10 @@ const NumbersGame = (props: Props) => {
       let guess: Guess;
 
       if (props.wordIndex === i) {
-        /* 
-        If the wordIndex and the row number are the same
-        (i.e the row is currently being used)
-        Show the currentGuess
-        */
         guess = props.currentGuess;
       } else if (props.wordIndex <= i) {
-        /*
-        If the wordIndex is behind the currently iterated row
-        (i.e the row has not been used yet)
-        Show an empty guess
-        */
         guess = { operand1: null, operand2: null, operator: "+" };
       } else {
-        /* 
-        If the wordIndex is ahead of the currently iterated row
-        (i.e the row has already been used)
-        Show the respective guess
-        */
         guess = props.guesses[i];
       }
 
@@ -230,7 +213,7 @@ const NumbersGame = (props: Props) => {
       );
     }
 
-    return Grid;
+    return <div className="numbers-game-grid">{Grid}</div>;
   }
 
   function computeBestSolution() {
@@ -423,7 +406,7 @@ const NumbersGame = (props: Props) => {
 
       {!props.inProgress && (
         <>
-          <Outcome/>
+          <Outcome />
 
           {displayBestSolution()}
 
@@ -446,7 +429,7 @@ const NumbersGame = (props: Props) => {
         </>
       )}
 
-      <div className="numbers-game-grid">{displayGrid()}</div>
+      <Grid/>
 
       {props.inProgress && (
         <>

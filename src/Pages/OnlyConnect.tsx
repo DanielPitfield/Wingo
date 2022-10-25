@@ -300,9 +300,9 @@ const OnlyConnect = (props: Props) => {
     );
   }
 
-  function displayGrid(): React.ReactNode {
-    // Create a grid (of a row for every group)
-    return Array.from({ length: gamemodeSettings.numGroups }).map((_, index) => populateRow(index));
+  const Grid = () => {
+    const Grid = Array.from({ length: gamemodeSettings.numGroups }).map((_, index) => populateRow(index));
+    return <div className="only_connect_wall">{Grid}</div>
   }
 
   function getCorrectGrid() {
@@ -437,7 +437,7 @@ const OnlyConnect = (props: Props) => {
       {Boolean(inProgress && numCompletedGroups === gamemodeSettings.numGroups - 2) && (
         <MessageNotification type="default">{`Guesses left: ${remainingGuesses}`}</MessageNotification>
       )}
-      <div className="only_connect_wall">{displayGrid()}</div>
+      <Grid/>
       <div>
         {gamemodeSettings.timerConfig.isTimed && (
           <ProgressBar

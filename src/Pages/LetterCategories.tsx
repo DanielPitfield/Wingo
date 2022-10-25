@@ -43,33 +43,17 @@ interface Props {
 const LetterCategories = (props: Props) => {
   const [keyboardDisabled, setKeyboardDisabled] = useState(false);
 
-  // Create grid of rows (for guessing words)
-  function displayGrid(): React.ReactNode {
+  const Grid = () => {
     const Grid = [];
 
     for (const [index, categoryMapping] of props.chosenCategoryMappings.entries()) {
       let word;
 
       if (props.wordIndex === index) {
-        /* 
-        If the wordIndex and the row number are the same
-        (i.e the row is currently being used)
-        Show the currentWord
-        */
         word = props.currentWord;
       } else if (props.wordIndex <= index) {
-        /*
-        If the wordIndex is behind the currently iterated row
-        (i.e the row has not been used yet)
-        Show an empty string 
-        */
         word = "";
       } else {
-        /* 
-        If the wordIndex is ahead of the currently iterated row
-        (i.e the row has already been used)
-        Show the respective guessed word
-        */
         word = props.guesses[index];
       }
 
@@ -102,8 +86,8 @@ const LetterCategories = (props: Props) => {
       Grid.push(row);
     }
 
-    return Grid;
-  }
+    return <div className="word_grid">{Grid}</div>;
+  };
 
   const Outcome = () => {
     if (props.inProgress) {
@@ -160,7 +144,7 @@ const LetterCategories = (props: Props) => {
       className="App"
       style={{ backgroundImage: `url(${props.theme.backgroundImageSrc})`, backgroundSize: "100% 100%" }}
     >
-      <Outcome/>
+      <Outcome />
       <div>
         {!props.inProgress && (
           <Button
@@ -189,7 +173,7 @@ const LetterCategories = (props: Props) => {
         </div>
       )}
 
-      <div className="word_grid">{displayGrid()}</div>
+      <Grid/>
 
       <div className="keyboard">
         <Keyboard

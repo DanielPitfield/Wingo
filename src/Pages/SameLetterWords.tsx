@@ -352,10 +352,12 @@ const SameLetterWords = (props: Props) => {
     );
   }
 
-  function displayGrid(): React.ReactNode {
+  const Grid = () => {
     // The number of total words divided by the number of words that make up the correct selection (rounded up)
     const numRows = Math.ceil(gamemodeSettings.numTotalWords / gamemodeSettings.numMatchingWords);
-    return Array.from({ length: numRows }).map((_, index) => populateRow(index));
+
+    const Grid = Array.from({ length: numRows }).map((_, index) => populateRow(index));
+    return <div className="only_connect_wall">{Grid}</div>;
   }
 
   const Outcome = () => {
@@ -465,7 +467,7 @@ const SameLetterWords = (props: Props) => {
           </MessageNotification>
         </>
       )}
-      <div className="grid">{displayGrid()}</div>
+      <Grid/>
       <div>
         {gamemodeSettings.timerConfig.isTimed && (
           <ProgressBar

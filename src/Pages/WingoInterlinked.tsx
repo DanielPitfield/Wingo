@@ -850,8 +850,9 @@ export const WingoInterlinked = (props: Props) => {
     );
   }
 
-  function displayGrid(): React.ReactNode {
-    return Array.from({ length: gridConfig.height }).map((_, index) => populateRow(index));
+  const Grid = () => {
+    const Grid = Array.from({ length: gridConfig.height }).map((_, index) => populateRow(index));
+    return <div className="word_grid">{Grid}</div>
   }
 
   const Outcome = () => {
@@ -998,7 +999,7 @@ export const WingoInterlinked = (props: Props) => {
           <strong>Hint:</strong> {hint}
         </MessageNotification>
       )}
-      <div className="word_grid">{displayGrid()}</div>
+      <Grid/>
       {inProgress && (
         <Button
           mode="accept"

@@ -109,7 +109,7 @@ const LettersGame = (props: Props) => {
       .join("");
   };
 
-  function displayGrid(): React.ReactNode {
+  const Grid = () => {
     // Read only letter selection WordRow
     const letterSelection = (
       <LetterSelectionRow
@@ -169,17 +169,19 @@ const LettersGame = (props: Props) => {
         inDictionary={props.inDictionary}
         settings={props.settings}
         applyAnimation={false}
-      ></WordRow>
+      />
     );
 
     return (
-      <div className="letters-game-wrapper" key={"letter_selection"}>
-        {letterSelection}
-        {addLetterButtons}
-        {inputRow}
+      <div className="letters-game-word-grid">
+        <div className="letters-game-wrapper" key={"letter_selection"}>
+          {letterSelection}
+          {addLetterButtons}
+          {inputRow}
+        </div>
       </div>
     );
-  }
+  };
 
   const Outcome = () => {
     // Game has not yet ended (currently only when when timer runs out)
@@ -297,7 +299,7 @@ const LettersGame = (props: Props) => {
         )}
       </div>
 
-      <div className="letters-game-word-grid">{displayGrid()}</div>
+      <Grid />
 
       <Keyboard
         onEnter={props.onEnter}

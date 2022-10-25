@@ -140,8 +140,7 @@ const Wingo = (props: Props) => {
     return;
   }
 
-  // Create grid of rows (for guessing words)
-  function displayGrid(): React.ReactNode {
+  const Grid = () => {
     const Grid = [];
 
     // Puzzle/Conundrum display row
@@ -192,7 +191,7 @@ const Wingo = (props: Props) => {
       );
     }
 
-    return Grid;
+    return <div className="word_grid">{Grid}</div>
   }
 
   React.useEffect(() => {
@@ -477,7 +476,7 @@ const Wingo = (props: Props) => {
             </div>
           )
       }
-      <div className="word_grid">{displayGrid()}</div>
+      <Grid/>
       <Keyboard
         onEnter={props.onEnter}
         onSubmitLetter={(letter) => {

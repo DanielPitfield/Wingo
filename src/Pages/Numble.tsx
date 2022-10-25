@@ -448,7 +448,7 @@ const Numble = (props: Props) => {
     );
   }
 
-  function displayGrid(): React.ReactNode {
+  const Grid = () => {
     const Grid = [];
 
     // Start with higher value rows (so that they are rendered first, at the top of the grid)
@@ -456,7 +456,7 @@ const Numble = (props: Props) => {
       Grid.push(populateRow(i));
     }
 
-    return Grid;
+    return <div className="numble-grid" data-shape={props.gamemodeSettings.gridShape}>{Grid}</div>
   }
 
   function displayPinScores(): React.ReactNode {
@@ -815,9 +815,7 @@ const Numble = (props: Props) => {
         )}
       </div>
 
-      <div className="numble-grid" data-shape={props.gamemodeSettings.gridShape}>
-        {displayGrid()}
-      </div>
+      <Grid/>
 
       <div className="numble-score-wrapper">
         <div className="teams-info-wrapper">
