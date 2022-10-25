@@ -3,7 +3,7 @@ import Success from "../Data/Images/success.svg";
 import Error from "../Data/Images/error.svg";
 import { SettingsData } from "../Data/SaveData/Settings";
 
-type RoundInfo = {
+export type RoundInfo = {
   score: number;
   roundNumber: number;
   mode: string;

@@ -11,7 +11,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { getAreaBacktrackPath } from "../Helpers/getAreaBacktrackPath";
 import { PagePath } from "../Data/PageNames";
 import { SettingsData } from "../Data/SaveData/Settings";
-import GameshowSummary from "../Components/GameshowSummary";
+import GameshowSummary, { RoundInfo } from "../Components/GameshowSummary";
 
 type RoundType = "number" | "letter" | "conundrum";
 
@@ -43,48 +43,31 @@ export const LettersNumbersGameshow = (props: Props) => {
   const location = useLocation().pathname as PagePath;
 
   const [inProgress, setInProgress] = useState(true);
-  const [roundOrder, setRoundOrder] = useState<RoundType[]>([]);
+
   const [roundNumberIndex, setRoundNumberIndex] = useState(0);
+
   const [gameshowScore, setGameshowScore] = useState(0);
-  const [summary, setSummary] = useState<
-    {
-      score: number;
-      roundNumber: number;
-      mode: string;
-      wasCorrect: boolean;
-      guess: string;
-      correctAnswer: string;
-    }[]
-  >([]);
+  const [summary, setSummary] = useState<RoundInfo[]>([]);
 
   // The order of rounds for just a singular set
-  function generateRoundSet(): RoundType[] {
+  const generateRoundSet = (): RoundType[] => {
     return Array.from({ length: props.numLetterRoundsPerSet })
       .map((_) => "letter" as RoundType)
       .concat(Array.from({ length: props.numNumberRoundsPerSet }).map((_) => "number" as RoundType))
       .concat(Array.from({ length: props.numConundrumRoundsPerSet }).map((_) => "conundrum" as RoundType))
       .concat(props.hasFinishingConundrum ? ["conundrum" as RoundType] : []);
-  }
+  };
 
   // The entire order of rounds
-  function generateRoundOrder(): RoundType[] {
+  const generateRoundOrder = (): RoundType[] => {
     return Array.from({ length: props.numSets }).flatMap((_, i) => generateRoundSet());
-  }
+  };
 
-  // Determine round order (from props)
-  React.useEffect(() => {
-    setRoundOrder(generateRoundOrder());
-  }, [
-    props.numSets,
-    props.numLetterRoundsPerSet,
-    props.numNumberRoundsPerSet,
-    props.numConundrumRoundsPerSet,
-    props.hasFinishingConundrum,
-  ]);
+  const roundOrder = generateRoundOrder();
 
   // Update cumulative score
   React.useEffect(() => {
-    if (!summary || summary.length === 0) {
+    if (!summary) {
       return;
     }
 
@@ -99,10 +82,6 @@ export const LettersNumbersGameshow = (props: Props) => {
 
   // Check if the gameshow has ended (when the roundNumber changes)
   React.useEffect(() => {
-    if (!roundOrder || roundOrder.length === 0) {
-      return;
-    }
-
     if (roundNumberIndex >= roundOrder.length) {
       setInProgress(false);
     }
@@ -136,26 +115,37 @@ export const LettersNumbersGameshow = (props: Props) => {
     return roundOrder[roundNumberIndex] ?? null;
   }
 
-  function getNextRound() {
-    const roundType = getRoundType();
-
-    if (roundType === null) {
-      return;
-    }
-
-    const commonProps = {
-      /*
+  const commonProps = {
+    /*
       Always say the rounds of the gameshow are NOT campaign levels (even if the gameshow IS a campaign level)
       This way the score from the rounds is reported back correctly (wasCorrect is less strict)
       The pass criteria for a gameshow campaign level is that the gameshow score has reached the target score
       */
-      campaignConfig: { isCampaignLevel: false as false },
-      settings: props.settings,
-      setTheme: props.setTheme,
-      addGold: props.addGold,
-      onComplete: props.onComplete,
-      onCompleteGameshowRound: onCompleteGameshowRound,
-    };
+    campaignConfig: { isCampaignLevel: false as false },
+    settings: props.settings,
+    setTheme: props.setTheme,
+    addGold: props.addGold,
+    onComplete: props.onComplete,
+    onCompleteGameshowRound: onCompleteGameshowRound,
+  };
+
+  const GameshowRound = () => {
+    if (!inProgress) {
+      return (
+        <>
+          <GameshowSummary summary={summary} settings={props.settings} />
+          <Button mode="accept" onClick={EndGameshow} settings={props.settings} additionalProps={{ autoFocus: true }}>
+            {props.campaignConfig.isCampaignLevel ? LEVEL_FINISHING_TEXT : "Back to Home"}
+          </Button>
+        </>
+      );
+    }
+
+    const roundType = getRoundType();
+
+    if (roundType === null) {
+      return null;
+    }
 
     if (roundType === "letter") {
       return (
@@ -166,7 +156,9 @@ export const LettersNumbersGameshow = (props: Props) => {
           gamemodeSettings={getPageGamemodeSettings("/LettersGame") as LettersGameConfigProps["gamemodeSettings"]}
         />
       );
-    } else if (roundType === "number") {
+    }
+
+    if (roundType === "number") {
       return (
         <NumbersGameConfig
           {...commonProps}
@@ -175,7 +167,9 @@ export const LettersNumbersGameshow = (props: Props) => {
           gamemodeSettings={getPageGamemodeSettings("/NumbersGame") as NumbersGameConfigProps["gamemodeSettings"]}
         />
       );
-    } else if (roundType === "conundrum") {
+    }
+
+    if (roundType === "conundrum") {
       return (
         <WingoConfig
           {...commonProps}
@@ -185,7 +179,9 @@ export const LettersNumbersGameshow = (props: Props) => {
         />
       );
     }
-  }
+
+    return null;
+  };
 
   const getMaximumPossibleScore = (): number => {
     const MAX_LETTER_ROUND_SCORE = 9;
@@ -215,17 +211,5 @@ export const LettersNumbersGameshow = (props: Props) => {
     props.campaignConfig.isCampaignLevel ? navigate(getAreaBacktrackPath(location)) : navigate("/Home");
   }
 
-  return (
-    <>
-      {inProgress && <>{getNextRound()}</>}
-      {!inProgress && (
-        <>
-          <GameshowSummary summary={summary} settings={props.settings} />
-          <Button mode="accept" onClick={EndGameshow} settings={props.settings} additionalProps={{ autoFocus: true }}>
-            {props.campaignConfig.isCampaignLevel ? LEVEL_FINISHING_TEXT : "Back to Home"}
-          </Button>
-        </>
-      )}
-    </>
-  );
+  return <GameshowRound />;
 };

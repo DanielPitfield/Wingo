@@ -11,7 +11,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { PagePath } from "../Data/PageNames";
 import { getAreaBacktrackPath } from "../Helpers/getAreaBacktrackPath";
 import { SettingsData } from "../Data/SaveData/Settings";
-import GameshowSummary from "../Components/GameshowSummary";
+import GameshowSummary, { RoundInfo } from "../Components/GameshowSummary";
 
 export interface WingoGameshowProps {
   campaignConfig:
@@ -48,28 +48,13 @@ export const WingoGameshow = (props: Props) => {
   const location = useLocation().pathname as PagePath;
 
   const [inProgress, setInProgress] = useState(true);
-  const [roundOrder, setRoundOrder] = useState<
-    { isPuzzle: boolean; wordLength: number; basePoints: number; pointsLostPerGuess: number }[]
-  >([]);
+
+  const roundOrder = getWingoGameshowRoundOrder(props.roundOrderConfig);
   const [roundNumberIndex, setRoundNumberIndex] = useState(0);
+
   const [wordLength, setWordLength] = useState(getGamemodeDefaultWordLength(location));
   const [gameshowScore, setGameshowScore] = useState(0);
-  const [summary, setSummary] = useState<
-    {
-      score: number;
-      roundNumber: number;
-      mode: string;
-      wasCorrect: boolean;
-      guess: string;
-      correctAnswer: string;
-    }[]
-  >([]);
-
-  // Determine round order
-  React.useEffect(() => {
-    const newRoundOrder = getWingoGameshowRoundOrder(props.roundOrderConfig);
-    setRoundOrder(newRoundOrder);
-  }, [props.roundOrderConfig]);
+  const [summary, setSummary] = useState<RoundInfo[]>([]);
 
   // Update cumulative score
   React.useEffect(() => {
@@ -88,31 +73,24 @@ export const WingoGameshow = (props: Props) => {
 
   // Check if the gameshow has ended (when the roundNumber changes)
   React.useEffect(() => {
-    if (!roundOrder || roundOrder.length === 0) {
-      return;
-    }
-
+    // Completed the last round
     if (roundNumberIndex >= roundOrder.length) {
       setInProgress(false);
     }
 
-    const nextRoundInfo = getRoundInfo();
+    const roundInfo = getCurrentRoundInfo();
 
-    // Missing required information for next round
-    if (nextRoundInfo === null) {
-      setInProgress(false);
-      return;
+    if (roundInfo) {
+      // Before loading round, set the word length needed
+      setWordLength(roundInfo.wordLength);
     }
-
-    // Before loading round, set the word length needed
-    setWordLength(nextRoundInfo?.wordLength);
   }, [roundNumberIndex]);
 
   function onCompleteGameshowRound(wasCorrect: boolean, guess: string, correctAnswer: string, score: number | null) {
     // Incorrect answer or score couldn't be determined, use score of 0
     const newScore = !wasCorrect ? 0 : score ?? 0;
 
-    const roundInfo = getRoundInfo();
+    const roundInfo = getCurrentRoundInfo();
 
     const roundSummary = {
       score: newScore,
@@ -134,37 +112,48 @@ export const WingoGameshow = (props: Props) => {
     return;
   }
 
-  function getRoundInfo() {
+  const getCurrentRoundInfo = () => {
     return roundOrder[roundNumberIndex] ?? null;
-  }
+  };
 
-  function getNextRound() {
-    const nextRoundInfo = getRoundInfo();
-
-    if (nextRoundInfo === null) {
-      return;
-    }
-
-    const roundScoringInfo = {
-      basePoints: nextRoundInfo.basePoints,
-      pointsLostPerGuess: nextRoundInfo.pointsLostPerGuess,
-    };
-
-    const commonProps = {
-      /*
+  const commonProps = {
+    /*
       Always say the rounds of the gameshow are NOT campaign levels (even if the gameshow IS a campaign level)
       This way the score from the rounds is reported back correctly (wasCorrect is less strict)
       The pass criteria for a gameshow campaign level is that the gameshow score has reached the target score
       */
-      isCampaignLevel: false,
-      settings: props.settings,
-      setTheme: props.setTheme,
-      addGold: props.addGold,
-      onComplete: props.onComplete,
-      onCompleteGameshowRound: onCompleteGameshowRound,
+    isCampaignLevel: false,
+    settings: props.settings,
+    setTheme: props.setTheme,
+    addGold: props.addGold,
+    onComplete: props.onComplete,
+    onCompleteGameshowRound: onCompleteGameshowRound,
+  };
+
+  const GameshowRound = () => {
+    if (!inProgress) {
+      return (
+        <>
+          <GameshowSummary summary={summary} settings={props.settings} />
+          <Button mode="accept" onClick={EndGameshow} settings={props.settings} additionalProps={{ autoFocus: true }}>
+            {props.campaignConfig.isCampaignLevel ? LEVEL_FINISHING_TEXT : "Back to Home"}
+          </Button>
+        </>
+      );
+    }
+
+    const roundInfo = getCurrentRoundInfo();
+
+    if (roundInfo === null) {
+      return null;
+    }
+
+    const roundScoringInfo = {
+      basePoints: roundInfo?.basePoints,
+      pointsLostPerGuess: roundInfo?.pointsLostPerGuess,
     };
 
-    if (nextRoundInfo.isPuzzle) {
+    if (roundInfo.isPuzzle) {
       return (
         <WingoConfig
           {...commonProps}
@@ -177,7 +166,9 @@ export const WingoGameshow = (props: Props) => {
           gameshowScore={gameshowScore}
         />
       );
-    } else {
+    }
+
+    if (!roundInfo.isPuzzle) {
       return (
         <WingoConfig
           {...commonProps}
@@ -191,7 +182,9 @@ export const WingoGameshow = (props: Props) => {
         />
       );
     }
-  }
+
+    return null;
+  };
 
   const getMaximumPossibleScore = (): number => {
     // TODO: What is the maximum score for each round type?
@@ -219,15 +212,7 @@ export const WingoGameshow = (props: Props) => {
 
   return (
     <div style={{ backgroundImage: `url(${props.theme.backgroundImageSrc})`, backgroundSize: "100% 100%" }}>
-      {inProgress && <>{getNextRound()}</>}
-      {!inProgress && (
-        <>
-          <GameshowSummary summary={summary} settings={props.settings} />
-          <Button mode="accept" onClick={EndGameshow} settings={props.settings} additionalProps={{ autoFocus: true }}>
-            {props.campaignConfig.isCampaignLevel ? LEVEL_FINISHING_TEXT : "Back to Home"}
-          </Button>
-        </>
-      )}
+      <GameshowRound />
     </div>
   );
 };
