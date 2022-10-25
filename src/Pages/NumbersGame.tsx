@@ -214,35 +214,28 @@ const NumbersGame = (props: Props) => {
     }
 
     return <div className="numbers-game-grid">{Grid}</div>;
-  }
+  };
 
-  function computeBestSolution() {
-    if (!props.targetNumber) {
-      return;
+  const GameshowScore = () => {
+    if (props.gameshowScore === undefined) {
+      return null;
     }
 
-    if (props.gamemodeSettings.numOperands > NUMBERPUZZLE_MAX_NUM_OPERANDS) {
-      return;
+    if (props.gameshowScore === null) {
+      return null;
     }
 
-    const inputNumbers = props.numberTileStatuses
-      .filter((x) => x.type === "original" && x.number)
-      .map((x) => x.number!);
+    return (
+      <div className="gameshow-score">
+        <MessageNotification type="default">
+          <strong>Gameshow points: </strong>
+          {props.gameshowScore}
+        </MessageNotification>
+      </div>
+    );
+  };
 
-    if (inputNumbers.length > NUMBERPUZZLE_MAX_NUM_OPERANDS) {
-      return;
-    }
-
-    // The amount of numbers that can be selected does not match with the specified/requested number from props
-    if (inputNumbers.length !== props.gamemodeSettings.numOperands) {
-      return;
-    }
-
-    const puzzle = new NumberPuzzle(props.targetNumber, inputNumbers);
-    setSolutions(puzzle.solve());
-  }
-
-  const Outcome = () => {
+  const RoundScoreDisplay = () => {
     if (props.inProgress) {
       return null;
     }
@@ -296,7 +289,33 @@ const NumbersGame = (props: Props) => {
     );
   };
 
-  function displayBestSolution(): React.ReactNode {
+  function computeBestSolution() {
+    if (!props.targetNumber) {
+      return;
+    }
+
+    if (props.gamemodeSettings.numOperands > NUMBERPUZZLE_MAX_NUM_OPERANDS) {
+      return;
+    }
+
+    const inputNumbers = props.numberTileStatuses
+      .filter((x) => x.type === "original" && x.number)
+      .map((x) => x.number!);
+
+    if (inputNumbers.length > NUMBERPUZZLE_MAX_NUM_OPERANDS) {
+      return;
+    }
+
+    // The amount of numbers that can be selected does not match with the specified/requested number from props
+    if (inputNumbers.length !== props.gamemodeSettings.numOperands) {
+      return;
+    }
+
+    const puzzle = new NumberPuzzle(props.targetNumber, inputNumbers);
+    setSolutions(puzzle.solve());
+  }
+
+  const BestSolution = () => {
     const { difference } = getNumbersGameScore(
       props.closestGuessSoFar,
       props.targetNumber,
@@ -305,12 +324,12 @@ const NumbersGame = (props: Props) => {
 
     // Don't need to show a best solution, the player got the target number
     if (difference === 0) {
-      return;
+      return null;
     }
 
     // Too many operands to compute a solution
     if (props.gamemodeSettings.numOperands > NUMBERPUZZLE_MAX_NUM_OPERANDS) {
-      return;
+      return null;
     }
 
     // Can just manage to find a solution with 7 operands, show a button to start finding the solution
@@ -349,20 +368,38 @@ const NumbersGame = (props: Props) => {
         </MessageNotification>
       </div>
     );
-  }
+  };
 
-  function displayGameshowScore(): React.ReactNode {
-    if (props.gameshowScore === undefined || props.gameshowScore === null) {
-      return;
+  const Outcome = () => {
+    if (props.inProgress) {
+      return null;
     }
 
     return (
-      <MessageNotification type="default">
-        <strong>Gameshow points: </strong>
-        {props.gameshowScore}
-      </MessageNotification>
+      <>
+        <GameshowScore />
+        <RoundScoreDisplay />
+        <BestSolution />
+
+        <Button
+          mode={"accept"}
+          onClick={() => {
+            props.ResetGame();
+            setSolutions(null);
+            setIsComputeSolutionButtonClicked(false);
+          }}
+          settings={props.settings}
+          additionalProps={{ autoFocus: true }}
+        >
+          {props.gameshowScore !== undefined
+            ? "Next round"
+            : props.campaignConfig.isCampaignLevel
+            ? LEVEL_FINISHING_TEXT
+            : "Restart"}
+        </Button>
+      </>
     );
-  }
+  };
 
   const handleTimerToggle = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newGamemodeSettings: NumbersGameConfigProps["gamemodeSettings"] = {
@@ -402,34 +439,9 @@ const NumbersGame = (props: Props) => {
         </div>
       )}
 
-      {props.gameshowScore !== undefined && <div className="gameshow-score">{displayGameshowScore()}</div>}
+      <Outcome />
 
-      {!props.inProgress && (
-        <>
-          <Outcome />
-
-          {displayBestSolution()}
-
-          <Button
-            mode={"accept"}
-            onClick={() => {
-              props.ResetGame();
-              setSolutions(null);
-              setIsComputeSolutionButtonClicked(false);
-            }}
-            settings={props.settings}
-            additionalProps={{ autoFocus: true }}
-          >
-            {props.gameshowScore !== undefined
-              ? "Next round"
-              : props.campaignConfig.isCampaignLevel
-              ? LEVEL_FINISHING_TEXT
-              : "Restart"}
-          </Button>
-        </>
-      )}
-
-      <Grid/>
+      <Grid />
 
       {props.inProgress && (
         <>
@@ -451,7 +463,7 @@ const NumbersGame = (props: Props) => {
             progress={props.remainingSeconds}
             total={props.gamemodeSettings.timerConfig.seconds}
             display={{ type: "transition", colorTransition: GreenToRedColorTransition }}
-          ></ProgressBar>
+          />
         )}
       </div>
     </div>
