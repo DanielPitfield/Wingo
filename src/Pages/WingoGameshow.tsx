@@ -5,13 +5,13 @@ import WingoConfig, { WingoConfigProps } from "./WingoConfig";
 import { Button } from "../Components/Button";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
 import { getGamemodeDefaultWordLength } from "../Helpers/getGamemodeDefaultWordLength";
-import { displayGameshowSummary } from "../Helpers/getGameshowSummary";
 import { getPageGamemodeSettings } from "../Helpers/getPageGamemodeSettings";
 import { getWingoGameshowRoundOrder } from "../Helpers/getWingoGameshowRoundOrder";
 import { useNavigate, useLocation } from "react-router-dom";
 import { PagePath } from "../Data/PageNames";
 import { getAreaBacktrackPath } from "../Helpers/getAreaBacktrackPath";
 import { SettingsData } from "../Data/SaveData/Settings";
+import GameshowSummary from "../Components/GameshowSummary";
 
 export interface WingoGameshowProps {
   campaignConfig:
@@ -222,7 +222,7 @@ export const WingoGameshow = (props: Props) => {
       {inProgress && <>{getNextRound()}</>}
       {!inProgress && (
         <>
-          {displayGameshowSummary(summary, props.settings)}
+          <GameshowSummary summary={summary} settings={props.settings} />
           <Button mode="accept" onClick={EndGameshow} settings={props.settings} additionalProps={{ autoFocus: true }}>
             {props.campaignConfig.isCampaignLevel ? LEVEL_FINISHING_TEXT : "Back to Home"}
           </Button>

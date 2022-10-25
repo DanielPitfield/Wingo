@@ -6,12 +6,12 @@ import { Theme, Themes } from "../Data/Themes";
 import { Button } from "../Components/Button";
 import WingoConfig, { WingoConfigProps } from "./WingoConfig";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
-import { displayGameshowSummary } from "../Helpers/getGameshowSummary";
 import { getPageGamemodeSettings } from "../Helpers/getPageGamemodeSettings";
 import { useLocation, useNavigate } from "react-router-dom";
 import { getAreaBacktrackPath } from "../Helpers/getAreaBacktrackPath";
 import { PagePath } from "../Data/PageNames";
 import { SettingsData } from "../Data/SaveData/Settings";
+import GameshowSummary from "../Components/GameshowSummary";
 
 type RoundType = "number" | "letter" | "conundrum";
 
@@ -220,7 +220,7 @@ export const LettersNumbersGameshow = (props: Props) => {
       {inProgress && <>{getNextRound()}</>}
       {!inProgress && (
         <>
-          {displayGameshowSummary(summary, props.settings)}
+          <GameshowSummary summary={summary} settings={props.settings} />
           <Button mode="accept" onClick={EndGameshow} settings={props.settings} additionalProps={{ autoFocus: true }}>
             {props.campaignConfig.isCampaignLevel ? LEVEL_FINISHING_TEXT : "Back to Home"}
           </Button>

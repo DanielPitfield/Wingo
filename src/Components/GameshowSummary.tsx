@@ -1,4 +1,4 @@
-import { ChallengeReward } from "../Components/Challenge";
+import { ChallengeReward } from "./Challenge";
 import Success from "../Data/Images/success.svg";
 import Error from "../Data/Images/error.svg";
 import { SettingsData } from "../Data/SaveData/Settings";
@@ -12,31 +12,38 @@ type RoundInfo = {
   correctAnswer: string;
 };
 
-export function displayGameshowSummary(summary: RoundInfo[], settings: SettingsData): React.ReactNode {
+interface GameshowSummaryProps {
+  summary: RoundInfo[];
+  settings: SettingsData;
+}
+
+const GameshowSummary = (props: GameshowSummaryProps) => {
   return (
     <section className="gameshow-summary-info">
       <h2 className="gameshow-summary-info-title">Summary</h2>
       <p className="total-acheived">
         Total Acheived <br />
         <strong>
-          {summary.reduce((total, round) => (total += round.score > 0 ? 1 : 0), 0)} / {summary.length} (
-          {Math.round((summary.reduce((total, round) => (total += round.score > 0 ? 1 : 0), 0) / summary.length) * 100)}
+          {props.summary.reduce((total, round) => (total += round.score > 0 ? 1 : 0), 0)} / {props.summary.length} (
+          {Math.round(
+            (props.summary.reduce((total, round) => (total += round.score > 0 ? 1 : 0), 0) / props.summary.length) * 100
+          )}
           %)
         </strong>
       </p>
       <p className="total-gold-coins">
         Total score: <br />
-        <ChallengeReward goldCoins={summary.reduce((total, x) => (total += x.score), 0)} />
+        <ChallengeReward goldCoins={props.summary.reduce((total, x) => (total += x.score), 0)} />
       </p>
       <div className="gameshow-summary-groups">
-        {summary
+        {props.summary
           .reduce<
             {
               mode: string;
               rounds: RoundInfo[];
             }[]
           >((all, round, i) => {
-            if (summary[i - 1]?.mode === round.mode) {
+            if (props.summary[i - 1]?.mode === round.mode) {
               all[all.length - 1].rounds.push(round);
             } else {
               all.push({
@@ -76,7 +83,7 @@ export function displayGameshowSummary(summary: RoundInfo[], settings: SettingsD
                       key={round.roundNumber}
                       className="gameshow-round-summary"
                       data-correct={round.score > 0}
-                      data-animation-setting={settings.graphics.animation}
+                      data-animation-setting={props.settings.graphics.animation}
                     >
                       <img
                         className="gameshow-round-summary-icon"
@@ -101,7 +108,7 @@ export function displayGameshowSummary(summary: RoundInfo[], settings: SettingsD
                       </p>
                       <ChallengeReward goldCoins={round.score} />
                     </div>
-                    {summary[i + 1]?.mode[0] !== round.mode[0] && <div className="break"></div>}
+                    {props.summary[i + 1]?.mode[0] !== round.mode[0] && <div className="break"></div>}
                   </>
                 ))}
               </div>
@@ -110,4 +117,6 @@ export function displayGameshowSummary(summary: RoundInfo[], settings: SettingsD
       </div>
     </section>
   );
-}
+};
+
+export default GameshowSummary;
