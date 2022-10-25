@@ -62,7 +62,7 @@ interface Props {
 
 const Wingo = (props: Props) => {
   const location = useLocation().pathname as PagePath;
-  
+
   const [keyboardDisabled, setKeyboardDisabled] = useState(false);
 
   const [timeUntilDailyReset, setTimeUntilDailyReset] = useState(getTimeUntilPeriodicReset("Day"));
@@ -191,8 +191,8 @@ const Wingo = (props: Props) => {
       );
     }
 
-    return <div className="word_grid">{Grid}</div>
-  }
+    return <div className="word_grid">{Grid}</div>;
+  };
 
   React.useEffect(() => {
     if (props.inProgress) {
@@ -206,9 +206,9 @@ const Wingo = (props: Props) => {
     }
   }, [props.inProgress]);
 
-  function displayHint() {
+  const Hint = () => {
     if (!props.targetHint) {
-      return;
+      return null;
     }
 
     // Display the hint (if defined)
@@ -217,7 +217,7 @@ const Wingo = (props: Props) => {
         <strong>Hint:</strong> {props.targetHint}
       </MessageNotification>
     );
-  }
+  };
 
   const isCurrentGuessCorrect = () => {
     return (
@@ -304,7 +304,7 @@ const Wingo = (props: Props) => {
         )}
       </MessageNotification>
     );
-  }
+  };
 
   function isOutcomeContinue(): boolean {
     const correctAnswer =
@@ -349,18 +349,24 @@ const Wingo = (props: Props) => {
     };
   }, [props.mode, props.inProgress]);
 
-  function displayGameshowScore(): React.ReactNode {
-    if (props.gameshowScore === undefined || props.gameshowScore === null) {
-      return;
+  const GameshowScore = () => {
+    if (props.gameshowScore === undefined) {
+      return null;
+    }
+
+    if (props.gameshowScore === null) {
+      return null;
     }
 
     return (
-      <MessageNotification type="default">
-        <strong>Gameshow points: </strong>
-        {props.gameshowScore}
-      </MessageNotification>
+      <div className="gameshow-score">
+        <MessageNotification type="default">
+          <strong>Gameshow points: </strong>
+          {props.gameshowScore}
+        </MessageNotification>
+      </div>
     );
-  }
+  };
 
   const handleMaxLivesToggle = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newGamemodeSettings: WingoConfigProps["gamemodeSettings"] = {
@@ -403,9 +409,10 @@ const Wingo = (props: Props) => {
         backgroundSize: "100% 100%",
       }}
     >
-      {props.gameshowScore !== undefined && <div className="gameshow-score">{displayGameshowScore()}</div>}
-      {props.inProgress && <div>{displayHint()}</div>}
-      <Outcome/>
+      <GameshowScore />
+      <Hint />
+      <Outcome />
+      
       {isDailyMode(location) && !props.inProgress && (
         <MessageNotification type="default">Next Daily reset in: {timeUntilDailyReset}</MessageNotification>
       )}
@@ -476,7 +483,7 @@ const Wingo = (props: Props) => {
             </div>
           )
       }
-      <Grid/>
+      <Grid />
       <Keyboard
         onEnter={props.onEnter}
         onSubmitLetter={(letter) => {

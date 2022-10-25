@@ -165,7 +165,7 @@ const Algebra = (props: Props) => {
     }
   }, [inProgress, guess]);
 
-  function displayInputs(): React.ReactNode {
+  const AlgebraInputs = () => {
     return (
       <div className="algebra_inputs_wrapper">
         {getCurrentAlgebraTemplate().inputs.map((input, index) => {
@@ -181,8 +181,12 @@ const Algebra = (props: Props) => {
     );
   }
 
-  function displayQuestion(): React.ReactNode {
+  const Question = () => {
     const question = getCurrentQuestionTemplate();
+
+    if (!question) {
+      return null;
+    }
 
     return (
       <div className="algebra_questions_wrapper">
@@ -396,7 +400,7 @@ const Algebra = (props: Props) => {
     setGuess(`${guess}${number}`);
   }
 
-  function displayInputMethods(): React.ReactNode {
+  const InputMethod = () => {
     const answerType: answerType = getCurrentQuestionTemplate().answerType;
 
     const letterKeyboard = (
@@ -446,6 +450,8 @@ const Algebra = (props: Props) => {
         </>
       );
     }
+
+    return null;
   }
 
   const handleDifficultyChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -498,8 +504,8 @@ const Algebra = (props: Props) => {
 
       <Outcome />
 
-      {displayInputs()}
-      {displayQuestion()}
+      <AlgebraInputs />
+      <Question />
 
       <div className="guess">
         <LetterTile
@@ -509,7 +515,7 @@ const Algebra = (props: Props) => {
         ></LetterTile>
       </div>
 
-      {displayInputMethods()}
+      <InputMethod />
 
       <div>
         {gamemodeSettings.timerConfig.isTimed && (

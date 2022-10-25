@@ -148,7 +148,7 @@ const NumberSets = (props: Props) => {
     }
   }, [guess, inProgress]);
 
-  function displayExamples(): React.ReactNode {
+  const Examples = () => {
     return (
       <div className="number_set_wrapper">
         {getCurrentNumberSetTemplate().examples.map((example, index) => {
@@ -164,7 +164,7 @@ const NumberSets = (props: Props) => {
     );
   }
 
-  function displayQuestion(): React.ReactNode {
+  const Question = () => {
     const question = getCurrentNumberSetTemplate().question;
 
     return (
@@ -360,8 +360,8 @@ const NumberSets = (props: Props) => {
 
       <Outcome/>
 
-      {displayExamples()}
-      {displayQuestion()}
+      <Examples />
+      <Question />
 
       <div className="guess">
         <LetterTile

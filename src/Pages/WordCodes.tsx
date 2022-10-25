@@ -397,24 +397,24 @@ const WordCodes = (props: Props) => {
   }
 
   // Textual information for questions gamemode
-  function displayInformation(): React.ReactNode {
+  const QuestionProvidedInformation = () => {
     if (props.mode !== "question") {
-      return;
+      return null;
     }
 
     if (!displayWords) {
-      return;
+      return null;
     }
 
     if (!displayCodes) {
-      return;
+      return null;
     }
 
     // Word code for the current question
     const currentQuestion = getCurrentQuestion();
 
     if (!currentQuestion) {
-      return;
+      return null;
     }
 
     const targetCodePlaceholder = Array.from({ length: gamemodeSettings.codeLength })
@@ -428,23 +428,23 @@ const WordCodes = (props: Props) => {
     }
 
     return (
-      <>
+      <div className="word_codes_information">
         <div className="word_codes_words">{displayWords.join("  ")}</div>
         <div className="word_codes_codes">{displayCodesWithPlaceholder.join("  ")}</div>
-      </>
+      </div>
     );
-  }
+  };
 
-  function displayQuestion(): React.ReactNode {
+  const Question = () => {
     if (props.mode !== "question") {
-      return;
+      return null;
     }
 
     // Word code for the current question
     const currentQuestion = getCurrentQuestion();
 
     if (!currentQuestion) {
-      return;
+      return null;
     }
 
     // Word to Code questions first
@@ -464,7 +464,9 @@ const WordCodes = (props: Props) => {
         </div>
       );
     }
-  }
+
+    return null;
+  };
 
   const getCurrentQuestion = () => {
     return questionWordCodes[questionIndex];
@@ -528,10 +530,9 @@ const WordCodes = (props: Props) => {
     setOppositeTiles(oppositeTiles.map((tile) => ({ ...tile, status: "not set" })));
   }
 
-  // Draggable tiles for match gamemode
-  function displayTiles(): React.ReactNode {
+  const MatchTiles = () => {
     if (props.mode !== "match") {
-      return;
+      return null;
     }
 
     const draggableWordTiles = (
@@ -555,7 +556,7 @@ const WordCodes = (props: Props) => {
     );
 
     return (
-      <>
+      <div className="tile_row">
         <DndContext
           sensors={sensors}
           collisionDetection={closestCenter}
@@ -575,9 +576,9 @@ const WordCodes = (props: Props) => {
             {draggableCodeTiles}
           </SortableContext>
         </DndContext>
-      </>
+      </div>
     );
-  }
+  };
 
   function checkTiles() {
     if (props.mode !== "match") {
@@ -780,14 +781,14 @@ const WordCodes = (props: Props) => {
     setQuestionIndex(questionIndex + 1);
   }
 
-  function displayInputMethod(): React.ReactNode {
+  const InputMethod = () => {
     // No input method, the tiles are just dragged and dropped
     if (props.mode === "match") {
-      return;
+      return null;
     }
 
     if (!getCurrentQuestion()) {
-      return;
+      return null;
     }
 
     // Guess will be a code, need a NumPad
@@ -823,7 +824,9 @@ const WordCodes = (props: Props) => {
         />
       );
     }
-  }
+
+    return null;
+  };
 
   function onBackspace() {
     if (!inProgress) {
@@ -909,7 +912,7 @@ const WordCodes = (props: Props) => {
         <MessageNotification type="default">{`Guesses left: ${remainingGuesses}`}</MessageNotification>
       )}
 
-      {props.mode === "match" && <div className="tile_row">{displayTiles()}</div>}
+      <MatchTiles />
 
       {Boolean(props.mode === "match" && inProgress) && (
         <Button
@@ -921,21 +924,20 @@ const WordCodes = (props: Props) => {
         </Button>
       )}
 
-      {props.mode !== "match" && (
-        <>
-          <div className="word_codes_information">{displayInformation()}</div>
-          {displayQuestion()}
-          <div className="guess">
-            <LetterTile
-              letter={guess}
-              status={inProgress ? "not set" : isCurrentGuessCorrect() ? "correct" : "incorrect"}
-              settings={props.settings}
-            ></LetterTile>
-          </div>
-        </>
+      <QuestionProvidedInformation />
+      <Question />
+
+      {props.mode === "question" && (
+        <div className="guess">
+          <LetterTile
+            letter={guess}
+            status={inProgress ? "not set" : isCurrentGuessCorrect() ? "correct" : "incorrect"}
+            settings={props.settings}
+          />
+        </div>
       )}
 
-      <>{displayInputMethod()}</>
+      <InputMethod />
 
       <div>
         {gamemodeSettings.timerConfig.isTimed && (

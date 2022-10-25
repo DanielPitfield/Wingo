@@ -226,16 +226,22 @@ const LettersGame = (props: Props) => {
     setBestGuess(longestWord);
   }, [props.guesses]);
 
-  function displayGameshowScore(): React.ReactNode {
-    if (props.gameshowScore === undefined || props.gameshowScore === null) {
-      return;
+  const GameshowScore = () => {
+    if (props.gameshowScore === undefined) {
+      return null;
+    }
+
+    if (props.gameshowScore === null) {
+      return null;
     }
 
     return (
-      <MessageNotification type="default">
-        <strong>Gameshow points: </strong>
-        {props.gameshowScore}
-      </MessageNotification>
+      <div className="gameshow-score">
+        <MessageNotification type="default">
+          <strong>Gameshow points: </strong>
+          {props.gameshowScore}
+        </MessageNotification>
+      </div>
     );
   }
 
@@ -277,7 +283,7 @@ const LettersGame = (props: Props) => {
         </div>
       )}
 
-      {props.gameshowScore !== undefined && <div className="gameshow-score">{displayGameshowScore()}</div>}
+      <GameshowScore />
 
       <Outcome />
 
