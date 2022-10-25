@@ -202,32 +202,28 @@ const Algebra = (props: Props) => {
     return !inProgress && allQuestionsCompleted;
   };
 
-  function displayOutcome(): React.ReactNode {
-    // Game still in progress, don't display anything
+  const Outcome = () => {
     if (inProgress) {
-      return;
+      return null;
     }
 
     // Show outcome of current question (and how many questions are left)
     const currentQuestionOutcome = (
-      <>
-        <MessageNotification type={isGuessCorrect() ? "success" : "error"}>
-          <strong>{isGuessCorrect() ? "Correct!" : "Incorrect!"}</strong>
-          <br />
-
-          {!isGuessCorrect() && (
-            <span>
-              The answers were: <strong>{getCurrentQuestionTemplate().correctAnswers.join(" , ")}</strong>
-            </span>
-          )}
-          <br />
-
-          {getCompletedNumQuestions() < getTotalNumQuestions() && (
-            <span>{`${getCompletedNumQuestions()} / ${getTotalNumQuestions()} questions completed`}</span>
-          )}
-        </MessageNotification>
+      <MessageNotification type={isGuessCorrect() ? "success" : "error"}>
+        <strong>{isGuessCorrect() ? "Correct!" : "Incorrect!"}</strong>
         <br />
-      </>
+
+        {!isGuessCorrect() && (
+          <span>
+            The answers were: <strong>{getCurrentQuestionTemplate().correctAnswers.join(" , ")}</strong>
+          </span>
+        )}
+        <br />
+
+        {getCompletedNumQuestions() < getTotalNumQuestions() && (
+          <span>{`${getCompletedNumQuestions()} / ${getTotalNumQuestions()} questions completed`}</span>
+        )}
+      </MessageNotification>
     );
 
     // The number of correct answers needed for a successful outcome
@@ -276,7 +272,7 @@ const Algebra = (props: Props) => {
     );
 
     return outcome;
-  }
+  };
 
   const getCompletedNumQuestions = () => {
     // The number of completed questions from current template
@@ -500,7 +496,7 @@ const Algebra = (props: Props) => {
         </div>
       )}
 
-      <div className="outcome">{displayOutcome()}</div>
+      <Outcome />
 
       {displayInputs()}
       {displayQuestion()}

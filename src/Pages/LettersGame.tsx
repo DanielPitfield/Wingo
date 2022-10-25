@@ -181,14 +181,14 @@ const LettersGame = (props: Props) => {
     );
   }
 
-  function displayOutcome(): React.ReactNode {
+  const Outcome = () => {
     // Game has not yet ended (currently only when when timer runs out)
     if (props.inProgress) {
-      return;
+      return null;
     }
 
     if (props.remainingSeconds > 0) {
-      return;
+      return null;
     }
 
     const bestWords = getBestLettersGameWords(getSelectionWord());
@@ -202,23 +202,16 @@ const LettersGame = (props: Props) => {
       </ul>
     );
 
-    if (bestGuess) {
-      const GOLD_PER_LETTER = 30;
-      // Reward gold based on how long the selected guess is
-      props.addGold(bestGuess.length * GOLD_PER_LETTER);
-    }
-
     return (
-      <>
-        <MessageNotification type="success">
-          <strong>{bestGuess ? bestGuess.toUpperCase() : "No guess was made"}</strong>
-          <br />
-          <strong>{bestGuess ? bestGuess.length : "0"} points</strong>
-        </MessageNotification>
+      <MessageNotification type="success">
+        <strong>{bestGuess ? bestGuess.toUpperCase() : "No guess was made"}</strong>
+        <br />
+        <strong>{bestGuess ? bestGuess.length : "0"} points</strong>
+        <br />
         {bestWordsList}
-      </>
+      </MessageNotification>
     );
-  }
+  };
 
   // Automatically choose the best word guessed so far
   React.useEffect(() => {
@@ -284,7 +277,7 @@ const LettersGame = (props: Props) => {
 
       {props.gameshowScore !== undefined && <div className="gameshow-score">{displayGameshowScore()}</div>}
 
-      <div>{displayOutcome()}</div>
+      <Outcome />
 
       <div>
         {!props.inProgress && props.remainingSeconds <= 0 && (

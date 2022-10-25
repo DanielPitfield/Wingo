@@ -105,10 +105,9 @@ const LetterCategories = (props: Props) => {
     return Grid;
   }
 
-  function displayOutcome(): React.ReactNode {
-    // Game still in progress, don't display anything
+  const Outcome = () => {
     if (props.inProgress) {
-      return;
+      return null;
     }
 
     // All correct
@@ -119,8 +118,9 @@ const LetterCategories = (props: Props) => {
         </MessageNotification>
       );
     }
+
     // All incorrect
-    else if (props.correctGuessesCount === 0) {
+    if (props.correctGuessesCount === 0) {
       return (
         <MessageNotification type="error">
           You didn't guess a correct word for <strong>any</strong> of the{" "}
@@ -128,16 +128,14 @@ const LetterCategories = (props: Props) => {
         </MessageNotification>
       );
     }
-    // Some (atleast one) words were right
-    else {
-      return (
-        <MessageNotification type="default">
-          You guessed a correct word for <strong>{props.correctGuessesCount}</strong> of the{" "}
-          <strong>{props.gamemodeSettings.numCategories}</strong> categories
-        </MessageNotification>
-      );
-    }
-  }
+
+    return (
+      <MessageNotification type="default">
+        You guessed a correct word for <strong>{props.correctGuessesCount}</strong> of the{" "}
+        <strong>{props.gamemodeSettings.numCategories}</strong> categories
+      </MessageNotification>
+    );
+  };
 
   const handleTimerToggle = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newGamemodeSettings: LetterCategoriesConfigProps["gamemodeSettings"] = {
@@ -162,7 +160,7 @@ const LetterCategories = (props: Props) => {
       className="App"
       style={{ backgroundImage: `url(${props.theme.backgroundImageSrc})`, backgroundSize: "100% 100%" }}
     >
-      <div>{displayOutcome()}</div>
+      <Outcome/>
       <div>
         {!props.inProgress && (
           <Button

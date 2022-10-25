@@ -259,13 +259,13 @@ const NumbersGame = (props: Props) => {
     setSolutions(puzzle.solve());
   }
 
-  function displayOutcome(): React.ReactNode {
+  const Outcome = () => {
     if (props.inProgress) {
-      return;
+      return null;
     }
 
     if (props.targetNumber === undefined) {
-      return;
+      return null;
     }
 
     const { score, difference } = getNumbersGameScore(
@@ -276,17 +276,15 @@ const NumbersGame = (props: Props) => {
 
     if (score === null) {
       return (
-        <>
-          <MessageNotification type="error">
-            No guess was made
-            <br />
-            <strong>0</strong> points
-          </MessageNotification>
-        </>
+        <MessageNotification type="error">
+          No guess was made
+          <br />
+          <strong>0</strong> points
+        </MessageNotification>
       );
     }
 
-    if (score === 10) {
+    if (props.closestGuessSoFar === props.targetNumber) {
       return (
         <MessageNotification type="success">
           You got the target number!
@@ -313,7 +311,7 @@ const NumbersGame = (props: Props) => {
         <strong>0</strong> points
       </MessageNotification>
     );
-  }
+  };
 
   function displayBestSolution(): React.ReactNode {
     const { difference } = getNumbersGameScore(
@@ -425,7 +423,7 @@ const NumbersGame = (props: Props) => {
 
       {!props.inProgress && (
         <>
-          {displayOutcome()}
+          <Outcome/>
 
           {displayBestSolution()}
 

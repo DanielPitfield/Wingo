@@ -391,7 +391,7 @@ const ArithmeticReveal = (props: Props) => {
     }
   }, [inProgress, revealState, gamemodeSettings.timerConfig.isTimed, remainingSeconds]);
 
-  // TODO: Still some refactoring with these functions and how they are used within displayOutcome()
+  // TODO: Still some refactoring with these functions and how they are used within Outcome
   const isGuessCorrect = (): Boolean => {
     return guess.toUpperCase() === targetNumbers[currentCheckpointIndex].toString().toUpperCase();
   };
@@ -406,10 +406,9 @@ const ArithmeticReveal = (props: Props) => {
     return !isGuessCorrect() || allCheckpointsCompleted;
   };
 
-  function displayOutcome(): React.ReactNode {
-    // Game still in progress, don't display anything
+  const Outcome = () => {
     if (inProgress) {
-      return;
+      return null;
     }
 
     const numCorrectAnswers = isGuessCorrect() ? currentCheckpointIndex + 1 : currentCheckpointIndex;
@@ -580,7 +579,7 @@ const ArithmeticReveal = (props: Props) => {
           />
         </div>
       )}
-      <div className="outcome">{displayOutcome()}</div>
+      <Outcome/>
       {inProgress && (
         <div className="target">
           <LetterTile

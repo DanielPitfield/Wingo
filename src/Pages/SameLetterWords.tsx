@@ -358,48 +358,43 @@ const SameLetterWords = (props: Props) => {
     return Array.from({ length: numRows }).map((_, index) => populateRow(index));
   }
 
-  /**
-   *
-   * @returns
-   */
-  function displayOutcome(): React.ReactNode {
-    // Game still in progress, don't display anything
+  const Outcome = () => {
     if (inProgress) {
-      return;
+      return null;
     }
 
     // Every valid word is within the selected words
     const successCondition =
       validWords.every((word) => selectedWords.includes(word)) && validWords.length > 0 && selectedWords.length > 0;
 
-    let outcomeNotification;
+    const restartButton = (
+      <Button mode="accept" settings={props.settings} onClick={() => ResetGame()}>
+        {props.isCampaignLevel ? LEVEL_FINISHING_TEXT : "Restart"}
+      </Button>
+    );
 
     if (successCondition) {
-      outcomeNotification = (
-        <MessageNotification type="success">
-          All <strong>{validWords.length}</strong> words with the same letters found!
-        </MessageNotification>
-      );
-    } else {
-      outcomeNotification = (
-        <MessageNotification type="error">
-          You didn't find the <strong>{validWords.length}</strong> words with the same letters
-        </MessageNotification>
+      return (
+        <>
+          <MessageNotification type="success">
+            All <strong>{validWords.length}</strong> words with the same letters found!
+          </MessageNotification>
+          <br />
+          {restartButton}
+        </>
       );
     }
 
     return (
       <>
-        {outcomeNotification}
-
+        <MessageNotification type="error">
+          You didn't find the <strong>{validWords.length}</strong> words with the same letters
+        </MessageNotification>
         <br />
-
-        <Button mode="accept" settings={props.settings} onClick={() => ResetGame()}>
-          {props.isCampaignLevel ? LEVEL_FINISHING_TEXT : "Restart"}
-        </Button>
+        {restartButton}
       </>
     );
-  }
+  };
 
   function ResetGame() {
     if (!inProgress) {
@@ -459,7 +454,7 @@ const SameLetterWords = (props: Props) => {
           />
         </div>
       )}
-      <div className="outcome">{displayOutcome()}</div>
+      <Outcome />
       {inProgress && (
         <>
           <MessageNotification type="default">

@@ -228,9 +228,9 @@ const Wingo = (props: Props) => {
     );
   };
 
-  function displayOutcome(): React.ReactNode {
+  const Outcome = () => {
     if (props.inProgress) {
-      return;
+      return null;
     }
 
     if (props.mode === "limitless") {
@@ -406,7 +406,7 @@ const Wingo = (props: Props) => {
     >
       {props.gameshowScore !== undefined && <div className="gameshow-score">{displayGameshowScore()}</div>}
       {props.inProgress && <div>{displayHint()}</div>}
-      <div>{displayOutcome()}</div>
+      <Outcome/>
       {isDailyMode(location) && !props.inProgress && (
         <MessageNotification type="default">Next Daily reset in: {timeUntilDailyReset}</MessageNotification>
       )}

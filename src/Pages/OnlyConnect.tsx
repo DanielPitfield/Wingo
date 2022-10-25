@@ -347,10 +347,9 @@ const OnlyConnect = (props: Props) => {
     );
   }
 
-  function displayOutcome(): React.ReactNode {
-    // Game still in progress, don't display anything
+  const Outcome = () => {
     if (inProgress) {
-      return;
+      return null;
     }
 
     // All groups were found
@@ -377,7 +376,7 @@ const OnlyConnect = (props: Props) => {
         </Button>
       </>
     );
-  }
+  };
 
   function ResetGame() {
     if (!inProgress) {
@@ -434,7 +433,7 @@ const OnlyConnect = (props: Props) => {
           />
         </div>
       )}
-      {!inProgress && <div className="outcome">{displayOutcome()}</div>}
+      <Outcome/>
       {Boolean(inProgress && numCompletedGroups === gamemodeSettings.numGroups - 2) && (
         <MessageNotification type="default">{`Guesses left: ${remainingGuesses}`}</MessageNotification>
       )}

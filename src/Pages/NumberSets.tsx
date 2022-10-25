@@ -184,32 +184,28 @@ const NumberSets = (props: Props) => {
     return !inProgress && isLastNumberSet;
   };
 
-  function displayOutcome(): React.ReactNode {
-    // Game still in progress, don't display anything
+  const Outcome = () => {
     if (inProgress) {
-      return;
+      return null;
     }
 
     // Show outcome of current question (and how many questions are left)
     const currentQuestionOutcome = (
-      <>
-        <MessageNotification type={isGuessCorrect() ? "success" : "error"}>
-          <strong>{isGuessCorrect() ? "Correct!" : "Incorrect!"}</strong>
-          <br />
-
-          {!isGuessCorrect() && (
-            <span>
-              The answer was <strong>{getCurrentNumberSetTemplate().question.correctAnswer}</strong>
-            </span>
-          )}
-          <br />
-
-          {currentNumberSetIndex + 1 < gamemodeSettings.numSets && (
-            <span>{`${currentNumberSetIndex + 1} / ${gamemodeSettings.numSets} questions completed`}</span>
-          )}
-        </MessageNotification>
+      <MessageNotification type={isGuessCorrect() ? "success" : "error"}>
+        <strong>{isGuessCorrect() ? "Correct!" : "Incorrect!"}</strong>
         <br />
-      </>
+
+        {!isGuessCorrect() && (
+          <span>
+            The answer was <strong>{getCurrentNumberSetTemplate().question.correctAnswer}</strong>
+          </span>
+        )}
+        <br />
+
+        {currentNumberSetIndex + 1 < gamemodeSettings.numSets && (
+          <span>{`${currentNumberSetIndex + 1} / ${gamemodeSettings.numSets} questions completed`}</span>
+        )}
+      </MessageNotification>
     );
 
     // The number of correct answers needed for a successful outcome
@@ -258,7 +254,7 @@ const NumberSets = (props: Props) => {
     );
 
     return outcome;
-  }
+  };
 
   function ResetGame() {
     if (isGameOver()) {
@@ -362,7 +358,7 @@ const NumberSets = (props: Props) => {
         </div>
       )}
 
-      <div className="outcome">{displayOutcome()}</div>
+      <Outcome/>
 
       {displayExamples()}
       {displayQuestion()}

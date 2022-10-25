@@ -854,10 +854,9 @@ export const WingoInterlinked = (props: Props) => {
     return Array.from({ length: gridConfig.height }).map((_, index) => populateRow(index));
   }
 
-  function displayOutcome(): React.ReactNode {
-    // Game still in progress, don't display anything
+  const Outcome = () => {
     if (inProgress) {
-      return;
+      return null;
     }
 
     // Is the grid completed (all correct words entered?)
@@ -892,7 +891,7 @@ export const WingoInterlinked = (props: Props) => {
         )}
       </>
     );
-  }
+  };
 
   function ResetGame() {
     if (!inProgress) {
@@ -979,7 +978,7 @@ export const WingoInterlinked = (props: Props) => {
         </div>
       )}
 
-      {!inProgress && <div className="outcome">{displayOutcome()}</div>}
+      <Outcome/>
       {Boolean(inProgress && props.provideWords) && (
         <MessageNotification type="info">
           <strong>Provided words:</strong>

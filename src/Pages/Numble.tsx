@@ -528,13 +528,9 @@ const Numble = (props: Props) => {
     return { messageType: "default", message: "" };
   }
 
-  function displayOutcome(): React.ReactNode {
+  const Outcome = () => {
     if (isGameInProgress()) {
-      return;
-    }
-
-    if (props.gamemodeSettings.numTeams <= 0) {
-      return;
+      return null;
     }
 
     // Singleplayer
@@ -544,13 +540,11 @@ const Numble = (props: Props) => {
 
       return (
         <MessageNotification type={outcomeMessageInfo.messageType}>
-          <>
-            <strong>Game over</strong>
-            <br />
-            {outcomeMessageInfo.message}
-            <br />
-            Final Score: {finalScore ?? 0}
-          </>
+          <strong>Game over</strong>
+          <br />
+          {outcomeMessageInfo.message}
+          <br />
+          Final Score: {finalScore ?? 0}
         </MessageNotification>
       );
     }
@@ -604,7 +598,9 @@ const Numble = (props: Props) => {
         </MessageNotification>
       );
     }
-  }
+
+    return null;
+  };
 
   function ResetGame() {
     if (!isGameInProgress()) {
@@ -755,7 +751,7 @@ const Numble = (props: Props) => {
       className="App"
       style={{ backgroundImage: `url(${props.theme.backgroundImageSrc})`, backgroundSize: "100% 100%" }}
     >
-      <div>{displayOutcome()}</div>
+      <Outcome/>
 
       <div>
         {!isGameInProgress() && (

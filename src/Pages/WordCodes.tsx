@@ -635,10 +635,9 @@ const WordCodes = (props: Props) => {
     return !inProgress && isLastQuestion;
   };
 
-  function displayOutcome(): React.ReactNode {
-    // Game still in progress, don't display anything
+  const Outcome = () => {
     if (inProgress) {
-      return;
+      return null;
     }
 
     const restartButton = (
@@ -675,9 +674,7 @@ const WordCodes = (props: Props) => {
               </span>
             )}
           </MessageNotification>
-
           <br />
-
           {restartButton}
         </>
       );
@@ -707,14 +704,11 @@ const WordCodes = (props: Props) => {
 
     // When the game has finished, show the number of correct answers
     const overallOutcome = (
-      <>
-        <MessageNotification
-          type={getQuestionSetOutcome(numCorrectAnswers, targetScore, props.campaignConfig.isCampaignLevel)}
-        >
-          <strong>{`${numCorrectAnswers} / ${getTotalNumQuestions()} correct`}</strong>
-        </MessageNotification>
-        <br />
-      </>
+      <MessageNotification
+        type={getQuestionSetOutcome(numCorrectAnswers, targetScore, props.campaignConfig.isCampaignLevel)}
+      >
+        <strong>{`${numCorrectAnswers} / ${getTotalNumQuestions()} correct`}</strong>
+      </MessageNotification>
     );
 
     const continueButton = (
@@ -741,8 +735,8 @@ const WordCodes = (props: Props) => {
       );
     }
 
-    return;
-  }
+    return null;
+  };
 
   // Restart with new word codes and set of questions
   function ResetGame() {
@@ -909,7 +903,7 @@ const WordCodes = (props: Props) => {
         </div>
       )}
 
-      <div className="outcome">{displayOutcome()}</div>
+      <Outcome />
 
       {Boolean(props.mode === "match" && inProgress) && (
         <MessageNotification type="default">{`Guesses left: ${remainingGuesses}`}</MessageNotification>

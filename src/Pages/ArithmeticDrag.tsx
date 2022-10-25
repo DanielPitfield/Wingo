@@ -418,7 +418,7 @@ const ArithmeticDrag = (props: Props) => {
    * LetterTile Debug: letter={`R: ${tile.total}`}
    * @returns
    */
-  function displayTiles(): React.ReactNode {
+  const Tiles = () => {
     const draggableExpressionTiles = (
       <div className="draggable_expressions" ref={parent}>
         {expressionTiles.map((tile) => (
@@ -440,7 +440,7 @@ const ArithmeticDrag = (props: Props) => {
     );
 
     return (
-      <>
+      <div className="tile_row">
         <DndContext
           sensors={sensors}
           collisionDetection={closestCenter}
@@ -464,7 +464,7 @@ const ArithmeticDrag = (props: Props) => {
             </SortableContext>
           </DndContext>
         )}
-      </>
+      </div>
     );
   }
 
@@ -523,10 +523,9 @@ const ArithmeticDrag = (props: Props) => {
     }
   }
 
-  function displayOutcome(): React.ReactNode {
-    // Game still in progress, don't display anything
+  const Outcome = () => {
     if (inProgress) {
-      return;
+      return null;
     }
 
     const numCorrectTiles = expressionTiles.filter((x) => x.status === "correct").length;
@@ -618,9 +617,11 @@ const ArithmeticDrag = (props: Props) => {
         </div>
       )}
 
-      <div className="outcome">{displayOutcome()}</div>
+      <Outcome/>
+
       {inProgress && <MessageNotification type="default">{`Guesses left: ${remainingGuesses}`}</MessageNotification>}
-      <div className="tile_row">{displayTiles()}</div>
+
+      <Tiles/>
       {inProgress && (
         <Button
           mode={remainingGuesses <= 1 ? "accept" : "default"}
