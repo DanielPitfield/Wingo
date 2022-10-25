@@ -83,9 +83,9 @@ const Wingo = (props: Props) => {
     return modesWithDisplayRow.includes(props.mode);
   };
 
-  function getDisplayRow(): React.ReactNode {
+  const DisplayRow = () => {
     if (!isModeWithDisplayRow()) {
-      return;
+      return null;
     }
 
     if (props.mode === "puzzle") {
@@ -98,6 +98,7 @@ const Wingo = (props: Props) => {
           displayWord += " ";
         }
       }
+
       // Return a read only WordRow that slowly reveals puzzle word
       return (
         <WordRow
@@ -137,7 +138,7 @@ const Wingo = (props: Props) => {
       );
     }
 
-    return;
+    return null;
   }
 
   const Grid = () => {
@@ -145,7 +146,7 @@ const Wingo = (props: Props) => {
 
     // Puzzle/Conundrum display row
     if (isModeWithDisplayRow()) {
-      Grid.push(getDisplayRow());
+      Grid.push(<DisplayRow />);
     }
 
     for (let i = 0; i < props.remainingGuesses; i++) {
@@ -412,7 +413,7 @@ const Wingo = (props: Props) => {
       <GameshowScore />
       <Hint />
       <Outcome />
-      
+
       {isDailyMode(location) && !props.inProgress && (
         <MessageNotification type="default">Next Daily reset in: {timeUntilDailyReset}</MessageNotification>
       )}
