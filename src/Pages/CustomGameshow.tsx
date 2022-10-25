@@ -120,7 +120,7 @@ export const CustomGameshow = (props: Props) => {
   }
 
   // List of buttons (which add to the queue when clicked)
-  function displayFilteredModes(): React.ReactNode {
+  const AvailableModes = () => {
     return (
       <div className="gameshow-available-modes-wrapper">
         {filteredModes.map((gameshowMode, index) => (
@@ -128,10 +128,10 @@ export const CustomGameshow = (props: Props) => {
         ))}
       </div>
     );
-  }
+  };
 
   // The order of gamemodes (the CustomGameshow will have)
-  function displayQueuedModes(): React.ReactNode {
+  const Queue = () => {
     const draggableGameshowModeTiles = (
       <div className="gameshow-queued-modes-wrapper" ref={parent}>
         {queuedModes?.map((gameshowMode, index) => (
@@ -152,7 +152,7 @@ export const CustomGameshow = (props: Props) => {
         </SortableContext>
       </DndContext>
     );
-  }
+  };
 
   // Which gamemode categories can be used as filters?
   const gamemodeCategoryFilters: gamemodeCategory[] = gamemodeCategories.filter(
@@ -196,8 +196,8 @@ export const CustomGameshow = (props: Props) => {
       </Button>
 
       <div className="custom-gameshow-wrapper">
-        {displayQueuedModes()}
-        {displayFilteredModes()}
+        <Queue />
+        <AvailableModes />
       </div>
     </>
   );
