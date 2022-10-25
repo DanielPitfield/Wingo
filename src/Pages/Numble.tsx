@@ -456,26 +456,26 @@ const Numble = (props: Props) => {
       Grid.push(populateRow(i));
     }
 
-    return <div className="numble-grid" data-shape={props.gamemodeSettings.gridShape}>{Grid}</div>
-  }
+    return (
+      <div className="numble-grid" data-shape={props.gamemodeSettings.gridShape}>
+        {Grid}
+      </div>
+    );
+  };
 
-  function displayPinScores(): React.ReactNode {
-    const pinScores = [];
-    // Create read-only numble pin of each colour with text of how many points it awards
-    for (const colourRange of pointColourMapping) {
-      pinScores.push(
-        <button
-          key={colourRange.colour}
-          className="numble-button-display"
-          data-prime={false}
-          data-picked={false}
-          data-colour={colourRange.colour}
-          disabled={false}
-        >
-          {colourRange.points}
-        </button>
-      );
-    }
+  const PinScores = () => {
+    const pinScores = pointColourMapping.map((colourRange) => (
+      <button
+        key={colourRange.colour}
+        className="numble-button-display"
+        data-prime={false}
+        data-picked={false}
+        data-colour={colourRange.colour}
+        disabled={false}
+      >
+        {colourRange.points}
+      </button>
+    ));
 
     // Use the last/highest row colour to show prime numble pin
     const lastPointColourMapping = pointColourMapping[pointColourMapping.length - 1];
@@ -494,8 +494,8 @@ const Numble = (props: Props) => {
       </button>
     );
 
-    return pinScores;
-  }
+    return <div className="numble-pin-scores">{pinScores}</div>;
+  };
 
   function isGameInProgress() {
     if (
@@ -751,7 +751,7 @@ const Numble = (props: Props) => {
       className="App"
       style={{ backgroundImage: `url(${props.theme.backgroundImageSrc})`, backgroundSize: "100% 100%" }}
     >
-      <Outcome/>
+      <Outcome />
 
       <div>
         {!isGameInProgress() && (
@@ -815,7 +815,7 @@ const Numble = (props: Props) => {
         )}
       </div>
 
-      <Grid/>
+      <Grid />
 
       <div className="numble-score-wrapper">
         <div className="teams-info-wrapper">
@@ -846,7 +846,7 @@ const Numble = (props: Props) => {
             </div>
           ))}
         </div>
-        <div className="numble-pin-scores">{displayPinScores()}</div>
+        <PinScores/>
       </div>
     </div>
   );
