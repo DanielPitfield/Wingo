@@ -379,12 +379,6 @@ const Wingo = (props: Props) => {
     props.updateGamemodeSettings(newGamemodeSettings);
   };
 
-  /*
-  TODO: Gamemode Settings Indicators/Icons
-  These should display to the user whether certain important gamemode settings are enabled or disabled
-  For instance, if a campaign level, currently how do you know whether enforceFullLengthGuesses is enabled/disabled?
-  */
-
   return (
     <div
       className="App"

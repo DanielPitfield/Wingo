@@ -41,20 +41,6 @@ export const App = () => {
   // Use this to change the path
   const navigate = useNavigate();
 
-  // App wide listener for right click event
-  // TODO: Decide whether right click should be enabled
-  //document.addEventListener("contextmenu", handleRightClick);
-
-  /* 
-  To re-enable it for a component, use:
-  document.removeEventListener('contextmenu', handleRightClick);
-  */
-
-  // Prevent default right click context menu from appearing
-  function handleRightClick(event: MouseEvent) {
-    event.preventDefault();
-  }
-
   const [settings, setSettings] = useState<SettingsData>(getSettings());
 
   const [loadingState, setLoadingState] = useState<"loading" | "loaded">("loading");
@@ -583,8 +569,6 @@ export const App = () => {
         />
 
         <Route path="/Random" element={null} />
-
-
 
         <Route
           path="*"

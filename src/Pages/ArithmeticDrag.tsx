@@ -64,16 +64,6 @@ export interface ArithmeticDragProps {
   mode: arithmeticMode;
 
   gamemodeSettings: {
-    /* TODO: Difficulty presets
-    All these settings control the difficulty for this mode
-
-    Maybe offer difficulty dropdown/select with Easy, Normal, Hard presets 
-    (i.e predetermined configurations of these settings)
-
-    But then also offer a Custom option, where the user can fine tune these settings themselves
-    (when the Custom option is selected, the inputs for the settings appear)
-    */
-
     // How many expressions (to match or order)?
     numTiles: number;
     // How big/difficult are the numbers used in these expressions?
@@ -466,7 +456,7 @@ const ArithmeticDrag = (props: Props) => {
         )}
       </div>
     );
-  }
+  };
 
   function checkTiles() {
     const tileTotals = expressionTiles.map((x) => x.total);
@@ -547,7 +537,7 @@ const ArithmeticDrag = (props: Props) => {
         </Button>
       </>
     );
-  }
+  };
 
   function ResetGame() {
     if (!inProgress) {
@@ -617,11 +607,11 @@ const ArithmeticDrag = (props: Props) => {
         </div>
       )}
 
-      <Outcome/>
+      <Outcome />
 
       {inProgress && <MessageNotification type="default">{`Guesses left: ${remainingGuesses}`}</MessageNotification>}
 
-      <Tiles/>
+      <Tiles />
       {inProgress && (
         <Button
           mode={remainingGuesses <= 1 ? "accept" : "default"}

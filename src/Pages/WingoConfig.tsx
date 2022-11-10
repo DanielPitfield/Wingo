@@ -523,7 +523,6 @@ const WingoConfig = (props: Props) => {
       return;
     }
 
-    // TODO: This function call is put inside either the ResetGame() function or the useEffect with gamemodeSettings as a dependency
     updateTargetWord();
   }, [
     // When word length is changed

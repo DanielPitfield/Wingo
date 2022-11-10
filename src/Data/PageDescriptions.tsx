@@ -1,15 +1,7 @@
 import { MAX_TARGET_WORD_LENGTH } from "./GamemodeSettingsInputLimits";
 import { PagePath } from "./PageNames";
 
-export const gamemodeCategories = [
-  "Daily / Weekly",
-  "Wingo",
-  "Letters",
-  "Numbers",
-  "Puzzle",
-  "Presets",
-  null,
-] as const;
+export const gamemodeCategories = ["Daily / Weekly", "Wingo", "Letters", "Numbers", "Puzzle", "Presets", null] as const;
 
 export type gamemodeCategory = typeof gamemodeCategories[number];
 
@@ -26,12 +18,6 @@ export type pageDescription = {
   description?: string;
   helpInfo?: JSX.Element;
 };
-
-/* 
-TODO: Gamemode display order
-Is there some way of specifying which order the tiles which are derived from these pageDescriptions appear?
-Other than ensuring they are in the correct order here (within pageDescriptions)
-*/
 
 // TODO: helpInfo for every gamemode
 

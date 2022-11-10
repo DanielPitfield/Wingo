@@ -32,16 +32,6 @@ export interface ArithmeticRevealProps {
     | { isCampaignLevel: false };
 
   gamemodeSettings: {
-    /* TODO: Difficulty presets
-    All these settings control the difficulty for this mode
-
-    Maybe offer difficulty dropdown/select with Easy, Normal, Hard presets 
-    (i.e predetermined configurations of these settings)
-
-    But then also offer a Custom option, where the user can fine tune these settings themselves
-    (when the Custom option is selected, the inputs for the settings appear)
-    */
-
     numCheckpoints: number;
     // How many tiles appear EACH checkpoint?
     numTiles: number;
@@ -489,7 +479,7 @@ const ArithmeticReveal = (props: Props) => {
     );
 
     return outcome;
-  }
+  };
 
   function ResetGame() {
     if (!inProgress) {
@@ -579,7 +569,7 @@ const ArithmeticReveal = (props: Props) => {
           />
         </div>
       )}
-      <Outcome/>
+      <Outcome />
       {inProgress && (
         <div className="target">
           <LetterTile
