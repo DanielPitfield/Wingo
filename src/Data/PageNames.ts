@@ -34,6 +34,3 @@ export type PagePath =
   | "/Challenges"
   | "/Settings"
   | "/Random"
-  | "/LettersNumbersGameshow"
-  | "/WingoGameshow"
-  | "/CustomGameshow";

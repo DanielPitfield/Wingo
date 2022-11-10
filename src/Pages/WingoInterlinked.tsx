@@ -900,15 +900,7 @@ export const WingoInterlinked = (props: Props) => {
       const wasCorrect = tileStatuses.every((tile) => tile.status === "correct");
       props.onComplete(wasCorrect);
 
-      /*
-      const NUM_POINTS_PER_WORD = 10;
-      props.onCompleteGameshowRound?.(
-        wasCorrect,
-        currentWords.join(""),
-        gridConfig.words.map((x) => x.word).join(""),
-        gridConfig.words.length * NUM_POINTS_PER_WORD
-      );
-      */
+
     }
 
     setInProgress(true);

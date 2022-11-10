@@ -53,7 +53,6 @@ interface Props {
 
   ResetGame: () => void;
   ContinueGame: () => void;
-  gameshowScore?: number;
 }
 
 const LettersGame = (props: Props) => {
@@ -226,25 +225,6 @@ const LettersGame = (props: Props) => {
     setBestGuess(longestWord);
   }, [props.guesses]);
 
-  const GameshowScore = () => {
-    if (props.gameshowScore === undefined) {
-      return null;
-    }
-
-    if (props.gameshowScore === null) {
-      return null;
-    }
-
-    return (
-      <div className="gameshow-score">
-        <MessageNotification type="default">
-          <strong>Gameshow points: </strong>
-          {props.gameshowScore}
-        </MessageNotification>
-      </div>
-    );
-  }
-
   const handleTimerToggle = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newGamemodeSettings: LettersGameConfigProps["gamemodeSettings"] = {
       ...props.gamemodeSettings,
@@ -268,7 +248,7 @@ const LettersGame = (props: Props) => {
       className="App"
       style={{ backgroundImage: `url(${props.theme.backgroundImageSrc})`, backgroundSize: "100% 100%" }}
     >
-      {!props.campaignConfig.isCampaignLevel && props.gameshowScore === undefined && (
+      {!props.campaignConfig.isCampaignLevel && (
         <div className="gamemodeSettings">
           <LettersGameGamemodeSettings
             gamemodeSettings={props.gamemodeSettings}
@@ -283,8 +263,6 @@ const LettersGame = (props: Props) => {
         </div>
       )}
 
-      <GameshowScore />
-
       <Outcome />
 
       <div>
@@ -296,9 +274,7 @@ const LettersGame = (props: Props) => {
             onClick={props.ResetGame}
             additionalProps={{ autoFocus: true }}
           >
-            {props.gameshowScore !== undefined
-              ? "Next round"
-              : props.campaignConfig.isCampaignLevel
+            {props.campaignConfig.isCampaignLevel
               ? LEVEL_FINISHING_TEXT
               : "Restart"}
           </Button>

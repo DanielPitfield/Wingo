@@ -22,13 +22,9 @@ import NumberSets, { NumberSetsProps } from "./Pages/NumberSets";
 import Algebra, { AlgebraProps } from "./Pages/Algebra";
 import { ChallengesInfo } from "./Components/ChallengesInfo";
 import WordCodes, { WordCodesProps } from "./Pages/WordCodes";
-import { LettersNumbersGameshow } from "./Pages/LettersNumbersGameshow";
-import { WingoGameshow } from "./Pages/WingoGameshow";
 import { TitlePage } from "./Pages/TitlePage";
-import { defaultWingoGameshowRoundOrder } from "./Data/DefaultGamemodeSettings";
 import { pageDescriptions } from "./Data/PageDescriptions";
 import SequencePuzzle from "./Pages/SequencePuzzle";
-import { CustomGameshow } from "./Pages/CustomGameshow";
 import { PagePath } from "./Data/PageNames";
 import { getPageGamemodeSettings } from "./Helpers/getPageGamemodeSettings";
 import { getRandomElementFrom } from "./Helpers/getRandomElementFrom";
@@ -587,44 +583,9 @@ export const App = () => {
         />
 
         <Route path="/Random" element={null} />
-        <Route
-          path="/LettersNumbersGameshow"
-          element={
-            <PageWrapper gold={gold} settings={settings}>
-              <LettersNumbersGameshow
-                {...commonProps}
-                {...commonWingoProps}
-                // TODO: Should LettersNumbersGameshow have gamemodeSettings like other gamemodes or an initial configuration page?
-                numSets={5}
-                numLetterRoundsPerSet={2}
-                numNumberRoundsPerSet={1}
-                numConundrumRoundsPerSet={0}
-                hasFinishingConundrum={true}
-              />
-            </PageWrapper>
-          }
-        />
-        <Route
-          path="/WingoGameshow"
-          element={
-            <PageWrapper gold={gold} settings={settings}>
-              <WingoGameshow
-                {...commonProps}
-                {...commonWingoProps}
-                // TODO: Should WingoGameshow have gamemodeSettings like other gamemodes or an initial configuration page?
-                roundOrderConfig={defaultWingoGameshowRoundOrder}
-              />
-            </PageWrapper>
-          }
-        />
-        <Route
-          path="/CustomGameshow"
-          element={
-            <PageWrapper gold={gold} settings={settings}>
-              <CustomGameshow {...commonProps} />
-            </PageWrapper>
-          }
-        />
+
+
+
         <Route
           path="*"
           element={

@@ -9,5 +9,4 @@ export const gamemodeDefaultNumGuesses: { page: PagePath; numGuesses: number }[]
   { page: "/SameLetters", numGuesses: 20 },
   { page: "/WordCodes/Question", numGuesses: 3 },
   { page: "/WordCodes/Match", numGuesses: 3 },
-  { page: "/LettersNumbersGameshow", numGuesses: 5 },
 ];

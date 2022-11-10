@@ -31,8 +31,6 @@ export interface NumbersGameConfigProps {
     numOperands: number;
     timerConfig: { isTimed: true; seconds: number } | { isTimed: false };
   };
-
-  gameshowScore?: number;
 }
 
 interface Props extends NumbersGameConfigProps {
@@ -41,7 +39,6 @@ interface Props extends NumbersGameConfigProps {
   setTheme: (theme: Theme) => void;
   addGold: (gold: number) => void;
   onComplete: (wasCorrect: boolean) => void;
-  onCompleteGameshowRound?: (wasCorrect: boolean, guess: string, correctAnswer: string, score: number | null) => void;
 }
 
 export type OriginalTileStatus = {
@@ -182,10 +179,6 @@ const NumbersGameConfig = (props: Props) => {
       return;
     }
 
-    if (props.gameshowScore !== undefined) {
-      return;
-    }
-
     ResetGame();
 
     // Save the latest gamemode settings for this mode
@@ -248,19 +241,10 @@ const NumbersGameConfig = (props: Props) => {
         ? Boolean(score && score >= Math.min(props.campaignConfig.targetScore, MAX_POSSIBLE_SCORE))
         : Boolean(difference && difference <= 10);
 
-      // Not part of a gameshow
-      if (props.gameshowScore === undefined) {
+
         props.onComplete(wasCorrect);
-      }
-      // Round within a gameshow
-      else {
-        props.onCompleteGameshowRound?.(
-          wasCorrect,
-          closestGuessSoFar?.toString() ?? "",
-          targetNumber?.toString() ?? "",
-          score
-        );
-      }
+      
+
     }
 
     setInProgress(true);
@@ -604,7 +588,7 @@ const NumbersGameConfig = (props: Props) => {
       submitBestGuess={submitBestGuess}
       setOperator={(operator) => setCurrentGuess({ ...currentGuess, operator })}
       addGold={props.addGold}
-      gameshowScore={props.gameshowScore}
+
     />
   );
 };

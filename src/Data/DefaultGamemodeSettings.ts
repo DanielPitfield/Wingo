@@ -280,15 +280,7 @@ export const defaultNumbleGamemodeSettings: NumbleConfigProps["gamemodeSettings"
   timerConfig: { isTimed: true, seconds: getGamemodeDefaultTimerValue("/Numble") },
 };
 
-export const defaultWingoGameshowRoundOrder = {
-  firstRoundConfig: { numWingos: 4, numPuzzles: 1 },
-  secondRoundConfig: { numWingos: 3, numPuzzles: 1 },
-  thirdRoundConfig: { numFourLengthWingos: 2, numPuzzles: 1, numFiveLengthWingos: 2, numberPuzzles: 1 },
-  hasFinalRound: true,
-};
-
 // TODO: Default gamemode settings (remaining unimplemented modes)
 /*
   "PuzzleSequence"
-  "LettersNumbersGameshow"
 */

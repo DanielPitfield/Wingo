@@ -16,8 +16,6 @@ import SameLetterWords, { SameLetterWordsProps } from "../Pages/SameLetterWords"
 import WordCodes, { WordCodesProps } from "../Pages/WordCodes";
 import WingoConfig, { WingoConfigProps } from "../Pages/WingoConfig";
 import { AreaConfig } from "../Pages/Area";
-import { LettersNumbersGameshow, LettersNumbersGameshowProps } from "../Pages/LettersNumbersGameshow";
-import { WingoGameshow, WingoGameshowProps } from "../Pages/WingoGameshow";
 import SequencePuzzle, { SequencePuzzleProps } from "../Pages/SequencePuzzle";
 import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import { useParams } from "react-router";
@@ -89,16 +87,6 @@ export type LevelConfig = {
         gameCategory: "Numble";
         page: PagePath;
         levelProps: NumbleConfigProps;
-      }
-    | {
-        gameCategory: "LettersNumbersGameshow";
-        page: PagePath;
-        levelProps: LettersNumbersGameshowProps;
-      }
-    | {
-        gameCategory: "WingoGameshow";
-        page: PagePath;
-        levelProps: WingoGameshowProps;
       }
     | {
         gameCategory: "SequencePuzzle";
@@ -210,12 +198,6 @@ export const Level = (props: LevelProps) => {
 
       case "Numble":
         return <NumbleConfig {...selectedLevel.level.levelProps} {...commonProps} />;
-
-      case "LettersNumbersGameshow":
-        return <LettersNumbersGameshow {...selectedLevel.level.levelProps} {...commonProps} />;
-
-      case "WingoGameshow":
-        return <WingoGameshow {...selectedLevel.level.levelProps} {...commonProps} />;
 
       case "SequencePuzzle":
         return <SequencePuzzle {...selectedLevel.level.levelProps} {...commonProps} />;

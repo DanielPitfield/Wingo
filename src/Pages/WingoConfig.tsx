@@ -97,7 +97,6 @@ export interface WingoConfigProps {
   checkInDictionary?: boolean;
 
   roundScoringInfo?: { basePoints: number; pointsLostPerGuess: number };
-  gameshowScore?: number;
 }
 
 interface Props extends WingoConfigProps {
@@ -107,7 +106,6 @@ interface Props extends WingoConfigProps {
   setTheme: (theme: Theme) => void;
   addGold: (gold: number) => void;
   onComplete: (wasCorrect: boolean) => void;
-  onCompleteGameshowRound?: (wasCorrect: boolean, guess: string, correctAnswer: string, score: number | null) => void;
 }
 
 export const DEFAULT_ALPHABET_STRING = "abcdefghijklmnopqrstuvwxyz";
@@ -603,11 +601,7 @@ const WingoConfig = (props: Props) => {
       // Guessed the target word correctly
       const wasCorrect = isCurrentGuessCorrect();
 
-      if (props.gameshowScore === undefined) {
-        props.onComplete(wasCorrect);
-      } else {
-        props.onCompleteGameshowRound?.(wasCorrect, currentWord, targetWord, determineScore());
-      }
+      props.onComplete(wasCorrect);
     }
 
     setIsIncompleteWord(false);
@@ -951,7 +945,6 @@ const WingoConfig = (props: Props) => {
       ResetGame={ResetGame}
       ContinueGame={ContinueGame}
       setTheme={props.setTheme}
-      gameshowScore={props.gameshowScore}
     ></Wingo>
   );
 };

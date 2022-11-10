@@ -31,8 +31,6 @@ export interface LettersGameConfigProps {
     numLetters: number;
     timerConfig: { isTimed: true; seconds: number } | { isTimed: false };
   };
-
-  gameshowScore?: number;
 }
 
 interface Props extends LettersGameConfigProps {
@@ -41,7 +39,6 @@ interface Props extends LettersGameConfigProps {
   setTheme: (theme: Theme) => void;
   addGold: (gold: number) => void;
   onComplete: (wasCorrect: boolean) => void;
-  onCompleteGameshowRound?: (wasCorrect: boolean, guess: string, correctAnswer: string, score: number | null) => void;
 }
 
 export type LettersGameTileStatus = {
@@ -142,10 +139,6 @@ const LettersGameConfig = (props: Props) => {
       return;
     }
 
-    if (props.gameshowScore !== undefined) {
-      return;
-    }
-
     ResetGame();
 
     // Save the latest gamemode settings for this mode
@@ -178,16 +171,9 @@ const LettersGameConfig = (props: Props) => {
         ? score >= Math.min(props.campaignConfig.targetScore, gamemodeSettings.numLetters)
         : score > 0;
 
-      // Not part of a gameshow
-      if (props.gameshowScore === undefined) {
-        props.onComplete(wasCorrect);
-      }
-      // Round within a gameshow
-      else {
-        props.onCompleteGameshowRound?.(wasCorrect, longestWord, "", score);
-      }
-    }    
-    
+      props.onComplete(wasCorrect);
+    }
+
     setInProgress(true);
 
     setGuesses([]);
@@ -425,7 +411,6 @@ const LettersGameConfig = (props: Props) => {
       ResetGame={ResetGame}
       ContinueGame={ContinueGame}
       addGold={props.addGold}
-      gameshowScore={props.gameshowScore}
     ></LettersGame>
   );
 };

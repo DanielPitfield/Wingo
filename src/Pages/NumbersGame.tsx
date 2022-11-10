@@ -62,7 +62,6 @@ interface Props {
 
   setOperator: (operator: Guess["operator"]) => void;
   addGold: (gold: number) => void;
-  gameshowScore?: number;
 }
 
 const NumbersGame = (props: Props) => {
@@ -216,24 +215,7 @@ const NumbersGame = (props: Props) => {
     return <div className="numbers-game-grid">{Grid}</div>;
   };
 
-  const GameshowScore = () => {
-    if (props.gameshowScore === undefined) {
-      return null;
-    }
 
-    if (props.gameshowScore === null) {
-      return null;
-    }
-
-    return (
-      <div className="gameshow-score">
-        <MessageNotification type="default">
-          <strong>Gameshow points: </strong>
-          {props.gameshowScore}
-        </MessageNotification>
-      </div>
-    );
-  };
 
   const RoundScoreDisplay = () => {
     if (props.inProgress) {
@@ -377,7 +359,6 @@ const NumbersGame = (props: Props) => {
 
     return (
       <>
-        <GameshowScore />
         <RoundScoreDisplay />
         <BestSolution />
 
@@ -391,9 +372,7 @@ const NumbersGame = (props: Props) => {
           settings={props.settings}
           additionalProps={{ autoFocus: true }}
         >
-          {props.gameshowScore !== undefined
-            ? "Next round"
-            : props.campaignConfig.isCampaignLevel
+          {props.campaignConfig.isCampaignLevel
             ? LEVEL_FINISHING_TEXT
             : "Restart"}
         </Button>
@@ -424,7 +403,7 @@ const NumbersGame = (props: Props) => {
       className="App"
       style={{ backgroundImage: `url(${props.theme.backgroundImageSrc})`, backgroundSize: "100% 100%" }}
     >
-      {!props.campaignConfig.isCampaignLevel && props.gameshowScore === undefined && (
+      {!props.campaignConfig.isCampaignLevel && (
         <div className="gamemodeSettings">
           <NumbersGameGamemodeSettings
             gamemodeSettings={props.gamemodeSettings}

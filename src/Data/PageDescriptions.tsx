@@ -7,7 +7,7 @@ export const gamemodeCategories = [
   "Letters",
   "Numbers",
   "Puzzle",
-  "Gameshow Presets",
+  "Presets",
   null,
 ] as const;
 
@@ -447,38 +447,13 @@ export const pageDescriptions: pageDescription[] = [
     description: "Find what comes next in the sequence",
   },
   {
-    path: "/WingoGameshow",
-    title: "Wingo Gameshow",
-    shortTitle: "Wingo Gameshow",
-    categoryType: "Gameshow Presets",
-    isDisplayed: true,
-    isRandomlyPlayable: false,
-  },
-  {
-    path: "/LettersNumbersGameshow",
-    title: "Letters Numbers Gameshow",
-    shortTitle: "Letters Numbers Gameshow",
-    categoryType: "Gameshow Presets",
-    isDisplayed: true,
-    isRandomlyPlayable: false,
-  },
-  {
-    path: "/CustomGameshow",
-    title: "Custom Gameshow",
-    shortTitle: "Custom Gameshow",
-    categoryType: "Gameshow Presets",
-    isDisplayed: true,
-    isRandomlyPlayable: false,
-  },
-  {
     path: "/Random",
     title: "Random",
     shortTitle: "Random",
-    categoryType: "Gameshow Presets",
+    categoryType: "Presets",
     isDisplayed: true,
     isRandomlyPlayable: false,
   },
-
   {
     path: "/Campaign",
     title: "Campaign",

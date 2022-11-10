@@ -57,7 +57,7 @@ interface Props {
   ContinueGame: () => void;
   setTheme: (theme: Theme) => void;
 
-  gameshowScore?: number;
+
 }
 
 const Wingo = (props: Props) => {
@@ -350,24 +350,7 @@ const Wingo = (props: Props) => {
     };
   }, [props.mode, props.inProgress]);
 
-  const GameshowScore = () => {
-    if (props.gameshowScore === undefined) {
-      return null;
-    }
 
-    if (props.gameshowScore === null) {
-      return null;
-    }
-
-    return (
-      <div className="gameshow-score">
-        <MessageNotification type="default">
-          <strong>Gameshow points: </strong>
-          {props.gameshowScore}
-        </MessageNotification>
-      </div>
-    );
-  };
 
   const handleMaxLivesToggle = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newGamemodeSettings: WingoConfigProps["gamemodeSettings"] = {
@@ -410,7 +393,6 @@ const Wingo = (props: Props) => {
         backgroundSize: "100% 100%",
       }}
     >
-      <GameshowScore />
       <Hint />
       <Outcome />
 
@@ -428,9 +410,7 @@ const Wingo = (props: Props) => {
             onClick={() => (isOutcomeContinue() ? props.ContinueGame() : props.ResetGame())}
             additionalProps={{ autoFocus: true }}
           >
-            {props.gameshowScore !== undefined
-              ? "Next round"
-              : props.isCampaignLevel
+            {props.isCampaignLevel
               ? LEVEL_FINISHING_TEXT
               : isOutcomeContinue()
               ? "Continue"
@@ -464,9 +444,9 @@ const Wingo = (props: Props) => {
         )}
       </div>
       {
-        /* Not daily mode, a campaign level or part of gameshow preset */ props.mode !== "daily" &&
+        /* Not daily mode or a campaign level */ props.mode !== "daily" &&
           !props.isCampaignLevel &&
-          props.gameshowScore === undefined && (
+           (
             <div className="gamemodeSettings">
               <WingoGamemodeSettings
                 mode={props.mode}
