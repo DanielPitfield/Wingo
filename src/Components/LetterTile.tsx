@@ -81,7 +81,7 @@ const LetterTile = (props: Props) => {
     // [data-new-letter-added="true"] - Pop animation is applied to LetterTile
     // [data-has-been-submitted="true"] - Reveal animation is applied to LetterTile
     <div
-      className="letter_tile"
+      className="letter-tile"
       onClick={props.onClick}
       data-animation-setting={props.settings.graphics.animation}
       data-apply-animation={props.applyAnimation}

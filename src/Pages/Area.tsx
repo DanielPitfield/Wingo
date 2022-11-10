@@ -7,6 +7,8 @@ import { Navigate, useParams } from "react-router-dom";
 import { getAreaConfig } from "../Helpers/getAreaConfig";
 import { SettingsData } from "../Data/SaveData/Settings";
 
+import styles from "../Styles/Area.module.scss";
+
 export interface AreaConfig {
   name: string;
   unlock_level: LevelConfig;
@@ -37,15 +39,16 @@ export const Area = (props: AreaProps) => {
 
   return (
     <div
-      className="area"
+      className={styles.area}
       style={{
         backgroundImage: `url(${selectedArea.theme.backgroundImageSrc})`,
         backgroundSize: "100%",
       }}
     >
-      <section className="area-header">
-        <h2 className="area-header-title">{selectedArea.name}</h2>
+      <section className={styles.header}>
+        <h2 className={styles["header-title"]}>{selectedArea.name}</h2>
       </section>
+
       <div className="widgets">
         {selectedArea.levels.map((level, index) => (
           <LevelNode
@@ -59,6 +62,7 @@ export const Area = (props: AreaProps) => {
             onHoverLevel={setSelectedLevel}
           />
         ))}
+        
         {selectedArea.levels.length === 0 && (
           <span>
             <MessageNotification type="default">
@@ -67,6 +71,7 @@ export const Area = (props: AreaProps) => {
           </span>
         )}
       </div>
+
     </div>
   );
 };

@@ -23,6 +23,8 @@ import { SettingsData } from "../Data/SaveData/Settings";
 import { setMostRecentAlgebraGamemodeSettings } from "../Data/SaveData/MostRecentGamemodeSettings";
 import { useCountdown } from "usehooks-ts";
 
+import styles from "../Styles/Algebra.module.scss";
+
 export interface AlgebraProps {
   campaignConfig:
     | {
@@ -167,12 +169,12 @@ const Algebra = (props: Props) => {
 
   const AlgebraInputs = () => {
     return (
-      <div className="algebra_inputs_wrapper">
+      <div className={styles["inputs-wrapper"]}>
         {getCurrentAlgebraTemplate().inputs.map((input, index) => {
           const letter = DEFAULT_ALPHABET[index];
 
           return (
-            <div key={`algebra_input ${letter}${input}`} className="algebra_input">
+            <div key={`algebra_input ${letter}${input}`}>
               <strong>{letter}</strong> = {input}
             </div>
           );
@@ -189,11 +191,11 @@ const Algebra = (props: Props) => {
     }
 
     return (
-      <div className="algebra_questions_wrapper">
-        <div className="algebra_question">
+      <div className={styles["questions-wrapper"]}>
+        <div className={styles.question}>
           <strong>{question.expression}</strong>
         </div>
-        <div className="algebra_question_type">
+        <div className={styles["question-type"]}>
           Answer type: <strong>{question.answerType}</strong>
         </div>
       </div>
@@ -512,7 +514,7 @@ const Algebra = (props: Props) => {
           letter={guess}
           status={inProgress ? "not set" : isGuessCorrect() ? "correct" : "incorrect"}
           settings={props.settings}
-        ></LetterTile>
+        />
       </div>
 
       <InputMethod />

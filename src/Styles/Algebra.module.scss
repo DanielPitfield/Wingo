@@ -1,6 +1,6 @@
 .algebra {
-  .algebra_inputs_wrapper,
-  .algebra_questions_wrapper {
+  .inputs-wrapper,
+  .questions-wrapper {
     display: flex;
     padding: 0.8em;
     min-width: 21em;
@@ -8,7 +8,8 @@
     justify-content: center;
     border: 1px solid #bbb;
   }
-  .algebra_inputs_wrapper {
+
+  .inputs-wrapper {
     margin-top: 0.8em;
     background-color: #e0e0e0;
     & > * {
@@ -18,21 +19,25 @@
       }
     }
   }
-  .algebra_questions_wrapper {
+
+  .questions-wrapper {
     flex-direction: column;
     background-color: #fff;
     margin-bottom: 1.1em;
     border-top: none;
-    .algebra_question {
+
+    .question {
       margin-bottom: 0.8em;
     }
-    .algebra_question_type {
+
+    .question-type {
       margin-bottom: 0.2em;
       font-size: 0.92em;
       opacity: 0.9;
     }
   }
-  .letter_tile {
+  
+  .letter-tile {
     width: 3.8em;
     margin-bottom: 0.3em;
   }
