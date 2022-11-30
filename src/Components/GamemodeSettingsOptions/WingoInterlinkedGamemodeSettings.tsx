@@ -60,25 +60,26 @@ const WingoInterlinkedGamemodeSettings = (props: Props) => {
             value={props.gamemodeSettings.minWordLength}
             min={MIN_TARGET_WORD_LENGTH}
             // Can't go above maximum word length
-            // TODO: Should all words be the same length for crossword fit mode?
             max={Math.min(props.gamemodeSettings.maxWordLength, MAX_TARGET_WORD_LENGTH)}
             onChange={props.handleSimpleGamemodeSettingsChange}
           />
-          Minimum Word Length
+          {props.provideWords ? "Word Length" : "Minimum Word Length"}
         </label>
 
-        <label>
-          <input
-            type="number"
-            name="maxWordLength"
-            value={props.gamemodeSettings.maxWordLength}
-            // Can't go below the minimum word length
-            min={Math.max(props.gamemodeSettings.minWordLength, MIN_TARGET_WORD_LENGTH)}
-            max={MAX_TARGET_WORD_LENGTH}
-            onChange={props.handleSimpleGamemodeSettingsChange}
-          />
-          Maximum Word Length
-        </label>
+        {!props.provideWords && (
+          <label>
+            <input
+              type="number"
+              name="maxWordLength"
+              value={props.gamemodeSettings.maxWordLength}
+              // Can't go below the minimum word length
+              min={Math.max(props.gamemodeSettings.minWordLength, MIN_TARGET_WORD_LENGTH)}
+              max={MAX_TARGET_WORD_LENGTH}
+              onChange={props.handleSimpleGamemodeSettingsChange}
+            />
+            Maximum Word Length
+          </label>
+        )}
 
         {!props.provideWords && (
           <>
