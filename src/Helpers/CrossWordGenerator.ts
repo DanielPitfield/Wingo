@@ -157,8 +157,7 @@ export const crosswordGenerator = (arr: any[]): CrosswordGenerationResult => {
       letterMap: letterMap,
     });
     if (nextObjArr.length) {
-      // TODO: Shuffle if needed: `const arr = shuffleArr(nextObjArr);`
-      const arr = nextObjArr;
+      const arr = shuffleArr(nextObjArr);
 
       const theWordStr = sortedArr.pop();
       for (let i = 0; i < nextObjArr.length; i += 1) {
