@@ -261,7 +261,7 @@ const NumbleConfig = (props: Props) => {
       onComplete={props.onComplete}
       theme={props.theme}
       settings={props.settings}
-    ></Numble>
+    />
   );
 };
 

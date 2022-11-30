@@ -922,7 +922,7 @@ const WingoConfig = (props: Props) => {
       ResetGame={ResetGame}
       ContinueGame={ContinueGame}
       setTheme={props.setTheme}
-    ></Wingo>
+    />
   );
 };
 

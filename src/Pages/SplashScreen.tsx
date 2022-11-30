@@ -25,7 +25,7 @@ export const SplashScreen = (props: SplashScreenProps) => {
       <div className="main-menu-wrapper" data-loading-state={props.loadingState}>
         <div className="game-name">
           <div className="game-name-label">
-            <Logo settings={props.settings}></Logo>
+            <Logo settings={props.settings} />
           </div>
         </div>
         <StudioLogo />

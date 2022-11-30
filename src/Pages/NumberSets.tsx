@@ -162,7 +162,7 @@ const NumberSets = (props: Props) => {
         })}
       </div>
     );
-  }
+  };
 
   const Question = () => {
     const question = getCurrentNumberSetTemplate().question;
@@ -174,7 +174,7 @@ const NumberSets = (props: Props) => {
         </span>
       </div>
     );
-  }
+  };
 
   // Has the last numberSet been guessed/attempted?
   const isGameOver = () => {
@@ -358,7 +358,7 @@ const NumberSets = (props: Props) => {
         </div>
       )}
 
-      <Outcome/>
+      <Outcome />
 
       <Examples />
       <Question />
@@ -368,7 +368,7 @@ const NumberSets = (props: Props) => {
           letter={guess}
           status={inProgress ? "not set" : isGuessCorrect() ? "correct" : "incorrect"}
           settings={props.settings}
-        ></LetterTile>
+        />
       </div>
 
       <NumPad

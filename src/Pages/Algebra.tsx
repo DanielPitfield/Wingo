@@ -179,7 +179,7 @@ const Algebra = (props: Props) => {
         })}
       </div>
     );
-  }
+  };
 
   const Question = () => {
     const question = getCurrentQuestionTemplate();
@@ -198,7 +198,7 @@ const Algebra = (props: Props) => {
         </div>
       </div>
     );
-  }
+  };
 
   // Have all the questions been answered (there are no more questions)?
   const isGameOver = () => {
@@ -452,7 +452,7 @@ const Algebra = (props: Props) => {
     }
 
     return null;
-  }
+  };
 
   const handleDifficultyChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newGamemodeSettings: AlgebraProps["gamemodeSettings"] = {
@@ -512,7 +512,7 @@ const Algebra = (props: Props) => {
           letter={guess}
           status={inProgress ? "not set" : isGuessCorrect() ? "correct" : "incorrect"}
           settings={props.settings}
-        ></LetterTile>
+        />
       </div>
 
       <InputMethod />

@@ -575,7 +575,7 @@ const ArithmeticReveal = (props: Props) => {
             letter={revealState.type === "finished" ? "?" : tiles[currentCheckpointIndex]?.[revealState.revealedTiles]}
             status={revealState.type === "finished" || targetTransitioned ? "contains" : "not set"}
             settings={props.settings}
-          ></LetterTile>
+          />
         </div>
       )}
       {revealState.type === "finished" && (
@@ -584,7 +584,7 @@ const ArithmeticReveal = (props: Props) => {
             letter={guess}
             status={inProgress ? "not set" : isGuessCorrect() ? "correct" : "incorrect"}
             settings={props.settings}
-          ></LetterTile>
+          />
         </div>
       )}
       {revealState.type === "finished" && (

@@ -33,11 +33,7 @@ export const PageWrapper = (props: Props) => {
   return (
     <ErrorBoundary
       fallbackRender={({ error, resetErrorBoundary }) => (
-        <ErrorFallback
-          error={error}
-          resetErrorBoundary={resetErrorBoundary}
-          settingsData={getSettings()}
-        ></ErrorFallback>
+        <ErrorFallback error={error} resetErrorBoundary={resetErrorBoundary} settingsData={getSettings()} />
       )}
       onReset={() => navigate(0)}
     >
@@ -105,7 +101,7 @@ export const PageWrapper = (props: Props) => {
         {props.children}
 
         {isHelpInfoShown && wrappedPage?.helpInfo !== undefined && (
-          <HelpInformation onClose={() => setIsHelpInfoShown(false)}></HelpInformation>
+          <HelpInformation onClose={() => setIsHelpInfoShown(false)} />
         )}
 
         <div className="version">{VERSION}</div>

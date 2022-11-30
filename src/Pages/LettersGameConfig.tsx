@@ -411,7 +411,7 @@ const LettersGameConfig = (props: Props) => {
       ResetGame={ResetGame}
       ContinueGame={ContinueGame}
       addGold={props.addGold}
-    ></LettersGame>
+    />
   );
 };
 
