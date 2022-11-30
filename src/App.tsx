@@ -68,33 +68,33 @@ export const App = () => {
     return getRandomElementFrom(playablePages)?.path;
   };
 
+  // When clicking 'Back' in the browser
+  window.onpopstate = () => {
+    // Navigate back using the history
+    navigate(-1);
+    // Always stop/cancel random session
+    setIsRandomSession(false);
+  };
+
   React.useEffect(() => {
-    const LOADING_TIMEOUT_MS = 2000;
-    const FADE_OUT_DURATION_MS = 500;
-
-    // TODO: Mask actual loading, rather than hard-coding seconds
-    window.setTimeout(() => setLoadingState("loaded"), LOADING_TIMEOUT_MS);
-
     const newEntryPage = getNewEntryPage();
 
     if (settings.gameplay.skipSplashscreen) {
       // Don't show splashscreen, navigate to entry page immediately
       navigate(newEntryPage);
+      setLoadingState("loaded");
       return;
     }
 
     // First, show splashscreen
+    const SPLASHSCREEN_DURATION_MS = 3000;
     navigate("/Splashscreen");
-    // After delay, navigate to entry page
-    window.setTimeout(() => navigate(newEntryPage), LOADING_TIMEOUT_MS + FADE_OUT_DURATION_MS);
 
-    // When clicking 'Back' in the browser
-    window.onpopstate = () => {
-      // Navigate back using the history
-      navigate(-1);
-      // Always stop/cancel random session
-      setIsRandomSession(false);
-    };
+    // After delay, navigate to entry page
+    window.setTimeout(() => {
+      navigate(newEntryPage);
+      setLoadingState("loaded");
+    }, SPLASHSCREEN_DURATION_MS);
   }, []);
 
   React.useEffect(() => {
