@@ -769,7 +769,6 @@ const Numble = (props: Props) => {
       {!props.campaignConfig.isCampaignLevel && (
         <div className="gamemodeSettings">
           <NumbleGamemodeSettings
-            // TODO: Refactor, this is passing through a function for nearly every input!
             gamemodeSettings={props.gamemodeSettings}
             handleGridShapeChange={handleGridShapeChange}
             handleGridSizeChange={handleGridSizeChange}

@@ -38,7 +38,6 @@ export type CrosswordTileStatus = {
 };
 
 export interface WingoInterlinkedProps {
-  // TODO: Add as a gamemode setting?
   wordArrayConfig:
     | { type: "custom"; array: string[]; useExact: boolean; canRestart: boolean }
     | { type: "category" }

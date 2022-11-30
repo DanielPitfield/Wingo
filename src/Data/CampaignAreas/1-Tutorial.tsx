@@ -22,7 +22,6 @@ export const area: AreaConfig = {
       levelProps: {
         mode: "repeat",
         targetWord: "start",
-        // TODO: Why is the LevelConfig type not being enforced, you can add any property you want here?
         gamemodeSettings: {
           ...commonWingoSettings,
         },
