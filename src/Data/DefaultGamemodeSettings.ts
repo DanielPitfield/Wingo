@@ -98,6 +98,7 @@ export const defaultWingoGamemodeSettings: { page: PagePath; settings: WingoConf
       ...commonWingoSettings,
       wordLength: getGamemodeDefaultWordLength("/Wingo/Puzzle"),
       startingNumGuesses: getGamemodeDefaultNumGuesses("/Wingo/Puzzle"),
+      isFirstLetterProvided: false,
       isHintShown: true,
     },
   },
