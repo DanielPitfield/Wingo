@@ -50,7 +50,7 @@ const ArithmeticRevealGamemodeSettings = (props: Props) => {
             min={MIN_NUM_TILES}
             max={MAX_NUM_TILES}
             onChange={props.handleSimpleGamemodeSettingsChange}
-          ></input>
+          />
           Number of tiles
         </label>
 
@@ -62,7 +62,7 @@ const ArithmeticRevealGamemodeSettings = (props: Props) => {
             min={MIN_NUM_CHECKPOINTS}
             max={MAX_NUM_CHECKPOINTS}
             onChange={props.handleSimpleGamemodeSettingsChange}
-          ></input>
+          />
           Number of checkpoints
         </label>
 
@@ -90,7 +90,7 @@ const ArithmeticRevealGamemodeSettings = (props: Props) => {
             min={MIN_REVEAL_INTERVAL}
             max={MAX_REVEAL_INTERVAL}
             onChange={props.handleSimpleGamemodeSettingsChange}
-          ></input>
+          />
           Reveal interval
         </label>
 
@@ -101,7 +101,7 @@ const ArithmeticRevealGamemodeSettings = (props: Props) => {
               type="checkbox"
               name="timerConfig"
               onChange={props.handleTimerToggle}
-            ></input>
+            />
             Timer
           </label>
 
@@ -119,7 +119,7 @@ const ArithmeticRevealGamemodeSettings = (props: Props) => {
                   props.setTotalSeconds(e.target.valueAsNumber);
                   props.handleSimpleGamemodeSettingsChange(e);
                 }}
-              ></input>
+              />
               Seconds
             </label>
           )}

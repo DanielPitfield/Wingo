@@ -50,7 +50,7 @@ const WordCodesGamemodeSettings = (props: Props) => {
                 min={MIN_NUM_DISPLAY_WORDS}
                 max={MAX_NUM_DISPLAY_WORDS}
                 onChange={props.handleSimpleGamemodeSettingsChange}
-              ></input>
+              />
               Number of display words
             </label>
 
@@ -62,7 +62,7 @@ const WordCodesGamemodeSettings = (props: Props) => {
                 min={MIN_NUMBER_DISPLAY_CODES}
                 max={MAX_NUM_DISPLAY_CODES}
                 onChange={props.handleSimpleGamemodeSettingsChange}
-              ></input>
+              />
               Number of display codes
             </label>
 
@@ -74,7 +74,7 @@ const WordCodesGamemodeSettings = (props: Props) => {
                 min={1}
                 max={10}
                 onChange={props.handleSimpleGamemodeSettingsChange}
-              ></input>
+              />
               Number of word to code questions
             </label>
 
@@ -86,7 +86,7 @@ const WordCodesGamemodeSettings = (props: Props) => {
                 min={1}
                 max={10}
                 onChange={props.handleSimpleGamemodeSettingsChange}
-              ></input>
+              />
               Number of code to word questions
             </label>
           </>
@@ -100,7 +100,7 @@ const WordCodesGamemodeSettings = (props: Props) => {
             min={2}
             max={10}
             onChange={props.handleSimpleGamemodeSettingsChange}
-          ></input>
+          />
           Code Length
         </label>
 
@@ -112,7 +112,7 @@ const WordCodesGamemodeSettings = (props: Props) => {
             min={1}
             max={10}
             onChange={props.handleSimpleGamemodeSettingsChange}
-          ></input>
+          />
           Number of codes
         </label>
 
@@ -124,7 +124,7 @@ const WordCodesGamemodeSettings = (props: Props) => {
             min={1}
             max={10}
             onChange={props.handleSimpleGamemodeSettingsChange}
-          ></input>
+          />
           Number of additional letters
         </label>
 
@@ -139,7 +139,7 @@ const WordCodesGamemodeSettings = (props: Props) => {
               props.setRemainingGuesses(e.target.valueAsNumber);
               props.handleSimpleGamemodeSettingsChange(e);
             }}
-          ></input>
+          />
           Number of guesses
         </label>
 
@@ -150,7 +150,7 @@ const WordCodesGamemodeSettings = (props: Props) => {
               type="checkbox"
               name="timerConfig"
               onChange={props.handleTimerToggle}
-            ></input>
+            />
             Timer
           </label>
 
@@ -168,7 +168,7 @@ const WordCodesGamemodeSettings = (props: Props) => {
                   props.setTotalSeconds(e.target.valueAsNumber);
                   props.handleSimpleGamemodeSettingsChange(e);
                 }}
-              ></input>
+              />
               Seconds
             </label>
           )}

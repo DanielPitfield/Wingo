@@ -50,7 +50,7 @@ const SameLetterWordsGamemodeSettings = (props: Props) => {
             min={MIN_NUM_SAME_LETTER_MATCHING_WORDS}
             max={Math.min(MAX_NUM_MATCHING_WORDS, props.gamemodeSettings.numTotalWords - 1)}
             onChange={props.handleSimpleGamemodeSettingsChange}
-          ></input>
+          />
           Number of matching words
         </label>
 
@@ -62,7 +62,7 @@ const SameLetterWordsGamemodeSettings = (props: Props) => {
             min={Math.max(MIN_NUM_SAME_LETTER_TOTAL_WORDS, props.gamemodeSettings.numMatchingWords + 1)}
             max={MAX_NUM_TOTAL_WORDS}
             onChange={props.handleSimpleGamemodeSettingsChange}
-          ></input>
+          />
           Number of total words
         </label>
 
@@ -77,7 +77,7 @@ const SameLetterWordsGamemodeSettings = (props: Props) => {
               props.setRemainingGuesses(e.target.valueAsNumber);
               props.handleSimpleGamemodeSettingsChange(e);
             }}
-          ></input>
+          />
           Number of guesses
         </label>
 
@@ -88,7 +88,7 @@ const SameLetterWordsGamemodeSettings = (props: Props) => {
               type="checkbox"
               name="timerConfig"
               onChange={props.handleTimerToggle}
-            ></input>
+            />
             Timer
           </label>
 
@@ -106,7 +106,7 @@ const SameLetterWordsGamemodeSettings = (props: Props) => {
                   props.setTotalSeconds(e.target.valueAsNumber);
                   props.handleSimpleGamemodeSettingsChange(e);
                 }}
-              ></input>
+              />
               Seconds
             </label>
           )}

@@ -45,7 +45,7 @@ const OnlyConnectGamemodeSettings = (props: Props) => {
             min={MIN_NUM_GROUPS}
             max={MAX_NUM_GROUPS}
             onChange={props.handleSimpleGamemodeSettingsChange}
-          ></input>
+          />
           Number of groups
         </label>
 
@@ -57,7 +57,7 @@ const OnlyConnectGamemodeSettings = (props: Props) => {
             min={MIN_GROUP_SIZE}
             max={MAX_GROUP_SIZE}
             onChange={props.handleSimpleGamemodeSettingsChange}
-          ></input>
+          />
           Group size
         </label>
 
@@ -69,7 +69,7 @@ const OnlyConnectGamemodeSettings = (props: Props) => {
             min={1}
             max={10}
             onChange={props.handleSimpleGamemodeSettingsChange}
-          ></input>
+          />
           Number of guesses
         </label>
 
@@ -80,7 +80,7 @@ const OnlyConnectGamemodeSettings = (props: Props) => {
               type="checkbox"
               name="timerConfig"
               onChange={props.handleTimerToggle}
-            ></input>
+            />
             Timer
           </label>
 
@@ -98,7 +98,7 @@ const OnlyConnectGamemodeSettings = (props: Props) => {
                   props.setTotalSeconds(e.target.valueAsNumber);
                   props.handleSimpleGamemodeSettingsChange(e);
                 }}
-              ></input>
+              />
               Seconds
             </label>
           )}

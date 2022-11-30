@@ -22,7 +22,7 @@ interface Props {
 
 const NumbersGameGamemodeSettings = (props: Props) => {
   const location = useLocation().pathname as PagePath;
-  
+
   return (
     <GamemodeSettingsMenu>
       <>
@@ -39,7 +39,7 @@ const NumbersGameGamemodeSettings = (props: Props) => {
             min={4}
             max={10}
             onChange={props.handleSimpleGamemodeSettingsChange}
-          ></input>
+          />
           Numbers in selection
         </label>
 
@@ -49,7 +49,7 @@ const NumbersGameGamemodeSettings = (props: Props) => {
             type="checkbox"
             name="hasScaryNumbers"
             onChange={props.handleSimpleGamemodeSettingsChange}
-          ></input>
+          />
           Scary Big Numbers
         </label>
 
@@ -60,7 +60,7 @@ const NumbersGameGamemodeSettings = (props: Props) => {
               type="checkbox"
               name="timerConfig"
               onChange={props.handleTimerToggle}
-            ></input>
+            />
             Timer
           </label>
 
@@ -78,7 +78,7 @@ const NumbersGameGamemodeSettings = (props: Props) => {
                   props.setTotalSeconds(e.target.valueAsNumber);
                   props.handleSimpleGamemodeSettingsChange(e);
                 }}
-              ></input>
+              />
               Seconds
             </label>
           )}

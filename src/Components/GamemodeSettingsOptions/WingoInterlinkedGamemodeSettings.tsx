@@ -48,7 +48,7 @@ const WingoInterlinkedGamemodeSettings = (props: Props) => {
               min={2}
               max={10}
               onChange={props.handleSimpleGamemodeSettingsChange}
-            ></input>
+            />
             Number of words
           </label>
         )}
@@ -63,7 +63,7 @@ const WingoInterlinkedGamemodeSettings = (props: Props) => {
             // TODO: Should all words be the same length for crossword fit mode?
             max={Math.min(props.gamemodeSettings.maxWordLength, MAX_TARGET_WORD_LENGTH)}
             onChange={props.handleSimpleGamemodeSettingsChange}
-          ></input>
+          />
           Minimum Word Length
         </label>
 
@@ -76,7 +76,7 @@ const WingoInterlinkedGamemodeSettings = (props: Props) => {
             min={Math.max(props.gamemodeSettings.minWordLength, MIN_TARGET_WORD_LENGTH)}
             max={MAX_TARGET_WORD_LENGTH}
             onChange={props.handleSimpleGamemodeSettingsChange}
-          ></input>
+          />
           Maximum Word Length
         </label>
 
@@ -88,7 +88,7 @@ const WingoInterlinkedGamemodeSettings = (props: Props) => {
                 type="checkbox"
                 name="fitRestrictionConfig"
                 onChange={props.handleFitRestrictionToggle}
-              ></input>
+              />
               Fit Restriction
             </label>
 
@@ -104,7 +104,7 @@ const WingoInterlinkedGamemodeSettings = (props: Props) => {
                     props.setMostRecentFitRestriction(e.target.valueAsNumber);
                     props.handleSimpleGamemodeSettingsChange(e);
                   }}
-                ></input>
+                />
                 Fit Restriction Amount
               </label>
             )}
@@ -117,7 +117,7 @@ const WingoInterlinkedGamemodeSettings = (props: Props) => {
             type="checkbox"
             name="isFirstLetterProvided"
             onChange={props.handleSimpleGamemodeSettingsChange}
-          ></input>
+          />
           First Letter Provided
         </label>
 
@@ -127,7 +127,7 @@ const WingoInterlinkedGamemodeSettings = (props: Props) => {
             type="checkbox"
             name="isHintShown"
             onChange={props.handleSimpleGamemodeSettingsChange}
-          ></input>
+          />
           Hints
         </label>
 
@@ -139,7 +139,7 @@ const WingoInterlinkedGamemodeSettings = (props: Props) => {
             min={0}
             max={100}
             onChange={props.handleSimpleGamemodeSettingsChange}
-          ></input>
+          />
           Number of word guesses
         </label>
 
@@ -151,7 +151,7 @@ const WingoInterlinkedGamemodeSettings = (props: Props) => {
             min={0}
             max={20}
             onChange={props.handleSimpleGamemodeSettingsChange}
-          ></input>
+          />
           Number of grid guesses
         </label>
 
@@ -162,7 +162,7 @@ const WingoInterlinkedGamemodeSettings = (props: Props) => {
               type="checkbox"
               name="timerConfig"
               onChange={props.handleTimerToggle}
-            ></input>
+            />
             Timer
           </label>
 
@@ -180,7 +180,7 @@ const WingoInterlinkedGamemodeSettings = (props: Props) => {
                   props.setTotalSeconds(e.target.valueAsNumber);
                   props.handleSimpleGamemodeSettingsChange(e);
                 }}
-              ></input>
+              />
               Seconds
             </label>
           )}

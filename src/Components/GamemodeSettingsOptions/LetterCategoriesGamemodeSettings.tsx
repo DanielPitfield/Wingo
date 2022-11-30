@@ -23,7 +23,7 @@ interface Props {
 
 const LetterCategoriesGamemodeSettings = (props: Props) => {
   const location = useLocation().pathname as PagePath;
-  
+
   return (
     <GamemodeSettingsMenu>
       <>
@@ -40,7 +40,7 @@ const LetterCategoriesGamemodeSettings = (props: Props) => {
             min={2}
             max={MAX_NUM_CATEGORIES}
             onChange={props.handleSimpleGamemodeSettingsChange}
-          ></input>
+          />
           Number of categories
         </label>
 
@@ -51,7 +51,7 @@ const LetterCategoriesGamemodeSettings = (props: Props) => {
               type="checkbox"
               name="timerConfig"
               onChange={props.handleTimerToggle}
-            ></input>
+            />
             Timer
           </label>
 
@@ -69,7 +69,7 @@ const LetterCategoriesGamemodeSettings = (props: Props) => {
                   props.setTotalSeconds(e.target.valueAsNumber);
                   props.handleSimpleGamemodeSettingsChange(e);
                 }}
-              ></input>
+              />
               Seconds
             </label>
           )}

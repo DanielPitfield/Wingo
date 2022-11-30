@@ -46,7 +46,7 @@ const ArithmeticDragGamemodeSettings = (props: Props) => {
             min={MIN_NUM_TILES}
             max={MAX_NUM_TILES}
             onChange={props.handleSimpleGamemodeSettingsChange}
-          ></input>
+          />
           Number of expressions
         </label>
 
@@ -58,7 +58,7 @@ const ArithmeticDragGamemodeSettings = (props: Props) => {
             min={MIN_NUM_OPERANDS}
             max={MAX_NUM_OPERANDS}
             onChange={props.handleSimpleGamemodeSettingsChange}
-          ></input>
+          />
           Number of operands
         </label>
 
@@ -86,7 +86,7 @@ const ArithmeticDragGamemodeSettings = (props: Props) => {
             min={1}
             max={10}
             onChange={props.handleSimpleGamemodeSettingsChange}
-          ></input>
+          />
           Number of guesses
         </label>
 
@@ -97,7 +97,7 @@ const ArithmeticDragGamemodeSettings = (props: Props) => {
               type="checkbox"
               name="timerConfig"
               onChange={props.handleTimerToggle}
-            ></input>
+            />
             Timer
           </label>
 
@@ -115,7 +115,7 @@ const ArithmeticDragGamemodeSettings = (props: Props) => {
                   props.setTotalSeconds(e.target.valueAsNumber);
                   props.handleSimpleGamemodeSettingsChange(e);
                 }}
-              ></input>
+              />
               Seconds
             </label>
           )}

@@ -72,7 +72,7 @@ const WingoGamemodeSettings = (props: Props) => {
               min={MIN_PUZZLE_WORD_LENGTH}
               max={MAX_PUZZLE_WORD_LENGTH}
               onChange={props.handleSimpleGamemodeSettingsChange}
-            ></input>
+            />
             Word Length
           </label>
 
@@ -84,7 +84,7 @@ const WingoGamemodeSettings = (props: Props) => {
               min={MIN_PUZZLE_REVEAL_INTERVAL_SECONDS}
               max={MAX_PUZZLE_REVEAL_INTERVAL_SECONDS}
               onChange={props.handleSimpleGamemodeSettingsChange}
-            ></input>
+            />
             Reveal Interval (seconds)
           </label>
 
@@ -97,7 +97,7 @@ const WingoGamemodeSettings = (props: Props) => {
               // Show atleast 1 letter (can't all be blank!)
               max={props.gamemodeSettings.wordLength - 1}
               onChange={props.handleSimpleGamemodeSettingsChange}
-            ></input>
+            />
             Number of letters left blank
           </label>
 
@@ -128,7 +128,7 @@ const WingoGamemodeSettings = (props: Props) => {
             min={MIN_TARGET_WORD_LENGTH}
             max={MIN_WORD_LENGTH_MAX_BOUNDARY}
             onChange={props.handleSimpleGamemodeSettingsChange}
-          ></input>
+          />
           {WORD_LENGTH_LABEL}
         </label>
 
@@ -141,7 +141,7 @@ const WingoGamemodeSettings = (props: Props) => {
               min={props.gamemodeSettings.wordLength + 1}
               max={MAX_TARGET_WORD_LENGTH}
               onChange={props.handleSimpleGamemodeSettingsChange}
-            ></input>
+            />
             Ending Word Length
           </label>
         )}
@@ -154,7 +154,7 @@ const WingoGamemodeSettings = (props: Props) => {
             min={MIN_STARTING_NUM_GUESSES}
             max={MAX_STARTING_NUM_GUESSES}
             onChange={props.handleSimpleGamemodeSettingsChange}
-          ></input>
+          />
           Number of guesses
         </label>
 
@@ -164,7 +164,7 @@ const WingoGamemodeSettings = (props: Props) => {
             type="checkbox"
             name="enforceFullLengthGuesses"
             onChange={props.handleSimpleGamemodeSettingsChange}
-          ></input>
+          />
           Enforce full length guesses
         </label>
 
@@ -176,7 +176,7 @@ const WingoGamemodeSettings = (props: Props) => {
                 type="checkbox"
                 name="maxLivesConfig"
                 onChange={props.handleMaxLivesToggle}
-              ></input>
+              />
               Cap max number of extra lives
             </label>
             {props.gamemodeSettings.maxLivesConfig.isLimited && (
@@ -191,7 +191,7 @@ const WingoGamemodeSettings = (props: Props) => {
                     props.setMostRecentMaxLives(e.target.valueAsNumber);
                     props.handleSimpleGamemodeSettingsChange(e);
                   }}
-                ></input>
+                />
                 Max number of extra lives
               </label>
             )}
@@ -204,7 +204,7 @@ const WingoGamemodeSettings = (props: Props) => {
             type="checkbox"
             name="isFirstLetterProvided"
             onChange={props.handleSimpleGamemodeSettingsChange}
-          ></input>
+          />
           First Letter Provided
         </label>
 
@@ -214,7 +214,7 @@ const WingoGamemodeSettings = (props: Props) => {
             type="checkbox"
             name="isHintShown"
             onChange={props.handleSimpleGamemodeSettingsChange}
-          ></input>
+          />
           Hints
         </label>
 
@@ -225,7 +225,7 @@ const WingoGamemodeSettings = (props: Props) => {
               type="checkbox"
               name="timerConfig"
               onChange={props.handleTimerToggle}
-            ></input>
+            />
             Timer
           </label>
 
@@ -243,7 +243,7 @@ const WingoGamemodeSettings = (props: Props) => {
                   props.setTotalSeconds(e.target.valueAsNumber);
                   props.handleSimpleGamemodeSettingsChange(e);
                 }}
-              ></input>
+              />
               Seconds
             </label>
           )}

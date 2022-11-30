@@ -24,7 +24,7 @@ interface Props {
 
 const NumberSetsGamemodeSettings = (props: Props) => {
   const location = useLocation().pathname as PagePath;
-  
+
   return (
     <GamemodeSettingsMenu>
       <>
@@ -56,7 +56,7 @@ const NumberSetsGamemodeSettings = (props: Props) => {
               type="checkbox"
               name="timerConfig"
               onChange={props.handleTimerToggle}
-            ></input>
+            />
             Timer
           </label>
 
@@ -74,7 +74,7 @@ const NumberSetsGamemodeSettings = (props: Props) => {
                   props.setTotalSeconds(e.target.valueAsNumber);
                   props.handleSimpleGamemodeSettingsChange(e);
                 }}
-              ></input>
+              />
               Seconds
             </label>
           )}

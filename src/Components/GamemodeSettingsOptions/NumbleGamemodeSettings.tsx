@@ -35,7 +35,7 @@ export const MAX_NUM_NUMBLE_TEAMS = 4;
 
 const NumbleGamemodeSettings = (props: Props) => {
   const location = useLocation().pathname as PagePath;
-  
+
   return (
     <GamemodeSettingsMenu>
       <>
@@ -52,7 +52,7 @@ const NumbleGamemodeSettings = (props: Props) => {
             min={2}
             max={6}
             onChange={props.handleSimpleGamemodeSettingsChange}
-          ></input>
+          />
           Number of dice
         </label>
 
@@ -64,7 +64,7 @@ const NumbleGamemodeSettings = (props: Props) => {
             min={1}
             max={props.gamemodeSettings.diceMax}
             onChange={props.handleSimpleGamemodeSettingsChange}
-          ></input>
+          />
           Minimum dice value
         </label>
 
@@ -76,7 +76,7 @@ const NumbleGamemodeSettings = (props: Props) => {
             min={props.gamemodeSettings.diceMin}
             max={100}
             onChange={props.handleSimpleGamemodeSettingsChange}
-          ></input>
+          />
           Maximum dice value
         </label>
 
@@ -120,7 +120,7 @@ const NumbleGamemodeSettings = (props: Props) => {
             min={1}
             max={MAX_NUM_NUMBLE_TEAMS}
             onChange={props.handleSimpleGamemodeSettingsChange}
-          ></input>
+          />
           Number of teams
         </label>
 
@@ -130,7 +130,7 @@ const NumbleGamemodeSettings = (props: Props) => {
             type="checkbox"
             name="isGameOverOnIncorrectPick"
             onChange={props.handleSimpleGamemodeSettingsChange}
-          ></input>
+          />
           Incorrect pick ends game
         </label>
 
@@ -141,7 +141,7 @@ const NumbleGamemodeSettings = (props: Props) => {
               type="checkbox"
               name="guessTimerConfig"
               onChange={props.handleGuessTimerToggle}
-            ></input>
+            />
             Guess Timer
           </label>
 
@@ -160,7 +160,7 @@ const NumbleGamemodeSettings = (props: Props) => {
                     props.setMostRecentGuessTimerTotalSeconds(e.target.valueAsNumber);
                     props.handleGuessTimerChange(e);
                   }}
-                ></input>
+                />
                 Seconds
               </label>
 
@@ -170,7 +170,7 @@ const NumbleGamemodeSettings = (props: Props) => {
                   type="checkbox"
                   name="guessTimerConfig"
                   onChange={props.handleGuessTimerBehaviourToggle}
-                ></input>
+                />
                 Guess timer ends game
               </label>
 
@@ -184,7 +184,7 @@ const NumbleGamemodeSettings = (props: Props) => {
                     max={100}
                     step={5}
                     onChange={props.handlePointsLostChange}
-                  ></input>
+                  />
                   Points lost
                 </label>
               )}
@@ -199,7 +199,7 @@ const NumbleGamemodeSettings = (props: Props) => {
               type="checkbox"
               name="timerConfig"
               onChange={props.handleTimerToggle}
-            ></input>
+            />
             Timer
           </label>
 
@@ -217,7 +217,7 @@ const NumbleGamemodeSettings = (props: Props) => {
                   props.setMostRecentTotalSeconds(e.target.valueAsNumber);
                   props.handleSimpleGamemodeSettingsChange(e);
                 }}
-              ></input>
+              />
               Seconds
             </label>
           )}
