@@ -245,14 +245,15 @@ const WingoConfig = (props: Props) => {
 
       case "conundrum":
         const newConundrum = getConundrum();
+
         if (newConundrum) {
-          setConundrum(newConundrum.question);
+          setConundrum(newConundrum.conundrum);
           setTargetWord(newConundrum.answer);
           // All letters revealed from start
           setRevealedLetterIndexes(Array.from({ length: newConundrum.answer.length }).map((_, index) => index));
         }
 
-        return { word: newConundrum?.answer, hint: newConundrum?.question };
+        return newConundrum?.answer;
 
       default:
         // Choose random word

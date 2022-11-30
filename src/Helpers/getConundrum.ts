@@ -3,12 +3,10 @@ import { getRandomElementFrom } from "./getRandomElementFrom";
 import { isAnagram } from "./isAnagram";
 
 /*
-https://en.wikipedia.org/wiki/Countdown_(game_show)#Conundrum
-
 The Conundrum is designed to have only one solution,
 But on occasion more than one valid word is found by happenstance,
 (e.g. MISS AT TEE can become both ESTIMATES and STEAMIEST)
-If this happens, any of these results is accepted
+If this happens, any of these results is accepted.
 */
 
 export function getConundrum() {
@@ -57,14 +55,15 @@ export function getConundrum() {
       const anagrams = getAllWordsOfLength(conundrumLength).filter((word) => isAnagram(constructedWord, word));
 
       // Very few number of anagrams
-      if (anagrams.length <= MAX_NUM_ANAGRAMS) {
-        conundrum = { question: constructedWord, answer: getRandomElementFrom(anagrams) };
+      if (anagrams.length >= 1 && anagrams.length <= MAX_NUM_ANAGRAMS) {
+        conundrum = { conundrum: constructedWord, answer: getRandomElementFrom(anagrams) };
         return conundrum;
       }
     }
 
     // Failed to find conundrum
     failCount += 1;
+
     if (failCount === MAX_ATTEMPTS_PER_COMBINATON) {
       // Try a different wordLengthCombination
       wordLengthCombination = getRandomElementFrom(wordLengthCombinations);

@@ -56,8 +56,6 @@ interface Props {
   ResetGame: () => void;
   ContinueGame: () => void;
   setTheme: (theme: Theme) => void;
-
-
 }
 
 const Wingo = (props: Props) => {
@@ -120,26 +118,24 @@ const Wingo = (props: Props) => {
     if (props.mode === "conundrum" && props.conundrum !== undefined) {
       // Return a read only WordRow that reveals conundrum
       return (
-        <div className="letters-game-wrapper" key={"conundrum/reveal"}>
-          <WordRow
-            key={"conundrum/read-only"}
-            isReadOnly={true}
-            inProgress={props.inProgress}
-            word={props.conundrum}
-            length={props.gamemodeSettings.wordLength}
-            targetWord={props.targetWord}
-            revealedLetterIndexes={props.revealedLetterIndexes}
-            hasSubmit={true}
-            inDictionary={props.inDictionary}
-            settings={props.settings}
-            applyAnimation={false}
-          />
-        </div>
+        <WordRow
+          key={"conundrum/read-only"}
+          isReadOnly={true}
+          inProgress={props.inProgress}
+          word={props.conundrum}
+          length={props.gamemodeSettings.wordLength}
+          targetWord={props.targetWord}
+          revealedLetterIndexes={props.revealedLetterIndexes}
+          hasSubmit={true}
+          inDictionary={props.inDictionary}
+          settings={props.settings}
+          applyAnimation={false}
+        />
       );
     }
 
     return null;
-  }
+  };
 
   const Grid = () => {
     const Grid = [];
@@ -149,7 +145,7 @@ const Wingo = (props: Props) => {
       Grid.push(<DisplayRow />);
     }
 
-    for (let i = 0; i < props.remainingGuesses; i++) {
+    for (let i = 0; i < props.gamemodeSettings.startingNumGuesses; i++) {
       let word;
 
       if (props.wordIndex < i) {
@@ -350,8 +346,6 @@ const Wingo = (props: Props) => {
     };
   }, [props.mode, props.inProgress]);
 
-
-
   const handleMaxLivesToggle = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newGamemodeSettings: WingoConfigProps["gamemodeSettings"] = {
       ...props.gamemodeSettings,
@@ -404,14 +398,11 @@ const Wingo = (props: Props) => {
             onClick={() => (isOutcomeContinue() ? props.ContinueGame() : props.ResetGame())}
             additionalProps={{ autoFocus: true }}
           >
-            {props.isCampaignLevel
-              ? LEVEL_FINISHING_TEXT
-              : isOutcomeContinue()
-              ? "Continue"
-              : "Restart"}
+            {props.isCampaignLevel ? LEVEL_FINISHING_TEXT : isOutcomeContinue() ? "Continue" : "Restart"}
           </Button>
         )}
       </div>
+
       <div className="category_label">
         {props.mode === "category" && (
           <MessageNotification type="default">
@@ -437,28 +428,27 @@ const Wingo = (props: Props) => {
           </MessageNotification>
         )}
       </div>
-      {
-        /* Not daily mode or a campaign level */ props.mode !== "daily" &&
-          !props.isCampaignLevel &&
-           (
-            <div className="gamemodeSettings">
-              <WingoGamemodeSettings
-                mode={props.mode}
-                gamemodeSettings={props.gamemodeSettings}
-                handleMaxLivesToggle={handleMaxLivesToggle}
-                handleTimerToggle={handleTimerToggle}
-                handleSimpleGamemodeSettingsChange={handleSimpleGamemodeSettingsChange}
-                setMostRecentMaxLives={setMostRecentMaxLives}
-                resetCountdown={props.resetCountdown}
-                setTotalSeconds={props.setTotalSeconds}
-                onLoadPresetGamemodeSettings={props.updateGamemodeSettings}
-                onShowOfAddPresetModal={() => setKeyboardDisabled(true)}
-                onHideOfAddPresetModal={() => setKeyboardDisabled(false)}
-              />
-            </div>
-          )
-      }
+
+      {props.mode !== "daily" && !props.isCampaignLevel && (
+        <div className="gamemodeSettings">
+          <WingoGamemodeSettings
+            mode={props.mode}
+            gamemodeSettings={props.gamemodeSettings}
+            handleMaxLivesToggle={handleMaxLivesToggle}
+            handleTimerToggle={handleTimerToggle}
+            handleSimpleGamemodeSettingsChange={handleSimpleGamemodeSettingsChange}
+            setMostRecentMaxLives={setMostRecentMaxLives}
+            resetCountdown={props.resetCountdown}
+            setTotalSeconds={props.setTotalSeconds}
+            onLoadPresetGamemodeSettings={props.updateGamemodeSettings}
+            onShowOfAddPresetModal={() => setKeyboardDisabled(true)}
+            onHideOfAddPresetModal={() => setKeyboardDisabled(false)}
+          />
+        </div>
+      )}
+
       <Grid />
+
       <Keyboard
         onEnter={props.onEnter}
         onSubmitLetter={(letter) => {
@@ -475,6 +465,7 @@ const Wingo = (props: Props) => {
         hasBackspace={true}
         hasEnter={true}
       />
+
       <div>
         {props.gamemodeSettings.timerConfig.isTimed && (
           <ProgressBar
