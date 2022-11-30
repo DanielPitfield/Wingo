@@ -1,3 +1,5 @@
+@use "sass:list";
+
 .only_connect_wall {
   padding: 2em 0;
 }
@@ -7,6 +9,7 @@
   align-items: center;
   justify-content: center;
   font-family: "Ubuntu", sans-serif;
+
   // Only Connect Wall button
   .only-connect-button {
     cursor: pointer;
@@ -24,54 +27,27 @@
     transition: all ease 0.2s;
     box-shadow: -3px 3px #2228;
 
-    // TODO: Colours for more groups
-    $only-connect-group-1-color: #004372;
-    $only-connect-group-2-color: #006d5d;
-    $only-connect-group-3-color: #5d2846;
-    $only-connect-group-4-color: #00657f;
+    $group-colors: (#004372, #006d5d, #5d2846, #00657f, #a79e24, #8e4da8);
 
     &[data-selected="true"] {
       color: white;
 
-      // Use the border color of the next group being selected
-      &[data-num-completed-groups="0"] {
-        background-color: $only-connect-group-1-color;
-        color: white;
-      }
-      &[data-num-completed-groups="1"] {
-        background-color: $only-connect-group-2-color;
-        color: white;
-      }
-      &[data-num-completed-groups="2"] {
-        background-color: $only-connect-group-3-color;
-        color: white;
-      }
-      &[data-num-completed-groups="3"] {
-        background-color: $only-connect-group-4-color;
-        color: white;
+      // Style selection (with colour of next group)
+      @for $i from 1 through length($group-colors) {
+        &[data-num-completed-groups="#{$i - 1}"] {
+          color: white;
+          background-color: list.nth($group-colors, $i);
+        }
       }
     }
 
-    // Style each group
-    &[data-row-number="1"] {
-      background-color: $only-connect-group-1-color;
-      color: white;
-      cursor: not-allowed;
-    }
-    &[data-row-number="2"] {
-      background-color: $only-connect-group-2-color;
-      color: white;
-      cursor: not-allowed;
-    }
-    &[data-row-number="3"] {
-      background-color: $only-connect-group-3-color;
-      color: white;
-      cursor: not-allowed;
-    }
-    &[data-row-number="4"] {
-      background-color: $only-connect-group-4-color;
-      color: white;
-      cursor: not-allowed;
+    // Style each group (once completed)
+    @for $i from 1 through length($group-colors) {
+      &[data-row-number="#{$i}"] {
+        background-color: list.nth($group-colors, $i);
+        color: white;
+        cursor: not-allowed;
+      }
     }
   }
 }

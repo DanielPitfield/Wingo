@@ -784,7 +784,6 @@ const WingoConfig = (props: Props) => {
       });
     }
 
-    // TODO: This will reset timer after every valid guess, is that right?
     if (gamemodeSettings.timerConfig.isTimed) {
       resetCountdown();
     }

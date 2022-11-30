@@ -21,10 +21,10 @@ interface Props {
 }
 
 const MIN_NUM_GROUPS = 2;
-const MAX_NUM_GROUPS = 10;
+const MAX_NUM_GROUPS = 6;
 
 const MIN_GROUP_SIZE = 2;
-const MAX_GROUP_SIZE = 10;
+const MAX_GROUP_SIZE = 6;
 
 const OnlyConnectGamemodeSettings = (props: Props) => {
   const location = useLocation().pathname as PagePath;
