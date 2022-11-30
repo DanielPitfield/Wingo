@@ -68,14 +68,6 @@ export const App = () => {
     return getRandomElementFrom(playablePages)?.path;
   };
 
-  // When clicking 'Back' in the browser
-  window.onpopstate = () => {
-    // Navigate back using the history
-    navigate(-1);
-    // Always stop/cancel random session
-    setIsRandomSession(false);
-  };
-
   React.useEffect(() => {
     const newEntryPage = getNewEntryPage();
 
