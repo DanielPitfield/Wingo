@@ -16,7 +16,7 @@ import { MAX_TARGET_WORD_LENGTH, MIN_TARGET_WORD_LENGTH } from "./GamemodeSettin
 import { getGamemodeDefaultNumGuesses } from "../Helpers/getGamemodeDefaultNumGuesses";
 import { getGamemodeDefaultTimerValue } from "../Helpers/getGamemodeDefaultTimerValue";
 import { getGamemodeDefaultWordLength } from "../Helpers/getGamemodeDefaultWordLength";
-import { PuzzleConfigProps, SequencePuzzleProps } from "../Pages/SequencePuzzle";
+import { SequencePuzzleProps } from "../Pages/SequencePuzzle";
 
 export const difficultyOptions = ["novice", "easy", "medium", "hard", "expert"] as const;
 export type Difficulty = typeof difficultyOptions[number];

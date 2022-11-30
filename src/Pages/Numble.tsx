@@ -468,6 +468,7 @@ const Numble = (props: Props) => {
       <button
         key={colourRange.colour}
         className="numble-button-display"
+        data-shape={props.gamemodeSettings.gridShape}
         data-prime={false}
         data-picked={false}
         data-colour={colourRange.colour}
@@ -485,6 +486,7 @@ const Numble = (props: Props) => {
       <button
         key={"prime-read-only"}
         className="numble-button-display"
+        data-shape={props.gamemodeSettings.gridShape}
         data-prime={true}
         data-picked={false}
         data-colour={lastPointColourMapping.colour}
