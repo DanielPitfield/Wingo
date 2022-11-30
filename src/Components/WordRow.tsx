@@ -23,25 +23,22 @@ export const WordRow = (props: Props) => {
   const location = useLocation().pathname as PagePath;
 
   const isAnimationEnabled = (letterIndex: number): boolean => {
+    if (location === "/Wingo/Daily") {
+      const hasEnded = !props.inProgress && props.word && props.hasSubmit;
+      // Game has ended (true) then animation is disabled (false) and vice versa
+      return !hasEnded;
+    }
+
     if (location === "/LettersGame") {
       return false;
     }
 
-    // Daily mode, when the game reports as having ended
-    const dailyModeEnd = location === "/Wingo/Daily" && !props.inProgress && props.word && props.hasSubmit;
-
-    if (dailyModeEnd) {
-      return false;
-    }
-
-    const letterRevealed =
-      props.revealedLetterIndexes !== undefined &&
-      props.isReadOnly &&
-      props.revealedLetterIndexes.includes(letterIndex);
-
-    // Letter hasn't been revealed yet, only show animation when it does become revealed
-    if (!letterRevealed) {
-      return false;
+    if (location === "/Wingo/Puzzle" || location === "/Conundrum") {
+      return (
+        props.revealedLetterIndexes !== undefined &&
+        props.isReadOnly &&
+        props.revealedLetterIndexes.includes(letterIndex)
+      );
     }
 
     return true;
@@ -106,7 +103,7 @@ export const WordRow = (props: Props) => {
           animationDelayMultiplier={props.revealedLetterIndexes ? 0 : areAllStatusesCorrect() ? 0.3 : undefined}
           settings={props.settings}
           status={getFinalTileStatus(i)}
-        ></LetterTile>
+        />
       );
     }
 

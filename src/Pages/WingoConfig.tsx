@@ -250,7 +250,8 @@ const WingoConfig = (props: Props) => {
           setConundrum(newConundrum.conundrum);
           setTargetWord(newConundrum.answer);
           // All letters revealed from start
-          setRevealedLetterIndexes(Array.from({ length: newConundrum.answer.length }).map((_, index) => index));
+          const newRevealedLetterIndexes: number[] = Array.from({ length: newConundrum.conundrum.length }).map((_, index) => index);
+          setRevealedLetterIndexes(newRevealedLetterIndexes);
         }
 
         return newConundrum?.answer;
