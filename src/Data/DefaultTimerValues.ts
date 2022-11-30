@@ -15,4 +15,6 @@ export const gamemodeDefaultTimerValues: { page: PagePath; timerValue: number }[
   { page: "/WordCodes/Match", timerValue: 100 },
   { page: "/WordCodes/Question", timerValue: 100 },
   { page: "/Numble", timerValue: 600 },
+  { page: "/Wingo/Puzzle", timerValue: 30 },
+  { page: "/Conundrum", timerValue: 30 },
 ];

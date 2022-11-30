@@ -108,7 +108,7 @@ export const defaultWingoGamemodeSettings: { page: PagePath; settings: WingoConf
       ...commonWingoSettings,
       wordLength: getGamemodeDefaultWordLength("/Conundrum"),
       startingNumGuesses: getGamemodeDefaultNumGuesses("/Conundrum"),
-      timerConfig: { isTimed: true, seconds: getGamemodeDefaultTimerValue("/Wingo/Puzzle") },
+      timerConfig: { isTimed: true, seconds: getGamemodeDefaultTimerValue("/Conundrum") },
     },
   },
 ];

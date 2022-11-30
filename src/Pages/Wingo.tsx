@@ -145,6 +145,8 @@ const Wingo = (props: Props) => {
       Grid.push(<DisplayRow />);
     }
 
+    console.log(props.gamemodeSettings.startingNumGuesses);
+
     for (let i = 0; i < props.gamemodeSettings.startingNumGuesses; i++) {
       let word;
 

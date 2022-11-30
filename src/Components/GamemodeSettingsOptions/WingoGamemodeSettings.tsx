@@ -55,6 +55,57 @@ const WingoGamemodeSettings = (props: Props) => {
   const MIN_WORD_LENGTH_MAX_BOUNDARY =
     props.mode === "increasing" ? MAX_TARGET_WORD_LENGTH - 1 : MAX_TARGET_WORD_LENGTH;
 
+  if (props.mode === "conundrum") {
+    return (
+      <GamemodeSettingsMenu>
+        <>
+          <LoadGamemodePresetModal
+            getPresets={() => getGamemodeSettingsPresets<WingoConfigProps["gamemodeSettings"]>(location)}
+            onSelectPreset={(preset) => props.onLoadPresetGamemodeSettings(preset.gamemodeSettings)}
+          />
+
+          <>
+            <label>
+              <input
+                checked={props.gamemodeSettings.timerConfig.isTimed}
+                type="checkbox"
+                name="timerConfig"
+                onChange={props.handleTimerToggle}
+              />
+              Timer
+            </label>
+
+            {props.gamemodeSettings.timerConfig.isTimed && (
+              <label>
+                <input
+                  type="number"
+                  name="timerConfig"
+                  value={props.gamemodeSettings.timerConfig.seconds}
+                  min={10}
+                  max={120}
+                  step={5}
+                  onChange={(e) => {
+                    props.resetCountdown();
+                    props.setTotalSeconds(e.target.valueAsNumber);
+                    props.handleSimpleGamemodeSettingsChange(e);
+                  }}
+                />
+                Seconds
+              </label>
+            )}
+          </>
+
+          <SaveGamemodePresetModal
+            currentGamemodeSettings={props.gamemodeSettings}
+            existingPresets={getGamemodeSettingsPresets<WingoConfigProps["gamemodeSettings"]>(location)}
+            onHide={props.onHideOfAddPresetModal}
+            onShow={props.onShowOfAddPresetModal}
+          />
+        </>
+      </GamemodeSettingsMenu>
+    );
+  }
+
   if (props.mode === "puzzle") {
     return (
       <GamemodeSettingsMenu>
@@ -118,7 +169,7 @@ const WingoGamemodeSettings = (props: Props) => {
         <LoadGamemodePresetModal
           getPresets={() => getGamemodeSettingsPresets<WingoConfigProps["gamemodeSettings"]>(location)}
           onSelectPreset={(preset) => props.onLoadPresetGamemodeSettings(preset.gamemodeSettings)}
-        ></LoadGamemodePresetModal>
+        />
 
         <label>
           <input
