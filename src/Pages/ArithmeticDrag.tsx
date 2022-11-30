@@ -612,6 +612,7 @@ const ArithmeticDrag = (props: Props) => {
       {inProgress && <MessageNotification type="default">{`Guesses left: ${remainingGuesses}`}</MessageNotification>}
 
       <Tiles />
+      
       {inProgress && (
         <Button
           mode={remainingGuesses <= 1 ? "accept" : "default"}
@@ -621,6 +622,7 @@ const ArithmeticDrag = (props: Props) => {
           Submit guess
         </Button>
       )}
+
       <div>
         {gamemodeSettings.timerConfig.isTimed && (
           <ProgressBar

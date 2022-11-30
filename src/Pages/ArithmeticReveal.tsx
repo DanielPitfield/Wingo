@@ -568,25 +568,29 @@ const ArithmeticReveal = (props: Props) => {
           />
         </div>
       )}
+
       <Outcome />
-      {inProgress && (
+
+      {inProgress && revealState.type !== "finished" && (
         <div className="target">
           <LetterTile
-            letter={revealState.type === "finished" ? "?" : tiles[currentCheckpointIndex]?.[revealState.revealedTiles]}
-            status={revealState.type === "finished" || targetTransitioned ? "contains" : "not set"}
+            letter={tiles[currentCheckpointIndex]?.[revealState.revealedTiles]}
+            status={"not set"}
             settings={props.settings}
           />
         </div>
       )}
+
       {revealState.type === "finished" && (
         <div className="guess">
           <LetterTile
-            letter={guess}
+            letter={guess ? guess : "?"}
             status={inProgress ? "not set" : isGuessCorrect() ? "correct" : "incorrect"}
             settings={props.settings}
           />
         </div>
       )}
+
       {revealState.type === "finished" && (
         <NumPad
           onEnter={() => setInProgress(false)}
@@ -598,6 +602,7 @@ const ArithmeticReveal = (props: Props) => {
           hasEnter={true}
         />
       )}
+
       {revealState.type === "finished" && (
         <div>
           {gamemodeSettings.timerConfig.isTimed && (
