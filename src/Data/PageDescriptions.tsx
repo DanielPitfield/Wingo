@@ -19,8 +19,6 @@ export type pageDescription = {
   helpInfo?: JSX.Element;
 };
 
-// TODO: helpInfo for every gamemode
-
 export const pageDescriptions: pageDescription[] = [
   { path: "/Splashscreen", title: "Wingo", categoryType: null, isDisplayed: false, isRandomlyPlayable: false },
   { path: "/TitlePage", title: "Home", categoryType: null, isDisplayed: false, isRandomlyPlayable: false },
@@ -51,12 +49,11 @@ export const pageDescriptions: pageDescription[] = [
     description: "Guess a crossword for today",
     helpInfo: (
       <>
-        <p>Complete a crossword specifically for today only!</p>
         <p>Guess the many target words, using the shared letters as hints</p>
         <p>Click on the word to highlight it, and make a guess</p>
         <p>Click 'Check Current Word' once you have guessed one word to see which letters are correct</p>
         <p>Click 'Check Crossword' once you have guessed all words to see if your guesses are correct</p>
-        <p>Do all this without running out of guesses!</p>
+        <p>Your attempt will be saved (and can be viewed at any time during the day)</p>
       </>
     ),
   },
@@ -70,12 +67,11 @@ export const pageDescriptions: pageDescription[] = [
     description: "Guess a crossword for this week",
     helpInfo: (
       <>
-        <p>Complete a crossword specifically for this week</p>
         <p>Guess the many target words, using the shared letters as hints</p>
         <p>Click on the word to highlight it, and make a guess</p>
         <p>Click 'Check Current Word' once you have guessed one word to see which letters are correct</p>
         <p>Click 'Check Crossword' once you have guessed all words to see if your guesses are correct</p>
-        <p>Do all this without running out of guesses!</p>
+        <p>Your attempt will be saved (and can be viewed at any time during the week)</p>
       </>
     ),
   },
@@ -88,18 +84,26 @@ export const pageDescriptions: pageDescription[] = [
     isRandomlyPlayable: true,
     description: "Guess a word",
     helpInfo: (
-      // TODO: Include images to show examples of the different letter statuses
-      // TODO: Change the colour of the text within the <p> element
-      // https://www.nytimes.com/games/wordle/index.html
       <>
         <p>Each guess must be a valid word</p>
         <p>
           When a guess is submited, the colour of the tiles will change to show how close your guess is to the correct
           word
         </p>
-        <p>A green tile means the letter is in the word and in the correct spot</p>
-        <p>A yellow tile means the letter is in the word but in the wrong spot</p>
-        <p>A grey tile means the letter is not in the word</p>
+        <p>
+          <strong style={{ color: "#4ca150" }}>Green</strong>tiles means the letter is in the word and in the correct
+          spot
+        </p>
+        <p>
+          <strong style={{ color: "#dc8d37" }}>Yellow</strong> tiles means the letter is in the word but in the wrong
+          spot
+        </p>
+        <p>
+          <strong style={{ color: "#cbcbcb" }}>Grey</strong> tiles means the letter is not in the word
+        </p>
+        <p>
+          <strong style={{ color: "#cc2132" }}>Red</strong> tiles means the the word is not a valid word
+        </p>
         <p>Press the 'Restart' button after an attempt for a new target word</p>
       </>
     ),
@@ -132,9 +136,7 @@ export const pageDescriptions: pageDescription[] = [
     isRandomlyPlayable: true,
     description: "Increase the word length to guess with every correct answer",
     helpInfo: (
-      // TODO: Somehow link to help information for the base repeat mode?
       <>
-        <p>Normal Wingo rules apply</p>
         <p>The target word will increase in length (one letter longer) after each successful guess</p>
         <p>{`The game will end when a ${MAX_TARGET_WORD_LENGTH} letter word is correctly guessed`}</p>
       </>
@@ -207,7 +209,6 @@ export const pageDescriptions: pageDescription[] = [
         <p>Click on the word to highlight it, and make a guess</p>
         <p>Click 'Check Current Word' once you have guessed one word to see which letters are correct</p>
         <p>Click 'Check Crossword' once you have guessed all words to see if your guesses are correct</p>
-        <p>Do all this without running out of guesses!</p>
       </>
     ),
   },
@@ -220,7 +221,6 @@ export const pageDescriptions: pageDescription[] = [
     isRandomlyPlayable: true,
     description: "Find groups of words from a scrambled word grid",
     helpInfo: (
-      // https://en.wikipedia.org/wiki/Only_Connect#Round_3:_Connecting_Wall
       <>
         <p>Select a group of words that share a common connection (category)</p>
         <p>The size of the selection must be equal to the width of the provided grid</p>
@@ -239,7 +239,6 @@ export const pageDescriptions: pageDescription[] = [
     isRandomlyPlayable: true,
     description: "Find the highest scoring word from the list of random letters",
     helpInfo: (
-      // https://en.wikipedia.org/wiki/Countdown_(game_show)#Letters_round
       <>
         <p>Add letters to the selection row using the 'Vowel' or Consonant' buttons</p>
         <p>The 'Quick Pick' will randomly complete the letter selection for you</p>
@@ -262,7 +261,6 @@ export const pageDescriptions: pageDescription[] = [
     isRandomlyPlayable: true,
     description: "Find a single word which uses all the letters",
     helpInfo: (
-      // https://en.wikipedia.org/wiki/Countdown_(game_show)#Conundrum
       <>
         <p>Enter a single word which uses all the letters</p>
         <p>Only one guess is allowed</p>
@@ -272,7 +270,7 @@ export const pageDescriptions: pageDescription[] = [
   {
     path: "/LettersCategories",
     title: "Letters Categories",
-    shortTitle: "Categories (5)",
+    shortTitle: "Letter Categories",
     categoryType: "Letters",
     isDisplayed: true,
     isRandomlyPlayable: true,
@@ -294,6 +292,7 @@ export const pageDescriptions: pageDescription[] = [
     helpInfo: (
       <>
         <p>Select the words which contain the same letters (the words that are anagrams)</p>
+        <p>The tiles that are currently selected are highlighted</p>
       </>
     ),
   },
@@ -302,8 +301,8 @@ export const pageDescriptions: pageDescription[] = [
     title: "Word Codes",
     shortTitle: "Word Codes",
     categoryType: "Letters",
-    isDisplayed: true,
-    isRandomlyPlayable: true,
+    isDisplayed: false,
+    isRandomlyPlayable: false,
     description: "Decipher codes to find words (and vice versa)",
   },
   {
@@ -311,8 +310,8 @@ export const pageDescriptions: pageDescription[] = [
     title: "Word Codes (Match)",
     shortTitle: "Word Codes (Match)",
     categoryType: "Letters",
-    isDisplayed: true,
-    isRandomlyPlayable: true,
+    isDisplayed: false,
+    isRandomlyPlayable: false,
     description: "Match the words to their codes",
   },
   {
@@ -320,15 +319,14 @@ export const pageDescriptions: pageDescription[] = [
     title: "Wingo Crossword Fit",
     shortTitle: "Crossword Fit",
     categoryType: "Letters",
-    isDisplayed: true,
-    isRandomlyPlayable: true,
+    isDisplayed: false,
+    isRandomlyPlayable: false,
     description: "Fill the crossword with the provided words",
     helpInfo: (
       <>
-        <p>Fill each word with one of the provided words, using the revealed letters as hints</p>
+        <p>Fill each word of the crossword with one of the provided words</p>
         <p>Click on the word to highlight it, and make a guess</p>
         <p>Click 'Check Crossword' once you have guessed all words to see if your guesses are correct</p>
-        <p>Do all this without running out of guesses!</p>
       </>
     ),
   },
@@ -358,6 +356,24 @@ export const pageDescriptions: pageDescription[] = [
     isDisplayed: true,
     isRandomlyPlayable: true,
     description: "Find the highest scoring number from a list of random numbers",
+    helpInfo: (
+      <>
+        <p>
+          Calculate a whole number, which can be made with the dice numbers, using the four basic mathematical
+          operations
+        </p>
+        <p>
+          Higher numbers reward more points (the number of points each colour of pin awards is shown below the current
+          score)
+        </p>
+        <p>
+          Bonus points are awarded for selecting prime numbers and for completing a triangle if the grid shape is
+          hexagon or for completing a square if the grid shape is square
+        </p>
+        <p>After making a selection, click the 'Roll Dice' button to be given a new set of dice numbers</p>
+        <p>The game will ends once the timer runs out</p>
+      </>
+    ),
   },
   {
     path: "/NumbersGame",
@@ -368,7 +384,6 @@ export const pageDescriptions: pageDescription[] = [
     isRandomlyPlayable: true,
     description: "Get the target number using a list of random numbers",
     helpInfo: (
-      // https://en.wikipedia.org/wiki/Countdown_(game_show)#Numbers_round
       <>
         <p>Add numbers to the selection row using the 'Small' or Big' buttons</p>
         <p>The 'Quick Pick' will randomly complete the number selection for you</p>
@@ -395,6 +410,15 @@ export const pageDescriptions: pageDescription[] = [
     isDisplayed: true,
     isRandomlyPlayable: true,
     description: "Put the arithmetic expressions in order from smallest to largest",
+    helpInfo: (
+      <>
+        <p>Drag the tiles so that they in order from smallest (at the top) to largest (at the bottom)</p>
+        <p>
+          The current order can be checked using the 'Submit Guess' button but the statuses will disappear when you next
+          move a tile
+        </p>
+      </>
+    ),
   },
   {
     path: "/ArithmeticDrag/Match",
@@ -404,6 +428,15 @@ export const pageDescriptions: pageDescription[] = [
     isDisplayed: true,
     isRandomlyPlayable: true,
     description: "Match the arithmetic expressions with the results they evaluate to",
+    helpInfo: (
+      <>
+        <p>Drag the tiles so that the tiles in the left column match the tiles in the right column</p>
+        <p>
+          The current matching made can be checked using the 'Submit Guess' button but the statuses will disappear when
+          you next move a tile
+        </p>
+      </>
+    ),
   },
   {
     path: "/NumberSets",
@@ -413,6 +446,12 @@ export const pageDescriptions: pageDescription[] = [
     isDisplayed: true,
     isRandomlyPlayable: true,
     description: "Find the answer to a unique number set",
+    helpInfo: (
+      <>
+        <p>Determine the mathmetical operation being applied in the two example templates</p>
+        <p>Apply the same operation to the question and enter the value which is missing (shown by the ? symbol)</p>
+      </>
+    ),
   },
   {
     path: "/Algebra",
@@ -422,6 +461,12 @@ export const pageDescriptions: pageDescription[] = [
     isDisplayed: true,
     isRandomlyPlayable: true,
     description: "Find the answer to a unique number set",
+    helpInfo: (
+      <>
+        <p>A selection of letters that each have a numerical value they are equal to is provided.</p>
+        <p>Evaluate the expression and enter the correct answer (taking note of the required answer type)</p>
+      </>
+    ),
   },
   {
     path: "/PuzzleSequence",
@@ -429,7 +474,7 @@ export const pageDescriptions: pageDescription[] = [
     shortTitle: "Sequence",
     categoryType: "Puzzle",
     isDisplayed: false,
-    isRandomlyPlayable: true,
+    isRandomlyPlayable: false,
     description: "Find what comes next in the sequence",
   },
   {
@@ -447,6 +492,14 @@ export const pageDescriptions: pageDescription[] = [
     categoryType: null,
     isDisplayed: false,
     isRandomlyPlayable: false,
+    helpInfo: (
+      <>
+        <p>The campaign includes several areas each with their own theme</p>
+        <p>Each of these areas have a number of levels</p>
+        <p>All levels of an area need to be completed in order to unlock the next level</p>
+        <p>Any gamemode which can be selected from the free play lobby menu can appear as a campaign level</p>
+      </>
+    ),
   },
   {
     path: "/Campaign/Areas/:areaName",
@@ -455,6 +508,13 @@ export const pageDescriptions: pageDescription[] = [
     categoryType: null,
     isDisplayed: false,
     isRandomlyPlayable: false,
+    helpInfo: (
+      <>
+        <p>This is the level selection for a campaign area</p>
+        <p>The unlock level of an area must be completed for all of the levels to appear</p>
+        <p>Completing all the levels of an area will unlock the next area</p>
+      </>
+    ),
   },
   {
     path: "/Campaign/Areas/:areaName/Levels/:levelNumber",
@@ -463,6 +523,12 @@ export const pageDescriptions: pageDescription[] = [
     categoryType: null,
     isDisplayed: false,
     isRandomlyPlayable: false,
+    helpInfo: (
+      <>
+        <p>Successfully complete this level to unlock the next level in the area</p>
+        <p>If you fail, the level will restart</p>
+      </>
+    ),
   },
   {
     path: "/Challenges",
@@ -471,6 +537,11 @@ export const pageDescriptions: pageDescription[] = [
     categoryType: null,
     isDisplayed: false,
     isRandomlyPlayable: false,
+    helpInfo: (
+      <>
+        <p>After completing any of the shown challenges, a gold coin reward can be collected by clicking the 'Claim' button (next to the challenge)</p>
+      </>
+    ),
   },
   {
     path: "/Settings",
