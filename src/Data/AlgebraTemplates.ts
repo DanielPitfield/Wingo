@@ -14,12 +14,6 @@ export type AlgebraQuestion = {
 
 export type answerType = "letter" | "number" | "combination";
 
-/* TODO: Difficulty mechanics
-  Can only use some of the letters (some are not included with the keyboard) with the combination answerType?
-  Add buttons to include operators in guess (and make an expression answerType)
-  Expression provided as an answer must meet minimum/maximum length requirements?
-*/
-
 /* All templates */
 export const AlgebraTemplates = {
   SmallEasy1: {

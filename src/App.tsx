@@ -24,7 +24,7 @@ import { ChallengesInfo } from "./Components/ChallengesInfo";
 import WordCodes, { WordCodesProps } from "./Pages/WordCodes";
 import { TitlePage } from "./Pages/TitlePage";
 import { pageDescriptions } from "./Data/PageDescriptions";
-import SequencePuzzle from "./Pages/SequencePuzzle";
+import SequencePuzzle, { SequencePuzzleProps } from "./Pages/SequencePuzzle";
 import { PagePath } from "./Data/PageNames";
 import { getPageGamemodeSettings } from "./Helpers/getPageGamemodeSettings";
 import { getRandomElementFrom } from "./Helpers/getRandomElementFrom";
@@ -547,7 +547,10 @@ export const App = () => {
           path="/PuzzleSequence"
           element={
             <PageWrapper gold={gold} settings={settings}>
-              <SequencePuzzle {...commonProps} />
+              <SequencePuzzle
+                {...commonProps}
+                gamemodeSettings={getPageGamemodeSettings("/PuzzleSequence") as SequencePuzzleProps["gamemodeSettings"]}
+              />
             </PageWrapper>
           }
         />
@@ -579,10 +582,10 @@ export const App = () => {
                   error={new Error("Page not found")}
                   resetErrorBoundary={() => navigate("/Home")}
                   settingsData={getSettings()}
-                ></ErrorFallback>
+                />
               )}
               onReset={() => navigate(0)}
-            ></ErrorBoundary>
+            />
           }
         />
       </Routes>

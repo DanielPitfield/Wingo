@@ -381,7 +381,6 @@ const ArithmeticReveal = (props: Props) => {
     }
   }, [inProgress, revealState, gamemodeSettings.timerConfig.isTimed, remainingSeconds]);
 
-  // TODO: Still some refactoring with these functions and how they are used within Outcome
   const isGuessCorrect = (): Boolean => {
     return guess.toUpperCase() === targetNumbers[currentCheckpointIndex].toString().toUpperCase();
   };

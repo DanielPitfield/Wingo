@@ -1,6 +1,5 @@
 export type AreaUnlockStatus = "locked" | "unlockable" | "unlocked";
 
-// TODO: completedLevelNumbers would ideally be a set, but it is problematic to implement!
 export type CampaignSaveData = {
   areas: { name: string; status: AreaUnlockStatus; completedLevelNumbers: string[] }[];
 };

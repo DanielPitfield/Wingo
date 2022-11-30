@@ -30,8 +30,16 @@ type SequencePuzzleStyling = {
 
 /** Properties of the component */
 export interface SequencePuzzleProps {
-  isCampaignLevel: boolean;
-  defaultPuzzle?: PuzzleConfigProps;
+  campaignConfig:
+    | {
+        isCampaignLevel: true;
+        // What score must be achieved to pass the campaign level?
+        targetScore: number;
+      }
+    | { isCampaignLevel: false };
+  gamemodeSettings: {
+    defaultPuzzle?: PuzzleConfigProps;
+  };
 }
 
 interface Props extends SequencePuzzleProps {
@@ -48,7 +56,7 @@ export const SequencePuzzle = (props: Props) => {
   const [result, setResult] = useState<"in-progress" | "correct" | "incorrect">("in-progress");
 
   // Current puzzle
-  const [puzzle, setPuzzle] = useState<PuzzleConfigProps | undefined>(props.defaultPuzzle);
+  const [puzzle, setPuzzle] = useState<PuzzleConfigProps | undefined>(props.gamemodeSettings.defaultPuzzle);
 
   // Index at which to display the correct answer, among the incorrect answers
   const [correctAnswerIndex, setCorrectAnswerIndex] = useState(0);
@@ -65,12 +73,12 @@ export const SequencePuzzle = (props: Props) => {
 
   // Picks a random puzzle if one was not passed in through the props
   useEffect(() => {
-    if (props.defaultPuzzle) {
-      setPuzzle(props.defaultPuzzle);
+    if (props.gamemodeSettings.defaultPuzzle) {
+      setPuzzle(props.gamemodeSettings.defaultPuzzle);
     } else {
       setPuzzle({ ...Object.values(Puzzles)[Math.round(Math.random() * (Object.values(Puzzles).length - 1))] });
     }
-  }, [props.defaultPuzzle]);
+  }, [props.gamemodeSettings.defaultPuzzle]);
 
   // Configures the icon mapping and answer option sort order on load
   useEffect(() => {
@@ -249,7 +257,7 @@ export const SequencePuzzle = (props: Props) => {
       <Notification />
       {result !== "in-progress" && (
         <Button mode="accept" settings={props.settings} onClick={() => ResetGame()}>
-          {props.isCampaignLevel ? LEVEL_FINISHING_TEXT : "Restart"}
+          {props.campaignConfig.isCampaignLevel ? LEVEL_FINISHING_TEXT : "Restart"}
         </Button>
       )}
       <Puzzle />

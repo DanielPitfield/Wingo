@@ -236,8 +236,6 @@ const LetterCategoriesConfig = (props: Props) => {
     if (wordIndex + 1 === chosenCategoryMappings.length) {
       // Out of guesses
       setInProgress(false);
-
-      // TODO: Calculate and add gold (only after all guesses have been made)
       //props.addGold(goldBanked);
     } else {
       setCurrentWord(requiredStartingLetter);

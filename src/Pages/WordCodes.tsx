@@ -367,12 +367,6 @@ const WordCodes = (props: Props) => {
     setWordCodes(newWordCodes);
 
     if (props.mode === "question") {
-      /*
-      If there are going to be word to code questions,
-      Add 1 of the displayed words as a question (ask what the code for a displayed word is, instead of what the code for a new word is),
-      TODO: The number of these questions which ask what the code for a display word (instead of a new word) could be configurable
-      */
-
       const questionWordSubset = gamemodeSettings.numWordToCodeQuestions > 0 ? [getRandomElementFrom(wordSubset)] : [];
 
       // How many more words for questions are needed?
