@@ -539,7 +539,7 @@ export const pageDescriptions: pageDescription[] = [
     isRandomlyPlayable: false,
     helpInfo: (
       <>
-        <p>After completing any of the shown challenges, a gold coin reward can be collected by clicking the 'Claim' button (next to the challenge)</p>
+        <p>After completing any of the shown challenges, a gold coin reward can be collected by clicking the 'Redeem' button (next to the challenge)</p>
       </>
     ),
   },
