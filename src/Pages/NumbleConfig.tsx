@@ -102,6 +102,13 @@ const NumbleConfig = (props: Props) => {
 
   const [teamTimers, setTeamTimers] = useState(initialTeamTimers);
 
+  function ResetConfig() {
+    setCurrentTeamNumber(0);
+    setStatus("dice-rolled-awaiting-pick");
+    setRemainingGuessTimerSeconds(INITIAL_GUESS_TIMER_VALUE);
+    setTeamTimers(initialTeamTimers);
+  }
+
   // Determine and set the next team to play
   const nextTeamTurn = () => {
     const newCurrentTeamNumber = getNextTeamNumberWithRemainingTime(currentTeamNumber, teamTimers);
@@ -256,6 +263,7 @@ const NumbleConfig = (props: Props) => {
       remainingGuessTimerSeconds={remainingGuessTimerSeconds}
       updateRemainingGuessTimerSeconds={updateRemainingGuessTimerSeconds}
       teamTimers={teamTimers}
+      resetConfig={ResetConfig}
       updateTeamTimers={updateTeamTimers}
       nextTeamTurn={nextTeamTurn}
       onComplete={props.onComplete}

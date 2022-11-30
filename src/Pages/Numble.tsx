@@ -40,6 +40,8 @@ interface Props {
   remainingGuessTimerSeconds: number;
   updateRemainingGuessTimerSeconds: (newGuessTimerSeconds: number) => void;
 
+  resetConfig: () => void;
+
   teamTimers: {
     teamNumber: number;
     remainingSeconds: number;
@@ -90,7 +92,7 @@ const Numble = (props: Props) => {
     return getRandomIntFromRange(props.gamemodeSettings.diceMin, props.gamemodeSettings.diceMax);
   };
 
-  const [diceValues, setdiceValues] = useState<number[]>(
+  const [diceValues, setDiceValues] = useState<number[]>(
     Array.from({ length: props.gamemodeSettings.numDice }).map((x) => getRandomDiceNumber())
   );
   const [pickedPins, setPickedPins] = useState<{ pinNumber: number; teamNumber: number }[]>([]);
@@ -120,6 +122,10 @@ const Numble = (props: Props) => {
     { teamNumber: 2, teamName: "Green" },
     { teamNumber: 3, teamName: "Yellow" },
   ];
+
+  React.useEffect(() => {
+    ResetGame();
+  }, [props.gamemodeSettings])
 
   // Determine valid results on update of diceValues (at start and on roll of dice)
   React.useEffect(() => {
@@ -198,7 +204,7 @@ const Numble = (props: Props) => {
     }
 
     // Determine random dice values for all the dice
-    setdiceValues(Array.from({ length: props.gamemodeSettings.numDice }).map((x) => getRandomDiceNumber()));
+    setDiceValues(Array.from({ length: props.gamemodeSettings.numDice }).map((x) => getRandomDiceNumber()));
   }
 
   function isPrime(value: number): boolean {
@@ -632,6 +638,8 @@ const Numble = (props: Props) => {
 
     // The quanity of dice (numDice) only updates after rolling
     rollDice();
+
+    props.resetConfig();
   }
 
   const handleGridShapeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -847,7 +855,7 @@ const Numble = (props: Props) => {
             </div>
           ))}
         </div>
-        <PinScores/>
+        <PinScores />
       </div>
     </div>
   );
