@@ -144,6 +144,8 @@ const WingoConfig = (props: Props) => {
   const [hasSubmitLetter, sethasSubmitLetter] = useState(false);
   const [revealedLetterIndexes, setRevealedLetterIndexes] = useState<number[]>([]);
 
+  const [numCorrectGuesses, setNumCorrectGuesses] = useState(0);
+  const [numIncorrectGuesses, setNumIncorrectGuesses] = useState(0);
   const [remainingGuesses, setRemainingGuesses] = useState(props.gamemodeSettings.startingNumGuesses);
 
   const [letterStatuses, setLetterStatuses] = useState<LetterTileStatus[]>(DEFAULT_LETTER_STATUSES);
@@ -179,16 +181,16 @@ const WingoConfig = (props: Props) => {
         const newTarget = getDeterministicArrayItems({ seedType: "today" }, 1, targetLengthWordArray)[0];
 
         // Load previous attempts at daily (if applicable)
-        const daily_word_storage = getDailyWordGuesses();
+        const dailyWordStorage = getDailyWordGuesses();
 
         // The actual daily word and the daily word set in local storage are the same
-        if (newTarget.word === daily_word_storage?.dailyWord) {
+        if (newTarget.word === dailyWordStorage?.dailyWord) {
           // Display the sava data on the word grid
-          setGuesses(daily_word_storage.guesses);
-          setWordIndex(daily_word_storage.wordIndex);
-          setInProgress(daily_word_storage.inProgress);
-          setCurrentWord(daily_word_storage.currentWord);
-          setInDictionary(daily_word_storage.inDictionary);
+          setGuesses(dailyWordStorage.guesses);
+          setWordIndex(dailyWordStorage.wordIndex);
+          setInProgress(dailyWordStorage.inProgress);
+          setCurrentWord(dailyWordStorage.currentWord);
+          setInDictionary(dailyWordStorage.inDictionary);
         }
 
         return newTarget;
@@ -250,7 +252,9 @@ const WingoConfig = (props: Props) => {
           setConundrum(newConundrum.conundrum);
           setTargetWord(newConundrum.answer);
           // All letters revealed from start
-          const newRevealedLetterIndexes: number[] = Array.from({ length: newConundrum.conundrum.length }).map((_, index) => index);
+          const newRevealedLetterIndexes: number[] = Array.from({ length: newConundrum.conundrum.length }).map(
+            (_, index) => index
+          );
           setRevealedLetterIndexes(newRevealedLetterIndexes);
         }
 
@@ -561,34 +565,6 @@ const WingoConfig = (props: Props) => {
     setGameId(gameId);
   }, [location, targetWord]);
 
-  function determineScore(): number | null {
-    // Correct conundrum
-    if (props.mode === "conundrum" && props.conundrum && currentWord.toUpperCase() === targetWord.toUpperCase()) {
-      return 10;
-    }
-    // Incorrect conundrum
-    else if (props.mode === "conundrum" && props.conundrum && currentWord.toUpperCase() !== targetWord.toUpperCase()) {
-      return 0;
-    }
-    // Wingo round
-    else if (props.mode !== "conundrum" && props.roundScoringInfo) {
-      const pointsLostPerGuess = props.roundScoringInfo?.pointsLostPerGuess ?? 0;
-      // Multiply points lost per guess by either the number of letters revealed or the number of guessed used
-      const pointsLost =
-        props.mode === "puzzle"
-          ? (revealedLetterIndexes.length - 1) * pointsLostPerGuess
-          : remainingGuesses * pointsLostPerGuess;
-
-      const score = props.roundScoringInfo.basePoints - pointsLost ?? 0;
-
-      return score;
-    }
-    // Unexpected round type or Wingo round but with no scoring information
-    else {
-      return null;
-    }
-  }
-
   const isCurrentGuessCorrect = () => {
     return currentWord.toLowerCase() === targetWord.toLowerCase() && currentWord.length > 0;
   };
@@ -648,12 +624,15 @@ const WingoConfig = (props: Props) => {
 
     // Add new rows for success in limitless mode
     if (props.mode === "limitless" && isCurrentGuessCorrect()) {
+      setNumCorrectGuesses(numCorrectGuesses + 1);
+
       const newLives = getNumNewLimitlessLives(remainingGuesses, wordIndex, gamemodeSettings.maxLivesConfig);
       setRemainingGuesses(remainingGuesses + newLives);
     }
 
     // Remove a row for failiure in limitless mode
     if (props.mode === "limitless" && !isCurrentGuessCorrect() && remainingGuesses >= 1) {
+      setNumIncorrectGuesses(numIncorrectGuesses + 1);
       setRemainingGuesses(remainingGuesses - 1);
     }
 
@@ -738,11 +717,7 @@ const WingoConfig = (props: Props) => {
     // The word is in the dictionary or is the target word exactly (to protect against a bug where the target word may not be in the dictionary)
     const isAccepetedWord = isCurrentGuessCorrect() || isCurrentGuessInDictionary();
 
-    /* 
-    TODO: Dictionary check disabled, invalid word
-    Currently, the guess will just disappear
-    Probably best the word stays shown but the user is alerted that the word is not in the dictionary
-    */
+    // TODO: Implent a message "Not a valid word" being shown when an invalid word (not in the dictionary) is entered
 
     if (isAccepetedWord) {
       // Add word to guesses
@@ -920,6 +895,8 @@ const WingoConfig = (props: Props) => {
       gamemodeSettings={gamemodeSettings}
       remainingSeconds={remainingSeconds}
       totalSeconds={totalSeconds}
+      numCorrectGuesses={numCorrectGuesses}
+      numIncorrectGuesses={numIncorrectGuesses}
       remainingGuesses={remainingGuesses}
       guesses={guesses}
       currentWord={currentWord}

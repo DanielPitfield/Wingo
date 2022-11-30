@@ -28,6 +28,8 @@ interface Props {
 
   remainingSeconds: number;
   totalSeconds: number;
+  numCorrectGuesses: number;
+  numIncorrectGuesses: number;
   remainingGuesses: number;
   guesses: string[];
   currentWord: string;
@@ -144,8 +146,6 @@ const Wingo = (props: Props) => {
     if (isModeWithDisplayRow()) {
       Grid.push(<DisplayRow />);
     }
-
-    console.log(props.gamemodeSettings.startingNumGuesses);
 
     for (let i = 0; i < props.gamemodeSettings.startingNumGuesses; i++) {
       let word;
@@ -447,6 +447,13 @@ const Wingo = (props: Props) => {
             onHideOfAddPresetModal={() => setKeyboardDisabled(false)}
           />
         </div>
+      )}
+
+      {props.mode === "limitless" && (
+        <MessageNotification type="default">
+          <div>{`Correct Guesses: ${props.numCorrectGuesses}`}</div>
+          <div>{`Incorrect Guesses: ${props.numIncorrectGuesses}`}</div>
+        </MessageNotification>
       )}
 
       <Grid />
