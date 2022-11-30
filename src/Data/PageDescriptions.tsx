@@ -91,7 +91,7 @@ export const pageDescriptions: pageDescription[] = [
           word.
         </p>
         <p>
-          <strong style={{ color: "#4ca150" }}>Green</strong>tiles means the letter is in the word and in the correct
+          <strong style={{ color: "#4ca150" }}>Green</strong> tiles means the letter is in the word and in the correct
           spot.
         </p>
         <p>
