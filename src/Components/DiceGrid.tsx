@@ -16,6 +16,20 @@ const DiceGrid = (props: Props) => {
   const numDice = props.diceValues.length;
   const isEvenNumDice = numDice % 2 === 0;
 
+  const rollDiceButton = (
+    <div className="dice_row">
+      <Button
+        className="roll_dice"
+        mode={"default"}
+        onClick={props.rollDice}
+        settings={props.settings}
+        disabled={props.disabled}
+      >
+        {props.children}
+      </Button>
+    </div>
+  );
+
   if (isEvenNumDice) {
     const halfwayIndex = Math.ceil(numDice / 2);
     const firstDiceRow = props.diceValues.slice(0, halfwayIndex);
@@ -34,25 +48,21 @@ const DiceGrid = (props: Props) => {
             <Dice key={i} value={diceValue} settings={props.settings} />
           ))}
         </div>
-        <Button mode={"default"} onClick={props.rollDice} settings={props.settings} disabled={props.disabled}>
-          {props.children}
-        </Button>
-      </div>
-    );
-  } else {
-    return (
-      <div className="dice_wrapper">
-        <div className="dice_row">
-          {props.diceValues.map((diceValue, i) => (
-            <Dice key={i} value={diceValue} settings={props.settings} />
-          ))}
-        </div>
-        <Button mode={"default"} onClick={props.rollDice} settings={props.settings} disabled={props.disabled}>
-          {props.children}
-        </Button>
+        {rollDiceButton}
       </div>
     );
   }
+
+  return (
+    <div className="dice_wrapper">
+      <div className="dice_row">
+        {props.diceValues.map((diceValue, i) => (
+          <Dice key={i} value={diceValue} settings={props.settings} />
+        ))}
+      </div>
+      {rollDiceButton}
+    </div>
+  );
 };
 
 export default DiceGrid;
