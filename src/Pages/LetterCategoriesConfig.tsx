@@ -157,29 +157,49 @@ const LetterCategoriesConfig = (props: Props) => {
   function generateTargetWords() {
     if (inProgress) {
       // Get a random letter from the Alphabet
-      const requiredStartingLetter = getRandomElementFrom(DEFAULT_ALPHABET);
+      let requiredStartingLetter: string;
+      let newChosenCategoryMappings: { name: string; targetWordArray: string[] }[] = [];
+
+      const MIN_TARGET_WORDS_PER_CATEGORY = 3;
+
+      // Until there is a s
+      do {
+        requiredStartingLetter = getRandomElementFrom(DEFAULT_ALPHABET);
+
+        // Randomly select the requiered number of categories
+        const chosenCategories = shuffleArray(categoryMappings).slice(
+          0,
+          Math.min(gamemodeSettings.numCategories, MAX_NUM_CATEGORIES)
+        );
+
+        newChosenCategoryMappings = chosenCategories.map((category) => {
+          return {
+            name: category.name,
+            // Just the words that start with the required starting letter
+            targetWordArray: category.array
+              .map((x) => x.word)
+              .filter((word) => word.charAt(0) === requiredStartingLetter),
+          };
+        });
+      } while (
+        !newChosenCategoryMappings.every((mapping) => mapping.targetWordArray.length >= MIN_TARGET_WORDS_PER_CATEGORY)
+      );
+
       // Set this letter as the letter that all words must begin with
       setRequiredStartingLetter(requiredStartingLetter);
       // Provide this letter as the start of guesses/words
       setCurrentWord(requiredStartingLetter);
 
       console.log(`%cStart Letter:%c ${requiredStartingLetter}`, "font-weight: bold", "font-weight: normal");
-
-      // Randomly select the requiered number of categories
-      const chosenCategories = shuffleArray(categoryMappings).slice(
-        0,
-        Math.min(gamemodeSettings.numCategories, MAX_NUM_CATEGORIES)
+      newChosenCategoryMappings.forEach((category) =>
+        console.log(
+          `%cCategory:%c ${category.name}  %cTarget Array:%c ${category.targetWordArray.join(", ")}`,
+          "font-weight: bold",
+          "font-weight: normal",
+          "font-weight: bold",
+          "font-weight: normal"
+        )
       );
-
-      const newChosenCategoryMappings = chosenCategories.map((category) => {
-        return {
-          name: category.name,
-          // Just the words that start with the required starting letter
-          targetWordArray: category.array
-            .map((x) => x.word)
-            .filter((word) => word.charAt(0) === requiredStartingLetter),
-        };
-      });
 
       setChosenCategoryMappings(newChosenCategoryMappings);
     }
