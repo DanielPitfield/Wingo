@@ -404,13 +404,9 @@ const ArithmeticDrag = (props: Props) => {
     setOppositeTiles(oppositeTiles.map((tile) => ({ ...tile, status: "not set" })));
   }
 
-  /**
-   * LetterTile Debug: letter={`R: ${tile.total}`}
-   * @returns
-   */
   const Tiles = () => {
     const draggableExpressionTiles = (
-      <div className="draggable_expressions" ref={parent}>
+      <div className="draggable_tiles_wrapper" data-operands={gamemodeSettings.numOperands} ref={parent}>
         {expressionTiles.map((tile) => (
           <DraggableItem key={tile.id} id={tile.id}>
             <LetterTile letter={tile.expression} status={tile.status} settings={props.settings} />
@@ -420,7 +416,7 @@ const ArithmeticDrag = (props: Props) => {
     );
 
     const draggableResultTiles = (
-      <div className="draggable_results" ref={parent}>
+      <div className="draggable_tiles_wrapper" data-operands={gamemodeSettings.numOperands} ref={parent}>
         {resultTiles.map((tile) => (
           <DraggableItem key={tile.id} id={tile.id}>
             <LetterTile letter={tile.total.toString()} status={tile.status} settings={props.settings} />
@@ -612,7 +608,7 @@ const ArithmeticDrag = (props: Props) => {
       {inProgress && <MessageNotification type="default">{`Guesses left: ${remainingGuesses}`}</MessageNotification>}
 
       <Tiles />
-      
+
       {inProgress && (
         <Button
           mode={remainingGuesses <= 1 ? "accept" : "default"}

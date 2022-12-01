@@ -1,0 +1,23 @@
+.numbers_arithmetic {
+  .draggable_tiles_wrapper {
+    .letter_tile {
+      min-height: 1em;
+      font-size: 2em;
+      padding: 0.5em 1em;
+      align-items: center;
+      justify-content: center;
+    }
+
+    &[data-operands="2"] {
+      .letter_tile {
+        min-width: 4em;
+      }
+    }
+
+    &[data-operands="3"] {
+      .letter_tile {
+        min-width: 7em;
+      }
+    }
+  }
+}
