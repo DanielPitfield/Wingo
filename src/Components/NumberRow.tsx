@@ -3,6 +3,7 @@ import OperatorTile from "./OperatorTile";
 import { Guess, IntermediaryTileStatus } from "../Pages/NumbersGameConfig";
 import { operators } from "../Data/Operators";
 import { getNumbersGameGuessTotal } from "../Helpers/getNumbersGameGuessTotal";
+import EqualsTile from "./EqualsTile";
 
 interface Props {
   onClick: (
@@ -22,7 +23,7 @@ export const NumberRow = (props: Props) => {
   return (
     <div className="number_row">
       <NumberTile
-        key="first-operand"
+        key={`first-operand-row-${props.rowIndex}`}
         number={props.expression.operand1 ?? null}
         disabled={
           props.disabled || getNumbersGameGuessTotal(props.expression) !== null || props.expression.operand1 === null
@@ -30,7 +31,7 @@ export const NumberRow = (props: Props) => {
       />
 
       <OperatorTile
-        key="first-operator"
+        key={`first-operator-row-${props.rowIndex}`}
         targetNumber={props.targetNumber}
         setOperator={props.setOperator}
         disabled={props.disabled || getNumbersGameGuessTotal(props.expression) !== null}
@@ -38,19 +39,17 @@ export const NumberRow = (props: Props) => {
       />
 
       <NumberTile
-        key="second-operand"
+        key={`second-operand-row-${props.rowIndex}`}
         number={props.expression.operand2 ?? null}
         disabled={
           props.disabled || getNumbersGameGuessTotal(props.expression) !== null || props.expression.operand2 === null
         }
       />
 
-      <div key="equals" className="equals_tile" data-disabled={true} data-is-readonly={false}>
-        =
-      </div>
+      <EqualsTile key={`equals-row-${props.rowIndex}`} />
 
       <NumberTile
-        key="row_result"
+        key={`row-result-${props.rowIndex}`}
         number={getNumbersGameGuessTotal(props.expression)}
         disabled={
           props.disabled ||

@@ -197,7 +197,7 @@ const NumbersGame = (props: Props) => {
 
       Grid.push(
         <NumberRow
-          key={`numbers-game-input ${i}`}
+          key={`numbers-game-input-rpw-${i}`}
           onClick={props.onClick}
           expression={guess}
           targetNumber={props.targetNumber}
