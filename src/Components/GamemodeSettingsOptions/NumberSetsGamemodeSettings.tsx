@@ -1,5 +1,6 @@
 import { useLocation } from "react-router-dom";
-import { difficultyOptions } from "../../Data/DefaultGamemodeSettings";
+import { Difficulty } from "../../Data/DefaultGamemodeSettings";
+import { NumberSetsTemplates, NumberSetTemplate } from "../../Data/NumberSetsTemplates";
 import { PagePath } from "../../Data/PageNames";
 import { getGamemodeSettingsPresets } from "../../Data/SaveData/Presets";
 import { NumberSetsProps } from "../../Pages/NumberSets";
@@ -24,6 +25,9 @@ interface Props {
 
 const NumberSetsGamemodeSettings = (props: Props) => {
   const location = useLocation().pathname as PagePath;
+  const availableDifficulties: Difficulty[] = [
+    ...new Set(NumberSetsTemplates.map((template: NumberSetTemplate) => template.difficulty)),
+  ];
 
   return (
     <GamemodeSettingsMenu>
@@ -40,9 +44,9 @@ const NumberSetsGamemodeSettings = (props: Props) => {
             name="difficulty"
             value={props.gamemodeSettings.difficulty}
           >
-            {difficultyOptions.map((difficultyOption) => (
-              <option key={difficultyOption} value={difficultyOption}>
-                {difficultyOption}
+            {availableDifficulties.map((difficulty: Difficulty) => (
+              <option key={difficulty} value={difficulty}>
+                {difficulty}
               </option>
             ))}
           </select>

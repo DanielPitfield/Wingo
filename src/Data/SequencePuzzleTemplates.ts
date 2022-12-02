@@ -1,8 +1,8 @@
 import { PuzzleConfigProps } from "../Pages/SequencePuzzle";
 
 /** All puzzles */
-export const Puzzles = {
-  Easy1IconVerticallyDown: {
+export const SequencePuzzleTemplates: PuzzleConfigProps[] = [
+  {
     mode: "sequence",
     difficulty: "easy",
     correctAnswerDescription: "Single icon, moving vertically downwards",
@@ -27,9 +27,9 @@ export const Puzzles = {
         { icon1: { left: "50%", top: "10%" } },
       ],
     },
-  } as PuzzleConfigProps,
+  },
 
-  Easy1IconHorizontallyAcrross: {
+  {
     mode: "sequence",
     difficulty: "easy",
     correctAnswerDescription: "Single icon, moving horizontally across",
@@ -54,9 +54,9 @@ export const Puzzles = {
         { icon1: { left: "50%", top: "70%" } },
       ],
     },
-  } as PuzzleConfigProps,
+  },
 
-  Medium2IconsOnceVerticallyDownOtherHorizontallyAcross: {
+  {
     mode: "sequence",
     difficulty: "medium",
     correctAnswerDescription: "Two icons, one moving vertically downwards, the other moving horizontally across",
@@ -85,5 +85,5 @@ export const Puzzles = {
         { icon1: { left: "50%", top: "70%" }, icon2: { left: "30%", top: "10%" } },
       ],
     },
-  } as PuzzleConfigProps,
-};
+  },
+];

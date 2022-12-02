@@ -14,9 +14,8 @@ export type AlgebraQuestion = {
 
 export type answerType = "letter" | "number" | "combination";
 
-/* All templates */
-export const AlgebraTemplates = {
-  SmallEasy1: {
+export const AlgebraTemplates: AlgebraTemplate[] = [
+  {
     difficulty: "easy",
     inputs: [3, 7, 5, 8, 4, 2],
     questions: [
@@ -46,8 +45,8 @@ export const AlgebraTemplates = {
         correctAnswers: ["f"],
       },
     ],
-  } as AlgebraTemplate,
-  expression1: {
+  },
+   {
     difficulty: "easy",
     inputs: [1, 2, 3, 4, 5, 6],
     questions: [
@@ -57,5 +56,5 @@ export const AlgebraTemplates = {
         correctAnswers: ["6A", "3B", "2C", "f"],
       },
     ],
-  } as AlgebraTemplate,
-};
+  } ,
+];

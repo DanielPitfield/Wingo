@@ -1,5 +1,6 @@
 import { useLocation } from "react-router-dom";
-import { difficultyOptions } from "../../Data/DefaultGamemodeSettings";
+import { AlgebraTemplate, AlgebraTemplates } from "../../Data/AlgebraTemplates";
+import { Difficulty } from "../../Data/DefaultGamemodeSettings";
 import { PagePath } from "../../Data/PageNames";
 import { getGamemodeSettingsPresets } from "../../Data/SaveData/Presets";
 import { AlgebraProps } from "../../Pages/Algebra";
@@ -24,6 +25,9 @@ interface Props {
 
 const AlgebraGamemodeSettings = (props: Props) => {
   const location = useLocation().pathname as PagePath;
+  const availableDifficulties: Difficulty[] = [
+    ...new Set(AlgebraTemplates.map((template: AlgebraTemplate) => template.difficulty)),
+  ];
 
   return (
     <GamemodeSettingsMenu>
@@ -40,9 +44,9 @@ const AlgebraGamemodeSettings = (props: Props) => {
             name="difficulty"
             value={props.gamemodeSettings.difficulty}
           >
-            {difficultyOptions.map((difficultyOption) => (
-              <option key={difficultyOption} value={difficultyOption}>
-                {difficultyOption}
+            {availableDifficulties.map((difficulty: Difficulty) => (
+              <option key={difficulty} value={difficulty}>
+                {difficulty}
               </option>
             ))}
           </select>

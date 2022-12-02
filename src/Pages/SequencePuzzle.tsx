@@ -1,7 +1,7 @@
 import { CSSProperties, useEffect, useState } from "react";
 import { Button } from "../Components/Button";
 import { MessageNotification } from "../Components/MessageNotification";
-import { Puzzles } from "../Data/Puzzles";
+import { SequencePuzzleTemplates } from "../Data/SequencePuzzleTemplates";
 import { Theme, ThemeIcons } from "../Data/Themes";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
 import { Difficulty } from "../Data/DefaultGamemodeSettings";
@@ -76,7 +76,11 @@ export const SequencePuzzle = (props: Props) => {
     if (props.gamemodeSettings.defaultPuzzle) {
       setPuzzle(props.gamemodeSettings.defaultPuzzle);
     } else {
-      setPuzzle({ ...Object.values(Puzzles)[Math.round(Math.random() * (Object.values(Puzzles).length - 1))] });
+      setPuzzle({
+        ...Object.values(SequencePuzzleTemplates)[
+          Math.round(Math.random() * (Object.values(SequencePuzzleTemplates).length - 1))
+        ],
+      });
     }
   }, [props.gamemodeSettings.defaultPuzzle]);
 
@@ -116,7 +120,11 @@ export const SequencePuzzle = (props: Props) => {
     }
 
     setResult("in-progress");
-    setPuzzle({ ...Object.values(Puzzles)[Math.round(Math.random() * (Object.values(Puzzles).length - 1))] });
+    setPuzzle({
+      ...Object.values(SequencePuzzleTemplates)[
+        Math.round(Math.random() * (Object.values(SequencePuzzleTemplates).length - 1))
+      ],
+    });
   }
 
   /**
