@@ -135,6 +135,9 @@ const WingoConfig = (props: Props) => {
   const [wordIndex, setWordIndex] = useState(0);
 
   const [inDictionary, setInDictionary] = useState(true);
+  const [errorMessage, setErrorMessage] = useState<{ isShown: true; message: string } | { isShown: false}>({
+    isShown: false,
+  });
   const [isIncompleteWord, setIsIncompleteWord] = useState(false);
 
   const [conundrum, setConundrum] = useState("");
@@ -175,9 +178,10 @@ const WingoConfig = (props: Props) => {
   // Returns the newly determined target word
   function getTargetWord(): TargetWordMapping | undefined {
     // Array of words of the current gamemode length (most modes will choose a word from this array)
-    let targetLengthWordArray: TargetWordMapping[] = getTargetWordsOfLength(
-      gamemodeSettings.wordLength
-    ).map((x) => ({ word: x, hint: "" }))!;
+    let targetLengthWordArray: TargetWordMapping[] = getTargetWordsOfLength(gamemodeSettings.wordLength).map((x) => ({
+      word: x,
+      hint: "",
+    }))!;
 
     switch (props.mode) {
       case "daily":
@@ -695,6 +699,7 @@ const WingoConfig = (props: Props) => {
     // Don't allow incomplete words (if specified in props)
     if (gamemodeSettings.enforceFullLengthGuesses && currentWord.length !== gamemodeSettings.wordLength) {
       setIsIncompleteWord(true);
+      setErrorMessage({isShown: true, message: "Only full length words are allowed"})
       return;
     }
 
@@ -709,6 +714,7 @@ const WingoConfig = (props: Props) => {
     // Checking against the dictionary is enabled and the word submitted was not in the dictionary
     if (!isCurrentGuessInDictionary()) {
       setInDictionary(false);
+      setErrorMessage({isShown: true, message: "Not a valid word"});
 
       if (props.checkInDictionary) {
         setInProgress(false);
@@ -718,8 +724,6 @@ const WingoConfig = (props: Props) => {
 
     // The word is in the dictionary or is the target word exactly (to protect against a bug where the target word may not be in the dictionary)
     const isAccepetedWord = isCurrentGuessCorrect() || isCurrentGuessInDictionary();
-
-    // TODO: Implent a message "Not a valid word" being shown when an invalid word (not in the dictionary) is entered
 
     if (isAccepetedWord) {
       // Add word to guesses
@@ -769,6 +773,8 @@ const WingoConfig = (props: Props) => {
   }
 
   function onSubmitLetter(letter: string) {
+    setErrorMessage({isShown: false as false});
+
     if (currentWord.length < gamemodeSettings.wordLength && inProgress) {
       setCurrentWord(currentWord + letter);
       sethasSubmitLetter(true);
@@ -783,6 +789,8 @@ const WingoConfig = (props: Props) => {
   }
 
   function onBackspace() {
+    setErrorMessage({ isShown: false as false});
+
     if (currentWord.length > 0 && inProgress) {
       // If only the first letter and it was provided to begin with
       if (currentWord.length === 1 && gamemodeSettings.isFirstLetterProvided) {
@@ -905,6 +913,7 @@ const WingoConfig = (props: Props) => {
       wordIndex={wordIndex}
       inProgress={inProgress}
       inDictionary={inDictionary}
+      errorMessage={errorMessage}
       isIncompleteWord={isIncompleteWord}
       conundrum={conundrum ?? ""}
       targetWord={targetWord ?? ""}

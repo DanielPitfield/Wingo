@@ -36,6 +36,7 @@ interface Props {
   wordIndex: number;
   inProgress: boolean;
   inDictionary: boolean;
+  errorMessage: { isShown: true; message: string } | { isShown: false };
   isIncompleteWord: boolean;
   conundrum?: string;
   targetWord: string;
@@ -448,6 +449,8 @@ const Wingo = (props: Props) => {
           />
         </div>
       )}
+
+      {props.errorMessage.isShown && <MessageNotification type="error">{props.errorMessage.message}</MessageNotification>}
 
       {props.mode === "limitless" && (
         <MessageNotification type="default">
