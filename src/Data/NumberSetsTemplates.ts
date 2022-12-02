@@ -18,7 +18,6 @@ export type NumberSetQuestion = {
 };
 
 // TODO: Examples and finding of operator are hardcoded
-// TODO: The correctAnswer must be an integer
 
 const smallNumbers: number[] = Array.from({ length: 10 }).map((_) => getRandomIntFromRange(2, 10));
 
@@ -87,34 +86,6 @@ export const NumberSetsTemplates = {
       numbersLeft: [smallNumbers[4]],
       numbersRight: [smallNumbers[5]],
       correctAnswer: operators.find((operator) => operator.name === "-")?.function(smallNumbers[4], smallNumbers[5]),
-    },
-  } as NumberSetTemplate,
-
-  Divide: {
-    difficulty: "easy",
-    correctAnswerDescription: "Divide the two numbers together",
-    examples: [
-      {
-        numbersLeft: [smallNumbers[0] * smallNumbers[1]],
-        numbersRight: [smallNumbers[1]],
-        correctAnswer: operators
-          .find((operator) => operator.name === "÷")
-          ?.function(smallNumbers[0] * smallNumbers[1], smallNumbers[1]),
-      },
-      {
-        numbersLeft: [smallNumbers[2] * smallNumbers[3]],
-        numbersRight: [smallNumbers[3]],
-        correctAnswer: operators
-          .find((operator) => operator.name === "÷")
-          ?.function(smallNumbers[2] * smallNumbers[3], smallNumbers[3]),
-      },
-    ],
-    question: {
-      numbersLeft: [smallNumbers[4] * smallNumbers[5]],
-      numbersRight: [smallNumbers[5]],
-      correctAnswer: operators
-        .find((operator) => operator.name === "÷")
-        ?.function(smallNumbers[4] * smallNumbers[5], smallNumbers[5]),
     },
   } as NumberSetTemplate,
 };
