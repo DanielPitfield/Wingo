@@ -1,6 +1,7 @@
 import { getAllWordsOfLength } from "./getWordsOfLength";
 import { getRandomElementFrom } from "./getRandomElementFrom";
 import { isAnagram } from "./isAnagram";
+import { Conundrum } from "../Pages/WingoConfig";
 
 /*
 The Conundrum is designed to have only one solution,
@@ -9,7 +10,7 @@ But on occasion more than one valid word is found by happenstance,
 If this happens, any of these results is accepted.
 */
 
-export function getConundrum() {
+export function getConundrum(): Conundrum | undefined {
   /*
   Combinations of word lengths that could make up a conundrum
   There are probably more combinations, but these should make the best conundrums

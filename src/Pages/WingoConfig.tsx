@@ -108,6 +108,9 @@ interface Props extends WingoConfigProps {
   onComplete: (wasCorrect: boolean) => void;
 }
 
+export type TargetWordMapping = { word: string; hint?: string };
+export type Conundrum = { conundrum: string; answer: string };
+
 export const DEFAULT_ALPHABET_STRING = "abcdefghijklmnopqrstuvwxyz";
 export const DEFAULT_ALPHABET = DEFAULT_ALPHABET_STRING.split("");
 
@@ -170,9 +173,9 @@ const WingoConfig = (props: Props) => {
   const [playClickSoundEffect] = useClickChime(props.settings);
 
   // Returns the newly determined target word
-  function getTargetWord() {
+  function getTargetWord(): TargetWordMapping | undefined {
     // Array of words of the current gamemode length (most modes will choose a word from this array)
-    let targetLengthWordArray: { word: string; hint: string }[] = getTargetWordsOfLength(
+    let targetLengthWordArray: TargetWordMapping[] = getTargetWordsOfLength(
       gamemodeSettings.wordLength
     ).map((x) => ({ word: x, hint: "" }))!;
 
@@ -215,7 +218,7 @@ const WingoConfig = (props: Props) => {
       case "increasing":
         // There is already a targetWord which is of the needed wordLength
         if (targetWord && targetWord.length === gamemodeSettings.wordLength) {
-          return targetWord;
+          return { word: targetWord };
         }
         // There is no array for the current wordLength
         else if (!targetLengthWordArray || targetLengthWordArray?.length <= 0) {
@@ -256,9 +259,10 @@ const WingoConfig = (props: Props) => {
             (_, index) => index
           );
           setRevealedLetterIndexes(newRevealedLetterIndexes);
+          return { word: newConundrum?.answer };
         }
 
-        return newConundrum?.answer;
+        return;
 
       default:
         // Choose random word
@@ -367,19 +371,17 @@ const WingoConfig = (props: Props) => {
       return;
     }
 
-    // Update word length every time the target word changes
-    if (targetWord) {
-      const newGamemodeSettings = {
-        ...gamemodeSettings,
-        wordLength: targetWord.length,
-      };
-      setGamemodeSettings(newGamemodeSettings);
-    }
-
     // Show first letter of the target word (if enabled)
     if (gamemodeSettings.isFirstLetterProvided) {
       setCurrentWord(targetWord.charAt(0));
     }
+
+    // Update word length every time the target word changes
+    const newGamemodeSettings = {
+      ...gamemodeSettings,
+      wordLength: targetWord.length,
+    };
+    setGamemodeSettings(newGamemodeSettings);
 
     // Update the currently valid guesses which can be made
     setWordArray(getValidWordArray());
