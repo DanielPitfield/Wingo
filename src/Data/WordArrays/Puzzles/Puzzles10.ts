@@ -1,6 +1,6 @@
-import { TargetWordMapping } from "../../../Pages/WingoConfig";
+import { WordHintMapping } from "../../../Pages/WingoConfig";
 
-export const Puzzles10: TargetWordMapping[] = [
+export const Puzzles10: WordHintMapping[] = [
   { word: "acceptance", hint: "Be kind and understanding with this answer" },
   { word: "adrenaline", hint: "Fight or Flight" },
   { word: "accountant", hint: "This answer takes charge of company finances" },
