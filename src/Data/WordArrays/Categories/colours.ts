@@ -1,6 +1,6 @@
-import { TargetWordMapping } from "../../../Pages/WingoConfig";
+import { WordHintMapping } from "../../../Pages/WingoConfig";
 
-export const categoryWordsColours: TargetWordMapping[] = [
+export const categoryWordsColours: WordHintMapping[] = [
   { word: "amber", hint: "Yellowish, also a gemstone" },
   { word: "amethyst", hint: "Purplish, also a gemstone" },
   { word: "apricot", hint: "Orangish, also a fruit" },

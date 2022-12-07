@@ -4,7 +4,7 @@ import {
   puzzleWordLengthMappings,
   targetWordLengthMappings,
 } from "../Data/WordArrayMappings";
-import { TargetWordMapping } from "../Pages/WingoConfig";
+import { WordHintMapping } from "../Pages/WingoConfig";
 
 export function getGuessableWordsOfLength(wordLength: number): string[] {
   return guessableWordLengthMappings.find((x) => x.value === wordLength)?.array ?? [];
@@ -29,6 +29,6 @@ export function getAllWordsUpToLength(wordLength: number): string[] {
   return newWordArray;
 }
 
-export function getAllPuzzleWordsOfLength(wordLength: number): TargetWordMapping[] {
+export function getAllPuzzleWordsOfLength(wordLength: number): WordHintMapping[] {
   return puzzleWordLengthMappings.find((x) => x.value === wordLength)?.array ?? [];
 }

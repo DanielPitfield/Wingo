@@ -1,6 +1,6 @@
-import { TargetWordMapping } from "../../../Pages/WingoConfig";
+import { WordHintMapping } from "../../../Pages/WingoConfig";
 
-export const categoryWordsMeatsAndFish: TargetWordMapping[] = [
+export const categoryWordsMeatsAndFish: WordHintMapping[] = [
   { word: "bacon", hint: "" },
   { word: "bbq-chicken", hint: "" },
   { word: "beef", hint: "" },

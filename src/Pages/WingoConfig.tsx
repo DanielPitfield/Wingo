@@ -108,7 +108,8 @@ interface Props extends WingoConfigProps {
   onComplete: (wasCorrect: boolean) => void;
 }
 
-export type TargetWordMapping = { word: string; hint?: string };
+export type TargetWordMapping = { word: string; canBeTargetWord: boolean };
+export type WordHintMapping = { word: string; hint?: string };
 export type Conundrum = { conundrum: string; answer: string };
 
 export const DEFAULT_ALPHABET_STRING = "abcdefghijklmnopqrstuvwxyz";
@@ -135,7 +136,7 @@ const WingoConfig = (props: Props) => {
   const [wordIndex, setWordIndex] = useState(0);
 
   const [inDictionary, setInDictionary] = useState(true);
-  const [errorMessage, setErrorMessage] = useState<{ isShown: true; message: string } | { isShown: false}>({
+  const [errorMessage, setErrorMessage] = useState<{ isShown: true; message: string } | { isShown: false }>({
     isShown: false,
   });
   const [isIncompleteWord, setIsIncompleteWord] = useState(false);
@@ -176,9 +177,9 @@ const WingoConfig = (props: Props) => {
   const [playClickSoundEffect] = useClickChime(props.settings);
 
   // Returns the newly determined target word
-  function getTargetWord(): TargetWordMapping | undefined {
+  function getTargetWord(): WordHintMapping | undefined {
     // Array of words of the current gamemode length (most modes will choose a word from this array)
-    let targetLengthWordArray: TargetWordMapping[] = getTargetWordsOfLength(gamemodeSettings.wordLength).map((x) => ({
+    let targetLengthWordArray: WordHintMapping[] = getTargetWordsOfLength(gamemodeSettings.wordLength).map((x) => ({
       word: x,
       hint: "",
     }))!;
@@ -699,7 +700,7 @@ const WingoConfig = (props: Props) => {
     // Don't allow incomplete words (if specified in props)
     if (gamemodeSettings.enforceFullLengthGuesses && currentWord.length !== gamemodeSettings.wordLength) {
       setIsIncompleteWord(true);
-      setErrorMessage({isShown: true, message: "Only full length words are allowed"})
+      setErrorMessage({ isShown: true, message: "Only full length words are allowed" });
       return;
     }
 
@@ -714,7 +715,7 @@ const WingoConfig = (props: Props) => {
     // Checking against the dictionary is enabled and the word submitted was not in the dictionary
     if (!isCurrentGuessInDictionary()) {
       setInDictionary(false);
-      setErrorMessage({isShown: true, message: "Not a valid word"});
+      setErrorMessage({ isShown: true, message: "Not a valid word" });
 
       if (props.checkInDictionary) {
         setInProgress(false);
@@ -773,7 +774,7 @@ const WingoConfig = (props: Props) => {
   }
 
   function onSubmitLetter(letter: string) {
-    setErrorMessage({isShown: false as false});
+    setErrorMessage({ isShown: false as false });
 
     if (currentWord.length < gamemodeSettings.wordLength && inProgress) {
       setCurrentWord(currentWord + letter);
@@ -789,7 +790,7 @@ const WingoConfig = (props: Props) => {
   }
 
   function onBackspace() {
-    setErrorMessage({ isShown: false as false});
+    setErrorMessage({ isShown: false as false });
 
     if (currentWord.length > 0 && inProgress) {
       // If only the first letter and it was provided to begin with

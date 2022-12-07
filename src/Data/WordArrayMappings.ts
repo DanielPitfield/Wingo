@@ -22,8 +22,9 @@ import { categoryWordsHerbsAndSpices } from "./WordArrays/Categories/HerbsAndSpi
 import { categoryWordsMeatsAndFish } from "./WordArrays/Categories/MeatsAndFish";
 import { categoryWordsSports } from "./WordArrays/Categories/Sports";
 import { categoryWordsVegetables } from "./WordArrays/Categories/Vegetables";
+import { WordHintMapping } from "../Pages/WingoConfig";
 
-export const targetWordLengthMappings = [
+export const targetWordLengthMappings: { value: number; array: string[] }[] = [
   { value: 3, array: targetWords3 },
   { value: 4, array: targetWords4 },
   { value: 5, array: targetWords5 },
@@ -35,7 +36,7 @@ export const targetWordLengthMappings = [
   { value: 11, array: targetWords11 },
 ];
 
-export const guessableWordLengthMappings = [
+export const guessableWordLengthMappings: { value: number; array: string[] }[] = [
   { value: 3, array: guessableWords3 },
   { value: 4, array: guessableWords4 },
   { value: 5, array: guessableWords5 },
@@ -47,9 +48,11 @@ export const guessableWordLengthMappings = [
   { value: 11, array: guessableWords11 },
 ];
 
-export const puzzleWordLengthMappings = [{ value: 10, array: Puzzles10 }];
+export const puzzleWordLengthMappings: { value: number; array: WordHintMapping[] }[] = [
+  { value: 10, array: Puzzles10 },
+];
 
-export const categoryMappings = [
+export const categoryMappings: { name: string; array: WordHintMapping[] }[] = [
   { name: "Animals", array: categoryWordsAnimals },
   { name: "Capital Cities", array: categoryWordsCapitalCities },
   { name: "Chemical Elements", array: categoryWordsChemicalElements },

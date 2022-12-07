@@ -1,6 +1,6 @@
-import { TargetWordMapping } from "../../../Pages/WingoConfig";
+import { WordHintMapping } from "../../../Pages/WingoConfig";
 
-export const categoryWordsChemicalElements: TargetWordMapping[] = [
+export const categoryWordsChemicalElements: WordHintMapping[] = [
   { word: "actinium", hint: "" },
   { word: "aluminum", hint: "" },
   { word: "americium", hint: "" },

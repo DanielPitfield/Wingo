@@ -1,6 +1,6 @@
-import { TargetWordMapping } from "../../../Pages/WingoConfig";
+import { WordHintMapping } from "../../../Pages/WingoConfig";
 
-export const categoryWordsGemstones: TargetWordMapping[] = [
+export const categoryWordsGemstones: WordHintMapping[] = [
   { word: "amber", hint: "" },
   { word: "amethyst", hint: "" },
   { word: "ammolite", hint: "" },
