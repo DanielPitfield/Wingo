@@ -1,6 +1,6 @@
-// https://a-z-animals.com/animals
+import { TargetWordMapping } from "../../../Pages/WingoConfig";
 
-export const words_animals = [
+export const categoryWordsAnimals: TargetWordMapping[] = [
   { word: "aardvark", hint: "" },
   { word: "albatross", hint: "" },
   { word: "alligator", hint: "" },

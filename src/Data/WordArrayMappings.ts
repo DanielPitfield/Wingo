@@ -10,19 +10,18 @@ import { targetWords11, guessableWords11 } from "./WordArrays/Lengths/Words11";
 
 import { Puzzles10 } from "./WordArrays/Puzzles/Puzzles10";
 
-import { words_animals } from "./WordArrays/Categories/Animals";
-import { words_capital_cities } from "./WordArrays/Categories/CapitalCities";
-import { words_chemical_elements } from "./WordArrays/Categories/ChemicalElements";
-import { words_colours } from "./WordArrays/Categories/Colours";
-import { words_countries } from "./WordArrays/Categories/Countries";
-import { words_dogs } from "./WordArrays/Categories/Dogs";
-import { words_fruits } from "./WordArrays/Categories/Fruits";
-import { words_gemstones } from "./WordArrays/Categories/Gemstones";
-import { words_herbs_and_spices } from "./WordArrays/Categories/HerbsAndSpices";
-import { words_meats_and_fish } from "./WordArrays/Categories/MeatsAndFish";
-import { words_pizza_toppings } from "./WordArrays/Categories/PizzaToppings";
-import { words_sports } from "./WordArrays/Categories/Sports";
-import { words_vegetables } from "./WordArrays/Categories/Vegetables";
+import { categoryWordsAnimals } from "./WordArrays/Categories/Animals";
+import { categoryWordsCapitalCities } from "./WordArrays/Categories/CapitalCities";
+import { categoryWordsChemicalElements } from "./WordArrays/Categories/ChemicalElements";
+import { categoryWordsColours } from "./WordArrays/Categories/Colours";
+import { categoryWordsCountries } from "./WordArrays/Categories/Countries";
+import { categoryWordsDogs } from "./WordArrays/Categories/Dogs";
+import { categoryWordsFruits } from "./WordArrays/Categories/Fruits";
+import { categoryWordsGemstones } from "./WordArrays/Categories/Gemstones";
+import { categoryWordsHerbsAndSpices } from "./WordArrays/Categories/HerbsAndSpices";
+import { categoryWordsMeatsAndFish } from "./WordArrays/Categories/MeatsAndFish";
+import { categoryWordsSports } from "./WordArrays/Categories/Sports";
+import { categoryWordsVegetables } from "./WordArrays/Categories/Vegetables";
 
 export const targetWordLengthMappings = [
   { value: 3, array: targetWords3 },
@@ -51,17 +50,16 @@ export const guessableWordLengthMappings = [
 export const puzzleWordLengthMappings = [{ value: 10, array: Puzzles10 }];
 
 export const categoryMappings = [
-  { name: "Animals", array: words_animals },
-  { name: "Capital Cities", array: words_capital_cities },
-  { name: "Chemical Elements", array: words_chemical_elements },
-  { name: "Colours", array: words_colours },
-  { name: "Countries", array: words_countries },
-  { name: "Dog Breeds", array: words_dogs },
-  { name: "Fruits", array: words_fruits },
-  { name: "Gemstones", array: words_gemstones },
-  { name: "Herbs and Spices", array: words_herbs_and_spices },
-  { name: "Meats and Fish", array: words_meats_and_fish },
-  { name: "Pizza Toppings", array: words_pizza_toppings },
-  { name: "Sports", array: words_sports },
-  { name: "Vegetables", array: words_vegetables },
+  { name: "Animals", array: categoryWordsAnimals },
+  { name: "Capital Cities", array: categoryWordsCapitalCities },
+  { name: "Chemical Elements", array: categoryWordsChemicalElements },
+  { name: "Colours", array: categoryWordsColours },
+  { name: "Countries", array: categoryWordsCountries },
+  { name: "Dog Breeds", array: categoryWordsDogs },
+  { name: "Fruits", array: categoryWordsFruits },
+  { name: "Gemstones", array: categoryWordsGemstones },
+  { name: "Herbs and Spices", array: categoryWordsHerbsAndSpices },
+  { name: "Meats and Fish", array: categoryWordsMeatsAndFish },
+  { name: "Sports", array: categoryWordsSports },
+  { name: "Vegetables", array: categoryWordsVegetables },
 ];

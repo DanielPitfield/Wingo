@@ -1,6 +1,6 @@
-// https://www.bbc.co.uk/sport/all-sports
+import { TargetWordMapping } from "../../../Pages/WingoConfig";
 
-export const words_sports = [
+export const categoryWordsSports: TargetWordMapping[] = [
   { word: "american-football", hint: "" },
   { word: "archery", hint: "" },
   { word: "artistic-swimming", hint: "" },

@@ -1,6 +1,6 @@
-// https://www.britannica.com/topic/list-of-chemical-elements-2026117
+import { TargetWordMapping } from "../../../Pages/WingoConfig";
 
-export const words_chemical_elements = [
+export const categoryWordsChemicalElements: TargetWordMapping[] = [
   { word: "actinium", hint: "" },
   { word: "aluminum", hint: "" },
   { word: "americium", hint: "" },

@@ -1,7 +1,6 @@
-// https://www.britannica.com/topic/list-of-herbs-and-spices-2024392
-// https://www.recipepizza.com/toppings/
+import { TargetWordMapping } from "../../../Pages/WingoConfig";
 
-export const words_herbs_and_spices = [
+export const categoryWordsHerbsAndSpices: TargetWordMapping[] = [
   { word: "allspice", hint: "" },
   { word: "anise", hint: "" },
   { word: "basil", hint: "" },

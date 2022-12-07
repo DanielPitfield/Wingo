@@ -1,6 +1,6 @@
-// https://www.worlddata.info/capital-cities.php#europa
+import { TargetWordMapping } from "../../../Pages/WingoConfig";
 
-export const words_capital_cities = [
+export const categoryWordsCapitalCities: TargetWordMapping[] = [
   { hint: "Capital of Åland Islands", word: "mariehamn" },
   { hint: "Capital of Albania", word: "tirana" },
   { hint: "Capital of Andorra", word: "andorra-la-vella" },

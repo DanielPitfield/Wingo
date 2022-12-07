@@ -1,6 +1,6 @@
-// https://www.gemsociety.org/gemstone-encyclopedia/
+import { TargetWordMapping } from "../../../Pages/WingoConfig";
 
-export const words_gemstones = [
+export const categoryWordsGemstones: TargetWordMapping[] = [
   { word: "amber", hint: "" },
   { word: "amethyst", hint: "" },
   { word: "ammolite", hint: "" },

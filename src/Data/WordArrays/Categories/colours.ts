@@ -1,6 +1,6 @@
-// https://simple.wikipedia.org/wiki/List_of_colors
+import { TargetWordMapping } from "../../../Pages/WingoConfig";
 
-export const words_colours = [
+export const categoryWordsColours: TargetWordMapping[] = [
   { word: "amber", hint: "Yellowish, also a gemstone" },
   { word: "amethyst", hint: "Purplish, also a gemstone" },
   { word: "apricot", hint: "Orangish, also a fruit" },

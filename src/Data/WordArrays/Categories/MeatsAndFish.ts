@@ -1,6 +1,6 @@
-// https://www.recipepizza.com/toppings/
+import { TargetWordMapping } from "../../../Pages/WingoConfig";
 
-export const words_meats_and_fish = [
+export const categoryWordsMeatsAndFish: TargetWordMapping[] = [
   { word: "bacon", hint: "" },
   { word: "bbq-chicken", hint: "" },
   { word: "beef", hint: "" },

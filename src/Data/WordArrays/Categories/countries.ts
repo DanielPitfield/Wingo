@@ -1,4 +1,6 @@
-export const words_countries = [
+import { TargetWordMapping } from "../../../Pages/WingoConfig";
+
+export const categoryWordsCountries: TargetWordMapping[] = [
   { word: "andorra", hint: "" },
   { word: "united-arab-emirates", hint: "" },
   { word: "afghanistan", hint: "" },

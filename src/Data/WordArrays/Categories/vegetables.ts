@@ -1,6 +1,6 @@
-// https://plantprosperous.com/list-of-fruits-and-vegetables/
+import { TargetWordMapping } from "../../../Pages/WingoConfig";
 
-export const words_vegetables = [
+export const categoryWordsVegetables: TargetWordMapping[] = [
   { word: "artichoke", hint: "" },
   { word: "asparagus", hint: "" },
   { word: "bean", hint: "" },
