@@ -1,4 +1,6 @@
-const Words8 = [
+import { TargetWordMapping } from "../../../Pages/WingoConfig";
+
+const Words8: TargetWordMapping[] = [
   { word: "aardvark", canBeTargetWord: true },
   { word: "aardwolf", canBeTargetWord: true },
   { word: "aaronite", canBeTargetWord: true },
@@ -11,5 +13,5 @@ const Words8 = [
   // Temporarily moved; copy from WordArrays folder at root of repo if needed
 ];
 
-export const guessableWords8 = Words8.map((x) => x.word);
-export const targetWords8 = Words8.filter((x) => x.canBeTargetWord).map((x) => x.word);
+export const guessableWords8: string[] = Words8.map((x) => x.word);
+export const targetWords8: string[] = Words8.filter((x) => x.canBeTargetWord).map((x) => x.word);
