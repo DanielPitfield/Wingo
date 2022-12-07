@@ -1,6 +1,8 @@
 // TODO: Move these WordArrays within the src folder
 
-const words_three = [
+import { TargetWordMapping } from "../../src/Pages/WingoConfig";
+
+const Words3: TargetWordMapping[] = [
   { word: "aaa", canBeTargetWord: true },
   { word: "aah", canBeTargetWord: true },
   { word: "aal", canBeTargetWord: true },
@@ -2124,5 +2126,5 @@ const words_three = [
   { word: "zoo", canBeTargetWord: true },
 ];
 
-export const words_three_guessable = words_three.map((x) => x.word);
-export const words_three_targets = words_three.filter((x) => x.canBeTargetWord).map((x) => x.word);
+export const guessableWords3: string[] = Words3.map((x) => x.word);
+export const targetWords3: string[] = Words3.filter((x) => x.canBeTargetWord).map((x) => x.word);

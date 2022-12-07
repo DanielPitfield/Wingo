@@ -1,4 +1,6 @@
-const words_four = [
+import { TargetWordMapping } from "../../src/Pages/WingoConfig";
+
+const Words4: TargetWordMapping[] = [
   { word: "aahs", canBeTargetWord: true },
   { word: "aals", canBeTargetWord: true },
   { word: "aani", canBeTargetWord: true },
@@ -7136,5 +7138,5 @@ const words_four = [
   { word: "zuza", canBeTargetWord: true },
 ];
 
-export const words_four_guessable = words_four.map((x) => x.word);
-export const words_four_targets = words_four.filter((x) => x.canBeTargetWord).map((x) => x.word);
+export const guessableWords4: string[] = Words4.map((x) => x.word);
+export const targetWords4: string[] = Words4.filter((x) => x.canBeTargetWord).map((x) => x.word);
