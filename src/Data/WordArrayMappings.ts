@@ -8,9 +8,7 @@ import { targetWords9, guessableWords9 } from "./WordArrays/Lengths/Words9";
 import { targetWords10, guessableWords10 } from "./WordArrays/Lengths/Words10";
 import { targetWords11, guessableWords11 } from "./WordArrays/Lengths/Words11";
 
-import { Puzzles9 } from "./WordArrays/Puzzles/Puzzles9";
 import { Puzzles10 } from "./WordArrays/Puzzles/Puzzles10";
-import { Puzzles11 } from "./WordArrays/Puzzles/Puzzles11";
 
 import { words_animals } from "./WordArrays/Categories/Animals";
 import { words_capital_cities } from "./WordArrays/Categories/CapitalCities";
@@ -50,11 +48,7 @@ export const guessableWordLengthMappings = [
   { value: 11, array: guessableWords11 },
 ];
 
-export const puzzleWordLengthMappings = [
-  { value: 9, array: Puzzles9 },
-  { value: 10, array: Puzzles10 },
-  { value: 11, array: Puzzles11 },
-];
+export const puzzleWordLengthMappings = [{ value: 10, array: Puzzles10 }];
 
 export const categoryMappings = [
   { name: "Animals", array: words_animals },
