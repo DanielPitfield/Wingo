@@ -1,3 +1,5 @@
+// TODO: Move these WordArrays within the src folder
+
 const words_three = [
   { word: "aaa", canBeTargetWord: true },
   { word: "aah", canBeTargetWord: true },
