@@ -6,7 +6,7 @@ import { Keyboard } from "../Components/Keyboard";
 import { Button } from "../Components/Button";
 import React from "react";
 import { MessageNotification } from "../Components/MessageNotification";
-import { CrosswordGenerationResult, crosswordGenerator as crossWordGenerator } from "../Helpers/CrossWordGenerator";
+import { CrosswordGenerationResult, crosswordGenerator } from "../Helpers/CrossWordGenerator";
 import ProgressBar, { GreenToRedColorTransition } from "../Components/ProgressBar";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
 import { categoryMappings, targetWordLengthMappings } from "../Data/WordArrayMappings";
@@ -186,6 +186,12 @@ export const WingoInterlinked = (props: Props) => {
     let targetWordArray: string[] = [];
 
     switch (props.wordArrayConfig.type) {
+      case "custom": {
+        // Use the custom array provided
+        targetWordArray = props.wordArrayConfig.array;
+        break;
+      }
+
       case "category": {
         targetWordArray = categoryMappings
           // Combine all categories (just the words)
@@ -198,7 +204,7 @@ export const WingoInterlinked = (props: Props) => {
         break;
       }
 
-      case "length": {
+      default:
         // Combine all length word arrays between minimum and maximum length
         targetWordArray = targetWordLengthMappings
           .filter(
@@ -206,16 +212,6 @@ export const WingoInterlinked = (props: Props) => {
               mapping.value >= gamemodeSettings.minWordLength && mapping.value <= gamemodeSettings.maxWordLength
           )
           .flatMap((lengthMappings) => lengthMappings.array);
-
-        break;
-      }
-
-      case "custom": {
-        // Use the custom array provided
-        targetWordArray = props.wordArrayConfig.array;
-
-        break;
-      }
     }
 
     // Any word with spaces, return true
@@ -434,12 +430,12 @@ export const WingoInterlinked = (props: Props) => {
     let result: CrosswordGenerationResult | null = null;
 
     if (props.wordArrayConfig.type === "custom" && props.wordArrayConfig.useExact) {
-      result = crossWordGenerator(targetWordArray);
+      result = crosswordGenerator(targetWordArray);
 
       if (!result) {
         throw new Error("The specified targetWordArray could not generate a crossword");
       }
-    } else if (gamemodeSettings.fitRestrictionConfig.isRestricted) {
+    } else if (gamemodeSettings.fitRestrictionConfig?.isRestricted) {
       // Height and width can't exceed this value (to begin with)
       const MAX_GRID_DIMENSION = gamemodeSettings.maxWordLength + gamemodeSettings.fitRestrictionConfig.fitRestriction;
       // Try to find smallest fit restriction possible but allow additional leeway up to this amount
@@ -457,7 +453,7 @@ export const WingoInterlinked = (props: Props) => {
         // For this number of max attempts
         for (let attemptNo = 1; attemptNo <= MAX_ATTEMPTS_BEFORE_TRYING_LOWER_NUM; attemptNo++) {
           // Try generate a crossword result
-          result = crossWordGenerator(targetWordArraySliced);
+          result = crosswordGenerator(targetWordArraySliced);
 
           // Found an ideal result
           if (result && result.width <= maxGridDimension && result.height <= maxGridDimension) {
@@ -475,7 +471,7 @@ export const WingoInterlinked = (props: Props) => {
       }
     } else {
       do {
-        result = crossWordGenerator(targetWordArraySliced);
+        result = crosswordGenerator(targetWordArraySliced);
 
         if (!result) {
           targetWordArraySliced = shuffleArray(targetWordArray).slice(0, gamemodeSettings.numWords);
@@ -851,8 +847,8 @@ export const WingoInterlinked = (props: Props) => {
 
   const Grid = () => {
     const Grid = Array.from({ length: gridConfig.height }).map((_, index) => populateRow(index));
-    return <div className="word_grid">{Grid}</div>
-  }
+    return <div className="word_grid">{Grid}</div>;
+  };
 
   const Outcome = () => {
     if (inProgress) {
@@ -898,8 +894,6 @@ export const WingoInterlinked = (props: Props) => {
       // Every tile where a letter should be, has the correct status
       const wasCorrect = tileStatuses.every((tile) => tile.status === "correct");
       props.onComplete(wasCorrect);
-
-
     }
 
     setInProgress(true);
@@ -970,7 +964,8 @@ export const WingoInterlinked = (props: Props) => {
         </div>
       )}
 
-      <Outcome/>
+      <Outcome />
+
       {Boolean(inProgress && props.provideWords) && (
         <MessageNotification type="info">
           <strong>Provided words:</strong>
@@ -978,6 +973,7 @@ export const WingoInterlinked = (props: Props) => {
           {gridConfig.words.map((wordInfo) => wordInfo.word.toUpperCase()).join(", ")}
         </MessageNotification>
       )}
+
       {inProgress && (
         <MessageNotification type="default">
           Grid guesses left: <strong>{remainingGridGuesses}</strong>
@@ -985,12 +981,15 @@ export const WingoInterlinked = (props: Props) => {
           Word guesses left: <strong>{remainingWordGuesses}</strong>
         </MessageNotification>
       )}
+
       {Boolean(inProgress && gamemodeSettings.isHintShown && hint) && (
         <MessageNotification type="info">
           <strong>Hint:</strong> {hint}
         </MessageNotification>
       )}
-      <Grid/>
+
+      <Grid />
+
       {inProgress && (
         <Button
           mode="accept"
@@ -1001,6 +1000,7 @@ export const WingoInterlinked = (props: Props) => {
           Check current word
         </Button>
       )}
+
       {inProgress && (
         <Button
           mode="accept"
