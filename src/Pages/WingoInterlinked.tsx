@@ -107,6 +107,7 @@ export const WingoInterlinked = (props: Props) => {
   );
 
   // Crossword configuration generated when provided with an array of words
+  const [categoryName, setCategoryName] = useState("");
   const [gridConfig, setGridConfig] = useState<GridConfig>(generateGridConfig(getTargetWordArray()));
   const [correctGrid, setCorrectGrid] = useState<{ x: number; y: number; letter: string; wordIndex?: number }[]>(
     getCorrectLetterGrid()
@@ -183,44 +184,39 @@ export const WingoInterlinked = (props: Props) => {
   const wordHints = getWordHints();
 
   function getTargetWordArray(): string[] {
-    let targetWordArray: string[] = [];
-
     switch (props.wordArrayConfig.type) {
       case "custom": {
         // Use the custom array provided
-        targetWordArray = props.wordArrayConfig.array;
-        break;
+        return props.wordArrayConfig.array;
       }
 
       case "category": {
-        targetWordArray = categoryMappings
-          // Combine all categories (just the words)
-          .flatMap((categoryMappings) => categoryMappings.array.map((mapping) => mapping.word))
-          // Return words between minimum and maximum length
-          .filter(
-            (word) => word.length >= gamemodeSettings.minWordLength && word.length <= gamemodeSettings.maxWordLength
-          );
+        const availableCategories =
+          categoryMappings.filter((mapping) => mapping.array.length >= gamemodeSettings.numWords) ?? categoryMappings;
 
-        break;
+        const chosenCategory = availableCategories[Math.floor(Math.random() * availableCategories.length)];
+
+        //setCategoryName(chosenCategory.name)
+
+        return (
+          chosenCategory.array
+            .map((mapping) => mapping.word)
+            // Return words between minimum and maximum length
+            .filter(
+              (word) => word.length >= gamemodeSettings.minWordLength && word.length <= gamemodeSettings.maxWordLength
+            )
+        );
       }
 
       default:
         // Combine all length word arrays between minimum and maximum length
-        targetWordArray = targetWordLengthMappings
+        return targetWordLengthMappings
           .filter(
             (mapping) =>
               mapping.value >= gamemodeSettings.minWordLength && mapping.value <= gamemodeSettings.maxWordLength
           )
           .flatMap((lengthMappings) => lengthMappings.array);
     }
-
-    // Any word with spaces, return true
-    if (targetWordArray.filter((word) => word.indexOf(" ") >= 0).length > 0) {
-      // Adds space to keyboard
-      setAllowSpaces(true);
-    }
-
-    return targetWordArray;
   }
 
   function getWordHints() {
@@ -428,6 +424,12 @@ export const WingoInterlinked = (props: Props) => {
   function generateGridConfig(targetWordArray: string[]): GridConfig {
     let targetWordArraySliced = shuffleArray(targetWordArray).slice(0, gamemodeSettings.numWords);
     let result: CrosswordGenerationResult | null = null;
+
+    // Any word with spaces, return true
+    if (targetWordArraySliced.filter((word) => word.indexOf(" ") >= 0).length > 0) {
+      // Adds space to keyboard
+      setAllowSpaces(true);
+    }
 
     if (props.wordArrayConfig.type === "custom" && props.wordArrayConfig.useExact) {
       result = crosswordGenerator(targetWordArray);
@@ -966,6 +968,14 @@ export const WingoInterlinked = (props: Props) => {
 
       <Outcome />
 
+      {inProgress && props.wordArrayConfig.type === "category" && categoryName !== "" && (
+        <MessageNotification type="info">
+          <strong>Current category:</strong>
+          <br />
+          {categoryName}
+        </MessageNotification>
+      )}
+
       {Boolean(inProgress && props.provideWords) && (
         <MessageNotification type="info">
           <strong>Provided words:</strong>
@@ -1022,6 +1032,7 @@ export const WingoInterlinked = (props: Props) => {
         letterStatuses={[]}
         settings={props.settings}
         disabled={keyboardDisabled || !inProgress}
+        hasSpaces={allowSpaces}
         hasBackspace={true}
         hasEnter={true}
       />

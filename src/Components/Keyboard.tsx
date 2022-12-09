@@ -21,6 +21,7 @@ interface Props {
   letterStatuses: LetterTileStatus[];
   customAlphabet?: string[];
   disabled: boolean;
+  hasSpaces?: boolean;
   hasBackspace: boolean;
   hasEnter: boolean;
 }
@@ -42,7 +43,7 @@ export const Keyboard = (props: Props) => {
   const alphabet = props.customAlphabet ?? DEFAULT_ALPHABET;
 
   const hasApostrophe = props.targetWord.includes("'");
-  const hasSpaces = props.targetWord.includes(" ");
+  const hasSpaces = props.hasSpaces || props.targetWord.includes(" ");
 
   const [playClickSoundEffect] = useClickChime(props.settings);
 
