@@ -31,7 +31,12 @@ export const area: AreaConfig = {
   levels: [
     {
       type: "level",
-      hint: <>To acquire new knowledge</>,
+      hint: (
+        <>
+          Completing every level in an area will unlock the next area <br /> To finish the tutorial, try entering the
+          word <strong>END TUTORIAL</strong>
+        </>
+      ),
       levelButtonCoords: {
         x: 10,
         y: 10,
@@ -41,9 +46,10 @@ export const area: AreaConfig = {
         page: "/Wingo/Repeat",
         levelProps: {
           mode: "repeat",
-          targetWord: "learn",
+          targetWord: "end tutorial",
           gamemodeSettings: {
             ...commonWingoSettings,
+            wordLength: 12,
           },
         },
       },

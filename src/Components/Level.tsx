@@ -8,7 +8,6 @@ import NumbleConfig, { NumbleConfigProps } from "../Pages/NumbleConfig";
 import ArithmeticDrag, { ArithmeticDragProps } from "../Pages/ArithmeticDrag";
 import ArithmeticReveal, { ArithmeticRevealProps } from "../Pages/ArithmeticReveal";
 import OnlyConnect, { OnlyConnectProps } from "../Pages/OnlyConnect";
-
 import { Theme } from "../Data/Themes";
 import Algebra, { AlgebraProps } from "../Pages/Algebra";
 import NumberSets, { NumberSetsProps } from "../Pages/NumberSets";

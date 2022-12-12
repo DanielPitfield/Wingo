@@ -224,22 +224,6 @@ export const area: AreaConfig = {
         },
       },
     },
-    /*
-    {
-      type: "level",
-      hint: null,
-      levelButtonCoords: {
-        x: 68,
-        y: 68,
-      },
-      level: {
-        gameCategory: "puzzle",
-        levelProps: {
-          ...Puzzles.Easy1IconHorizontallyAcrross,
-        },
-      },
-    },
-    */
     {
       type: "level",
       hint: <>Planet with icy rings</>,
