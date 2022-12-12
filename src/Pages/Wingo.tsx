@@ -145,7 +145,7 @@ const Wingo = (props: Props) => {
 
     // Puzzle/Conundrum display row
     if (isModeWithDisplayRow()) {
-      Grid.push(<DisplayRow />);
+      Grid.push(<DisplayRow key={`${props.mode}-display-row`} />);
     }
 
     for (let i = 0; i < props.gamemodeSettings.startingNumGuesses; i++) {
