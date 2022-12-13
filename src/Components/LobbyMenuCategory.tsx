@@ -23,6 +23,8 @@ const LobbyMenuCategory = (props: LobbyMenuCategoryProps) => {
           <Carousel
             onClickItem={(index: number, _) => navigate(props.categoryGamemodesPages[index].path)}
             showIndicators={false}
+            showThumbs={false}
+            showStatus={false}
             centerMode
             centerSlidePercentage={33}
             useKeyboardArrows

@@ -1,5 +1,7 @@
+import { IconType } from "react-icons";
 import { MAX_TARGET_WORD_LENGTH } from "./GamemodeSettingsInputLimits";
 import { PagePath } from "./PageNames";
+import { GiAbstract050 } from "react-icons/gi";
 
 export const gamemodeCategories = ["Daily / Weekly", "Wingo", "Letters", "Numbers", "Puzzle", "Presets", null] as const;
 export type GamemodeCategory = typeof gamemodeCategories[number];
@@ -16,6 +18,7 @@ export type PageDescription = {
   isRandomlyPlayable: boolean;
   description?: string;
   helpInfo?: JSX.Element;
+  icon?: IconType;
 };
 
 export const pageDescriptions: PageDescription[] = [
@@ -227,6 +230,7 @@ export const pageDescriptions: PageDescription[] = [
         <p>After finding two complete groups, only three guesses are allowed.</p>
       </>
     ),
+    icon: GiAbstract050,
   },
   {
     path: "/LettersGame",

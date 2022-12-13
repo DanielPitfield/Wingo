@@ -10,12 +10,11 @@ interface LobbyMenuTileProps {
 const LobbyMenuTile = (props: LobbyMenuTileProps) => {
   return (
     <div className="widget" key={props.page.title}>
-      <img src={""} alt={props.page.title} />
+      {props.page.icon ? <props.page.icon className="widget-icon" /> : <BsInfoCircleFill className="widget-icon" />}
 
-      <div className="widget-title">
-        {props.page.shortTitle ?? props.page.title ?? "(Unnamed)"}
-        {props.page.description && <BsInfoCircleFill className="icon tooltip-icon" />}
-        <p className="tooltip">{props.page.description}</p>
+      <div className="widget-header">
+        <div className="widget-title">{props.page.shortTitle ?? props.page.title ?? "(Unnamed)"}</div>
+        <p className="widget-description">{props.page.description}</p>
       </div>
     </div>
   );
