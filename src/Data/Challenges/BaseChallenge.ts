@@ -4,7 +4,6 @@ import { AllChallenges } from "./AllChallenges";
 
 export type ChallengeReward = { goldCoins: number; xp: number };
 
-/** */
 export abstract class BaseChallenge {
   /** Name of the class of the challenge (non user-facing) */
   public abstract internalClassName: string;

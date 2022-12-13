@@ -51,7 +51,6 @@ interface Props extends ArithmeticRevealProps {
   onComplete: (wasCorrect: boolean) => void;
 }
 
-/** */
 const ArithmeticReveal = (props: Props) => {
   const location = useLocation().pathname as PagePath;
 
