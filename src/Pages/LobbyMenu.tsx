@@ -1,16 +1,12 @@
-import { PagePath } from "../Data/PageNames";
-import { BsInfoCircleFill } from "react-icons/bs";
 import { AllChallenges } from "../Data/Challenges/AllChallenges";
-
 import { Challenge } from "../Components/Challenge";
-import { Button } from "../Components/Button";
 import { Campaign } from "./Campaign";
 import { Theme } from "../Data/Themes";
-import { FiPlay } from "react-icons/fi";
 import { gamemodeCategories, pageDescriptions } from "../Data/PageDescriptions";
 import { useNavigate } from "react-router-dom";
 import { SettingsData } from "../Data/SaveData/Settings";
 import { getHistory } from "../Data/SaveData/GameHistory";
+import { LobbyMenuTile } from "../Components/LobbyMenuTile";
 
 interface Props {
   theme: Theme;
@@ -21,36 +17,7 @@ interface Props {
 
 export const LobbyMenu = (props: Props) => {
   const navigate = useNavigate();
-
   const history = getHistory();
-
-  function renderGameModeTile(page: PagePath) {
-    const pageInfo = pageDescriptions.find((x) => x.path === page);
-
-    return (
-      <li className="widget" key={page}>
-        <span className="widget-title">
-          {pageInfo?.shortTitle || pageInfo?.title || "(Unnamed)"}
-          {pageInfo?.description && <BsInfoCircleFill className="icon tooltip-icon" />}
-          <p className="tooltip">{pageInfo?.description}</p>
-        </span>
-        <div className="widget-button-wrapper">
-          <Button
-            mode="accept"
-            data-game-mode={page}
-            settings={props.settings}
-            onClick={() => {
-              console.log(page);
-              navigate(page);
-            }}
-          >
-            <FiPlay />
-            Play
-          </Button>
-        </div>
-      </li>
-    );
-  }
 
   return (
     <div className="home">
@@ -78,8 +45,7 @@ export const LobbyMenu = (props: Props) => {
                   <div className="sidebar-title">{category}</div>
                   <ul className="widgets">
                     {gamemodePages.map((page) => {
-                      // And then render a tile for each gamemode (nested within this sidebar)
-                      return renderGameModeTile(page.path);
+                      return <LobbyMenuTile key={page.path} page={page.path} settings={props.settings} />;
                     })}
                   </ul>
                 </div>
