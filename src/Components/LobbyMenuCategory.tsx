@@ -24,6 +24,7 @@ const LobbyMenuCategory = (props: LobbyMenuCategoryProps) => {
             onClickItem={(index: number, _) => navigate(props.categoryGamemodesPages[index].path)}
             showIndicators={false}
             centerMode
+            centerSlidePercentage={33}
             useKeyboardArrows
             infiniteLoop
           >
