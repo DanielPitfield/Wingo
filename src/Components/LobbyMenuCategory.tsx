@@ -3,7 +3,7 @@ import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { useNavigate } from "react-router-dom";
 import { GamemodeCategory, PageDescription } from "../Data/PageDescriptions";
 import { SettingsData } from "../Data/SaveData/Settings";
-import { LobbyMenuTile } from "./LobbyMenuTile";
+import LobbyMenuTile from "./LobbyMenuTile";
 
 interface LobbyMenuCategoryProps {
   category: GamemodeCategory;
@@ -11,7 +11,7 @@ interface LobbyMenuCategoryProps {
   settings: SettingsData;
 }
 
-export const LobbyMenuCategory = (props: LobbyMenuCategoryProps) => {
+const LobbyMenuCategory = (props: LobbyMenuCategoryProps) => {
   const navigate = useNavigate();
 
   // If there are gamemodes for this category, render a sidebar with the category name
@@ -41,3 +41,5 @@ export const LobbyMenuCategory = (props: LobbyMenuCategoryProps) => {
   // No gamemodes for this category, don't even render a sidebar for the category
   return null;
 };
+
+export default LobbyMenuCategory;

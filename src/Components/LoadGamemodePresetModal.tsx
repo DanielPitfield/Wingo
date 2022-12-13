@@ -2,8 +2,8 @@ import React, { useCallback, useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { PagePath } from "../Data/PageNames";
 import { removeGamemodeSettingPreset } from "../Data/SaveData/Presets";
-import { Button } from "./Button";
-import { Modal } from "./Modal";
+import Button from "./Button";
+import Modal from "./Modal";
 
 interface Props<TGamemodeSettingsPreset> {
   getPresets: () => TGamemodeSettingsPreset[];
@@ -35,6 +35,7 @@ function LoadGamemodePresetModal<
       <Button mode="default" onClick={() => setIsModalShown(true)}>
         Presets
       </Button>
+
       {isModalShown && (
         <Modal mode="default" name="Load preset" title="Presets" onClose={() => setIsModalShown(false)}>
           {presets.length > 0 ? (

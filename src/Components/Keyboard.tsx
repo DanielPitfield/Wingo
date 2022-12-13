@@ -1,6 +1,5 @@
 import React from "react";
-import { Button } from "./Button";
-
+import Button from "./Button";
 import { useClickChime } from "../Data/Sounds";
 import { PagePath } from "../Data/PageNames";
 import { FiChevronLeft, FiCornerDownLeft } from "react-icons/fi";
@@ -10,7 +9,7 @@ import { DEFAULT_ALPHABET } from "../Pages/WingoConfig";
 import { useLocation } from "react-router-dom";
 import { SettingsData } from "../Data/SaveData/Settings";
 
-interface Props {
+interface KeyboardProps {
   settings: SettingsData;
   onSubmitLetter: (letter: string) => void;
   onEnter: () => void;
@@ -37,7 +36,7 @@ const isModeWithoutKeyboardStatuses = (page: PagePath) => {
   return modesWithoutKeyboardStatuses.includes(page);
 };
 
-export const Keyboard = (props: Props) => {
+const Keyboard = (props: KeyboardProps) => {
   const location = useLocation().pathname as PagePath;
 
   const alphabet = props.customAlphabet ?? DEFAULT_ALPHABET;
@@ -243,3 +242,5 @@ export const Keyboard = (props: Props) => {
     </div>
   );
 };
+
+export default Keyboard;

@@ -5,7 +5,7 @@ import { operators } from "../Data/Operators";
 import { getNumbersGameGuessTotal } from "../Helpers/getNumbersGameGuessTotal";
 import EqualsTile from "./EqualsTile";
 
-interface Props {
+interface NumberRowProps {
   onClick: (
     value: number | null,
     id: { type: "original"; index: number } | { type: "intermediary"; rowIndex: number }
@@ -19,7 +19,7 @@ interface Props {
   setOperator: (operator: typeof operators[0]["name"]) => void;
 }
 
-export const NumberRow = (props: Props) => {
+const NumberRow = (props: NumberRowProps) => {
   return (
     <div className="number_row">
       <NumberTile
@@ -66,3 +66,5 @@ export const NumberRow = (props: Props) => {
     </div>
   );
 };
+
+export default NumberRow;

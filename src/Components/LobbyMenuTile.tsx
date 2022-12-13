@@ -7,7 +7,7 @@ interface LobbyMenuTileProps {
   settings: SettingsData;
 }
 
-export const LobbyMenuTile = (props: LobbyMenuTileProps) => {
+const LobbyMenuTile = (props: LobbyMenuTileProps) => {
   return (
     <div className="widget" key={props.page.title}>
       <img src={""} alt={props.page.title} />
@@ -20,3 +20,5 @@ export const LobbyMenuTile = (props: LobbyMenuTileProps) => {
     </div>
   );
 };
+
+export default LobbyMenuTile;

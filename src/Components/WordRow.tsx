@@ -4,7 +4,7 @@ import { useLocation } from "react-router-dom";
 import { PagePath } from "../Data/PageNames";
 import { SettingsData } from "../Data/SaveData/Settings";
 
-interface Props {
+interface WordRowProps {
   isReadOnly: boolean;
   inProgress?: boolean;
   length: number;
@@ -19,7 +19,7 @@ interface Props {
   applyAnimation?: boolean;
 }
 
-export const WordRow = (props: Props) => {
+const WordRow = (props: WordRowProps) => {
   const location = useLocation().pathname as PagePath;
 
   const isAnimationEnabled = (letterIndex: number): boolean => {
@@ -35,7 +35,7 @@ export const WordRow = (props: Props) => {
 
     if (location === "/Wingo/Puzzle" || location === "/Conundrum") {
       return (
-        // A read only WordRow 
+        // A read only WordRow
         props.isReadOnly &&
         // Which has letters periodically revealing
         props.revealedLetterIndexes !== undefined &&
@@ -133,3 +133,5 @@ export const WordRow = (props: Props) => {
     </div>
   );
 };
+
+export default WordRow;

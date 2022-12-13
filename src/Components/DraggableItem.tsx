@@ -7,7 +7,7 @@ interface DraggableItemProps {
   children?: React.ReactNode;
 }
 
-export const DraggableItem = (props: DraggableItemProps) => {
+const DraggableItem = (props: DraggableItemProps) => {
   const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: props.id });
 
   const style = {
@@ -21,3 +21,5 @@ export const DraggableItem = (props: DraggableItemProps) => {
     </div>
   );
 };
+
+export default DraggableItem;

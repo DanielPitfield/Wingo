@@ -2,19 +2,18 @@ import { SettingsData } from "../Data/SaveData/Settings";
 import { LettersGameTileStatus } from "../Pages/LettersGameConfig";
 import LetterTile from "./LetterTile";
 
-interface Props {
+interface LetterSelectionRowProps {
   onClick: (value: string | null, index: number) => void;
   disabled: boolean;
-
   letterTileStatuses: LettersGameTileStatus[];
-
   settings: SettingsData;
 }
 
-export const LetterSelectionRow = (props: Props) => {
+const LetterSelectionRow = (props: LetterSelectionRowProps) => {
   function CreateRow() {
     let tileArray = [];
 
+    // TODO: Map over entries?
     for (const [index, letterTileStatus] of props.letterTileStatuses.entries()) {
       tileArray.push(
         <LetterTile
@@ -37,3 +36,5 @@ export const LetterSelectionRow = (props: Props) => {
     </div>
   );
 };
+
+export default LetterSelectionRow;

@@ -3,10 +3,12 @@ export interface MessageNotificationProps {
   children?: React.ReactNode;
 }
 
-export const MessageNotification = (props: MessageNotificationProps) => {
+const MessageNotification = (props: MessageNotificationProps) => {
   return (
     <span className="message-notification" data-type={props.type}>
       {props.children}
     </span>
   );
 };
+
+export default MessageNotification;

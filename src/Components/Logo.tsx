@@ -5,7 +5,7 @@ interface LogoProps {
   settings: SettingsData;
 }
 
-export const Logo = (props: LogoProps) => {
+const Logo = (props: LogoProps) => {
   return (
     <div className="logo" data-automation-id="logo">
       <LetterTile letter={"W"} status={"not set"} settings={props.settings} applyAnimation={false} />
@@ -16,3 +16,5 @@ export const Logo = (props: LogoProps) => {
     </div>
   );
 };
+
+export default Logo;

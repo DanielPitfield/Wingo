@@ -1,7 +1,7 @@
 import { NumberTileStatus } from "../Pages/NumbersGameConfig";
 import NumberTile from "./NumberTile";
 
-interface Props {
+interface NumberSelectionRowProps {
   onClick: (
     value: number | null,
     id: { type: "original"; index: number } | { type: "intermediary"; rowIndex: number }
@@ -10,12 +10,13 @@ interface Props {
   numberTileStatuses: NumberTileStatus[];
 }
 
-export const NumberSelectionRow = (props: Props) => {
+const NumberSelectionRow = (props: NumberSelectionRowProps) => {
   function CreateRow() {
     let tileArray = [];
 
     const originalNumbers = props.numberTileStatuses.filter((x) => x.type === "original");
 
+    // TODO: Map over entries?
     for (const [index, originalNumberInfo] of originalNumbers.entries()) {
       tileArray.push(
         <NumberTile
@@ -36,3 +37,5 @@ export const NumberSelectionRow = (props: Props) => {
     </div>
   );
 };
+
+export default NumberSelectionRow;

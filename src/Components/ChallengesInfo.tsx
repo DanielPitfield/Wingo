@@ -10,7 +10,7 @@ interface ChallengesInfoProps {
   addGold: (gold: number) => void;
 }
 
-export const ChallengesInfo = (props: ChallengesInfoProps) => {
+const ChallengesInfo = (props: ChallengesInfoProps) => {
   const history = getHistory();
   const [selectedChallenge, setSelectedChallenge] = useState<BaseChallenge | null>();
 
@@ -94,3 +94,5 @@ export const ChallengesInfo = (props: ChallengesInfoProps) => {
     </section>
   );
 };
+
+export default ChallengesInfo;

@@ -19,7 +19,7 @@ interface LevelNodeProps {
   setTheme: (theme: Theme) => void;
 }
 
-export const LevelNode = (props: LevelNodeProps) => {
+const LevelNode = (props: LevelNodeProps) => {
   const navigate = useNavigate();
 
   const [referenceElement, setReferenceElement] = useState(null);
@@ -105,3 +105,5 @@ export const LevelNode = (props: LevelNodeProps) => {
     </>
   );
 };
+
+export default LevelNode;

@@ -24,14 +24,14 @@ interface ColorTransition {
   hexColorAt10: string;
 }
 
-interface Props {
+interface ProgressBarProps {
   children?: React.ReactNode;
   progress: number;
   total: number;
   display: { type: "transition"; colorTransition: ColorTransition } | { type: "solid"; color: string };
 }
 
-const ProgressBar = (props: Props) => {
+const ProgressBar = (props: ProgressBarProps) => {
   const percentage = (props.progress / props.total) * 100;
 
   const backgroundColor =

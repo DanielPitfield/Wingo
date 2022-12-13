@@ -3,7 +3,7 @@ import { FiArrowLeft, FiHelpCircle, FiSettings } from "react-icons/fi";
 import { pageDescriptions } from "../Data/PageDescriptions";
 import { VERSION } from "../Data/Version";
 import { ErrorFallback } from "../Pages/ErrorFallback";
-import { Button } from "./Button";
+import Button from "./Button";
 import HelpInformation from "./HelpInformation";
 import { useNavigate, useLocation } from "react-router-dom";
 import { PagePath } from "../Data/PageNames";
@@ -13,13 +13,13 @@ import { isCampaignAreaPath, isCampaignLevelPath } from "../Helpers/CampaignPath
 import { getAreaBacktrackPath } from "../Helpers/getAreaBacktrackPath";
 import { getSettings, SettingsData } from "../Data/SaveData/Settings";
 
-interface Props {
+interface PageWrapperProps {
   settings: SettingsData;
   gold: number;
   children: React.ReactNode;
 }
 
-export const PageWrapper = (props: Props) => {
+const PageWrapper = (props: PageWrapperProps) => {
   // What is the current path?
   const location = useLocation().pathname as PagePath;
 
@@ -109,3 +109,5 @@ export const PageWrapper = (props: Props) => {
     </ErrorBoundary>
   );
 };
+
+export default PageWrapper;

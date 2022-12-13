@@ -1,10 +1,10 @@
 import React from "react";
-import { Button } from "./Button";
+import Button from "./Button";
 import { useClickChime } from "../Data/Sounds";
 import { FiChevronLeft, FiCornerDownLeft } from "react-icons/fi";
 import { SettingsData } from "../Data/SaveData/Settings";
 
-interface Props {
+interface NumPadProps {
   settings: SettingsData;
   onSubmitNumber: (number: number) => void;
   onEnter: () => void;
@@ -14,7 +14,7 @@ interface Props {
   hasEnter: boolean;
 }
 
-export const NumPad = (props: Props) => {
+const NumPad = (props: NumPadProps) => {
   // The numbers 0 through 9
   const Numbers = Array.from({ length: 10 }, (_, i) => i);
 
@@ -109,3 +109,5 @@ export const NumPad = (props: Props) => {
     </div>
   );
 };
+
+export default NumPad;

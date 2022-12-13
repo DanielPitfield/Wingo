@@ -2,9 +2,9 @@ import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { PagePath } from "../Data/PageNames";
 import { addGamemodeSettingsPreset } from "../Data/SaveData/Presets";
-import { Button } from "./Button";
-import { MessageNotification } from "./MessageNotification";
-import { Modal } from "./Modal";
+import Button from "./Button";
+import MessageNotification from "./MessageNotification";
+import Modal from "./Modal";
 
 interface Props<TGamemodeSettingsPreset, TGamemodeSettings> {
   existingPresets: TGamemodeSettingsPreset[];

@@ -3,7 +3,7 @@ import { PagePath } from "../Data/PageNames";
 import LettersGameConfig, { LettersGameConfigProps } from "../Pages/LettersGameConfig";
 import NumbersGameConfig, { NumbersGameConfigProps } from "../Pages/NumbersGameConfig";
 import LetterCategoriesConfig, { LetterCategoriesConfigProps } from "../Pages/LetterCategoriesConfig";
-import { MessageNotification } from "./MessageNotification";
+import MessageNotification from "./MessageNotification";
 import NumbleConfig, { NumbleConfigProps } from "../Pages/NumbleConfig";
 import ArithmeticDrag, { ArithmeticDragProps } from "../Pages/ArithmeticDrag";
 import ArithmeticReveal, { ArithmeticRevealProps } from "../Pages/ArithmeticReveal";
@@ -115,7 +115,7 @@ interface LevelProps {
 }
 
 /** A level within an area (e.g. one game) */
-export const Level = (props: LevelProps) => {
+const Level = (props: LevelProps) => {
   const { areaName, levelNumber } = useParams();
 
   const location = useLocation().pathname as PagePath;
@@ -216,3 +216,5 @@ export const Level = (props: LevelProps) => {
     </div>
   );
 };
+
+export default Level;

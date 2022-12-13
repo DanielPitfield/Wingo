@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import { SettingsData } from "../Data/SaveData/Settings";
 
-interface Props {
+interface DiceProps {
   value: number;
   settings: SettingsData;
 }
 
-const Dice = (props: Props) => {
+const Dice = (props: DiceProps) => {
   const [applyAnimation, setApplyAnimation] = useState(false);
 
   React.useEffect(() => {

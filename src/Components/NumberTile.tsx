@@ -1,11 +1,11 @@
-interface Props {
+interface NumberTileProps {
   onClick?: () => void;
   isReadOnly?: boolean;
   number: number | null;
   disabled: boolean;
 }
 
-const NumberTile = (props: Props) => {
+const NumberTile = (props: NumberTileProps) => {
   return (
     <div
       className="number_tile"

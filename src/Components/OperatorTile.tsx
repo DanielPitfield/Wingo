@@ -1,13 +1,13 @@
 import { operators } from "../Data/Operators";
 
-interface Props {
+interface OperatorTileProps {
   targetNumber: number | null;
   disabled: boolean;
   operator: typeof operators[0]["name"];
   setOperator: (operator: typeof operators[0]["name"]) => void;
 }
 
-const OperatorTile = (props: Props) => {
+const OperatorTile = (props: OperatorTileProps) => {
   function cycleOperator() {
     if (props.disabled) {
       return;

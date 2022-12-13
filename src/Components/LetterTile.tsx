@@ -8,7 +8,7 @@ export type LetterTileStatus = {
 
 export type TileStatus = "incorrect" | "contains" | "correct" | "not set" | "not in word";
 
-interface Props {
+interface LetterTileProps {
   letter: string;
   status: TileStatus;
   settings: SettingsData;
@@ -20,7 +20,7 @@ interface Props {
   additionalProps?: React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement>;
 }
 
-const LetterTile = (props: Props) => {
+const LetterTile = (props: LetterTileProps) => {
   const DELAY_BETWEEN_TILE_REVEAL_SECONDS = 0.4;
 
   /**
@@ -63,7 +63,7 @@ const LetterTile = (props: Props) => {
     return delayForIndexSeconds * delayMultipler;
   }
 
-  const [delayedStatus, setDelayedStatus] = useState<Props["status"]>("not set");
+  const [delayedStatus, setDelayedStatus] = useState<LetterTileProps["status"]>("not set");
 
   React.useEffect(() => {
     if (props.status === "not set") {

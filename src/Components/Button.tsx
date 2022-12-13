@@ -14,13 +14,13 @@ interface ButtonProps {
   additionalProps?: React.DetailedHTMLProps<React.ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement>;
 }
 
-export const Button = (props: ButtonProps) => {
+const Button = (props: ButtonProps) => {
   const [playClickSoundEffect] = useClickChime(props.settings ?? DISABLED_SETTINGS);
 
   return (
     <button
       {...props.additionalProps}
-      className={`btn ${props.mode} ${props.className || ""}`}
+      className={`btn ${props.mode} ${props.className ?? ""}`}
       onClick={(e) => {
         props.onClick?.(e);
 
@@ -35,3 +35,5 @@ export const Button = (props: ButtonProps) => {
     </button>
   );
 };
+
+export default Button;

@@ -1,10 +1,9 @@
 import React from "react";
 import { SettingsData } from "../Data/SaveData/Settings";
-import { Button } from "./Button";
-
+import Button from "./Button";
 import Dice from "./Dice";
 
-interface Props {
+interface DiceGridProps {
   children?: React.ReactNode;
   diceValues: number[];
   rollDice: () => void;
@@ -12,7 +11,7 @@ interface Props {
   disabled: boolean;
 }
 
-const DiceGrid = (props: Props) => {
+const DiceGrid = (props: DiceGridProps) => {
   const numDice = props.diceValues.length;
   const isEvenNumDice = numDice % 2 === 0;
 

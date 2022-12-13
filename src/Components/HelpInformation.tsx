@@ -1,14 +1,13 @@
 import { pageDescriptions } from "../Data/PageDescriptions";
-import { Modal } from "./Modal";
-
+import Modal from "./Modal";
 import { useLocation } from "react-router-dom";
 import { PagePath } from "../Data/PageNames";
 
-interface Props {
+interface HelpInformationProps {
   onClose: () => void;
 }
 
-export const HelpInformation = (props: Props) => {
+const HelpInformation = (props: HelpInformationProps) => {
   const location = useLocation().pathname as PagePath;
 
   const pageInfo = pageDescriptions.find((x) => x.path === location);

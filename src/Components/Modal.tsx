@@ -1,5 +1,5 @@
 import React from "react";
-import { Button } from "./Button";
+import Button from "./Button";
 
 interface ModalProps {
   name: string;
@@ -9,8 +9,7 @@ interface ModalProps {
   onClose: () => void;
 }
 
-/** Represents a popup modal dialog */
-export const Modal = (props: ModalProps) => {
+const Modal = (props: ModalProps) => {
   return (
     <div className="modal" data-modal-name={props.name}>
       <div className="modal-wrapper">
@@ -25,3 +24,5 @@ export const Modal = (props: ModalProps) => {
     </div>
   );
 };
+
+export default Modal;
