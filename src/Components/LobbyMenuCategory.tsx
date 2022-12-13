@@ -15,7 +15,7 @@ const LobbyMenuCategory = (props: LobbyMenuCategoryProps) => {
   const navigate = useNavigate();
 
   // No gamemodes for this category, don't render a carousel
-  if (!props.categoryGamemodesPages) {
+  if (props.categoryGamemodesPages.length <= 0) {
     return null;
   }
 
