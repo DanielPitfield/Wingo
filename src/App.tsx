@@ -1,41 +1,41 @@
 import React, { useState } from "react";
-import { SplashScreen } from "./Pages/SplashScreen";
-import { LobbyMenu } from "./Pages/LobbyMenu";
+import SplashScreen from "./Pages/SplashScreen";
+import LobbyMenu from "./Pages/LobbyMenu";
 import WingoConfig, { WingoConfigProps } from "./Pages/WingoConfig";
 import NumbleConfig, { NumbleConfigProps } from "./Pages/NumbleConfig";
 import LettersGameConfig, { LettersGameConfigProps } from "./Pages/LettersGameConfig";
 import NumbersGameConfig, { NumbersGameConfigProps } from "./Pages/NumbersGameConfig";
-import { Campaign } from "./Pages/Campaign";
-import { Area, AreaConfig } from "./Pages/Area";
-import { Level } from "./Components/Level";
+import Campaign from "./Pages/Campaign";
+import Area, { AreaConfig } from "./Pages/Area";
+import Level from "./Components/Level";
 import LetterCategoriesConfig, { LetterCategoriesConfigProps } from "./Pages/LetterCategoriesConfig";
 import ArithmeticReveal, { ArithmeticRevealProps } from "./Pages/ArithmeticReveal";
 import ArithmeticDrag, { ArithmeticDragProps } from "./Pages/ArithmeticDrag";
 import { Theme, Themes } from "./Data/Themes";
 import { AllCampaignAreas } from "./Data/CampaignAreas/AllCampaignAreas";
-import { Settings } from "./Pages/Settings";
+import Settings from "./Pages/Settings";
 import OnlyConnect, { OnlyConnectProps } from "./Pages/OnlyConnect";
 import { useBackgroundMusic } from "./Data/Sounds";
-import { ErrorFallback } from "./Pages/ErrorFallback";
+import ErrorFallback from "./Pages/ErrorFallback";
 import SameLetterWords, { SameLetterWordsProps } from "./Pages/SameLetterWords";
 import NumberSets, { NumberSetsProps } from "./Pages/NumberSets";
 import Algebra, { AlgebraProps } from "./Pages/Algebra";
-import { ChallengesInfo } from "./Components/ChallengesInfo";
+import ChallengesInfo from "./Components/ChallengesInfo";
 import WordCodes, { WordCodesProps } from "./Pages/WordCodes";
-import { TitlePage } from "./Pages/TitlePage";
+import TitlePage from "./Pages/TitlePage";
 import { pageDescriptions } from "./Data/PageDescriptions";
 import SequencePuzzle, { SequencePuzzleProps } from "./Pages/SequencePuzzle";
 import { PagePath } from "./Data/PageNames";
 import { getPageGamemodeSettings } from "./Helpers/getPageGamemodeSettings";
 import { getRandomElementFrom } from "./Helpers/getRandomElementFrom";
 import { Routes, Route, useNavigate, useLocation, Navigate } from "react-router-dom";
-import { PageWrapper } from "./Components/PageWrapper";
+import PageWrapper from "./Components/PageWrapper";
 import { getCampaignProgress } from "./Data/SaveData/CampaignProgress";
 import { getSettings, saveSettings, SettingsData } from "./Data/SaveData/Settings";
 import { readGold } from "./Data/SaveData/Gold";
 import { ErrorBoundary } from "react-error-boundary";
 
-export const App = () => {
+const App = () => {
   // What is the current path?
   const location = useLocation().pathname as PagePath;
   // Use this to change the path
@@ -584,3 +584,5 @@ export const App = () => {
     </div>
   );
 };
+
+export default App;

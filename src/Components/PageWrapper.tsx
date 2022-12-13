@@ -2,7 +2,7 @@ import { ErrorBoundary } from "react-error-boundary";
 import { FiArrowLeft, FiHelpCircle, FiSettings } from "react-icons/fi";
 import { pageDescriptions } from "../Data/PageDescriptions";
 import { VERSION } from "../Data/Version";
-import { ErrorFallback } from "../Pages/ErrorFallback";
+import ErrorFallback from "../Pages/ErrorFallback";
 import Button from "./Button";
 import HelpInformation from "./HelpInformation";
 import { useNavigate, useLocation } from "react-router-dom";
