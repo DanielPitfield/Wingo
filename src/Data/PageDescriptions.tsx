@@ -2,15 +2,14 @@ import { MAX_TARGET_WORD_LENGTH } from "./GamemodeSettingsInputLimits";
 import { PagePath } from "./PageNames";
 
 export const gamemodeCategories = ["Daily / Weekly", "Wingo", "Letters", "Numbers", "Puzzle", "Presets", null] as const;
+export type GamemodeCategory = typeof gamemodeCategories[number];
 
-export type gamemodeCategory = typeof gamemodeCategories[number];
-
-export type pageDescription = {
+export type PageDescription = {
   path: PagePath;
   title: string;
   shortTitle?: string;
   // What category best describes this gamemode (the tile to select the gamemode will be under a title with this name)?
-  categoryType: gamemodeCategory;
+  categoryType: GamemodeCategory;
   // Is the gamemode shown on the gamemode selection screen (is it available to play/enabled?)
   isDisplayed: boolean;
   // Can the gamemode be selected during a random session?
@@ -19,7 +18,7 @@ export type pageDescription = {
   helpInfo?: JSX.Element;
 };
 
-export const pageDescriptions: pageDescription[] = [
+export const pageDescriptions: PageDescription[] = [
   { path: "/Splashscreen", title: "Wingo", categoryType: null, isDisplayed: false, isRandomlyPlayable: false },
   { path: "/TitlePage", title: "Home", categoryType: null, isDisplayed: false, isRandomlyPlayable: false },
   //{ page: "/Home", title: "", isDisplayed: false, isRandomlyPlayable: false },
@@ -538,7 +537,10 @@ export const pageDescriptions: pageDescription[] = [
     isRandomlyPlayable: false,
     helpInfo: (
       <>
-        <p>After completing any of the shown challenges, a gold coin reward can be collected by clicking the 'Redeem' button (next to the challenge).</p>
+        <p>
+          After completing any of the shown challenges, a gold coin reward can be collected by clicking the 'Redeem'
+          button (next to the challenge).
+        </p>
       </>
     ),
   },

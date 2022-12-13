@@ -1,12 +1,12 @@
 import { useNavigate } from "react-router-dom";
 import { FiPlay } from "react-icons/fi";
 import { BsInfoCircleFill } from "react-icons/bs";
-import { pageDescription } from "../Data/PageDescriptions";
+import { PageDescription } from "../Data/PageDescriptions";
 import { Button } from "./Button";
 import { SettingsData } from "../Data/SaveData/Settings";
 
 interface LobbyMenuTileProps {
-  page: pageDescription;
+  page: PageDescription;
   settings: SettingsData;
 }
 

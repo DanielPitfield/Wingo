@@ -6,7 +6,7 @@ import { gamemodeCategories, pageDescriptions } from "../Data/PageDescriptions";
 import { useNavigate } from "react-router-dom";
 import { SettingsData } from "../Data/SaveData/Settings";
 import { getHistory } from "../Data/SaveData/GameHistory";
-import { LobbyMenuTile } from "../Components/LobbyMenuTile";
+import { LobbyMenuCategory } from "../Components/LobbyMenuCategory";
 
 interface Props {
   theme: Theme;
@@ -34,26 +34,13 @@ export const LobbyMenu = (props: Props) => {
         {gamemodeCategories
           .filter((category) => category !== null)
           // For each category
-          .map((category, index) => {
+          .map((category) => {
             // Get all the gamemodes within the category
-            const gamemodePages = pageDescriptions.filter((page) => page.categoryType === category && page.isDisplayed);
+            const categoryGamemodePages = pageDescriptions.filter(
+              (page) => page.categoryType === category && page.isDisplayed
+            );
 
-            // If there are gamemodes for this category, render a sidebar with the category name
-            if (gamemodePages.length > 0) {
-              return (
-                <div className="sidebar" key={`${category}${index}`}>
-                  <div className="sidebar-title">{category}</div>
-                  <ul className="widgets">
-                    {gamemodePages.map((page) => {
-                      return <LobbyMenuTile key={page.title} page={page} settings={props.settings} />;
-                    })}
-                  </ul>
-                </div>
-              );
-            }
-
-            // No gamemodes for this category, don't even render a sidebar for the category
-            return null;
+            return <LobbyMenuCategory category={category} categoryGamemodesPages={categoryGamemodePages} settings={props.settings} />;
           })}
       </div>
 
