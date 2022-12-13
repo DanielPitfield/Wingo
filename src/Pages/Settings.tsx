@@ -3,13 +3,13 @@ import { IconType } from "react-icons";
 import { FiCompass, FiHeadphones, FiInfo, FiMonitor } from "react-icons/fi";
 import { pageDescriptions } from "../Data/PageDescriptions";
 import { PagePath } from "../Data/PageNames";
-import { Button } from "../Components/Button";
-import { StudioLogo } from "../Components/StudioLogo";
+import Button from "../Components/Button";
+import StudioLogo from "../Components/StudioLogo";
 import { Themes } from "../Data/Themes";
 import { VERSION } from "../Data/Version";
 import { SettingsData } from "../Data/SaveData/Settings";
 
-interface Props {
+interface SettingsProps {
   settings: SettingsData;
   onSettingsChange: (settings: SettingsData) => void;
 }
@@ -29,7 +29,7 @@ type Setting =
   | { type: "decimal"; name: string; value: number; onChange: (value: number) => SettingsData }
   | { type: "boolean"; name: string; value: boolean; onChange: (value: boolean) => SettingsData };
 
-export const Settings = (props: Props) => {
+const Settings = (props: SettingsProps) => {
   const [selectedSettingAreaName, setSelectedSettingAreaName] = useState<SettingArea>("Sound");
   const { settings } = props;
 
@@ -247,3 +247,5 @@ export const Settings = (props: Props) => {
     </div>
   );
 };
+
+export default Settings;

@@ -1,13 +1,12 @@
 import React, { useState } from "react";
-import { Button } from "../Components/Button";
-import { MessageNotification } from "../Components/MessageNotification";
+import Button from "../Components/Button";
+import MessageNotification from "../Components/MessageNotification";
 import ProgressBar, { GreenToRedColorTransition } from "../Components/ProgressBar";
-import { NumberRow } from "../Components/NumberRow";
+import NumberRow from "../Components/NumberRow";
 import NumberTile from "../Components/NumberTile";
 import { Guess, IntermediaryTileStatus, NumbersGameConfigProps, NumberTileStatus } from "./NumbersGameConfig";
-import { NumberSelectionRow } from "../Components/NumberSelectionRow";
+import NumberSelectionRow from "../Components/NumberSelectionRow";
 import { Theme } from "../Data/Themes";
-
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
 import { DEFAULT_NUMBERS_GAME_NUM_ROWS } from "../Data/DefaultGamemodeSettings";
 import { getRandomElementFrom } from "../Helpers/getRandomElementFrom";
@@ -19,7 +18,7 @@ import { getNewGamemodeSettingValue } from "../Helpers/getGamemodeSettingsNewVal
 import NumbersGameGamemodeSettings from "../Components/GamemodeSettingsOptions/NumbersGameGamemodeSettings";
 import { SettingsData } from "../Data/SaveData/Settings";
 
-interface Props {
+interface NumbersGameProps {
   campaignConfig: NumbersGameConfigProps["campaignConfig"];
   gamemodeSettings: NumbersGameConfigProps["gamemodeSettings"];
 
@@ -64,7 +63,7 @@ interface Props {
   addGold: (gold: number) => void;
 }
 
-const NumbersGame = (props: Props) => {
+const NumbersGame = (props: NumbersGameProps) => {
   // The number of operands the numberPuzzle can compute a solution for (with no noticeable delay)
   const NUMBERPUZZLE_MAX_NUM_OPERANDS_WITHHOUT_DELAY = 6;
   // The maximum possible number of operands the numberPuzzle can a compute solution for (without the browser crashing)
@@ -214,8 +213,6 @@ const NumbersGame = (props: Props) => {
 
     return <div className="numbers-game-grid">{Grid}</div>;
   };
-
-
 
   const RoundScoreDisplay = () => {
     if (props.inProgress) {
@@ -372,9 +369,7 @@ const NumbersGame = (props: Props) => {
           settings={props.settings}
           additionalProps={{ autoFocus: true }}
         >
-          {props.campaignConfig.isCampaignLevel
-            ? LEVEL_FINISHING_TEXT
-            : "Restart"}
+          {props.campaignConfig.isCampaignLevel ? LEVEL_FINISHING_TEXT : "Restart"}
         </Button>
       </>
     );

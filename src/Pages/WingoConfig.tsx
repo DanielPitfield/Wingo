@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 import Wingo from "./Wingo";
-
 import { Theme } from "../Data/Themes";
-import { WingoInterlinked } from "./WingoInterlinked";
+import WingoInterlinked from "./WingoInterlinked";
 import {
   defaultDailyCrosswordGamemodeSettings,
   defaultWeeklyCrosswordGamemodeSettings,

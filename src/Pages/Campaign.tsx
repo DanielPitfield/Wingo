@@ -1,5 +1,5 @@
 import { AreaConfig } from "./Area";
-import { Button } from "../Components/Button";
+import Button from "../Components/Button";
 import { Theme } from "../Data/Themes";
 import { AllCampaignAreas } from "../Data/CampaignAreas/AllCampaignAreas";
 import BackgroundImageSrc from "../Data/Images/background.png";
@@ -17,7 +17,7 @@ interface CampaignProps {
 }
 
 /** The entire campaign, showing the list of areas */
-export const Campaign = (props: CampaignProps) => {
+const Campaign = (props: CampaignProps) => {
   const navigate = useNavigate();
 
   function onAreaClick(area: AreaConfig, unlockLevelStatus: CampaignSaveData["areas"][0]["status"]) {
@@ -127,3 +127,5 @@ export const Campaign = (props: CampaignProps) => {
     </div>
   );
 };
+
+export default Campaign;

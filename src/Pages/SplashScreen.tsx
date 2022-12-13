@@ -1,10 +1,9 @@
-import React, { useEffect } from "react";
-import { Logo } from "../Components/Logo";
+import { useEffect } from "react";
+import Logo from "../Components/Logo";
 import BackgroundSrc from "../Data/Images/background.png";
 import BackgroundDarkThemeSrc from "../Data/Images/background-dark-theme.png";
 import { useIntroMusic } from "../Data/Sounds";
-
-import { StudioLogo } from "../Components/StudioLogo";
+import StudioLogo from "../Components/StudioLogo";
 import { SettingsData } from "../Data/SaveData/Settings";
 
 interface SplashScreenProps {
@@ -12,7 +11,7 @@ interface SplashScreenProps {
   settings: SettingsData;
 }
 
-export const SplashScreen = (props: SplashScreenProps) => {
+const SplashScreen = (props: SplashScreenProps) => {
   const [playIntroSrc] = useIntroMusic(props.settings);
 
   useEffect(() => playIntroSrc(), [playIntroSrc]);
@@ -33,3 +32,5 @@ export const SplashScreen = (props: SplashScreenProps) => {
     </div>
   );
 };
+
+export default SplashScreen;

@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { PagePath } from "../Data/PageNames";
-import { MessageNotification } from "../Components/MessageNotification";
+import MessageNotification from "../Components/MessageNotification";
 import LetterTile from "../Components/LetterTile";
-import { NumPad } from "../Components/NumPad";
+import NumPad from "../Components/NumPad";
 import ProgressBar, { GreenToRedColorTransition } from "../Components/ProgressBar";
-import { Button } from "../Components/Button";
+import Button from "../Components/Button";
 import { Theme } from "../Data/Themes";
 import { arithmeticNumberSize } from "./ArithmeticDrag";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";

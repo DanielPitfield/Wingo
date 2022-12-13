@@ -1,6 +1,6 @@
 import { CSSProperties, useEffect, useState } from "react";
-import { Button } from "../Components/Button";
-import { MessageNotification } from "../Components/MessageNotification";
+import Button from "../Components/Button";
+import MessageNotification from "../Components/MessageNotification";
 import { SequencePuzzleTemplates } from "../Data/SequencePuzzleTemplates";
 import { Theme, ThemeIcons } from "../Data/Themes";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
@@ -50,8 +50,7 @@ interface Props extends SequencePuzzleProps {
   onComplete: (wasCorrect: boolean) => void;
 }
 
-/** Puzzle config */
-export const SequencePuzzle = (props: Props) => {
+const SequencePuzzle = (props: Props) => {
   // Result of the guess
   const [result, setResult] = useState<"in-progress" | "correct" | "incorrect">("in-progress");
 

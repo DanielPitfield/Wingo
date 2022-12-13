@@ -1,6 +1,5 @@
-import { Button } from "../Components/Button";
-import { Logo } from "../Components/Logo";
-
+import Button from "../Components/Button";
+import Logo from "../Components/Logo";
 import BackgroundSrc from "../Data/Images/background.png";
 import BackgroundDarkThemeSrc from "../Data/Images/background-dark-theme.png";
 import { FiCodesandbox, FiPlay, FiSettings, FiShuffle } from "react-icons/fi";
@@ -11,7 +10,7 @@ interface TitlePageProps {
   settings: SettingsData;
 }
 
-export const TitlePage = (props: TitlePageProps) => {
+const TitlePage = (props: TitlePageProps) => {
   const navigate = useNavigate();
 
   return (
@@ -51,3 +50,5 @@ export const TitlePage = (props: TitlePageProps) => {
     </div>
   );
 };
+
+export default TitlePage;

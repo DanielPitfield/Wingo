@@ -1,8 +1,7 @@
 import React, { useState } from "react";
-import { Button } from "../Components/Button";
-import { MessageNotification, MessageNotificationProps } from "../Components/MessageNotification";
+import  Button  from "../Components/Button";
+import MessageNotification, { MessageNotificationProps } from "../Components/MessageNotification";
 import ProgressBar, { GreenToRedColorTransition } from "../Components/ProgressBar";
-
 import { Theme } from "../Data/Themes";
 import DiceGrid from "../Components/DiceGrid";
 import { NumbleConfigProps, numbleGridShape, numbleGridSize, NumbleStatus } from "./NumbleConfig";
@@ -25,7 +24,7 @@ import { useLocation } from "react-router-dom";
 import { PagePath } from "../Data/PageNames";
 import { SettingsData } from "../Data/SaveData/Settings";
 
-interface Props {
+interface NumbleProps {
   campaignConfig: NumbleConfigProps["campaignConfig"];
   gamemodeSettings: NumbleConfigProps["gamemodeSettings"];
 
@@ -63,7 +62,7 @@ interface Props {
   settings: SettingsData;
 }
 
-const Numble = (props: Props) => {
+const Numble = (props: NumbleProps) => {
   const location = useLocation().pathname as PagePath;
 
   // Information as to how the pins are displayed and what pins are on each row

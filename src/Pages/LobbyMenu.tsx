@@ -1,21 +1,21 @@
 import { AllChallenges } from "../Data/Challenges/AllChallenges";
 import { Challenge } from "../Components/Challenge";
-import { Campaign } from "./Campaign";
+import Campaign from "./Campaign";
 import { Theme } from "../Data/Themes";
 import { gamemodeCategories, pageDescriptions } from "../Data/PageDescriptions";
 import { useNavigate } from "react-router-dom";
 import { SettingsData } from "../Data/SaveData/Settings";
 import { getHistory } from "../Data/SaveData/GameHistory";
-import { LobbyMenuCategory } from "../Components/LobbyMenuCategory";
+import LobbyMenuCategory from "../Components/LobbyMenuCategory";
 
-interface Props {
+interface LobbyMenuProps {
   theme: Theme;
   settings: SettingsData;
   setTheme: (theme: Theme) => void;
   addGold: (gold: number) => void;
 }
 
-export const LobbyMenu = (props: Props) => {
+const LobbyMenu = (props: LobbyMenuProps) => {
   const navigate = useNavigate();
   const history = getHistory();
 
@@ -82,3 +82,5 @@ export const LobbyMenu = (props: Props) => {
     </div>
   );
 };
+
+export default LobbyMenu;

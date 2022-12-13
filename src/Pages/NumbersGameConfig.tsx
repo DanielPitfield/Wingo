@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import NumbersGame from "./NumbersGame";
 import { Theme } from "../Data/Themes";
-
 import { operators } from "../Data/Operators";
 import { getGamemodeDefaultTimerValue } from "../Helpers/getGamemodeDefaultTimerValue";
 import { hasNumberSelectionFinished } from "../Helpers/hasNumberSelectionFinished";

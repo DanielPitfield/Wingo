@@ -1,5 +1,5 @@
-import { Button } from "../Components/Button";
-import { Modal } from "../Components/Modal";
+import  Button  from "../Components/Button";
+import  Modal from "../Components/Modal";
 import { FaRegCopy } from "react-icons/fa";
 import { AiOutlineMail } from "react-icons/ai";
 import { FiRefreshCw } from "react-icons/fi";
@@ -7,13 +7,13 @@ import { SettingsData } from "../Data/SaveData/Settings";
 import { VERSION } from "../Data/Version";
 import { useCopyToClipboard } from "usehooks-ts";
 
-interface Props {
+interface ErrorFallbackProps {
   error: Error;
   resetErrorBoundary: () => void;
   settingsData: SettingsData;
 }
 
-export const ErrorFallback = (props: Props) => {
+const ErrorFallback = (props: ErrorFallbackProps) => {
   const [copiedValue, copy] = useCopyToClipboard();
 
   // The error information, settings and version number (formatted)
@@ -65,3 +65,5 @@ export const ErrorFallback = (props: Props) => {
     </Modal>
   );
 };
+
+export default ErrorFallback;

@@ -1,8 +1,7 @@
 import React, { useState } from "react";
-import { Button } from "../Components/Button";
-import { MessageNotification } from "../Components/MessageNotification";
+import Button from "../Components/Button";
+import MessageNotification from "../Components/MessageNotification";
 import ProgressBar, { GreenToRedColorTransition } from "../Components/ProgressBar";
-
 import { useClickChime, useCorrectChime, useFailureChime, useLightPingChime } from "../Data/Sounds";
 import { Theme } from "../Data/Themes";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
@@ -128,7 +127,7 @@ const OnlyConnect = (props: Props) => {
           return gridWord;
         })
       );
-      
+
       setInProgress(false);
     }
   }, [inProgress, gamemodeSettings.timerConfig.isTimed, remainingSeconds]);
@@ -302,8 +301,8 @@ const OnlyConnect = (props: Props) => {
 
   const Grid = () => {
     const Grid = Array.from({ length: gamemodeSettings.numGroups }).map((_, index) => populateRow(index));
-    return <div className="only_connect_wall">{Grid}</div>
-  }
+    return <div className="only_connect_wall">{Grid}</div>;
+  };
 
   function getCorrectGrid() {
     const categoryNames = Array.from(new Set(gridWords.map((word) => word.categoryName)));
@@ -433,11 +432,11 @@ const OnlyConnect = (props: Props) => {
           />
         </div>
       )}
-      <Outcome/>
+      <Outcome />
       {Boolean(inProgress && numCompletedGroups === gamemodeSettings.numGroups - 2) && (
         <MessageNotification type="default">{`Guesses left: ${remainingGuesses}`}</MessageNotification>
       )}
-      <Grid/>
+      <Grid />
       <div>
         {gamemodeSettings.timerConfig.isTimed && (
           <ProgressBar

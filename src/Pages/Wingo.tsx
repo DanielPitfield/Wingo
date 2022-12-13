@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import { Keyboard } from "../Components/Keyboard";
-import { WordRow } from "../Components/WordRow";
-import { Button } from "../Components/Button";
-import { MessageNotification } from "../Components/MessageNotification";
+import Keyboard from "../Components/Keyboard";
+import WordRow from "../Components/WordRow";
+import Button from "../Components/Button";
+import MessageNotification from "../Components/MessageNotification";
 import ProgressBar, { GreenToRedColorTransition } from "../Components/ProgressBar";
 import { WingoConfigProps, WingoMode } from "./WingoConfig";
 import { Theme } from "../Data/Themes";
@@ -20,7 +20,7 @@ import { useLocation } from "react-router-dom";
 import { PagePath } from "../Data/PageNames";
 import { isDailyMode, isTimePeriodicMode, isWeeklyMode } from "../Helpers/isTimePeriodicMode";
 
-interface Props {
+interface WingoProps {
   isCampaignLevel: boolean;
   mode: WingoMode;
 
@@ -61,7 +61,7 @@ interface Props {
   setTheme: (theme: Theme) => void;
 }
 
-const Wingo = (props: Props) => {
+const Wingo = (props: WingoProps) => {
   const location = useLocation().pathname as PagePath;
 
   const [keyboardDisabled, setKeyboardDisabled] = useState(false);
@@ -450,7 +450,9 @@ const Wingo = (props: Props) => {
         </div>
       )}
 
-      {props.errorMessage.isShown && <MessageNotification type="error">{props.errorMessage.message}</MessageNotification>}
+      {props.errorMessage.isShown && (
+        <MessageNotification type="error">{props.errorMessage.message}</MessageNotification>
+      )}
 
       {props.mode === "limitless" && (
         <MessageNotification type="default">

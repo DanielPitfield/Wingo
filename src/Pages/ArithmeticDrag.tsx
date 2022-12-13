@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import { PagePath } from "../Data/PageNames";
-import { Button } from "../Components/Button";
+import Button from "../Components/Button";
 import LetterTile from "../Components/LetterTile";
-import { MessageNotification } from "../Components/MessageNotification";
+import MessageNotification from "../Components/MessageNotification";
 import ProgressBar, { GreenToRedColorTransition } from "../Components/ProgressBar";
 import { Theme } from "../Data/Themes";
-import { DraggableItem } from "../Components/DraggableItem";
+import DraggableItem from "../Components/DraggableItem";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
 import { shuffleArray } from "../Helpers/shuffleArray";
 import { operatorSymbols, operators } from "../Data/Operators";

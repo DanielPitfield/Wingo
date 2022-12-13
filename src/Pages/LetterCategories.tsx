@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import { Keyboard } from "../Components/Keyboard";
-import { WordRow } from "../Components/WordRow";
-import { Button } from "../Components/Button";
-import { MessageNotification } from "../Components/MessageNotification";
+import Keyboard from "../Components/Keyboard";
+import WordRow from "../Components/WordRow";
+import Button from "../Components/Button";
+import MessageNotification from "../Components/MessageNotification";
 import ProgressBar, { GreenToRedColorTransition } from "../Components/ProgressBar";
 import { Theme } from "../Data/Themes";
 
@@ -12,7 +12,7 @@ import LetterCategoriesGamemodeSettings from "../Components/GamemodeSettingsOpti
 import { getNewGamemodeSettingValue } from "../Helpers/getGamemodeSettingsNewValue";
 import { SettingsData } from "../Data/SaveData/Settings";
 
-interface Props {
+interface LetterCategoriesProps {
   campaignConfig: LetterCategoriesConfigProps["campaignConfig"];
   gamemodeSettings: LetterCategoriesConfigProps["gamemodeSettings"];
 
@@ -40,7 +40,7 @@ interface Props {
   ResetGame: () => void;
 }
 
-const LetterCategories = (props: Props) => {
+const LetterCategories = (props: LetterCategoriesProps) => {
   const [keyboardDisabled, setKeyboardDisabled] = useState(false);
 
   const Grid = () => {
@@ -173,7 +173,7 @@ const LetterCategories = (props: Props) => {
         </div>
       )}
 
-      <Grid/>
+      <Grid />
 
       <div className="keyboard">
         <Keyboard

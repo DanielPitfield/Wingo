@@ -1,14 +1,13 @@
 import React, { useState } from "react";
-import { Button } from "../Components/Button";
+import  Button  from "../Components/Button";
 import LettersGameGamemodeSettings from "../Components/GamemodeSettingsOptions/LettersGameGamemodeSettings";
-import { Keyboard } from "../Components/Keyboard";
-import { LetterSelectionRow } from "../Components/LetterSelectionRow";
+import  Keyboard  from "../Components/Keyboard";
+import  LetterSelectionRow  from "../Components/LetterSelectionRow";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
-import { MessageNotification } from "../Components/MessageNotification";
+import  MessageNotification  from "../Components/MessageNotification";
 import ProgressBar, { GreenToRedColorTransition } from "../Components/ProgressBar";
-import { WordRow } from "../Components/WordRow";
+import  WordRow  from "../Components/WordRow";
 import { PagePath } from "../Data/PageNames";
-
 import { Theme } from "../Data/Themes";
 import { getGamemodeDefaultTimerValue } from "../Helpers/getGamemodeDefaultTimerValue";
 import { getNewGamemodeSettingValue } from "../Helpers/getGamemodeSettingsNewValue";
@@ -19,7 +18,7 @@ import { consonantWeightings, vowelWeightings } from "../Data/LettersGameWeighti
 import { getBestLettersGameWords } from "../Helpers/getBestLettersGameWords";
 import { SettingsData } from "../Data/SaveData/Settings";
 
-interface Props {
+interface LettersGameProps {
   campaignConfig: LettersGameConfigProps["campaignConfig"];
   gamemodeSettings: LettersGameConfigProps["gamemodeSettings"];
 
@@ -55,7 +54,7 @@ interface Props {
   ContinueGame: () => void;
 }
 
-const LettersGame = (props: Props) => {
+const LettersGame = (props: LettersGameProps) => {
   const location = useLocation().pathname as PagePath;
 
   const [keyboardDisabled, setKeyboardDisabled] = useState(false);

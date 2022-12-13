@@ -1,16 +1,15 @@
 import React, { useState } from "react";
 import { DEFAULT_ALPHABET } from "./WingoConfig";
 import { PagePath } from "../Data/PageNames";
-import { Button } from "../Components/Button";
-import { Keyboard } from "../Components/Keyboard";
+import Button from "../Components/Button";
+import Keyboard from "../Components/Keyboard";
 import LetterTile from "../Components/LetterTile";
-import { MessageNotification } from "../Components/MessageNotification";
-import { NumPad } from "../Components/NumPad";
+import MessageNotification from "../Components/MessageNotification";
+import NumPad from "../Components/NumPad";
 import ProgressBar, { GreenToRedColorTransition } from "../Components/ProgressBar";
-
 import { useClickChime, useCorrectChime, useFailureChime, useLightPingChime } from "../Data/Sounds";
 import { Theme } from "../Data/Themes";
-import { DraggableItem } from "../Components/DraggableItem";
+import DraggableItem from "../Components/DraggableItem";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
 import { MAX_CODE_LENGTH } from "../Data/GamemodeSettingsInputLimits";
 import { shuffleArray } from "../Helpers/shuffleArray";
