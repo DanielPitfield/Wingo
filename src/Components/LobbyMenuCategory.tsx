@@ -25,9 +25,7 @@ const LobbyMenuCategory = (props: LobbyMenuCategoryProps) => {
             showIndicators={false}
             centerMode
             useKeyboardArrows
-            autoPlay
             infiniteLoop
-            interval={5000}
           >
             {props.categoryGamemodesPages.map((page) => {
               return <LobbyMenuTile key={page.title} page={page} settings={props.settings} />;
