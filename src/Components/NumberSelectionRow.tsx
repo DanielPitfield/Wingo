@@ -11,29 +11,20 @@ interface NumberSelectionRowProps {
 }
 
 const NumberSelectionRow = (props: NumberSelectionRowProps) => {
-  function CreateRow() {
-    let tileArray = [];
-
-    const originalNumbers = props.numberTileStatuses.filter((x) => x.type === "original");
-
-    // TODO: Map over entries?
-    for (const [index, originalNumberInfo] of originalNumbers.entries()) {
-      tileArray.push(
-        <NumberTile
-          key={index}
-          number={originalNumberInfo.number}
-          disabled={props.disabled || originalNumberInfo.picked}
-          onClick={() => props.onClick(originalNumberInfo.number, { type: "original", index: index })}
-        />
-      );
-    }
-
-    return tileArray;
-  }
+  const originalNumbers = props.numberTileStatuses.filter((x) => x.type === "original");
 
   return (
     <div className="number_row">
-      <>{CreateRow()}</>
+      {originalNumbers.map((originalNumberInfo, index) => {
+        return (
+          <NumberTile
+            key={index}
+            number={originalNumberInfo.number}
+            disabled={props.disabled || originalNumberInfo.picked}
+            onClick={() => props.onClick(originalNumberInfo.number, { type: "original", index: index })}
+          />
+        );
+      })}
     </div>
   );
 };

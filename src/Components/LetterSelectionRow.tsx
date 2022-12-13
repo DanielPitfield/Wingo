@@ -10,29 +10,20 @@ interface LetterSelectionRowProps {
 }
 
 const LetterSelectionRow = (props: LetterSelectionRowProps) => {
-  function CreateRow() {
-    let tileArray = [];
-
-    // TODO: Map over entries?
-    for (const [index, letterTileStatus] of props.letterTileStatuses.entries()) {
-      tileArray.push(
-        <LetterTile
-          key={`${letterTileStatus.letter} - ${index}`}
-          letter={letterTileStatus.letter ?? ""}
-          status={"not set"}
-          settings={props.settings}
-          disabled={props.disabled || letterTileStatus.picked}
-          onClick={() => props.onClick(letterTileStatus.letter, index)}
-        />
-      );
-    }
-
-    return tileArray;
-  }
-
   return (
     <div className="letter_row">
-      <>{CreateRow()}</>
+      {props.letterTileStatuses.map((letterTileStatus, index) => {
+        return (
+          <LetterTile
+            key={`${letterTileStatus.letter} - ${index}`}
+            letter={letterTileStatus.letter ?? ""}
+            status={"not set"}
+            settings={props.settings}
+            disabled={props.disabled || letterTileStatus.picked}
+            onClick={() => props.onClick(letterTileStatus.letter, index)}
+          />
+        );
+      })}
     </div>
   );
 };
