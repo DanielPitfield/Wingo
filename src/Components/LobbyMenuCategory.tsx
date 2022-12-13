@@ -1,3 +1,5 @@
+import { Carousel } from "react-responsive-carousel";
+import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { GamemodeCategory, PageDescription } from "../Data/PageDescriptions";
 import { SettingsData } from "../Data/SaveData/Settings";
 import { LobbyMenuTile } from "./LobbyMenuTile";
@@ -15,9 +17,11 @@ export const LobbyMenuCategory = (props: LobbyMenuCategoryProps) => {
       <div className="sidebar" key={props.category}>
         <div className="sidebar-title">{props.category}</div>
         <ul className="widgets">
-          {props.categoryGamemodesPages.map((page) => {
-            return <LobbyMenuTile key={page.title} page={page} settings={props.settings} />;
-          })}
+          <Carousel>
+            {props.categoryGamemodesPages.map((page) => {
+              return <LobbyMenuTile key={page.title} page={page} settings={props.settings} />;
+            })}
+          </Carousel>
         </ul>
       </div>
     );

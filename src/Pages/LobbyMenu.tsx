@@ -40,7 +40,13 @@ export const LobbyMenu = (props: Props) => {
               (page) => page.categoryType === category && page.isDisplayed
             );
 
-            return <LobbyMenuCategory category={category} categoryGamemodesPages={categoryGamemodePages} settings={props.settings} />;
+            return (
+              <LobbyMenuCategory
+                category={category}
+                categoryGamemodesPages={categoryGamemodePages}
+                settings={props.settings}
+              />
+            );
           })}
       </div>
 
