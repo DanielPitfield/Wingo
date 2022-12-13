@@ -45,7 +45,7 @@ export const LobbyMenu = (props: Props) => {
                   <div className="sidebar-title">{category}</div>
                   <ul className="widgets">
                     {gamemodePages.map((page) => {
-                      return <LobbyMenuTile key={page.path} page={page.path} settings={props.settings} />;
+                      return <LobbyMenuTile key={page.title} page={page} settings={props.settings} />;
                     })}
                   </ul>
                 </div>
