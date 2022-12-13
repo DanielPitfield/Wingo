@@ -6,7 +6,7 @@ import GamemodeSettingsMenu from "../GamemodeSettingsMenu";
 import LoadGamemodePresetModal from "../LoadGamemodePresetModal";
 import SaveGamemodePresetModal from "../SaveGamemodePresetModal";
 
-interface Props {
+interface NumbleGamemodeSettingsProps {
   gamemodeSettings: NumbleConfigProps["gamemodeSettings"];
 
   handleGridShapeChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
@@ -33,7 +33,7 @@ interface Props {
 
 export const MAX_NUM_NUMBLE_TEAMS = 4;
 
-const NumbleGamemodeSettings = (props: Props) => {
+const NumbleGamemodeSettings = (props: NumbleGamemodeSettingsProps) => {
   const location = useLocation().pathname as PagePath;
 
   return (

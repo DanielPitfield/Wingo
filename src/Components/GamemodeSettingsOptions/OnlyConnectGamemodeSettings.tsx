@@ -6,7 +6,7 @@ import GamemodeSettingsMenu from "../GamemodeSettingsMenu";
 import LoadGamemodePresetModal from "../LoadGamemodePresetModal";
 import SaveGamemodePresetModal from "../SaveGamemodePresetModal";
 
-interface Props {
+interface OnlyConnectGamemodeSettingsProps {
   gamemodeSettings: OnlyConnectProps["gamemodeSettings"];
 
   handleTimerToggle: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -26,7 +26,7 @@ const MAX_NUM_GROUPS = 6;
 const MIN_GROUP_SIZE = 2;
 const MAX_GROUP_SIZE = 6;
 
-const OnlyConnectGamemodeSettings = (props: Props) => {
+const OnlyConnectGamemodeSettings = (props: OnlyConnectGamemodeSettingsProps) => {
   const location = useLocation().pathname as PagePath;
 
   return (

@@ -8,7 +8,7 @@ import GamemodeSettingsMenu from "../GamemodeSettingsMenu";
 import LoadGamemodePresetModal from "../LoadGamemodePresetModal";
 import SaveGamemodePresetModal from "../SaveGamemodePresetModal";
 
-interface Props {
+interface NumberSetsGamemodeSettingsProps {
   gamemodeSettings: NumberSetsProps["gamemodeSettings"];
 
   handleDifficultyChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
@@ -23,7 +23,7 @@ interface Props {
   onHideOfAddPresetModal: () => void;
 }
 
-const NumberSetsGamemodeSettings = (props: Props) => {
+const NumberSetsGamemodeSettings = (props: NumberSetsGamemodeSettingsProps) => {
   const location = useLocation().pathname as PagePath;
   const availableDifficulties: Difficulty[] = [
     ...new Set(NumberSetsTemplates.map((template: NumberSetTemplate) => template.difficulty)),

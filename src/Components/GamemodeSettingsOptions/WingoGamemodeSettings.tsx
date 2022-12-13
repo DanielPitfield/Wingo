@@ -13,7 +13,7 @@ import GamemodeSettingsMenu from "../GamemodeSettingsMenu";
 import LoadGamemodePresetModal from "../LoadGamemodePresetModal";
 import SaveGamemodePresetModal from "../SaveGamemodePresetModal";
 
-interface Props {
+interface WingoGamemodeSettingsProps {
   mode: WingoMode;
   gamemodeSettings: WingoConfigProps["gamemodeSettings"];
 
@@ -40,7 +40,7 @@ const MAX_PUZZLE_REVEAL_INTERVAL_SECONDS = 10;
 // Must be atleast 1 letter blank (otherwise entire word is revealed)
 const MIN_PUZZLE_LEAVE_NUM_BLANKS = 1;
 
-const WingoGamemodeSettings = (props: Props) => {
+const WingoGamemodeSettings = (props: WingoGamemodeSettingsProps) => {
   const location = useLocation().pathname as PagePath;
 
   const isContinuationMode = () => {

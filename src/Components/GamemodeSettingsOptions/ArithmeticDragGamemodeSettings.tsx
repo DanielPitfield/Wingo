@@ -6,7 +6,7 @@ import GamemodeSettingsMenu from "../GamemodeSettingsMenu";
 import LoadGamemodePresetModal from "../LoadGamemodePresetModal";
 import SaveGamemodePresetModal from "../SaveGamemodePresetModal";
 
-interface Props {
+interface ArithmeticDragGamemodeSettingsProps {
   gamemodeSettings: ArithmeticDragProps["gamemodeSettings"];
 
   handleNumberSizeChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
@@ -27,7 +27,7 @@ const MAX_NUM_TILES = 10;
 const MIN_NUM_OPERANDS = 2;
 const MAX_NUM_OPERANDS = 3;
 
-const ArithmeticDragGamemodeSettings = (props: Props) => {
+const ArithmeticDragGamemodeSettings = (props: ArithmeticDragGamemodeSettingsProps) => {
   const location = useLocation().pathname as PagePath;
 
   return (

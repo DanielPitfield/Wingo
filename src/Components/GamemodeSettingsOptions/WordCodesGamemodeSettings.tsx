@@ -6,7 +6,7 @@ import GamemodeSettingsMenu from "../GamemodeSettingsMenu";
 import LoadGamemodePresetModal from "../LoadGamemodePresetModal";
 import SaveGamemodePresetModal from "../SaveGamemodePresetModal";
 
-interface Props {
+interface WordCodesGamemodeSettingsProps {
   mode: wordCodesMode;
   gamemodeSettings: WordCodesProps["gamemodeSettings"];
 
@@ -26,7 +26,7 @@ interface Props {
 const MIN_NUMBER_DISPLAY_CODES = 2;
 const MAX_NUM_DISPLAY_WORDS = 10;
 
-const WordCodesGamemodeSettings = (props: Props) => {
+const WordCodesGamemodeSettings = (props: WordCodesGamemodeSettingsProps) => {
   const location = useLocation().pathname as PagePath;
 
   const MIN_NUM_DISPLAY_WORDS = Math.max(2, props.gamemodeSettings.numDisplayCodes + 1);

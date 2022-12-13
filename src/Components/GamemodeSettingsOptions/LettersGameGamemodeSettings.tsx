@@ -7,7 +7,7 @@ import GamemodeSettingsMenu from "../GamemodeSettingsMenu";
 import LoadGamemodePresetModal from "../LoadGamemodePresetModal";
 import SaveGamemodePresetModal from "../SaveGamemodePresetModal";
 
-interface Props {
+interface LettersGameGamemodeSettingsProps {
   gamemodeSettings: LettersGameConfigProps["gamemodeSettings"];
 
   handleTimerToggle: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -21,7 +21,7 @@ interface Props {
   onHideOfAddPresetModal: () => void;
 }
 
-const LettersGameGamemodeSettings = (props: Props) => {
+const LettersGameGamemodeSettings = (props: LettersGameGamemodeSettingsProps) => {
   const location = useLocation().pathname as PagePath;
 
   return (

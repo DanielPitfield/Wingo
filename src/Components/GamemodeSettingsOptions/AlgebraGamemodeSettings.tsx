@@ -8,7 +8,7 @@ import GamemodeSettingsMenu from "../GamemodeSettingsMenu";
 import LoadGamemodePresetModal from "../LoadGamemodePresetModal";
 import SaveGamemodePresetModal from "../SaveGamemodePresetModal";
 
-interface Props {
+interface AlgebraGamemodeSettingsProps {
   gamemodeSettings: AlgebraProps["gamemodeSettings"];
 
   handleDifficultyChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
@@ -23,7 +23,7 @@ interface Props {
   onHideOfAddPresetModal: () => void;
 }
 
-const AlgebraGamemodeSettings = (props: Props) => {
+const AlgebraGamemodeSettings = (props: AlgebraGamemodeSettingsProps) => {
   const location = useLocation().pathname as PagePath;
   const availableDifficulties: Difficulty[] = [
     ...new Set(AlgebraTemplates.map((template: AlgebraTemplate) => template.difficulty)),

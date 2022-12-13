@@ -7,7 +7,7 @@ import GamemodeSettingsMenu from "../GamemodeSettingsMenu";
 import LoadGamemodePresetModal from "../LoadGamemodePresetModal";
 import SaveGamemodePresetModal from "../SaveGamemodePresetModal";
 
-interface Props {
+interface ArithmeticRevealGamemodeSettingsProps {
   gamemodeSettings: ArithmeticRevealProps["gamemodeSettings"];
 
   handleNumberSizeChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
@@ -31,7 +31,7 @@ const MAX_NUM_CHECKPOINTS = 10;
 const MIN_REVEAL_INTERVAL = 1;
 const MAX_REVEAL_INTERVAL = 5;
 
-const ArithmeticRevealGamemodeSettings = (props: Props) => {
+const ArithmeticRevealGamemodeSettings = (props: ArithmeticRevealGamemodeSettingsProps) => {
   const location = useLocation().pathname as PagePath;
 
   return (

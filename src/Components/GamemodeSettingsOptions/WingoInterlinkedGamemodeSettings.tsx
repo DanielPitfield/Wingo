@@ -7,7 +7,7 @@ import GamemodeSettingsMenu from "../GamemodeSettingsMenu";
 import LoadGamemodePresetModal from "../LoadGamemodePresetModal";
 import SaveGamemodePresetModal from "../SaveGamemodePresetModal";
 
-interface Props {
+interface WingoInterlinkedGamemodeSettingsProps {
   gamemodeSettings: WingoInterlinkedProps["gamemodeSettings"];
   provideWords: boolean;
 
@@ -25,7 +25,7 @@ interface Props {
   onHideOfAddPresetModal: () => void;
 }
 
-const WingoInterlinkedGamemodeSettings = (props: Props) => {
+const WingoInterlinkedGamemodeSettings = (props: WingoInterlinkedGamemodeSettingsProps) => {
   const location = useLocation().pathname as PagePath;
 
   // Started with more than 2 words (so not basic WingoInterlinked of two interlinked words but a fully fledged crossword)

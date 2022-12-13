@@ -6,7 +6,7 @@ import GamemodeSettingsMenu from "../GamemodeSettingsMenu";
 import LoadGamemodePresetModal from "../LoadGamemodePresetModal";
 import SaveGamemodePresetModal from "../SaveGamemodePresetModal";
 
-interface Props {
+interface SameLetterWordsGamemodeSettingsProps {
   gamemodeSettings: SameLetterWordsProps["gamemodeSettings"];
 
   handleTimerToggle: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -31,7 +31,7 @@ const MAX_NUM_MATCHING_WORDS = 10;
 const MIN_NUM_GUESSES = 1;
 const MAX_NUM_GUESSES = 100;
 
-const SameLetterWordsGamemodeSettings = (props: Props) => {
+const SameLetterWordsGamemodeSettings = (props: SameLetterWordsGamemodeSettingsProps) => {
   const location = useLocation().pathname as PagePath;
 
   return (
