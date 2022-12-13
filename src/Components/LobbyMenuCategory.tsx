@@ -17,7 +17,7 @@ export const LobbyMenuCategory = (props: LobbyMenuCategoryProps) => {
       <div className="sidebar" key={props.category}>
         <div className="sidebar-title">{props.category}</div>
         <ul className="widgets">
-          <Carousel>
+          <Carousel showIndicators={false} centerMode useKeyboardArrows autoPlay infiniteLoop interval={5000}>
             {props.categoryGamemodesPages.map((page) => {
               return <LobbyMenuTile key={page.title} page={page} settings={props.settings} />;
             })}
