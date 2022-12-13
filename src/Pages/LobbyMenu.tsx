@@ -42,6 +42,7 @@ const LobbyMenu = (props: LobbyMenuProps) => {
 
             return (
               <LobbyMenuCategory
+                key={category}
                 category={category}
                 categoryGamemodesPages={categoryGamemodePages}
                 settings={props.settings}
