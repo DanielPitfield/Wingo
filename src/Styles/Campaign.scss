@@ -15,6 +15,8 @@
   .widgets,
   .area-button {
     flex-grow: 1;
+    justify-content: center;
+    flex-direction: column;
     background-repeat: no-repeat;
     background-size: 100%;
     &[data-unlock-status="locked"] {
@@ -26,6 +28,11 @@
     }
     .widget {
       height: 10em;
+    }
+    .area-name {
+      display: flex;
+      flex-grow: 1;
+      align-items: center;
     }
     .level-count {
       display: flex;
@@ -42,6 +49,7 @@
   border-bottom: 3px solid #888;
   border-left: 3px solid #888;
   cursor: pointer;
+  padding: 2em;
   &:hover {
     opacity: 0.9;
     .widget-title,
@@ -61,6 +69,6 @@
     justify-content: flex-start;
   }
   .widget-button-wrapper {
-    margin-bottom: 3em;
+    margin-bottom: 1em;
   }
 }
