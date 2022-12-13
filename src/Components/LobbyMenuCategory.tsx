@@ -1,5 +1,6 @@
 import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
+import { useNavigate } from "react-router-dom";
 import { GamemodeCategory, PageDescription } from "../Data/PageDescriptions";
 import { SettingsData } from "../Data/SaveData/Settings";
 import { LobbyMenuTile } from "./LobbyMenuTile";
@@ -11,13 +12,23 @@ interface LobbyMenuCategoryProps {
 }
 
 export const LobbyMenuCategory = (props: LobbyMenuCategoryProps) => {
+  const navigate = useNavigate();
+
   // If there are gamemodes for this category, render a sidebar with the category name
   if (props.categoryGamemodesPages.length > 0) {
     return (
       <div className="sidebar" key={props.category}>
         <div className="sidebar-title">{props.category}</div>
         <ul className="widgets">
-          <Carousel showIndicators={false} centerMode useKeyboardArrows autoPlay infiniteLoop interval={5000}>
+          <Carousel
+            onClickItem={(index: number, _) => navigate(props.categoryGamemodesPages[index].path)}
+            showIndicators={false}
+            centerMode
+            useKeyboardArrows
+            autoPlay
+            infiniteLoop
+            interval={5000}
+          >
             {props.categoryGamemodesPages.map((page) => {
               return <LobbyMenuTile key={page.title} page={page} settings={props.settings} />;
             })}

@@ -42,87 +42,95 @@
   }
 }
 
-.widgets {
-  padding: 0;
-  margin: 0;
-  display: flex;
-  flex-wrap: wrap;
-  .widget {
+.carousel {
+  .slide {
+  }
+
+  .control-dots {
+  }
+
+  .widgets {
+    padding: 0;
+    margin: 0;
     display: flex;
-    flex-direction: column;
-    list-style-type: none;
-    margin: 0.4em;
-    width: 11em;
-    height: 7em;
-    background-color: #f7f7f7;
-    border-bottom: 3px solid #ccc;
-    padding: 1em;
-    padding-top: 0.5em;
-    user-select: none;
-    &:hover {
-      background-color: #fafafa;
-    }
-    .widget-title,
-    .widget-subtitle {
+    flex-wrap: wrap;
+    .widget {
       display: flex;
-      flex-grow: 1;
-      font-weight: normal;
-      align-items: center;
-      color: #999;
-      padding: 0.4em 0.2em;
-      //text-transform: uppercase;
-    }
-    .widget-title {
-      font-size: 1.2em;
-      position: relative;
-      padding-right: 1em;
-      .tooltip {
-        display: none;
-        position: absolute;
-        z-index: 9999;
-        top: 0;
-        right: 0;
-        margin: 1em;
-        background-color: #eee;
-        box-shadow: 0 0 4px #888;
-        color: #777;
-        padding: 0.5em;
-        min-width: 9em;
-        max-width: 16em;
-        text-transform: none;
-        font-size: 0.9em;
+      flex-direction: column;
+      list-style-type: none;
+      margin: 0.4em;
+      width: 11em;
+      height: 7em;
+      background-color: #f7f7f7;
+      border-bottom: 3px solid #ccc;
+      padding: 1em;
+      padding-top: 0.5em;
+      user-select: none;
+      &:hover {
+        background-color: #fafafa;
       }
-      .tooltip-icon {
-        position: absolute;
-        right: 0;
-        opacity: 0.6;
-        cursor: help;
-        &:hover {
-          opacity: 1;
-          & + .tooltip {
-            display: flex;
+      .widget-title,
+      .widget-subtitle {
+        display: flex;
+        flex-grow: 1;
+        font-weight: normal;
+        align-items: center;
+        color: #999;
+        padding: 0.4em 0.2em;
+        //text-transform: uppercase;
+      }
+      .widget-title {
+        font-size: 1.2em;
+        position: relative;
+        padding-right: 1em;
+        .tooltip {
+          display: none;
+          position: absolute;
+          z-index: 9999;
+          top: 0;
+          right: 0;
+          margin: 1em;
+          background-color: #eee;
+          box-shadow: 0 0 4px #888;
+          color: #777;
+          padding: 0.5em;
+          min-width: 9em;
+          max-width: 16em;
+          text-transform: none;
+          font-size: 0.9em;
+        }
+        .tooltip-icon {
+          position: absolute;
+          right: 0;
+          opacity: 0.6;
+          cursor: help;
+          &:hover {
+            opacity: 1;
+            & + .tooltip {
+              display: flex;
+            }
           }
         }
       }
-    }
-    .widget-button-wrapper {
-      display: flex;
-      position: relative;
-      font-size: 0.95em;
-      .widget-button {
+      .widget-button-wrapper {
         display: flex;
-        flex-shrink: 0;
-        font-weight: bold;
-        border: 0;
-        padding: 0;
-        height: 11em;
-        width: 13em;
-        cursor: pointer;
-        user-select: none;
-        &:hover {
-          opacity: 0.8;
-          .widget-title {
-            background-color: #444;
+        position: relative;
+        font-size: 0.95em;
+        .widget-button {
+          display: flex;
+          flex-shrink: 0;
+          font-weight: bold;
+          border: 0;
+          padding: 0;
+          height: 11em;
+          width: 13em;
+          cursor: pointer;
+          user-select: none;
+          &:hover {
+            opacity: 0.8;
+            .widget-title {
+              background-color: #444;
+            }
           }
         }
       }
