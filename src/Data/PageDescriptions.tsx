@@ -2,6 +2,7 @@ import { IconType } from "react-icons";
 import { MAX_TARGET_WORD_LENGTH } from "./GamemodeSettingsInputLimits";
 import { PagePath } from "./PageNames";
 import { GiAbstract050 } from "react-icons/gi";
+import { BsGraphUp } from "react-icons/bs";
 
 export const gamemodeCategories = ["Daily / Weekly", "Wingo", "Letters", "Numbers", "Puzzle", "Presets", null] as const;
 export type GamemodeCategory = typeof gamemodeCategories[number];
@@ -160,6 +161,7 @@ export const pageDescriptions: PageDescription[] = [
         <p>The game ends after an incorrect guess with only one guess (row) remaining.</p>
       </>
     ),
+    icon: BsGraphUp,
   },
   {
     path: "/Wingo/Category",

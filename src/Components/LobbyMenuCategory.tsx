@@ -23,7 +23,7 @@ const LobbyMenuCategory = (props: LobbyMenuCategoryProps) => {
   }
 
   // Don't need a carousel, just show the tiles normally
-  if (props.categoryGamemodesPages.length < NUM_ITEMS_PER_VIEW) {
+  if (props.categoryGamemodesPages.length <= NUM_ITEMS_PER_VIEW) {
     return (
       <div className="sidebar" key={props.category}>
         <div className="sidebar-title">{props.category}</div>
