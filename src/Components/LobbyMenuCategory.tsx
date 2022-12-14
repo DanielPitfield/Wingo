@@ -14,9 +14,7 @@ interface LobbyMenuCategoryProps {
 const LobbyMenuCategory = (props: LobbyMenuCategoryProps) => {
   const navigate = useNavigate();
 
-  // How many gamemodes does there need to be for the centerMode of the carousel to be enabled?
-  const CAROUSEL_CENTERING_MIN_NUM_GAMEMODES = 3;
-  // How many gamemodes should be shown on the carousel at any one time?
+  // How many gamemodes should be shown on the carousel at any one time (also the minimum number in order for a carousel to be shown)?
   const NUM_ITEMS_PER_VIEW = 3;
 
   // No gamemodes for this category, don't render a carousel
@@ -24,6 +22,21 @@ const LobbyMenuCategory = (props: LobbyMenuCategoryProps) => {
     return null;
   }
 
+  // Don't need a carousel, just show the tiles normally
+  if (props.categoryGamemodesPages.length < NUM_ITEMS_PER_VIEW) {
+    return (
+      <div className="sidebar" key={props.category}>
+        <div className="sidebar-title">{props.category}</div>
+        <ul className="widgets">
+          {props.categoryGamemodesPages.map((page) => {
+            return <LobbyMenuTile key={page.title} page={page} settings={props.settings} />;
+          })}
+        </ul>
+      </div>
+    );
+  }
+
+  // Carousel
   return (
     <div className="sidebar" key={props.category}>
       <div className="sidebar-title">{props.category}</div>
@@ -33,7 +46,7 @@ const LobbyMenuCategory = (props: LobbyMenuCategoryProps) => {
           showIndicators={false}
           showThumbs={false}
           showStatus={false}
-          centerMode={props.categoryGamemodesPages.length >= CAROUSEL_CENTERING_MIN_NUM_GAMEMODES}
+          centerMode
           centerSlidePercentage={Math.floor(100 / NUM_ITEMS_PER_VIEW)}
           useKeyboardArrows
           infiniteLoop
