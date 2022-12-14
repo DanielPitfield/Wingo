@@ -14,6 +14,11 @@ interface LobbyMenuCategoryProps {
 const LobbyMenuCategory = (props: LobbyMenuCategoryProps) => {
   const navigate = useNavigate();
 
+  // How many gamemodes does there need to be for the centerMode of the carousel to be enabled?
+  const CAROUSEL_CENTERING_MIN_NUM_GAMEMODES = 3;
+  // How many gamemodes should be shown on the carousel at any one time?
+  const NUM_ITEMS_PER_VIEW = 3;
+
   // No gamemodes for this category, don't render a carousel
   if (props.categoryGamemodesPages.length <= 0) {
     return null;
@@ -28,8 +33,8 @@ const LobbyMenuCategory = (props: LobbyMenuCategoryProps) => {
           showIndicators={false}
           showThumbs={false}
           showStatus={false}
-          centerMode
-          centerSlidePercentage={33}
+          centerMode={props.categoryGamemodesPages.length >= CAROUSEL_CENTERING_MIN_NUM_GAMEMODES}
+          centerSlidePercentage={Math.floor(100 / NUM_ITEMS_PER_VIEW)}
           useKeyboardArrows
           infiniteLoop
         >
