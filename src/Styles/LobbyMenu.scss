@@ -57,15 +57,22 @@
 
   &.default {
     .widget {
-      flex-basis: calc(33% - 2.4em);
-      flex-grow: 1;
+      flex-basis: calc(33% - 2em);
     }
-    .control-arrow {
-      &.control-prev {
-        margin-right: 0.25em;
-      }
-      &.control-next {
-        margin-left: 0.25em;
+    .carousel.carousel-slider {
+      .control-arrow {
+        background-color: #aaa !important;
+        cursor: not-allowed;
+
+        &:hover {
+          background-color: #aaa !important;
+        }
+        &.control-prev {
+          margin-right: 0.25em;
+        }
+        &.control-next {
+          margin-left: 0.25em;
+        }
       }
     }
   }

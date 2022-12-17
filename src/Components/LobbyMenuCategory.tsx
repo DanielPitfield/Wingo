@@ -29,11 +29,13 @@ const LobbyMenuCategory = (props: LobbyMenuCategoryProps) => {
         <div className="sidebar-title">{props.category}</div>
         <ul className="widgets default">
           <div className="carousel carousel-slider">
-            <button type="button" aria-label="next slide / item" className="control-arrow control-prev"></button>
+            <button type="button" aria-label="next slide / item" className="control-arrow control-prev" />
+
             {props.categoryGamemodesPages.map((page) => {
               return <LobbyMenuTile key={page.title} page={page} settings={props.settings} />;
             })}
-            <button type="button" aria-label="next slide / item" className="control-arrow control-next"></button>
+
+            <button type="button" aria-label="next slide / item" className="control-arrow control-next" />
           </div>
         </ul>
       </div>
