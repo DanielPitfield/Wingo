@@ -27,7 +27,7 @@ const LobbyMenuCategory = (props: LobbyMenuCategoryProps) => {
     return (
       <div className="sidebar" key={props.category}>
         <div className="sidebar-title">{props.category}</div>
-        <ul className="widgets">
+        <ul className="widgets default">
           {props.categoryGamemodesPages.map((page) => {
             return <LobbyMenuTile key={page.title} page={page} settings={props.settings} />;
           })}
@@ -40,7 +40,7 @@ const LobbyMenuCategory = (props: LobbyMenuCategoryProps) => {
   return (
     <div className="sidebar" key={props.category}>
       <div className="sidebar-title">{props.category}</div>
-      <ul className="widgets">
+      <ul className="widgets carousel">
         <Carousel
           onClickItem={(index: number, _) => navigate(props.categoryGamemodesPages[index].path)}
           showIndicators={false}
