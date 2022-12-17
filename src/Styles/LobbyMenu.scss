@@ -56,12 +56,17 @@
   }
 
   &.default {
-    display: flex;
-    flex-direction: row;
-    padding-left: 2.2em;
-    padding-right: 2.2em;
     .widget {
       flex-basis: calc(33% - 2.4em);
+      flex-grow: 1;
+    }
+    .control-arrow {
+      &.control-prev {
+        margin-right: 0.25em;
+      }
+      &.control-next {
+        margin-left: 0.25em;
+      }
     }
   }
 
@@ -186,10 +191,10 @@
       position: static !important;
       padding: 0.85em 0.2em !important;
       display: block;
-      background-color: gray !important;
+      background-color: rgb(68, 156, 185) !important;
       opacity: 0.9 !important;
       &:hover {
-        background-color: #333 !important;
+        background-color: darken(rgb(68, 156, 185), 10%) !important;
         opacity: 1 !important;
       }
     }
