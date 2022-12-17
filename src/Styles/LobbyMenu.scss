@@ -16,6 +16,7 @@
       max-width: 80vw;
       box-shadow: 1px 1px 2px #7778;
       &.campaign-sidebar {
+        max-width: calc(80vw + 1.6em);
         padding: 0;
         .campaign.widgets {
           padding: 0;
@@ -57,8 +58,10 @@
   &.default {
     display: flex;
     flex-direction: row;
+    padding-left: 0.5em;
+    padding-right: 0.5em;
     .widget {
-      flex-basis: 33%;
+      flex-basis: calc(33% - 2.4em);
     }
   }
 
