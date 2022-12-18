@@ -2,7 +2,9 @@ import { IconType } from "react-icons";
 import { MAX_TARGET_WORD_LENGTH } from "./GamemodeSettingsInputLimits";
 import { PagePath } from "./PageNames";
 import { GiAbstract050 } from "react-icons/gi";
-import { BsGraphUp } from "react-icons/bs";
+import { BsGraphUp, BsCalculatorFill, BsQuestionCircleFill } from "react-icons/bs";
+import { AiFillCalculator } from "react-icons/ai";
+import { HiVariable } from "react-icons/hi";
 
 export const gamemodeCategories = ["Daily / Weekly", "Wingo", "Letters", "Numbers", "Puzzle", "Presets", null] as const;
 export type GamemodeCategory = typeof gamemodeCategories[number];
@@ -351,6 +353,7 @@ export const pageDescriptions: PageDescription[] = [
         <p>There may be several checkpoints but the number of tiles between checkponts will not change.</p>
       </>
     ),
+    icon: BsCalculatorFill,
   },
   {
     path: "/Numble",
@@ -404,6 +407,7 @@ export const pageDescriptions: PageDescription[] = [
         <p>The 'Best Guess' button will end the game and take the closest answer so far.</p>
       </>
     ),
+    icon: AiFillCalculator,
   },
 
   {
@@ -471,6 +475,7 @@ export const pageDescriptions: PageDescription[] = [
         <p>Evaluate the expression and enter the correct answer (taking note of the required answer type).</p>
       </>
     ),
+    icon: HiVariable,
   },
   {
     path: "/PuzzleSequence",
@@ -488,6 +493,8 @@ export const pageDescriptions: PageDescription[] = [
     categoryType: "Presets",
     isDisplayed: true,
     isRandomlyPlayable: false,
+    description: "Randomly cycle through all playable gamemodes",
+    icon: BsQuestionCircleFill,
   },
   {
     path: "/Campaign",
