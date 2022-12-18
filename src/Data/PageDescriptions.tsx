@@ -2,9 +2,10 @@ import { IconType } from "react-icons";
 import { MAX_TARGET_WORD_LENGTH } from "./GamemodeSettingsInputLimits";
 import { PagePath } from "./PageNames";
 import { GiAbstract050 } from "react-icons/gi";
-import { BsGraphUp, BsCalculatorFill, BsQuestionCircleFill } from "react-icons/bs";
+import { BsGraphUp, BsCalculatorFill, BsQuestionCircleFill, BsHexagon } from "react-icons/bs";
 import { AiFillCalculator } from "react-icons/ai";
 import { HiVariable } from "react-icons/hi";
+import { GrLinkUp } from "react-icons/gr";
 
 export const gamemodeCategories = ["Daily / Weekly", "Wingo", "Letters", "Numbers", "Puzzle", "Presets", null] as const;
 export type GamemodeCategory = typeof gamemodeCategories[number];
@@ -146,6 +147,7 @@ export const pageDescriptions: PageDescription[] = [
         <p>{`The game will end when a ${MAX_TARGET_WORD_LENGTH} letter word is correctly guessed.`}</p>
       </>
     ),
+    icon: GrLinkUp,
   },
   {
     path: "/Wingo/Limitless",
@@ -381,6 +383,7 @@ export const pageDescriptions: PageDescription[] = [
         <p>The game will ends once the timer runs out.</p>
       </>
     ),
+    icon: BsHexagon,
   },
   {
     path: "/NumbersGame",
