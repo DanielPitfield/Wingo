@@ -6,6 +6,9 @@ import { BsGraphUp, BsCalculatorFill, BsQuestionCircleFill, BsHexagon } from "re
 import { AiFillCalculator } from "react-icons/ai";
 import { HiVariable } from "react-icons/hi";
 import { GrLinkUp } from "react-icons/gr";
+import { GiPackedPlanks } from "react-icons/gi";
+import { TbLetterCase } from "react-icons/tb";
+import { TbNumbers } from "react-icons/tb";
 
 export const gamemodeCategories = ["Daily / Weekly", "Wingo", "Letters", "Numbers", "Puzzle", "Presets", null] as const;
 export type GamemodeCategory = typeof gamemodeCategories[number];
@@ -62,6 +65,7 @@ export const pageDescriptions: PageDescription[] = [
         <p>Your attempt will be saved (and can be viewed at any time during the day).</p>
       </>
     ),
+    icon: GiPackedPlanks,
   },
   {
     path: "/Wingo/Crossword/Weekly",
@@ -80,6 +84,7 @@ export const pageDescriptions: PageDescription[] = [
         <p>Your attempt will be saved (and can be viewed at any time during the week).</p>
       </>
     ),
+    icon: GiPackedPlanks,
   },
   {
     path: "/Wingo/Repeat",
@@ -201,6 +206,7 @@ export const pageDescriptions: PageDescription[] = [
         <p>Click 'Check Crossword' once you have guessed both words to see if your guesses are correct.</p>
       </>
     ),
+    icon: GiPackedPlanks,
   },
   {
     path: "/Wingo/Crossword",
@@ -218,6 +224,7 @@ export const pageDescriptions: PageDescription[] = [
         <p>Click 'Check Crossword' once you have guessed all words to see if your guesses are correct.</p>
       </>
     ),
+    icon: GiPackedPlanks,
   },
   {
     path: "/OnlyConnect",
@@ -259,6 +266,7 @@ export const pageDescriptions: PageDescription[] = [
         <p>The longest word entered will be automically chosen when the timer runs out.</p>
       </>
     ),
+    icon: TbLetterCase,
   },
   {
     path: "/Conundrum",
@@ -463,6 +471,7 @@ export const pageDescriptions: PageDescription[] = [
         <p>Apply the same operation to the question and enter the value which is missing (shown by the ? symbol).</p>
       </>
     ),
+    icon: TbNumbers,
   },
   {
     path: "/Algebra",
