@@ -14,6 +14,10 @@ import { FaListOl } from "react-icons/fa";
 import { FaThList } from "react-icons/fa";
 import { BsClockFill } from "react-icons/bs";
 import { BsFillPuzzleFill } from "react-icons/bs";
+import { TbLetterCaseLower } from "react-icons/tb";
+import { FaList } from "react-icons/fa";
+import { VscServer } from "react-icons/vsc";
+import { CgTimer } from "react-icons/cg";
 
 export const gamemodeCategories = ["Daily / Weekly", "Wingo", "Letters", "Numbers", "Puzzle", "Presets", null] as const;
 export type GamemodeCategory = typeof gamemodeCategories[number];
@@ -124,6 +128,7 @@ export const pageDescriptions: PageDescription[] = [
         <p>Press the 'Restart' button after an attempt for a new target word.</p>
       </>
     ),
+    icon: VscServer,
   },
   {
     path: "/Wingo/Puzzle",
@@ -197,6 +202,7 @@ export const pageDescriptions: PageDescription[] = [
         </p>
       </>
     ),
+    icon: FaList,
   },
   {
     path: "/Wingo/Interlinked",
@@ -289,6 +295,7 @@ export const pageDescriptions: PageDescription[] = [
         <p>Only one guess is allowed.</p>
       </>
     ),
+    icon: CgTimer,
   },
   {
     path: "/LettersCategories",
@@ -319,6 +326,7 @@ export const pageDescriptions: PageDescription[] = [
         <p>The tiles that are currently selected are highlighted.</p>
       </>
     ),
+    icon: TbLetterCaseLower,
   },
   {
     path: "/WordCodes/Question",
