@@ -222,7 +222,7 @@ const Wingo = (props: WingoProps) => {
   const isCurrentGuessCorrect = () => {
     return (
       props.currentWord.length > 0 &&
-      props.currentWord.toUpperCase() === props.targetWord.toUpperCase() &&
+      props.currentWord.replace(/ /g, "-").toUpperCase() === props.targetWord.replace(/ /g, "-").toUpperCase() &&
       props.inDictionary
     );
   };

@@ -572,11 +572,14 @@ const WingoConfig = (props: Props) => {
   }, [location, targetWord]);
 
   const isCurrentGuessCorrect = () => {
-    return currentWord.toLowerCase() === targetWord.toLowerCase() && currentWord.length > 0;
+    return (
+      currentWord.replace(/ /g, "-").toLowerCase() === targetWord.replace(/ /g, "-").toLowerCase() &&
+      currentWord.length > 0
+    );
   };
 
   const isCurrentGuessInDictionary = () => {
-    return wordArray.includes(currentWord.toLowerCase()) && currentWord.length > 0;
+    return isCurrentGuessCorrect() || (wordArray.includes(currentWord.toLowerCase()) && currentWord.length > 0);
   };
 
   function ResetGame() {
@@ -686,8 +689,8 @@ const WingoConfig = (props: Props) => {
       return;
     }
 
-    // Don't end game prematurely (before wordArray is determined)
-    if (!wordArray || wordArray.length <= 0) {
+    // Don't end game prematurely (before wordArray is determined), only if the current guess is not correct (to avoid the correct answer failing as its not in the word array)
+    if (!isCurrentGuessCorrect() && (!wordArray || wordArray.length <= 0)) {
       return;
     }
 
