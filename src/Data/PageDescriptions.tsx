@@ -9,6 +9,11 @@ import { GrLinkUp } from "react-icons/gr";
 import { GiPackedPlanks } from "react-icons/gi";
 import { TbLetterCase } from "react-icons/tb";
 import { TbNumbers } from "react-icons/tb";
+import { TbSortAscendingLetters } from "react-icons/tb";
+import { FaListOl } from "react-icons/fa";
+import { FaThList } from "react-icons/fa";
+import { BsClockFill } from "react-icons/bs";
+import { BsFillPuzzleFill } from "react-icons/bs";
 
 export const gamemodeCategories = ["Daily / Weekly", "Wingo", "Letters", "Numbers", "Puzzle", "Presets", null] as const;
 export type GamemodeCategory = typeof gamemodeCategories[number];
@@ -47,6 +52,7 @@ export const pageDescriptions: PageDescription[] = [
         <p>Your attempt will be saved (and can be viewed at any time during the day).</p>
       </>
     ),
+    icon: BsClockFill,
   },
   {
     path: "/Wingo/Crossword/Daily",
@@ -137,6 +143,7 @@ export const pageDescriptions: PageDescription[] = [
         </p>
       </>
     ),
+    icon: BsFillPuzzleFill,
   },
   {
     path: "/Wingo/Increasing",
@@ -296,6 +303,7 @@ export const pageDescriptions: PageDescription[] = [
         <p>Enter a word (of any length) for each category that starts with the provided letter.</p>
       </>
     ),
+    icon: TbSortAscendingLetters,
   },
   {
     path: "/SameLetters",
@@ -438,6 +446,7 @@ export const pageDescriptions: PageDescription[] = [
         </p>
       </>
     ),
+    icon: FaListOl,
   },
   {
     path: "/ArithmeticDrag/Match",
@@ -456,6 +465,7 @@ export const pageDescriptions: PageDescription[] = [
         </p>
       </>
     ),
+    icon: FaThList,
   },
   {
     path: "/NumberSets",
