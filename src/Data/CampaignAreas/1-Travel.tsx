@@ -7,7 +7,15 @@ export const area: AreaConfig = {
   theme: Themes.Travel,
   unlock_level: {
     type: "unlock-level",
-    hint: <>Unlock this area</>,
+    hint: (
+      <>
+        Unlock this area by guessing the word!
+        <br />
+        As this is the first one, we'll give you this one for free.
+        <br />
+        Enter <strong>TRAVEL</strong> below
+      </>
+    ),
     level: {
       gameCategory: "Wingo",
       page: "/Wingo/Repeat",
