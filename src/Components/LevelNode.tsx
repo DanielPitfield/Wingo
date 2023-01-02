@@ -74,13 +74,9 @@ const LevelNode = (props: LevelNodeProps) => {
         data-is-completed={isLevelCompleted}
         data-is-unlocked={isLevelUnlocked}
         data-animation-setting={props.settings.graphics.animation}
-        style={{
-          position: "absolute",
-          top: `${props.level.levelButtonCoords.y}%`,
-          left: `${props.level.levelButtonCoords.x}%`,
-        }}
       >
-        {props.levelNumber}
+        <span className="level-number">{props.levelNumber}</span>
+        <span className="level-mode">{levelInfo?.title || levelInfo?.shortTitle}</span>
       </button>
 
       {props.isSelected && (

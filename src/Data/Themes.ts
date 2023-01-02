@@ -14,7 +14,7 @@ import SpaceIcon3Src from "../Data/Images/themes/Space/icon-3.png";
 import SpaceIcon4Src from "../Data/Images/themes/Space/icon-4.png";
 import SpaceIcon5Src from "../Data/Images/themes/Space/icon-5.png";
 
-import TravelBackgroundImageSrc from "../Data/Images/themes/Travel/background.png";
+import TravelBackgroundImageSrc from "../Data/Images/themes/Travel/background.jpg";
 import TravelBackgroundAudioSrc from "../Data/Images/themes/Travel/background.mp3";
 import TravelIcon1Src from "../Data/Images/themes/Travel/icon-1.png";
 import TravelIcon2Src from "../Data/Images/themes/Travel/icon-2.png";
