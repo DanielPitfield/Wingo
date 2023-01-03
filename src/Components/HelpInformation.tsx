@@ -9,7 +9,6 @@ interface HelpInformationProps {
 
 const HelpInformation = (props: HelpInformationProps) => {
   const location = useLocation().pathname as PagePath;
-
   const pageInfo = pageDescriptions.find((x) => x.path === location);
 
   return (

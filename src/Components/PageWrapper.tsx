@@ -1,17 +1,13 @@
 import { ErrorBoundary } from "react-error-boundary";
-import { FiArrowLeft, FiHelpCircle, FiSettings } from "react-icons/fi";
 import { pageDescriptions } from "../Data/PageDescriptions";
 import { VERSION } from "../Data/Version";
 import ErrorFallback from "../Pages/ErrorFallback";
-import Button from "./Button";
 import HelpInformation from "./HelpInformation";
 import { useNavigate, useLocation } from "react-router-dom";
 import { PagePath } from "../Data/PageNames";
-import GoldCoin from "../Data/Images/gold.png";
 import { useState } from "react";
-import { isCampaignAreaPath, isCampaignLevelPath } from "../Helpers/CampaignPathChecks";
-import { getAreaBacktrackPath } from "../Helpers/getAreaBacktrackPath";
 import { getSettings, SettingsData } from "../Data/SaveData/Settings";
+import Toolbar from "./Toolbar";
 
 interface PageWrapperProps {
   settings: SettingsData;
@@ -20,11 +16,8 @@ interface PageWrapperProps {
 }
 
 const PageWrapper = (props: PageWrapperProps) => {
-  // What is the current path?
   const location = useLocation().pathname as PagePath;
-
   const navigate = useNavigate();
-
   const wrappedPage = pageDescriptions.find((page) => page.path === location);
 
   // Modal explaining current gamemode, should it be currently shown?
@@ -38,65 +31,7 @@ const PageWrapper = (props: PageWrapperProps) => {
       onReset={() => navigate(0)}
     >
       <div className="app" data-automation-id="app" data-automation-page-name={location}>
-        {location !== "/Splashscreen" && location !== "/MainMenu" && (
-          <>
-            <div className="toolbar">
-              {location !== "/LobbyMenu" && (
-                <nav className="navigation">
-                  <Button
-                    mode="default"
-                    className="back-button"
-                    settings={props.settings}
-                    onClick={() => {
-                      setIsHelpInfoShown(false);
-
-                      if (isCampaignLevelPath(location)) {
-                        navigate(getAreaBacktrackPath(location));
-                      } else if (isCampaignAreaPath(location)) {
-                        navigate("/Campaign");
-                      } else {
-                        navigate("/LobbyMenu");
-                      }
-                    }}
-                  >
-                    <FiArrowLeft /> Back
-                  </Button>
-                </nav>
-              )}
-
-              <h1 className="title">{wrappedPage?.title}</h1>
-
-              {wrappedPage?.helpInfo !== undefined && (
-                <Button
-                  mode="default"
-                  className="help-info-button"
-                  settings={props.settings}
-                  onClick={() => setIsHelpInfoShown(true)}
-                  additionalProps={{ "aria-label": "help", title: "Get help with this game mode" }}
-                >
-                  <FiHelpCircle /> Help
-                </Button>
-              )}
-
-              <Button
-                mode="default"
-                className="props.settings-button"
-                settings={props.settings}
-                onClick={() => {
-                  navigate("/Settings");
-                  setIsHelpInfoShown(false);
-                }}
-              >
-                <FiSettings /> Settings
-              </Button>
-
-              <div className="gold_counter" onClick={() => navigate("/Challenges")}>
-                <img className="gold_coin_image" src={GoldCoin} alt="Gold" />
-                {props.gold.toLocaleString("en-GB")}
-              </div>
-            </div>
-          </>
-        )}
+        <Toolbar settings={props.settings} gold={props.gold} setIsHelpInfoShown={setIsHelpInfoShown} />
 
         {props.children}
 
