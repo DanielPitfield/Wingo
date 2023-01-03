@@ -34,7 +34,8 @@ const Settings = (props: SettingsProps) => {
   const { settings } = props;
 
   // The available choices for which page is loaded on launch
-  const entryPages: PagePath[] = ["/TitlePage", "/Campaign", "/Wingo/Daily"];
+  // TODO: /LobbyMenu entry option?
+  const entryPages: PagePath[] = ["/MainMenu", "/Campaign", "/Wingo/Daily"];
   // More user friendly to use title values (for dropdown in settings)
   const entryPageValues = pageDescriptions.filter((page) => entryPages.includes(page.path))?.map((page) => page.title);
 

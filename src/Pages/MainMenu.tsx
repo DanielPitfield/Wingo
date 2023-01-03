@@ -6,11 +6,11 @@ import { FiCodesandbox, FiPlay, FiSettings, FiShuffle } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import { SettingsData } from "../Data/SaveData/Settings";
 
-interface TitlePageProps {
+interface MainMenuProps {
   settings: SettingsData;
 }
 
-const TitlePage = (props: TitlePageProps) => {
+const MainMenu = (props: MainMenuProps) => {
   const navigate = useNavigate();
 
   return (
@@ -35,7 +35,7 @@ const TitlePage = (props: TitlePageProps) => {
             </Button>
           </li>
           <li className="sidebar-link">
-            <Button mode="default" onClick={() => navigate("/Home")}>
+            <Button mode="default" onClick={() => navigate("/LobbyMenu")}>
               <FiCodesandbox /> Custom game
             </Button>
           </li>
@@ -51,4 +51,4 @@ const TitlePage = (props: TitlePageProps) => {
   );
 };
 
-export default TitlePage;
+export default MainMenu;

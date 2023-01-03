@@ -1,7 +1,7 @@
 export type PagePath =
   | "/Splashscreen"
-  | "/TitlePage"
-  | "/Home"
+  | "/MainMenu"
+  | "/LobbyMenu"
   | "/Wingo/Daily"
   | "/Wingo/Repeat"
   | "/Wingo/Category"

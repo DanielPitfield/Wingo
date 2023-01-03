@@ -22,7 +22,7 @@ import NumberSets, { NumberSetsProps } from "./Pages/NumberSets";
 import Algebra, { AlgebraProps } from "./Pages/Algebra";
 import ChallengesInfo from "./Components/ChallengesInfo";
 import WordCodes, { WordCodesProps } from "./Pages/WordCodes";
-import TitlePage from "./Pages/TitlePage";
+import MainMenu from "./Pages/MainMenu";
 import { pageDescriptions } from "./Data/PageDescriptions";
 import SequencePuzzle, { SequencePuzzleProps } from "./Pages/SequencePuzzle";
 import { PagePath } from "./Data/PageNames";
@@ -55,14 +55,14 @@ const App = () => {
   const [gold, setGold] = useState<number>(readGold());
   const [playBackgroundMusic, stopBackgroundMusic] = useBackgroundMusic(settings, theme);
 
-  const getNewEntryPage = () => {
+  const getNewEntryPage = (): PagePath => {
     // Find the page that has the title of the option chosen in the settings menu (dropdown)
     const entryPageSelection = pageDescriptions.find((page) => page.title === settings.gameplay.entryPage)?.path;
-    // TitlePage as default
-    return entryPageSelection ?? "/TitlePage";
+    // MainMenu as default
+    return entryPageSelection ?? "/MainMenu";
   };
 
-  const getRandomPlayablePage = () => {
+  const getRandomPlayablePage = (): PagePath => {
     // The page must be suitable for the random session and there must be a tile displayed for the page on the LobbyMenu
     const playablePages = pageDescriptions.filter((page) => page.isRandomlyPlayable && page.isDisplayed);
     return getRandomElementFrom(playablePages)?.path;
@@ -179,11 +179,11 @@ const App = () => {
   return (
     <div id="global-wrapper" data-dark-mode={settings.graphics.darkMode}>
       <Routes>
-        <Route path="/" element={<Navigate to={getNewEntryPage()} />} />
-        <Route path="/TitlePage" element={<TitlePage settings={settings} />} />
+        <Route path="/" element={<Navigate to={getNewEntryPage()} />} />{" "}
         <Route path="/Splashscreen" element={<SplashScreen loadingState={loadingState} settings={settings} />} />
+        <Route path="/MainMenu" element={<MainMenu settings={settings} />} />
         <Route
-          path="/Home"
+          path="/LobbyMenu"
           element={
             <PageWrapper gold={gold} settings={settings}>
               <LobbyMenu setTheme={setThemeIfNoPreferredSet} theme={theme} addGold={addGold} settings={settings} />
@@ -562,9 +562,7 @@ const App = () => {
             </PageWrapper>
           }
         />
-
         <Route path="/Random" element={null} />
-
         <Route
           path="*"
           element={
@@ -572,7 +570,7 @@ const App = () => {
               fallbackRender={() => (
                 <ErrorFallback
                   error={new Error("Page not found")}
-                  resetErrorBoundary={() => navigate("/Home")}
+                  resetErrorBoundary={() => navigate("/LobbyMenu")}
                   settingsData={getSettings()}
                 />
               )}

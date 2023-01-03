@@ -38,10 +38,10 @@ const PageWrapper = (props: PageWrapperProps) => {
       onReset={() => navigate(0)}
     >
       <div className="app" data-automation-id="app" data-automation-page-name={location}>
-        {location !== "/Splashscreen" && location !== "/TitlePage" && (
+        {location !== "/Splashscreen" && location !== "/MainMenu" && (
           <>
             <div className="toolbar">
-              {location !== "/Home" && (
+              {location !== "/LobbyMenu" && (
                 <nav className="navigation">
                   <Button
                     mode="default"
@@ -55,7 +55,7 @@ const PageWrapper = (props: PageWrapperProps) => {
                       } else if (isCampaignAreaPath(location)) {
                         navigate("/Campaign");
                       } else {
-                        navigate("/Home");
+                        navigate("/LobbyMenu");
                       }
                     }}
                   >
