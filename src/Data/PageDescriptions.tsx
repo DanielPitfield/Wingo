@@ -463,7 +463,7 @@ export const pageDescriptions: PageDescription[] = [
     categoryType: "Numbers",
     isDisplayed: true,
     isRandomlyPlayable: true,
-    description: "Match the arithmetic expressions with the results they evaluate to",
+    description: "Match the arithmetic expressions with their results",
     helpInfo: (
       <>
         <p>Drag the tiles so that the tiles in the left column match the tiles in the right column.</p>
