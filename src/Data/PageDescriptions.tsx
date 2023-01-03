@@ -40,7 +40,7 @@ export type PageDescription = {
 export const pageDescriptions: PageDescription[] = [
   { path: "/Splashscreen", title: "Wingo", categoryType: null, isDisplayed: false, isRandomlyPlayable: false },
   { path: "/MainMenu", title: "Main Menu", categoryType: null, isDisplayed: false, isRandomlyPlayable: false },
-  { path: "/LobbyMenu", title: "Lobby Menu", categoryType: null, isDisplayed: false, isRandomlyPlayable: false },
+  { path: "/LobbyMenu", title: "", categoryType: null, isDisplayed: false, isRandomlyPlayable: false },
   {
     path: "/Wingo/Daily",
     title: "Daily Wingo",
