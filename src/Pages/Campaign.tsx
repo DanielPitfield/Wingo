@@ -80,13 +80,7 @@ const Campaign = (props: CampaignProps) => {
             data-unlock-status={unlockStatus}
             key={area.name}
             style={{
-              backgroundImage: `url(${
-                unlockStatus === "unlockable"
-                  ? !props.settings.graphics.darkMode
-                    ? BackgroundImageSrc
-                    : BackgroundDarkThemeSrc
-                  : area.theme.backgroundImageSrc
-              })`,
+              backgroundImage: `url(${area.theme.backgroundImageSrc})`,
               backgroundSize: "100%",
             }}
           >
