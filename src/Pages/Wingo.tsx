@@ -393,8 +393,9 @@ const Wingo = (props: WingoProps) => {
       {isWeeklyMode(location) && !props.inProgress && (
         <MessageNotification type="default">Next Weekly reset in: {timeUntilWeeklyReset}</MessageNotification>
       )}
-      <div>
-        {!isTimePeriodicMode(location) && !props.inProgress && (
+
+      {!isTimePeriodicMode(location) && !props.inProgress && (
+        <div>
           <Button
             mode={"accept"}
             settings={props.settings}
@@ -403,8 +404,8 @@ const Wingo = (props: WingoProps) => {
           >
             {props.isCampaignLevel ? LEVEL_FINISHING_TEXT : isOutcomeContinue() ? "Continue" : "Restart"}
           </Button>
-        )}
-      </div>
+        </div>
+      )}
 
       <div className="category_label">
         {props.mode === "category" && (
@@ -480,15 +481,15 @@ const Wingo = (props: WingoProps) => {
         hasEnter={true}
       />
 
-      <div>
-        {props.gamemodeSettings.timerConfig.isTimed && (
+      {props.gamemodeSettings.timerConfig.isTimed && (
+        <div>
           <ProgressBar
             progress={props.remainingSeconds}
             total={props.gamemodeSettings.timerConfig.seconds}
             display={{ type: "transition", colorTransition: GreenToRedColorTransition }}
           />
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 };

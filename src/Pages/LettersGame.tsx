@@ -1,12 +1,12 @@
 import React, { useState } from "react";
-import  Button  from "../Components/Button";
+import Button from "../Components/Button";
 import LettersGameGamemodeSettings from "../Components/GamemodeSettingsOptions/LettersGameGamemodeSettings";
-import  Keyboard  from "../Components/Keyboard";
-import  LetterSelectionRow  from "../Components/LetterSelectionRow";
+import Keyboard from "../Components/Keyboard";
+import LetterSelectionRow from "../Components/LetterSelectionRow";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
-import  MessageNotification  from "../Components/MessageNotification";
+import MessageNotification from "../Components/MessageNotification";
 import ProgressBar, { GreenToRedColorTransition } from "../Components/ProgressBar";
-import  WordRow  from "../Components/WordRow";
+import WordRow from "../Components/WordRow";
 import { PagePath } from "../Data/PageNames";
 import { Theme } from "../Data/Themes";
 import { getGamemodeDefaultTimerValue } from "../Helpers/getGamemodeDefaultTimerValue";
@@ -264,8 +264,8 @@ const LettersGame = (props: LettersGameProps) => {
 
       <Outcome />
 
-      <div>
-        {!props.inProgress && props.remainingSeconds <= 0 && (
+      {!props.inProgress && props.remainingSeconds <= 0 && (
+        <div>
           <Button
             mode={"accept"}
             settings={props.settings}
@@ -273,12 +273,10 @@ const LettersGame = (props: LettersGameProps) => {
             onClick={props.ResetGame}
             additionalProps={{ autoFocus: true }}
           >
-            {props.campaignConfig.isCampaignLevel
-              ? LEVEL_FINISHING_TEXT
-              : "Restart"}
+            {props.campaignConfig.isCampaignLevel ? LEVEL_FINISHING_TEXT : "Restart"}
           </Button>
-        )}
-      </div>
+        </div>
+      )}
 
       <Grid />
 
@@ -296,15 +294,15 @@ const LettersGame = (props: LettersGameProps) => {
         hasEnter={true}
       />
 
-      <div>
-        {props.gamemodeSettings.timerConfig.isTimed && (
+      {props.gamemodeSettings.timerConfig.isTimed && (
+        <div>
           <ProgressBar
             progress={props.remainingSeconds}
             total={props.gamemodeSettings.timerConfig.seconds}
             display={{ type: "transition", colorTransition: GreenToRedColorTransition }}
           />
-        )}
-      </div>
+        </div>
+      )}
 
       <div className="letters-game-guesses">
         {props.guesses.map((guess) => (

@@ -602,15 +602,13 @@ const ArithmeticReveal = (props: Props) => {
         />
       )}
 
-      {revealState.type === "finished" && (
+      {revealState.type === "finished" && gamemodeSettings.timerConfig.isTimed && (
         <div>
-          {gamemodeSettings.timerConfig.isTimed && (
-            <ProgressBar
-              progress={remainingSeconds}
-              total={gamemodeSettings.timerConfig.seconds}
-              display={{ type: "transition", colorTransition: GreenToRedColorTransition }}
-            />
-          )}
+          <ProgressBar
+            progress={remainingSeconds}
+            total={gamemodeSettings.timerConfig.seconds}
+            display={{ type: "transition", colorTransition: GreenToRedColorTransition }}
+          />
         </div>
       )}
     </div>

@@ -432,20 +432,24 @@ const OnlyConnect = (props: Props) => {
           />
         </div>
       )}
+
       <Outcome />
+
       {Boolean(inProgress && numCompletedGroups === gamemodeSettings.numGroups - 2) && (
         <MessageNotification type="default">{`Guesses left: ${remainingGuesses}`}</MessageNotification>
       )}
+
       <Grid />
-      <div>
-        {gamemodeSettings.timerConfig.isTimed && (
+
+      {gamemodeSettings.timerConfig.isTimed && (
+        <div>
           <ProgressBar
             progress={remainingSeconds}
             total={gamemodeSettings.timerConfig.seconds}
             display={{ type: "transition", colorTransition: GreenToRedColorTransition }}
           />
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 };

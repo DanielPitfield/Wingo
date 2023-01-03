@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import  Button  from "../Components/Button";
+import Button from "../Components/Button";
 import MessageNotification, { MessageNotificationProps } from "../Components/MessageNotification";
 import ProgressBar, { GreenToRedColorTransition } from "../Components/ProgressBar";
 import { Theme } from "../Data/Themes";
@@ -124,7 +124,7 @@ const Numble = (props: NumbleProps) => {
 
   React.useEffect(() => {
     ResetGame();
-  }, [props.gamemodeSettings])
+  }, [props.gamemodeSettings]);
 
   // Determine valid results on update of diceValues (at start and on roll of dice)
   React.useEffect(() => {
@@ -762,8 +762,8 @@ const Numble = (props: NumbleProps) => {
     >
       <Outcome />
 
-      <div>
-        {!isGameInProgress() && (
+      {!isGameInProgress() && (
+        <div>
           <Button
             mode="accept"
             settings={props.settings}
@@ -772,8 +772,8 @@ const Numble = (props: NumbleProps) => {
           >
             {props.campaignConfig.isCampaignLevel ? LEVEL_FINISHING_TEXT : "Restart"}
           </Button>
-        )}
-      </div>
+        </div>
+      )}
 
       {!props.campaignConfig.isCampaignLevel && (
         <div className="gamemodeSettings">
@@ -813,15 +813,15 @@ const Numble = (props: NumbleProps) => {
           : "Game over"}
       </DiceGrid>
 
-      <div>
-        {props.gamemodeSettings.guessTimerConfig.isTimed && (
+      {props.gamemodeSettings.guessTimerConfig.isTimed && (
+        <div>
           <ProgressBar
             progress={props.remainingGuessTimerSeconds}
             total={props.gamemodeSettings.guessTimerConfig.seconds}
             display={{ type: "transition", colorTransition: GreenToRedColorTransition }}
           />
-        )}
-      </div>
+        </div>
+      )}
 
       <Grid />
 

@@ -431,15 +431,15 @@ const NumbersGame = (props: NumbersGameProps) => {
         </>
       )}
 
-      <div>
-        {props.gamemodeSettings.timerConfig.isTimed && (
+      {props.gamemodeSettings.timerConfig.isTimed && (
+        <div>
           <ProgressBar
             progress={props.remainingSeconds}
             total={props.gamemodeSettings.timerConfig.seconds}
             display={{ type: "transition", colorTransition: GreenToRedColorTransition }}
           />
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 };

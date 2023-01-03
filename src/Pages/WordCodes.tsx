@@ -932,15 +932,15 @@ const WordCodes = (props: Props) => {
 
       <InputMethod />
 
-      <div>
-        {gamemodeSettings.timerConfig.isTimed && (
+      {gamemodeSettings.timerConfig.isTimed && (
+        <div>
           <ProgressBar
             progress={remainingSeconds}
             total={gamemodeSettings.timerConfig.seconds}
             display={{ type: "transition", colorTransition: GreenToRedColorTransition }}
           />
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 };

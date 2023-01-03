@@ -145,8 +145,9 @@ const LetterCategories = (props: LetterCategoriesProps) => {
       style={{ backgroundImage: `url(${props.theme.backgroundImageSrc})`, backgroundSize: "100% 100%" }}
     >
       <Outcome />
-      <div>
-        {!props.inProgress && (
+
+      {!props.inProgress && (
+        <div>
           <Button
             mode="accept"
             settings={props.settings}
@@ -155,8 +156,8 @@ const LetterCategories = (props: LetterCategoriesProps) => {
           >
             {props.campaignConfig.isCampaignLevel ? LEVEL_FINISHING_TEXT : "Restart"}
           </Button>
-        )}
-      </div>
+        </div>
+      )}
 
       {!props.campaignConfig.isCampaignLevel && (
         <div className="gamemodeSettings">
@@ -191,15 +192,15 @@ const LetterCategories = (props: LetterCategoriesProps) => {
         />
       </div>
 
-      <div>
-        {props.gamemodeSettings.timerConfig.isTimed && (
+      {props.gamemodeSettings.timerConfig.isTimed && (
+        <div>
           <ProgressBar
             progress={props.remainingSeconds}
             total={props.gamemodeSettings.timerConfig.seconds}
             display={{ type: "transition", colorTransition: GreenToRedColorTransition }}
           />
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 };
