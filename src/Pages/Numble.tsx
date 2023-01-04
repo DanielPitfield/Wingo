@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import  Button  from "../Components/Button";
+import Button from "../Components/Button";
 import MessageNotification, { MessageNotificationProps } from "../Components/MessageNotification";
 import ProgressBar, { GreenToRedColorTransition } from "../Components/ProgressBar";
 import { Theme } from "../Data/Themes";
@@ -124,7 +124,7 @@ const Numble = (props: NumbleProps) => {
 
   React.useEffect(() => {
     ResetGame();
-  }, [props.gamemodeSettings])
+  }, [props.gamemodeSettings]);
 
   // Determine valid results on update of diceValues (at start and on roll of dice)
   React.useEffect(() => {
@@ -505,15 +505,11 @@ const Numble = (props: NumbleProps) => {
   };
 
   function isGameInProgress() {
-    if (
+    return (
       props.status === "dice-rolling" ||
       props.status === "dice-rolled-awaiting-pick" ||
       props.status === "picked-awaiting-dice-roll"
-    ) {
-      return true;
-    } else {
-      return false;
-    }
+    );
   }
 
   // The type of message and the displayed message for each singleplayer end game status

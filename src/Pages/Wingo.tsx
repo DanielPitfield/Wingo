@@ -219,10 +219,10 @@ const Wingo = (props: WingoProps) => {
     );
   };
 
-  const isCurrentGuessCorrect = () => {
+  const isCurrentGuessCorrect = (): boolean => {
     return (
       props.currentWord.length > 0 &&
-      props.currentWord.replace(/ /g, "-").toUpperCase() === props.targetWord.replace(/ /g, "-").toUpperCase() &&
+      props.currentWord.replace(/ /g, "-").toLowerCase() === props.targetWord.replace(/ /g, "-").toLowerCase() &&
       props.inDictionary
     );
   };
@@ -307,21 +307,19 @@ const Wingo = (props: WingoProps) => {
   };
 
   function isOutcomeContinue(): boolean {
-    const correctAnswer =
-      props.currentWord.length > 0 && props.targetWord.toUpperCase() === props.currentWord.toUpperCase();
-
     if (props.mode === "increasing") {
       // Correct and next wordLength does not exceed limit
-      return correctAnswer && props.gamemodeSettings.wordLength < props.gamemodeSettings.wordLengthMaxLimit;
+      return isCurrentGuessCorrect() && props.gamemodeSettings.wordLength < props.gamemodeSettings.wordLengthMaxLimit;
     }
 
     if (props.mode === "limitless") {
       // Correct answer with last row left
-      const lastRowCorrectAnswer = props.remainingGuesses === 1 && correctAnswer;
+      const lastRowCorrectAnswer = isCurrentGuessCorrect() && props.remainingGuesses === 1;
       // Lives left or correct answer with last remaining life
       return lastRowCorrectAnswer || props.remainingGuesses > 1;
     }
 
+    // Only increasing and limitless modes can be continued
     return false;
   }
 

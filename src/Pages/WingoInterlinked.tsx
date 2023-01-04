@@ -859,10 +859,7 @@ const WingoInterlinked = (props: Props) => {
 
     // Is the grid completed (all correct words entered?)
     const gridCompleted = tileStatuses.every((tile) => {
-      if (tile.status === "correct") {
-        return true;
-      }
-      return false;
+      return tile.status === "correct";
     });
 
     return (

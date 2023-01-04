@@ -566,14 +566,14 @@ const WingoConfig = (props: Props) => {
     setGameId(gameId);
   }, [location, targetWord]);
 
-  const isCurrentGuessCorrect = () => {
+  const isCurrentGuessCorrect = (): boolean => {
     return (
-      currentWord.replace(/ /g, "-").toLowerCase() === targetWord.replace(/ /g, "-").toLowerCase() &&
-      currentWord.length > 0
+      currentWord.length > 0 &&
+      currentWord.replace(/ /g, "-").toLowerCase() === targetWord.replace(/ /g, "-").toLowerCase()
     );
   };
 
-  const isCurrentGuessInDictionary = () => {
+  const isCurrentGuessInDictionary = (): boolean => {
     return isCurrentGuessCorrect() || (wordArray.includes(currentWord.toLowerCase()) && currentWord.length > 0);
   };
 
@@ -651,20 +651,19 @@ const WingoConfig = (props: Props) => {
   }
 
   function isOutcomeContinue(): boolean {
-    const correctAnswer = currentWord.length > 0 && currentWord.toUpperCase() === targetWord.toUpperCase();
-
     if (props.mode === "increasing") {
       // Correct and next wordLength does not exceed limit
-      return correctAnswer && props.gamemodeSettings.wordLength < props.gamemodeSettings.wordLengthMaxLimit;
+      return isCurrentGuessCorrect() && props.gamemodeSettings.wordLength < props.gamemodeSettings.wordLengthMaxLimit;
     }
 
     if (props.mode === "limitless") {
       // Correct answer with last row left
-      const lastRowCorrectAnswer = remainingGuesses === 1 && correctAnswer;
+      const lastRowCorrectAnswer = isCurrentGuessCorrect() && remainingGuesses === 1;
       // Lives left or correct answer with last remaining life
       return lastRowCorrectAnswer || remainingGuesses > 1;
     }
 
+    // Only increasing and limitless modes can be continued
     return false;
   }
 
