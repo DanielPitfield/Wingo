@@ -42,7 +42,7 @@ const Keyboard = (props: KeyboardProps) => {
   const alphabet = props.customAlphabet ?? DEFAULT_ALPHABET;
 
   const hasApostrophe = props.targetWord.includes("'");
-  const hasSpaces = props.hasSpaces || props.targetWord.includes(" ");
+  const hasSpaces = props.hasSpaces || props.targetWord.includes("-") || props.targetWord.includes(" ");
 
   const [playClickSoundEffect] = useClickChime(props.settings);
 
