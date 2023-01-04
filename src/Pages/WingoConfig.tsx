@@ -146,8 +146,7 @@ const WingoConfig = (props: Props) => {
   const [wordArray, setWordArray] = useState(props.wordArray ?? []);
   const [targetHint, setTargetHint] = useState("");
   const [targetCategory, setTargetCategory] = useState("");
-  const [hasSelectedTargetCategory, sethasSelectedTargetCategory] = useState(false);
-  const [hasSubmitLetter, sethasSubmitLetter] = useState(false);
+  const [hasSubmitLetter, setHasSubmitLetter] = useState(false);
   const [revealedLetterIndexes, setRevealedLetterIndexes] = useState<number[]>([]);
 
   const [numCorrectGuesses, setNumCorrectGuesses] = useState(0);
@@ -207,17 +206,13 @@ const WingoConfig = (props: Props) => {
         return getRandomElementFrom(getAllPuzzleWordsOfLength(gamemodeSettings.wordLength));
 
       case "category":
-        // A target category has been manually selected from dropdown
-        if (hasSelectedTargetCategory) {
-          // Continue using that category
-          const targetWordArray = categoryMappings.find((x) => x.name === targetCategory)?.array!;
-          return getRandomElementFrom(targetWordArray);
-        } else {
-          // Otherwise, randomly choose a category (can be changed afterwards)
+        if (!targetCategory) {
+          // Randomly choose a category (can be changed afterwards)
           setTargetCategory(getRandomElementFrom(categoryMappings).name);
           // A random word from this category is set in a useEffect(), so return
           return;
         }
+        break;
 
       case "increasing":
         // There is already a targetWord which is of the needed wordLength
@@ -601,7 +596,7 @@ const WingoConfig = (props: Props) => {
     setWordIndex(0);
     setInProgress(true);
     setInDictionary(true);
-    sethasSubmitLetter(false);
+    setHasSubmitLetter(false);
     setConundrum("");
     setRevealedLetterIndexes([]);
     setLetterStatuses(DEFAULT_LETTER_STATUSES);
@@ -622,7 +617,7 @@ const WingoConfig = (props: Props) => {
     setInProgress(true);
     setInDictionary(true);
 
-    sethasSubmitLetter(false);
+    setHasSubmitLetter(false);
     setRevealedLetterIndexes([]);
     setLetterStatuses(DEFAULT_LETTER_STATUSES);
 
@@ -780,14 +775,13 @@ const WingoConfig = (props: Props) => {
 
     if (currentWord.length < gamemodeSettings.wordLength && inProgress) {
       setCurrentWord(currentWord + letter);
-      sethasSubmitLetter(true);
+      setHasSubmitLetter(true);
     }
   }
 
   function onSubmitTargetCategory(category: string) {
     if (categoryMappings.find((x) => x.name === category)) {
       setTargetCategory(category);
-      sethasSelectedTargetCategory(true);
     }
   }
 
