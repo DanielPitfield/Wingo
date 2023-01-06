@@ -14,6 +14,7 @@ import {
   defaultWordCodesQuestionGamemodeSettings,
   defaultWordCodesMatchGamemodeSettings,
   commonWingoSettings,
+  defaultWingoInterlinkedGamemodeSettings,
 } from "../Data/DefaultGamemodeSettings";
 import { PagePath } from "../Data/PageNames";
 import {
@@ -41,6 +42,7 @@ import { NumbleConfigProps } from "../Pages/NumbleConfig";
 import { OnlyConnectProps } from "../Pages/OnlyConnect";
 import { SameLetterWordsProps } from "../Pages/SameLetterWords";
 import { WingoConfigProps } from "../Pages/WingoConfig";
+import { WingoInterlinkedProps } from "../Pages/WingoInterlinked";
 import { WordCodesProps } from "../Pages/WordCodes";
 
 export function getPageGamemodeSettings(page: PagePath) {
@@ -69,7 +71,7 @@ export function getPageGamemodeSettings(page: PagePath) {
         The gamemode settings are redefined in WingoConfig (when rendering a WingoInterlinked component)
         Just pass fallback settings through, because gamemodeSettings can't be left undefined
       */
-      return commonWingoSettings as WingoConfigProps["gamemodeSettings"];
+      return defaultWingoInterlinkedGamemodeSettings as WingoInterlinkedProps["gamemodeSettings"];
 
     case "/LettersCategories":
       return (getMostRecentLetterCategoriesConfigGamemodeSettings() ??
