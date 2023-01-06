@@ -22,6 +22,7 @@ import { SettingsData } from "../Data/SaveData/Settings";
 import { setMostRecentWingoInterlinkedGamemodeSettings } from "../Data/SaveData/MostRecentGamemodeSettings";
 import { useCountdown } from "usehooks-ts";
 import { useCorrectChime, useFailureChime, useLightPingChime, useClickChime } from "../Data/Sounds";
+import { FaSpinner } from "react-icons/fa";
 
 type Orientation = "vertical" | "horizontal";
 
@@ -147,6 +148,8 @@ const WingoInterlinked = (props: Props) => {
       : getGamemodeDefaultTimerValue(location)
   );
 
+  const [isLoading, setIsLoading] = useState(true);
+
   // How many seconds left on the timer?
   const [remainingSeconds, { startCountdown, stopCountdown, resetCountdown }] = useCountdown({
     countStart: totalSeconds,
@@ -158,6 +161,16 @@ const WingoInterlinked = (props: Props) => {
   const [playFailureChimeSoundEffect] = useFailureChime(props.settings);
   const [playLightPingSoundEffect] = useLightPingChime(props.settings);
   const [playClickSoundEffect] = useClickChime(props.settings);
+
+  React.useEffect(() => {
+    const LOADING_TIME_MS = 1000;
+
+    setIsLoading(true);
+
+    const timeoutId = window.setTimeout(() => setIsLoading(false), LOADING_TIME_MS);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [gridConfig, setIsLoading]);
 
   // Save gameplay progress
   React.useEffect(() => {
@@ -422,6 +435,10 @@ const WingoInterlinked = (props: Props) => {
    * @returns Generated grid config.
    */
   function generateGridConfig(targetWordArray: string[]): GridConfig {
+    if (targetWordArray.length === 0) {
+      throw new Error(`targetWordArray for generateGridConfig was empty`);
+    }
+
     let targetWordArraySliced = shuffleArray(targetWordArray).slice(0, gamemodeSettings.numWords);
     let result: CrosswordGenerationResult | null = null;
 
@@ -852,6 +869,28 @@ const WingoInterlinked = (props: Props) => {
     return <div className="word_grid">{Grid}</div>;
   };
 
+  /** Placeholder grid to show when loading */
+  const LoadingGrid = () => {
+    const Grid = Array.from({ length: gridConfig.height }).map((_, index) => (
+      <div className="word-grid-row" key={index}>
+        {Array.from({ length: gridConfig.width }).map((_, i) => (
+          <div key={i} className="letter-tile-wrapper">
+            <LetterTile letter="?" settings={props.settings} status="not set" />
+          </div>
+        ))}
+      </div>
+    ));
+    return (
+      <div className="word_grid" data-is-loading="true">
+        {Grid}
+        <span className="loading-message">
+          <FaSpinner className="spinner" />
+          Loading
+        </span>
+      </div>
+    );
+  };
+
   const Outcome = () => {
     if (inProgress) {
       return null;
@@ -995,7 +1034,7 @@ const WingoInterlinked = (props: Props) => {
         </MessageNotification>
       )}
 
-      <Grid />
+      {isLoading ? <LoadingGrid /> : <Grid />}
 
       {inProgress && (
         <Button

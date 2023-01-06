@@ -4,6 +4,7 @@
   //background-size: cover;
   .word_grid {
     display: flex;
+    position: relative;
     flex-direction: column;
     align-items: center;
     justify-content: center;
@@ -32,5 +33,41 @@
         }
       }
     }
+
+    &[data-is-loading="true"] {
+      position: relative;
+      background-color: transparent;
+      border-color: transparent;
+      .loading-message {
+        display: flex;
+        position: absolute;
+        content: "Loading...";
+        color: #eee;
+        background-color: #222c;
+        padding: 0.7em;
+        font-style: italic;
+        align-items: center;
+        justify-content: center;
+        .spinner {
+          font-size: 1.2em;
+          margin-right: 0.3em;
+          animation: spin 1s infinite linear;
+        }
+      }
+      .word-grid-row {
+        .letter-tile-wrapper {
+          visibility: hidden;
+        }
+      }
+    }
+  }
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
   }
 }

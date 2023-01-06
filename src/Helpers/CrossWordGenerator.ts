@@ -38,6 +38,10 @@ export type CrosswordGenerationResult =
   | false;
 
 export const crosswordGenerator = (arr: any[]): CrosswordGenerationResult => {
+  if (arr.length === 0) {
+    throw new Error(`Crossword generator array was empty`);
+  }
+
   // increase the probability of having an answer
   // const sortedArr = arr
   const sortedArr = sortArr(arr);
