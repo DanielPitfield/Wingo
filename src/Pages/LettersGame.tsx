@@ -67,24 +67,6 @@ const LettersGame = (props: LettersGameProps) => {
       : getGamemodeDefaultTimerValue(location)
   );
 
-  const getVowel = (): string => {
-    // Already have enough letters, don't add any more
-    if (props.hasLetterSelectionFinished) {
-      return "";
-    }
-
-    return getWeightedLetter(vowelWeightings);
-  };
-
-  const getConsonant = (): string => {
-    // Already have enough letters, don't add any more
-    if (props.hasLetterSelectionFinished) {
-      return "";
-    }
-
-    return getWeightedLetter(consonantWeightings);
-  };
-
   const getSelectionWord = (): string => {
     return props.letterTileStatuses
       .filter((letterStatus) => letterStatus.letter !== null)

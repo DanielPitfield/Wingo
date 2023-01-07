@@ -80,23 +80,6 @@ const NumbersGame = (props: NumbersGameProps) => {
     computeBestSolution();
   }, [props.targetNumber]);
 
-  function getSmallNumber(): number | null {
-    // Already selected enough numbers, don't add any more
-    if (hasNumberSelectionFinished(props.numberTileStatuses, props.gamemodeSettings.numOperands)) {
-      return null;
-    }
-
-    return getRandomSmallNumber();
-  }
-
-  function getBigNumber(): number | null {
-    if (hasNumberSelectionFinished(props.numberTileStatuses, props.gamemodeSettings.numOperands)) {
-      return null;
-    }
-
-    return getRandomBigNumber(props.gamemodeSettings.hasScaryNumbers);
-  }
-
   const RoundScoreDisplay = () => {
     if (props.inProgress) {
       return null;
