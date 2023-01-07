@@ -392,8 +392,8 @@ const WingoConfig = (props: Props) => {
       return;
     }
 
-    if (isTimePeriodicMode(location) || props.mode === "limitless") {
-      // Do not reset the game if the gamemode is daily/weekly, as the gamemodeSettings are instead loaded from localStorage (#304, #305)
+    if (isTimePeriodicMode(location) || props.mode === "limitless" || props.mode === "conundrum") {
+      // Do not reset the game if the gamemode is daily/weekly, as the gamemodeSettings are instead loaded from localStorage (#304, #305, #508)
       return;
     }
 
