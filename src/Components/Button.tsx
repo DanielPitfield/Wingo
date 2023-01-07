@@ -25,11 +25,11 @@ const Button = (props: ButtonProps) => {
       {...props.additionalProps}
       className={`btn ${props.mode} ${props.className ?? ""}`}
       onClick={(e) => {
-        props.onClick?.(e);
-
         if (useSoundEffect) {
           playClickSoundEffect();
         }
+
+        props.onClick?.(e);
       }}
       disabled={props.disabled}
       data-status={props.status}

@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { SettingsData } from "../Data/SaveData/Settings";
 import { getHistory } from "../Data/SaveData/GameHistory";
 import LobbyMenuCategory from "../Components/LobbyMenuCategory";
+import { useClickChime } from "../Data/Sounds";
 
 interface LobbyMenuProps {
   theme: Theme;
@@ -18,6 +19,7 @@ interface LobbyMenuProps {
 const LobbyMenu = (props: LobbyMenuProps) => {
   const navigate = useNavigate();
   const history = getHistory();
+  const [playClickSoundEffect] = useClickChime(props.settings);
 
   return (
     <div className="home">
@@ -64,7 +66,10 @@ const LobbyMenu = (props: LobbyMenuProps) => {
                 mode="default"
                 challenge={challenge}
                 settings={props.settings}
-                onClick={() => navigate("/Challenges")}
+                onClick={() => {
+                  playClickSoundEffect();
+                  navigate("/Challenges");
+                }}
                 addGold={props.addGold}
               />
             ),
