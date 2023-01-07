@@ -14,7 +14,7 @@ interface ErrorFallbackProps {
 }
 
 const ErrorFallback = (props: ErrorFallbackProps) => {
-  const [copiedValue, copy] = useCopyToClipboard();
+  const copy = useCopyToClipboard()[1];
 
   // The error information, settings and version number (formatted)
   const message = `${props.error.message}\n\n
@@ -49,8 +49,8 @@ const ErrorFallback = (props: ErrorFallbackProps) => {
         </Button>
       </div>
 
-      {/* TODO: Displays Stack, for testing purposes */}
-      {<pre>{message}</pre>}
+      {/* Displays Stack, for testing purposes */}
+      {/*<pre>{message}</pre>*/}
 
       <div className="error-fallback-action-wrapper">
         <Button className="error-fallback-reset" mode="default" onClick={props.resetErrorBoundary}>
