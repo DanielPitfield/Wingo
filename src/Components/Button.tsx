@@ -17,6 +17,9 @@ interface ButtonProps {
 const Button = (props: ButtonProps) => {
   const [playClickSoundEffect] = useClickChime(props.settings ?? DISABLED_SETTINGS);
 
+  // Default undefined for props.useSoundEffect to true (i.e. its opt-out to disable sound effects)
+  const useSoundEffect = props.useSoundEffect !== false;
+
   return (
     <button
       {...props.additionalProps}
@@ -24,7 +27,7 @@ const Button = (props: ButtonProps) => {
       onClick={(e) => {
         props.onClick?.(e);
 
-        if (props.useSoundEffect) {
+        if (useSoundEffect) {
           playClickSoundEffect();
         }
       }}

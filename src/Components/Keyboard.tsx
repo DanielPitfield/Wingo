@@ -187,7 +187,6 @@ const Keyboard = (props: KeyboardProps) => {
           settings={props.settings}
           onClick={() => {
             props.onSubmitLetter(letter);
-            playClickSoundEffect();
           }}
           disabled={props.disabled}
         >

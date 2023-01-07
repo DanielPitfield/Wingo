@@ -1053,7 +1053,6 @@ const WingoInterlinked = (props: Props) => {
           mode="accept"
           disabled={remainingWordGuesses <= 0}
           settings={props.settings}
-          useSoundEffect
           onClick={() => checkInput("current")}
         >
           Check current word
@@ -1065,7 +1064,6 @@ const WingoInterlinked = (props: Props) => {
           mode="accept"
           disabled={remainingGridGuesses <= 0}
           settings={props.settings}
-          useSoundEffect
           onClick={() => checkInput("all")}
         >
           Check crossword

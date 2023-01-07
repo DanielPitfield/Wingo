@@ -340,7 +340,6 @@ const SameLetterWords = (props: Props) => {
               }
               onClick={() => {
                 handleSelection(word);
-                playClickSoundEffect();
               }}
             >
               {word ? getPrettyText(word) : ""}
