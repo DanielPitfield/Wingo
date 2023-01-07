@@ -376,6 +376,7 @@ const WingoInterlinked = (props: Props) => {
     });
 
     setCorrectGrid(newCorrectLetterGrid);
+    playLightPingSoundEffect();
 
     // Log the correct word
     console.log(
@@ -403,6 +404,7 @@ const WingoInterlinked = (props: Props) => {
 
     if (gridCompleted) {
       setInProgress(false);
+      playCorrectChimeSoundEffect();
     }
   }, [tileStatuses]);
 
@@ -624,6 +626,7 @@ const WingoInterlinked = (props: Props) => {
       // Used last current word guess and also no grid guesses left
       if (remainingWordGuesses <= 1 && remainingGridGuesses <= 0) {
         setInProgress(false);
+        playFailureChimeSoundEffect();
       }
     } else if (wordsToCheck === "all" && remainingGridGuesses >= 1) {
       // Still a 'Check Crossword' guess left
@@ -634,6 +637,7 @@ const WingoInterlinked = (props: Props) => {
       // Used last grid guess and also no word guesses left
       if (remainingGridGuesses <= 1 && remainingWordGuesses === 0) {
         setInProgress(false);
+        playFailureChimeSoundEffect();
       }
     }
   }
@@ -1049,6 +1053,7 @@ const WingoInterlinked = (props: Props) => {
           mode="accept"
           disabled={remainingWordGuesses <= 0}
           settings={props.settings}
+          useSoundEffect
           onClick={() => checkInput("current")}
         >
           Check current word
@@ -1060,6 +1065,7 @@ const WingoInterlinked = (props: Props) => {
           mode="accept"
           disabled={remainingGridGuesses <= 0}
           settings={props.settings}
+          useSoundEffect
           onClick={() => checkInput("all")}
         >
           Check crossword
