@@ -1,11 +1,9 @@
 import React, { useState } from "react";
 import { PagePath } from "../Data/PageNames";
 import Button from "../Components/Button";
-import LetterTile from "../Components/LetterTile";
 import MessageNotification from "../Components/MessageNotification";
 import ProgressBar, { GreenToRedColorTransition } from "../Components/ProgressBar";
 import { Theme } from "../Data/Themes";
-import DraggableItem from "../Components/DraggableItem";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
 import { shuffleArray } from "../Helpers/shuffleArray";
 import { operatorSymbols, operators } from "../Data/Operators";
@@ -15,26 +13,11 @@ import { getRandomIntFromRange } from "../Helpers/getRandomIntFromRange";
 import { getNewGamemodeSettingValue } from "../Helpers/getGamemodeSettingsNewValue";
 import ArithmeticDragGamemodeSettings from "../Components/GamemodeSettingsOptions/ArithmeticDragGamemodeSettings";
 import { useLocation } from "react-router-dom";
-import {
-  DndContext,
-  closestCenter,
-  KeyboardSensor,
-  PointerSensor,
-  useSensor,
-  useSensors,
-  DragEndEvent,
-} from "@dnd-kit/core";
-import {
-  arrayMove,
-  SortableContext,
-  sortableKeyboardCoordinates,
-  verticalListSortingStrategy,
-} from "@dnd-kit/sortable";
-import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { SettingsData } from "../Data/SaveData/Settings";
 import { setMostRecentArithmeticDragGamemodeSettings } from "../Data/SaveData/MostRecentGamemodeSettings";
 import { useCountdown } from "usehooks-ts";
 import { useCorrectChime, useFailureChime, useLightPingChime, useClickChime } from "../Data/Sounds";
+import ArithmeticDragTiles from "../Components/ArithmeticragTiles";
 
 // Const Contexts: https://stackoverflow.com/questions/44497388/typescript-array-to-string-literal-type
 export const arithmeticNumberSizes = ["small", "medium", "large"] as const;
@@ -43,14 +26,14 @@ export type arithmeticNumberSize = typeof arithmeticNumberSizes[number];
 const arithmeticModes = ["order", "match"] as const;
 export type arithmeticMode = typeof arithmeticModes[number];
 
-type ExpressionTile = {
+export type ExpressionTile = {
   id: number;
   expression: string;
   total: number;
   status: "incorrect" | "correct" | "not set";
 };
 
-type ResultTile = { id: number; total: number; status: "incorrect" | "correct" | "not set" };
+export type ResultTile = { id: number; total: number; status: "incorrect" | "correct" | "not set" };
 
 export interface ArithmeticDragProps {
   campaignConfig:
@@ -87,17 +70,7 @@ interface Props extends ArithmeticDragProps {
 const ArithmeticDrag = (props: Props) => {
   const location = useLocation().pathname as PagePath;
 
-  // dnd-kit
-  const sensors = useSensors(
-    useSensor(PointerSensor),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-    })
-  );
-
   const [inProgress, setInProgress] = useState(true);
-
-  const [parent] = useAutoAnimate<HTMLDivElement>();
 
   const [expressionTiles, setExpressionTiles] = useState<ExpressionTile[]>([]);
   // For the match game mode type
@@ -363,97 +336,6 @@ const ArithmeticDrag = (props: Props) => {
     }
   }, [inProgress, gamemodeSettings.timerConfig.isTimed, remainingSeconds]);
 
-  function handleDragEnd<
-    T extends { id: number },
-    TOpposite extends { id: number; status: "incorrect" | "correct" | "not set" }
-  >(
-    event: DragEndEvent,
-    // tiles uses generic type which extends id (acting as a general constraint)
-    tiles: T[],
-    // oppositeTiles uses another generic type (with id and status general constraints)
-    oppositeTiles: TOpposite[],
-    setTiles: (tiles: T[]) => void,
-    setOppositeTiles: (oppositeTiles: TOpposite[]) => void
-  ) {
-    const { active, over } = event;
-
-    // Drag was started but the order of the tiles wasn't changed
-    if (active.id === over?.id) {
-      return;
-    }
-
-    // The tile which is being dragged
-    const oldTile: T | undefined = tiles.find((tile) => tile.id === active.id);
-    // The tile below where the tile being dragged has been dragged to
-    const newTile: T | undefined = tiles.find((tile) => tile.id === over?.id);
-
-    // Either of the required tiles for the switch to be made are missing
-    if (!oldTile || !newTile) {
-      return;
-    }
-
-    // Find the indexes of the tiles within the wordTiles array
-    const oldIndex: number = tiles.indexOf(oldTile);
-    const newIndex: number = tiles.indexOf(newTile);
-
-    // Switch the positions of the tiles (using the indexes)
-    const newTiles: T[] = arrayMove(tiles, oldIndex, newIndex);
-
-    // Reset status of tiles when moved
-    setTiles(newTiles.map((tile) => ({ ...tile, status: "not set" })));
-    setOppositeTiles(oppositeTiles.map((tile) => ({ ...tile, status: "not set" })));
-  }
-
-  const Tiles = () => {
-    const draggableExpressionTiles = (
-      <div className="draggable_tiles_wrapper" data-operands={gamemodeSettings.numOperands} ref={parent}>
-        {expressionTiles.map((tile) => (
-          <DraggableItem key={tile.id} id={tile.id}>
-            <LetterTile letter={tile.expression} status={tile.status} settings={props.settings} />
-          </DraggableItem>
-        ))}
-      </div>
-    );
-
-    const draggableResultTiles = (
-      <div className="draggable_tiles_wrapper" data-operands={gamemodeSettings.numOperands} ref={parent}>
-        {resultTiles.map((tile) => (
-          <DraggableItem key={tile.id} id={tile.id}>
-            <LetterTile letter={tile.total.toString()} status={tile.status} settings={props.settings} />
-          </DraggableItem>
-        ))}
-      </div>
-    );
-
-    return (
-      <div className="tile_row">
-        <DndContext
-          sensors={sensors}
-          collisionDetection={closestCenter}
-          onDragEnd={(event) => handleDragEnd(event, expressionTiles, resultTiles, setExpressionTiles, setResultTiles)}
-        >
-          <SortableContext items={expressionTiles} strategy={verticalListSortingStrategy}>
-            {draggableExpressionTiles}
-          </SortableContext>
-        </DndContext>
-
-        {props.mode === "match" && (
-          <DndContext
-            sensors={sensors}
-            collisionDetection={closestCenter}
-            onDragEnd={(event) =>
-              handleDragEnd(event, resultTiles, expressionTiles, setResultTiles, setExpressionTiles)
-            }
-          >
-            <SortableContext items={resultTiles} strategy={verticalListSortingStrategy}>
-              {draggableResultTiles}
-            </SortableContext>
-          </DndContext>
-        )}
-      </div>
-    );
-  };
-
   function checkTiles() {
     const tileTotals = expressionTiles.map((x) => x.total);
 
@@ -607,7 +489,13 @@ const ArithmeticDrag = (props: Props) => {
 
       {inProgress && <MessageNotification type="default">{`Guesses left: ${remainingGuesses}`}</MessageNotification>}
 
-      <Tiles />
+      <ArithmeticDragTiles
+        {...props}
+        expressionTiles={expressionTiles}
+        resultTiles={resultTiles}
+        setExpressionTiles={setExpressionTiles}
+        setResultTiles={setResultTiles}
+      />
 
       {inProgress && (
         <Button
