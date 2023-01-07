@@ -220,8 +220,6 @@ const Wingo = (props: WingoProps) => {
       return;
     }
 
-    debugger;
-
     const intervalId = setInterval(
       () =>
         isDailyMode(location)
@@ -262,7 +260,6 @@ const Wingo = (props: WingoProps) => {
     props.updateGamemodeSettings(newGamemodeSettings);
   };
 
-  debugger;
   return (
     <div
       className="App"
