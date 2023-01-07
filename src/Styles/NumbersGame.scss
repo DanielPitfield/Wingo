@@ -87,3 +87,55 @@
     min-width: 20em;
   }
 }
+
+.numbers-game {
+  position: relative;
+  .numbers-game-grid {
+    margin-bottom: 20em;
+  }
+  .game-panel {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    bottom: 5vh;
+    width: 25em;
+    margin: 3em;
+    .button-section,
+    .timer-section {
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      padding: 1em;
+      /* From https://css.glass */
+      background: #ffffff33;
+      border-radius: 2px;
+      box-shadow: 0 4px 30px #0000001a;
+      backdrop-filter: blur(5px);
+      border: 1px solid #ffffff4d;
+      margin-bottom: 1em;
+      .progress_bar {
+        margin-top: 0;
+      }
+    }
+  }
+  .info-panel {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    top: 0;
+    bottom: 0;
+    right: 10vw;
+    max-width: 20em;
+    margin: 3em;
+    padding: 2em;
+    /* From https://css.glass */
+    background: #ffffff33;
+    border-radius: 2px;
+    box-shadow: 0 4px 30px #0000001a;
+    backdrop-filter: blur(5px);
+    border: 1px solid #ffffff4d;
+  }
+}

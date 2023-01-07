@@ -278,50 +278,54 @@ const NumbersGame = (props: NumbersGameProps) => {
 
   return (
     <div
-      className="App"
+      className="App numbers-game"
       style={{ backgroundImage: `url(${props.theme.backgroundImageSrc})`, backgroundSize: "100% 100%" }}
     >
-      {!props.campaignConfig.isCampaignLevel && (
-        <div className="gamemodeSettings">
-          <NumbersGameGamemodeSettings
-            gamemodeSettings={props.gamemodeSettings}
-            handleSimpleGamemodeSettingsChange={handleSimpleGamemodeSettingsChange}
-            handleTimerToggle={handleTimerToggle}
-            resetCountdown={props.resetCountdown}
-            setTotalSeconds={props.setTotalSeconds}
-            onLoadPresetGamemodeSettings={props.updateGamemodeSettings}
-            onShowOfAddPresetModal={() => {}}
-            onHideOfAddPresetModal={() => {}}
-          />
-        </div>
-      )}
-
-      <Outcome />
-
       <NumbersGameGrid {...props} />
 
       {props.inProgress && (
-        <>
-          <Button mode="destructive" onClick={props.onBackspace} settings={props.settings}>
-            Undo
-          </Button>
-          <Button mode="destructive" onClick={props.clearGrid} settings={props.settings}>
-            Clear
-          </Button>
-          <Button mode="default" onClick={props.submitBestGuess} settings={props.settings}>
-            Use Best Guess
-          </Button>
-        </>
+        <div className="game-panel">
+          <div className="button-section">
+            <Button mode="destructive" onClick={props.onBackspace} settings={props.settings}>
+              Undo
+            </Button>
+            <Button mode="destructive" onClick={props.clearGrid} settings={props.settings}>
+              Clear
+            </Button>
+            <Button mode="default" onClick={props.submitBestGuess} settings={props.settings}>
+              Use Best Guess
+            </Button>
+          </div>
+          
+          <div className="timer-section">
+            {props.gamemodeSettings.timerConfig.isTimed && (
+              <ProgressBar
+                progress={props.remainingSeconds}
+                total={props.gamemodeSettings.timerConfig.seconds}
+                display={{ type: "transition", colorTransition: GreenToRedColorTransition }}
+              />
+            )}
+          </div>
+        </div>
       )}
 
-      <div>
-        {props.gamemodeSettings.timerConfig.isTimed && (
-          <ProgressBar
-            progress={props.remainingSeconds}
-            total={props.gamemodeSettings.timerConfig.seconds}
-            display={{ type: "transition", colorTransition: GreenToRedColorTransition }}
-          />
+      <div className="info-panel">
+        {!props.campaignConfig.isCampaignLevel && (
+          <div className="gamemodeSettings">
+            <NumbersGameGamemodeSettings
+              gamemodeSettings={props.gamemodeSettings}
+              handleSimpleGamemodeSettingsChange={handleSimpleGamemodeSettingsChange}
+              handleTimerToggle={handleTimerToggle}
+              resetCountdown={props.resetCountdown}
+              setTotalSeconds={props.setTotalSeconds}
+              onLoadPresetGamemodeSettings={props.updateGamemodeSettings}
+              onShowOfAddPresetModal={() => {}}
+              onHideOfAddPresetModal={() => {}}
+            />
+          </div>
         )}
+
+        <Outcome />
       </div>
     </div>
   );
