@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Wingo from "./Wingo";
 import { Theme } from "../Data/Themes";
 import WingoInterlinked from "./WingoInterlinked";
@@ -105,6 +105,7 @@ interface Props extends WingoConfigProps {
   setTheme: (theme: Theme) => void;
   addGold: (gold: number) => void;
   onComplete: (wasCorrect: boolean) => void;
+  onResetGame: () => void;
 }
 
 export type TargetWordMapping = { word: string; canBeTargetWord: boolean };
@@ -118,6 +119,9 @@ const DEFAULT_LETTER_STATUSES: LetterTileStatus[] = [...DEFAULT_ALPHABET, "-", "
   letter: x,
   status: "not set",
 }));
+
+// Modes to perform a full destroy/re-build reset
+const HARD_RESET_MODES: WingoMode[] = ["repeat", "puzzle", "category"];
 
 const WingoConfig = (props: Props) => {
   const location = useLocation().pathname as PagePath;
@@ -605,6 +609,10 @@ const WingoConfig = (props: Props) => {
       // Reset the timer if it is enabled in the game options
       resetCountdown();
     }
+
+    if (HARD_RESET_MODES.includes(props.mode)) {
+      props.onResetGame();
+    }
   }
 
   function ContinueGame() {
@@ -933,4 +941,38 @@ const WingoConfig = (props: Props) => {
   );
 };
 
-export default WingoConfig;
+// Wrapper to easily reset a Wingo game
+const WingoConfigWithResetWrapper = (props: Omit<Props, "onResetGame">) => {
+  // Number of milliseconds to ignore a ResetGame request after a preivous reset
+  // (to avoid an error with re-render limit, as ResetGame is often called in many
+  // modes of WingoConfig on initialisation)
+  const DEBOUNCE_MS = 1500;
+
+  const [resetKey, setResetKey] = useState(new Date().toISOString());
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  // Add a timeout on reset of the WingoConfig to mark the element as loaded
+  useEffect(() => {
+    const timeoutId = window.setTimeout(() => setIsLoaded(true), DEBOUNCE_MS);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [setIsLoaded, resetKey]);
+
+  return (
+    <WingoConfig
+      // Set a unique key (on change of this, the entire WingoConfig component is destroyed and rebuilt)
+      key={resetKey}
+      {...props}
+      onResetGame={() => {
+        // Only if the element is loaded (to avoid an error with re-render limit,
+        // as ResetGame is often called in many modes of WingoConfig on initialisation)
+        if (isLoaded) {
+          setResetKey(new Date().toISOString());
+          setIsLoaded(false);
+        }
+      }}
+    />
+  );
+};
+
+export default WingoConfigWithResetWrapper;
