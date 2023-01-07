@@ -50,7 +50,6 @@ interface WingoProps {
   settings: SettingsData;
   onEnter: () => void;
   onSubmitLetter: (letter: string) => void;
-  onSubmitTargetCategory: (category: string) => void;
   onBackspace: () => void;
 
   updateGamemodeSettings: (newGamemodeSettings: WingoConfigProps["gamemodeSettings"]) => void;
@@ -66,6 +65,7 @@ const Wingo = (props: WingoProps) => {
   const location = useLocation().pathname as PagePath;
 
   const [keyboardDisabled, setKeyboardDisabled] = useState(false);
+  const [categoryCanBeChanged, setCategoryCanBeChanged] = useState(false);
 
   const [timeUntilDailyReset, setTimeUntilDailyReset] = useState(getTimeUntilPeriodicReset("Day"));
   const [timeUntilWeeklyReset, setTimeUntilWeeklyReset] = useState(getTimeUntilPeriodicReset("Week"));
@@ -154,6 +154,15 @@ const Wingo = (props: WingoProps) => {
     };
   }, [props.mode, props.inProgress]);
 
+  // Set a boolean determining whether the category can be changed yet
+  React.useEffect(() => {
+    const timeoutId = window.setTimeout(() => {
+      setCategoryCanBeChanged(true);
+    }, 1500);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [setCategoryCanBeChanged]);
+
   const handleMaxLivesToggle = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newGamemodeSettings: WingoConfigProps["gamemodeSettings"] = {
       ...props.gamemodeSettings,
@@ -234,21 +243,12 @@ const Wingo = (props: WingoProps) => {
           <MessageNotification type="default">
             <div className="category_selection">
               <label className="category_label">
-                <strong>Category</strong>{" "}
-                <select
-                  onChange={(event) => {
-                    props.onSubmitTargetCategory(event.target.value);
-                  }}
-                  className="category_input"
-                  name="category"
-                  value={props.targetCategory}
-                >
-                  {categoryMappings.map((category) => (
-                    <option key={category.name} value={category.name}>
-                      {category.name}
-                    </option>
-                  ))}
-                </select>
+                <span>
+                  <strong>Category</strong>: {props.targetCategory}
+                </span>
+                <Button mode="accept" onClick={() => props.ResetGame()} disabled={!categoryCanBeChanged}>
+                  New category
+                </Button>
               </label>
             </div>
           </MessageNotification>

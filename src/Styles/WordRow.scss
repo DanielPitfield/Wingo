@@ -22,12 +22,9 @@
 .category_label {
   display: flex;
   align-items: center;
-  strong {
-    margin-right: 0.5em;
-    margin-bottom: 0.1em;
-  }
-  select {
-    flex-grow: 1;
+  .btn {
+    font-size: 0.9em;
+    margin-left: 1em;
   }
 }
 

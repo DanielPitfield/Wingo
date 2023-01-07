@@ -35,7 +35,6 @@ interface IWingoGridProps {
   settings: SettingsData;
   onEnter: () => void;
   onSubmitLetter: (letter: string) => void;
-  onSubmitTargetCategory: (category: string) => void;
   onBackspace: () => void;
 
   updateGamemodeSettings: (newGamemodeSettings: WingoConfigProps["gamemodeSettings"]) => void;

@@ -786,12 +786,6 @@ const WingoConfig = (props: Props) => {
     }
   }
 
-  function onSubmitTargetCategory(category: string) {
-    if (categoryMappings.find((x) => x.name === category)) {
-      setTargetCategory(category);
-    }
-  }
-
   function onBackspace() {
     setErrorMessage({ isShown: false as false });
 
@@ -929,7 +923,6 @@ const WingoConfig = (props: Props) => {
       settings={props.settings}
       onEnter={onEnter}
       onSubmitLetter={onSubmitLetter}
-      onSubmitTargetCategory={onSubmitTargetCategory}
       onBackspace={onBackspace}
       updateGamemodeSettings={updateGamemodeSettings}
       resetCountdown={resetCountdown}
