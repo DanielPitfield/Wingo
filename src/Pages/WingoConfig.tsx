@@ -590,7 +590,7 @@ const WingoConfig = (props: Props) => {
     // Update word (when first letter provided setting is changed)
     const newCurrentWord = gamemodeSettings.isFirstLetterProvided ? targetWord.charAt(0) : "";
     setCurrentWord(newCurrentWord);
-
+    setErrorMessage({ isShown: false });
     setGuesses([]);
     setRemainingGuesses(gamemodeSettings.startingNumGuesses);
     setWordIndex(0);
