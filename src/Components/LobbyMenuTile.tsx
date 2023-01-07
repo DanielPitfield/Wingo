@@ -2,6 +2,7 @@ import { BsInfoCircleFill } from "react-icons/bs";
 import { useNavigate } from "react-router-dom";
 import { PageDescription } from "../Data/PageDescriptions";
 import { SettingsData } from "../Data/SaveData/Settings";
+import { useClickChime } from "../Data/Sounds";
 
 interface LobbyMenuTileProps {
   page: PageDescription;
@@ -10,9 +11,17 @@ interface LobbyMenuTileProps {
 
 const LobbyMenuTile = (props: LobbyMenuTileProps) => {
   const navigate = useNavigate();
-  
+  const [playClickSoundEffect] = useClickChime(props.settings);
+
   return (
-    <div className="widget" key={props.page.title} onClick={() => navigate(props.page.path)}>
+    <div
+      className="widget"
+      key={props.page.title}
+      onClick={() => {
+        navigate(props.page.path);
+        playClickSoundEffect();
+      }}
+    >
       {props.page.icon ? <props.page.icon className="widget-icon" /> : <BsInfoCircleFill className="widget-icon" />}
 
       <div className="widget-header">
