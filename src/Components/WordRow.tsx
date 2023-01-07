@@ -33,19 +33,6 @@ const WordRow = (props: WordRowProps) => {
       return false;
     }
 
-    if (location === "/Wingo/Puzzle" || location === "/Conundrum") {
-      return (
-        // A read only WordRow
-        props.isReadOnly &&
-        // Which has letters periodically revealing
-        props.revealedLetterIndexes !== undefined &&
-        // The letter has been revealed
-        props.revealedLetterIndexes.includes(letterIndex) &&
-        // Is the most recently revealed letter? (otherwise previously revealed letters will have the animation again)
-        letterIndex === props.revealedLetterIndexes.at(-1)
-      );
-    }
-
     return true;
   };
 

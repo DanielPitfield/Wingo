@@ -19,6 +19,7 @@ import { getTimeUntilPeriodicReset } from "../Helpers/getTimeUntilPeriodicReset"
 import { useLocation } from "react-router-dom";
 import { PagePath } from "../Data/PageNames";
 import { isDailyMode, isTimePeriodicMode, isWeeklyMode } from "../Helpers/isTimePeriodicMode";
+import WingoGrid from "../Components/WIngoGrid";
 
 interface WingoProps {
   isCampaignLevel: boolean;
@@ -78,121 +79,6 @@ const Wingo = (props: WingoProps) => {
       ? props.gamemodeSettings?.maxLivesConfig?.maxLives
       : DEFAULT_WINGO_INCREASING_MAX_NUM_LIVES
   );
-
-  const isModeWithDisplayRow = (): boolean => {
-    const modesWithDisplayRow: typeof props.mode[] = ["puzzle", "conundrum"];
-    return modesWithDisplayRow.includes(props.mode);
-  };
-
-  const DisplayRow = () => {
-    if (!isModeWithDisplayRow()) {
-      return null;
-    }
-
-    if (props.mode === "puzzle") {
-      let displayWord = "";
-
-      for (let i = 0; i < props.targetWord.length; i++) {
-        if (props.revealedLetterIndexes.includes(i)) {
-          displayWord += props.targetWord[i];
-        } else {
-          displayWord += " ";
-        }
-      }
-
-      // Return a read only WordRow that slowly reveals puzzle word
-      return (
-        <WordRow
-          key={"wingo/read-only"}
-          isReadOnly={true}
-          inProgress={props.inProgress}
-          word={displayWord}
-          length={props.gamemodeSettings.wordLength}
-          targetWord={props.targetWord}
-          revealedLetterIndexes={props.revealedLetterIndexes}
-          hasSubmit={true}
-          inDictionary={props.inDictionary}
-          settings={props.settings}
-          applyAnimation={false}
-        />
-      );
-    }
-
-    if (props.mode === "conundrum" && props.conundrum !== undefined) {
-      // Return a read only WordRow that reveals conundrum
-      return (
-        <WordRow
-          key={"conundrum/read-only"}
-          isReadOnly={true}
-          inProgress={props.inProgress}
-          word={props.conundrum}
-          length={props.gamemodeSettings.wordLength}
-          targetWord={props.targetWord}
-          revealedLetterIndexes={props.revealedLetterIndexes}
-          hasSubmit={true}
-          inDictionary={props.inDictionary}
-          settings={props.settings}
-          applyAnimation={false}
-        />
-      );
-    }
-
-    return null;
-  };
-
-  const Grid = () => {
-    const Grid = [];
-
-    // Puzzle/Conundrum display row
-    if (isModeWithDisplayRow()) {
-      Grid.push(<DisplayRow key={`${props.mode}-display-row`} />);
-    }
-
-    for (let i = 0; i < props.gamemodeSettings.startingNumGuesses; i++) {
-      let word;
-
-      if (props.wordIndex < i) {
-        /*
-        If the wordIndex is behind the currently iterated row
-        (i.e the row has not been used yet)
-        Show an empty string 
-        */
-        word = "";
-      } else if (props.wordIndex === i) {
-        /* 
-        If the wordIndex and the row number are the same
-        (i.e the row is currently being used)
-        Show the currentWord
-        */
-        word = props.currentWord;
-      } else {
-        /* 
-        If the wordIndex is ahead of the currently iterated row
-        (i.e the row has already been used)
-        Show the respective guessed word
-        */
-        word = props.guesses[i];
-      }
-
-      Grid.push(
-        <WordRow
-          key={`wingo/row/${i}`}
-          isReadOnly={false}
-          inProgress={props.inProgress}
-          word={word}
-          length={props.gamemodeSettings.wordLength}
-          targetWord={props.targetWord}
-          hasSubmit={props.wordIndex > i || !props.inProgress}
-          inDictionary={props.inDictionary}
-          isIncompleteWord={props.isIncompleteWord}
-          applyAnimation={props.wordIndex === i}
-          settings={props.settings}
-        />
-      );
-    }
-
-    return <div className="word_grid">{Grid}</div>;
-  };
 
   React.useEffect(() => {
     if (props.inProgress) {
@@ -334,6 +220,8 @@ const Wingo = (props: WingoProps) => {
       return;
     }
 
+    debugger;
+
     const intervalId = setInterval(
       () =>
         isDailyMode(location)
@@ -374,6 +262,7 @@ const Wingo = (props: WingoProps) => {
     props.updateGamemodeSettings(newGamemodeSettings);
   };
 
+  debugger;
   return (
     <div
       className="App"
@@ -459,7 +348,7 @@ const Wingo = (props: WingoProps) => {
         </MessageNotification>
       )}
 
-      <Grid />
+      <WingoGrid {...props} />
 
       <Keyboard
         onEnter={props.onEnter}
