@@ -2,21 +2,18 @@ import React, { useState } from "react";
 import Button from "../Components/Button";
 import MessageNotification from "../Components/MessageNotification";
 import ProgressBar, { GreenToRedColorTransition } from "../Components/ProgressBar";
-import NumberRow from "../Components/NumberRow";
-import NumberTile from "../Components/NumberTile";
-import { Guess, IntermediaryTileStatus, NumbersGameConfigProps, NumberTileStatus } from "./NumbersGameConfig";
-import NumberSelectionRow from "../Components/NumberSelectionRow";
+import { Guess, NumbersGameConfigProps, NumberTileStatus } from "./NumbersGameConfig";
 import { Theme } from "../Data/Themes";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
-import { DEFAULT_NUMBERS_GAME_NUM_ROWS } from "../Data/DefaultGamemodeSettings";
-import { getRandomElementFrom } from "../Helpers/getRandomElementFrom";
 import { hasNumberSelectionFinished } from "../Helpers/hasNumberSelectionFinished";
-import { hasNumberSelectionStarted } from "../Helpers/hasNumberSelectionStarted";
 import { NumberPuzzleValue, NumberPuzzle } from "../Helpers/NumbersGameSolver";
 import { getNumbersGameScore } from "../Helpers/getNumbersGameScore";
 import { getNewGamemodeSettingValue } from "../Helpers/getGamemodeSettingsNewValue";
 import NumbersGameGamemodeSettings from "../Components/GamemodeSettingsOptions/NumbersGameGamemodeSettings";
 import { SettingsData } from "../Data/SaveData/Settings";
+import { getRandomBigNumber } from "../Helpers/getRandomBigNumber";
+import { getRandomSmallNumber } from "../Helpers/getRandomSmallNumber";
+import NumbersGameGrid from "../Components/NumbersGameGrid";
 
 interface NumbersGameProps {
   campaignConfig: NumbersGameConfigProps["campaignConfig"];
@@ -89,10 +86,7 @@ const NumbersGame = (props: NumbersGameProps) => {
       return null;
     }
 
-    // The numbers 1 through 10
-    const smallNumbers = Array.from({ length: 10 }, (_, i) => i + 1);
-
-    return getRandomElementFrom(smallNumbers);
+    return getRandomSmallNumber();
   }
 
   function getBigNumber(): number | null {
@@ -100,119 +94,8 @@ const NumbersGame = (props: NumbersGameProps) => {
       return null;
     }
 
-    const bigNumbers = props.gamemodeSettings.hasScaryNumbers
-      ? // The numbers 1 to 99 (without multiples of 10 becuase they would be too easy)
-        Array.from({ length: 99 }, (_, i) => i + 1).filter((number) => number % 10 !== 0)
-      : // The four standard big numbers
-        [25, 50, 75, 100];
-
-    return getRandomElementFrom(bigNumbers);
+    return getRandomBigNumber(props.gamemodeSettings.hasScaryNumbers);
   }
-
-  // Automatically choose a selection of small or big numbers
-  function quickNumberSelection() {
-    let newNumbersGameSelection = [];
-
-    // Build selection by randomly adding small numbers or big numbers
-    for (let i = 0; i < props.gamemodeSettings.numOperands; i++) {
-      let x = Math.floor(Math.random() * 3) === 0;
-      // 66% chance small number, 33% chance big number
-      if (x) {
-        newNumbersGameSelection.push(getBigNumber()!);
-      } else {
-        newNumbersGameSelection.push(getSmallNumber()!);
-      }
-    }
-    // Set the entire expression at once
-    props.onSubmitNumbersGameSelection(newNumbersGameSelection);
-  }
-
-  const Grid = () => {
-    const Grid = [];
-
-    const isSelectionFinished = hasNumberSelectionFinished(
-      props.numberTileStatuses,
-      props.gamemodeSettings.numOperands
-    );
-
-    Grid.push(
-      <div className="numbers-game-wrapper">
-        <div className="target-number">
-          <NumberTile number={isSelectionFinished ? props.targetNumber : null} disabled={true} isReadOnly={true} />
-        </div>
-
-        <NumberSelectionRow
-          key={"number_selection"}
-          // The original tiles are disabled when selection has not yet finished
-          disabled={!props.inProgress || !isSelectionFinished}
-          onClick={props.onClick}
-          numberTileStatuses={props.numberTileStatuses}
-        />
-
-        <div className="add-number-buttons-wrapper">
-          <Button
-            className="add-number-buttons"
-            mode={"default"}
-            settings={props.settings}
-            disabled={isSelectionFinished}
-            onClick={() => props.onSubmitNumbersGameNumber(getSmallNumber()!)}
-          >
-            Small
-          </Button>
-
-          <Button
-            className="add-number-buttons"
-            mode={"default"}
-            settings={props.settings}
-            disabled={isSelectionFinished}
-            onClick={() => props.onSubmitNumbersGameNumber(getBigNumber()!)}
-          >
-            Big
-          </Button>
-
-          <Button
-            className="add-number-buttons"
-            mode={"default"}
-            settings={props.settings}
-            disabled={hasNumberSelectionStarted(props.numberTileStatuses) || isSelectionFinished}
-            onClick={quickNumberSelection}
-          >
-            Quick Pick
-          </Button>
-        </div>
-      </div>
-    );
-
-    for (let i = 0; i < Math.max(DEFAULT_NUMBERS_GAME_NUM_ROWS, props.wordIndex + 1); i++) {
-      let guess: Guess;
-
-      if (props.wordIndex === i) {
-        guess = props.currentGuess;
-      } else if (props.wordIndex <= i) {
-        guess = { operand1: null, operand2: null, operator: "+" };
-      } else {
-        guess = props.guesses[i];
-      }
-
-      Grid.push(
-        <NumberRow
-          key={`numbers-game-input-rpw-${i}`}
-          onClick={props.onClick}
-          expression={guess}
-          targetNumber={props.targetNumber}
-          hasSubmit={!props.inProgress}
-          setOperator={props.setOperator}
-          disabled={!props.inProgress || !isSelectionFinished || i > props.wordIndex}
-          rowIndex={i}
-          intermediaryTileStatuses={
-            props.numberTileStatuses.filter((x) => x.type === "intermediary") as IntermediaryTileStatus[]
-          }
-        />
-      );
-    }
-
-    return <div className="numbers-game-grid">{Grid}</div>;
-  };
 
   const RoundScoreDisplay = () => {
     if (props.inProgress) {
@@ -415,7 +298,7 @@ const NumbersGame = (props: NumbersGameProps) => {
 
       <Outcome />
 
-      <Grid />
+      <NumbersGameGrid {...props} />
 
       {props.inProgress && (
         <>
