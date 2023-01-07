@@ -335,6 +335,8 @@ const ArithmeticReveal = (props: Props) => {
         });
         setTargetTransitioned(true);
       }
+
+      playLightPingSoundEffect();
     }, gamemodeSettings.revealIntervalSeconds * 1000);
 
     return () => clearInterval(intervalId);
@@ -397,6 +399,14 @@ const ArithmeticReveal = (props: Props) => {
   const Outcome = () => {
     if (inProgress) {
       return null;
+    }
+
+    stopCountdown();
+
+    if (isGuessCorrect()) {
+      playCorrectChimeSoundEffect();
+    } else {
+      playFailureChimeSoundEffect();
     }
 
     const numCorrectAnswers = isGuessCorrect() ? currentCheckpointIndex + 1 : currentCheckpointIndex;
