@@ -166,7 +166,7 @@ const LettersGame = (props: LettersGameProps) => {
           inDictionary={props.inDictionary}
           letterStatuses={[]}
           settings={props.settings}
-          disabled={keyboardDisabled || !props.inProgress}
+          disabled={keyboardDisabled || !props.inProgress || !props.hasLetterSelectionFinished}
           hasBackspace={true}
           hasEnter={true}
         />
