@@ -50,7 +50,12 @@ $data-statuses: (
 @each $status, $colour in $data-statuses {
   .letter_tile[data-status="#{$status}"] {
     color: white;
-    background-color: $colour;
+    @if ($status == "not in word") {
+      background-color: $colour;
+    } @else {
+      // Add !important to overwrite any custom colors from the Letters Game and Numbers Game
+      background-color: $colour !important;
+    }
     box-shadow: 0px 3px 2px 0px darken($colour, 20%);
     text-shadow: 0 4px 1px darken($colour, 12%);
     &[data-disabled="false"]:hover {
@@ -98,6 +103,11 @@ $data-statuses: (
       }
     }
   }
+}
+
+.letters-game-wrapper > .word_row > .letter_tile[data-disabled="true"] {
+  // As an exception, show the letters on the guess word row for letters game as slightly brighter, as this is the main row to look at when guessing
+  opacity: 1;
 }
 
 // For when checking a guess in Wingo (each letter tile flips to reveal status)

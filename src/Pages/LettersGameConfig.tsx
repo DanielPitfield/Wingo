@@ -130,6 +130,7 @@ const LettersGameConfig = (props: Props) => {
       stopCountdown();
       playFailureChimeSoundEffect();
       setInProgress(false);
+      setCurrentWord("");
     }
   }, [inProgress, gamemodeSettings.timerConfig.isTimed, hasLetterSelectionFinished, remainingSeconds]);
 

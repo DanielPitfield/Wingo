@@ -279,16 +279,16 @@ const NumbersGame = (props: NumbersGameProps) => {
               Use Best Guess
             </Button>
           </div>
-          
-          <div className="timer-section">
-            {props.gamemodeSettings.timerConfig.isTimed && (
+
+          {props.gamemodeSettings.timerConfig.isTimed && props.remainingSeconds > 0 && (
+            <div className="timer-section">
               <ProgressBar
                 progress={props.remainingSeconds}
                 total={props.gamemodeSettings.timerConfig.seconds}
                 display={{ type: "transition", colorTransition: GreenToRedColorTransition }}
               />
-            )}
-          </div>
+            </div>
+          )}
         </div>
       )}
 

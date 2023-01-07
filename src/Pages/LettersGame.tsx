@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import  Button  from "../Components/Button";
+import Button from "../Components/Button";
 import LettersGameGamemodeSettings from "../Components/GamemodeSettingsOptions/LettersGameGamemodeSettings";
-import  Keyboard  from "../Components/Keyboard";
+import Keyboard from "../Components/Keyboard";
 import { LEVEL_FINISHING_TEXT } from "../Components/Level";
-import  MessageNotification  from "../Components/MessageNotification";
+import MessageNotification from "../Components/MessageNotification";
 import ProgressBar, { GreenToRedColorTransition } from "../Components/ProgressBar";
 import { PagePath } from "../Data/PageNames";
 import { Theme } from "../Data/Themes";
@@ -11,8 +11,6 @@ import { getGamemodeDefaultTimerValue } from "../Helpers/getGamemodeDefaultTimer
 import { getNewGamemodeSettingValue } from "../Helpers/getGamemodeSettingsNewValue";
 import { LettersGameConfigProps, LettersGameTileStatus } from "./LettersGameConfig";
 import { useLocation } from "react-router-dom";
-import { getWeightedLetter } from "../Helpers/getWeightedLetter";
-import { consonantWeightings, vowelWeightings } from "../Data/LettersGameWeightings";
 import { getBestLettersGameWords } from "../Helpers/getBestLettersGameWords";
 import { SettingsData } from "../Data/SaveData/Settings";
 import LettersGameGrid from "../Components/LettersGameGrid";
@@ -74,7 +72,6 @@ const LettersGame = (props: LettersGameProps) => {
       .join("");
   };
 
-
   const Outcome = () => {
     // Game has not yet ended (currently only when when timer runs out)
     if (props.inProgress) {
@@ -88,19 +85,35 @@ const LettersGame = (props: LettersGameProps) => {
     const bestWords = getBestLettersGameWords(getSelectionWord());
 
     // Create a list of the longest words that can be made with the available letters
-    const bestWordsList = (
-      <ul className="best_words_list">
-        {bestWords.map((bestWord) => (
-          <li key={bestWord}>{bestWord}</li>
-        ))}
-      </ul>
+    const bestWordsList = bestWords.length > 0 && (
+      <>
+        <br />
+        <span>Best possible words:</span>
+        <ul className="best_words_list">
+          {bestWords.map((bestWord) => (
+            <li key={bestWord}>{bestWord}</li>
+          ))}
+        </ul>
+      </>
     );
+
+    if (!bestGuess) {
+      return (
+        <MessageNotification type="error">
+          <strong>No valid guess was made</strong>
+          <br />
+          <span>0 points</span>
+          <br />
+          {bestWordsList}
+        </MessageNotification>
+      );
+    }
 
     return (
       <MessageNotification type="success">
-        <strong>{bestGuess ? bestGuess.toUpperCase() : "No guess was made"}</strong>
+        <strong>{bestGuess.toUpperCase()}</strong>
         <br />
-        <strong>{bestGuess ? bestGuess.length : "0"} points</strong>
+        <span>{bestGuess.length} points</span>
         <br />
         {bestWordsList}
       </MessageNotification>
@@ -138,72 +151,75 @@ const LettersGame = (props: LettersGameProps) => {
 
   return (
     <div
-      className="App"
+      className="App letters-game"
       style={{ backgroundImage: `url(${props.theme.backgroundImageSrc})`, backgroundSize: "100% 100%" }}
     >
-      {!props.campaignConfig.isCampaignLevel && (
-        <div className="gamemodeSettings">
-          <LettersGameGamemodeSettings
-            gamemodeSettings={props.gamemodeSettings}
-            handleSimpleGamemodeSettingsChange={handleSimpleGamemodeSettingsChange}
-            handleTimerToggle={handleTimerToggle}
-            resetCountdown={props.resetCountdown}
-            setTotalSeconds={props.setTotalSeconds}
-            onLoadPresetGamemodeSettings={props.updateGamemodeSettings}
-            onShowOfAddPresetModal={() => setKeyboardDisabled(true)}
-            onHideOfAddPresetModal={() => setKeyboardDisabled(false)}
-          />
+      <div className="letters-game-grid">
+        <LettersGameGrid {...props} />
+
+        <Keyboard
+          onEnter={props.onEnter}
+          onSubmitLetter={props.onSubmitKeyboardLetter}
+          onBackspace={props.onBackspace}
+          guesses={props.guesses}
+          targetWord={props.targetWord}
+          inDictionary={props.inDictionary}
+          letterStatuses={[]}
+          settings={props.settings}
+          disabled={keyboardDisabled || !props.inProgress}
+          hasBackspace={true}
+          hasEnter={true}
+        />
+      </div>
+
+      {props.gamemodeSettings.timerConfig.isTimed && props.remainingSeconds > 0 && (
+        <div className="game-panel">
+          <div className="timer-section">
+            <ProgressBar
+              progress={props.remainingSeconds}
+              total={props.gamemodeSettings.timerConfig.seconds}
+              display={{ type: "transition", colorTransition: GreenToRedColorTransition }}
+            />
+          </div>
         </div>
       )}
 
-      <Outcome />
-
-      <div>
-        {!props.inProgress && props.remainingSeconds <= 0 && (
-          <Button
-            mode={"accept"}
-            settings={props.settings}
-            // Reset the game (but callback the score that was just achieved)
-            onClick={props.ResetGame}
-            additionalProps={{ autoFocus: true }}
-          >
-            {props.campaignConfig.isCampaignLevel
-              ? LEVEL_FINISHING_TEXT
-              : "Restart"}
-          </Button>
+      <div className="info-panel">
+        {!props.campaignConfig.isCampaignLevel && (
+          <div className="gamemodeSettings">
+            <LettersGameGamemodeSettings
+              gamemodeSettings={props.gamemodeSettings}
+              handleSimpleGamemodeSettingsChange={handleSimpleGamemodeSettingsChange}
+              handleTimerToggle={handleTimerToggle}
+              resetCountdown={props.resetCountdown}
+              setTotalSeconds={props.setTotalSeconds}
+              onLoadPresetGamemodeSettings={props.updateGamemodeSettings}
+              onShowOfAddPresetModal={() => setKeyboardDisabled(true)}
+              onHideOfAddPresetModal={() => setKeyboardDisabled(false)}
+            />
+          </div>
         )}
-      </div>
 
-      <LettersGameGrid {...props} />
+        <Outcome />
 
-      <Keyboard
-        onEnter={props.onEnter}
-        onSubmitLetter={props.onSubmitKeyboardLetter}
-        onBackspace={props.onBackspace}
-        guesses={props.guesses}
-        targetWord={props.targetWord}
-        inDictionary={props.inDictionary}
-        letterStatuses={[]}
-        settings={props.settings}
-        disabled={keyboardDisabled || !props.inProgress}
-        hasBackspace={true}
-        hasEnter={true}
-      />
-
-      <div>
-        {props.gamemodeSettings.timerConfig.isTimed && (
-          <ProgressBar
-            progress={props.remainingSeconds}
-            total={props.gamemodeSettings.timerConfig.seconds}
-            display={{ type: "transition", colorTransition: GreenToRedColorTransition }}
-          />
-        )}
-      </div>
-
-      <div className="letters-game-guesses">
-        {props.guesses.map((guess) => (
-          <>{guess}</>
-        ))}
+        <div>
+          {!props.inProgress && props.remainingSeconds <= 0 && (
+            <Button
+              mode={"accept"}
+              settings={props.settings}
+              // Reset the game (but callback the score that was just achieved)
+              onClick={props.ResetGame}
+              additionalProps={{ autoFocus: true }}
+            >
+              {props.campaignConfig.isCampaignLevel ? LEVEL_FINISHING_TEXT : "Restart"}
+            </Button>
+          )}
+        </div>
+        <div className="letters-game-guesses">
+          {props.guesses.map((guess) => (
+            <>{guess}</>
+          ))}
+        </div>
       </div>
     </div>
   );
