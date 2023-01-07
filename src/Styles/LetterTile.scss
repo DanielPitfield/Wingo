@@ -85,6 +85,7 @@ $data-statuses: (
 
 // The letter tiles of Letters Game (read only selection row and input row)
 .letters-game-wrapper .letter_row,
+.conundrum .word_row,
 .letters-game-wrapper .word_row {
   .letter_tile {
     border: none;
@@ -105,6 +106,7 @@ $data-statuses: (
   }
 }
 
+.conundrum .word_row > .letter_tile[data-disabled="true"],
 .letters-game-wrapper > .word_row > .letter_tile[data-disabled="true"] {
   // As an exception, show the letters on the guess word row for letters game as slightly brighter, as this is the main row to look at when guessing
   opacity: 1;

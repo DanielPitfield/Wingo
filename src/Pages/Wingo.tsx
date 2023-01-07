@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import Keyboard from "../Components/Keyboard";
-import WordRow from "../Components/WordRow";
 import Button from "../Components/Button";
 import MessageNotification from "../Components/MessageNotification";
 import ProgressBar, { GreenToRedColorTransition } from "../Components/ProgressBar";
@@ -12,7 +11,6 @@ import { categoryMappings } from "../Data/WordArrayMappings";
 import { getNewGamemodeSettingValue } from "../Helpers/getGamemodeSettingsNewValue";
 import { DEFAULT_WINGO_INCREASING_MAX_NUM_LIVES } from "../Data/DefaultGamemodeSettings";
 import { LetterTileStatus } from "../Components/LetterTile";
-import { getNumNewLimitlessLives } from "../Helpers/getNumNewLimitlessLives";
 import WingoGamemodeSettings from "../Components/GamemodeSettingsOptions/WingoGamemodeSettings";
 import { SettingsData } from "../Data/SaveData/Settings";
 import { getTimeUntilPeriodicReset } from "../Helpers/getTimeUntilPeriodicReset";
@@ -20,6 +18,8 @@ import { useLocation } from "react-router-dom";
 import { PagePath } from "../Data/PageNames";
 import { isDailyMode, isTimePeriodicMode, isWeeklyMode } from "../Helpers/isTimePeriodicMode";
 import WingoGrid from "../Components/WIngoGrid";
+import WingoConundrum from "../Components/WingoConundrum";
+import WingoOutcome from "../Components/WingoOutcome";
 
 interface WingoProps {
   isCampaignLevel: boolean;
@@ -113,85 +113,6 @@ const Wingo = (props: WingoProps) => {
     );
   };
 
-  const Outcome = () => {
-    if (props.inProgress) {
-      return null;
-    }
-
-    if (props.mode === "limitless") {
-      // The number of rows not used in guessing word
-      const newLives = getNumNewLimitlessLives(
-        props.remainingGuesses,
-        props.wordIndex,
-        props.gamemodeSettings.maxLivesConfig
-      );
-
-      if (isCurrentGuessCorrect()) {
-        return (
-          <MessageNotification type="success">
-            <strong>
-              {newLives > 0
-                ? /* Word guessed with rows to spare */ `+${newLives} ${newLives === 1 ? "life" : "lives"}`
-                : /* Word guessed with last guess */ "No lives added"}
-            </strong>
-          </MessageNotification>
-        );
-      }
-
-      return (
-        <MessageNotification type={props.remainingGuesses > 1 ? "default" : "error"}>
-          {props.remainingGuesses <= 1 && (
-            <>
-              <strong>Game Over</strong>
-              <br />
-            </>
-          )}
-          {!props.inDictionary && (
-            <>
-              <strong>{props.currentWord.toUpperCase()}</strong> is not a valid word
-              <br />
-            </>
-          )}
-          {!props.isCampaignLevel && (
-            <>
-              The word was: <strong>{props.targetWord.toUpperCase()}</strong>
-              <br />
-            </>
-          )}
-          <strong>-1 life</strong>
-        </MessageNotification>
-      );
-    }
-
-    return (
-      <MessageNotification type={isCurrentGuessCorrect() ? "success" : "error"}>
-        <strong>{isCurrentGuessCorrect() ? "Correct!" : "Incorrect!"}</strong>
-        <br />
-
-        {!props.inDictionary && (
-          <>
-            <strong>{props.currentWord.toUpperCase()}</strong> is not a valid word
-            <br />
-          </>
-        )}
-
-        {isCurrentGuessCorrect() && (
-          <strong>
-            {props.wordIndex === 0
-              ? "You guessed the word in one guess"
-              : `You guessed the word in ${props.wordIndex + 1} guesses`}
-          </strong>
-        )}
-
-        {!isCurrentGuessCorrect() && !props.isCampaignLevel && (
-          <>
-            The word was: <strong>{props.targetWord.toUpperCase()}</strong>
-          </>
-        )}
-      </MessageNotification>
-    );
-  };
-
   function isOutcomeContinue(): boolean {
     if (props.mode === "increasing") {
       // Correct and next wordLength does not exceed limit
@@ -260,6 +181,24 @@ const Wingo = (props: WingoProps) => {
     props.updateGamemodeSettings(newGamemodeSettings);
   };
 
+  // Show a slightly different UI for conundrum (though it shares the core logic of Wingo.tsx)
+  if (props.mode === "conundrum") {
+    return (
+      <WingoConundrum
+        {...props}
+        handleMaxLivesToggle={handleMaxLivesToggle}
+        handleSimpleGamemodeSettingsChange={handleSimpleGamemodeSettingsChange}
+        handleTimerToggle={handleTimerToggle}
+        keyboardDisabled={keyboardDisabled}
+        setMostRecentMaxLives={setMostRecentMaxLives}
+        setKeyboardDisabled={setKeyboardDisabled}
+        isOutcomeContinue={isOutcomeContinue()}
+        isCurrentGuessCorrect={isCurrentGuessCorrect()}
+      />
+    );
+  }
+
+  // Else; for all other modes
   return (
     <div
       className="App"
@@ -269,7 +208,7 @@ const Wingo = (props: WingoProps) => {
       }}
     >
       <Hint />
-      <Outcome />
+      <WingoOutcome {...props} isCurrentGuessCorrect={isCurrentGuessCorrect()} />
 
       {isDailyMode(location) && !props.inProgress && (
         <MessageNotification type="default">Next Daily reset in: {timeUntilDailyReset}</MessageNotification>
