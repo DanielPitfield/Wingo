@@ -17,7 +17,7 @@ import { SettingsData } from "../Data/SaveData/Settings";
 import { setMostRecentArithmeticDragGamemodeSettings } from "../Data/SaveData/MostRecentGamemodeSettings";
 import { useCountdown } from "usehooks-ts";
 import { useCorrectChime, useFailureChime, useLightPingChime, useClickChime } from "../Data/Sounds";
-import ArithmeticDragTiles from "../Components/ArithmeticragTiles";
+import ArithmeticDragTiles from "../Components/ArithmeticDragTiles";
 
 // Const Contexts: https://stackoverflow.com/questions/44497388/typescript-array-to-string-literal-type
 export const arithmeticNumberSizes = ["small", "medium", "large"] as const;

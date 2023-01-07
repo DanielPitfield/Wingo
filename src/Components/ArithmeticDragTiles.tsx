@@ -1,5 +1,5 @@
-import LetterTile from "../Components/LetterTile";
-import DraggableItem from "../Components/DraggableItem";
+import LetterTile from "./LetterTile";
+import DraggableItem from "./DraggableItem";
 import {
   DndContext,
   closestCenter,
