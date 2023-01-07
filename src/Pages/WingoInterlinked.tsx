@@ -1,6 +1,6 @@
 import LetterTile, { TileStatus } from "../Components/LetterTile";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Theme } from "../Data/Themes";
 import Keyboard from "../Components/Keyboard";
 import Button from "../Components/Button";
@@ -108,7 +108,7 @@ const WingoInterlinked = (props: Props) => {
   );
 
   // Crossword configuration generated when provided with an array of words
-  const [categoryName, setCategoryName] = useState("");
+  const categoryNameRef = useRef(getRandomCategory().name);
   const [gridConfig, setGridConfig] = useState<GridConfig>(generateGridConfig(getTargetWordArray()));
   const [correctGrid, setCorrectGrid] = useState<{ x: number; y: number; letter: string; wordIndex?: number }[]>(
     getCorrectLetterGrid()
@@ -196,6 +196,15 @@ const WingoInterlinked = (props: Props) => {
   // Words and their hints
   const wordHints = getWordHints();
 
+  function getRandomCategory() {
+    const availableCategories =
+      categoryMappings.filter((mapping) => mapping.array.length >= gamemodeSettings.numWords) ?? categoryMappings;
+
+    const category = availableCategories[Math.floor(Math.random() * availableCategories.length)];
+
+    return category;
+  }
+
   function getTargetWordArray(): string[] {
     switch (props.wordArrayConfig.type) {
       case "custom": {
@@ -204,12 +213,11 @@ const WingoInterlinked = (props: Props) => {
       }
 
       case "category": {
-        const availableCategories =
-          categoryMappings.filter((mapping) => mapping.array.length >= gamemodeSettings.numWords) ?? categoryMappings;
+        const chosenCategory = categoryMappings.find((x) => x.name === categoryNameRef.current);
 
-        const chosenCategory = availableCategories[Math.floor(Math.random() * availableCategories.length)];
-
-        //setCategoryName(chosenCategory.name)
+        if (!chosenCategory) {
+          throw new Error(`Failed to find chosen category, categoryName is '${categoryNameRef.current}'`);
+        }
 
         return (
           chosenCategory.array
@@ -1004,11 +1012,11 @@ const WingoInterlinked = (props: Props) => {
 
       <Outcome />
 
-      {inProgress && props.wordArrayConfig.type === "category" && categoryName !== "" && (
+      {inProgress && props.wordArrayConfig.type === "category" && categoryNameRef.current !== "" && (
         <MessageNotification type="info">
           <strong>Current category:</strong>
           <br />
-          {categoryName}
+          {categoryNameRef.current}
         </MessageNotification>
       )}
 
