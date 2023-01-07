@@ -91,7 +91,6 @@ const LevelNode = (props: LevelNodeProps) => {
               <span className="level-status">
                 {isLevelCompleted ? "Completed" : isLevelUnlocked ? "Unlocked!" : "Locked"}
               </span>
-              <span className="level-number">Level {props.levelNumber}</span>
             </strong>
             <p className="level-mode">{levelInfo?.title || levelInfo?.shortTitle}</p>
             <div ref={setArrowElement as any} style={styles.arrow} />
