@@ -23,6 +23,7 @@ import NumbleGamemodeSettings from "../Components/GamemodeSettingsOptions/Numble
 import { useLocation } from "react-router-dom";
 import { PagePath } from "../Data/PageNames";
 import { SettingsData } from "../Data/SaveData/Settings";
+import { useClickChime } from "../Data/Sounds";
 
 interface NumbleProps {
   campaignConfig: NumbleConfigProps["campaignConfig"];
@@ -121,6 +122,9 @@ const Numble = (props: NumbleProps) => {
     { teamNumber: 2, teamName: "Green" },
     { teamNumber: 3, teamName: "Yellow" },
   ];
+
+  // Sounds
+  const [playClickSoundEffect] = useClickChime(props.settings);
 
   React.useEffect(() => {
     ResetGame();
@@ -442,7 +446,10 @@ const Numble = (props: NumbleProps) => {
               data-picked={isPicked}
               data-team-number={pickedPins.find((x) => x.pinNumber === value)?.teamNumber}
               data-colour={getPinColour(value)}
-              onClick={() => onClick(value)}
+              onClick={() => {
+                onClick(value);
+                playClickSoundEffect();
+              }}
               disabled={isPicked || props.status !== "dice-rolled-awaiting-pick"}
             >
               {buttonBody}
