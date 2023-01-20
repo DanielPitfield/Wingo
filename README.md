@@ -1,46 +1,36 @@
-# Getting Started with Create React App
+# Wingo
+A game based on Wordle but with more content (numerous game modes) and better replayability.
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+![TypeScript](https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white)
+![React](https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB)
+![SASS](https://img.shields.io/badge/SASS-hotpink.svg?style=for-the-badge&logo=SASS&logoColor=white)
 
-## Available Scripts
+## Usage / Instructions
+From the main menu, clicking the 'Play' button will navigate to the lobby menu, this is where any of the gamemodes can be selected and played. A shortcut to the campaign as well as navigation to the game's options is also provided.
 
-In the project directory, you can run:
+### Gamemode Settings
+The current settings of the gamemode (things such as word length, difficulty, time limits) can be configured by clicking the 'Gamemode Settings' button below the name of the gamemode in the header. When exiting the gamemode, the most recently used settings will be saved. Additionally, a preset of settings can be saved for future use, just change the settings, provide a name for the preset and click the 'Save Preset' button. This preset can then be loaded at any time by clicking the 'Load Preset' button and selecting the preset by name.
 
-### `npm start`
+Gamemode settings can not be configured for campaign levels!
+### Challenges
+When at the lobby menu (where gamemodes are selected), a list of challenges can be seen towards the right-hand side. Complete these challenges by fulfilling their descriptions/criteria. Once a challenge has been completed, it will shimmer and the reward of gold coins can be collected by clikcing the 'Redeem' button.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+### Campaign
+Whilst any gamemode can be played by selecting it from the lobby menu, there is also a campaign of predetermined levels! These levels are grouped into areas according to their topic or context (for instance, levels within the 'Travel' area may include guessing target words that are countries or cities!). Completing a level unlocks the next level in the area and all levels in an area must be completed for the next area to be unlocked!
+### Gamemodes
+The gamemodes are each categorised into one of five categories, the gamemode categories and their gamemodes are the following:
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+* Daily / Weekly
+Daily Wingo
+Daily Crossword
+Weekly Crossword
 
-### `npm test`
+* Letters
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+* Numbers
 
-### `npm run build`
+* Puzzle
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+* Other
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
