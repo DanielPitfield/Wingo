@@ -5,6 +5,8 @@ A game based on Wordle but with more content (22+ unique game modes), better rep
 ![React](https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB)
 ![SASS](https://img.shields.io/badge/SASS-hotpink.svg?style=for-the-badge&logo=SASS&logoColor=white)
 
+![Wingo](https://raw.githubusercontent.com/DanielPitfield/danielpitfield.github.io/main/public/Images/Projects/wingo.png)
+
 ## Usage / Instructions
 From the main menu, clicking the 'Custom Game' button will navigate to the lobby menu, this is where any of the gamemodes can be selected and played. To get playing immediately, click the 'Quick Game' button after which a random gamemode will be selected. A shortcut to the campaign as well as navigation to the game's options are also provided.
 
