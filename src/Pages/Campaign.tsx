@@ -2,8 +2,6 @@ import { AreaConfig } from "./Area";
 import Button from "../Components/Button";
 import { Theme } from "../Data/Themes";
 import { AllCampaignAreas } from "../Data/CampaignAreas/AllCampaignAreas";
-import BackgroundImageSrc from "../Data/Images/background.png";
-import BackgroundDarkThemeSrc from "../Data/Images/background-dark-theme.png";
 import { FiCheck, FiLock, FiPlay } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import { CampaignSaveData, getCampaignProgress } from "../Data/SaveData/CampaignProgress";
