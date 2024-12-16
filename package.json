@@ -3,31 +3,31 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@dnd-kit/core": "^6.0.8",
-    "@dnd-kit/sortable": "^7.0.2",
+    "@dnd-kit/core": "^6.3.1",
+    "@dnd-kit/sortable": "^10.0.0",
     "@formkit/auto-animate": "^1.0.0-beta.3",
-    "@testing-library/jest-dom": "^5.16.5",
-    "@testing-library/react": "^14.0.0",
-    "@testing-library/user-event": "^14.4.3",
-    "@types/jest": "^29.5.2",
-    "@types/node": "^20.3.3",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.1.0",
+    "@testing-library/user-event": "^14.5.2",
+    "@types/jest": "^29.5.14",
+    "@types/node": "^22.10.2",
     "@types/react": "^18.2.14",
     "@types/react-dom": "^18.2.6",
     "@types/react-router-dom": "^5.3.3",
-    "chance": "^1.1.11",
-    "date-fns": "^2.30.0",
+    "chance": "^1.1.12",
+    "date-fns": "^4.1.0",
     "react": "^18.2.0",
     "react-collapsible": "^2.10.0",
     "react-dom": "^18.2.0",
-    "react-icons": "^4.10.1",
+    "react-icons": "^5.4.0",
     "react-responsive-carousel": "^3.2.23",
     "react-router-dom": "^6.14.1",
-    "react-scripts": "5.0.0",
+    "react-scripts": "5.0.1",
     "sass": "^1.63.6",
-    "typescript": "^4.8.4",
-    "use-sound": "^4.0.1",
-    "usehooks-ts": "^2.9.1",
-    "web-vitals": "^3.3.2"
+    "typescript": "^4.9.5",
+    "use-sound": "^4.0.3",
+    "usehooks-ts": "^3.1.0",
+    "web-vitals": "^4.2.4"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -41,6 +41,13 @@
       "react-app/jest"
     ]
   },
+  "devDependencies": {
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
+    "@popperjs/core": "^2.11.8",
+    "@types/chance": "^1.1.6",
+    "react-error-boundary": "^4.1.2",
+    "react-popper": "^2.3.0"
+  },
   "browserslist": {
     "production": [
       ">0.2%",
@@ -52,12 +59,5 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-  "devDependencies": {
-    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
-    "@popperjs/core": "^2.11.8",
-    "@types/chance": "^1.1.3",
-    "react-error-boundary": "^4.0.10",
-    "react-popper": "^2.3.0"
   }
 }
