@@ -1,6 +1,4 @@
-import endOfDay from "date-fns/endOfDay";
-import endOfWeek from "date-fns/endOfWeek";
-import intervalToDuration from "date-fns/intervalToDuration";
+import { endOfDay, endOfWeek, intervalToDuration } from "date-fns";
 
 type TimePeriod = "Day" | "Week";
 
