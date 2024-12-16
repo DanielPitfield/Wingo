@@ -6,7 +6,7 @@ import { getGamemodeDefaultTimerValue } from "../Helpers/getGamemodeDefaultTimer
 import { hasNumberSelectionFinished } from "../Helpers/hasNumberSelectionFinished";
 import { getNumbersGameGuessTotal } from "../Helpers/getNumbersGameGuessTotal";
 import { getNumbersGameScore } from "../Helpers/getNumbersGameScore";
-import { useLocation } from "react-router-dom";
+import { useLocation } from "react-router";
 import { PagePath } from "../Data/PageNames";
 import { isCampaignLevelPath } from "../Helpers/CampaignPathChecks";
 import { SettingsData } from "../Data/SaveData/Settings";
@@ -55,7 +55,7 @@ export type IntermediaryTileStatus = {
 
 export type NumberTileStatus = OriginalTileStatus | IntermediaryTileStatus;
 
-export type Guess = { operand1: number | null; operand2: number | null; operator: typeof operators[0]["name"] };
+export type Guess = { operand1: number | null; operand2: number | null; operator: (typeof operators)[0]["name"] };
 
 const NumbersGameConfig = (props: Props) => {
   const location = useLocation().pathname as PagePath;
@@ -240,10 +240,7 @@ const NumbersGameConfig = (props: Props) => {
         ? Boolean(score && score >= Math.min(props.campaignConfig.targetScore, MAX_POSSIBLE_SCORE))
         : Boolean(difference && difference <= 10);
 
-
-        props.onComplete(wasCorrect);
-      
-
+      props.onComplete(wasCorrect);
     }
 
     setInProgress(true);
@@ -587,7 +584,6 @@ const NumbersGameConfig = (props: Props) => {
       submitBestGuess={submitBestGuess}
       setOperator={(operator) => setCurrentGuess({ ...currentGuess, operator })}
       addGold={props.addGold}
-
     />
   );
 };

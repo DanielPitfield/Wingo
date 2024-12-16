@@ -14,7 +14,7 @@ import { LetterTileStatus } from "../Components/LetterTile";
 import WingoGamemodeSettings from "../Components/GamemodeSettingsOptions/WingoGamemodeSettings";
 import { SettingsData } from "../Data/SaveData/Settings";
 import { getTimeUntilPeriodicReset } from "../Helpers/getTimeUntilPeriodicReset";
-import { useLocation } from "react-router-dom";
+import { useLocation } from "react-router";
 import { PagePath } from "../Data/PageNames";
 import { isDailyMode, isTimePeriodicMode, isWeeklyMode } from "../Helpers/isTimePeriodicMode";
 import WingoGrid from "../Components/WIngoGrid";

@@ -17,7 +17,7 @@ import { getGamemodeDefaultTimerValue } from "../Helpers/getGamemodeDefaultTimer
 import { getQuestionSetOutcome } from "../Helpers/getQuestionSetOutcome";
 import { getNewGamemodeSettingValue } from "../Helpers/getGamemodeSettingsNewValue";
 import AlgebraGamemodeSettings from "../Components/GamemodeSettingsOptions/AlgebraGamemodeSettings";
-import { useLocation } from "react-router-dom";
+import { useLocation } from "react-router";
 import { PagePath } from "../Data/PageNames";
 import { SettingsData } from "../Data/SaveData/Settings";
 import { setMostRecentAlgebraGamemodeSettings } from "../Data/SaveData/MostRecentGamemodeSettings";

@@ -15,7 +15,7 @@ import { getQuestionSetOutcome } from "../Helpers/getQuestionSetOutcome";
 import { getNumberSetTemplates } from "../Helpers/getNumberSetTemplates";
 import { getNewGamemodeSettingValue } from "../Helpers/getGamemodeSettingsNewValue";
 import NumberSetsGamemodeSettings from "../Components/GamemodeSettingsOptions/NumberSetsGamemodeSettings";
-import { useLocation } from "react-router-dom";
+import { useLocation } from "react-router";
 import { PagePath } from "../Data/PageNames";
 import { SettingsData } from "../Data/SaveData/Settings";
 import { setMostRecentNumberSetsGamemodeSettings } from "../Data/SaveData/MostRecentGamemodeSettings";

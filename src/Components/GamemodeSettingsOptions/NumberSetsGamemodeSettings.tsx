@@ -1,4 +1,4 @@
-import { useLocation } from "react-router-dom";
+import { useLocation } from "react-router";
 import { Difficulty } from "../../Data/DefaultGamemodeSettings";
 import { NumberSetsTemplates, NumberSetTemplate } from "../../Data/NumberSetsTemplates";
 import { PagePath } from "../../Data/PageNames";

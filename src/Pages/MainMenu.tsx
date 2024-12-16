@@ -3,7 +3,7 @@ import Logo from "../Components/Logo";
 import BackgroundSrc from "../Data/Images/background.png";
 import BackgroundDarkThemeSrc from "../Data/Images/background-dark-theme.png";
 import { FiCodesandbox, FiPlay, FiSettings, FiShuffle } from "react-icons/fi";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { SettingsData } from "../Data/SaveData/Settings";
 
 interface MainMenuProps {

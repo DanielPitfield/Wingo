@@ -3,7 +3,7 @@ import { Challenge } from "../Components/Challenge";
 import Campaign from "./Campaign";
 import { Theme } from "../Data/Themes";
 import { gamemodeCategories, pageDescriptions } from "../Data/PageDescriptions";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { SettingsData } from "../Data/SaveData/Settings";
 import { getHistory } from "../Data/SaveData/GameHistory";
 import LobbyMenuCategory from "../Components/LobbyMenuCategory";

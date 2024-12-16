@@ -16,7 +16,7 @@ import WordCodes, { WordCodesProps } from "../Pages/WordCodes";
 import WingoConfig, { WingoConfigProps } from "../Pages/WingoConfig";
 import { AreaConfig } from "../Pages/Area";
 import SequencePuzzle, { SequencePuzzleProps } from "../Pages/SequencePuzzle";
-import { Navigate, useLocation, useNavigate } from "react-router-dom";
+import { Navigate, useLocation, useNavigate } from "react-router";
 import { useParams } from "react-router";
 import { getAreaConfig } from "../Helpers/getAreaConfig";
 import { getLevelConfig } from "../Helpers/getLevelConfig";

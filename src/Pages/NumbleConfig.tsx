@@ -5,16 +5,16 @@ import { DEFAULT_NUMBLE_GUESS_TIMER_VALUE } from "../Data/DefaultGamemodeSetting
 import { getGamemodeDefaultTimerValue } from "../Helpers/getGamemodeDefaultTimerValue";
 import { getNextTeamNumberWithRemainingTime } from "../Helpers/getNextTeamWithRemainingTime";
 import { MAX_NUM_NUMBLE_TEAMS } from "../Components/GamemodeSettingsOptions/NumbleGamemodeSettings";
-import { useLocation } from "react-router-dom";
+import { useLocation } from "react-router";
 import { PagePath } from "../Data/PageNames";
 import { SettingsData } from "../Data/SaveData/Settings";
 import { setMostRecentNumbleConfigGamemodeSettings } from "../Data/SaveData/MostRecentGamemodeSettings";
 
 export const numbleGridShapes = ["square", "hexagon"] as const;
-export type numbleGridShape = typeof numbleGridShapes[number];
+export type numbleGridShape = (typeof numbleGridShapes)[number];
 
 export const numbleGridSizes = [25, 64, 100] as const;
-export type numbleGridSize = typeof numbleGridSizes[number];
+export type numbleGridSize = (typeof numbleGridSizes)[number];
 
 export interface NumbleConfigProps {
   campaignConfig:

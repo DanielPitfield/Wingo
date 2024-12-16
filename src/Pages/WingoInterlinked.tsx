@@ -16,7 +16,7 @@ import { shuffleArray } from "../Helpers/shuffleArray";
 import { getGamemodeDefaultTimerValue } from "../Helpers/getGamemodeDefaultTimerValue";
 import { getNewGamemodeSettingValue } from "../Helpers/getGamemodeSettingsNewValue";
 import WingoInterlinkedGamemodeSettings from "../Components/GamemodeSettingsOptions/WingoInterlinkedGamemodeSettings";
-import { useLocation } from "react-router-dom";
+import { useLocation } from "react-router";
 import { PagePath } from "../Data/PageNames";
 import { SettingsData } from "../Data/SaveData/Settings";
 import { setMostRecentWingoInterlinkedGamemodeSettings } from "../Data/SaveData/MostRecentGamemodeSettings";

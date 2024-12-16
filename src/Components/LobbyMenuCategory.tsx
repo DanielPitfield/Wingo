@@ -1,6 +1,6 @@
 import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { GamemodeCategory, PageDescription } from "../Data/PageDescriptions";
 import { SettingsData } from "../Data/SaveData/Settings";
 import LobbyMenuTile from "./LobbyMenuTile";

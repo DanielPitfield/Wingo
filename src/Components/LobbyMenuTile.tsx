@@ -1,5 +1,5 @@
 import { BsInfoCircleFill } from "react-icons/bs";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { PageDescription } from "../Data/PageDescriptions";
 import { SettingsData } from "../Data/SaveData/Settings";
 import { useClickChime } from "../Data/Sounds";

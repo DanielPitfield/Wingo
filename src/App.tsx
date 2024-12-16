@@ -28,7 +28,7 @@ import SequencePuzzle, { SequencePuzzleProps } from "./Pages/SequencePuzzle";
 import { PagePath } from "./Data/PageNames";
 import { getPageGamemodeSettings } from "./Helpers/getPageGamemodeSettings";
 import { getRandomElementFrom } from "./Helpers/getRandomElementFrom";
-import { Routes, Route, useNavigate, useLocation, Navigate } from "react-router-dom";
+import { Routes, Route, useNavigate, useLocation, Navigate } from "react-router";
 import PageWrapper from "./Components/PageWrapper";
 import { getCampaignProgress } from "./Data/SaveData/CampaignProgress";
 import { getSettings, saveSettings, SettingsData } from "./Data/SaveData/Settings";

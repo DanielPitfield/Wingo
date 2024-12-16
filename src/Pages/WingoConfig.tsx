@@ -20,7 +20,7 @@ import { getRandomElementFrom } from "../Helpers/getRandomElementFrom";
 import { getLetterStatus } from "../Helpers/getLetterStatus";
 import { getNumNewLimitlessLives } from "../Helpers/getNumNewLimitlessLives";
 import { getDailyWeeklyWingoModes } from "../Helpers/getDailyWeeklyWingoModes";
-import { useLocation } from "react-router-dom";
+import { useLocation } from "react-router";
 import { PagePath } from "../Data/PageNames";
 import { isCampaignLevelPath } from "../Helpers/CampaignPathChecks";
 import { SettingsData } from "../Data/SaveData/Settings";
@@ -56,7 +56,7 @@ export const wingoModes = [
   "conundrum",
 ] as const;
 
-export type WingoMode = typeof wingoModes[number];
+export type WingoMode = (typeof wingoModes)[number];
 
 export interface WingoConfigProps {
   mode: WingoMode;

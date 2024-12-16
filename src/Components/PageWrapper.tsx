@@ -3,7 +3,7 @@ import { pageDescriptions } from "../Data/PageDescriptions";
 import { VERSION } from "../Data/Version";
 import ErrorFallback from "../Pages/ErrorFallback";
 import HelpInformation from "./HelpInformation";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router";
 import { PagePath } from "../Data/PageNames";
 import { useState } from "react";
 import { getSettings, SettingsData } from "../Data/SaveData/Settings";
