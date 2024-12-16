@@ -130,9 +130,6 @@ const App = () => {
     setThemeIfNoPreferredSet(getHighestCampaignArea()?.theme || Themes.GenericWingo);
   }, [settings]);
 
-  React.useEffect(() => {
-    setGold(gold);
-  }, [gold]);
   function setThemeIfNoPreferredSet(theme: Theme) {
     setTheme(settings.graphics.preferredTheme ? Themes[settings.graphics.preferredTheme] : theme);
   }
