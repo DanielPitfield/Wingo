@@ -6,7 +6,7 @@ import { FiChevronLeft, FiCornerDownLeft } from "react-icons/fi";
 import { getWordRowStatusSummary, WordRowStatusChecks, WordRowStatusSummary } from "../Helpers/getWordRowStatusSummary";
 import { LetterTileStatus } from "./LetterTile";
 import { DEFAULT_ALPHABET } from "../Pages/WingoConfig";
-import { useLocation } from "react-router-dom";
+import { useLocation } from "react-router";
 import { SettingsData } from "../Data/SaveData/Settings";
 
 interface KeyboardProps {

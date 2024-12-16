@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import  Button  from "../Components/Button";
-import  MessageNotification  from "../Components/MessageNotification";
+import Button from "../Components/Button";
+import MessageNotification from "../Components/MessageNotification";
 import ProgressBar, { GreenToRedColorTransition } from "../Components/ProgressBar";
 import { useClickChime, useCorrectChime, useFailureChime, useLightPingChime } from "../Data/Sounds";
 import { Theme } from "../Data/Themes";
@@ -15,7 +15,7 @@ import SameLetterWordsGamemodeSettings, {
   MIN_NUM_SAME_LETTER_MATCHING_WORDS,
   MIN_NUM_SAME_LETTER_TOTAL_WORDS,
 } from "../Components/GamemodeSettingsOptions/SameLetterWordsGamemodeSettings";
-import { useLocation } from "react-router-dom";
+import { useLocation } from "react-router";
 import { PagePath } from "../Data/PageNames";
 import { SettingsData } from "../Data/SaveData/Settings";
 import { setMostRecentSameLetterWordsGamemodeSettings } from "../Data/SaveData/MostRecentGamemodeSettings";
@@ -356,7 +356,7 @@ const SameLetterWords = (props: Props) => {
 
     const Grid = Array.from({ length: numRows }).map((_, index) => populateRow(index));
     return <div className="only_connect_wall">{Grid}</div>;
-  }
+  };
 
   const Outcome = () => {
     if (inProgress) {
@@ -465,7 +465,7 @@ const SameLetterWords = (props: Props) => {
           </MessageNotification>
         </>
       )}
-      <Grid/>
+      <Grid />
       <div>
         {gamemodeSettings.timerConfig.isTimed && (
           <ProgressBar

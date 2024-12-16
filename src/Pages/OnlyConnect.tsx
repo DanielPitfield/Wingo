@@ -9,7 +9,7 @@ import { getPrettyText } from "../Helpers/getPrettyText";
 import { getGamemodeDefaultTimerValue } from "../Helpers/getGamemodeDefaultTimerValue";
 import { getNewGamemodeSettingValue } from "../Helpers/getGamemodeSettingsNewValue";
 import OnlyConnectGamemodeSettings from "../Components/GamemodeSettingsOptions/OnlyConnectGamemodeSettings";
-import { useLocation } from "react-router-dom";
+import { useLocation } from "react-router";
 import { PagePath } from "../Data/PageNames";
 import { getOnlyConnectGridWords } from "../Helpers/getOnlyConnectGridWords";
 import { SettingsData } from "../Data/SaveData/Settings";

@@ -20,7 +20,7 @@ import { getQuestionSetOutcome } from "../Helpers/getQuestionSetOutcome";
 import { getRandomElementFrom } from "../Helpers/getRandomElementFrom";
 import { getNewGamemodeSettingValue } from "../Helpers/getGamemodeSettingsNewValue";
 import WordCodesGamemodeSettings from "../Components/GamemodeSettingsOptions/WordCodesGamemodeSettings";
-import { useLocation } from "react-router-dom";
+import { useLocation } from "react-router";
 import {
   DndContext,
   closestCenter,
@@ -42,7 +42,7 @@ import { setMostRecentWordCodesGamemodeSettings } from "../Data/SaveData/MostRec
 import { useCountdown } from "usehooks-ts";
 
 const wordCodesModes = ["match", "question"] as const;
-export type wordCodesMode = typeof wordCodesModes[number];
+export type wordCodesMode = (typeof wordCodesModes)[number];
 
 type WordTile = { id: number; word: string; code: string; status: "incorrect" | "correct" | "not set" };
 type CodeTile = { id: number; code: string; status: "incorrect" | "correct" | "not set" };

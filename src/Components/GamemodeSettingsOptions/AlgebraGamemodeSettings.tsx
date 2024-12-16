@@ -1,4 +1,4 @@
-import { useLocation } from "react-router-dom";
+import { useLocation } from "react-router";
 import { AlgebraTemplate, AlgebraTemplates } from "../../Data/AlgebraTemplates";
 import { Difficulty } from "../../Data/DefaultGamemodeSettings";
 import { PagePath } from "../../Data/PageNames";

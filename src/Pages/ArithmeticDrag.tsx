@@ -12,7 +12,7 @@ import { getRandomElementFrom } from "../Helpers/getRandomElementFrom";
 import { getRandomIntFromRange } from "../Helpers/getRandomIntFromRange";
 import { getNewGamemodeSettingValue } from "../Helpers/getGamemodeSettingsNewValue";
 import ArithmeticDragGamemodeSettings from "../Components/GamemodeSettingsOptions/ArithmeticDragGamemodeSettings";
-import { useLocation } from "react-router-dom";
+import { useLocation } from "react-router";
 import { SettingsData } from "../Data/SaveData/Settings";
 import { setMostRecentArithmeticDragGamemodeSettings } from "../Data/SaveData/MostRecentGamemodeSettings";
 import { useCountdown } from "usehooks-ts";
@@ -21,10 +21,10 @@ import ArithmeticDragTiles from "../Components/ArithmeticDragTiles";
 
 // Const Contexts: https://stackoverflow.com/questions/44497388/typescript-array-to-string-literal-type
 export const arithmeticNumberSizes = ["small", "medium", "large"] as const;
-export type arithmeticNumberSize = typeof arithmeticNumberSizes[number];
+export type arithmeticNumberSize = (typeof arithmeticNumberSizes)[number];
 
 const arithmeticModes = ["order", "match"] as const;
-export type arithmeticMode = typeof arithmeticModes[number];
+export type arithmeticMode = (typeof arithmeticModes)[number];
 
 export type ExpressionTile = {
   id: number;

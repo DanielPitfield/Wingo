@@ -5,7 +5,7 @@ import { Theme } from "../Data/Themes";
 import { usePopper } from "react-popper";
 import { useClickChime } from "../Data/Sounds";
 import { AreaConfig } from "../Pages/Area";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { DISABLED_SETTINGS, SettingsData } from "../Data/SaveData/Settings";
 import { getCampaignProgress } from "../Data/SaveData/CampaignProgress";
 

@@ -20,7 +20,7 @@ import { NumberPuzzle } from "../Helpers/NumbersGameSolver";
 import { getRandomIntFromRange } from "../Helpers/getRandomIntFromRange";
 import { getNewGamemodeSettingValue } from "../Helpers/getGamemodeSettingsNewValue";
 import NumbleGamemodeSettings from "../Components/GamemodeSettingsOptions/NumbleGamemodeSettings";
-import { useLocation } from "react-router-dom";
+import { useLocation } from "react-router";
 import { PagePath } from "../Data/PageNames";
 import { SettingsData } from "../Data/SaveData/Settings";
 import { useClickChime } from "../Data/Sounds";

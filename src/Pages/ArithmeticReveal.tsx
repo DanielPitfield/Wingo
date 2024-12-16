@@ -16,7 +16,7 @@ import { getRandomElementFrom } from "../Helpers/getRandomElementFrom";
 import { getRandomIntFromRange } from "../Helpers/getRandomIntFromRange";
 import ArithmeticRevealGamemodeSettings from "../Components/GamemodeSettingsOptions/ArithmeticRevealGamemodeSettings";
 import { getNewGamemodeSettingValue } from "../Helpers/getGamemodeSettingsNewValue";
-import { useLocation } from "react-router-dom";
+import { useLocation } from "react-router";
 import { setMostRecentArithmeticRevealGamemodeSettings } from "../Data/SaveData/MostRecentGamemodeSettings";
 import { SettingsData } from "../Data/SaveData/Settings";
 import { useCountdown } from "usehooks-ts";

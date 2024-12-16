@@ -27,7 +27,7 @@ export const DISABLED_SETTINGS: SettingsData = {
 
 /** Default settings */
 const DEFAULT_SETTINGS: SettingsData = {
-  sound: { masterVolume: 0.5, effectsVolume: 0.5, backgroundVolume: 0.35 },
+  sound: { masterVolume: 0, effectsVolume: 0, backgroundVolume: 0 },
   graphics: { darkMode: false, preferredTheme: null, animation: true },
   gameplay: { showKeyboardUi: true, skipSplashscreen: false, entryPage: "Home" },
 };

@@ -3,7 +3,7 @@ import Button from "../Components/Button";
 import { Theme } from "../Data/Themes";
 import { AllCampaignAreas } from "../Data/CampaignAreas/AllCampaignAreas";
 import { FiCheck, FiLock, FiPlay } from "react-icons/fi";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { CampaignSaveData, getCampaignProgress } from "../Data/SaveData/CampaignProgress";
 import { SettingsData } from "../Data/SaveData/Settings";
 

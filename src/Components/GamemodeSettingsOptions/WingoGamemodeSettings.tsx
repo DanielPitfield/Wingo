@@ -1,4 +1,4 @@
-import { useLocation } from "react-router-dom";
+import { useLocation } from "react-router";
 import {
   MAX_TARGET_WORD_LENGTH,
   MIN_PUZZLE_WORD_LENGTH,

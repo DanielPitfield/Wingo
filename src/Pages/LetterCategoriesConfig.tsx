@@ -9,7 +9,7 @@ import { shuffleArray } from "../Helpers/shuffleArray";
 import { getGamemodeDefaultTimerValue } from "../Helpers/getGamemodeDefaultTimerValue";
 import { getGamemodeDefaultWordLength } from "../Helpers/getGamemodeDefaultWordLength";
 import { getRandomElementFrom } from "../Helpers/getRandomElementFrom";
-import { useLocation } from "react-router-dom";
+import { useLocation } from "react-router";
 import { isCampaignLevelPath } from "../Helpers/CampaignPathChecks";
 import { SettingsData } from "../Data/SaveData/Settings";
 import { setMostRecentLetterCategoriesConfigGamemodeSettings } from "../Data/SaveData/MostRecentGamemodeSettings";

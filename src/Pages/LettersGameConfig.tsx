@@ -6,7 +6,7 @@ import { Theme } from "../Data/Themes";
 import { getAllWordsOfLength } from "../Helpers/getWordsOfLength";
 import { getGamemodeDefaultTimerValue } from "../Helpers/getGamemodeDefaultTimerValue";
 import { isLettersGameGuessValid } from "../Helpers/isLettersGameGuessValid";
-import { useLocation } from "react-router-dom";
+import { useLocation } from "react-router";
 import { isCampaignLevelPath } from "../Helpers/CampaignPathChecks";
 import { SettingsData } from "../Data/SaveData/Settings";
 import { setMostRecentLettersGameConfigGamemodeSettings } from "../Data/SaveData/MostRecentGamemodeSettings";

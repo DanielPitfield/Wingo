@@ -1,7 +1,7 @@
 import { FiArrowLeft, FiHelpCircle, FiSettings } from "react-icons/fi";
 import { pageDescriptions } from "../Data/PageDescriptions";
 import Button from "./Button";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router";
 import { PagePath } from "../Data/PageNames";
 import GoldCoin from "../Data/Images/gold.png";
 import { isCampaignAreaPath, isCampaignLevelPath } from "../Helpers/CampaignPathChecks";

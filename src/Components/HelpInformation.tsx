@@ -1,6 +1,6 @@
 import { PageDescription, pageDescriptions } from "../Data/PageDescriptions";
 import Modal from "./Modal";
-import { useLocation } from "react-router-dom";
+import { useLocation } from "react-router";
 import { PagePath } from "../Data/PageNames";
 
 interface HelpInformationProps {

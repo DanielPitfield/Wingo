@@ -10,7 +10,7 @@ import { Theme } from "../Data/Themes";
 import { getGamemodeDefaultTimerValue } from "../Helpers/getGamemodeDefaultTimerValue";
 import { getNewGamemodeSettingValue } from "../Helpers/getGamemodeSettingsNewValue";
 import { LettersGameConfigProps, LettersGameTileStatus } from "./LettersGameConfig";
-import { useLocation } from "react-router-dom";
+import { useLocation } from "react-router";
 import { getBestLettersGameWords } from "../Helpers/getBestLettersGameWords";
 import { SettingsData } from "../Data/SaveData/Settings";
 import LettersGameGrid from "../Components/LettersGameGrid";

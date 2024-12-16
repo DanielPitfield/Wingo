@@ -3,7 +3,7 @@ import { LevelConfig } from "../Components/Level";
 import MessageNotification from "../Components/MessageNotification";
 import { Theme } from "../Data/Themes";
 import LevelNode from "../Components/LevelNode";
-import { Navigate, useNavigate, useParams } from "react-router-dom";
+import { Navigate, useNavigate, useParams } from "react-router";
 import { getAreaConfig } from "../Helpers/getAreaConfig";
 import { SettingsData } from "../Data/SaveData/Settings";
 import { getCampaignProgress } from "../Data/SaveData/CampaignProgress";
